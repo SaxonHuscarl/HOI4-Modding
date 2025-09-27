@@ -1,0 +1,276 @@
+############################################################################################################
+#	Expert AI mod - misc effects
+############################################################################################################
+
+EAI_num_surface_ships = {
+
+	set_variable = { EAI_num_surface_ships = num_ships_with_type@destroyer }
+	add_to_variable = { EAI_num_surface_ships = num_ships_with_type@light_cruiser }
+	add_to_variable = { EAI_num_surface_ships = num_ships_with_type@heavy_cruiser }
+	add_to_variable = { EAI_num_surface_ships = num_ships_with_type@battle_cruiser }
+	add_to_variable = { EAI_num_surface_ships = num_ships_with_type@battleship }
+}
+
+# submarines lost during 20 days
+EAI_track_submarine_losses = {
+
+	subtract_from_variable = { EAI_previous_subs = num_ships_with_type@submarine }
+
+	if = { limit = { check_variable = { EAI_previous_subs > 0 } }
+
+		divide_variable = { EAI_previous_subs = num_ships_with_type@submarine }
+		if = { limit = { check_variable = { EAI_previous_subs > 0.05 } } # lost more than 5%
+			set_country_flag = { flag = EAI_halt_sub_missions value = 1 days = 14 }
+		}
+	}
+
+	set_variable = { EAI_previous_subs = num_ships_with_type@submarine }
+}
+
+### scripted trade AI
+
+EAI_trade_strategies = {
+
+	every_country = { EAI_allow_trade = yes }
+	
+	### GER - stop oversea trade
+
+	if = { 
+		limit = { 
+			GER = { EAI_PREV_on_same_side_with_THIS = yes }
+			capital_scope = { OR = { is_on_continent = europe is_on_continent = middle_east } }
+			has_war = yes 
+			alliance_naval_strength_ratio < 4
+			stockpile_ratio = { archetype = convoy ratio < 200 }
+		}
+
+		every_country = {
+			limit = { 
+				NOT = { capital_scope = { OR = { is_on_continent = europe is_on_continent = middle_east } } } 
+				NOT = { is_neighbor_of = ROOT }
+			}
+
+			EAI_block_trade = yes
+		}
+	}
+
+	### JAP - stop oversea trade
+
+	if = { 
+		limit = { 
+			JAP = { EAI_PREV_on_same_side_with_THIS = yes }
+			capital_scope = { OR = { is_on_continent = asia is_on_continent = pacific is_on_continent = oceania } }
+			has_war = yes 
+			alliance_naval_strength_ratio < 4
+		}
+
+		every_country = { 
+			limit = { 
+				NOT = { capital_scope = { OR = { is_on_continent = asia is_on_continent = pacific is_on_continent = oceania } } }
+				NOT = { is_neighbor_of = ROOT }
+			}
+
+			EAI_block_trade = yes
+		}
+	}
+
+	### ROM - direct oil trade to GER when needed
+
+	if = { 
+		limit = { 
+			OR = { is_in_faction_with = GER has_non_aggression_pact_with = GER GER = { EAI_PREV_has_same_ideology_with_THIS = yes } }
+			NOT = { original_tag = GER original_tag = ROM }
+			ROM = { is_in_faction_with = GER }
+			GER = { fuel_ratio < 0.5 }
+			NOT = { AND = { original_tag = ITA fuel_ratio < 0.25 } }
+			fuel_ratio > 0.1
+		}
+		
+		ROM = { 
+			EAI_block_trade = yes
+		}
+	}
+}
+
+EAI_block_trade = {
+
+	if = { limit = { NOT = { has_country_flag = EAI_block_trade_to_@PREV } }
+
+		set_country_flag = EAI_block_trade_to_@PREV
+
+		add_opinion_modifier = { target = PREV modifier = EAI_trade_opinion_1 } 
+		add_opinion_modifier = { target = PREV modifier = EAI_trade_opinion_0 } 
+		add_opinion_modifier = { target = PREV modifier = EAI_trade_opinion_3 } 
+
+		# log = "[GetYear] [GetMonth] | AI | [Prev.GetName] | TRADE: blocking trade against [This.GetName]"
+	}
+}
+
+EAI_allow_trade = {
+
+	if = { limit = { has_country_flag = EAI_block_trade_to_@PREV }
+
+		clr_country_flag = EAI_block_trade_to_@PREV
+
+		remove_opinion_modifier = { target = PREV modifier = EAI_trade_opinion_1 } 
+		remove_opinion_modifier = { target = PREV modifier = EAI_trade_opinion_0 } 
+		remove_opinion_modifier = { target = PREV modifier = EAI_trade_opinion_3 } 
+
+		# log = "[GetYear] [GetMonth] | AI | [Prev.GetName] | TRADE: allowing trade against [This.GetName]"
+	}
+}
+
+EAI_apply_trade_modifiers = {
+	if = {
+		limit = {
+			tag = JAP #Dont trade with Chinese
+		}
+		reverse_add_opinion_modifier = {
+			target = CHI
+			modifier = EAI_trade_opinion_1
+		}
+		reverse_add_opinion_modifier = {
+			target = PGR
+			modifier = EAI_trade_opinion_1
+		}
+		reverse_add_opinion_modifier = {
+			target = YUT
+			modifier = EAI_trade_opinion_1
+		}
+		reverse_add_opinion_modifier = {
+			target = GXC
+			modifier = EAI_trade_opinion_1
+		}
+		reverse_add_opinion_modifier = {
+			target = SCC
+			modifier = EAI_trade_opinion_1
+		}
+		reverse_add_opinion_modifier = {
+			target = PRC
+			modifier = EAI_trade_opinion_1
+		}
+		reverse_add_opinion_modifier = {
+			target = ZXL
+			modifier = EAI_trade_opinion_1
+		}
+		reverse_add_opinion_modifier = {
+			target = AST
+			modifier = EAI_trade_opinion_1
+		}
+		reverse_add_opinion_modifier = {
+			target = CAN
+			modifier = EAI_trade_opinion_1
+		}
+		reverse_add_opinion_modifier = {
+			target = MAL
+			modifier = EAI_trade_opinion_1
+		}
+		reverse_add_opinion_modifier = {
+			target = NZL
+			modifier = EAI_trade_opinion_1
+		}
+		reverse_add_opinion_modifier = {
+			target = SOV
+			modifier = EAI_trade_opinion_1
+		}
+		
+		reverse_add_opinion_modifier = {
+			target = USA
+			modifier = EAI_trade_opinion_5
+		}
+		reverse_add_opinion_modifier = {
+			target = MEN
+			modifier = EAI_trade_opinion_2
+		}
+		reverse_add_opinion_modifier = {
+			target = RGR
+			modifier = EAI_trade_opinion_2
+		}
+		reverse_add_opinion_modifier = {
+			target = MAN
+			modifier = EAI_trade_opinion_2
+		}
+		reverse_add_opinion_modifier = {
+			target = MAN
+			modifier = EAI_trade_opinion_4
+		}
+	}
+	
+		
+	if = {
+		limit = {
+			OR = {
+				tag = POL 
+				tag = DEN 
+				tag = GRE 
+				tag = POL 
+				tag = YUG
+				tag = HOL
+				tag = BEL
+			}
+		}
+			
+		if = {
+			limit = {
+				GER = { is_ai = no }
+			}
+			reverse_add_opinion_modifier = {
+				target = GER
+				modifier = EAI_trade_opinion_1
+			}
+		}
+		if = {
+			limit = {
+				ITA = { is_ai = no }
+			}
+			reverse_add_opinion_modifier = {
+				target = GER
+				modifier = EAI_trade_opinion_1
+			}
+		}
+	}
+	
+}
+EAI_anti_aggression_check = {
+	if = { limit = { has_global_flag = EAI_anti_aggression_diplomacy }
+			
+		every_country = {
+			limit = { OR = { EAI_invite_to_faction = yes has_country_flag = EAI_invite_to_faction_@ROOT } }
+			
+			if = {
+				limit = {
+					has_country_flag = EAI_invite_to_faction_@ROOT
+					NOT = { EAI_invite_to_faction = yes }
+				}
+				clr_country_flag = EAI_invite_to_faction_@ROOT
+				meta_effect = {
+					text = {
+						add_ai_strategy = {
+							type = alliance
+							id = [TAG]
+							value = -500
+						}
+					}
+					TAG  = "[Root.GetTag]"
+				}
+			}
+			else_if = {
+				limit = { EAI_invite_to_faction = yes }
+				
+				set_country_flag = EAI_invite_to_faction_@ROOT
+				meta_effect = {
+					text = {
+						add_ai_strategy = {
+							type = alliance
+							id = [TAG]
+							value = 500
+						}
+					}
+					TAG  = "[Root.GetTag]"
+				}
+			}
+		}
+	}
+}
+
+#####################################################

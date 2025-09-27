@@ -1,0 +1,87 @@
+scripted_gui = {
+	BI_sidebar = {
+		context_type = player_context
+		
+		#parent_scripted_gui = BI_sidebar_frame
+		parent_window_token = top_bar 
+		window_name = "BI_sidebar_container"
+		
+		visible = { 
+			has_country_flag = sidebar 
+		} 
+		
+		dynamic_lists = {
+			sidebar_list = {
+				array = sidebar_list
+				change_scope = yes
+				entry_container = "sidebar_entry_container"
+			}
+		}
+		
+		properties = {
+			army_strength = { 
+				image = "[GetArmyStrengthGFX]"
+			}
+			air_strength = { 
+				image = "[GetAirStrengthGFX]"
+			}
+			navy_strength = { 
+				image = "[GetNavyStrengthGFX]"
+			}
+			
+			icon = {
+				image = GFX_idea_[?icon.GetTokenKey]
+			}
+			
+			hide = {
+				y = hide_y
+			}
+		}
+		
+		dirty = ui_sidebar_update
+
+		triggers = {
+			hide_click_enabled = {
+				
+				set_temp_variable = { hide_y = sidebar_list^num }
+				if = {
+					limit = {
+						check_variable = { hide_y = 0 }
+					}
+					set_temp_variable = { hide_y = 315 }
+				}
+				else = {
+					multiply_temp_variable = { hide_y = 80 }
+					add_to_temp_variable = { hide_y = 250 }
+				}
+		
+			}
+			
+			icon_click_enabled = {
+				sidebar_trigger = yes
+			}
+		}
+		
+		effects = {
+			icon_click = {
+				sidebar_effect = yes
+			}
+			army_strength_click = { 
+				army_strength_tooltip = yes
+			}  
+			 
+			air_strength_click = {
+				air_strength_tooltip = yes
+			} 
+			
+			navy_strength_click = { 
+				navy_strength_tooltip = yes
+			}
+			
+			hide_click = {
+				clr_country_flag = sidebar
+				add_to_variable = { ui_topbar_update = 1 }
+			}
+        }
+	}
+}

@@ -1,0 +1,94 @@
+
+SAF_war_with_ETH = {
+	allowed = {
+		tag = SAF
+	}
+	
+	enable = {
+		is_in_faction_with = ENG
+		OR = {
+			has_war_with = ETH
+			date > 1939.1.1
+			has_war_with = GER
+		}
+		NOT = {
+			has_country_flag = ai_ENG_no_help_against_ETH
+		}
+	}
+	abort = {
+		ETH = { 
+			OR = { 
+				has_capitulated = yes 
+				exists = no 
+				SAF = { has_country_flag = ai_ENG_no_help_against_ETH }
+			}		
+		}
+	}
+
+	
+	ai_strategy = {
+		type = front_unit_request
+		area = north_africa
+		value = -100
+	}
+	ai_strategy = {
+		type = front_unit_request
+		tag = ETH
+		value = 100
+	}
+	ai_strategy = {
+		type = conquer
+		id = ETH
+		value = 1000
+	}
+	
+}
+
+SAF_egypt_buffer = {
+	allowed = { tag = SAF }
+	enable = {
+		271 = { is_controlled_by_ROOT_or_ally = yes }
+		NOT = { ITA = { has_idea = ITA_bad_war } }
+		surrender_progress < 0.1
+	}
+	abort_when_not_enabled = yes
+	
+	ai_strategy = { type = naval_avoid_region id = 298 value = 500 } #dont use supply via alexandria port
+	
+	ai_strategy = {
+		type = conquer
+		id = ITA
+		value = 1000
+	}
+	ai_strategy = {
+		type = put_unit_buffers
+		states = { 853 446 447 } #Northern Egypt
+		ratio = 0.75
+		area = africa
+		order_id = 1
+		subtract_invasions_from_need = yes
+		subtract_fronts_from_need = yes
+	}
+}
+
+SAF_north_africa_buffer = {
+	allowed = { tag = SAF }
+	enable = {
+		271 = { is_controlled_by_ROOT_or_ally = yes }
+		ITA = { has_idea = ITA_bad_war }
+		surrender_progress < 0.1
+	}
+	abort_when_not_enabled = yes
+	
+	ai_strategy = { type = naval_avoid_region id = 298 value = 500 } #dont use supply via alexandria port
+	
+	ai_strategy = {
+		type = put_unit_buffers
+		states = { 448 449 450 451 665 458 } #Lybia & Tunisia
+		ratio = 0.75
+		area = africa
+		order_id = 1
+		subtract_invasions_from_need = yes
+		subtract_fronts_from_need = yes
+	}
+}

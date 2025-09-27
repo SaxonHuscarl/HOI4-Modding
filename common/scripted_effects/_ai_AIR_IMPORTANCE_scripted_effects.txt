@@ -1,0 +1,1043 @@
+
+
+## scripted air region ai score
+
+ai_custom_air_region_priorities = {
+	if = {
+		limit = {
+			tag = ENG
+		}
+
+		if = {
+			limit = {
+				is_in_faction_with = FRA
+				FRA = { has_capitulated = no }
+			}
+			
+			add_to_temp_array = { air_region_target = 18 } #British Channel
+			set_temp_variable = { air_region_score@18 = 1000 }
+			
+			add_to_temp_array = { air_region_target = 236 } #London
+			set_temp_variable = { air_region_score@236 = 1000 }
+			
+			add_to_temp_array = { air_region_target = 1 } #Plymouth
+			set_temp_variable = { air_region_score@1 = 1000 }
+			
+			add_to_temp_array = { air_region_target = 2 } #Northern England
+			set_temp_variable = { air_region_score@2 = 1000 }
+		}
+		
+		add_to_temp_array = { air_region_target = 18 } #British Channel
+		set_temp_variable = { air_region_score@18 = 5000 }
+		
+		add_to_temp_array = { air_region_target = 43 } #Western Approaches
+		set_temp_variable = { air_region_score@43 = 200 }
+		
+		add_to_temp_array = { air_region_target = 29 } #Malta
+		set_temp_variable = { air_region_score@29 = 1000 }
+		
+		add_to_temp_array = { air_region_target = 299 } #Pantelleria
+		set_temp_variable = { air_region_score@299 = 500 }
+		
+		add_to_temp_array = { air_region_target = 250 } #Pantelleria
+		set_temp_variable = { air_region_score@250 = 500 }
+		
+		add_to_temp_array = { air_region_target = 224 } #Pantelleria
+		set_temp_variable = { air_region_score@224 = 500 }
+		
+	}
+	
+	else_if = {
+		limit = {
+			tag = USA
+		}
+		
+		
+		if = { limit = { is_in_faction_with = ENG }
+			# Protect British Islands
+			
+			#add_to_temp_array = { bombing_raid_start = token:ai_USA_bombing_raid_northern_france }
+			
+			if = {
+				limit = {
+					ENG = { has_capitulated = no }
+				}
+				
+			}
+		
+			
+		}
+	}
+	
+	else_if = {
+		limit = {
+			tag = ITA
+		}
+		
+		if = {
+			limit = {
+				NOT = { has_country_flag = ai_basic_air_region_scores }
+			}
+			set_country_flag = ai_basic_air_region_scores
+			clear_temp_array = checked
+			
+			every_state = {
+				if = {
+					limit = {
+						OR = {
+							is_core_of = SOV
+							is_core_of = POL
+							is_core_of = LIT
+							is_core_of = LAT
+							is_core_of = EST
+							is_core_of = FIN
+							is_core_of = NOR
+							is_core_of = SWE
+						}
+						NOT = { is_in_array = { checked = region } }
+					}
+							
+					add_to_temp_array = { checked = region }
+					
+					set_temp_variable = { t = region }
+					meta_effect = {
+						text = {
+							ROOT = {
+								add_ai_strategy = {
+									type = strategic_air_importance
+									id = [X]
+									value = -40000
+								}
+							}
+						}
+						X = "[?t]"
+					}
+				}
+			}
+			
+		}
+	}
+	
+	else_if = {
+		limit = {
+			tag = AST
+		}
+		
+		if = {
+			limit = {
+				NOT = { has_country_flag = ai_basic_air_region_scores }
+			}
+			set_country_flag = ai_basic_air_region_scores
+			clear_temp_array = checked
+			
+			every_state = {
+				if = {
+					limit = {
+						OR = {
+							is_on_continent = europe
+							is_on_continent = middle_east
+							is_on_continent = africa
+							is_on_continent = north_america
+							is_on_continent = south_america
+						}
+						NOT = { #support IEA front
+							region = 17
+							region = 244
+							region = 183
+						}
+						NOT = { is_in_array = { checked = region } }
+					}
+							
+					add_to_temp_array = { checked = region }
+					
+					set_temp_variable = { t = region }
+					meta_effect = {
+						text = {
+							ROOT = {
+								add_ai_strategy = {
+									type = strategic_air_importance
+									id = [X]
+									value = -25000
+								}
+							}
+						}
+						X = "[?t]"
+					}
+				}
+				else_if = {
+					limit = {
+						is_on_continent = asia
+						OR = {
+							is_core_of = RAJ
+							is_core_of = BUR
+							is_core_of = SIA
+							is_core_of = CHI
+							is_core_of = JAP
+							is_core_of = SOV
+							is_core_of = PER
+							is_core_of = SIK
+							is_core_of = MON
+							is_core_of = KOR
+							is_core_of = FRI
+							is_core_of = TIB
+							is_core_of = BHU
+							is_core_of = NEP
+							is_core_of = AFG
+							is_core_of = TAN
+						}
+						NOT = { is_in_array = { checked = region } }
+					}
+							
+					add_to_temp_array = { checked = region }
+					
+					set_temp_variable = { t = region }
+					meta_effect = {
+						text = {
+							ROOT = {
+								add_ai_strategy = {
+									type = strategic_air_importance
+									id = [X]
+									value = -15000
+								}
+							}
+						}
+						X = "[?t]"
+					}
+				}
+			}
+		}
+		
+		if = {
+			limit = {
+				always = no
+				NOT = { has_country_flag = ai_basic_air_region_scores4 }
+			}
+			set_country_flag = ai_basic_air_region_scores4
+			clear_temp_array = checked
+			
+			every_state = {
+				if = {
+					limit = {
+						always = no
+						is_on_continent = asia
+						OR = {
+							is_core_of = RAJ
+							is_core_of = BUR
+							is_core_of = SIA
+							is_core_of = CHI
+							is_core_of = JAP
+							is_core_of = SOV
+							is_core_of = PER
+							is_core_of = SIK
+							is_core_of = MON
+							is_core_of = KOR
+							is_core_of = FRI
+							is_core_of = TIB
+							is_core_of = BHU
+							is_core_of = NEP
+							is_core_of = AFG
+							is_core_of = TAN
+						}
+						NOT = { is_in_array = { checked = region } }
+					}
+							
+					add_to_temp_array = { checked = region }
+					
+					set_temp_variable = { t = region }
+					meta_effect = {
+						text = {
+							ROOT = {
+								add_ai_strategy = {
+									type = strategic_air_importance
+									id = [X]
+									value = -15000
+								}
+							}
+						}
+						X = "[?t]"
+					}
+				}
+			}
+		}
+	}
+		
+	else_if = {
+		limit = {
+			tag = CHI
+		}
+			
+		add_to_temp_array = { air_region_target = 77 } #Yellow Sea
+		set_temp_variable = { air_region_score@77 = -12000 }
+		
+		add_to_temp_array = { air_region_target = 76 } #East China Sea
+		set_temp_variable = { air_region_score@76 = -12000 }
+		
+		add_to_temp_array = { air_region_target = 174 } #South China Sea
+		set_temp_variable = { air_region_score@174 = -12000 }
+			
+	}
+	
+}
+
+#####################################################################
+#### scripted bombing raid chains
+
+ai_USA_bombing_raid_northern_france = {
+
+	set_temp_variable = { strategic_importance = 20000 }
+
+	add_to_temp_array = { raid_region = 19 }
+	
+	# enable conditions
+	
+	set_temp_variable = { min_bomber_type = 600 } #min bombers to start this raid, only for the first raid in a chain
+	set_temp_variable = { min_fighter_type = 1000 }
+	
+	
+	# abort conditions
+	
+	set_temp_variable = { max_bomber_loss_ratio = 0.20 } #if ai has 1000 bombers when it starts this, it will abort it at 800
+	set_temp_variable = { max_fighter_loss_ratio = 0.30 }
+	
+	
+	# countries to support us
+	
+	add_to_temp_array = { countries_support = ENG }
+	add_to_temp_array = { countries_support = CAN }
+	add_to_temp_array = { countries_support = SAF }
+	
+	
+	# escalate conditions
+	
+	set_temp_variable = { escalate_min_days_passed = 60 }
+	
+	set_temp_variable = { escalate_min_bomber_gain = 0.05 }
+	set_temp_variable = { escalate_min_fighter_gain = 0.10 }
+	
+	add_to_temp_array = { escalate_to = token:ai_USA_bombing_raid_belgium }
+	add_to_temp_array = { escalate_to = token:ai_USA_bombing_raid_central_france }
+	add_to_temp_array = { escalate_to = token:ai_USA_bombing_raid_eastern_france }
+	add_to_temp_array = { escalate_to = token:ai_USA_bombing_raid_western_france }
+}
+
+ai_USA_bombing_raid_holland = {
+	set_temp_variable = { strategic_importance = 20000 }
+
+	add_to_temp_array = { raid_region = 5 }
+	
+	# enable conditions
+	
+	set_temp_variable = { min_bomber_type = 600 }
+	set_temp_variable = { min_fighter_type = 1000 }
+	
+	
+	# abort conditions
+	
+	set_temp_variable = { max_bomber_loss_ratio = 0.20 }
+	set_temp_variable = { max_fighter_loss_ratio = 0.30 }
+	
+	
+	# countries to support us
+	
+	add_to_temp_array = { countries_support = ENG }
+	add_to_temp_array = { countries_support = CAN }
+	add_to_temp_array = { countries_support = SAF }
+	
+	
+	# escalate conditions
+	
+	set_temp_variable = { escalate_min_days_passed = 60 }
+	
+	set_temp_variable = { escalate_min_bomber_gain = 0.05 }
+	set_temp_variable = { escalate_min_fighter_gain = 0.10 }
+	
+	#add_to_temp_array = { escalate_to = token:ai_USA_bombing_raid_belgium }
+}
+
+ai_USA_bombing_raid_belgium = {
+	set_temp_variable = { strategic_importance = 20000 }
+
+	add_to_temp_array = { raid_region = 237 }
+	
+	# enable conditions
+	
+	set_temp_variable = { min_bomber_type = 600 }
+	set_temp_variable = { min_fighter_type = 1000 }
+	
+	
+	# abort conditions
+	
+	set_temp_variable = { max_bomber_loss_ratio = 0.20 }
+	set_temp_variable = { max_fighter_loss_ratio = 0.30 }
+	
+	
+	# countries to support us
+	
+	add_to_temp_array = { countries_support = ENG }
+	add_to_temp_array = { countries_support = CAN }
+	add_to_temp_array = { countries_support = SAF }
+	
+	
+	# escalate conditions
+	
+	set_temp_variable = { escalate_min_days_passed = 60 }
+	
+	set_temp_variable = { escalate_min_bomber_gain = 0.05 }
+	set_temp_variable = { escalate_min_fighter_gain = 0.10 }
+	
+	add_to_temp_array = { escalate_to = token:ai_USA_bombing_raid_holland }
+	add_to_temp_array = { escalate_to = token:ai_USA_bombing_raid_eastern_france }
+}
+
+ai_USA_bombing_raid_central_france = {
+	set_temp_variable = { strategic_importance = 20000 }
+
+	add_to_temp_array = { raid_region = 239 }
+	
+	# enable conditions
+	
+	set_temp_variable = { min_bomber_type = 600 }
+	set_temp_variable = { min_fighter_type = 1000 }
+	
+	
+	# abort conditions
+	
+	set_temp_variable = { max_bomber_loss_ratio = 0.20 }
+	set_temp_variable = { max_fighter_loss_ratio = 0.30 }
+	
+	
+	# countries to support us
+	
+	add_to_temp_array = { countries_support = ENG }
+	add_to_temp_array = { countries_support = CAN }
+	add_to_temp_array = { countries_support = SAF }
+	
+	
+	# escalate conditions
+	
+	set_temp_variable = { escalate_min_days_passed = 60 }
+	
+	set_temp_variable = { escalate_min_bomber_gain = 0.05 }
+	set_temp_variable = { escalate_min_fighter_gain = 0.10 }
+	
+	add_to_temp_array = { escalate_to = token:ai_USA_bombing_raid_belgium }
+	add_to_temp_array = { escalate_to = token:ai_USA_bombing_raid_eastern_france }
+	add_to_temp_array = { escalate_to = token:ai_USA_bombing_raid_western_france }
+	
+}
+
+ai_USA_bombing_raid_eastern_france = {
+	set_temp_variable = { strategic_importance = 20000 }
+
+	add_to_temp_array = { raid_region = 238 }
+	
+	# enable conditions
+	
+	set_temp_variable = { min_bomber_type = 600 }
+	set_temp_variable = { min_fighter_type = 1000 }
+	
+	
+	# abort conditions
+	
+	set_temp_variable = { max_bomber_loss_ratio = 0.20 }
+	set_temp_variable = { max_fighter_loss_ratio = 0.30 }
+	
+	
+	# countries to support us
+	
+	add_to_temp_array = { countries_support = ENG }
+	add_to_temp_array = { countries_support = CAN }
+	add_to_temp_array = { countries_support = SAF }
+	
+	
+	# escalate conditions
+	
+	set_temp_variable = { escalate_min_days_passed = 60 }
+	
+	set_temp_variable = { escalate_min_bomber_gain = 0.05 }
+	set_temp_variable = { escalate_min_fighter_gain = 0.10 }
+	
+	add_to_temp_array = { escalate_to = token:ai_USA_bombing_raid_belgium }
+	add_to_temp_array = { escalate_to = token:ai_USA_bombing_raid_central_france }
+}
+
+ai_USA_bombing_raid_western_france = {
+	set_temp_variable = { strategic_importance = 20000 }
+
+	add_to_temp_array = { raid_region = 240 }
+	
+	# enable conditions
+	
+	set_temp_variable = { min_bomber_type = 600 }
+	set_temp_variable = { min_fighter_type = 1000 }
+	
+	
+	# abort conditions
+	
+	set_temp_variable = { max_bomber_loss_ratio = 0.20 }
+	set_temp_variable = { max_fighter_loss_ratio = 0.30 }
+	
+	
+	# countries to support us
+	
+	add_to_temp_array = { countries_support = ENG }
+	add_to_temp_array = { countries_support = CAN }
+	add_to_temp_array = { countries_support = SAF }
+	
+	
+	# escalate conditions
+	
+	set_temp_variable = { escalate_min_days_passed = 60 }
+	
+	set_temp_variable = { escalate_min_bomber_gain = 0.05 }
+	set_temp_variable = { escalate_min_fighter_gain = 0.10 }
+	
+	add_to_temp_array = { escalate_to = token:ai_USA_bombing_raid_central_france }
+}
+
+d_log_ai_bombing_raids = {
+	ai_calculate_deployed_fighter_type = yes
+	ai_calculate_deployed_bomber_type = yes
+	
+	
+	for_each_loop = {
+		array = ai_active_bombing_raid
+		
+		log = " "
+		log = "BOMBING RAID: [?v.GetTokenKey]"
+		log = "[?ai_active_bombing_raid_score@var:v] score"
+		log = "[?ai_active_bombing_raid_abort_fighter@var:v] abort_fighter"
+		log = "[?ai_active_bombing_raid_abort_bomber@var:v] abort_bomber"
+		log = "[?ai_active_bombing_raid_escalate_date@var:v.GetDateStringNoHour] escalate_date"
+		log = "[?ai_active_bombing_raid_escalate_fighter@var:v] escalate_fighter (Current: [?ai_fighter_strength])"
+		log = "[?ai_active_bombing_raid_escalate_bomber@var:v] escalate_bomber (Current: [?ai_bomber_strength])"
+		log = "Escalate to:"
+		for_each_loop = {
+			array = ai_active_bombing_raid_escalate@var:v
+			value = vv
+			
+			log = "	   [?vv.GetTokenKey] escalate"
+		}
+		log = "Supported by:"
+		for_each_scope_loop = {
+			array = ai_active_bombing_raid_support@var:v
+			
+			log = "	   [This.GetTag]"
+		}
+		log = " "
+	}
+}
+
+d_ai_update_bombing_strategies = {
+	#set_variable = { fighter_strength = 2000 }
+	#set_variable = { bomber_strength = 3000 }
+	
+	ai_calculate_deployed_fighter_type = yes
+	ai_calculate_deployed_bomber_type = yes
+	
+	if = {
+		limit = {
+			check_variable = { ai_active_bombing_raid^num = 0 }
+		}
+		
+		for_each_loop = {
+			array = bombing_raid_start
+			value = raid
+			
+			ai_activate_bombing_raid = yes
+		}
+		
+	}
+	else = {
+	
+		for_each_loop = {
+			array = ai_active_bombing_raid
+			
+			## check if we need to abort 
+			
+			if = {
+				limit = {
+					OR = {
+						check_variable = { ai_active_bombing_raid_abort_fighter@var:v > ai_fighter_strength }
+						check_variable = { ai_active_bombing_raid_abort_bomber@var:v > ai_bomber_strength }
+					}
+				}
+				log = "REMOVE BOMBING RAID: [?v.GetTokenKey]"
+				
+				## clear
+				
+				meta_effect = {
+					text = {
+						[X] = yes
+					}
+					X = "[?v.GetTokenKey]"
+				}
+				
+				for_each_scope_loop = {
+					array = ai_active_bombing_raid_support@var:v
+					
+					multiply_variable = { ai_active_bombing_raid_score@var:v = -1 }
+					for_each_loop = {
+						array = raid_region 
+						value = region_target
+							
+						meta_effect = {
+							text = {
+								add_ai_strategy = {
+									type = strategic_air_importance
+									id = [X]
+									value = [Y]
+								}
+							}
+							X = "[?region_target]"
+							Y = "[?ai_active_bombing_raid_score@var:v]"
+						}
+					}
+					
+					clear_variable = ai_active_bombing_raid_score@var:v
+				}
+				multiply_variable = { ai_active_bombing_raid_score@var:v = -1 }
+				for_each_loop = {
+					array = raid_region 
+					value = region_target
+						
+					meta_effect = {
+						text = {
+							add_ai_strategy = {
+								type = strategic_air_importance
+								id = [X]
+								value = [Y]
+							}
+						}
+						X = "[?region_target]"
+						Y = "[?ai_active_bombing_raid_score@var:v]"
+					}
+				}
+				clear_variable = ai_active_bombing_raid_score@var:v
+				
+				clear_variable = ai_active_bombing_raid_abort_fighter@var:v
+				clear_variable = ai_active_bombing_raid_abort_bomber@var:v
+				clear_variable = ai_active_bombing_raid_escalate_date@var:v
+				clear_variable = ai_active_bombing_raid_escalate_fighter@var:v
+				clear_variable = ai_active_bombing_raid_escalate_bomber@var:v
+				
+				clear_array = ai_active_bombing_raid_escalate@var:v
+				clear_array = ai_active_bombing_raid_escalate_region@var:v
+				clear_array = ai_active_bombing_raid_support@var:v
+				
+				add_to_temp_array = { remove_raid = v }
+			}
+			else_if = { ## check for escalate
+				limit = {
+					check_variable = { global.date > ai_active_bombing_raid_escalate_date@var:v }
+					check_variable = { ai_fighter_strength > ai_active_bombing_raid_escalate_fighter@var:v }
+					check_variable = { ai_bomber_strength > ai_active_bombing_raid_escalate_bomber@var:v }
+				}
+				
+				#log = "    -ESCALATE TO i [?chance] / [?ai_active_bombing_raid_escalate@var:v^num]"
+				
+				for_each_loop = {
+					array = ai_active_bombing_raid_escalate@var:v
+					value = raid
+					break = escalate_break
+					
+					if = {
+						limit = {
+							NOT = { is_in_array = { ai_active_bombing_raid = raid } }
+						}
+							
+						log = "ESCALATE FOUND! [?raid.GetTokenKey]"
+					
+						if = {
+							limit = {
+								is_in_array = { ai_potential_escalate = raid }
+							}
+							add_to_temp_variable = { ai_potential_escalate_num@var:raid = 1 }
+						}
+						else = {
+							add_to_temp_array = { ai_potential_escalate = raid }
+							add_to_temp_variable = { ai_potential_escalate_num@var:raid = 1 }
+						}
+					}
+				}
+				
+			}
+			
+		}
+		
+		## clear invalid
+		
+		for_each_loop = {
+			array = remove_raid
+			
+			remove_from_array = { ai_active_bombing_raid = v }
+		}
+		
+		## score potential escalate
+		
+		for_each_loop = {
+			array = ai_potential_escalate
+			value = potential_escalate
+			
+			if = {
+				limit = {
+					NOT = { is_in_array = { ai_active_bombing_raid = potential_escalate } }
+				}
+					
+				set_temp_variable = { strategic_importance = 0 }
+				
+				clear_temp_array = raid_region
+				clear_temp_array = countries_support
+				clear_temp_array = escalate_to
+				meta_effect = {
+					text = {
+						[X] = yes
+					}
+					X = "[?potential_escalate.GetTokenKey]"
+				}
+				
+				if = {
+					limit = { #only evaluate if the raid got loaded
+						check_variable = { strategic_importance > 0 }
+					}
+						
+					clear_temp_array = region_states
+					for_each_loop = {
+						array = raid_region
+						value = region_v
+						
+						meta_effect = {
+							text = {
+								region_[X] = yes #DEPRECATED!!! fix this if it gets used
+							}
+							X = "[?region_v]"
+						}
+					}
+					
+					ai_score_bombing_raid = yes
+				}
+			}
+		}
+		
+		if = {
+			limit = {
+				check_variable = { best_escalate_score > 0 }
+			}
+			log = "BEST ESCALATE RAID [?best_escalate_raid.GetTokenKey] | [?best_escalate_score] score"
+			
+			set_temp_variable = { raid = best_escalate_raid }
+			
+			ai_activate_bombing_raid = yes
+		}
+	}
+			
+}
+
+ai_score_bombing_raid = {
+	set_temp_variable = { escalate_score = 100 }
+	
+	for_each_loop = {
+		array = region_states
+		
+		var:v = { subtract_from_temp_variable = { escalate_score = building_level@anti_air_building } }
+	}
+	
+	### save highest scored 
+	
+	if = {
+		limit = {
+			check_variable = { escalate_score > best_escalate_score }
+		}
+		set_temp_variable = { best_escalate_score = escalate_score }
+		set_temp_variable = { best_escalate_raid = potential_escalate }
+	}
+}
+
+ai_activate_bombing_raid = {
+	clear_temp_array = raid_region
+	clear_temp_array = countries_support
+	clear_temp_array = escalate_to
+	meta_effect = {
+		text = {
+			[X] = yes
+		}
+		X = "[?raid.GetTokenKey]"
+	}
+
+	if = {
+		limit = {
+			check_variable = { ai_fighter_strength > min_fighter_type }
+			check_variable = { ai_bomber_strength > min_bomber_type }
+			NOT = { is_in_array = { ai_active_bombing_raid = raid } }
+		}
+		set_temp_variable = { escalate_break = 1 }
+		
+		log = "ADD ACTIVE RAID: [?raid.GetTokenKey]"
+		add_to_array = { ai_active_bombing_raid = raid }
+		set_variable = { ai_active_bombing_raid_score@var:raid = strategic_importance }
+		
+	## abort 
+
+		set_temp_variable = { num_to_abort = 1 }
+		subtract_from_temp_variable = { num_to_abort = max_bomber_loss_ratio }
+		multiply_temp_variable = { num_to_abort = ai_bomber_strength }
+		set_variable = { ai_active_bombing_raid_abort_bomber@var:raid = num_to_abort }
+		
+		set_temp_variable = { num_to_abort = 1 }
+		subtract_from_temp_variable = { num_to_abort = max_fighter_loss_ratio }
+		multiply_temp_variable = { num_to_abort = ai_fighter_strength }
+		set_variable = { ai_active_bombing_raid_abort_fighter@var:raid = num_to_abort }
+		
+	## escalate
+
+		set_temp_variable = { date_for_escalate = global.date }
+		set_temp_variable = { t = escalate_min_days_passed }
+		multiply_temp_variable = { t = 24 }
+		multiply_temp_variable = { t = 0.001 }
+		add_to_temp_variable = { date_for_escalate = t }
+		set_variable = { ai_active_bombing_raid_escalate_date@var:raid = date_for_escalate }
+		
+		set_temp_variable = { num_to_escalate = ai_bomber_strength }
+		set_temp_variable = { t = 1 }
+		add_to_temp_variable = { t = escalate_min_bomber_gain }
+		multiply_temp_variable = { num_to_escalate = t }
+		set_variable = { ai_active_bombing_raid_escalate_bomber@var:raid = num_to_escalate }
+		
+		set_temp_variable = { num_to_escalate = ai_fighter_strength }
+		set_temp_variable = { t = 1 }
+		add_to_temp_variable = { t = escalate_min_fighter_gain }
+		multiply_temp_variable = { num_to_escalate = t }
+		set_variable = { ai_active_bombing_raid_escalate_fighter@var:raid = num_to_escalate }
+		
+		for_each_loop = {
+			array = escalate_to
+			
+			add_to_array = { ai_active_bombing_raid_escalate@var:raid = v }
+		}
+		
+		for_each_loop = {
+			array = raid_region
+			
+			meta_effect = {
+				text = {
+					add_ai_strategy = {
+						type = strategic_air_importance
+						id = [X]
+						value = [Y]
+					}
+				}
+				X = "[?v]"
+				Y = "[?strategic_importance]"
+			}
+		}
+
+	## countries support
+
+		for_each_scope_loop = {
+			array = countries_support
+			
+			if = {
+				limit = {
+					check_variable = { ai_active_bombing_raid_score@var:raid = 0 }
+				}
+				add_to_array = { PREV.ai_active_bombing_raid_support@var:raid = THIS }
+				
+				set_variable = { ai_active_bombing_raid_score@var:raid = strategic_importance }
+				
+				for_each_loop = {
+					array = raid_region
+					
+					meta_effect = {
+						text = {
+							add_ai_strategy = {
+								type = strategic_air_importance
+								id = [X]
+								value = [Y]
+							}
+						}
+						X = "[?v]"
+						Y = "[?strategic_importance]"
+					}
+				}
+			}
+		}
+	}
+}
+
+d_ai_update_air_region_priorities = {
+	ai_custom_air_region_priorities = yes
+	######################################
+	
+	#d_ai_update_bombing_strategies = yes
+	
+	for_each_loop = {
+		array = air_region_target
+		
+		if = { #region is not yet in the ai_air_region_priority array
+			limit = {
+				NOT = { has_variable = ai_air_region_priority@var:v }
+			}
+			
+			add_to_array = { ai_air_region_priority = v }
+			set_variable = { ai_air_region_priority@var:v = air_region_score@var:v }
+			
+			set_temp_variable = { change = ai_air_region_priority@var:v }
+			
+			meta_effect = {
+				text = {
+					add_ai_strategy = {
+						type = strategic_air_importance
+						id = [X]
+						value = [Y]
+					}
+				}
+				X = "[?v]"
+				Y = "[?change]"
+			}
+			#log = "Region: [?v] | INITIAL SCORE [?change]"
+		}
+		else_if = { #region is already in the array, but the score doesnt match
+			limit = {
+				NOT = { check_variable = { ai_air_region_priority@var:v = air_region_score@var:v } }
+			}
+			
+			set_temp_variable = { change = air_region_score@var:v }
+			subtract_from_temp_variable = { change = ai_air_region_priority@var:v }
+			
+			set_variable = { ai_air_region_priority@var:v = air_region_score@var:v }
+			
+			meta_effect = {
+				text = {
+					add_ai_strategy = {
+						type = strategic_air_importance
+						id = [X]
+						value = [Y]
+					}
+				}
+				X = "[?v]"
+				Y = "[?change]"
+			}
+			log = "Region: [?v] | CHANGE SCORE by [?change]"
+		}
+	}
+	
+	# iterate through the actual array to find regions for removal, if theyre no longer in air_region_target
+	for_each_loop = { 
+		array = ai_air_region_priority
+		
+		if = {
+			limit = {
+				NOT = { is_in_array = { air_region_target = v } }
+			}
+			set_temp_variable = { change = ai_air_region_priority@var:v }
+			multiply_temp_variable = { change = -1 }
+			
+			clear_variable = ai_air_region_priority@var:v
+			
+			meta_effect = {
+				text = {
+					add_ai_strategy = {
+						type = strategic_air_importance
+						id = [X]
+						value = [Y]
+					}
+				}
+				X = "[?v]"
+				Y = "[?change]"
+			}
+			
+			add_to_temp_array = { air_removal = v }
+			log = "Region: [?v] | REMOVAL"
+		}
+	}
+	
+	for_each_loop = { array = air_removal remove_from_array = { ai_air_region_priority = v } }
+}		
+
+d_ai_update_naval_region_priorities = { #TODO UNUSED STILL!
+	#ai_custom_naval_region_priorities = yes
+	######################################
+	
+	for_each_loop = {
+		array = naval_region_target
+		
+		if = { #region is not yet in the ai_naval_region_priority array
+			limit = {
+				NOT = { has_variable = ai_naval_region_priority@var:v }
+			}
+			
+			add_to_array = { ai_naval_region_priority = v }
+			set_variable = { ai_naval_region_priority@var:v = naval_region_score@var:v }
+			
+			set_temp_variable = { change = ai_naval_region_priority@var:v }
+			
+			meta_effect = {
+				text = {
+					add_ai_strategy = {
+						type = naval_convoy_raid_region
+						id = [X]
+						value = [Y]
+					}
+				}
+				X = "[?v]"
+				Y = "[?change]"
+			}
+			#log = "Region: [?v] | INITIAL SCORE [?change]"
+		}
+		else_if = { #region is already in the array, but the score doesnt match
+			limit = {
+				NOT = { check_variable = { ai_naval_region_priority@var:v = naval_region_score@var:v } }
+			}
+			
+			set_temp_variable = { change = naval_region_score@var:v }
+			subtract_from_temp_variable = { change = ai_naval_region_priority@var:v }
+			
+			set_variable = { ai_naval_region_priority@var:v = naval_region_score@var:v }
+			
+			meta_effect = {
+				text = {
+					add_ai_strategy = {
+						type = naval_convoy_raid_region
+						id = [X]
+						value = [Y]
+					}
+				}
+				X = "[?v]"
+				Y = "[?change]"
+			}
+			log = "Region: [?v] | CHANGE SCORE by [?change]"
+		}
+	}
+	
+	# iterate through the actual array to find regions for removal if theyre no longer in naval_region_target
+	for_each_loop = { 
+		array = ai_naval_region_priority
+		
+		if = {
+			limit = {
+				NOT = { is_in_array = { naval_region_target = v } }
+			}
+			set_temp_variable = { change = ai_naval_region_priority@var:v }
+			multiply_temp_variable = { change = -1 }
+			
+			clear_variable = ai_naval_region_priority@var:v
+			
+			meta_effect = {
+				text = {
+					add_ai_strategy = {
+						type = naval_convoy_raid_region
+						id = [X]
+						value = [Y]
+					}
+				}
+				X = "[?v]"
+				Y = "[?change]"
+			}
+			
+			add_to_temp_array = { naval_removal = v }
+			log = "Region: [?v] | REMOVAL"
+		}
+	}
+	
+	for_each_loop = { array = naval_removal remove_from_array = { ai_naval_region_priority = v } }
+}

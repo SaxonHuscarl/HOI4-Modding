@@ -1,0 +1,5600 @@
+
+@BUILD_COST_RAILWAY = 2400 #cost for level 1 railway
+
+#weight = 20/resource_per_civ
+
+@AI_OIL_WEIGHT= 2.5
+@AI_RUBBER_WEIGHT= 2
+@AI_TUNGSTEN_WEIGHT= 2.5
+@AI_CHROMIUM_WEIGHT= 2.5
+@AI_IRON_WEIGHT= 0.625
+@AI_COAL_WEIGHT= 0.5
+@AI_BAUXITE_WEIGHT= 0.625
+@AI_FOOD_WEIGHT= 0.4
+
+ai_custom_construction_logic = {
+
+	if = {
+		limit = {
+			OR = {
+				has_country_flag = ai_construction_logic
+				tag = GER
+				tag = ITA
+				tag = JAP
+				tag = ENG
+				tag = FRA
+				tag = USA
+				tag = SOV
+				tag = CAN
+				tag = SAF
+				tag = CHI
+			}
+		}
+		set_country_flag = ai_construction_logic
+		meta_effect = {
+			text = { ai_construction_logic/[X] = yes }
+			X = "[This.GetTag]"
+		}
+	}
+	else = {
+		ai_construction_logic/generic = yes
+	}
+}
+
+#####################################################
+########## RADAR 
+#####################################################
+
+@MAX_RADAR_DISTANCE = 80	
+@MIN_RADAR_DISTANCE = 5
+@LEVEL_RADAR_DISTANCE = 15	
+	
+# these scores only get run on a global array of (initially) predetermined states in ai_radar_location trigger
+@AI_RADAR_MIN_SCORE = 25 
+
+@AI_RADAR_BASE_SCORE = 35
+@AI_RADAR_PRIORITY_SCORE = 80
+@AI_RADAR_PER_LEVEL_SCORE = -10 
+@AI_RADAR_HOME_AREA_SCORE = 25 
+@AI_RADAR_NEW_STATE_SCORE = 15 
+
+@AI_RADAR_DISTANCE_MULT = 1.5
+@AI_RADAR_SCORE_PER_CONTROLLED_STATE_COVERAGE = 4
+@AI_RADAR_SCORE_PER_FRIENDLY_STATE_COVERAGE = 3
+@AI_RADAR_SCORE_PER_NEUTRAL_STATE_COVERAGE = 1.5
+@AI_RADAR_SCORE_PER_ENEMY_STATE_COVERAGE = 8
+@AI_RADAR_SCORE_PER_POTENTIAL_ENEMY_STATE_COVERAGE = 6 #per enemy state not in distance atm but would be if radar would be maxed out
+	
+# these ones are for the ai creating new radar sites nears fronts (<100 distance), the coverage values above also get used
+@AI_NEW_RADAR_BASE_SCORE = 30
+@AI_NEW_RADAR_MIN_SCORE = 50
+@AI_NEW_RADAR_EXISTING_LEVEL_SCORE = 5 #if theres a radar in a state which isnt a radar location yet. scaled by building level
+@AI_NEW_RADAR_DISTANCE_MIN = 60 #min distance to an already existing radar state used by us or allies
+@AI_NEW_RADAR_DISTANCE_MAX = 150 #if between min and this distance a factor 0-1 gets applied to the score per radar state in range
+
+#####################################################
+########## AIRBASE
+#####################################################
+
+@AI_AIRBASE_MIN_SCORE = 50
+@AI_AIRBASE_BASE_SCORE = 100
+@AI_AIRBASE_PER_LEVEL_SCORE = -10
+@AI_AIRBASE_PRIORITY_SCORE = 50
+@AI_AIRBASE_RADAR_STATE_SCORE = 20 #states with radars
+
+@AI_AIRBASE_MAX_BUILD_DAYS_PER_UPDATE = 16 #determines how many airbase levels get queued at max per update (since a single airbase is built in a day or so)
+
+ai_custom_airbase_score = { #ROOT = country; THIS = state
+	if = {
+		limit = { ROOT = { tag = USA } }
+		
+		multiply_variable = { ai_airbase_slot_score = 1.5 }
+		
+		if = {
+			limit = {
+				OR = {
+					is_core_of = RAJ
+					is_core_of = BUR
+				}
+			}
+			multiply_variable = { ai_airbase_slot_score = 1.1 }
+		}
+		
+		if = {
+			limit = {
+				is_on_continent = africa
+				is_controlled_by = ROOT
+			}
+			multiply_variable = { ai_airbase_slot_score = 1.15 }
+		}
+	}
+	else_if = {
+		limit = { ROOT = { tag = JAP } }
+		
+		if = {
+			limit = {
+				OR = {
+					is_core_of = PHI
+					is_core_of = MAL
+				}
+			}
+			multiply_variable = { ai_airbase_slot_score = 1.5 }
+		}
+		if = {
+			limit = {
+				is_core_of = CHI
+			}
+			multiply_variable = { ai_airbase_slot_score = 0.75 }
+		}
+		
+	}
+	else_if = {
+		limit = { ROOT = { tag = GER } }
+		
+		if = {
+			limit = {
+				OR = {
+					is_core_of = SOV
+					is_core_of = LIT
+					is_core_of = LAT
+					is_core_of = EST
+				}
+			}
+			multiply_variable = { ai_airbase_slot_score = 1.25 }
+		}
+		
+	}
+		
+}
+
+#####################################################
+########## FUEL SILO  
+#####################################################
+@FUEL_SILO_TO_SCORE = 1000 #1000 score = 1 fuel silo
+@FUEL_SILO_RATIO_MIN = 0.3 #fuel ratio before considering building a silo
+
+@FUEL_SILO_PER_MOTORIZED = 3
+@FUEL_SILO_PER_ARMOR = 16
+@FUEL_SILO_PER_SHIP = 6
+@FUEL_SILO_PER_PLANE = 0.25
+
+@FUEL_SILO_PER_MIC = 1.75
+@FUEL_SILO_PER_NIC = 15.0
+@FUEL_SILO_PER_CIC = 1.75
+@FUEL_SILO_PER_OIL = -16 
+		
+@FUEL_SILO_RATIO_BONUS_START = 0.65 #fuel ratio above this: bonus below starts
+@FUEL_SILO_RATIO_MAX_BONUS = 2.0 #fuel ratio at 1= this bonus max
+@FUEL_SILO_FULL_BONUS = 1.0 #fuel ratio at 1 = above bonus + this
+
+ai_custom_fuel_silo_target = {
+	if = {
+		limit = {
+			tag = SOV
+		}
+		multiply_variable = { ai_fuel_silo_target = 0.75 }
+	}
+}
+#####################################################
+########## OIL REFINERY 
+#####################################################
+@MIC_RATIO_TO_BUILD_SYNTH_REFINERY = 1.2 #compared to CIC. the lower this is the less focused the ai will be on an MIC buildup
+@FUEL_TO_SCORE_BASE = 100 #10 score = 1 fuel refinery worth of max consumption
+
+# values are standardized for "max" consumption
+@FUEL_PER_MOTORIZED = 12
+@FUEL_PER_ARMOR = 16
+@FUEL_PER_SHIP = 1
+@FUEL_PER_PLANE = 0.25
+
+@FUEL_PER_MIC = 0.1
+@FUEL_PER_NIC = 0.2
+@FUEL_PER_CIC = 1.25
+
+# 1 oil = 1 refinery worth of fuel
+@FUEL_PER_OIL = -10
+@FUEL_PER_OIL_IMPORT = -5
+
+@FUEL_RATIO_BONUS_START = 1.7
+@FUEL_RATIO_BONUS_STOP = 0.3
+@FUEL_RATIO_BONUS_MAX = 5.0
+@FUEL_RATIO_BONUS_FULL = 1.0
+
+#####################################################
+########## RUBBER REFINERY 
+#####################################################
+
+# this is pretty broken
+@RUBBER_REFINERY_TO_SCORE = 1000  
+
+@RUBBER_REFINERY_PER_DEFICIT = 20 
+@RUBBER_REFINERY_PER_IMPORT = 10
+@RUBBER_REFINERY_PER_CONSUMED = 6
+@RUBBER_REFINERY_PER_PRODUCED = -10
+
+@RUBBER_REFINERY_PER_MOTORIZED = 2 
+@RUBBER_REFINERY_PER_MECHANIZED = 4 
+@RUBBER_REFINERY_PER_RUBBER_AIR_PRODUCTION = 2 #TODO
+@RUBBER_REFINERY_PER_IC_FACTOR = 0.01
+@RUBBER_REFINERY_MAX_IC_FACTOR = 3
+
+ai_update_fuel_silo_target = {
+	if = {
+		limit = {
+			check_variable = { building_target@fuel_silo = 0 }
+		}
+		
+		clear_variable = ai_fuel_silo_target
+		clear_variable = ai_fuel_silo_target_mult
+		
+	### MOTORIZED
+		set_temp_variable = { motorized = num_battalions_with_type@semi_motorized }
+		add_to_temp_variable = { motorized = num_battalions_with_type@semi_motorized_assault }
+		add_to_temp_variable = { motorized = num_battalions_with_type@motorcycle_infantry }
+		add_to_temp_variable = { motorized = num_battalions_with_type@motorized }
+		add_to_temp_variable = { motorized = num_battalions_with_type@motorized_assault }
+		add_to_temp_variable = { motorized = num_battalions_with_type@mechanized }
+		add_to_temp_variable = { motorized = num_battalions_with_type@mechanized_assault }
+		
+		multiply_temp_variable = { motorized = @FUEL_SILO_PER_MOTORIZED }
+		add_to_variable = { ai_fuel_silo_target = motorized }
+		
+	### ARMOR 
+		set_temp_variable = { armor = num_armor }
+		
+		multiply_temp_variable = { armor = @FUEL_SILO_PER_ARMOR }
+		add_to_variable = { ai_fuel_silo_target = armor }
+		
+	### SHIPS 
+		set_temp_variable = { ships = num_ships }
+		
+		multiply_temp_variable = { ships = @FUEL_SILO_PER_SHIP }
+		add_to_variable = { ai_fuel_silo_target = ships }
+		
+	### PLANES 
+		set_temp_variable = { planes = num_deployed_planes }
+		
+		multiply_temp_variable = { planes = @FUEL_SILO_PER_PLANE }
+		add_to_variable = { ai_fuel_silo_target = planes }
+		
+	### MIC 
+		set_temp_variable = { mic = num_of_military_factories }
+		
+		multiply_temp_variable = { mic = @FUEL_SILO_PER_MIC }
+		add_to_variable = { ai_fuel_silo_target = mic }
+		
+	### NIC 
+		set_temp_variable = { dock = num_of_naval_factories }
+		
+		multiply_temp_variable = { dock = @FUEL_SILO_PER_NIC }
+		add_to_variable = { ai_fuel_silo_target = dock }
+		
+	### CIC 
+		set_temp_variable = { cic = num_of_civilian_factories }
+		
+		multiply_temp_variable = { cic = @FUEL_SILO_PER_CIC }
+		add_to_variable = { ai_fuel_silo_target = cic }
+		
+	### OIL 
+		set_temp_variable = { oil = resource_produced@oil }	
+		set_temp_variable = { mod = 1 }
+		subtract_from_temp_variable = { mod = modifier@min_export }
+		multiply_temp_variable = { oil = mod }
+		
+		multiply_temp_variable = { oil = @FUEL_SILO_PER_OIL }
+		add_to_variable = { ai_fuel_silo_target = oil }
+		
+		clamp_variable = { var = ai_fuel_silo_target min = 1 }
+		
+	### RATIO 
+		set_temp_variable = { ratio = fuel_ratio }
+		subtract_from_temp_variable = { ratio = @FUEL_SILO_RATIO_BONUS_START }
+		if = { limit = { check_variable = { ratio > 0 } }
+			set_temp_variable = { ratio_max = 1 } 
+			subtract_from_temp_variable = { ratio_max = @FUEL_SILO_RATIO_BONUS_START } 
+			
+			divide_temp_variable = { ratio = ratio_max } 
+			 
+			set_temp_variable = { bonus_mult = @FUEL_SILO_RATIO_MAX_BONUS }
+			subtract_from_temp_variable = { bonus_mult = 1 }
+			add_to_temp_variable = { bonus_mult = ratio }
+		}
+		else = {
+			set_temp_variable = { bonus_mult = 1 }
+		}
+		
+		set_variable = { ai_fuel_silo_target_mult = fuel_ratio }
+		multiply_variable = { ai_fuel_silo_target_mult = bonus_mult }
+		
+		if = { limit = { check_variable = { fuel_ratio > 0.95 } }
+			add_to_variable = { ai_fuel_silo_target_mult = @FUEL_SILO_FULL_BONUS }
+		}
+		
+		multiply_variable = { ai_fuel_silo_target = ai_fuel_silo_target_mult }
+		
+		ai_custom_fuel_silo_target = yes
+	}
+	else = {
+		clear_variable = ai_fuel_silo_target
+		clear_variable = ai_fuel_silo_target_mult
+		
+		set_variable = { ai_fuel_silo_target = building_target@fuel_silo }
+		multiply_variable = { ai_fuel_silo_target = @FUEL_SILO_TO_SCORE }
+	}
+}
+
+ai_update_synthetic_refinery_target = {
+	if = {
+		limit = {
+			check_variable = { building_target@synthetic_refinery = 0 }
+		}
+			
+		clear_variable = ai_fuel_target
+		clear_variable = ai_fuel_refinery_need
+		
+	### MOTORIZED
+		set_temp_variable = { motorized = num_battalions_with_type@semi_motorized }
+		add_to_temp_variable = { motorized = num_battalions_with_type@semi_motorized_assault }
+		add_to_temp_variable = { motorized = num_battalions_with_type@motorcycle_infantry }
+		add_to_temp_variable = { motorized = num_battalions_with_type@motorized }
+		add_to_temp_variable = { motorized = num_battalions_with_type@motorized_assault }
+		add_to_temp_variable = { motorized = num_battalions_with_type@mechanized }
+		add_to_temp_variable = { motorized = num_battalions_with_type@mechanized_assault }
+		
+		multiply_temp_variable = { motorized = @FUEL_PER_MOTORIZED }
+		add_to_variable = { ai_fuel_target = motorized }
+		
+	### ARMOR 
+		set_temp_variable = { armor = num_armor }
+		
+		multiply_temp_variable = { armor = @FUEL_PER_ARMOR }
+		add_to_variable = { ai_fuel_target = armor }
+		
+	### SHIPS 
+		set_temp_variable = { ships = num_ships }
+		
+		multiply_temp_variable = { ships = @FUEL_PER_SHIP }
+		add_to_variable = { ai_fuel_target = ships }
+		
+	### PLANES 
+		set_temp_variable = { planes = num_deployed_planes }
+		
+		multiply_temp_variable = { planes = @FUEL_PER_PLANE }
+		add_to_variable = { ai_fuel_target = planes }
+		
+	### MIC 
+		set_temp_variable = { mic = num_of_military_factories }
+		
+		multiply_temp_variable = { mic = @FUEL_PER_MIC }
+		add_to_variable = { ai_fuel_target = mic }
+		
+	### NIC 
+		set_temp_variable = { dock = num_of_naval_factories }
+		
+		multiply_temp_variable = { dock = @FUEL_PER_NIC }
+		add_to_variable = { ai_fuel_target = dock }
+		
+	### CIC 
+		set_temp_variable = { cic = num_of_civilian_factories }
+		
+		multiply_temp_variable = { cic = @FUEL_PER_CIC }
+		add_to_variable = { ai_fuel_target = cic }
+		
+	### RATIOS 
+		set_temp_variable = { refinery_factor = 1 }
+		add_to_temp_variable = { refinery_factor = modifier@fuel_gain_factor_from_states}
+		
+		divide_variable = { ai_fuel_target = refinery_factor } # divide target by synth efficiency (if they produce double you need half as many)
+		#clamp_variable = { var = ai_fuel_target min = 0 }
+		 
+		set_temp_variable = { tempratio = @FUEL_RATIO_BONUS_START }
+		add_to_temp_variable = { tempratio = @FUEL_RATIO_BONUS_STOP } # I know this is just bad code for scaling but its the only thing that came to mind in the moment 
+		set_temp_variable = { ratio_bonus = 1.05 } # i did not start it at 1 so that the ratio does not approach 0 with full fuel as quickly and is not 0 at full stockpile
+		subtract_from_temp_variable = { ratio_bonus = fuel_ratio }
+		multiply_temp_variable = { ratio_bonus = @FUEL_RATIO_BONUS_MAX }
+		divide_temp_variable = { ratio_bonus = tempratio }
+		
+		
+		if = { limit = { fuel_ratio < @FUEL_RATIO_BONUS_STOP } add_to_temp_variable = { ratio_bonus = @FUEL_RATIO_BONUS_FULL}} # If under FUEL_RATIO_BONUS_STOP give this extra bonus. 
+		if = { limit = { has_war = no } divide_temp_variable = { ratio_bonus = 5} } # No synths during peace pls
+		
+		multiply_variable = { ai_fuel_target = ratio_bonus } # fuel consumption values get scaled based on avalabile fuel - less fuel in stockpile means it "consumes" more - done to account for different fuel usage ratios
+
+	### OIL 
+		set_temp_variable = { oil = resource_produced@oil }	
+		set_temp_variable = { modfactor = 1 }
+		add_to_temp_variable = { modfactor = modifier@fuel_gain_factor }
+		set_temp_variable = { mod = 1 }
+		subtract_from_temp_variable = { mod = modifier@min_export }
+		multiply_temp_variable = { oil = mod }
+		multiply_temp_variable = { oil = modfactor } # oil value gets scaled by oil refining tech
+
+		multiply_temp_variable = { oil = @FUEL_PER_OIL }
+		add_to_variable = { ai_fuel_target = oil }
+		
+		set_temp_variable = { oil_import = resource_imported@oil }		
+		multiply_temp_variable = { oil_import = modfactor }
+		multiply_temp_variable = { oil_import = @FUEL_PER_OIL_IMPORT }
+		add_to_variable = { ai_fuel_target = oil_import } # Imported Fuel also lowers need for refineries but by less
+		
+	### NEED - basically how bad the AI wants a new refinery now
+		
+		set_temp_variable = { fuel_need_factor = 0.5 } # this value is 0.5 + fuel refining bonus, starts at 0.5 so that AI doesnt want bad synths as much
+		add_to_temp_variable = { fuel_need_factor = modifier@fuel_gain_factor_from_states}	
+		add_to_variable = { ai_fuel_refinery_need = ai_fuel_target }
+		set_temp_variable = { target_diff = num_synthetic_refinery }
+		multiply_temp_variable = { target_diff = @FUEL_TO_SCORE_BASE } 
+		subtract_from_variable = { ai_fuel_refinery_need = target_diff } # NEED is proportional to the difference between synth_target and num_synth 
+		multiply_variable = { ai_fuel_refinery_need = fuel_need_factor } # And multiplied by the refining bonus to make better tech refineries more appealing
+		multiply_variable = { ai_fuel_refinery_need = fuel_need_factor } # Technically Multiplied twice because the target got divided by the tech earlier 
+	}
+	else = {
+		clear_variable = ai_fuel_target
+		clear_variable = ai_fuel_refinery_need
+		
+		set_variable = { ai_fuel_target = building_target@synthetic_refinery }
+		multiply_variable = { ai_fuel_target = @FUEL_TO_SCORE_BASE }
+	}
+}
+
+ai_update_synthetic_rubber_refinery_target = {
+	if = {
+		limit = {
+			check_variable = { building_target@synthetic_refinery = 0 }
+		}
+				
+		clear_variable = ai_rubber_refinery_target
+		
+	### MOTORIZED
+		set_temp_variable = { motorized = num_battalions_with_type@semi_motorized }
+		add_to_temp_variable = { motorized = num_battalions_with_type@semi_motorized_assault }
+		add_to_temp_variable = { motorized = num_battalions_with_type@motorcycle_infantry }
+		add_to_temp_variable = { motorized = num_battalions_with_type@motorized }
+		add_to_temp_variable = { motorized = num_battalions_with_type@motorized_assault }
+		
+		multiply_temp_variable = { motorized = @RUBBER_REFINERY_PER_MOTORIZED }
+		add_to_variable = { ai_rubber_refinery_target = motorized }
+		
+	### MECHANIZED
+		set_temp_variable = { mechanized = num_battalions_with_type@mechanized }
+		add_to_temp_variable = { mechanized = num_battalions_with_type@mechanized_assault }
+		
+		multiply_temp_variable = { mechanized = @RUBBER_REFINERY_PER_MECHANIZED }
+		add_to_variable = { ai_rubber_refinery_target = mechanized }
+		
+	### DEFICIT
+		
+		if = {
+			limit = {
+				check_variable = { resource@rubber < 0 }
+			}
+			set_temp_variable = { deficit = resource@rubber }
+			multiply_temp_variable = { deficit = @RUBBER_REFINERY_PER_DEFICIT }
+			add_to_variable = { ai_rubber_refinery_target = deficit }
+		}
+		
+	### IMPORT
+
+		set_temp_variable = { import = resource_imported@rubber }
+		multiply_temp_variable = { import = @RUBBER_REFINERY_PER_IMPORT }
+		add_to_variable = { ai_rubber_refinery_target = import }
+		
+	### PRODUCTION 
+
+		set_temp_variable = { production = resource_produced@rubber }
+		multiply_temp_variable = { production = @RUBBER_REFINERY_PER_PRODUCED }
+		add_to_variable = { ai_rubber_refinery_target = production }
+		
+	### CONSUMPTION 
+
+		set_temp_variable = { consumption = resource_consumed@rubber }
+		multiply_temp_variable = { consumption = @RUBBER_REFINERY_PER_CONSUMED }
+		add_to_variable = { ai_rubber_refinery_target = consumption }
+		
+	### IC factor 
+		
+		set_temp_variable = { factor = num_of_civilian_factories }
+		multiply_temp_variable = { factor = @RUBBER_REFINERY_PER_IC_FACTOR }
+		#add_to_temp_variable = { factor = 1 }
+		
+		set_temp_variable = { max_value = @RUBBER_REFINERY_MAX_IC_FACTOR }
+		clamp_temp_variable = { var = factor max = max_value }
+		multiply_variable = { ai_rubber_refinery_target = factor }
+	}
+	else = {
+		clear_variable = ai_rubber_refinery_target
+		
+		set_variable = { ai_rubber_refinery_target = building_target@synthetic_rubber_refinery }
+		multiply_variable = { ai_rubber_refinery_target = @RUBBER_REFINERY_TO_SCORE }
+	}
+}
+		
+ai_scripted_air_base_states = {
+	
+	#add_to_temp_array = { ai_airbase_state = 258 } #state where we should build airbases outside of fronts, can also be allied controlled, but only 1 ai country can construct at a time
+	#set_temp_variable = { ai_airbase_state_target@258 = 2 } #max lvl to build, dont set for infinite (setting to 0 is not enough)
+	#set_temp_variable = { ai_airbase_state_score_mult@258 = 0.5 } #increases score for this state
+	
+	#add_to_temp_array = { ai_airbase_region = 251 } #region
+	#set_temp_variable = { ai_airbase_region_target@251 = 6 }
+	#set_temp_variable = { ai_airbase_region_score_mult@251 = 0.5 }
+	
+	
+	#########################################################
+	####### ENG 
+	#########################################################
+	
+	if = {
+		limit = {
+			tag = ENG 
+		}
+		
+		if = {
+			limit = {
+				OR = {
+					is_in_faction_with = USA 
+					USA = { is_lend_leasing = ENG }
+					date > 1941.1.1
+				}
+			}
+			add_to_temp_array = { ai_airbase_state = 696.id } #BERMUDA
+			add_to_temp_array = { ai_airbase_state = 698.id } #AZORES
+			add_to_temp_array = { ai_airbase_state = 697.id } #MADEIRA
+			add_to_temp_array = { ai_airbase_state = 178.id } #CANARY
+			
+			add_to_temp_array = { ai_airbase_state = 703.id } 
+			add_to_temp_array = { ai_airbase_state = 704.id } 
+			add_to_temp_array = { ai_airbase_state = 707.id } 
+			add_to_temp_array = { ai_airbase_state = 709.id }
+		}
+		
+		### MEDITERRANEAN
+		add_to_temp_array = { ai_airbase_state = 183.id } #CYPRUS
+		add_to_temp_array = { ai_airbase_state = 164.id } #RHODES
+		add_to_temp_array = { ai_airbase_state = 116.id } #MALTA
+		add_to_temp_array = { ai_airbase_state = 850.id } #PANTELLERIA
+		add_to_temp_array = { ai_airbase_state = 114.id } #SARDEGNA
+		add_to_temp_array = { ai_airbase_state = 1.id } #CORSICA
+		add_to_temp_array = { ai_airbase_state = 177.id } #BALEARIC ISLANDS
+		add_to_temp_array = { ai_airbase_state = 182.id } #CRETE
+		add_to_temp_array = { ai_airbase_state = 118.id } #GIBRALTAR
+		
+		if = {
+			limit = {
+				OR = {
+					check_variable = { ai_main_navy_enemy = JAP.id }
+					has_war_with = JAP 
+				}
+			}
+			
+			### PACIFIC ISLANDS
+			add_to_temp_array = { ai_airbase_state = 647.id }
+			add_to_temp_array = { ai_airbase_state = 684.id }
+			add_to_temp_array = { ai_airbase_state = 638.id }
+			add_to_temp_array = { ai_airbase_state = 633.id }
+			add_to_temp_array = { ai_airbase_state = 725.id }
+			add_to_temp_array = { ai_airbase_state = 639.id }
+			add_to_temp_array = { ai_airbase_state = 643.id }
+			add_to_temp_array = { ai_airbase_state = 642.id }
+			add_to_temp_array = { ai_airbase_state = 636.id }
+			add_to_temp_array = { ai_airbase_state = 726.id }
+			add_to_temp_array = { ai_airbase_state = 727.id }
+			add_to_temp_array = { ai_airbase_state = 629.id }
+			add_to_temp_array = { ai_airbase_state = 630.id }
+			add_to_temp_array = { ai_airbase_state = 632.id }
+			add_to_temp_array = { ai_airbase_state = 646.id }
+			add_to_temp_array = { ai_airbase_state = 648.id }
+			add_to_temp_array = { ai_airbase_state = 645.id }
+			add_to_temp_array = { ai_airbase_state = 631.id }
+			add_to_temp_array = { ai_airbase_state = 526.id }
+			add_to_temp_array = { ai_airbase_state = 650.id }
+			add_to_temp_array = { ai_airbase_state = 733.id }
+			add_to_temp_array = { ai_airbase_state = 422.id }
+			add_to_temp_array = { ai_airbase_state = 711.id }
+			add_to_temp_array = { ai_airbase_state = 712.id }
+		}
+		
+		if = {
+			limit = {
+				268 = { CONTROLLER = { has_war_with = ROOT } } #French Somaliland
+			}
+			add_to_temp_array = { ai_airbase_state = 659.id } #Aden
+		}
+			
+	}
+	else_if = {
+		limit = {
+			tag = USA 
+		}
+		### PACIFIC ISLANDS
+		add_to_temp_array = { ai_airbase_state = 647.id }
+		add_to_temp_array = { ai_airbase_state = 684.id }
+		add_to_temp_array = { ai_airbase_state = 638.id }
+		add_to_temp_array = { ai_airbase_state = 633.id }
+		add_to_temp_array = { ai_airbase_state = 725.id }
+		add_to_temp_array = { ai_airbase_state = 639.id }
+		add_to_temp_array = { ai_airbase_state = 643.id }
+		add_to_temp_array = { ai_airbase_state = 642.id }
+		add_to_temp_array = { ai_airbase_state = 636.id }
+		add_to_temp_array = { ai_airbase_state = 726.id }
+		add_to_temp_array = { ai_airbase_state = 727.id }
+		add_to_temp_array = { ai_airbase_state = 629.id }
+		add_to_temp_array = { ai_airbase_state = 630.id }
+		add_to_temp_array = { ai_airbase_state = 632.id }
+		add_to_temp_array = { ai_airbase_state = 646.id }
+		add_to_temp_array = { ai_airbase_state = 648.id }
+		add_to_temp_array = { ai_airbase_state = 645.id }
+		add_to_temp_array = { ai_airbase_state = 631.id }
+		add_to_temp_array = { ai_airbase_state = 526.id }
+		add_to_temp_array = { ai_airbase_state = 650.id }
+		
+		### MED
+		add_to_temp_array = { ai_airbase_state = 116.id } #Malta
+		add_to_temp_array = { ai_airbase_state = 850.id } #Pantelleria
+		add_to_temp_array = { ai_airbase_state = 1.id } #Corsica
+		add_to_temp_array = { ai_airbase_state = 114.id } #Sardegna
+		add_to_temp_array = { ai_airbase_state = 177.id } #Sardegna
+		
+		if = {
+			limit = {
+				controls_state = 460 #constantine
+			}
+			add_to_temp_array = { ai_airbase_region = 126 } #north africa
+			add_to_temp_array = { ai_airbase_region = 286 } #tunisia
+		}
+			
+	}
+	else_if = {
+		limit = {
+			tag = JAP 
+		}
+		### PACIFIC ISLANDS
+		add_to_temp_array = { ai_airbase_state = 647.id }
+		add_to_temp_array = { ai_airbase_state = 684.id }
+		add_to_temp_array = { ai_airbase_state = 638.id }
+		add_to_temp_array = { ai_airbase_state = 633.id }
+		add_to_temp_array = { ai_airbase_state = 725.id }
+		add_to_temp_array = { ai_airbase_state = 639.id }
+		add_to_temp_array = { ai_airbase_state = 643.id }
+		add_to_temp_array = { ai_airbase_state = 642.id }
+		add_to_temp_array = { ai_airbase_state = 636.id }
+		add_to_temp_array = { ai_airbase_state = 726.id }
+		add_to_temp_array = { ai_airbase_state = 727.id }
+		add_to_temp_array = { ai_airbase_state = 629.id }
+		add_to_temp_array = { ai_airbase_state = 630.id }
+		add_to_temp_array = { ai_airbase_state = 632.id }
+		add_to_temp_array = { ai_airbase_state = 646.id }
+		add_to_temp_array = { ai_airbase_state = 648.id }
+		add_to_temp_array = { ai_airbase_state = 645.id }
+		add_to_temp_array = { ai_airbase_state = 631.id }
+		add_to_temp_array = { ai_airbase_state = 526.id }
+		add_to_temp_array = { ai_airbase_state = 650.id }
+		
+		### PHILIPPINES
+		add_to_temp_array = { ai_airbase_state = 625.id }
+		add_to_temp_array = { ai_airbase_state = 626.id }
+		
+		
+	}
+	
+}
+
+ai_update_rail_way_construction = {
+
+	if = { limit = { tag = ITA }
+	
+	# Railway from Albania into Greece
+		if = { 
+			limit = {
+				NOT = { has_country_flag = ai_ITA_greece_supply_1_done }
+				NOT = { has_country_flag = ai_ITA_greece_supply_1_cooldown }
+				
+				### CONDITIONS
+				
+				controls_state = 942
+			}
+			
+			set_temp_variable = { allocate_ic = 15 }
+			
+			if = {
+				limit = {
+					NOT = { has_country_flag = ai_ITA_greece_supply_1 }
+				}
+				set_country_flag = ai_ITA_greece_supply_1
+			
+				add_to_array = { ai_ITA_greece_rail_1 = 9875 }
+				add_to_array = { ai_ITA_greece_rail_1 = 3448 }
+				add_to_array = { ai_ITA_greece_rail_1 = 841 }
+				add_to_array = { ai_ITA_greece_rail_1 = 3980 }
+				add_to_array = { ai_ITA_greece_rail_1 = 6930 }
+				
+				add_to_variable = { ai_active_rail_queue = 1 }
+				log = "ai_ITA_greece_supply_1 STARTED"
+			}
+				
+			set_temp_variable = { origin = ai_ITA_greece_rail_1^0 }
+			set_temp_variable = { end = ai_ITA_greece_rail_1^1 }
+			
+			if = {
+				limit = {
+					check_variable = { ai_ITA_greece_rail_1^num > 1 }
+				}
+				
+				if = { limit = { ai_controls_railway = yes }
+					ai_build_railway = yes
+					remove_from_array = { array = ai_ITA_greece_rail_1 index = 0 }
+					meta_effect = {
+						text = { set_country_flag = { flag = ai_ITA_greece_supply_1_cooldown value = 1 days = [X] } }
+						X = "[?build_days]"
+					}
+				}
+			}
+			else = {
+				set_country_flag = ai_ITA_greece_supply_1_done
+				clear_array = ai_ITA_greece_rail_1
+				add_to_variable = { ai_active_rail_queue = -1 }
+			}
+		}
+		
+	# Railway from a Greek port to main GRE railway
+		if = { 
+			limit = {
+				NOT = { has_country_flag = ai_ITA_greece_supply_2_done }
+				NOT = { has_country_flag = ai_ITA_greece_supply_2_cooldown }
+				
+				### CONDITIONS
+				
+				controls_state = 185
+			}
+			
+			set_temp_variable = { allocate_ic = 15 }
+			
+			if = {
+				limit = {
+					NOT = { has_country_flag = ai_ITA_greece_supply_2 }
+				}
+				set_country_flag = ai_ITA_greece_supply_2
+			
+				add_to_array = { ai_ITA_greece_rail_2 = 9805 }
+				add_to_array = { ai_ITA_greece_rail_2 = 3914 }
+				add_to_array = { ai_ITA_greece_rail_2 = 3980 }
+				
+				add_to_variable = { ai_active_rail_queue = 1 }
+				log = "ai_ITA_greece_supply_2 STARTED"
+			}
+				
+			set_temp_variable = { origin = ai_ITA_greece_rail_2^0 }
+			set_temp_variable = { end = ai_ITA_greece_rail_2^1 }
+			
+			if = {
+				limit = {
+					check_variable = { ai_ITA_greece_rail_2^num > 1 }
+				}
+				if = { limit = { ai_controls_railway = yes }
+					ai_build_railway = yes
+					remove_from_array = { array = ai_ITA_greece_rail_2 index = 0 }
+					meta_effect = {
+						text = { set_country_flag = { flag = ai_ITA_greece_supply_2_cooldown value = 1 days = [X] } }
+						X = "[?build_days]"
+					}
+				}
+			}
+			else = {
+				set_country_flag = ai_ITA_greece_supply_2_done
+				clear_array = ai_ITA_greece_rail_2
+				add_to_variable = { ai_active_rail_queue = -1 }
+			}
+		}
+		
+		### AFRICA TODO
+		
+	}
+		
+	else_if = { limit = { tag = ENG }
+	
+		if = {
+			limit = {
+				date > 1939.1.1
+				NOT = { has_country_flag = ai_ENG_somali_supply }
+			}
+			set_country_flag = ai_ENG_somali_supply
+			
+			269 = {
+				add_building_construction = {
+					type = naval_base
+					level = 2
+					instant_build = yes
+					province = 12759
+				}
+			}
+		}
+	# Railway from Alexandria to El Alamein
+		if = { 
+			limit = {
+				NOT = { has_country_flag = ai_ENG_egypt_supply_done }
+				NOT = { has_country_flag = ai_ENG_egypt_supply_cooldown }
+				
+				### CONDITIONS
+				
+				OR = {
+					has_war_with = ITA
+					date > 1940.1.1
+				}
+			}
+			
+			set_temp_variable = { allocate_ic = 15 }
+			
+			if = {
+				limit = {
+					NOT = { has_country_flag = ai_ENG_egypt_supply }
+				}
+				set_country_flag = ai_ENG_egypt_supply
+			
+				add_to_array = { ai_ENG_egypt_rail = 4076 }
+				add_to_array = { ai_ENG_egypt_rail = 4145 }
+				add_to_array = { ai_ENG_egypt_rail = 1071 }
+				
+				add_to_variable = { ai_active_rail_queue = 1 }
+				log = "ai_ENG_egypt_supply STARTED"
+			}
+				
+			set_temp_variable = { origin = ai_ENG_egypt_rail^0 }
+			set_temp_variable = { end = ai_ENG_egypt_rail^1 }
+			
+			if = {
+				limit = {
+					check_variable = { ai_ENG_egypt_rail^num > 1 }
+				}
+				if = { limit = { ai_controls_railway = yes }
+					ai_build_railway = yes
+					remove_from_array = { array = ai_ENG_egypt_rail index = 0 }
+					meta_effect = {
+						text = { set_country_flag = { flag = ai_ENG_egypt_supply_cooldown value = 1 days = [X] } }
+						X = "[?build_days]"
+					}
+				}
+			}
+			else = {
+				set_country_flag = ai_ENG_egypt_supply_done
+				clear_array = ai_ENG_egypt_rail
+				add_to_variable = { ai_active_rail_queue = -1 }
+			}
+		}
+		
+	# Railway from El Alamein to Sidi Barrani
+		if = { 
+			limit = {
+				NOT = { has_country_flag = ai_ENG_egypt_supply_2_done }
+				NOT = { has_country_flag = ai_ENG_egypt_supply_2_cooldown }
+				
+				has_country_flag = ai_ENG_egypt_supply_done
+				
+				var:global.province_controllers^9989 = { #Sidi Barrani
+					is_ally_with = ROOT
+				}
+			
+				OR = {
+					has_war_with = ITA
+					date > 1940.1.1
+				}
+			}
+			
+			set_temp_variable = { allocate_ic = 10 }
+			
+			if = {
+				limit = {
+					NOT = { has_country_flag = ai_ENG_egypt_supply_2 }
+				}
+				set_country_flag = ai_ENG_egypt_supply_2
+			
+				add_to_array = { ai_ENG_egypt_rail_2 = 1071 }
+				add_to_array = { ai_ENG_egypt_rail_2 = 11910 }
+				add_to_array = { ai_ENG_egypt_rail_2 = 10061 }
+				add_to_array = { ai_ENG_egypt_rail_2 = 11967 }
+				add_to_array = { ai_ENG_egypt_rail_2 = 9989 }
+				
+				add_to_variable = { ai_active_rail_queue = 1 }
+				log = "ai_ENG_egypt_supply_2 STARTED"
+			}
+				
+			set_temp_variable = { origin = ai_ENG_egypt_rail_2^0 }
+			set_temp_variable = { end = ai_ENG_egypt_rail_2^1 }
+			
+			if = {
+				limit = {
+					check_variable = { ai_ENG_egypt_rail_2^num > 1 }
+				}
+				if = { limit = { ai_controls_railway = yes }
+					ai_build_railway = yes
+					remove_from_array = { array = ai_ENG_egypt_rail_2 index = 0 }
+					meta_effect = {
+						text = { set_country_flag = { flag = ai_ENG_egypt_supply_2_cooldown value = 1 days = [X] } }
+						X = "[?build_days]"
+					}
+				}
+			}
+			else = {
+				set_country_flag = ai_ENG_egypt_supply_2_done
+				clear_array = ai_ENG_egypt_rail_2
+				add_to_variable = { ai_active_rail_queue = -1 }
+			}
+		}
+		
+	# Railway from Amman (Jordan) to Iraq border
+		if = { 
+			limit = {
+				NOT = { has_country_flag = ai_ENG_jordan_supply_done }
+				NOT = { has_country_flag = ai_ENG_jordan_supply_cooldown }
+				
+				controls_state = 853 #Suez
+				
+				IRQ = { has_capitulated = no }
+				
+				OR = {
+					has_war_with = IRQ
+					date > 1941.1.1
+				}
+			}
+			
+			set_temp_variable = { allocate_ic = 15 }
+			
+			if = {
+				limit = {
+					NOT = { has_country_flag = ai_ENG_jordan_supply }
+				}
+				set_country_flag = ai_ENG_jordan_supply
+			
+				add_to_array = { ai_ENG_jordan_rail = 4574 }
+				add_to_array = { ai_ENG_jordan_rail = 1544 }
+				add_to_array = { ai_ENG_jordan_rail = 4440 }
+				
+				add_to_variable = { ai_active_rail_queue = 1 }
+				log = "ai_ENG_jordan_supply STARTED"
+			}
+				
+			set_temp_variable = { origin = ai_ENG_jordan_rail^0 }
+			set_temp_variable = { end = ai_ENG_jordan_rail^1 }
+			
+			if = {
+				limit = {
+					check_variable = { ai_ENG_jordan_rail^num > 1 }
+				}
+				if = { limit = { ai_controls_railway = yes }
+					ai_build_railway = yes
+					remove_from_array = { array = ai_ENG_jordan_rail index = 0 }
+					meta_effect = {
+						text = { set_country_flag = { flag = ai_ENG_jordan_supply_cooldown value = 1 days = [X] } }
+						X = "[?build_days]"
+					}
+				}
+			}
+			else = {
+				set_country_flag = ai_ENG_jordan_supply_done
+				clear_array = ai_ENG_jordan_rail
+				add_to_variable = { ai_active_rail_queue = -1 }
+				
+				455 = {
+					add_building_construction = {
+						type = supply_node
+						level = 1
+						instant_build = yes
+						province = 4440
+					}
+				}
+			}
+		}
+		
+	# Railway from Jordan to Bagdad
+		if = { 
+			limit = {
+				NOT = { has_country_flag = ai_ENG_jordan_supply_2_done }
+				NOT = { has_country_flag = ai_ENG_jordan_supply_2_cooldown }
+				
+				controls_state = 853 #Suez
+				
+				291 = { is_controlled_by_ROOT_or_ally = yes }
+				
+				OR = {
+					has_war_with = IRQ
+					date > 1941.1.1
+				}
+			}
+			
+			set_temp_variable = { allocate_ic = 5 }
+			
+			if = {
+				limit = {
+					NOT = { has_country_flag = ai_ENG_jordan_supply_2 }
+				}
+				set_country_flag = ai_ENG_jordan_supply_2
+			
+				add_to_array = { ai_ENG_iraq_rail = 4440 }
+				add_to_array = { ai_ENG_iraq_rail = 13238 }
+				add_to_array = { ai_ENG_iraq_rail = 1631 }
+				add_to_array = { ai_ENG_iraq_rail = 13239 }
+				add_to_array = { ai_ENG_iraq_rail = 12839 }
+				add_to_array = { ai_ENG_iraq_rail = 13240 }
+				add_to_array = { ai_ENG_iraq_rail = 2097 }
+				
+				add_to_variable = { ai_active_rail_queue = 1 }
+				log = "ai_ENG_jordan_supply_2 STARTED"
+			}
+				
+			set_temp_variable = { origin = ai_ENG_iraq_rail^0 }
+			set_temp_variable = { end = ai_ENG_iraq_rail^1 }
+			
+			if = {
+				limit = {
+					check_variable = { ai_ENG_iraq_rail^num > 1 }
+				}
+				if = { limit = { ai_controls_railway = yes }
+					ai_build_railway = yes
+					remove_from_array = { array = ai_ENG_iraq_rail index = 0 }
+					meta_effect = {
+						text = { set_country_flag = { flag = ai_ENG_jordan_supply_2_cooldown value = 1 days = [X] } }
+						X = "[?build_days]"
+					}
+				}
+			}
+			else = {
+				set_country_flag = ai_ENG_jordan_supply_2_done
+				clear_array = ai_ENG_iraq_rail
+				add_to_variable = { ai_active_rail_queue = -1 }
+				
+			}
+		}
+	}
+	
+	else_if = { limit = { tag = USA }
+	
+	# Railway from RAJ to Mandalay, Burma (South)
+		if = { 
+			limit = {
+				NOT = { has_country_flag = ai_USA_burma_supply_1_done }
+				NOT = { has_country_flag = ai_USA_burma_supply_1_cooldown }
+				
+				### CONDITIONS
+				
+				OR = {
+					is_in_faction_with = RAJ
+					is_in_faction_with = BUR
+				}
+			}
+			
+			set_temp_variable = { allocate_ic = 15 }
+			
+			if = {
+				limit = {
+					NOT = { has_country_flag = ai_USA_burma_supply_1 }
+				}
+				set_country_flag = ai_USA_burma_supply_1
+			
+				add_to_array = { ai_USA_burma_rail_1 = 9991 }
+				add_to_array = { ai_USA_burma_rail_1 = 7122 }
+				add_to_array = { ai_USA_burma_rail_1 = 4147 }
+				add_to_array = { ai_USA_burma_rail_1 = 4019 }
+				add_to_array = { ai_USA_burma_rail_1 = 7034 }
+				
+				add_to_variable = { ai_active_rail_queue = 1 }
+				log = "ai_USA_burma_supply_1 STARTED"
+			}
+				
+			set_temp_variable = { origin = ai_USA_burma_rail_1^0 }
+			set_temp_variable = { end = ai_USA_burma_rail_1^1 }
+			
+			if = {
+				limit = {
+					check_variable = { ai_USA_burma_rail_1^num > 1 }
+				}
+				if = { limit = { ai_controls_railway = yes }
+					ai_build_railway = yes
+					remove_from_array = { array = ai_USA_burma_rail_1 index = 0 }
+					meta_effect = {
+						text = { set_country_flag = { flag = ai_USA_burma_supply_1_cooldown value = 1 days = [X] } }
+						X = "[?build_days]"
+					}
+				}
+			}
+			else = {
+				set_country_flag = ai_USA_burma_supply_1_done
+				clr_country_flag = ai_USA_burma_supply_1
+				clear_array = ai_USA_burma_rail_1
+				add_to_variable = { ai_active_rail_queue = -1 }
+			}
+		}
+		
+	# Railway from RAJ to Burma (North)
+		if = { 
+			limit = {
+				NOT = { has_country_flag = ai_USA_burma_supply_2_done }
+				NOT = { has_country_flag = ai_USA_burma_supply_2_cooldown }
+				
+				### CONDITIONS
+				
+				OR = {
+					is_in_faction_with = RAJ
+					is_in_faction_with = BUR
+				}
+			}
+			
+			set_temp_variable = { allocate_ic = 15 }
+			
+			if = {
+				limit = {
+					NOT = { has_country_flag = ai_USA_burma_supply_2 }
+				}
+				set_country_flag = ai_USA_burma_supply_2
+			
+				add_to_array = { ai_USA_burma_rail_2 = 12366 }
+				add_to_array = { ai_USA_burma_rail_2 = 1525 }
+				add_to_array = { ai_USA_burma_rail_2 = 4087 }
+				add_to_array = { ai_USA_burma_rail_2 = 4588 }
+				add_to_array = { ai_USA_burma_rail_2 = 1082 }
+				
+				add_to_variable = { ai_active_rail_queue = 1 }
+				log = "ai_USA_burma_supply_2 STARTED"
+			}
+				
+			set_temp_variable = { origin = ai_USA_burma_rail_2^0 }
+			set_temp_variable = { end = ai_USA_burma_rail_2^1 }
+			
+			if = {
+				limit = {
+					check_variable = { ai_USA_burma_rail_2^num > 1 }
+				}
+				if = { limit = { ai_controls_railway = yes }
+					ai_build_railway = yes
+					remove_from_array = { array = ai_USA_burma_rail_2 index = 0 }
+					meta_effect = {
+						text = { set_country_flag = { flag = ai_USA_burma_supply_2_cooldown value = 1 days = [X] } }
+						X = "[?build_days]"
+					}
+				}
+			}
+			else = {
+				set_country_flag = ai_USA_burma_supply_2_done
+				clear_array = ai_USA_burma_rail_2
+				add_to_variable = { ai_active_rail_queue = -1 }
+			}
+		}
+	}
+	
+	else_if = { limit = { tag = JAP }
+	
+	# (Historical) Railway from South Burma to Bangkok. "Death Railway"
+		if = { 
+			limit = {
+				NOT = { has_country_flag = ai_JAP_burma_supply_1_done }
+				NOT = { has_country_flag = ai_JAP_burma_supply_1_cooldown }
+				
+				### CONDITIONS
+				
+				AND = {
+					always = no # Disabled for now
+					#states 744, 922 controlled by self or ally
+				}
+			}
+			
+			set_temp_variable = { allocate_ic = 15 }
+			
+			if = {
+				limit = {
+					NOT = { has_country_flag = ai_JAP_burma_supply_1 }
+				}
+				set_country_flag = ai_JAP_burma_supply_1
+			
+				add_to_array = { ai_JAP_burma_rail_1 = 1403 }
+				add_to_array = { ai_JAP_burma_rail_1 = 12125 }
+				add_to_array = { ai_JAP_burma_rail_1 = 10193 }
+				add_to_array = { ai_JAP_burma_rail_1 = 4348 }
+				add_to_array = { ai_JAP_burma_rail_1 = 7587 }
+				add_to_array = { ai_JAP_burma_rail_1 = 1427 }
+				
+				add_to_variable = { ai_active_rail_queue = 1 }
+				log = "ai_JAP_burma_supply_1 STARTED"
+			}
+				
+			set_temp_variable = { origin = ai_JAP_burma_rail_1^0 }
+			set_temp_variable = { end = ai_JAP_burma_rail_1^1 }
+			
+			if = {
+				limit = {
+					check_variable = { ai_JAP_burma_rail_1^num > 1 }
+				}
+				if = { limit = { ai_controls_railway = yes }
+					ai_build_railway = yes
+					remove_from_array = { array = ai_JAP_burma_rail_1 index = 0 }
+					meta_effect = {
+						text = { set_country_flag = { flag = ai_JAP_burma_supply_1_cooldown value = 1 days = [X] } }
+						X = "[?build_days]"
+					}
+				}
+			}
+			else = {
+				set_country_flag = ai_JAP_burma_supply_1_done
+				clr_country_flag = ai_JAP_burma_supply_1
+				clear_array = ai_JAP_burma_rail_1
+				add_to_variable = { ai_active_rail_queue = -1 }
+			}
+		}	
+		
+	# connect depot with Minhou port
+		if = { 
+			limit = {
+				NOT = { has_country_flag = ai_JAP_china_supply_1_done }
+				NOT = { has_country_flag = ai_JAP_china_supply_1_cooldown }
+				
+				### CONDITIONS
+				
+				controls_state = 595
+			}
+			
+			set_temp_variable = { allocate_ic = 15 }
+			
+			if = {
+				limit = {
+					NOT = { has_country_flag = ai_JAP_china_supply_1 }
+				}
+				set_country_flag = ai_JAP_china_supply_1
+			
+				add_to_array = { ai_JAP_china_rail_1 = 4196 }
+				add_to_array = { ai_JAP_china_rail_1 = 1166 }
+				add_to_array = { ai_JAP_china_rail_1 = 1193 }
+				add_to_array = { ai_JAP_china_rail_1 = 10084 }
+				add_to_array = { ai_JAP_china_rail_1 = 12030 }
+				add_to_array = { ai_JAP_china_rail_1 = 7199 }
+				
+				add_to_variable = { ai_active_rail_queue = 1 }
+				log = "ai_JAP_china_supply_1 STARTED"
+			}
+				
+			set_temp_variable = { origin = ai_JAP_china_rail_1^0 }
+			set_temp_variable = { end = ai_JAP_china_rail_1^1 }
+			
+			if = {
+				limit = {
+					check_variable = { ai_JAP_china_rail_1^num > 1 }
+				}
+				if = { limit = { ai_controls_railway = yes }
+					ai_build_railway = yes
+					remove_from_array = { array = ai_JAP_china_rail_1 index = 0 }
+					meta_effect = {
+						text = { set_country_flag = { flag = ai_JAP_china_supply_1_cooldown value = 1 days = [X] } }
+						X = "[?build_days]"
+					}
+				}
+			}
+			else = {
+				set_country_flag = ai_JAP_china_supply_1_done
+				clr_country_flag = ai_JAP_china_supply_1
+				clear_array = ai_JAP_china_rail_1
+				add_to_variable = { ai_active_rail_queue = -1 }
+			}
+		}	
+	}
+	
+	else_if = { limit = { tag = TUR }
+	
+	# Connect Afyon with Antalya by Rail
+		if = { 
+			limit = {
+				NOT = { has_country_flag = ai_TUR_afyon_supply_done }
+				NOT = { has_country_flag = ai_TUR_afyon_supply_cooldown }
+				
+				### CONDITIONS
+				
+				OR = {
+					date > 1939.1.1
+					has_war = yes
+					any_claim = yes
+				}
+			}
+			
+			set_temp_variable = { allocate_ic = 10 }
+			
+			if = {
+				limit = {
+					NOT = { has_country_flag = ai_TUR_afyon_supply }
+				}
+				set_country_flag = ai_TUR_afyon_supply
+			
+				add_to_array = { ai_TUR_afyon_rail = 9878 }
+				add_to_array = { ai_TUR_afyon_rail = 11907 }
+				add_to_array = { ai_TUR_afyon_rail = 12016 }
+				add_to_array = { ai_TUR_afyon_rail = 1005 }
+				
+				add_to_variable = { ai_active_rail_queue = 1 }
+				log = "ai_TUR_afyon_supply STARTED"
+			}
+				
+			set_temp_variable = { origin = ai_TUR_afyon_rail^0 }
+			set_temp_variable = { end = ai_TUR_afyon_rail^1 }
+			
+			if = {
+				limit = {
+					check_variable = { ai_TUR_afyon_rail^num > 1 }
+				}
+				if = { limit = { ai_controls_railway = yes }
+					ai_build_railway = yes
+					remove_from_array = { array = ai_TUR_afyon_rail index = 0 }
+					meta_effect = {
+						text = { set_country_flag = { flag = ai_TUR_afyon_supply_cooldown value = 1 days = [X] } }
+						X = "[?build_days]"
+					}
+				}
+			}
+			else = {
+				set_country_flag = ai_TUR_afyon_supply_done
+				clr_country_flag = ai_TUR_afyon_supply
+				clear_array = ai_TUR_afyon_rail
+				add_to_variable = { ai_active_rail_queue = -1 }
+			}
+		}	
+	}
+	
+	
+	if = {
+		limit = {
+			tag = JAP
+			NOT = { has_country_flag = ai_JAP_china_supply }
+			controls_state = 780
+		}
+		set_country_flag = ai_JAP_china_supply
+		
+		780 = {
+			add_building_construction = {
+				type = supply_node
+				level = 1
+				instant_build = yes
+				province = 10404
+			}
+		}
+		
+	}
+	
+	if = {
+		limit = {
+			tag = FRA	
+		}
+		
+	# French West Africa railway towards east
+		if = { 
+			limit = {
+				NOT = { has_country_flag = ai_FRA_africa_1_supply_done }
+				NOT = { has_country_flag = ai_FRA_africa_1_supply_cooldown }
+				
+				### CONDITIONS
+				
+				OR = {
+					date > 1939.1.1
+					has_war = yes
+				}
+			}
+			
+			set_temp_variable = { allocate_ic = 10 }
+			
+			if = {
+				limit = {
+					NOT = { has_country_flag = ai_FRA_africa_1_supply }
+				}
+				set_country_flag = ai_FRA_africa_1_supply
+			
+				add_to_array = { ai_FRA_africa_1_rail = 10829 }
+				add_to_array = { ai_FRA_africa_1_rail = 12751 }
+				add_to_array = { ai_FRA_africa_1_rail = 12838 }
+				add_to_array = { ai_FRA_africa_1_rail = 7930 }
+				add_to_array = { ai_FRA_africa_1_rail = 7954 }
+				add_to_array = { ai_FRA_africa_1_rail = 1975 }
+				add_to_array = { ai_FRA_africa_1_rail = 2056 }
+				add_to_array = { ai_FRA_africa_1_rail = 1891 }
+				add_to_array = { ai_FRA_africa_1_rail = 1969 }
+				
+				add_to_variable = { ai_active_rail_queue = 1 }
+				log = "ai_FRA_africa_1_supply STARTED"
+			}
+				
+			set_temp_variable = { origin = ai_FRA_africa_1_rail^0 }
+			set_temp_variable = { end = ai_FRA_africa_1_rail^1 }
+			
+			if = {
+				limit = {
+					check_variable = { ai_FRA_africa_1_rail^num > 1 }
+				}
+				if = { limit = { ai_controls_railway = yes }
+					ai_build_railway = yes
+					remove_from_array = { array = ai_FRA_africa_1_rail index = 0 }
+					meta_effect = {
+						text = { set_country_flag = { flag = ai_FRA_africa_1_supply_cooldown value = 1 days = [X] } }
+						X = "[?build_days]"
+					}
+					
+					if = {
+						limit = {
+							check_variable = { end = 7954 }
+						}
+						556 = {
+							add_building_construction = {
+								type = supply_node
+								level = 1
+								instant_build = yes
+								province = 7954
+							}
+						}
+					}
+				}
+			}
+			else = {
+				set_country_flag = ai_FRA_africa_1_supply_done
+				clr_country_flag = ai_FRA_africa_1_supply
+				clear_array = ai_FRA_africa_1_rail
+				add_to_variable = { ai_active_rail_queue = -1 }
+				
+			}
+		}	
+		
+	# French West Africa railway towards east
+		if = { 
+			limit = {
+				NOT = { has_country_flag = ai_FRA_africa_2_supply_done }
+				NOT = { has_country_flag = ai_FRA_africa_2_supply_cooldown }
+				
+				### CONDITIONS
+				
+				OR = {
+					date > 1939.1.1
+					has_war = yes
+				}
+			}
+			
+			set_temp_variable = { allocate_ic = 15 }
+			
+			if = {
+				limit = {
+					NOT = { has_country_flag = ai_FRA_africa_2_supply }
+				}
+				set_country_flag = ai_FRA_africa_2_supply
+			
+				add_to_array = { ai_FRA_africa_2_rail = 4972 }
+				add_to_array = { ai_FRA_africa_2_rail = 5028 }
+				add_to_array = { ai_FRA_africa_2_rail = 4997 }
+				add_to_array = { ai_FRA_africa_2_rail = 7963 }
+				add_to_array = { ai_FRA_africa_2_rail = 9152 }
+				add_to_array = { ai_FRA_africa_2_rail = 3181 }
+				add_to_array = { ai_FRA_africa_2_rail = 7919 }
+				add_to_array = { ai_FRA_africa_2_rail = 1960 }
+				add_to_array = { ai_FRA_africa_2_rail = 8052 }
+				add_to_array = { ai_FRA_africa_2_rail = 10827 }
+				add_to_array = { ai_FRA_africa_2_rail = 2016 }
+				add_to_array = { ai_FRA_africa_2_rail = 7915 }
+				add_to_array = { ai_FRA_africa_2_rail = 12806 }
+				
+				add_to_variable = { ai_active_rail_queue = 1 }
+				log = "ai_FRA_africa_2_supply STARTED"
+			}
+				
+			set_temp_variable = { origin = ai_FRA_africa_2_rail^0 }
+			set_temp_variable = { end = ai_FRA_africa_2_rail^1 }
+			
+			if = {
+				limit = {
+					check_variable = { ai_FRA_africa_2_rail^num > 1 }
+				}
+				if = { limit = { ai_controls_railway = yes }
+					ai_build_railway = yes
+					remove_from_array = { array = ai_FRA_africa_2_rail index = 0 }
+					meta_effect = {
+						text = { set_country_flag = { flag = ai_FRA_africa_2_supply_cooldown value = 1 days = [X] } }
+						X = "[?build_days]"
+					}
+					
+					if = {
+						limit = {
+							check_variable = { end = 3181 }
+						}
+						660 = {
+							add_building_construction = {
+								type = supply_node
+								level = 1
+								instant_build = yes
+								province = 3181
+							}
+						}
+					}
+					if = {
+						limit = {
+							check_variable = { end = 10827 }
+						}
+						549 = {
+							add_building_construction = {
+								type = supply_node
+								level = 1
+								instant_build = yes
+								province = 10827
+							}
+						}
+					}
+				}
+			}
+			else = {
+				set_country_flag = ai_FRA_africa_2_supply_done
+				clr_country_flag = ai_FRA_africa_2_supply
+				clear_array = ai_FRA_africa_2_rail
+				add_to_variable = { ai_active_rail_queue = -1 }
+				
+			}
+		}	
+		
+	# French Gabon railway towards north east
+		if = { 
+			limit = {
+				NOT = { has_country_flag = ai_FRA_africa_3_supply_done }
+				NOT = { has_country_flag = ai_FRA_africa_3_supply_cooldown }
+				
+				### CONDITIONS
+				
+				OR = {
+					date > 1939.1.1
+					has_war = yes
+				}
+			}
+			
+			set_temp_variable = { allocate_ic = 15 }
+			
+			if = {
+				limit = {
+					NOT = { has_country_flag = ai_FRA_africa_3_supply }
+				}
+				set_country_flag = ai_FRA_africa_3_supply
+			
+				add_to_array = { ai_FRA_africa_3_rail = 5139 }
+				add_to_array = { ai_FRA_africa_3_rail = 10498 }
+				add_to_array = { ai_FRA_africa_3_rail = 2080 }
+				add_to_array = { ai_FRA_africa_3_rail = 5054 }
+				add_to_array = { ai_FRA_africa_3_rail = 11012 }
+				add_to_array = { ai_FRA_africa_3_rail = 12830 }
+				
+				add_to_variable = { ai_active_rail_queue = 1 }
+				log = "ai_FRA_africa_3_supply STARTED"
+			}
+				
+			set_temp_variable = { origin = ai_FRA_africa_3_rail^0 }
+			set_temp_variable = { end = ai_FRA_africa_3_rail^1 }
+			
+			if = {
+				limit = {
+					check_variable = { ai_FRA_africa_3_rail^num > 1 }
+				}
+				if = { limit = { ai_controls_railway = yes }
+					ai_build_railway = yes
+					remove_from_array = { array = ai_FRA_africa_3_rail index = 0 }
+					meta_effect = {
+						text = { set_country_flag = { flag = ai_FRA_africa_3_supply_cooldown value = 1 days = [X] } }
+						X = "[?build_days]"
+					}
+					
+					if = {
+						limit = {
+							check_variable = { end = 12830 }
+						}
+						660 = {
+							add_building_construction = {
+								type = supply_node
+								level = 1
+								instant_build = yes
+								province = 12830
+							}
+						}
+					}
+				}
+			}
+			else = {
+				set_country_flag = ai_FRA_africa_3_supply_done
+				clr_country_flag = ai_FRA_africa_3_supply
+				clear_array = ai_FRA_africa_3_rail
+				add_to_variable = { ai_active_rail_queue = -1 }
+				
+			}
+		}	
+		
+	}
+	
+	if = {
+		limit = {
+			tag = BEL
+			has_capitulated = yes
+			NOT = { has_country_flag = ai_BEL_africa_supply }
+		}
+		set_country_flag = ai_BEL_africa_supply
+		
+		718 = {
+			add_building_construction = {
+				type = supply_node
+				level = 1
+				instant_build = yes
+				province = 11934
+			}
+		}
+	}
+	if = {
+		limit = {
+			tag = GER
+			197 = {is_controlled_by_ROOT_or_ally = yes}	
+			NOT = { has_country_flag = ai_GER_kherson_supply }
+		}
+		set_country_flag = ai_GER_kherson_supply
+		
+		197 = {
+			add_building_construction = {
+				type = supply_node
+				level = 1
+				instant_build = yes
+				province = 3755
+			}
+		}
+	}
+	if = {
+		limit = {
+			tag = SOV
+		}
+			
+	# Connecting Baku with Teheran
+		if = { 
+			limit = {
+				NOT = { has_country_flag = ai_SOV_iran_supply_done }
+				
+				### CONDITIONS
+				
+				controls_state = 419
+				controls_state = 266
+			}
+			
+			set_temp_variable = { allocate_ic = 15 }
+			
+			if = {
+				limit = {
+					NOT = { has_country_flag = ai_SOV_iran_supply }
+				}
+				set_country_flag = ai_SOV_iran_supply
+			
+				add_to_array = { ai_SOV_iran_supply = 7661 }
+				add_to_array = { ai_SOV_iran_supply = 1536 }
+				add_to_array = { ai_SOV_iran_supply = 12434 }
+				add_to_array = { ai_SOV_iran_supply = 4473 }
+				add_to_array = { ai_SOV_iran_supply = 4901 }
+				add_to_array = { ai_SOV_iran_supply = 4609 }
+				add_to_array = { ai_SOV_iran_supply = 4637 }
+				add_to_array = { ai_SOV_iran_supply = 4580 }
+				add_to_array = { ai_SOV_iran_supply = 10768 }
+				
+				add_to_variable = { ai_active_rail_queue = 1 }
+				log = "ai_SOV_iran_supply STARTED"
+			}
+				
+			set_temp_variable = { origin = ai_SOV_iran_supply^0 }
+			set_temp_variable = { end = ai_SOV_iran_supply^1 }
+			
+			if = {
+				limit = {
+					check_variable = { ai_SOV_iran_supply^num > 1 }
+				}
+				if = { limit = { ai_controls_railway = yes }
+					ai_build_railway = yes
+					remove_from_array = { array = ai_SOV_iran_supply index = 0 }
+					
+				}
+			}
+			else = {
+				set_country_flag = ai_SOV_iran_supply_done
+				clr_country_flag = ai_SOV_iran_supply
+				clear_array = ai_SOV_iran_supply
+				add_to_variable = { ai_active_rail_queue = -1 }
+			}
+		}	
+		
+	# Connecting Astrakhan with Atyrau
+		if = { 
+			limit = {
+				NOT = { has_country_flag = ai_SOV_astrakhan_supply_done }
+				
+				### CONDITIONS
+				
+				surrender_progress > 0.3
+			}
+			
+			set_temp_variable = { allocate_ic = 15 }
+			
+			if = {
+				limit = {
+					NOT = { has_country_flag = ai_SOV_astrakhan_supply }
+				}
+				set_country_flag = ai_SOV_astrakhan_supply
+			
+				add_to_array = { ai_SOV_astrakhan_supply = 464 }
+				add_to_array = { ai_SOV_astrakhan_supply = 615 }
+				add_to_array = { ai_SOV_astrakhan_supply = 11578 }
+				add_to_array = { ai_SOV_astrakhan_supply = 3622 }
+				add_to_array = { ai_SOV_astrakhan_supply = 11736 }
+				add_to_array = { ai_SOV_astrakhan_supply = 9753 }
+				
+				add_to_variable = { ai_active_rail_queue = 1 }
+				log = "ai_SOV_astrakhan_supply STARTED"
+			}
+				
+			set_temp_variable = { origin = ai_SOV_astrakhan_supply^0 }
+			set_temp_variable = { end = ai_SOV_astrakhan_supply^1 }
+			
+			if = {
+				limit = {
+					check_variable = { ai_SOV_astrakhan_supply^num > 1 }
+				}
+				if = { limit = { ai_controls_railway = yes }
+					ai_build_railway = yes
+					remove_from_array = { array = ai_SOV_astrakhan_supply index = 0 }
+					
+				}
+			}
+			else = {
+				set_country_flag = ai_SOV_astrakhan_supply_done
+				clr_country_flag = ai_SOV_astrakhan_supply
+				clear_array = ai_SOV_astrakhan_supply
+				add_to_variable = { ai_active_rail_queue = -1 }
+			}
+		}
+		
+	# Connecting a new supply depot north of Astrakhan with Atyrau
+		if = { 
+			limit = {
+				NOT = { has_country_flag = ai_SOV_astrakhan_supply_2_done }
+				
+				### CONDITIONS
+				
+				221 = { CONTROLLER = { has_war_with = ROOT } }
+			}
+			
+			set_temp_variable = { allocate_ic = 15 }
+			
+			if = {
+				limit = {
+					NOT = { has_country_flag = ai_SOV_astrakhan_supply_2 }
+				}
+				set_country_flag = ai_SOV_astrakhan_supply_2
+			
+				add_to_array = { ai_SOV_astrakhan_supply_2 = 464 }
+				add_to_array = { ai_SOV_astrakhan_supply_2 = 9469 }
+				add_to_array = { ai_SOV_astrakhan_supply_2 = 6523 }
+				add_to_array = { ai_SOV_astrakhan_supply_2 = 3515 }
+				
+				add_to_variable = { ai_active_rail_queue = 1 }
+				log = "ai_SOV_astrakhan_supply_2 STARTED"
+			}
+				
+			set_temp_variable = { origin = ai_SOV_astrakhan_supply_2^0 }
+			set_temp_variable = { end = ai_SOV_astrakhan_supply_2^1 }
+			
+			if = {
+				limit = {
+					check_variable = { ai_SOV_astrakhan_supply_2^num > 1 }
+				}
+				if = { limit = { ai_controls_railway = yes }
+					ai_build_railway = yes
+					remove_from_array = { array = ai_SOV_astrakhan_supply_2 index = 0 }
+					
+					if = {
+						limit = {
+							check_variable = { end = 3515 }
+						}
+						407 = {
+							add_building_construction = {
+								type = supply_node
+								level = 1
+								instant_build = yes
+								province = 3515
+							}
+						}
+						406 = {
+							add_building_construction = {
+								type = supply_node
+								level = 1
+								instant_build = yes
+								province = 554
+							}
+						}
+					}
+				}
+			}
+			else = {
+				set_country_flag = ai_SOV_astrakhan_supply_2_done
+				clr_country_flag = ai_SOV_astrakhan_supply_2
+				clear_array = ai_SOV_astrakhan_supply_2
+				add_to_variable = { ai_active_rail_queue = -1 }
+			}
+		}	
+		
+	# Connecting a new supply depot west of Astrakhan near Elista
+		if = { 
+			limit = {
+				NOT = { has_country_flag = ai_SOV_astrakhan_supply_3_done }
+				
+				### CONDITIONS
+				
+				OR = {
+					221 = { CONTROLLER = { has_war_with = ROOT } }
+					NOT = { 137 = { is_fully_controlled_by = ROOT } }
+					NOT = { 234 = { is_fully_controlled_by = ROOT } }
+				}
+			}
+			
+			set_temp_variable = { allocate_ic = 15 }
+			
+			if = {
+				limit = {
+					NOT = { has_country_flag = ai_SOV_astrakhan_supply_3 }
+				}
+				set_country_flag = ai_SOV_astrakhan_supply_3
+			
+				add_to_array = { ai_SOV_astrakhan_supply_3 = 11706 }
+				add_to_array = { ai_SOV_astrakhan_supply_3 = 6791 }
+				add_to_array = { ai_SOV_astrakhan_supply_3 = 3774 }
+				
+				add_to_variable = { ai_active_rail_queue = 1 }
+				log = "ai_SOV_astrakhan_supply_3 STARTED"
+			}
+				
+			set_temp_variable = { origin = ai_SOV_astrakhan_supply_3^0 }
+			set_temp_variable = { end = ai_SOV_astrakhan_supply_3^1 }
+			
+			if = {
+				limit = {
+					check_variable = { ai_SOV_astrakhan_supply_3^num > 1 }
+				}
+				if = { limit = { ai_controls_railway = yes }
+					ai_build_railway = yes
+					remove_from_array = { array = ai_SOV_astrakhan_supply_3 index = 0 }
+					
+					if = {
+						limit = {
+							check_variable = { end = 3774 }
+						}
+						237 = {
+							add_building_construction = {
+								type = supply_node
+								level = 1
+								instant_build = yes
+								province = 3774
+							}
+						}
+					}
+				}
+			}
+			else = {
+				set_country_flag = ai_SOV_astrakhan_supply_3_done
+				clr_country_flag = ai_SOV_astrakhan_supply_3
+				clear_array = ai_SOV_astrakhan_supply_3
+				add_to_variable = { ai_active_rail_queue = -1 }
+			}
+		}
+		
+	# Connecting a new supply depot north of Stavropol (north caucasus)
+		if = { 
+			limit = {
+				NOT = { has_country_flag = ai_SOV_caucasus_supply_1_done }
+				
+				### CONDITIONS
+				
+				OR = {
+					221 = { CONTROLLER = { has_war_with = ROOT } }
+					NOT = { 137 = { is_fully_controlled_by = ROOT } }
+					NOT = { 234 = { is_fully_controlled_by = ROOT } }
+				}
+			}
+			
+			set_temp_variable = { allocate_ic = 15 }
+			
+			if = {
+				limit = {
+					NOT = { has_country_flag = ai_SOV_caucasus_supply_1 }
+				}
+				set_country_flag = ai_SOV_caucasus_supply_1
+			
+				add_to_array = { ai_SOV_caucasus_supply_1 = 731 }
+				add_to_array = { ai_SOV_caucasus_supply_1 = 3748 }
+				
+				add_to_variable = { ai_active_rail_queue = 1 }
+				log = "ai_SOV_caucasus_supply_1 STARTED"
+			}
+				
+			set_temp_variable = { origin = ai_SOV_caucasus_supply_1^0 }
+			set_temp_variable = { end = ai_SOV_caucasus_supply_1^1 }
+			
+			if = {
+				limit = {
+					check_variable = { ai_SOV_caucasus_supply_1^num > 1 }
+				}
+				if = { limit = { ai_controls_railway = yes }
+					ai_build_railway = yes
+					remove_from_array = { array = ai_SOV_caucasus_supply_1 index = 0 }
+					
+					if = {
+						limit = {
+							check_variable = { end = 3748 }
+						}
+						235 = {
+							add_building_construction = {
+								type = supply_node
+								level = 1
+								instant_build = yes
+								province = 3748
+							}
+						}
+					}
+				}
+			}
+			else = {
+				set_country_flag = ai_SOV_caucasus_supply_1_done
+				clr_country_flag = ai_SOV_caucasus_supply_1
+				clear_array = ai_SOV_caucasus_supply_1
+				add_to_variable = { ai_active_rail_queue = -1 }
+			}
+		}	
+		
+		if = { #Arkangles/ Murmansk
+			limit = {
+				NOT = { has_country_flag = ai_SOV_supply }
+			}
+			set_country_flag = ai_SOV_supply
+			
+			214 = {
+				add_building_construction = {
+					type = supply_node
+					level = 1
+					instant_build = yes
+					province = 9187
+				}
+			}
+			351 = {
+				add_building_construction = {
+					type = supply_node
+					level = 1
+					instant_build = yes
+					province = 11075
+				}
+			}
+		}
+	}
+	
+	if = {
+		limit = {
+			tag = ARG
+			date > 1938.1.1
+			NOT = { has_country_flag = ai_ARG_supply }
+		}
+		set_country_flag = ai_ARG_supply
+		
+		512 = {
+			add_building_construction = {
+				type = naval_base
+				level = 1
+				instant_build = yes
+				province = 10953
+			}
+		}
+	}
+	else_if = {
+		limit = {
+			tag = PRU
+			date > 1939.1.1
+			NOT = { has_country_flag = ai_PRU_supply }
+		}
+		set_country_flag = ai_PRU_supply
+		
+		303 = {
+			add_building_construction = {
+				type = naval_base
+				level = 1
+				instant_build = yes
+				province = 2156
+			}
+		}
+	}
+	else_if = {
+		limit = {
+			tag = BRA
+			date > 1937.1.1
+			NOT = { has_country_flag = ai_BRA_supply }
+		}
+		set_country_flag = ai_BRA_supply
+		
+		885 = {
+			add_building_construction = {
+				type = naval_base
+				level = 1
+				instant_build = yes
+				province = 12853
+			}
+		}
+	}
+		
+}
+
+ai_build_railway = {
+	if = {
+		limit = {
+			var:global.province_controllers^origin = {
+				is_ally_with = ROOT
+			}
+			var:global.province_controllers^end = {
+				is_ally_with = ROOT
+			}
+		}
+		meta_effect = {
+			text = {
+				build_railway = {
+					level = 1
+					start_province = [X]
+					target_province = [Y]
+				}
+				
+			}
+			X = "[?origin]"
+			Y = "[?end]"
+		}
+		
+		set_temp_variable = { t1 = 4 }
+		set_temp_variable = { t2 = modifier@production_speed_rail_way_factor }
+		add_to_temp_variable = { t2 = 1 }
+		multiply_temp_variable = { t1 = t2 }
+		
+		set_temp_variable = { t3 = allocate_ic }
+		multiply_temp_variable = { t3 = t1 }
+		
+		set_temp_variable = { build_days = @BUILD_COST_RAILWAY }
+		divide_temp_variable = { build_days = t3 }
+		round_temp_variable = build_days
+		clamp_temp_variable = { var = build_days min = 1 }
+		
+	}
+}
+
+ai_construction_logic/GER = {
+	set_temp_variable = { MIC_to_CIC_ratio = 1.3 }
+	set_temp_variable = { NIC_to_MIC_ratio = 0.05 }
+	
+	if = {
+		limit = {
+			date < 1937.10.1
+		}
+		set_temp_variable = { MIC_to_CIC_ratio = 0.1 }
+	}
+	else_if = {
+		limit = {
+			NOT = { has_country_flag = ai_military_build_switch }
+		}
+		set_country_flag = ai_military_build_switch
+		ai_clamp_civilian_queue = yes
+	}
+	
+	#ic_ratio/<building> determines how many buildings it queues. if it results in more than 24 IC, it will queue 2 buildings (24 cuz 24/16+0.5 round = 2 buildings queued)
+	set_temp_variable = { ic_ratio/fuel_silo = 0.15 }
+	set_temp_variable = { ic_ratio/radar_station = 0.1 }
+	set_temp_variable = { ic_ratio/infrastructure = 0.1 }
+	set_temp_variable = { ic_ratio/air_assembly = 0.25 }
+	set_temp_variable = { ic_ratio/steel_refinery = 0.15 }
+	set_temp_variable = { ic_ratio/aluminium_refinery = 0.15 }
+	set_temp_variable = { ic_ratio/synthetic_refinery = 0.25 }
+	set_temp_variable = { ic_ratio/synthetic_rubber_refinery = 0.2 }
+	set_temp_variable = { ic_ratio/shipyard = 0 }
+	set_temp_variable = { ic_ratio/subyard = 1 }
+	set_temp_variable = { ic_ratio/storage = 0 } #this does nothing without building_target@storage
+	set_temp_variable = { ic_ratio/power_plant = 0.1 } 
+	set_temp_variable = { ic_ratio/air_base = 0.05 } 
+	
+	# these variables multiply the extra ic ratio from air production need
+	#set_temp_variable = { ai_air_assembly_need_factor = 1 }
+	#set_temp_variable = { ai_aluminium_refinery_need_factor = 1 }
+	
+	# these variables can be used to set a building target manually
+	#set_temp_variable = { building_target@fuel_silo = 20 }
+	#set_temp_variable = { building_target@storage = 20 }
+	#set_temp_variable = { building_target@synthetic_refinery = 20 }
+	#set_temp_variable = { building_target@synthetic_rubber_refinery = 20 }
+	
+	# these variables are used for infrastructure construction
+	#set_temp_variable = { ai_need_resources = 1 } #set to >0 to build infra without any resource deficit
+	#set_temp_variable = { ai_need_<resource> = 1 } #same as above, per resource
+	#set_temp_variable = { ai_<resource>_weight = 2 } #these affect the state scoring per resource
+	
+	# these variables are used for air-base construction, for state / region specific stuff see ai_scripted_air_base_states
+	
+	set_temp_variable = { ai_airbase_region_max_capacity_used = 0.75 } #amount of planes in region to build
+	set_temp_variable = { ai_airbase_min_front_region_capacity = 0.1 }
+	
+	set_temp_variable = { ai_airbase_max_front_distance = 100 } #max distance to nearest front state to build airbase
+	set_temp_variable = { ai_airbase_front_distance_mult = -0.1 } #proportional to max distance, this gets added to a multiplier with 1 as base
+
+	set_temp_variable = { ai_build_air_base_min_days = 12 } #ai will spread out its IC across multiple air base constructions, it wants construction to last atleast this long
+		
+
+	#---------------------------------------------------------------
+	
+	if = {
+		limit = {
+			date > 1939.1.1
+		}
+		set_temp_variable = { ic_ratio/air_assembly = 0.1 }
+	}
+	
+	if = {
+		limit = {
+			date < 1940.1.1
+		}
+		set_temp_variable = { ic_ratio/subyard = 0 }
+	}
+	
+	if = {
+		limit = {
+			date < 1941.3.1
+			ai_GER_has_defeated_FRA = yes
+			has_war_with = ENG
+		}
+		set_temp_variable = { ic_ratio/air_assembly = 0.2 }
+	}
+	
+	if = {
+		limit = {
+			date < 1939.1.1
+			has_war = no
+		}
+			
+		set_temp_variable = { ic_ratio/radar_station = 0.0 }
+		set_temp_variable = { ic_ratio/air_base = 0.0 }
+	}
+	
+	if = {
+		limit = {
+			OR = {
+				has_war_with = SOV 
+				ai_GER_has_defeated_FRA = yes
+			}
+		}
+		
+		add_to_temp_variable = { ic_ratio/radar_station = 0.05 }
+		
+		add_to_temp_variable = { ic_ratio/air_base = 0.02 }
+	}
+	
+	if = {
+		limit = { #massive naval buildup after SOV has fallen
+			ai_GER_has_defeated_SOV = yes
+		}
+		multiply_temp_variable = { ic_ratio/shipyard = 1 }
+		add_to_temp_variable = { NIC_to_MIC_ratio = 0.1 }
+	}
+	
+}
+ai_construction_logic/SOV = {
+	
+	set_temp_variable = { MIC_to_CIC_ratio = 1.5 }
+	set_temp_variable = { NIC_to_MIC_ratio = 0 }
+	
+	if = {
+		limit = {
+			date < 1938.6.1
+		}
+		set_temp_variable = { MIC_to_CIC_ratio = 0.1 }
+	}
+	else_if = {
+		limit = {
+			NOT = { has_country_flag = ai_military_build_switch }
+		}
+		set_country_flag = ai_military_build_switch
+		ai_clamp_civilian_queue = yes
+	}
+	
+	set_temp_variable = { ic_ratio/fuel_silo = 0 }
+	set_temp_variable = { ic_ratio/radar_station = 0.05 }
+	set_temp_variable = { ic_ratio/air_base = 0.03 }
+	set_temp_variable = { ic_ratio/infrastructure = 0.05 }
+	set_temp_variable = { ic_ratio/air_assembly = 0.1 }
+	set_temp_variable = { ic_ratio/steel_refinery = 0.15 }
+	set_temp_variable = { ic_ratio/aluminium_refinery = 0.15 }
+	set_temp_variable = { ic_ratio/synthetic_refinery = 0.1 }
+	set_temp_variable = { ic_ratio/synthetic_rubber_refinery = 0.1 }
+	set_temp_variable = { ic_ratio/shipyard = 0 }
+	set_temp_variable = { ic_ratio/subyard = 0 }
+	set_temp_variable = { ic_ratio/storage = 0 }
+	set_temp_variable = { ic_ratio/power_plant = 0.1 } 
+	
+	
+	set_temp_variable = { ai_airbase_region_max_capacity_used = 0.75 }
+	set_temp_variable = { ai_airbase_min_front_region_capacity = 0.1 }
+	set_temp_variable = { ai_airbase_max_front_distance = 100 }
+	set_temp_variable = { ai_airbase_front_distance_mult = -0.1 }
+	set_temp_variable = { ai_build_air_base_min_days = 12 }
+		
+	#--------------------- LOCATION PRIORITIES ---------------------
+
+	set_temp_variable = { region@149 = 10 } #central russia regions
+	set_temp_variable = { region@147 = 10 } 
+	set_temp_variable = { region@14 = 10 } 
+	set_temp_variable = { region@151 = 10 } 
+	set_temp_variable = { region@136 = 10 } 
+	set_temp_variable = { region@138 = 10 } 
+	set_temp_variable = { region@150 = 10 } 
+	set_temp_variable = { region@40 = 10 } 
+	set_temp_variable = { region@137 = 10 } 
+	
+	set_temp_variable = { state@240 = -0.5 } 
+	set_temp_variable = { state@223 = -0.5 } 
+	set_temp_variable = { state@222 = -0.5 } 
+	set_temp_variable = { state@220 = -0.5 } 
+	set_temp_variable = { state@260 = -0.5 } 
+	set_temp_variable = { state@258 = -0.5 } 
+	set_temp_variable = { state@245 = -0.5 } 
+	set_temp_variable = { state@218 = -0.5 } 
+	set_temp_variable = { state@231 = -0.5 } 
+	set_temp_variable = { state@230 = -0.5 } 
+
+	#---------------------------------------------------------------
+	
+	if = {
+		limit = {
+			has_war = no
+		}
+		set_temp_variable = { ic_ratio/air_base = 0 }
+	}
+	
+	if = {
+		limit = {
+			has_war = yes 
+			check_variable = { resource@rubber < -40 }
+		}
+		set_temp_variable = { building_target@synthetic_rubber_refinery = 10 }
+		add_to_temp_variable = { ic_ratio/synthetic_rubber_refinery = 0.1 }
+	}
+	
+}
+ai_construction_logic/USA = {
+	
+	set_temp_variable = { MIC_to_CIC_ratio = 1.5 }
+	set_temp_variable = { NIC_to_MIC_ratio = 0.125 }
+	
+	set_temp_variable = { ic_ratio/fuel_silo = 0.1 }
+	set_temp_variable = { ic_ratio/radar_station = 0.05 }
+	set_temp_variable = { ic_ratio/air_base = 0.05 }
+	set_temp_variable = { ic_ratio/infrastructure = 0.1 }
+	set_temp_variable = { ic_ratio/air_assembly = 0.15 }
+	set_temp_variable = { ic_ratio/steel_refinery = 0.15 }
+	set_temp_variable = { ic_ratio/aluminium_refinery = 0.2 }
+	set_temp_variable = { ic_ratio/synthetic_refinery = 0.15 }
+	set_temp_variable = { ic_ratio/synthetic_rubber_refinery = 0.15 }
+	set_temp_variable = { ic_ratio/shipyard = 1 }
+	set_temp_variable = { ic_ratio/subyard = 1 }
+	set_temp_variable = { ic_ratio/storage = 0 }
+	set_temp_variable = { ic_ratio/power_plant = 0.1 } 
+	
+	
+	set_temp_variable = { ai_airbase_region_max_capacity_used = 0.75 }
+	set_temp_variable = { ai_airbase_min_front_region_capacity = 0.1 }
+	set_temp_variable = { ai_airbase_max_front_distance = 100 }
+	set_temp_variable = { ai_airbase_front_distance_mult = -0.1 }
+	set_temp_variable = { ai_build_air_base_min_days = 12 }
+		
+	#---------------------------------------------------------------
+	
+	if = {
+		limit = {
+			ENG = {has_war = no}
+			has_war = no
+		}
+		
+		set_temp_variable = { ic_ratio/infrastructure = 0.4 }
+		set_temp_variable = { MIC_to_CIC_ratio = 0.1 }
+		#set_temp_variable = { ai_need_resources = 1 }
+	}
+	else = {
+		set_country_flag = ai_military_build_switch
+	}
+	
+	if = {
+		limit = {
+			num_of_military_factories < 250
+		}
+		set_temp_variable = { ic_ratio/air_base = 0 }
+		set_temp_variable = { ic_ratio/shipyard = 0.05 }
+		set_temp_variable = { ic_ratio/subyard = 0.05 }
+		set_temp_variable = { ic_ratio/radar_station = 0 }
+		set_temp_variable = { ic_ratio/aluminium_refinery = 0.15 }
+	}
+	
+	if = {
+		limit = {
+			check_variable = { num_deployed_planes > 5000 }
+		}
+		set_temp_variable = { ratio = ai_fighter_target_ratio }
+		clamp_temp_variable = { var = ratio max = 1 }
+		multiply_temp_variable = { ratio = 0.5 }
+		set_temp_variable = { factor = 1 }
+		subtract_from_temp_variable = { factor = ratio }
+		
+		set_temp_variable = { ai_aluminium_refinery_need_factor = factor }
+		set_temp_variable = { ai_air_assembly_need_factor = factor }
+	}
+		
+	if = {
+		limit = {
+			has_war = no
+			date < 1941.1.1
+		}
+		set_temp_variable = { ic_ratio/radar_station = 0 }
+		set_temp_variable = { ic_ratio/air_base = 0 }
+	}
+	
+	if = {
+		limit = {
+			num_of_military_factories > 600
+		}
+		add_to_temp_variable = { NIC_to_MIC_ratio = 0.05 }
+	}
+	
+	#build rubber synths if rubber states got lost to enemies
+	if = {
+		limit = {
+			has_war = yes 
+		}
+		
+		if = { #Southern Malay
+			limit = { 870 = { CONTROLLER = { has_war_with = ROOT } } }
+		
+			add_to_temp_variable = { building_target@synthetic_rubber_refinery = 10 }
+		}
+		if = { #Sumatra
+			limit = { 672 = { CONTROLLER = { has_war_with = ROOT } } }
+		
+			add_to_temp_variable = { building_target@synthetic_rubber_refinery = 5 }
+		}
+		if = { #Kalimantan
+			limit = { 334 = { CONTROLLER = { has_war_with = ROOT } } }
+		
+			add_to_temp_variable = { building_target@synthetic_rubber_refinery = 5 }
+		}
+	}
+				
+}
+ai_construction_logic/ITA = {
+	set_temp_variable = { MIC_to_CIC_ratio = 1.25 }
+	set_temp_variable = { NIC_to_MIC_ratio = 0.075 }
+	
+	if = {
+		limit = {
+			date < 1938.5.1
+		}
+		set_temp_variable = { MIC_to_CIC_ratio = 0.1 }
+	}
+	else_if = {
+		limit = {
+			NOT = { has_country_flag = ai_military_build_switch }
+		}
+		set_country_flag = ai_military_build_switch
+		ai_clamp_civilian_queue = yes
+	}
+	
+	
+	set_temp_variable = { ic_ratio/fuel_silo = 0.1 }
+	set_temp_variable = { ic_ratio/radar_station = 0.07 }
+	set_temp_variable = { ic_ratio/air_base = 0.02 }
+	set_temp_variable = { ic_ratio/infrastructure = 0.1 }
+	set_temp_variable = { ic_ratio/air_assembly = 0.15 }
+	set_temp_variable = { ic_ratio/steel_refinery = 0.15 }
+	set_temp_variable = { ic_ratio/aluminium_refinery = 0.15 }
+	set_temp_variable = { ic_ratio/synthetic_refinery = 0.15 }
+	set_temp_variable = { ic_ratio/synthetic_rubber_refinery = 0.15 }
+	set_temp_variable = { ic_ratio/shipyard = 0.15 }
+	set_temp_variable = { ic_ratio/subyard = 0.15 }
+	set_temp_variable = { ic_ratio/storage = 0 }
+	set_temp_variable = { ic_ratio/power_plant = 0.1 } 
+	
+	
+	set_temp_variable = { ai_airbase_region_max_capacity_used = 0.75 }
+	set_temp_variable = { ai_airbase_min_front_region_capacity = 0.1 }
+	set_temp_variable = { ai_airbase_max_front_distance = 100 }
+	set_temp_variable = { ai_airbase_front_distance_mult = -0.1 }
+	set_temp_variable = { ai_build_air_base_min_days = 12 }
+		
+	#---------------------------------------------------------------
+	
+	if = {
+		limit = {
+			has_war = no
+			date < 1939.1.1
+		}
+		set_temp_variable = { ic_ratio/radar_station = 0 }
+		set_temp_variable = { ic_ratio/air_base = 0 }
+	}
+}
+ai_construction_logic/JAP = {
+	set_temp_variable = { MIC_to_CIC_ratio = 1.2 }
+	set_temp_variable = { NIC_to_MIC_ratio = 0.125 }
+	
+	if = {
+		limit = {
+			date < 1937.1.1
+		}
+		set_temp_variable = { MIC_to_CIC_ratio = 0.1 }
+	}
+	else_if = {
+		limit = {
+			NOT = { has_country_flag = ai_military_build_switch }
+		}
+		set_country_flag = ai_military_build_switch
+		ai_clamp_civilian_queue = yes
+	}
+	
+	set_temp_variable = { ic_ratio/fuel_silo = 0.1 }
+	set_temp_variable = { ic_ratio/radar_station = 0.05 }
+	set_temp_variable = { ic_ratio/air_base = 0.02 }
+	set_temp_variable = { ic_ratio/infrastructure = 0.1 }
+	set_temp_variable = { ic_ratio/air_assembly = 0.1 }
+	set_temp_variable = { ic_ratio/steel_refinery = 0.15 }
+	set_temp_variable = { ic_ratio/aluminium_refinery = 0.15 }
+	set_temp_variable = { ic_ratio/synthetic_refinery = 0.05 }
+	set_temp_variable = { ic_ratio/synthetic_rubber_refinery = 0.1 }
+	set_temp_variable = { ic_ratio/shipyard = 0.2 }
+	set_temp_variable = { ic_ratio/subyard = 0.15 }
+	set_temp_variable = { ic_ratio/storage = 0 }
+	set_temp_variable = { ic_ratio/power_plant = 0.1 } 
+	
+	
+	set_temp_variable = { ai_airbase_region_max_capacity_used = 0.75 }
+	set_temp_variable = { ai_airbase_min_front_region_capacity = 0.1 }
+	set_temp_variable = { ai_airbase_max_front_distance = 100 }
+	set_temp_variable = { ai_airbase_front_distance_mult = -0.1 }
+	set_temp_variable = { ai_build_air_base_min_days = 12 }
+		
+	#---------------------------------------------------------------
+	
+	if = {
+		limit = {
+			date > 1939.1.1
+			has_war = no
+		}
+		set_temp_variable = { ic_ratio/storage = 0.1 }
+		set_temp_variable = { building_target@storage = 10 }
+	}
+	
+	if = {
+		limit = {
+			has_war = no
+			date < 1940.1.1
+		}
+		set_temp_variable = { ic_ratio/radar_station = 0 }
+		set_temp_variable = { ic_ratio/air_base = 0 }
+	}
+	
+	if = {
+		limit = {
+			has_war_with = USA
+		}
+		set_temp_variable = { ic_ratio/radar_station = 0.15 }
+	}
+		
+}
+
+ai_construction_logic/ENG = {
+	set_temp_variable = { MIC_to_CIC_ratio = 1.2 }
+	set_temp_variable = { NIC_to_MIC_ratio = 0.1 }
+	
+	if = {
+		limit = {
+			date < 1938.3.1
+		}
+		set_temp_variable = { MIC_to_CIC_ratio = 0.1 }
+	}
+	else_if = {
+		limit = {
+			NOT = { has_country_flag = ai_military_build_switch }
+		}
+		set_country_flag = ai_military_build_switch
+		ai_clamp_civilian_queue = yes
+	}
+	
+	set_temp_variable = { ic_ratio/fuel_silo = 0.15 }
+	set_temp_variable = { ic_ratio/radar_station = 0.1 }
+	set_temp_variable = { ic_ratio/air_base = 0.05 }
+	set_temp_variable = { ic_ratio/infrastructure = 0.15 }
+	set_temp_variable = { ic_ratio/air_assembly = 0.2 }
+	set_temp_variable = { ic_ratio/steel_refinery = 0.15 }
+	set_temp_variable = { ic_ratio/aluminium_refinery = 0.15 }
+	set_temp_variable = { ic_ratio/synthetic_refinery = 0.05 }
+	set_temp_variable = { ic_ratio/synthetic_rubber_refinery = 0.1 }
+	set_temp_variable = { ic_ratio/shipyard = 0.1 }
+	set_temp_variable = { ic_ratio/subyard = 0 }
+	
+	
+	set_temp_variable = { ai_airbase_region_max_capacity_used = 0.75 }
+	set_temp_variable = { ai_airbase_min_front_region_capacity = 0.1 }
+	set_temp_variable = { ai_airbase_max_front_distance = 100 }
+	set_temp_variable = { ai_airbase_front_distance_mult = -0.1 }
+	set_temp_variable = { ai_build_air_base_min_days = 12 }
+		
+	#---------------------------------------------------------------
+	
+	if = {
+		limit = {
+			has_war = no
+			date < 1939.6.1
+			num_of_civilian_factories < 175
+		}
+		set_temp_variable = { ic_ratio/radar_station = 0 }
+		set_temp_variable = { ic_ratio/air_base = 0 }
+	}
+	
+	if = {
+		limit = {
+			CAN = { has_capitulated = no }
+			stockpile_ratio = {
+				archetype = convoy
+				ratio > 600
+			}
+		}
+		set_temp_variable = { ic_ratio/aluminium_refinery = 0.01 }
+	}
+	
+}
+
+ai_construction_logic/FRA = {
+	set_temp_variable = { MIC_to_CIC_ratio = 1.0 }
+	set_temp_variable = { NIC_to_MIC_ratio = 0.1 }
+	
+	if = {
+		limit = {
+			date < 1937.6.1
+		}
+		set_temp_variable = { MIC_to_CIC_ratio = 0.1 }
+	}
+	else_if = {
+		limit = {
+			NOT = { has_country_flag = ai_military_build_switch }
+		}
+		set_country_flag = ai_military_build_switch
+		ai_clamp_civilian_queue = yes
+	}
+	
+	
+	set_temp_variable = { ic_ratio/fuel_silo = 0.1 }
+	set_temp_variable = { ic_ratio/radar_station = 0.0 }
+	set_temp_variable = { ic_ratio/air_base = 0.01 }
+	set_temp_variable = { ic_ratio/infrastructure = 0.05 }
+	set_temp_variable = { ic_ratio/air_assembly = 0.1 }
+	set_temp_variable = { ic_ratio/steel_refinery = 0.1 }
+	set_temp_variable = { ic_ratio/aluminium_refinery = 0.1 }
+	set_temp_variable = { ic_ratio/synthetic_refinery = 0.05 }
+	set_temp_variable = { ic_ratio/synthetic_rubber_refinery = 0.1 }
+	set_temp_variable = { ic_ratio/shipyard = 0.1 }
+	set_temp_variable = { ic_ratio/subyard = 0.0 }
+	
+	
+	set_temp_variable = { ai_airbase_region_max_capacity_used = 0.75 }
+	set_temp_variable = { ai_airbase_min_front_region_capacity = 0.1 }
+	set_temp_variable = { ai_airbase_max_front_distance = 100 }
+	set_temp_variable = { ai_airbase_front_distance_mult = -0.1 }
+	set_temp_variable = { ai_build_air_base_min_days = 12 }
+		
+	#--------------------- LOCATION PRIORITIES ---------------------
+
+	set_temp_variable = { region@19 = -0.25 } #Maginot
+	set_temp_variable = { region@238 = -0.25 } #Northern France
+	
+	set_temp_variable = { region@242 = 0.5 } #Mid France
+	set_temp_variable = { region@20 = 0.5 } #Southern France
+
+	#---------------------------------------------------------------
+	
+	if = {
+		limit = {
+			has_war = no
+			date < 1939.1.1
+		}
+		set_temp_variable = { ic_ratio/radar_station = 0 }
+		set_temp_variable = { ic_ratio/air_base = 0 }
+	}
+	
+	if = {
+		limit = {
+			has_capitulated = yes
+		}
+		
+		set_temp_variable = { ai_airbase_front_target = 0.35 }
+	}
+}
+
+ai_construction_logic/CAN = {
+	set_temp_variable = { MIC_to_CIC_ratio = 1.2 }
+	set_temp_variable = { NIC_to_MIC_ratio = 0.05 }
+	
+	if = {
+		limit = {
+			date < 1938.1.1
+		}
+		set_temp_variable = { MIC_to_CIC_ratio = 0.1 }
+	}
+	else_if = {
+		limit = {
+			NOT = { has_country_flag = ai_military_build_switch }
+		}
+		set_country_flag = ai_military_build_switch
+		ai_clamp_civilian_queue = yes
+	}
+
+	set_temp_variable = { ic_ratio/fuel_silo = 0.15 }
+	set_temp_variable = { ic_ratio/radar_station = 0.05 }
+	set_temp_variable = { ic_ratio/air_base = 0.03 }
+	set_temp_variable = { ic_ratio/infrastructure = 0.05 }
+	set_temp_variable = { ic_ratio/air_assembly = 0.10 }
+	set_temp_variable = { ic_ratio/steel_refinery = 0.1 }
+	set_temp_variable = { ic_ratio/aluminium_refinery = 0.1 }
+	set_temp_variable = { ic_ratio/synthetic_refinery = 0.05 }
+	set_temp_variable = { ic_ratio/synthetic_rubber_refinery = 0.1 }
+	set_temp_variable = { ic_ratio/shipyard = 0.1 }
+	set_temp_variable = { ic_ratio/subyard = 0.05 }
+	set_temp_variable = { ic_ratio/storage = 0 }
+	set_temp_variable = { ic_ratio/power_plant = 0.1 } 
+	
+	set_temp_variable = { ai_airbase_region_max_capacity_used = 0.75 }
+	set_temp_variable = { ai_airbase_min_front_region_capacity = 0.1 }
+	set_temp_variable = { ai_airbase_max_front_distance = 100 }
+	set_temp_variable = { ai_airbase_front_distance_mult = -0.1 }
+	set_temp_variable = { ai_build_air_base_min_days = 12 }
+		
+	#---------------------------------------------------------------
+	
+	
+	if = {
+		limit = {
+			has_country_flag = {
+				flag = ai_start_air_production
+				value = 1
+				days < 270
+			}
+		}
+		set_temp_variable = { ic_ratio/air_assembly = 0.25 }
+		set_temp_variable = { ic_ratio/aluminium_refinery = 0.25 }
+	}
+	
+	if = {
+		limit = {
+			num_of_military_factories > 39
+		}
+		add_to_temp_variable = { NIC_to_MIC_ratio = 0.25 }
+	}
+	if = {
+		limit = {
+			num_of_military_factories > 50
+		}
+		add_to_temp_variable = { ic_ratio/air_assembly = 0.2 }
+		add_to_temp_variable = { ic_ratio/aluminium_refinery = 0.2 }
+		add_to_temp_variable = { NIC_to_MIC_ratio = 0.05 }
+	}
+	if = {
+		limit = {
+			num_of_military_factories > 60
+		}
+		add_to_temp_variable = { NIC_to_MIC_ratio = 0.05 }
+	}
+}
+
+ai_construction_logic/SAF = {
+	set_temp_variable = { MIC_to_CIC_ratio = 1.2 }
+	set_temp_variable = { NIC_to_MIC_ratio = 0 }
+	
+	if = {
+		limit = {
+			date < 1939.1.1
+		}
+		set_temp_variable = { MIC_to_CIC_ratio = 0.1 }
+	}
+	else_if = {
+		limit = {
+			NOT = { has_country_flag = ai_military_build_switch }
+		}
+		set_country_flag = ai_military_build_switch
+		ai_clamp_civilian_queue = yes
+	}
+
+	set_temp_variable = { ic_ratio/fuel_silo = 0.15 }
+	set_temp_variable = { ic_ratio/radar_station = 0.05 }
+	set_temp_variable = { ic_ratio/air_base = 0.03 }
+	set_temp_variable = { ic_ratio/infrastructure = 0.05 }
+	set_temp_variable = { ic_ratio/air_assembly = 0.10 }
+	set_temp_variable = { ic_ratio/steel_refinery = 0.1 }
+	set_temp_variable = { ic_ratio/aluminium_refinery = 0.1 }
+	set_temp_variable = { ic_ratio/synthetic_refinery = 0.05 }
+	set_temp_variable = { ic_ratio/synthetic_rubber_refinery = 0.1 }
+	set_temp_variable = { ic_ratio/shipyard = 0.1 }
+	set_temp_variable = { ic_ratio/subyard = 0.05 }
+	set_temp_variable = { ic_ratio/storage = 0 }
+	set_temp_variable = { ic_ratio/power_plant = 0.1 } 
+	
+	
+	set_temp_variable = { ai_airbase_region_max_capacity_used = 0.75 }
+	set_temp_variable = { ai_airbase_min_front_region_capacity = 0.1 }
+	set_temp_variable = { ai_airbase_max_front_distance = 100 }
+	set_temp_variable = { ai_airbase_front_distance_mult = -0.1 }
+	set_temp_variable = { ai_build_air_base_min_days = 12 }
+		
+	#---------------------------------------------------------------
+	
+	if = {
+		limit = {
+			has_country_flag = {
+				flag = ai_start_air_production
+				value = 1
+				days < 270
+			}
+		}
+		set_temp_variable = { ic_ratio/air_assembly = 0.25 }
+		set_temp_variable = { ic_ratio/aluminium_refinery = 0.25 }
+	}
+	
+	if = {
+		limit = {
+			num_of_military_factories > 79
+		}
+		add_to_temp_variable = { NIC_to_MIC_ratio = 0.15 }
+	}
+	else_if = {
+		limit = {
+			num_of_military_factories > 59
+		}
+		add_to_temp_variable = { NIC_to_MIC_ratio = 0.1 }
+	}
+	else_if = {
+		limit = {
+			num_of_military_factories > 39
+		}
+		add_to_temp_variable = { NIC_to_MIC_ratio = 0.05 }
+	}
+}
+
+ai_construction_logic/CHI = {
+	set_temp_variable = { MIC_to_CIC_ratio = 1.2 }
+	set_temp_variable = { NIC_to_MIC_ratio = 0 }
+	
+	if = {
+		limit = {
+			num_of_civilian_factories < 125
+			date < 1939.1.1
+		}
+		set_temp_variable = { MIC_to_CIC_ratio = 0.1 }
+	}
+	else_if = {
+		limit = {
+			NOT = { has_country_flag = ai_military_build_switch }
+		}
+		set_country_flag = ai_military_build_switch
+		ai_clamp_civilian_queue = yes
+	}
+
+	set_temp_variable = { ic_ratio/fuel_silo = 0.15 }
+	set_temp_variable = { ic_ratio/radar_station = 0.05 }
+	set_temp_variable = { ic_ratio/air_base = 0.0 }
+	set_temp_variable = { ic_ratio/infrastructure = 0.05 }
+	set_temp_variable = { ic_ratio/air_assembly = 0.10 }
+	set_temp_variable = { ic_ratio/steel_refinery = 0.1 }
+	set_temp_variable = { ic_ratio/aluminium_refinery = 0.1 }
+	set_temp_variable = { ic_ratio/synthetic_refinery = 0.05 }
+	set_temp_variable = { ic_ratio/synthetic_rubber_refinery = 0.1 }
+	set_temp_variable = { ic_ratio/shipyard = 0.1 }
+	set_temp_variable = { ic_ratio/subyard = 0.05 }
+	set_temp_variable = { ic_ratio/storage = 0 }
+	set_temp_variable = { ic_ratio/power_plant = 0.1 } 
+	
+	set_temp_variable = { ai_airbase_region_max_capacity_used = 0.90 }
+	set_temp_variable = { ai_airbase_min_front_region_capacity = 0.1 }
+	set_temp_variable = { ai_airbase_max_front_distance = 100 }
+	set_temp_variable = { ai_airbase_front_distance_mult = -0.1 }
+	set_temp_variable = { ai_build_air_base_min_days = 12 }
+		
+	#--------------------- LOCATION PRIORITIES ---------------------
+
+	set_temp_variable = { region@144 = 10 } #western china regions
+	set_temp_variable = { region@145 = 10 } 
+	set_temp_variable = { region@200 = 10 } 
+	set_temp_variable = { region@146 = 10 } 
+	
+	set_temp_variable = { region@164 = -0.25 } #Shanghai
+	set_temp_variable = { region@229 = -0.25 } #Minzhe
+	
+	#---------------------------------------------------------------
+	
+	if = {
+		limit = {
+			has_country_flag = {
+				flag = ai_start_air_production
+				value = 1
+				days < 270
+			}
+		}
+		set_temp_variable = { ic_ratio/air_assembly = 0.25 }
+		set_temp_variable = { ic_ratio/aluminium_refinery = 0.25 }
+	}
+	
+}
+
+ai_construction_logic/generic = {
+	set_temp_variable = { MIC_to_CIC_ratio = 1.2 }
+	set_temp_variable = { NIC_to_MIC_ratio = 0.05 }
+	
+	if = {
+		limit = {
+			date < 1938.1.1
+			has_war = no
+		}
+		set_temp_variable = { MIC_to_CIC_ratio = 0.1 }
+	}
+	else_if = {
+		limit = {
+			NOT = { has_country_flag = ai_military_build_switch }
+		}
+		set_country_flag = ai_military_build_switch
+		ai_clamp_civilian_queue = yes
+	}
+	
+	if = {
+		limit = {
+			num_of_military_factories < 30
+		}
+		set_temp_variable = { NIC_to_MIC_ratio = 0 }
+	}
+
+	set_temp_variable = { ic_ratio/fuel_silo = 0.15 }
+	set_temp_variable = { ic_ratio/radar_station = 0.05 }
+	set_temp_variable = { ic_ratio/air_base = 0.03 }
+	set_temp_variable = { ic_ratio/infrastructure = 0.05 }
+	set_temp_variable = { ic_ratio/air_assembly = 0.10 }
+	set_temp_variable = { ic_ratio/steel_refinery = 0.1 }
+	set_temp_variable = { ic_ratio/aluminium_refinery = 0.1 }
+	set_temp_variable = { ic_ratio/synthetic_refinery = 0.05 }
+	set_temp_variable = { ic_ratio/synthetic_rubber_refinery = 0.1 }
+	set_temp_variable = { ic_ratio/shipyard = 0.1 }
+	set_temp_variable = { ic_ratio/subyard = 0.05 }
+	set_temp_variable = { ic_ratio/storage = 0 }
+	set_temp_variable = { ic_ratio/power_plant = 0.1 } 
+	
+	set_temp_variable = { ai_airbase_region_max_capacity_used = 0.75 }
+	set_temp_variable = { ai_airbase_min_front_region_capacity = 0.05 }
+	set_temp_variable = { ai_airbase_max_front_distance = 80 }
+	set_temp_variable = { ai_airbase_front_distance_mult = -0.1 }
+	set_temp_variable = { ai_build_air_base_min_days = 12 }
+		
+	#--------------------- LOCATION PRIORITIES ---------------------
+	
+	if = {
+		limit = {
+			tag = SWE
+		}
+		set_temp_variable = { region@10 = -0.5 } #Southern Sweden
+	}
+	else_if = {
+		limit = {
+			tag = FIN
+		}
+		set_temp_variable = { state@146 = -0.5 } #Karjala
+		set_temp_variable = { state@818 = -0.5 } #Hanko
+		set_temp_variable = { state@147 = -0.5 } #Salla
+		set_temp_variable = { state@722 = -0.5 } #Petsamo
+	}
+	else_if = {
+		limit = {
+			tag = YUG
+		}
+		set_temp_variable = { state@917 = 1.0 } # serbian states
+		set_temp_variable = { state@906 = 1.0 }
+		set_temp_variable = { state@903 = 1.0 }
+		set_temp_variable = { state@107 = 1.0 }
+		set_temp_variable = { state@108 = 1.0 }
+		set_temp_variable = { state@907 = 1.0 }
+	}
+	else_if = {
+		limit = {
+			tag = RAJ
+		}
+		set_temp_variable = { region@141 = -0.8 } # Burma and Eastern India
+		set_temp_variable = { region@189 = -0.8 }
+	}
+	
+	#---------------------------------------------------------------
+	
+	if = {
+		limit = {
+			has_country_flag = {
+				flag = ai_start_air_production
+				value = 1
+				days < 270
+			}
+		}
+		set_temp_variable = { ic_ratio/air_assembly = 0.25 }
+		set_temp_variable = { ic_ratio/aluminium_refinery = 0.25 }
+	}
+	
+	if = {
+		limit = {
+			num_of_military_factories > 160
+		}
+		add_to_temp_variable = { NIC_to_MIC_ratio = 0.1 }
+	}
+	else_if = {
+		limit = {
+			num_of_military_factories > 100
+		}
+		add_to_temp_variable = { NIC_to_MIC_ratio = 0.05 }
+	}
+	
+	################ country specific stuff
+	
+	if = {
+		limit = { #ROM building infra in Muntenia
+			tag = ROM
+			is_in_faction_with = GER
+			check_variable = { 46.infrastructure_level < 10 }
+			check_variable = { 46.ai_queue_num@token:infrastructure = 0 }
+		}
+		
+		46 = {
+			set_variable = { ai_queue_num@token:infrastructure = 1 }
+
+			add_to_array = { array = ROOT.ai_queue index = ai_highest_construction_pending_index value = token:infrastructure }
+			add_to_array = { array = ROOT.ai_queue_infra index = ai_highest_construction_pending_index value = 0 }
+			add_to_array = { array = ROOT.ai_queue_progress index = ai_highest_construction_pending_index value = 0 }
+			add_to_array = { array = ROOT.ai_queue_location index = ai_highest_construction_pending_index value = THIS }
+			
+			add_to_variable = { ROOT.ai_queued@infrastructure = 1 }
+		}
+				
+	}
+}	
+
+ai_clamp_civilian_queue = { #sets civilian factories in queue to 1
+	for_each_loop = {
+		array = ai_queue
+		
+		if = {
+			limit = {
+				check_variable = { v = token:industrial_complex }
+			}
+			
+			var:ai_queue_location^i = {
+				set_temp_variable = { t = ai_queue_num@industrial_complex }
+				subtract_from_temp_variable = { t = 1 }
+				
+				subtract_from_variable = { ai_queue_num@industrial_complex = t }
+			}
+			subtract_from_variable = { ai_queued@industrial_complex = t }
+		}
+	}
+}
+
+ai_clean_up_construction_queue = {
+	for_each_loop = {
+		array = ai_queue
+		
+		var:ai_queue_location^i = {
+			add_to_temp_variable = { actual_queued@var:v = ai_queue_num@var:v }
+		}
+	}
+	
+	for_each_loop = {
+		array = global.buildings
+		
+		if = {
+			limit = {
+				NOT = { check_variable = { ai_queued@var:v = actual_queued@var:v } }
+			}
+			log = "Not correct for [?v.GetTokenKey] | [?ai_queued@var:v] queued | [?actual_queued@var:v] actual queued"
+			set_variable = { ai_queued@var:v = actual_queued@var:v }
+		}
+	}
+}
+
+d_ai_update_construction_queue = {
+	# ai_queue
+	# ai_queue_infra
+	# ai_queue_progress
+	# ai_queue_location
+	
+	ai_custom_construction_logic = yes
+	
+	set_temp_variable = { num_ic = num_of_civilian_factories_available_for_projects }
+	set_temp_variable = { ai_num_ic_assigned = num_of_civilian_factories_available_for_projects }
+	
+	if = {
+		limit = {
+			has_country_flag = coastal_state
+		}
+		
+		if = { ## remove shipyards from queue if we got max / queued enough already
+			limit = {
+				check_variable = { ai_queued@shipyard > 0 }
+				
+				set_temp_variable = { t = num_shipyard }
+				add_to_temp_variable = { t = ai_queued@shipyard }
+				
+				check_variable = { t > 20 }
+			}
+			subtract_from_temp_variable = { t = 20 }
+			
+			for_each_loop = {
+				array = ai_queue
+				
+				if = {
+					limit = {
+						check_variable = { v = token:shipyard }
+					}
+					
+					add_to_temp_array = { array = clear_shipyard index = 0 value = i }
+						
+					var:ai_queue_location^i = {
+						clear_variable = ai_queue_num@shipyard
+						subtract_from_variable = { ROOT.ai_queued@shipyard = 1 }
+					}
+					
+					if = {
+						limit = {
+							check_variable = { clear_shipyard^num > t }
+						}
+						set_temp_variable = { break = 1 }
+					}
+				}
+			}
+			
+			for_each_loop = {
+				array = clear_shipyard
+				
+				#log = "Remove index [?v]"
+				
+				remove_from_array = { array = ai_queue index = v }
+				remove_from_array = { array = ai_queue_infra index = v }
+				remove_from_array = { array = ai_queue_progress index = v }
+				remove_from_array = { array = ai_queue_location index = v }
+			}
+	
+		}
+		
+		if = { ## remove subyards from queue if we got max / queued enough already
+			limit = {
+				check_variable = { ai_queued@subyard > 0 }
+				
+				set_temp_variable = { t = num_subyard }
+				add_to_temp_variable = { t = ai_queued@subyard }
+				
+				check_variable = { t > 20 }
+			}
+			subtract_from_temp_variable = { t = 20 }
+			
+			for_each_loop = {
+				array = ai_queue
+				
+				if = {
+					limit = {
+						check_variable = { v = token:subyard }
+					}
+					
+					add_to_temp_array = { array = clear_subyard index = 0 value = i }
+							
+					var:ai_queue_location^i = {
+						clear_variable = ai_queue_num@subyard
+						subtract_from_variable = { ROOT.ai_queued@subyard = 1 }
+					}
+					
+					if = {
+						limit = {
+							check_variable = { clear_subyard^num > t }
+						}
+						set_temp_variable = { break = 1 }
+					}
+				}
+			}
+			
+			for_each_loop = {
+				array = clear_subyard
+				
+				#log = "Remove index [?v]"
+				
+				remove_from_array = { array = ai_queue index = v }
+				remove_from_array = { array = ai_queue_infra index = v }
+				remove_from_array = { array = ai_queue_progress index = v }
+				remove_from_array = { array = ai_queue_location index = v }
+			}
+	
+		}
+	}
+	else = {
+		set_temp_variable = { NIC_to_MIC_ratio = 0 }
+		set_temp_variable = { ic_ratio/shipyard = 0 }
+		set_temp_variable = { ic_ratio/subyard = 0 }
+	}
+		
+	
+	if = {
+		limit = {
+			check_variable = { num_ic > 23 }
+		}
+			
+		set_temp_variable = { max_ic_entries = num_ic }
+		divide_temp_variable = { max_ic_entries = 24 }
+		round_temp_variable = max_ic_entries
+		
+		
+		set_temp_variable = { rest_ic_entry = num_ic }
+		modulo_temp_variable = { rest_ic_entry = 24 }
+	}
+	else = {
+		set_temp_variable = { rest_ic_entry = num_ic }
+	}
+		#log = "[?max_ic_entries] max_ic_entries"
+		#log = "[?rest_ic_entry] rest_ic_entry"
+	
+	set_temp_variable = { update_frequency = ai_update_2?2 }
+	multiply_temp_variable = { update_frequency = 7 }
+	
+	for_each_loop = {
+		array = ai_queue
+		value = building
+		
+		set_temp_variable = { progress = 3.2 }
+		multiply_temp_variable = { progress = update_frequency?14 }
+		
+		if = {
+			limit = {
+				check_variable = { max_ic_entries > i }
+			}
+			multiply_temp_variable = { progress = 24 }
+		}
+		else_if = {
+			limit = {
+				check_variable = { max_ic_entries = i }
+			}
+			multiply_temp_variable = { progress = rest_ic_entry }
+			#log = "[?rest_ic_entry] REST IC ENTRY"
+		}
+		else = {
+			set_temp_variable = { break = 1 }
+			set_temp_variable = { progress = 0 }
+			#log = "BREAK"
+		}
+		
+		set_temp_variable = { factor = modifier@var:global.building_speed@var:building }
+		add_to_temp_variable = { factor = modifier@production_speed_buildings_factor }
+		add_to_temp_variable = { factor = ai_queue_infra^i }
+		add_to_temp_variable = { factor = 1 }
+		
+		multiply_temp_variable = { progress = factor }
+		
+		add_to_temp_variable = { progress = ai_queue_overflow }
+		clear_variable = ai_queue_overflow
+		
+		add_to_variable = { ai_queue_progress^i = progress }
+		#log = "[?progress] progress | [?ai_queue_progress^i]"
+		### construction finished
+		
+		if = {
+			limit = {
+				check_variable = { ai_queue_progress^i > global.building_cost@var:building }
+				#log = "[?ai_queue_progress^i] / [?global.building_cost@var:building] | COMPLETED!"
+				
+				if = {
+					limit = {
+						check_variable = { building = token:infrastructure }
+					}
+					var:ai_queue_location^i = { set_temp_variable = { cost = building_level@infrastructure } }
+					multiply_temp_variable = { cost = constant:building.per_level.infrastructure }
+					add_to_temp_variable = { cost = global.building_cost@infrastructure }
+					
+					check_variable = { ai_queue_progress^i > cost }
+				}
+				
+				set_temp_variable = { overflow = ai_queue_progress^i }
+				subtract_from_temp_variable = { overflow = global.building_cost@var:building }
+				
+			}
+			set_variable = { ai_queue_overflow = overflow }
+			#log = "[?overflow] overflow"
+			
+			var:ai_queue_location^i = {
+				if = {
+					limit = {
+						is_controlled_by_ROOT_or_ally = yes
+					}
+					
+					if = {
+						limit = {
+							OR = {
+								check_variable = { building = token:land_facility }
+								check_variable = { building = token:electronics_facility }
+								check_variable = { building = token:naval_facility }
+								check_variable = { building = token:air_facility }
+								check_variable = { building = token:nuclear_facility }
+							}
+						}
+						
+						if = {
+							limit = {
+								meta_trigger = {
+									text = {
+										can_construct_building = [X]
+									}
+									X = "[?building.GetTokenKey]"
+								}
+							}
+								
+							meta_effect = {
+								text = {
+									construct_building_in_random_province = { [X] = 1 }
+								}
+								X = "[?building.GetTokenKey]"
+							}	
+							
+						}
+						else = { #if building location is invalid due to e.g. a focus placing a facility here give ai a free building somewhere else
+							set_variable = { ai_free_building@var:building = 1 }
+						}
+					}
+					else = {
+						meta_effect = {
+							text = {
+								add_building_construction = {
+									type = [X]
+									level = 1
+									instant_build = yes
+								}
+							}
+							X = "[?building.GetTokenKey]"
+						}
+					}
+				}
+				subtract_from_variable = { ai_queue_num@var:building = 1 }
+				clamp_variable = { var = ai_queue_num@var:building min = 0 }
+				subtract_from_variable = { ROOT.ai_queued@var:building = 1 }
+				
+				add_to_variable = { ROOT.ai_built@var:building = 1 }
+				add_to_variable = { ai_built@var:building = 1 }
+				
+				if = {
+					limit = {
+						check_variable = { ai_queue_num@var:building < 1 }
+					}
+					
+					clear_variable = ai_queue_num@var:building
+					add_to_temp_array = { array = finished_constructions index = 0 value = i }
+				}
+				else = {
+					set_variable = { ROOT.ai_queue_progress^i = 0 }
+				}
+			}
+			
+			clamp_variable = { var = ai_queued@var:building min = 0 }
+			
+		}
+	}
+	
+	################ finished constructions
+	
+	for_each_loop = {
+		array = finished_constructions
+		
+		#log = "Remove index [?v]"
+		
+		remove_from_array = { array = ai_queue index = v }
+		remove_from_array = { array = ai_queue_infra index = v }
+		remove_from_array = { array = ai_queue_progress index = v }
+		remove_from_array = { array = ai_queue_location index = v }
+	}
+	
+	# check if we have unused IC due to recent finished constructions
+	
+	d_ai_queue_main_factories = yes
+}
+
+d_ai_queue_main_factories = {
+	# do not queue buildings in front of partially finished ones
+	
+	for_each_loop = {
+		array = ai_queue
+		break = ai_queue_break
+		
+		if = {
+			limit = {
+				check_variable = { ai_queue_progress^i = 0 }
+			}
+			set_temp_variable = { ai_highest_construction_pending_index = i }
+			set_temp_variable = { ai_queue_break = 1 }
+		}
+	}
+	if = {
+		limit = {
+			check_variable = { ai_queue_break = 0 }
+		}
+		set_temp_variable = { ai_highest_construction_pending_index = ai_queue^num }
+	}
+	
+	## order matters as every building gets placed in index ai_highest_construction_pending_index
+	ai_queue_facilities = yes
+	ai_queue_synthetic_refinery = yes
+	ai_queue_synthetic_rubber_refinery = yes
+	ai_queue_storage = yes
+	ai_queue_shipyard = yes
+	ai_queue_subyard = yes
+	ai_queue_infrastructure = yes
+	ai_queue_radar_station = yes
+	ai_queue_air_assembly = yes
+	ai_queue_fuel_silo = yes
+	ai_queue_aluminium_refinery = yes
+	ai_queue_steel_refinery = yes
+	ai_queue_power_plant = yes
+	ai_queue_air_base = yes
+	
+	set_temp_variable = { max_queue_entries = num_ic } #ai_num_queue_ic
+	multiply_temp_variable = { max_queue_entries = 1.1 }
+	divide_temp_variable = { max_queue_entries = 24 }
+	add_to_temp_variable = { max_queue_entries = 0.5 }
+	round_temp_variable = max_queue_entries
+	#log = "Max desired queue entries: [?max_queue_entries]"
+	
+	if = {
+		limit = {
+			check_variable = { ROOT.ai_queue^num < max_queue_entries }
+		}
+		
+		set_temp_variable = { num_of_factories_and_queued@arms_factory = num_of_military_factories }
+		add_to_temp_variable = { num_of_factories_and_queued@arms_factory = ai_queued@arms_factory }
+		add_to_temp_variable = { num_of_factories_and_queued@arms_factory = 1 }
+		set_temp_variable = { num_of_factories_and_queued@industrial_complex = num_of_civilian_factories }
+		add_to_temp_variable = { num_of_factories_and_queued@industrial_complex = ai_queued@industrial_complex }
+		add_to_temp_variable = { num_of_factories_and_queued@industrial_complex = 1 }
+		set_temp_variable = { num_of_factories_and_queued@dockyard = num_of_naval_factories }
+		add_to_temp_variable = { num_of_factories_and_queued@dockyard = ai_queued@dockyard }
+		add_to_temp_variable = { num_of_factories_and_queued@dockyard = 1 }
+	
+	
+		set_temp_variable = { max_level@industrial_complex = mtth:max_industrial_complex }
+		set_temp_variable = { max_level@arms_factory = mtth:max_arms_factory }
+		set_temp_variable = { max_level@dockyard = mtth:max_dockyard }
+
+		if = { #if we are focusing on MIC, we only queue CIC 1 level per state
+			limit = {
+				has_country_flag = ai_military_build_switch
+			}
+			set_temp_variable = { max_queue@industrial_complex = 1 }
+		}
+		
+		set_temp_variable = { max_queue@dockyard = 1 } #costs a lot so we need to be very careful about spamming them
+		
+		ai_get_default_slot_scores = yes
+		
+		for_each_scope_loop = {
+			array = ai_default_slot_scores
+				
+			set_temp_variable = { ratio = num_of_factories_and_queued@arms_factory } #100
+			divide_temp_variable = { ratio = num_of_factories_and_queued@industrial_complex } #50 = 2
+			
+			set_temp_variable = { NIC_ratio = num_of_factories_and_queued@dockyard } #20
+			divide_temp_variable = { NIC_ratio = num_of_factories_and_queued@arms_factory } #100 = 0.2
+			
+			#log = "[?MIC_to_CIC_ratio] MIC_to_CIC_ratio"
+			#log = "[?ratio] actual ratio"
+			#log = "[?NIC_ratio] actual NIC_ratio"
+			if = {
+				limit = {
+					check_variable = { NIC_to_MIC_ratio > NIC_ratio }
+					
+					# check which ratio is worse, NIC or MIC to decide which of the 2 to queue
+					
+					set_temp_variable = { NIC_ratio_of_target = NIC_ratio }
+					divide_temp_variable = { NIC_ratio_of_target = NIC_to_MIC_ratio }
+					
+					set_temp_variable = { MIC_ratio_of_target = ratio }
+					divide_temp_variable = { MIC_ratio_of_target = MIC_to_CIC_ratio }
+					
+					## check if NIC ratio is worse than MIC ratio 
+					
+					if = {
+						limit = {
+							check_variable = { NIC_ratio_of_target > MIC_ratio_of_target }
+						}
+						log = "[This.GetTag] | DELAYED DOCKYARD QUEUE FOR MIC | NIC: [?NIC_ratio_of_target] | MIC [?MIC_ratio_of_target]"
+						always = no
+					}
+				}
+				#log = "[?NIC_to_MIC_ratio] NIC_to_MIC_ratio > [?NIC_ratio] actual NIC_ratio"
+				set_temp_variable = { building_type = token:dockyard }
+			}
+			else_if = {
+				limit = {
+					check_variable = { MIC_to_CIC_ratio < ratio }
+				}
+				#log = "[?ratio] MIC to CIC ratio > [?MIC_to_CIC_ratio] MIC_to_CIC_ratio"
+				set_temp_variable = { building_type = token:industrial_complex }
+			}
+			else = {
+				set_temp_variable = { building_type = token:arms_factory }
+			}
+				
+			
+			if = {
+				limit = {
+					check_variable = { ai_queue_num@var:building_type = 0 } #no active queue in this state already
+					
+					check_variable = { max_level@var:building_type > building_level@var:building_type }
+					
+					if = {
+						limit = {
+							check_variable = { building_type = token:dockyard }
+						}
+						is_coastal = yes
+					}
+				}
+				# levels to queue
+				set_temp_variable = { level = max_level@var:building_type }
+				subtract_from_temp_variable = { level = building_level@var:building_type }
+				clamp_temp_variable = { var = level min = 1 max = max_queue@var:building_type?99 }
+				set_variable = { ai_queue_num@var:building_type = level }
+
+				# infra speed
+				set_temp_variable = { infra_bonus = building_level@infrastructure }
+				multiply_temp_variable = { infra_bonus = 0.05 }
+				
+				add_to_array = { ROOT.ai_queue = building_type }
+				add_to_array = { ROOT.ai_queue_infra = infra_bonus }
+				add_to_array = { ROOT.ai_queue_progress = 0 }
+				add_to_array = { ROOT.ai_queue_location = THIS }
+				
+				add_to_variable = { ROOT.ai_queued@var:building_type = level }
+				
+				add_to_temp_variable = { num_of_factories_and_queued@var:building_type = level }
+				
+				#log = "Queue [?level] [?building_type.GetTokenKey] in [This.GetName]"
+				
+				if = {
+					limit = {
+						check_variable = { ROOT.ai_queue^num > max_queue_entries }
+					}
+					#log = "Max Queue Entries ([?max_queue_entries]) reached"
+					set_temp_variable = { break = 1 }
+				}
+			}
+		}
+		
+		if = {
+			limit = {
+				check_variable = { break = 0 }
+			}
+			
+			## There is still unused IC. queue smth to use it here
+		}
+	}
+	
+}
+
+ai_queue_fuel_silo = {
+	if = {
+		limit = {
+			check_variable = { ic_ratio/fuel_silo > 0 }
+			
+			ai_can_build_fuel_silo = yes
+			
+			set_temp_variable = { max_queue = ai_num_ic_assigned }
+			multiply_temp_variable = { max_queue = ic_ratio/fuel_silo }
+			divide_temp_variable = { max_queue = 24 }
+			add_to_temp_variable = { max_queue = 0.5 }
+			round_temp_variable = max_queue
+			
+			check_variable = { ai_queued@fuel_silo < max_queue }
+			subtract_from_temp_variable = { max_queue = ai_queued@fuel_silo }
+		}
+	
+		ai_update_fuel_silo_target = yes
+		
+		if = {
+			limit = {
+				set_temp_variable = { fuel_silo_target = ai_fuel_silo_target }
+				divide_temp_variable = { fuel_silo_target = @FUEL_SILO_TO_SCORE }
+				round_temp_variable = fuel_silo_target
+				set_temp_variable = { queued = num_fuel_silo }
+				add_to_temp_variable = { queued = ai_queued@fuel_silo }
+				check_variable = { fuel_silo_target > queued }
+				
+				set_temp_variable = { queue_limit = fuel_silo_target }
+				subtract_from_temp_variable = { queue_limit = num_fuel_silo }
+				clamp_temp_variable = { var = queue_limit max = max_queue }
+			}
+
+			ai_get_default_slot_scores = yes
+		
+			for_each_scope_loop = { array = ai_default_slot_scores
+
+				if = { 
+					limit = {
+						free_building_slots = { building = fuel_silo size > 0 include_locked = no }
+					}
+					subtract_from_temp_variable = { queue_limit = 1 }
+					
+					set_variable = { ai_queue_num@token:fuel_silo = 1 }
+
+					set_temp_variable = { infra_speed = building_level@infrastructure }
+					multiply_temp_variable = { infra_speed = 0.05 }
+					
+					add_to_array = { array = ROOT.ai_queue index = ai_highest_construction_pending_index value = token:fuel_silo }
+					add_to_array = { array = ROOT.ai_queue_infra index = ai_highest_construction_pending_index value = infra_speed }
+					add_to_array = { array = ROOT.ai_queue_progress index = ai_highest_construction_pending_index value = 0 }
+					add_to_array = { array = ROOT.ai_queue_location index = ai_highest_construction_pending_index value = THIS }
+					
+					add_to_variable = { ROOT.ai_queued@fuel_silo = 1 }
+					
+					log = "[ROOT.GetTag]| [GetYear] [GetMonth] | QUEUE FUEL SILO in [This.GetName]"
+					
+					if = {
+						limit = {
+							check_variable = { queue_limit < 1 }
+						}
+						set_temp_variable = { break = 1 }
+					}
+				}
+				
+			}
+			
+		}
+		
+	}
+}
+
+ai_queue_radar_station = {
+	
+	if = {
+		limit = {
+			check_variable = { ic_ratio/radar_station > 0 }
+			
+			ai_can_build_radar_station = yes
+			
+			set_temp_variable = { max_queue = ai_num_ic_assigned }
+			multiply_temp_variable = { max_queue = ic_ratio/radar_station }
+			divide_temp_variable = { max_queue = 24 }
+			add_to_temp_variable = { max_queue = 0.5 }
+			round_temp_variable = max_queue
+			
+			check_variable = { ai_queued@radar_station < max_queue }
+			subtract_from_temp_variable = { max_queue = ai_queued@radar_station }
+		}
+
+		set_temp_variable = { ai_required_radar_score = @AI_RADAR_MIN_SCORE }
+		set_temp_variable = { ai_max_radar_level = mtth:max_radar_level }
+		set_temp_variable = { queue_limit = max_queue }
+
+		ai_get_radar_slot_scores = yes
+	
+		for_each_scope_loop = { array = ai_radar_slot_scores
+
+			if = { 
+				limit = {
+					check_variable = { ai_radar_slot_score > ai_required_radar_score }
+					free_building_slots = { building = radar_station size > 0 include_locked = no }
+					check_variable = { ai_queue_num@radar_station = 0 }
+				}
+				subtract_from_temp_variable = { queue_limit = 1 }
+
+				set_variable = { ai_queue_num@token:radar_station = 1 }
+
+				set_temp_variable = { infra_speed = building_level@infrastructure }
+				multiply_temp_variable = { infra_speed = 0.05 }
+				
+				add_to_array = { array = ROOT.ai_queue index = ai_highest_construction_pending_index value = token:radar_station }
+				add_to_array = { array = ROOT.ai_queue_infra index = ai_highest_construction_pending_index value = infra_speed }
+				add_to_array = { array = ROOT.ai_queue_progress index = ai_highest_construction_pending_index value = 0 }
+				add_to_array = { array = ROOT.ai_queue_location index = ai_highest_construction_pending_index value = THIS }
+				
+				add_to_variable = { ROOT.ai_queued@radar_station = 1 }
+				
+					log = "[ROOT.GetTag]| [GetYear] [GetMonth] | QUEUE RADAR STATION in [This.GetName]"
+				
+				if = {
+					limit = {
+						check_variable = { queue_limit < 1 }
+					}
+					set_temp_variable = { break = 1 }
+				}
+			}
+			
+		}
+		
+	}
+}
+	
+ai_queue_synthetic_refinery = {
+	
+	if = {
+		limit = {
+			check_variable = { ic_ratio/synthetic_refinery > 0 }
+			
+			ai_can_build_synthetic_refinery = yes
+			
+			set_temp_variable = { max_queue = ai_num_ic_assigned }
+			multiply_temp_variable = { max_queue = ic_ratio/synthetic_refinery }
+			divide_temp_variable = { max_queue = 24 }
+			add_to_temp_variable = { max_queue = 0.5 }
+			round_temp_variable = max_queue
+			
+			check_variable = { ai_queued@synthetic_refinery < max_queue }
+			subtract_from_temp_variable = { max_queue = ai_queued@synthetic_refinery }
+		}
+	
+		ai_update_synthetic_refinery_target = yes
+		
+		if = {
+			limit = {
+				set_temp_variable = { synthetic_refinery_target = ai_fuel_target }
+				divide_temp_variable = { synthetic_refinery_target = @FUEL_TO_SCORE_BASE }
+				round_temp_variable = synthetic_refinery_target
+				set_temp_variable = { queued = num_refinery@fuel }
+				add_to_temp_variable = { queued = ai_queued@synthetic_refinery }
+				check_variable = { synthetic_refinery_target > queued }
+				
+				set_temp_variable = { queue_limit = synthetic_refinery_target }
+				subtract_from_temp_variable = { queue_limit = num_refinery@fuel }
+				clamp_temp_variable = { var = queue_limit max = max_queue }
+			}
+
+			ai_get_default_slot_scores = yes
+		
+			for_each_scope_loop = { array = ai_default_slot_scores
+
+				if = { 
+					limit = {
+						free_building_slots = { building = synthetic_refinery size > 0 include_locked = no }
+						check_variable = { ai_queue_num@synthetic_refinery = 0 }
+					}
+					subtract_from_temp_variable = { queue_limit = 1 }
+
+					set_variable = { ai_queue_num@token:synthetic_refinery = 1 }
+
+					set_temp_variable = { infra_speed = building_level@infrastructure }
+					multiply_temp_variable = { infra_speed = 0.05 }
+					
+					add_to_array = { array = ROOT.ai_queue index = ai_highest_construction_pending_index value = token:synthetic_refinery }
+					add_to_array = { array = ROOT.ai_queue_infra index = ai_highest_construction_pending_index value = infra_speed }
+					add_to_array = { array = ROOT.ai_queue_progress index = ai_highest_construction_pending_index value = 0 }
+					add_to_array = { array = ROOT.ai_queue_location index = ai_highest_construction_pending_index value = THIS }
+					
+					add_to_variable = { ROOT.ai_queued@synthetic_refinery = 1 }
+					
+					log = "[ROOT.GetTag]| [GetYear] [GetMonth] | QUEUE SYNTHETIC REFINERY in [This.GetName]"
+					
+					if = {
+						limit = {
+							check_variable = { queue_limit < 1 }
+						}
+						set_temp_variable = { break = 1 }
+					}
+				}
+				
+			}
+			
+		}
+		
+	}
+}
+
+ai_queue_synthetic_rubber_refinery = {
+	
+	if = {
+		limit = {
+			check_variable = { ic_ratio/synthetic_rubber_refinery > 0 }
+			
+			ai_can_build_synthetic_rubber_refinery = yes
+			
+			set_temp_variable = { max_queue = ai_num_ic_assigned }
+			multiply_temp_variable = { max_queue = ic_ratio/synthetic_rubber_refinery }
+			divide_temp_variable = { max_queue = 24 }
+			add_to_temp_variable = { max_queue = 0.5 }
+			round_temp_variable = max_queue
+			
+			check_variable = { ai_queued@synthetic_rubber_refinery < max_queue }
+			subtract_from_temp_variable = { max_queue = ai_queued@synthetic_rubber_refinery }
+		}
+	
+		ai_update_synthetic_rubber_refinery_target = yes
+		
+		if = {
+			limit = {
+				set_temp_variable = { synthetic_rubber_refinery_target = ai_rubber_refinery_target }
+				divide_temp_variable = { synthetic_rubber_refinery_target = @RUBBER_REFINERY_TO_SCORE }
+				round_temp_variable = synthetic_rubber_refinery_target
+				set_temp_variable = { queued = num_refinery@rubber }
+				add_to_temp_variable = { queued = ai_queued@synthetic_rubber_refinery }
+				check_variable = { synthetic_rubber_refinery_target > queued }
+				
+				set_temp_variable = { queue_limit = synthetic_rubber_refinery_target }
+				subtract_from_temp_variable = { queue_limit = num_refinery@rubber }
+				clamp_temp_variable = { var = queue_limit max = max_queue }
+			}
+
+			ai_get_default_slot_scores = yes
+		
+			for_each_scope_loop = { array = ai_default_slot_scores
+
+				if = { 
+					limit = {
+						free_building_slots = { building = synthetic_rubber_refinery size > 0 include_locked = no }
+						check_variable = { ai_queue_num@synthetic_rubber_refinery = 0 }
+					}
+					subtract_from_temp_variable = { queue_limit = 1 }
+					
+					set_variable = { ai_queue_num@token:synthetic_rubber_refinery = 1 }
+
+					set_temp_variable = { infra_speed = building_level@infrastructure }
+					multiply_temp_variable = { infra_speed = 0.05 }
+					
+					add_to_array = { array = ROOT.ai_queue index = ai_highest_construction_pending_index value = token:synthetic_rubber_refinery }
+					add_to_array = { array = ROOT.ai_queue_infra index = ai_highest_construction_pending_index value = infra_speed }
+					add_to_array = { array = ROOT.ai_queue_progress index = ai_highest_construction_pending_index value = 0 }
+					add_to_array = { array = ROOT.ai_queue_location index = ai_highest_construction_pending_index value = THIS }
+					
+					add_to_variable = { ROOT.ai_queued@synthetic_rubber_refinery = 1 }
+					
+					log = "[ROOT.GetTag]| [GetYear] [GetMonth] | QUEUE RUBBER REFINERY in [This.GetName]"
+					
+					if = {
+						limit = {
+							check_variable = { queue_limit < 1 }
+						}
+						set_temp_variable = { break = 1 }
+					}
+				}
+				
+			}
+			
+		}
+		
+	}
+}
+
+ai_queue_shipyard = {
+	
+	if = {
+		limit = {
+			check_variable = { ic_ratio/shipyard > 0 }
+			
+			ai_can_build_shipyard = yes
+			
+			set_temp_variable = { max_queue = ai_num_ic_assigned }
+			multiply_temp_variable = { max_queue = ic_ratio/shipyard }
+			divide_temp_variable = { max_queue = 24 }
+			add_to_temp_variable = { max_queue = 0.5 }
+			round_temp_variable = max_queue
+			
+			check_variable = { ai_queued@shipyard < max_queue }
+			subtract_from_temp_variable = { max_queue = ai_queued@shipyard }
+		}
+
+		set_temp_variable = { queue_limit = max_queue }
+		set_temp_variable = { limit = 20 }
+		subtract_from_temp_variable = { limit = num_active_and_queued }
+		clamp_temp_variable = { var = queue_limit max = limit }
+			
+		ai_get_default_slot_scores = yes
+	
+		for_each_scope_loop = { array = ai_default_slot_scores
+
+			if = { 
+				limit = {
+					is_coastal = yes
+					free_building_slots = { building = shipyard size > 0 include_locked = no }
+					check_variable = { ai_queue_num@shipyard = 0 }
+				}
+				subtract_from_temp_variable = { queue_limit = 1 }
+
+				set_variable = { ai_queue_num@token:shipyard = 1 }
+
+				set_temp_variable = { infra_speed = building_level@infrastructure }
+				multiply_temp_variable = { infra_speed = 0.05 }
+				
+				add_to_array = { array = ROOT.ai_queue index = ai_highest_construction_pending_index value = token:shipyard }
+				add_to_array = { array = ROOT.ai_queue_infra index = ai_highest_construction_pending_index value = infra_speed }
+				add_to_array = { array = ROOT.ai_queue_progress index = ai_highest_construction_pending_index value = 0 }
+				add_to_array = { array = ROOT.ai_queue_location index = ai_highest_construction_pending_index value = THIS }
+				
+				add_to_variable = { ROOT.ai_queued@shipyard = 1 }
+				
+				log = "[ROOT.GetTag]| [GetYear] [GetMonth] | QUEUE SHIPYARD in [This.GetName]"
+				
+				if = {
+					limit = {
+						check_variable = { queue_limit < 1 }
+					}
+					set_temp_variable = { break = 1 }
+				}
+			}
+			
+		}
+		
+	}
+}
+
+ai_queue_subyard = {
+	
+	if = {
+		limit = {
+			check_variable = { ic_ratio/subyard > 0 }
+			
+			ai_can_build_subyard = yes
+			
+			set_temp_variable = { max_queue = ai_num_ic_assigned }
+			multiply_temp_variable = { max_queue = ic_ratio/subyard }
+			divide_temp_variable = { max_queue = 24 }
+			add_to_temp_variable = { max_queue = 0.5 }
+			round_temp_variable = max_queue
+			
+			check_variable = { ai_queued@subyard < max_queue }
+			subtract_from_temp_variable = { max_queue = ai_queued@subyard }
+		}
+
+		set_temp_variable = { queue_limit = max_queue }
+		set_temp_variable = { limit = 20 }
+		subtract_from_temp_variable = { limit = num_active_and_queued }
+		clamp_temp_variable = { var = queue_limit max = limit }
+			
+		ai_get_default_slot_scores = yes
+	
+		for_each_scope_loop = { array = ai_default_slot_scores
+
+			if = { 
+				limit = {
+					is_coastal = yes
+					free_building_slots = { building = subyard size > 0 include_locked = no }
+					check_variable = { ai_queue_num@subyard = 0 }
+				}
+				subtract_from_temp_variable = { queue_limit = 1 }
+
+				set_variable = { ai_queue_num@token:subyard = 1 }
+
+				set_temp_variable = { infra_speed = building_level@infrastructure }
+				multiply_temp_variable = { infra_speed = 0.05 }
+				
+				add_to_array = { array = ROOT.ai_queue index = ai_highest_construction_pending_index value = token:subyard }
+				add_to_array = { array = ROOT.ai_queue_infra index = ai_highest_construction_pending_index value = infra_speed }
+				add_to_array = { array = ROOT.ai_queue_progress index = ai_highest_construction_pending_index value = 0 }
+				add_to_array = { array = ROOT.ai_queue_location index = ai_highest_construction_pending_index value = THIS }
+				
+				add_to_variable = { ROOT.ai_queued@subyard = 1 }
+				
+				log = "[ROOT.GetTag]| [GetYear] [GetMonth] | QUEUE SUBYARD in [This.GetName]"
+				
+				if = {
+					limit = {
+						check_variable = { queue_limit < 1 }
+					}
+					set_temp_variable = { break = 1 }
+				}
+			}
+			
+		}
+		
+	}
+}
+
+ai_queue_infrastructure = {
+	
+	if = {
+		limit = {
+			check_variable = { ic_ratio/infrastructure > 0 }
+			
+			ai_can_build_infrastructure = yes
+			
+			set_temp_variable = { max_queue = ai_num_ic_assigned }
+			multiply_temp_variable = { max_queue = ic_ratio/infrastructure }
+			divide_temp_variable = { max_queue = 24 }
+			add_to_temp_variable = { max_queue = 0.5 }
+			round_temp_variable = max_queue
+			
+			check_variable = { ai_queued@infrastructure < max_queue }
+			subtract_from_temp_variable = { max_queue = ai_queued@infrastructure }
+		}
+
+		set_temp_variable = { queue_limit = max_queue }
+		
+		ai_get_resource_slot_scores = yes
+	
+		for_each_scope_loop = { array = ai_resource_slot_scores
+
+			if = { 
+				limit = {
+					free_building_slots = { building = infrastructure size > 0 include_locked = no }
+					check_variable = { ai_queue_num@infrastructure = 0 }
+				}
+				subtract_from_temp_variable = { queue_limit = 1 }
+
+				set_variable = { ai_queue_num@token:infrastructure = 1 }
+
+				add_to_array = { array = ROOT.ai_queue index = ai_highest_construction_pending_index value = token:infrastructure }
+				add_to_array = { array = ROOT.ai_queue_infra index = ai_highest_construction_pending_index value = 0 }
+				add_to_array = { array = ROOT.ai_queue_progress index = ai_highest_construction_pending_index value = 0 }
+				add_to_array = { array = ROOT.ai_queue_location index = ai_highest_construction_pending_index value = THIS }
+				
+				add_to_variable = { ROOT.ai_queued@infrastructure = 1 }
+				
+				log = "[ROOT.GetTag]| [GetYear] [GetMonth] | QUEUE INFRASTRUCTURE in [This.GetName] | SCORE [?ai_resource_slot_score] > [?infra_threshold]"
+				
+				if = {
+					limit = {
+						check_variable = { queue_limit < 1 }
+					}
+					set_temp_variable = { break = 1 }
+				}
+			}
+			
+		}
+		
+	}
+}
+
+ai_queue_air_assembly = {
+	
+	if = {
+		limit = {
+			check_variable = { ic_ratio/air_assembly > 0 }
+			
+			ai_can_build_air_assembly = yes
+			
+			set_temp_variable = { max_queue = ai_num_ic_assigned }
+			multiply_temp_variable = { max_queue = ic_ratio/air_assembly }
+			
+			set_temp_variable = { allocate_mult = ai_delta_air_assembly}
+			divide_temp_variable = { allocate_mult = 15}
+			clamp_temp_variable = { var = allocate_mult min = 0.75 max = 2.5}
+			multiply_temp_variable = { max_queue = allocate_mult }
+			
+			divide_temp_variable = { max_queue = 24 }
+			add_to_temp_variable = { max_queue = 0.5 }
+			
+			round_temp_variable = max_queue
+			
+			check_variable = { ai_queued@air_assembly < max_queue }
+			subtract_from_temp_variable = { max_queue = ai_queued@air_assembly }
+		}
+
+		set_temp_variable = { queue_limit = max_queue }
+		
+		ai_get_default_slot_scores = yes
+	
+		for_each_scope_loop = { array = ai_default_slot_scores
+
+			if = { 
+				limit = {
+					free_building_slots = { building = air_assembly size > 0 include_locked = no }
+					check_variable = { ai_queue_num@air_assembly = 0 }
+				}
+				subtract_from_temp_variable = { queue_limit = 1 }
+
+				set_variable = { ai_queue_num@token:air_assembly = 1 }
+
+				add_to_array = { array = ROOT.ai_queue index = ai_highest_construction_pending_index value = token:air_assembly }
+				add_to_array = { array = ROOT.ai_queue_infra index = ai_highest_construction_pending_index value = 0 }
+				add_to_array = { array = ROOT.ai_queue_progress index = ai_highest_construction_pending_index value = 0 }
+				add_to_array = { array = ROOT.ai_queue_location index = ai_highest_construction_pending_index value = THIS }
+				
+				add_to_variable = { ROOT.ai_queued@air_assembly = 1 }
+				
+					log = "[ROOT.GetTag]| [GetYear] [GetMonth] | QUEUE AIR ASSEMBLY in [This.GetName]"
+				
+				if = {
+					limit = {
+						check_variable = { queue_limit < 1 }
+					}
+					set_temp_variable = { break = 1 }
+				}
+			}
+			
+		}
+		
+	}
+}
+
+ai_queue_steel_refinery = {
+	
+	if = {
+		limit = {
+			check_variable = { ic_ratio/steel_refinery > 0 }
+			
+			ai_can_build_steel_refinery = yes
+			
+			set_temp_variable = { max_queue = ai_num_ic_assigned }
+			multiply_temp_variable = { max_queue = ic_ratio/steel_refinery }
+			divide_temp_variable = { max_queue = 24 }
+			add_to_temp_variable = { max_queue = 0.5 }
+			round_temp_variable = max_queue
+			
+			check_variable = { ai_queued@steel_refinery < max_queue }
+			subtract_from_temp_variable = { max_queue = ai_queued@steel_refinery }
+		}
+
+		set_temp_variable = { queue_limit = max_queue }
+		
+		ai_get_default_slot_scores = yes
+	
+		for_each_scope_loop = { array = ai_default_slot_scores
+
+			if = { 
+				limit = {
+					free_building_slots = { building = steel_refinery size > 0 include_locked = no }
+					check_variable = { ai_queue_num@steel_refinery = 0 }
+				}
+				subtract_from_temp_variable = { queue_limit = 1 }
+
+				set_variable = { ai_queue_num@token:steel_refinery = 1 }
+
+				add_to_array = { array = ROOT.ai_queue index = ai_highest_construction_pending_index value = token:steel_refinery }
+				add_to_array = { array = ROOT.ai_queue_infra index = ai_highest_construction_pending_index value = 0 }
+				add_to_array = { array = ROOT.ai_queue_progress index = ai_highest_construction_pending_index value = 0 }
+				add_to_array = { array = ROOT.ai_queue_location index = ai_highest_construction_pending_index value = THIS }
+				
+				add_to_variable = { ROOT.ai_queued@steel_refinery = 1 }
+				
+				log = "[ROOT.GetTag]| [GetYear] [GetMonth] | QUEUE STEEL REFINERY in [This.GetName]"
+				
+				if = {
+					limit = {
+						check_variable = { queue_limit < 1 }
+					}
+					set_temp_variable = { break = 1 }
+				}
+			}
+			
+		}
+		
+	}
+}
+
+ai_queue_facilities = {
+	
+	if = {
+		limit = { # simple triggers, only ever build 1 facility
+			check_variable = { ai_queued@land_facility = 0 }
+			
+			ai_can_build_land_facility = yes 
+		}
+
+		set_temp_variable = { queue_limit = max_queue }
+		
+		ai_get_default_slot_scores = yes
+	
+		for_each_scope_loop = { array = ai_default_slot_scores
+
+			if = { 
+				limit = {
+					can_construct_building = land_facility
+					check_variable = { ai_queue_num@land_facility = 0 }
+					check_variable = { ai_queue_num@air_facility = 0 }
+					check_variable = { ai_queue_num@naval_facility = 0 }
+					check_variable = { ai_queue_num@electronics_facility = 0 }
+					check_variable = { ai_queue_num@nuclear_facility = 0 }
+				}
+				subtract_from_temp_variable = { queue_limit = 1 }
+
+				set_variable = { ai_queue_num@token:land_facility = 1 }
+
+				add_to_array = { array = ROOT.ai_queue index = ai_highest_construction_pending_index value = token:land_facility }
+				add_to_array = { array = ROOT.ai_queue_infra index = ai_highest_construction_pending_index value = 0 }
+				add_to_array = { array = ROOT.ai_queue_progress index = ai_highest_construction_pending_index value = 0 }
+				add_to_array = { array = ROOT.ai_queue_location index = ai_highest_construction_pending_index value = THIS }
+				
+				add_to_variable = { ROOT.ai_queued@land_facility = 1 }
+				
+				log = "[ROOT.GetTag]| [GetYear] [GetMonth] | QUEUE LAND FACILITY in [This.GetName]"
+				
+				if = {
+					limit = {
+						check_variable = { queue_limit < 1 }
+					}
+					set_temp_variable = { break = 1 }
+				}
+			}
+			
+		}
+		
+	}
+	
+	if = {
+		limit = { # simple triggers, only ever build 1 facility
+			check_variable = { ai_queued@electronics_facility = 0 }
+			
+			ai_can_build_electronics_facility = yes 
+		}
+
+		set_temp_variable = { queue_limit = max_queue }
+		
+		ai_get_default_slot_scores = yes
+	
+		for_each_scope_loop = { array = ai_default_slot_scores
+
+			if = { 
+				limit = {
+					can_construct_building = electronics_facility
+					check_variable = { ai_queue_num@land_facility = 0 }
+					check_variable = { ai_queue_num@air_facility = 0 }
+					check_variable = { ai_queue_num@naval_facility = 0 }
+					check_variable = { ai_queue_num@electronics_facility = 0 }
+					check_variable = { ai_queue_num@nuclear_facility = 0 }
+				}
+				subtract_from_temp_variable = { queue_limit = 1 }
+
+				set_variable = { ai_queue_num@token:electronics_facility = 1 }
+
+				add_to_array = { array = ROOT.ai_queue index = ai_highest_construction_pending_index value = token:electronics_facility }
+				add_to_array = { array = ROOT.ai_queue_infra index = ai_highest_construction_pending_index value = 0 }
+				add_to_array = { array = ROOT.ai_queue_progress index = ai_highest_construction_pending_index value = 0 }
+				add_to_array = { array = ROOT.ai_queue_location index = ai_highest_construction_pending_index value = THIS }
+				
+				add_to_variable = { ROOT.ai_queued@electronics_facility = 1 }
+				
+				log = "[ROOT.GetTag]| [GetYear] [GetMonth] | QUEUE ELECTRONICS FACILITY in [This.GetName]"
+				
+				if = {
+					limit = {
+						check_variable = { queue_limit < 1 }
+					}
+					set_temp_variable = { break = 1 }
+				}
+			}
+			
+		}
+		
+	}
+
+	if = {
+		limit = { # simple triggers, only ever build 1 facility
+			check_variable = { ai_queued@naval_facility = 0 }
+			
+			ai_can_build_naval_facility = yes 
+		}
+
+		set_temp_variable = { queue_limit = max_queue }
+		
+		ai_get_default_slot_scores = yes
+	
+		for_each_scope_loop = { array = ai_default_slot_scores
+
+			if = { 
+				limit = {
+					can_construct_building = naval_facility
+					check_variable = { ai_queue_num@land_facility = 0 }
+					check_variable = { ai_queue_num@air_facility = 0 }
+					check_variable = { ai_queue_num@naval_facility = 0 }
+					check_variable = { ai_queue_num@electronics_facility = 0 }
+					check_variable = { ai_queue_num@nuclear_facility = 0 }
+				}
+				subtract_from_temp_variable = { queue_limit = 1 }
+
+				set_variable = { ai_queue_num@token:naval_facility = 1 }
+
+				add_to_array = { array = ROOT.ai_queue index = ai_highest_construction_pending_index value = token:naval_facility }
+				add_to_array = { array = ROOT.ai_queue_infra index = ai_highest_construction_pending_index value = 0 }
+				add_to_array = { array = ROOT.ai_queue_progress index = ai_highest_construction_pending_index value = 0 }
+				add_to_array = { array = ROOT.ai_queue_location index = ai_highest_construction_pending_index value = THIS }
+				
+				add_to_variable = { ROOT.ai_queued@naval_facility = 1 }
+				
+				log = "[ROOT.GetTag]| [GetYear] [GetMonth] | QUEUE ELECTRONICS FACILITY in [This.GetName]"
+				
+				if = {
+					limit = {
+						check_variable = { queue_limit < 1 }
+					}
+					set_temp_variable = { break = 1 }
+				}
+			}
+			
+		}
+		
+	}
+	
+	if = {
+		limit = { # simple triggers, only ever build 1 facility
+			check_variable = { ai_queued@air_facility = 0 }
+			
+			ai_can_build_air_facility = yes 
+		}
+
+		set_temp_variable = { queue_limit = max_queue }
+		
+		ai_get_default_slot_scores = yes
+	
+		for_each_scope_loop = { array = ai_default_slot_scores
+
+			if = { 
+				limit = {
+					can_construct_building = air_facility
+					check_variable = { ai_queue_num@land_facility = 0 }
+					check_variable = { ai_queue_num@air_facility = 0 }
+					check_variable = { ai_queue_num@naval_facility = 0 }
+					check_variable = { ai_queue_num@electronics_facility = 0 }
+					check_variable = { ai_queue_num@nuclear_facility = 0 }
+				}
+				subtract_from_temp_variable = { queue_limit = 1 }
+
+				set_variable = { ai_queue_num@token:air_facility = 1 }
+
+				add_to_array = { array = ROOT.ai_queue index = ai_highest_construction_pending_index value = token:air_facility }
+				add_to_array = { array = ROOT.ai_queue_infra index = ai_highest_construction_pending_index value = 0 }
+				add_to_array = { array = ROOT.ai_queue_progress index = ai_highest_construction_pending_index value = 0 }
+				add_to_array = { array = ROOT.ai_queue_location index = ai_highest_construction_pending_index value = THIS }
+				
+				add_to_variable = { ROOT.ai_queued@air_facility = 1 }
+				
+				log = "[ROOT.GetTag]| [GetYear] [GetMonth] | QUEUE ELECTRONICS FACILITY in [This.GetName]"
+				
+				if = {
+					limit = {
+						check_variable = { queue_limit < 1 }
+					}
+					set_temp_variable = { break = 1 }
+				}
+			}
+			
+		}
+		
+	}
+	
+	if = {
+		limit = { # simple triggers, only ever build 1 facility
+			check_variable = { ai_queued@nuclear_facility = 0 }
+			
+			ai_can_build_nuclear_facility = yes 
+		}
+
+		set_temp_variable = { queue_limit = max_queue }
+		
+		ai_get_default_slot_scores = yes
+	
+		for_each_scope_loop = { array = ai_default_slot_scores
+
+			if = { 
+				limit = {
+					can_construct_building = nuclear_facility
+					check_variable = { ai_queue_num@land_facility = 0 }
+					check_variable = { ai_queue_num@air_facility = 0 }
+					check_variable = { ai_queue_num@naval_facility = 0 }
+					check_variable = { ai_queue_num@electronics_facility = 0 }
+					check_variable = { ai_queue_num@nuclear_facility = 0 }
+				}
+				subtract_from_temp_variable = { queue_limit = 1 }
+
+				set_variable = { ai_queue_num@token:nuclear_facility = 1 }
+
+				add_to_array = { array = ROOT.ai_queue index = ai_highest_construction_pending_index value = token:nuclear_facility }
+				add_to_array = { array = ROOT.ai_queue_infra index = ai_highest_construction_pending_index value = 0 }
+				add_to_array = { array = ROOT.ai_queue_progress index = ai_highest_construction_pending_index value = 0 }
+				add_to_array = { array = ROOT.ai_queue_location index = ai_highest_construction_pending_index value = THIS }
+				
+				add_to_variable = { ROOT.ai_queued@nuclear_facility = 1 }
+				
+				log = "[ROOT.GetTag]| [GetYear] [GetMonth] | QUEUE ELECTRONICS FACILITY in [This.GetName]"
+				
+				if = {
+					limit = {
+						check_variable = { queue_limit < 1 }
+					}
+					set_temp_variable = { break = 1 }
+				}
+			}
+			
+		}
+		
+	}
+}
+
+ai_queue_aluminium_refinery = {
+
+	if = {
+		limit = {
+			check_variable = { ic_ratio/aluminium_refinery > 0 }
+			
+			ai_can_build_aluminium_refinery = yes 
+			
+			set_temp_variable = { max_queue = ai_num_ic_assigned }
+			multiply_temp_variable = { max_queue = ic_ratio/aluminium_refinery }
+			
+			set_temp_variable = { allocate_mult = alu_plane_cap }
+			divide_temp_variable = { allocate_mult = mic_plane_cap }
+			multiply_temp_variable = { allocate_mult = ai_aluminium_refinery_need_factor?1 }
+			clamp_temp_variable = { var = allocate_mult min = 0 max = 1 }
+			add_to_temp_variable = { allocate_mult = 1 }
+			multiply_temp_variable = { max_queue = allocate_mult }
+			
+			divide_temp_variable = { max_queue = 24 }
+			add_to_temp_variable = { max_queue = 0.5 }
+			round_temp_variable = max_queue
+			
+			check_variable = { ai_queued@aluminium_refinery < max_queue }
+			subtract_from_temp_variable = { max_queue = ai_queued@aluminium_refinery }
+		}
+
+		set_temp_variable = { queue_limit = max_queue }
+		
+		ai_get_default_slot_scores = yes
+	
+		for_each_scope_loop = { array = ai_default_slot_scores
+
+			if = { 
+				limit = {
+					free_building_slots = { building = aluminium_refinery size > 0 include_locked = no }
+					check_variable = { ai_queue_num@aluminium_refinery = 0 }
+				}
+				subtract_from_temp_variable = { queue_limit = 1 }
+
+				set_variable = { ai_queue_num@token:aluminium_refinery = 1 }
+
+				add_to_array = { array = ROOT.ai_queue index = ai_highest_construction_pending_index value = token:aluminium_refinery }
+				add_to_array = { array = ROOT.ai_queue_infra index = ai_highest_construction_pending_index value = 0 }
+				add_to_array = { array = ROOT.ai_queue_progress index = ai_highest_construction_pending_index value = 0 }
+				add_to_array = { array = ROOT.ai_queue_location index = ai_highest_construction_pending_index value = THIS }
+				
+				add_to_variable = { ROOT.ai_queued@aluminium_refinery = 1 }
+				
+				log = "[ROOT.GetTag]| [GetYear] [GetMonth] | QUEUE ALUMINIUM REFINERY in [This.GetName]"
+				
+				if = {
+					limit = {
+						check_variable = { queue_limit < 1 }
+					}
+					set_temp_variable = { break = 1 }
+				}
+			}
+			
+		}
+		
+	}
+}
+
+ai_queue_storage = {
+	
+	if = {
+		limit = {
+			check_variable = { ic_ratio/storage > 0 }
+			
+			ai_can_build_storage = yes
+			
+			set_temp_variable = { max_queue = ai_num_ic_assigned }
+			multiply_temp_variable = { max_queue = ic_ratio/storage }
+			divide_temp_variable = { max_queue = 24 }
+			add_to_temp_variable = { max_queue = 0.5 }
+			round_temp_variable = max_queue
+			
+			check_variable = { ai_queued@storage < max_queue }
+			subtract_from_temp_variable = { max_queue = ai_queued@storage }
+		}
+
+		if = {
+			limit = {
+				set_temp_variable = { queued = num_storage@rubber }
+				add_to_temp_variable = { queued = num_storage@aluminium }
+				add_to_temp_variable = { queued = num_storage@steel }
+				add_to_temp_variable = { queued = num_storage@tungsten }
+				add_to_temp_variable = { queued = num_storage@chromium }
+				add_to_temp_variable = { queued = num_storage@iron }
+				add_to_temp_variable = { queued = num_storage@coal }
+				add_to_temp_variable = { queued = num_storage@bauxite }
+				add_to_temp_variable = { queued = ai_queued@storage }
+				check_variable = { building_target@storage > queued }
+				subtract_from_temp_variable = { queued = ai_queued@storage }
+				
+				set_temp_variable = { queue_limit = building_target@storage }
+				subtract_from_temp_variable = { queue_limit = queued }
+				clamp_temp_variable = { var = queue_limit max = max_queue }
+			}
+
+			ai_get_default_slot_scores = yes
+		
+			for_each_scope_loop = { array = ai_default_slot_scores
+
+				if = { 
+					limit = {
+						free_building_slots = { building = storage size > 0 include_locked = no }
+						check_variable = { ai_queue_num@storage = 0 }
+					}
+					subtract_from_temp_variable = { queue_limit = 1 }
+
+					set_variable = { ai_queue_num@token:storage = 1 }
+
+					add_to_array = { array = ROOT.ai_queue index = ai_highest_construction_pending_index value = token:storage }
+					add_to_array = { array = ROOT.ai_queue_infra index = ai_highest_construction_pending_index value = 0 }
+					add_to_array = { array = ROOT.ai_queue_progress index = ai_highest_construction_pending_index value = 0 }
+					add_to_array = { array = ROOT.ai_queue_location index = ai_highest_construction_pending_index value = THIS }
+					
+					add_to_variable = { ROOT.ai_queued@storage = 1 }
+					
+					log = "[ROOT.GetTag]| [GetYear] [GetMonth] | QUEUE STORAGE in [This.GetName]"
+					
+					if = {
+						limit = {
+							check_variable = { queue_limit < 1 }
+						}
+						set_temp_variable = { break = 1 }
+					}
+				}
+				
+			}
+		}
+	}
+}
+
+ai_queue_power_plant = {
+	
+	if = {
+		limit = {
+			check_variable = { ic_ratio/power_plant > 0 }
+			
+			ai_can_build_power_plant = yes
+			
+			set_temp_variable = { max_queue = ai_num_ic_assigned }
+			multiply_temp_variable = { max_queue = ic_ratio/power_plant }
+			divide_temp_variable = { max_queue = 24 }
+			add_to_temp_variable = { max_queue = 0.5 }
+			round_temp_variable = max_queue
+			
+			check_variable = { ai_queued@power_plant < max_queue }
+			subtract_from_temp_variable = { max_queue = ai_queued@power_plant }
+		}
+
+		set_temp_variable = { queue_limit = max_queue }
+		
+		ai_get_default_slot_scores = yes
+	
+		for_each_scope_loop = { array = ai_default_slot_scores
+
+			if = { 
+				limit = {
+					free_building_slots = { building = power_plant size > 0 include_locked = no }
+					check_variable = { ai_queue_num@power_plant = 0 }
+				}
+				subtract_from_temp_variable = { queue_limit = 1 }
+
+				set_variable = { ai_queue_num@token:power_plant = 1 }
+
+				add_to_array = { array = ROOT.ai_queue index = ai_highest_construction_pending_index value = token:power_plant }
+				add_to_array = { array = ROOT.ai_queue_infra index = ai_highest_construction_pending_index value = 0 }
+				add_to_array = { array = ROOT.ai_queue_progress index = ai_highest_construction_pending_index value = 0 }
+				add_to_array = { array = ROOT.ai_queue_location index = ai_highest_construction_pending_index value = THIS }
+				
+				add_to_variable = { ROOT.ai_queued@power_plant = 1 }
+				
+				log = "[ROOT.GetTag]| [GetYear] [GetMonth] | QUEUE POWER PLANT in [This.GetName]"
+				
+				if = {
+					limit = {
+						check_variable = { queue_limit < 1 }
+					}
+					set_temp_variable = { break = 1 }
+				}
+			}
+			
+		}
+		
+	}
+}
+
+ai_queue_air_base = {
+	if = {
+		limit = {
+			check_variable = { ic_ratio/air_base > 0 }
+			
+			ai_can_build_air_base = yes
+			
+			set_temp_variable = { airbase_ic_assigned = num_of_civilian_factories_available_for_projects }
+			multiply_temp_variable = { airbase_ic_assigned = ic_ratio/air_base }
+			round_temp_variable = airbase_ic_assigned
+			
+			NOT = {
+				AND = {
+					has_decision = ai_airbase_1
+					has_decision = ai_airbase_2
+					has_decision = ai_airbase_3
+				}
+			}
+		}
+
+		calculate_front_area_for_ai_airbase = yes
+		
+		set_temp_variable = { min_region_capacity = num_deployed_planes }
+		multiply_temp_variable = { min_region_capacity = ai_airbase_min_front_region_capacity }
+		
+		if = {
+			limit = { #any front region with more than X% full airbases or less than X% capacity
+				any_of = {
+					array = front_regions
+					
+					OR = {
+						#always = yes
+						check_variable = { airbase_filled@var:v > ai_airbase_region_max_capacity_used }
+						check_variable = { front_region_air_capacity@var:v < min_region_capacity }
+					}
+				}
+			}
+				
+			ai_get_airbase_slot_scores = yes
+		
+			set_temp_variable = { cost = global.building_cost@air_base }
+			
+			set_temp_variable = { total_daily_progress_available = 3.2 }
+			set_temp_variable = { factor = modifier@production_speed_air_base_factor }
+			add_to_temp_variable = { factor = modifier@production_speed_buildings_factor }
+			add_to_temp_variable = { factor = 1 }
+			multiply_temp_variable = { total_daily_progress_available = factor }
+			multiply_temp_variable = { total_daily_progress_available = airbase_ic_assigned }
+			
+			#log = "[?ai_airbase_slot_scores^num] ai_airbase_slot_scores"
+			for_each_loop = { array = ai_airbase_slot_scores
+				
+				var:v = {
+					if = { 
+						limit = {
+							check_variable = { ai_airbase_slot_score > 3 }
+						}
+						subtract_from_temp_variable = { queue_limit = 1 }
+
+						log = "[ROOT.GetTag]| [GetYear] [GetMonth] | QUEUE AIR BASE in [This.GetName] | Region: [?region] | Score: [?ai_airbase_slot_score]"
+						
+						set_temp_variable = { lvl_cost = building_level@air_base }
+						multiply_temp_variable = { lvl_cost = constant:building.per_level.air_base }
+						
+						set_temp_variable = { needed_progress_min = cost }
+						add_to_temp_variable = { needed_progress_min = lvl_cost }
+						divide_temp_variable = { needed_progress_min = ai_build_air_base_min_days }
+						
+						if = { #if available progress is higher than needed progress to have construction atleast as long as the minimum
+							limit = { # then subtract needed progress from available daily progress and set days for decision to min
+								check_variable = { total_daily_progress_available > needed_progress_min }
+								
+								# only split IC if we can actually queue more air bases in the next state
+								set_temp_variable = { next_potential_build = i }
+								add_to_temp_variable = { next_potential_build = 1 }
+								check_variable = { PREV.ai_airbase_slot_scores^num > next_potential_build }
+								var:PREV.ai_airbase_slot_scores^next_potential_build = {
+									check_variable = { ai_airbase_slot_score > 3 }
+								}
+							}
+							subtract_from_temp_variable = { total_daily_progress_available = needed_progress_min }
+							
+							#log = "[?days] DAYS SPLIT | [?cost] cost | [?total_daily_progress_available] total_daily_progress_available | [?needed_progress_min] needed_progress_min"
+							set_temp_variable = { days = ai_build_air_base_min_days }
+						}
+						else = { #if needed is higher than available, have it calculate days by cost / available progress
+							set_temp_variable = { days = cost }
+							add_to_temp_variable = { days = lvl_cost }
+							divide_temp_variable = { days = total_daily_progress_available }
+							
+							#log = "[?days] DAYS ELSE | [?cost]+[?lvl_cost] cost | [?total_daily_progress_available] total_daily_progress_available | [?needed_progress_min] needed_progress_min"
+							
+							set_temp_variable = { total_daily_progress_available = 0 }
+						}
+							
+						ROOT = {
+							if = {
+								limit = {
+									NOT = { has_decision = ai_airbase_1 }
+								}
+								set_variable = { ai_airbase_1 = PREV }
+								add_to_variable = { PREV.ai_queue_num@air_base = 1 }
+								set_variable = { ai_airbase_1_days = days }
+								activate_decision = ai_airbase_1
+							}
+							else_if = {
+								limit = {
+									NOT = { has_decision = ai_airbase_2 }
+								}
+								set_variable = { ai_airbase_2 = PREV }
+								add_to_variable = { PREV.ai_queue_num@air_base = 1 }
+								set_variable = { ai_airbase_2_days = days }
+								activate_decision = ai_airbase_2
+							}
+							else_if = {
+								limit = {
+									NOT = { has_decision = ai_airbase_3 }
+								}
+								set_variable = { ai_airbase_3 = PREV }
+								add_to_variable = { PREV.ai_queue_num@air_base = 1 }
+								set_variable = { ai_airbase_3_days = days }
+								activate_decision = ai_airbase_3
+							}
+						}
+						
+						if = {
+							limit = {
+								check_variable = { total_daily_progress_available < 0.001 }
+							}
+							set_temp_variable = { break = 1 }
+						}
+					}
+					
+				}
+			}
+		}
+	}
+}
+
+
+
+
+######################################################
+
+ai_get_default_slot_scores = {
+	if = {
+		limit = {
+			check_variable = { ai_has_default_slot_scores = 0 }
+		}
+		set_temp_variable = { ai_has_default_slot_scores = 1 }
+			
+		for_each_scope_loop = { array = controlled_states
+			
+			if = { 
+				limit = { 
+					is_fully_controlled_by = ROOT
+
+					free_building_slots = { building = dummy size > 0 include_locked = no }
+					impassable = no 
+				}
+
+				ai_get_default_slot_score = yes
+
+				for_each_loop = { array = ai_default_slot_scores
+
+					var:v = {
+						if = { limit = { check_variable = { PREV.ai_default_slot_score > ai_default_slot_score } }
+
+							add_to_temp_array = { array = ai_default_slot_scores index = i value = PREV.id }
+							set_temp_variable = { break = 1 }
+						}
+					}
+				}
+
+				if = { limit = { check_variable = { break = 0 } }
+					
+					add_to_temp_array = { array = ai_default_slot_scores value = THIS.id }
+				}
+				else = { set_temp_variable = { break = 0 } }
+			}
+		}
+	}
+}
+
+ai_get_default_slot_score = {
+
+	set_variable = { ai_default_slot_score = building_level@infrastructure }
+
+	if = { 
+		limit = { 
+			OR = {
+				is_core_of = ROOT
+				is_in_home_area = yes
+			}
+		} 
+		
+		multiply_variable = { ai_default_slot_score = 4 } 
+	}
+	
+	if = { 
+		limit = { 
+			any_neighbor_state = { 
+				CONTROLLER = { 
+					NOT = {
+						is_ally_with = ROOT 
+					}
+				}
+			} 
+		} 
+		
+		multiply_variable = { ai_default_slot_score = 0.9 } 
+	}
+	
+	if = { 
+		limit = { 
+			any_neighbor_state = { CONTROLLER = { has_war_with = ROOT } }
+		} 
+		
+		multiply_variable = { ai_default_slot_score = 0.5 } 
+	}
+	
+	set_temp_variable = { mult = state@THIS }
+	add_to_temp_variable = { mult = region@var:region }
+	add_to_temp_variable = { mult = 1 }
+	
+	multiply_variable = { ai_default_slot_score = mult }
+
+}
+
+ai_get_airbase_slot_scores = {
+	# Create State Target array
+	clear_temp_array = construction_targets
+	
+	for_each_loop = { 
+		array = front_states_and_nearby 
+		
+		add_to_temp_array = { construction_targets = v } 
+		set_temp_variable = { is_front_state@var:v = 1 }
+	}
+	for_each_loop = { array = ai_airbase_state add_to_temp_array = { construction_targets = v } set_temp_variable = { is_airbase_state@var:v = 1 } }
+
+	# Scoring states
+		
+	for_each_scope_loop = { array = construction_targets
+		
+		if = { 
+			limit = { 
+					
+				#free_building_slots = { building = air_base size > 0 include_locked = no }
+				#impassable = no
+				
+				#CONTROLLER = { is_ally_with = ROOT } #already checked beforehand
+			}
+
+			ai_get_airbase_slot_score = yes
+
+			for_each_loop = { array = ai_airbase_slot_scores
+
+				var:v = {
+					if = { limit = { check_variable = { PREV.ai_airbase_slot_score > ai_airbase_slot_score } }
+
+						add_to_temp_array = { array = ai_airbase_slot_scores index = i value = PREV.id }
+						set_temp_variable = { break = 1 }
+					}
+				}
+			}
+
+			if = { limit = { check_variable = { break = 0 } }
+				
+				add_to_temp_array = { array = ai_airbase_slot_scores value = THIS.id }
+			}
+			else = { set_temp_variable = { break = 0 } }
+		}
+	}
+}
+
+ai_get_airbase_slot_score = {
+	
+	if = {
+		limit = {
+			#log = "[?ai_airbase_region_target@var:region] ai_airbase_region_target@var:region"
+			check_variable = { building_level@air_base < ai_airbase_state_target@THIS?99 }
+			check_variable = { building_level@air_base < ai_airbase_region_target@var:region?99 }
+		}
+		set_variable = { ai_airbase_slot_score = 15 }
+		subtract_from_variable = { ai_airbase_slot_score = building_level@air_base }
+		
+		if = {
+			limit = {
+				NOT = { is_fully_controlled_by = var:controller }
+			}
+			multiply_variable = { ai_airbase_slot_score = 0.75 }
+		}
+		
+		set_temp_variable = { mult = 1 }
+		
+		add_to_temp_variable = { mult = airbase_filled@var:region }
+		
+		set_temp_variable = { distance = shortest_front_distance@THIS }
+		divide_temp_variable = { distance = ai_airbase_max_front_distance }
+		multiply_temp_variable = { distance = ai_airbase_front_distance_mult }
+		set_temp_variable = { distance_mult = 1 }
+		add_to_temp_variable = { distance_mult = distance }
+		
+		set_variable = { distance_to_front = distance }
+		
+		add_to_temp_variable = { mult = distance }
+		
+		if = {
+			limit = {
+				check_variable = { building_level@air_base = 0 }
+			}
+			add_to_temp_variable = { mult = 0.1 }
+		}
+		
+		##### custom scores
+		if = {
+			limit = {
+				check_variable = { is_airbase_state@THIS = 1 }
+			}
+			add_to_temp_variable = { mult = ai_airbase_state_score_mult@THIS }
+		}
+		if = {
+			limit = {
+				check_variable = { is_airbase_region@var:region = 1 }
+			}
+			add_to_temp_variable = { mult = ai_airbase_region_score_mult@var:region }
+		}
+		
+		set_variable = { ai_airbase_slot_score_mult = mult }
+		multiply_variable = { ai_airbase_slot_score = mult }
+		#log = "[?ai_airbase_slot_score] ai_airbase_slot_score score for [This.GetName]"
+		
+		if = {
+			limit = {
+				NOT = {
+					check_variable = { airbase_filled@var:region > ai_airbase_region_max_capacity_used }
+					check_variable = { front_region_air_capacity@var:region < min_region_capacity }
+				}
+			}
+			multiply_variable = { ai_airbase_slot_score = 0.2 }
+		}
+		
+	}
+	
+	if = {
+		limit = {
+			has_state_flag = small_airbase
+			check_variable = { building_level@air_base > 0 }
+		}
+		clear_variable = ai_airbase_slot_score 
+	}
+	if = {
+		limit = {
+			has_state_flag = medium_airbase
+			check_variable = { building_level@air_base > 2 }
+		}
+		clear_variable = ai_airbase_slot_score 
+	}
+		
+}
+
+ai_get_radar_slot_scores = {
+
+	for_each_scope_loop = { array = global.ai_radar_states
+		
+		if = { 
+			limit = { 
+				CONTROLLER = { is_ally_with = ROOT }
+				free_building_slots = { building = radar_station size > 0 include_locked = no }
+				
+				#NOT = { check_variable = { building_level@radar_station = ai_max_radar_level } }
+				NOT = { has_state_flag = small_airbase }
+			}
+
+			ai_get_radar_slot_score = yes
+
+			for_each_loop = { array = ai_radar_slot_scores
+
+				var:v = {
+					if = { limit = { check_variable = { PREV.ai_radar_slot_score > ai_radar_slot_score } }
+
+						add_to_temp_array = { array = ai_radar_slot_scores index = i value = PREV.id }
+						set_temp_variable = { break = 1 }
+					}
+				}
+			}
+
+			if = { limit = { check_variable = { break = 0 } }
+				
+				add_to_temp_array = { array = ai_radar_slot_scores value = THIS.id }
+			}
+			else = { set_temp_variable = { break = 0 } }
+		}
+	}
+	
+}
+ai_get_radar_slot_score = {
+
+	set_variable = { ai_radar_slot_score = @AI_RADAR_BASE_SCORE }
+	set_temp_variable = { existing_radar = building_level@radar_station }
+	multiply_temp_variable = { existing_radar = @AI_RADAR_PER_LEVEL_SCORE }
+	add_to_variable = { ai_radar_slot_score = existing_radar }
+	
+	#Radar Priority state (Malta, Gibraltar)
+	if = { limit = { has_state_flag = ai_radar_priority_state } add_to_variable = { ai_radar_slot_score = @AI_RADAR_PRIORITY_SCORE } }
+
+	### Home area priority
+	if = { limit = { is_in_home_area = yes } add_to_variable = { ai_radar_slot_score = @AI_RADAR_HOME_AREA_SCORE } }
+
+	### Building level 1 radar 
+	if = { limit = { check_variable = { building_level@radar_station = 0 } } add_to_variable = { ai_radar_slot_score = @AI_RADAR_NEW_STATE_SCORE } }
+	
+	### Medium Island Restriction
+	if = { limit = { has_state_flag = medium_airbase check_variable = { building_level@radar_station = 1 } } clear_variable = ai_radar_slot_score }
+	
+	set_temp_variable = { radar_state = THIS }
+	
+	set_temp_variable = { max_radar_distance = @MAX_RADAR_DISTANCE }
+	set_temp_variable = { radar_distance = @MIN_RADAR_DISTANCE }
+	set_temp_variable = { existing_radar = building_level@radar_station }
+	multiply_temp_variable = { existing_radar = @LEVEL_RADAR_DISTANCE }
+	add_to_temp_variable = { radar_distance = existing_radar }
+	multiply_temp_variable = { radar_distance = @AI_RADAR_DISTANCE_MULT }
+	clamp_temp_variable = { var = radar_distance max = max_radar_distance }
+	
+	
+	set_temp_variable = { num_neutral_states = 0 }
+	set_temp_variable = { num_own_states = 0 }
+	set_temp_variable = { num_allied_states = 0 }
+	set_temp_variable = { num_enemy_states = 0 }
+	set_temp_variable = { num_potential_enemy_states = 0 }
+	
+	#####
+	
+	for_each_loop = {
+		array = global.region_nearby@var:region
+		value = v_region
+		
+		for_each_scope_loop = {
+			array = global.region_states@var:v_region
+			
+			if = {
+				limit = {
+					is_controlled_by = ROOT
+				}
+				
+				if = {
+					limit = {
+						check_variable = { distance_to@var:radar_state < radar_distance }
+						check_variable = { distance_to@var:radar_state > 0 }
+					}
+					add_to_temp_variable = { num_own_states = 1 }
+				}
+			}
+			else_if = {
+				limit = {
+					CONTROLLER = { has_war_with = ROOT }
+				}
+				
+				if = {
+					limit = {
+						check_variable = { distance_to@var:radar_state < radar_distance }
+						check_variable = { distance_to@var:radar_state > 0 }
+					}
+					add_to_temp_variable = { num_enemy_states = 1 }
+				}
+				else_if = {
+					limit = {
+						check_variable = { distance_to@var:radar_state < max_radar_distance }
+						#check_variable = { distance_to@var:radar_state > radar_distance }
+					}
+					add_to_temp_variable = { num_potential_enemy_states = 1 }
+				}
+			}
+			else_if = {
+				limit = {
+					CONTROLLER = {
+						OR = {
+							is_subject_of = ROOT
+							is_in_faction_with = ROOT
+						}
+					}
+				}
+				
+				if = {
+					limit = {
+						check_variable = { distance_to@var:radar_state < radar_distance }
+						check_variable = { distance_to@var:radar_state > 0 }
+					}
+					add_to_temp_variable = { num_allied_states = 1 }
+				}
+			}
+			else_if = {
+				limit = {
+					check_variable = { distance_to@var:radar_state < radar_distance }
+					check_variable = { distance_to@var:radar_state > 0 }
+				}
+				add_to_temp_variable = { num_neutral_states = 1 }
+			}
+		
+		}
+		
+	}
+
+	multiply_temp_variable = { num_own_states = @AI_RADAR_SCORE_PER_CONTROLLED_STATE_COVERAGE }
+	multiply_temp_variable = { num_allied_states = @AI_RADAR_SCORE_PER_FRIENDLY_STATE_COVERAGE }
+	multiply_temp_variable = { num_neutral_states = @AI_RADAR_SCORE_PER_NEUTRAL_STATE_COVERAGE }
+	multiply_temp_variable = { num_enemy_states = @AI_RADAR_SCORE_PER_ENEMY_STATE_COVERAGE }
+	multiply_temp_variable = { num_potential_enemy_states = @AI_RADAR_SCORE_PER_POTENTIAL_ENEMY_STATE_COVERAGE }
+	
+	add_to_variable = { PREV.ai_radar_slot_score = num_own_states } 
+	add_to_variable = { PREV.ai_radar_slot_score = num_allied_states } 
+	add_to_variable = { PREV.ai_radar_slot_score = num_neutral_states } 
+	add_to_variable = { PREV.ai_radar_slot_score = num_enemy_states } 
+	add_to_variable = { PREV.ai_radar_slot_score = num_potential_enemy_states } 
+	
+	#set_variable = { ai_num_allied_states = num_allied_states } 
+	#set_variable = { ai_num_neutral_states = num_neutral_states } 
+	#set_variable = { ai_num_enemy_states = num_enemy_states } 
+	#set_variable = { ai_num_potential_enemy_states = num_potential_enemy_states } 
+	
+}
+ai_get_resource_slot_scores = {
+
+	# calculates the threshold for a "good" infra investment
+	set_temp_variable = { import_cic = mtth:num_of_civilian_factories_for_import }
+	multiply_temp_variable = {import_cic = 0.025}
+	add_to_temp_variable = {import_cic = 1.25}
+	subtract_from_temp_variable = {import_cic = modifier@min_ore_export}
+	# todo: mabe subtract goods exported modifier too
+	set_temp_variable = {infra_threshold = 10}
+	divide_temp_variable = {infra_threshold = import_cic}
+
+	for_each_scope_loop = { array = controlled_states
+		
+		if = { 
+			limit = { 
+				free_building_slots = { building = infrastructure size > 0 include_locked = no }
+				impassable = no 
+				
+				OR = {
+					is_fully_controlled_by = ROOT
+					is_in_array = { ROOT.resource_rights_states = THIS }
+				}
+			}
+
+			ai_get_resource_slot_score = yes
+			
+
+			if = {
+				limit = {
+					check_variable = { ai_resource_slot_score > infra_threshold }
+				}
+				for_each_loop = { array = ai_resource_slot_scores
+
+					var:v = {
+						if = { limit = { check_variable = { PREV.ai_resource_slot_score > ai_resource_slot_score } }
+
+							add_to_temp_array = { array = ai_resource_slot_scores index = i value = PREV.id }
+							set_temp_variable = { break = 1 }
+						}
+					}
+				}
+
+				if = { limit = { check_variable = { break = 0 } }
+					
+					add_to_temp_array = { array = ai_resource_slot_scores value = THIS.id }
+				}
+				else = { set_temp_variable = { break = 0 } }
+			}
+		}
+	}
+}
+ai_get_resource_slot_score = {
+
+	set_variable = { ai_resource_slot_score = 0 }
+
+	set_temp_variable = { cost = building_level@infrastructure }
+	multiply_temp_variable = {cost = constant:building.per_level.infrastructure } # price per infra lvl
+	add_to_temp_variable = { cost = global.building_cost@infrastructure }
+	divide_temp_variable = { cost = 100 }
+
+	#log = "[THIS.name] <<<"
+		
+	if = {
+		limit = {
+			check_variable = { resource@oil > 0 }
+		}
+		
+		set_temp_variable = { t = resource@oil }
+		multiply_temp_variable = { t = @AI_OIL_WEIGHT }
+
+		if = {
+			limit = {
+				NOT = {check_variable = { ai_need_oil = 1 }}
+			}
+			multiply_temp_variable = {t = 0.15}
+		}
+
+		#log = "[?t] oil"
+		
+		add_to_variable = { ai_resource_slot_score = t }
+	}
+	if = {
+		limit = {
+			check_variable = { resource@rubber > 0 }
+		}
+		
+		set_temp_variable = { t = resource@rubber }
+		multiply_temp_variable = { t = @AI_RUBBER_WEIGHT }
+
+		if = {
+			limit = {
+				NOT = {check_variable = { ai_need_rubber = 1 }}
+			}
+			multiply_temp_variable = {t = 0.10}
+		}
+		
+		# log = "[?t] rubber"
+		
+		add_to_variable = { ai_resource_slot_score = t }
+	}
+	if = {
+		limit = {
+			check_variable = { resource@iron > 0 }
+		}
+		
+		set_temp_variable = { t = resource@iron }
+		multiply_temp_variable = { t = @AI_IRON_WEIGHT }
+
+		if = {
+			limit = {
+				NOT = {check_variable = { ai_need_iron = 1 }}
+			}
+			multiply_temp_variable = {t = 0.15}
+		}
+		
+		# log = "[?t] iron"
+		
+		add_to_variable = { ai_resource_slot_score = t }
+	}
+	if = {
+		limit = {
+			check_variable = { resource@coal > 0 }
+		}
+		
+		set_temp_variable = { t = resource@coal }
+		multiply_temp_variable = { t = @AI_COAL_WEIGHT }
+
+		if = {
+			limit = {
+				NOT = {check_variable = { ai_need_coal = 1 }}
+			}
+			multiply_temp_variable = {t = 0.15}
+		}
+		
+		# log = "[?t] coal"
+		
+		add_to_variable = { ai_resource_slot_score = t }
+	}
+	if = {
+		limit = {
+			check_variable = { resource@tungsten > 0 }
+		}
+		
+		set_temp_variable = { t = resource@tungsten }
+		multiply_temp_variable = { t = @AI_TUNGSTEN_WEIGHT }
+
+		if = {
+			limit = {
+				NOT = {check_variable = { ai_need_tungsten = 1 }}
+			}
+			multiply_temp_variable = {t = 0.05}
+		}
+		
+		# log = "[?t] tungsten"
+		
+		add_to_variable = { ai_resource_slot_score = t }
+	}
+	if = {
+		limit = {
+			check_variable = { resource@bauxite > 0 }
+		}
+		
+		set_temp_variable = { t = resource@bauxite }
+		multiply_temp_variable = { t = @AI_BAUXITE_WEIGHT }
+
+		if = {
+			limit = {
+				NOT = {check_variable = { ai_need_bauxite = 1 }}
+			}
+			multiply_temp_variable = {t = 0.2}
+		}
+		
+		# log = "[?t] bauxite"
+		
+		add_to_variable = { ai_resource_slot_score = t }
+	}
+	if = {
+		limit = {
+			check_variable = { resource@chromium > 0 }
+		}
+		
+		set_temp_variable = { t = resource@chromium }
+		multiply_temp_variable = { t = @AI_CHROMIUM_WEIGHT }
+
+		if = {
+			limit = {
+				NOT = {check_variable = { ai_need_chromium = 1 }}
+			}
+			multiply_temp_variable = {t = 0.05}
+		}
+		
+		# log = "[?t] chromium"
+		
+		add_to_variable = { ai_resource_slot_score = t }
+	}
+	if = {
+		limit = {
+			check_variable = { resource@food > 0 }
+		}
+		
+		set_temp_variable = { t = resource@food }
+		multiply_temp_variable = { t = @AI_FOOD_WEIGHT }
+
+		if = {
+			limit = {
+				NOT = {check_variable = { ai_need_food = 1 }}
+			}
+			multiply_temp_variable = {t = 0.15}
+		}
+		
+		# log = "[?t] food"
+		
+		add_to_variable = { ai_resource_slot_score = t }
+	}
+
+	# divide score by infra cost
+	# log = "[?cost] cost"
+	divide_variable = { ai_resource_slot_score = cost }
+	# lower score by existing infra resource bonus %
+
+	set_temp_variable = { rf = building_level@infrastructure }
+	multiply_temp_variable = { rf = 0.075 }
+	add_to_temp_variable = {rf = 1}
+
+	divide_variable = {ai_resource_slot_score = rf}
+
+	if = { limit = { no_border = yes } multiply_variable = { ai_resource_slot_score = 1.2} }
+
+	if = { limit = { no_enemy_border = yes } multiply_variable = { ai_resource_slot_score = 1.4 } }
+
+	if = { limit = { ai_infra_region_priority = yes } multiply_variable = { ai_resource_slot_score = 1.6 } }
+
+	#log = "[?ai_resource_slot_score] total score"
+
+}
+
+ai_create_new_radar_state_near_front = {
+	if = {
+		limit = { ai_allow_create_new_radar_state = yes }
+			
+		ai_custom_construction_logic = yes
+		
+		if = {
+			limit = {
+				check_variable = { ic_ratio/radar_station > 0 }
+			}
+			
+			calculate_local_front_states = yes #set up front_states_and_nearby array
+					
+			# Create State Target array
+			clear_temp_array = construction_targets
+			for_each_loop = { array = front_states_and_nearby add_to_temp_array = { construction_targets = v } }
+			for_each_loop = { array = owned_controlled_states add_to_temp_array = { construction_targets = v } }
+	
+			set_temp_variable = { ai_required_radar_score = @AI_NEW_RADAR_MIN_SCORE }
+
+			for_each_scope_loop = { array = construction_targets
+				
+				if = { 
+					limit = { 
+						free_building_slots = { building = radar_station size > 0 include_locked = no }
+						check_variable = { building_level@radar_station = 0 }
+						NOT = { has_state_flag = ai_radar_location }
+						CONTROLLER = { is_ally_with = ROOT }
+						NOT = { any_neighbor_state = { has_state_flag = ai_radar_location } }
+					}
+
+					ai_get_new_radar_state_slot_score = yes
+
+					for_each_loop = { array = ai_radar_slot_scores
+
+						var:v = {
+							if = { limit = { check_variable = { PREV.ai_radar_slot_score > ai_radar_slot_score } }
+
+								add_to_temp_array = { array = ai_radar_slot_scores index = i value = PREV.id }
+								set_temp_variable = { break = 1 }
+							}
+						}
+					}
+
+					if = { limit = { check_variable = { break = 0 } }
+						
+						add_to_temp_array = { array = ai_radar_slot_scores value = THIS.id }
+					}
+					else = { set_temp_variable = { break = 0 } }
+				}
+			}
+			
+			for_each_scope_loop = { array = ai_radar_slot_scores
+
+				if = { 
+					limit = {
+						check_variable = { ai_new_radar_slot_score > ai_required_radar_score }
+						free_building_slots = { building = radar_station size > 0 include_locked = no }
+					}
+
+					add_to_array = { global.ai_radar_states = THIS }
+					set_state_flag = ai_radar_location
+					set_state_flag = ai_new_radar_location
+					log = "[Root.GetTag] | [GetMonth] [GetYear] NEW RADAR STATE in [This.GetName] | Score [?ai_radar_slot_score]"
+					set_temp_variable = { break = 1 }
+				}
+			}
+		}
+	}
+}
+
+ai_get_new_radar_state_slot_score = { #gets checked for all frontline states
+	
+	set_variable = { ai_new_radar_slot_score = @AI_NEW_RADAR_BASE_SCORE }
+	
+	if = {
+		limit = {
+			check_variable = { building_level@radar_station > 0 }
+			NOT = { has_state_flag = ai_radar_location }
+		}
+		
+		set_temp_variable = { radar_level = building_level@radar_station }
+		multiply_temp_variable = { radar_level = @AI_NEW_RADAR_EXISTING_LEVEL_SCORE }
+		add_to_variable = { ai_new_radar_slot_score = radar_level }
+	}
+			
+	set_temp_variable = { radar_state = THIS }
+	
+	set_temp_variable = { max_radar_distance = @MAX_RADAR_DISTANCE }
+	set_temp_variable = { radar_distance = @MIN_RADAR_DISTANCE }
+	set_temp_variable = { existing_radar = building_level@radar_station }
+	multiply_temp_variable = { existing_radar = @LEVEL_RADAR_DISTANCE }
+	add_to_temp_variable = { radar_distance = existing_radar }
+	multiply_temp_variable = { radar_distance = @AI_RADAR_DISTANCE_MULT }
+	
+	
+	set_temp_variable = { num_neutral_states = 0 }
+	set_temp_variable = { num_own_states = 0 }
+	set_temp_variable = { num_allied_states = 0 }
+	set_temp_variable = { num_enemy_states = 0 }
+	set_temp_variable = { num_potential_enemy_states = 0 }
+	
+	set_temp_variable = { min_distance = @AI_NEW_RADAR_DISTANCE_MIN }
+	set_temp_variable = { max_distance = @AI_NEW_RADAR_DISTANCE_MAX }
+	
+	clamp_temp_variable = { var = radar_distance min = min_distance max = max_radar_distance }
+	
+	if = {
+		limit = {
+			any_of = {
+				array = global.ai_radar_states
+				
+				var:v = { check_variable = { distance_to@var:radar_state < min_distance } }
+			}
+		}
+		#log = "got so far MIN"
+		set_variable = { ai_new_radar_slot_score = 0 }
+	}
+	else = {
+		
+		#log = "got so far ELSE region [?region]"
+		for_each_loop = {
+			array = global.region_nearby@var:region
+			value = v_region
+			
+			for_each_loop = {
+				array = global.region_states@var:v_region
+				value = v_state
+				
+				
+				var:v_state = {
+						
+					if = {
+						limit = {
+							is_controlled_by = ROOT
+						}
+						
+						if = {
+							limit = {
+								check_variable = { distance_to@var:radar_state < radar_distance }
+								check_variable = { distance_to@var:radar_state > 0 }
+							}
+							add_to_temp_variable = { num_own_states = 1 }
+						}
+					}
+					else_if = {
+						limit = {
+							CONTROLLER = { has_war_with = ROOT }
+						}
+						
+						if = {
+							limit = {
+								check_variable = { distance_to@var:radar_state < radar_distance }
+								check_variable = { distance_to@var:radar_state > 0 }
+							}
+							add_to_temp_variable = { num_enemy_states = 1 }
+						}
+						else_if = {
+							limit = {
+								check_variable = { distance_to@var:radar_state < max_radar_distance }
+								#check_variable = { distance_to@var:radar_state > radar_distance }
+							}
+							#log = "POTENTIAL STATE [This.GetName] [?distance_to@var:radar_state]"
+							add_to_temp_variable = { num_potential_enemy_states = 1 }
+						}
+					}
+					else_if = {
+						limit = {
+							CONTROLLER = {
+								OR = {
+									is_subject_of = ROOT
+									is_in_faction_with = ROOT
+								}
+							}
+						}
+						
+						if = {
+							limit = {
+								check_variable = { distance_to@var:radar_state < radar_distance }
+								check_variable = { distance_to@var:radar_state > 0 }
+							}
+							add_to_temp_variable = { num_allied_states = 1 }
+						}
+					}
+					else_if = {
+						limit = {
+							check_variable = { distance_to@var:radar_state < radar_distance }
+							check_variable = { distance_to@var:radar_state > 0 }
+						}
+						add_to_temp_variable = { num_neutral_states = 1 }
+					}
+					
+				}
+			}
+		}
+		
+		#log = "[?num_own_states] num_own_states"
+		#log = "[?num_allied_states] num_allied_states"
+		#log = "[?num_neutral_states] num_neutral_states"
+		#log = "[?num_enemy_states] num_enemy_states"
+		set_variable = { ai_new_radar_num_own_states = num_own_states } 
+		set_variable = { ai_new_radar_num_allied_states = num_allied_states } 
+		set_variable = { ai_new_radar_num_neutral_states = num_neutral_states } 
+		set_variable = { ai_new_radar_num_enemy_states = num_enemy_states } 
+		set_variable = { ai_new_radar_num_potential_enemy_states = num_potential_enemy_states } 
+		
+		#log = "[?num_potential_enemy_states] num_potential_enemy_states"
+		multiply_temp_variable = { num_own_states = @AI_RADAR_SCORE_PER_CONTROLLED_STATE_COVERAGE }
+		multiply_temp_variable = { num_allied_states = @AI_RADAR_SCORE_PER_FRIENDLY_STATE_COVERAGE }
+		multiply_temp_variable = { num_neutral_states = @AI_RADAR_SCORE_PER_NEUTRAL_STATE_COVERAGE }
+		multiply_temp_variable = { num_enemy_states = @AI_RADAR_SCORE_PER_ENEMY_STATE_COVERAGE }
+		multiply_temp_variable = { num_potential_enemy_states = @AI_RADAR_SCORE_PER_POTENTIAL_ENEMY_STATE_COVERAGE }
+
+		add_to_variable = { ai_new_radar_slot_score = num_own_states } 
+		add_to_variable = { ai_new_radar_slot_score = num_allied_states } 
+		add_to_variable = { ai_new_radar_slot_score = num_neutral_states } 
+		add_to_variable = { ai_new_radar_slot_score = num_enemy_states } 
+		add_to_variable = { ai_new_radar_slot_score = num_potential_enemy_states } 
+		
+		#log = "[?ai_new_radar_slot_score] SCOERE"
+		for_each_loop = {
+			array = global.ai_radar_states
+
+			var:v = {
+				if = {
+					limit = {
+						has_state_flag = ai_radar_location
+						is_controlled_by_ROOT_or_ally = yes
+					}
+					
+					if = {
+						limit = {
+							check_variable = { distance_to@var:radar_state > min_distance }
+							check_variable = { distance_to@var:radar_state < max_distance }
+						}
+						
+						set_temp_variable = { distance_from_radar = max_distance }
+						subtract_from_temp_variable = { distance_from_radar = min_distance }
+						
+						set_temp_variable = { factor = distance_to@var:radar_state }
+						subtract_from_temp_variable = { factor = min_distance }
+						divide_temp_variable = { factor = distance_from_radar }
+						
+						#log = "MULTIPLY WITH [?factor]"
+						multiply_variable = { PREV.ai_new_radar_slot_score = factor }
+					}
+				}
+			}
+		}
+	}
+		
+}
+
+d_ai_print_constructions = {
+	add_to_temp_array = { ttt = token:infrastructure }
+	for_each_loop = {
+		array = global.buildings
+		
+		add_to_temp_array = { ttt = v }
+	}
+	for_each_loop = {
+		array = ttt
+		
+		if = {
+			limit = {
+				check_variable = { ai_built@var:v > 0 }
+			}
+			log = "[?v.GetTokenKey]: [?ai_built@var:v]"
+		}
+	}
+}
+
+d_print_debug_equipment_MIC = {
+	every_country = {
+		limit = {
+			check_variable = { resource@placeholder_1 < -100 }
+		}
+		log = "[This.GetTag] uses more than 1 MIC for debug equipment"
+	}
+	log = "============================"
+	
+}
+
+@CONSTRUCTION_STEP = 5000
+
+ai_update_construction = {
+
+	if = {
+		limit = {
+			check_variable = { total_constructed_military_factory > ai_build }
+		}
+		
+		set_temp_variable = { change = total_constructed_military_factory }
+		subtract_from_temp_variable = { change = ai_build }
+		multiply_temp_variable = { change = @CONSTRUCTION_STEP }
+		add_to_variable = { ai_build_capacity = change }
+		
+		set_variable = { ai_build = total_constructed_military_factory }
+	}
+}
+
+ai_pick_building = {
+	## set up cost for each building
+	
+	for_each_loop = { #c = cost; s = speed
+		array = global.ai_buildings
+		
+		set_temp_variable = { c = building_cost@var:v }
+		set_temp_variable = { s = modifier@var:global.building_speed@var:v }
+		multiply_temp_variable = { s = -1 }
+		add_to_temp_variable = { s = 1 }
+		multiply_temp_variable = { c = s }
+		
+		set_temp_variable = { actual_cost@var:v = c }
+	}
+
+}
+
+ai_score_buildings = {
+	## set scores
+	
+	#these 3 work with ratios
+	set_temp_variable = { need_industrial_complex = 1 }
+	set_temp_variable = { need_arms_factory = 1 }
+	set_temp_variable = { need_dockyard = 1 }
+	
+	#these dont
+	set_temp_variable = { need_radar = 1 }
+	set_temp_variable = { need_infrastructure = 1 }
+	set_temp_variable = { need_air_assembly = 1 }
+	set_temp_variable = { need_power_plant = 1 }
+	set_temp_variable = { need_fuel_storage = 1 }
+	set_temp_variable = { need_shipyard = 1 }
+	set_temp_variable = { need_subyard = 1 }
+	set_temp_variable = { need_steel_refinery = 1 }
+	set_temp_variable = { need_aluminium_refinery = 1 }
+	set_temp_variable = { need_synthetic_refinery = 1 }
+	set_temp_variable = { need_synthetic_rubber_refinery = 1 }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

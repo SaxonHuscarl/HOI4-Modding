@@ -1,0 +1,115 @@
+﻿#########################################
+# Bomb the Bridges over the Meuse River #
+#########################################
+
+add_namespace = belgium
+
+country_event = {
+	
+	id = belgium.1
+	title = belgium.1.t
+	desc = belgium.1.d
+	picture = report_event_meuse
+
+	trigger = {
+		tag = BEL
+		has_war_with = GER 
+		#BEL = surrender_progress < 0.1 
+		NOT = { GER = { controls_state = 6 controls_state = 34 } }
+		NOT = { has_country_flag = bomb_the_bridges_over_meuse }
+	}
+
+	mean_time_to_happen =  { months = 10 }
+	
+	option = {
+		name = belgium.1.a			# Go Ahead
+		set_country_flag = bomb_the_bridges_over_meuse
+		add_stability = 0.05
+	}
+	option = {
+		name = belgium.1.b			# Perhaps it's not such a good idea
+		set_country_flag = bomb_the_bridges_over_meuse
+		add_stability = -0.05
+	}
+}
+country_event = {
+	id = belgium.2
+	title = belgium.2.t
+	desc = belgium.2.d
+	picture = GFX_report_event_soldiers_in_france
+
+	major = yes
+	
+	is_triggered_only = yes
+	
+	show_major = {
+		OR = {
+			tag = BEL
+			tag = FRA
+			tag = ENG
+		}
+	}
+	
+	option = {
+		name = belgium.2.a			# Go Ahead
+		random_unit_leader = {
+			gain_xp = 25
+		}
+	}
+}
+country_event = {
+	id = belgium.3
+	title = belgium.3.t
+	desc = belgium.3.d
+	picture = GFX_report_event_soldiers_in_france
+
+	major = yes
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = belgium.3.a
+		trigger = {
+			tag = BEL
+		}
+		diplomatic_relation = {
+			country = ENG
+			relation = military_access
+			active = no
+		}
+		diplomatic_relation = {
+			country = FRA
+			relation = military_access
+			active = no
+		}
+		add_war_support = 0.1
+	}
+	option = {
+		name = belgium.3.b
+		trigger = {
+			OR = {
+				tag = ENG
+				tag = FRA
+			}
+		}
+		effect_tooltip = {
+			BEL = {
+				diplomatic_relation = {
+					country = ROOT
+					relation = military_access
+					active = no
+				}
+			}
+		}
+	}
+	option = {
+		name = belgium.3.c
+		trigger = {
+			NOT = {
+				tag = ENG
+				tag = FRA
+				tag = BEL
+			}
+		}
+	}	
+}

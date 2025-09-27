@@ -1,0 +1,593 @@
+scripted_gui = {
+	BI_state_view_gui = {
+		context_type = selected_state_context
+		
+		parent_window_token = selected_state_view
+		
+		window_name = "BI_state_view"
+		
+		visible = {
+			
+		}
+		
+		#dirty = global.num_days
+		
+		effects = {
+			local_food_icon_click = {
+				OWNER = { 
+					set_temp_variable = { t = global.law@diet_laws^law_level@diet_laws }
+					set_temp_variable = { fneed_owner = modifier@base_food_need_civilian }
+				}
+				
+				custom_effect_tooltip = STATE_FOOD_EXPLANATION
+				
+				if = {
+					limit = {
+						NOT = { OWNER = { controls_state = PREV } }
+					}
+					
+					CONTROLLER = { 
+						set_temp_variable = { t = global.law@diet_laws^law_level@diet_laws }
+						set_temp_variable = { fneed_controller = modifier@base_food_need_civilian }
+					}
+				
+					add_to_temp_variable = { final = fneed_owner }
+					add_to_temp_variable = { final = fneed_controller }
+					divide_temp_variable = { final = 2 }
+					custom_effect_tooltip = STATE_FOOD_EXPLANATION1
+				}
+				else = {
+					set_temp_variable = { final = fneed_owner }
+				}
+				
+				set_temp_variable = { base_consumption = state_population_k }
+				multiply_temp_variable = { base_consumption = final }
+				
+				custom_effect_tooltip = STATE_FOOD_TOTAL_CONSUMPTION
+				custom_effect_tooltip = STATE_FOOD_BASE_CONSUMPTION
+				
+				set_temp_variable = { state_food_use = state_population_k }
+				if = {
+					limit = {
+						is_coastal = yes
+						NOT = { CONTROLLER = { check_variable = { modifier@food_need_coastal = 0 } } }
+					}
+					CONTROLLER = { set_temp_variable = { factor = modifier@food_need_coastal } }
+					add_to_temp_variable = { factor = 1 }
+					
+					custom_effect_tooltip = STATE_FOOD_COASTAL_FACTOR
+				}
+				if = {
+					limit = {
+						NOT = { check_variable = { modifier@local_food_use = 0 } }
+					}
+					set_temp_variable = { local_factor = modifier@local_food_use }
+					add_to_temp_variable = { local_factor = 1 }
+					custom_effect_tooltip = STATE_FOOD_LOCAL_FACTOR
+				}
+				
+			}
+			show_building_list_click = {
+				ROOT = {
+					set_country_flag = ui_show_state_list
+				}
+			}
+			show_building_slots_click = {
+				ROOT = {
+					clr_country_flag = ui_show_state_list
+				}
+			}
+			local_resources_click = {
+				set_temp_variable = { other = 0 }
+				if = {
+					limit = {
+						has_resistance = yes
+					}
+					custom_effect_tooltip = {
+						localization_key = MODIFIER_LIST_ENTRY
+						SOURCE = non_core_controller
+						VALUE = -0.6
+					}
+					add_to_temp_variable = { other = -0.60 }
+						
+					if = {
+						limit = {
+							occupation_law = no_garrison
+							check_variable = { resistance > 0 }
+						}
+						custom_effect_tooltip = {
+							localization_key = MODIFIER_LIST_ENTRY
+							SOURCE = no_garrison
+							VALUE = -0.2
+						}
+						add_to_temp_variable = { other = -0.2 }
+					}
+					if = {
+						limit = {
+							occupation_law = secret_police_oversight
+						}
+						custom_effect_tooltip = {
+							localization_key = MODIFIER_LIST_ENTRY
+							SOURCE = secret_police_oversight
+							VALUE = 0.05
+						}
+						add_to_temp_variable = { other = 0.05 }
+					}
+					if = {
+						limit = {
+							occupation_law = military_governor_occupation
+						}
+						custom_effect_tooltip = {
+							localization_key = MODIFIER_LIST_ENTRY
+							SOURCE = military_governor_occupation
+							VALUE = 0.15
+						}
+						add_to_temp_variable = { other = 0.15 }
+					}
+					if = {
+						limit = {
+							occupation_law = martial_law_occupation
+						}
+						custom_effect_tooltip = {
+							localization_key = MODIFIER_LIST_ENTRY
+							SOURCE = martial_law_occupation
+							VALUE = 0.15
+						}
+						add_to_temp_variable = { other = 0.15 }
+					}
+					if = {
+						limit = {
+							occupation_law = forced_labor_occupation
+						}
+						custom_effect_tooltip = {
+							localization_key = MODIFIER_LIST_ENTRY
+							SOURCE = forced_labor_occupation
+							VALUE = 0.3
+						}
+						add_to_temp_variable = { other = 0.3 }
+					}
+					if = {
+						limit = {
+							occupation_law = harsh_quotas_occupation
+						}
+						custom_effect_tooltip = {
+							localization_key = MODIFIER_LIST_ENTRY
+							SOURCE = harsh_quotas_occupation
+							VALUE = 0.15
+						}
+						add_to_temp_variable = { other = 0.15 }
+					}
+					if = {
+						limit = {
+							occupation_law = brutally_oppressive_occupation
+						}
+						custom_effect_tooltip = {
+							localization_key = MODIFIER_LIST_ENTRY
+							SOURCE = brutally_oppressive_occupation
+							VALUE = 0.15
+						}
+						add_to_temp_variable = { other = 0.15 }
+					}
+						
+				}
+				if = {
+					limit = {
+						check_variable = { compliance > 0 }
+					}
+					set_temp_variable = { t = compliance }
+					multiply_temp_variable = { t = 0.01 }
+					multiply_temp_variable = { t = 0.40 }
+					
+					custom_effect_tooltip = {
+						localization_key = MODIFIER_LIST_ENTRY
+						SOURCE = Compliance
+						VALUE = t
+					}
+					add_to_temp_variable = { other = t }
+				}
+				if = {
+					limit = {
+						has_occupation_modifier = compliance_40
+					}
+					custom_effect_tooltip = {
+						localization_key = MODIFIER_LIST_ENTRY
+						SOURCE = compliance_40
+						VALUE = 0.05
+					}
+					add_to_temp_variable = { other = 0.05 }
+				}
+				if = {
+					limit = {
+						has_variable = resource_state_change
+					}
+					custom_effect_tooltip = {
+						localization_key = MODIFIER_LIST_ENTRY
+						SOURCE = recent_state_change
+						VALUE = resource_state_change
+					}
+					add_to_temp_variable = { other = resource_state_change }
+				}
+				
+				if = {
+					limit = {
+						NOT = { check_variable = { other = modifier@local_resources } }
+					}
+					set_temp_variable = { t = modifier@local_resources }
+					subtract_from_temp_variable = { t = other }
+					custom_effect_tooltip = {
+						localization_key = MODIFIER_LIST_ENTRY
+						SOURCE = Other
+						VALUE = t
+					}
+				}
+			}
+			local_factories_click = {
+				set_temp_variable = { other = 0 }
+				if = {
+					limit = {
+						has_resistance = yes
+					}
+					custom_effect_tooltip = {
+						localization_key = MODIFIER_LIST_ENTRY
+						SOURCE = non_core_controller
+						VALUE = -0.75
+					}
+					add_to_temp_variable = { other = -0.75 }
+						
+					if = {
+						limit = {
+							occupation_law = no_garrison
+							check_variable = { resistance > 0 }
+						}
+						custom_effect_tooltip = {
+							localization_key = MODIFIER_LIST_ENTRY
+							SOURCE = no_garrison
+							VALUE = -0.2
+						}
+						add_to_temp_variable = { other = -0.2 }
+					}
+					if = {
+						limit = {
+							occupation_law = secret_police_oversight
+						}
+						custom_effect_tooltip = {
+							localization_key = MODIFIER_LIST_ENTRY
+							SOURCE = secret_police_oversight
+							VALUE = 0.05
+						}
+						add_to_temp_variable = { other = 0.05 }
+					}
+					if = {
+						limit = {
+							occupation_law = military_governor_occupation
+						}
+						custom_effect_tooltip = {
+							localization_key = MODIFIER_LIST_ENTRY
+							SOURCE = military_governor_occupation
+							VALUE = 0.1
+						}
+						add_to_temp_variable = { other = 0.1 }
+					}
+					if = {
+						limit = {
+							occupation_law = martial_law_occupation
+						}
+						custom_effect_tooltip = {
+							localization_key = MODIFIER_LIST_ENTRY
+							SOURCE = martial_law_occupation
+							VALUE = 0.1
+						}
+						add_to_temp_variable = { other = 0.1 }
+					}
+					if = {
+						limit = {
+							occupation_law = forced_labor_occupation
+						}
+						custom_effect_tooltip = {
+							localization_key = MODIFIER_LIST_ENTRY
+							SOURCE = forced_labor_occupation
+							VALUE = 0.15
+						}
+						add_to_temp_variable = { other = 0.15 }
+					}
+					if = {
+						limit = {
+							occupation_law = harsh_quotas_occupation
+						}
+						custom_effect_tooltip = {
+							localization_key = MODIFIER_LIST_ENTRY
+							SOURCE = harsh_quotas_occupation
+							VALUE = 0.3
+						}
+						add_to_temp_variable = { other = 0.3 }
+					}
+					
+					if = {
+						limit = {
+							occupation_law = brutally_oppressive_occupation
+						}
+						custom_effect_tooltip = {
+							localization_key = MODIFIER_LIST_ENTRY
+							SOURCE = brutally_oppressive_occupation
+							VALUE = 0.15
+						}
+						add_to_temp_variable = { other = 0.15 }
+					}
+				}
+				
+				if = {
+					limit = {
+						check_variable = { compliance > 0 }
+					}
+					set_temp_variable = { t = compliance }
+					multiply_temp_variable = { t = 0.01 }
+					multiply_temp_variable = { t = 0.40 }
+					
+					custom_effect_tooltip = {
+						localization_key = MODIFIER_LIST_ENTRY
+						SOURCE = Compliance
+						VALUE = t
+					}
+					add_to_temp_variable = { other = t }
+				}
+				if = {
+					limit = {
+						has_occupation_modifier = compliance_40
+					}
+					custom_effect_tooltip = {
+						localization_key = MODIFIER_LIST_ENTRY
+						SOURCE = compliance_40
+						VALUE = 0.05
+					}
+					add_to_temp_variable = { other = 0.05 }
+				}
+				if = {
+					limit = {
+						has_occupation_modifier = resistance_90
+					}
+					custom_effect_tooltip = {
+						localization_key = MODIFIER_LIST_ENTRY
+						SOURCE = resistance_90
+						VALUE = -0.2
+					}
+					add_to_temp_variable = { other = -0.2 }
+				}
+				
+				if = {
+					limit = {
+						NOT = { check_variable = { other = modifier@local_factories } }
+					}
+					set_temp_variable = { t = modifier@local_factories }
+					subtract_from_temp_variable = { t = other }
+					custom_effect_tooltip = {
+						localization_key = MODIFIER_LIST_ENTRY
+						SOURCE = Other
+						VALUE = t
+					}
+				}
+			}
+			local_supplies_click = {
+				set_temp_variable = { other = 0 }
+				if = {
+					limit = {
+						has_resistance = yes
+					}
+					custom_effect_tooltip = {
+						localization_key = MODIFIER_LIST_ENTRY
+						SOURCE = non_core_controller
+						VALUE = -0.8
+					}
+					add_to_temp_variable = { other = -0.8 }
+				}
+				if = {
+					limit = {
+						check_variable = { resistance > 0 }
+					}
+					set_temp_variable = { t = resistance }
+					multiply_temp_variable = { t = 0.01 }
+					multiply_temp_variable = { t = -0.5 }
+					
+					custom_effect_tooltip = {
+						localization_key = MODIFIER_LIST_ENTRY
+						SOURCE = Resistance
+						VALUE = t
+					}
+					add_to_temp_variable = { other = t }
+						
+					if = {
+						limit = {
+							occupation_law = military_governor_occupation
+						}
+						custom_effect_tooltip = {
+							localization_key = MODIFIER_LIST_ENTRY
+							SOURCE = military_governor_occupation
+							VALUE = 0.08
+						}
+						add_to_temp_variable = { other = 0.08 }
+					}
+					if = {
+						limit = {
+							occupation_law = martial_law_occupation
+						}
+						custom_effect_tooltip = {
+							localization_key = MODIFIER_LIST_ENTRY
+							SOURCE = martial_law_occupation
+							VALUE = 0.05
+						}
+						add_to_temp_variable = { other = 0.05 }
+					}
+					if = {
+						limit = {
+							occupation_law = brutally_oppressive_occupation
+						}
+						custom_effect_tooltip = {
+							localization_key = MODIFIER_LIST_ENTRY
+							SOURCE = brutally_oppressive_occupation
+							VALUE = 0.1
+						}
+						add_to_temp_variable = { other = 0.1 }
+					}
+				}
+				if = {
+					limit = {
+						check_variable = { compliance > 0 }
+					}
+					set_temp_variable = { t = compliance }
+					multiply_temp_variable = { t = 0.01 }
+					multiply_temp_variable = { t = 0.5 }
+					
+					custom_effect_tooltip = {
+						localization_key = MODIFIER_LIST_ENTRY
+						SOURCE = Compliance
+						VALUE = t
+					}
+					add_to_temp_variable = { other = t }
+				}
+				if = {
+					limit = {
+						has_occupation_modifier = compliance_40
+					}
+					custom_effect_tooltip = {
+						localization_key = MODIFIER_LIST_ENTRY
+						SOURCE = compliance_40
+						VALUE = 0.1
+					}
+					add_to_temp_variable = { other = 0.1 }
+				}
+				
+				if = {
+					limit = {
+						NOT = { check_variable = { other = modifier@local_supplies } }
+					}
+					set_temp_variable = { t = modifier@local_supplies }
+					subtract_from_temp_variable = { t = other }
+					custom_effect_tooltip = {
+						localization_key = MODIFIER_LIST_ENTRY
+						SOURCE = Other
+						VALUE = t
+					}
+				}
+			}
+		}
+		
+		triggers = {
+			#research_centre_building_icon_click_enabled = {
+			#	always = no 
+			#}
+			show_building_slots_visible = {
+				ROOT = { has_country_flag = ui_show_state_list }
+			}
+			
+			air_base_limit_visible = {
+				OR = {
+					has_state_flag = small_airbase
+					has_state_flag = medium_airbase
+				}
+			}
+			air_base_background_visible = {
+				OR = {
+					has_state_flag = small_airbase
+					has_state_flag = medium_airbase
+				}
+			}
+			
+			radar_limit_visible = { 
+				OR = {
+					has_state_flag = small_airbase
+					has_state_flag = medium_airbase
+				}
+			}
+			radar_background_visible = {
+				OR = {
+					has_state_flag = small_airbase
+					has_state_flag = medium_airbase
+				}
+			}
+			
+			#research_centre_building_overlay_visible = {
+			#	NOT = { is_controlled_by_ROOT_or_ally = yes }
+			#}
+			#research_centre_building_icon_visible  = {
+			#	NOT = { is_controlled_by_ROOT_or_ally = yes }
+			#}
+			#unknown_research_centre_visible = {
+			#	NOT = { is_controlled_by_ROOT_or_ally = yes }
+			#}
+		}
+	}
+	BI_state_list_gui = {
+		context_type = selected_state_context
+		
+		parent_window_token = selected_state_view
+		
+		window_name = "BI_state_list_view"
+		
+		visible = {
+			CONTROLLER = {
+				is_ally_with = ROOT
+			}
+			ROOT = { has_country_flag = ui_show_state_list }
+		}
+		
+		dynamic_lists = { 
+			state_building_list = {  
+				array = buildings_list
+				change_scope = yes
+				entry_container = "state_list_view_entry"
+			}
+		}
+		
+		properties = {
+			building_picture = {
+				frame = global.building_frame@var:v
+			}
+			damage_bar = {
+				frame = damage 
+			}
+		}
+		
+		triggers = {
+			pointer_click_enabled = {
+				all_of = {
+					array = global.buildings
+					
+					if = {
+						limit = {
+							check_variable = { building_level@var:v > 0 }
+						}
+						add_to_temp_array = { buildings_list = v }
+					}
+				}
+			}
+			building_picture_click_enabled = {
+				check_variable = { building_level@var:v > 0 }
+				
+				set_temp_variable = { damage = damaged_building_level@var:v }
+				divide_temp_variable = { damage = building_level@var:v }
+				set_temp_variable = { d_ratio = damage }
+				multiply_temp_variable = { damage = 100 }
+			}
+			level_visible = {
+				check_variable = { building_level@var:v > 0 }
+			}
+			
+			bg_click_enabled = {
+				check_variable = { building_level@var:v > 0 }
+			
+			}
+				
+		}
+		effects = {
+			building_picture_click = {
+				meta_effect = {
+					text = {
+						custom_effect_tooltip = "[X]_desc"
+					}
+					X = "[?v.GetTokenKey]"
+				}
+			}
+		}
+		
+	}
+		
+}

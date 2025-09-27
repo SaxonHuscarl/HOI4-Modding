@@ -1,0 +1,325 @@
+############################################################################################################
+#	Expert AI mod - decisions
+############################################################################################################
+
+ai_GER_help_in_the_east = {
+	
+	GER_open_help_in_the_east = {
+		allowed = { tag = GER  }
+
+		available = {
+			
+			#has_war_with = SOV
+		}
+		
+		visible = {
+			#has_war_with = SOV
+			is_in_faction = yes
+			NOT = { has_country_flag = ai_coord_show_help_in_the_east }
+		}
+
+		complete_effect = {
+			set_country_flag = ai_coord_show_help_in_the_east
+			every_other_country = {
+				limit = { is_in_faction_with = ROOT }
+				if = {
+					limit = {
+						has_country_flag = GER_request_help_in_the_east
+					}
+					ROOT = {
+						activate_targeted_decision = {
+							decision = GER_cancel_help_in_the_east
+							target = PREV
+						}
+					}
+				}
+				else = {
+					ROOT = {
+						activate_targeted_decision = {
+							decision = GER_request_help_in_the_east
+							target = PREV
+						}
+					}
+				}
+			}
+		}
+
+		ai_will_do = {
+			factor = 0
+		}
+	}
+	GER_close_help_in_the_east = {
+		allowed = { tag = GER }
+		
+		available = {
+			
+		}
+		
+		visible = {
+			has_country_flag = ai_coord_show_help_in_the_east
+		}
+
+		complete_effect = {
+			clr_country_flag = ai_coord_show_help_in_the_east
+			hidden_effect = {
+				every_other_country = {
+					ROOT = {
+						remove_targeted_decision = {
+							decision = GER_request_help_in_the_east
+							target = PREV
+						}
+						remove_targeted_decision = {
+							decision = GER_cancel_help_in_the_east
+							target = PREV
+						}
+					}
+				}
+			}
+			custom_effect_tooltip = GER_close_help_in_the_east_tt
+		}
+
+		ai_will_do = {
+			factor = 0
+		}
+	}
+	
+	GER_request_help_in_the_east = { #targeted
+		allowed = { always = no }
+
+		available = {
+			is_in_faction_with = FROM
+			has_war_with = SOV
+		}
+		
+		visible = {
+			is_in_faction_with = FROM
+			has_war_with = SOV
+		}
+
+		days_remove = 1
+
+		remove_effect = {
+			hidden_effect = {
+				FROM = {
+					meta_effect = { #meta effect so the game doesnt crash on load, since apparently decisions are loaded before ai areas
+						text = {
+							add_ai_strategy = {
+								type = force_defend_ally_borders
+								target = SOV_western
+								value = 1
+							}
+							add_ai_strategy = {
+								type = force_defend_ally_borders
+								target = SOV_central
+								value = 1
+							}
+						}
+					}
+					set_country_flag = GER_request_help_in_the_east
+				}
+				
+				activate_targeted_decision = {
+					decision = GER_cancel_help_in_the_east
+					target = FROM
+				}
+				remove_targeted_decision = {
+					decision = GER_request_help_in_the_east
+					target = FROM
+				}
+			}
+			custom_effect_tooltip = GER_request_help_in_the_east_tt
+		}
+
+		ai_will_do = {
+			factor = 0
+		}
+	}
+	GER_cancel_help_in_the_east = { #targeted
+		allowed = { always = no }
+
+		available = {
+			is_in_faction_with = FROM
+			has_war_with = SOV
+		}
+		
+		visible = {
+			is_in_faction_with = FROM
+			has_war_with = SOV
+		}
+
+		days_remove = 1
+
+		remove_effect = { 
+			hidden_effect = {
+				FROM = {
+					meta_effect = {
+						text = {
+							add_ai_strategy = {
+								type = force_defend_ally_borders
+								target = SOV_western
+								value = -1
+							}
+							add_ai_strategy = {
+								type = force_defend_ally_borders
+								target = SOV_central
+								value = -1
+							}
+						}
+					}
+					clr_country_flag = GER_request_help_in_the_east
+				}
+				
+				activate_targeted_decision = {
+					decision = GER_request_help_in_the_east
+					target = FROM
+				}
+				remove_targeted_decision = {
+					decision = GER_cancel_help_in_the_east
+					target = FROM
+				}
+			}
+			custom_effect_tooltip = GER_cancel_help_in_the_east_tt
+		}
+
+		ai_will_do = {
+			factor = 0
+		}
+	}
+}
+	
+ai_ENG_help_in_east_africa = {
+	ENG_cancel_help_against_ETH_from_SAF = { #targeted
+		allowed = { tag = ENG }
+
+		available = {
+			
+		}
+		
+		visible = {
+			is_ai = no
+			ETH = { exists = yes }
+			is_in_faction_with = SAF
+			OR = {
+				has_war_with = ETH
+				date > 1939.1.1
+			}
+			
+			NOT = { SAF = { has_country_flag = ai_ENG_no_help_against_ETH } }
+		}
+
+		cosmetic_tag = SAF
+		days_remove = 1
+
+		remove_effect = { 
+			hidden_effect = {
+				SAF = { set_country_flag = ai_ENG_no_help_against_ETH }
+			}
+			custom_effect_tooltip = ENG_cancel_help_against_ETH_from_SAF_tt
+		}
+
+		ai_will_do = {
+			factor = 0
+		}
+	}
+	ENG_request_help_against_ETH_from_SAF = { #targeted
+		allowed = { tag = ENG }
+
+		available = {
+		}
+		
+		visible = {
+			is_ai = no
+			ETH = { exists = yes }
+			is_in_faction_with = SAF
+			OR = {
+				has_war_with = ETH
+				date > 1939.1.1
+			}
+			
+			SAF = { has_country_flag = ai_ENG_no_help_against_ETH }
+		}
+
+		cosmetic_tag = SAF
+		days_remove = 1
+
+		remove_effect = { 
+			hidden_effect = {
+				SAF = { clr_country_flag = ai_ENG_no_help_against_ETH }
+			}
+			custom_effect_tooltip = ENG_cancel_help_against_ETH_from_SAF_tt
+		}
+
+		ai_will_do = {
+			factor = 0
+		}
+	}
+	
+	ENG_cancel_help_against_ETH_from_RAJ = { #targeted
+		allowed = { tag = ENG }
+
+		available = {
+			#is_in_faction_with = FROM
+			#has_war_with = SOV
+		}
+		
+		visible = {
+			is_ai = no
+			ETH = { exists = yes }
+			is_in_faction_with = RAJ
+			OR = {
+				has_war_with = ETH
+				date > 1939.1.1
+			}
+			
+			NOT = { RAJ = { has_country_flag = ai_ENG_no_help_against_ETH } }
+		}
+
+		cosmetic_tag = RAJ
+		days_remove = 1
+
+		remove_effect = { 
+			hidden_effect = {
+				RAJ = { set_country_flag = ai_ENG_no_help_against_RAJ }
+			}
+			custom_effect_tooltip = ENG_cancel_help_against_ETH_from_RAJ_tt
+		}
+
+		ai_will_do = {
+			factor = 0
+		}
+	}
+	ENG_request_help_against_ETH_from_RAJ = { #targeted
+		allowed = { tag = ENG }
+
+		available = {
+			#is_in_faction_with = FROM
+			#has_war_with = SOV
+		}
+		
+		visible = {
+			is_ai = no
+			ETH = { exists = yes }
+			is_in_faction_with = RAJ
+			OR = {
+				has_war_with = ETH
+				date > 1939.1.1
+			}
+			
+			RAJ = { has_country_flag = ai_ENG_no_help_against_ETH }
+		}
+
+		cosmetic_tag = RAJ
+		days_remove = 1
+
+		remove_effect = { 
+			hidden_effect = {
+				RAJ = { clr_country_flag = ai_ENG_no_help_against_ETH }
+			}
+			custom_effect_tooltip = ENG_cancel_help_against_ETH_from_RAJ_tt
+		}
+
+		ai_will_do = {
+			factor = 0
+		}
+	}
+}

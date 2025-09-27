@@ -1,0 +1,3345 @@
+
+##################################### DIVISION PRODUCTION
+
+@MANPOWER_LEVEL_START_REDUCTION = 7 #max lvl is 15. decreases division target by DIVISION_REDUCTION_PER_MP_LAW for every lvl above. 7 = expanded and 18-45
+@DIVISION_REDUCTION_PER_MP_LAW = 0.04 #division target reduction per lvl above MANPOWER_LEVEL_START_REDUCTION
+	
+@AI_STORAGE_DAYS_FOR_OUTPUT = 30 #how many days of resources in stock compared to output before using storage
+	
+ai_deficit_production_weights = { #define extra production weight for specific equipments in deficit, default is 50
+
+	set_variable = { global.ai_deficit_weight@anti_tank_equipment = 100 }
+	set_variable = { global.ai_deficit_weight@medanti_tank_equipment = 150 }
+	set_variable = { global.ai_deficit_weight@radio_equipment = 100 }
+	
+	set_variable = { global.ai_deficit_weight@train_equipment = 200 }
+	
+	set_variable = { global.ai_deficit_weight@trm_light_tank_chassis = 100 }
+	set_variable = { global.ai_deficit_weight@trm_light_tank_cs_chassis = 100 }
+	set_variable = { global.ai_deficit_weight@trm_light_tank_destroyer_chassis = 100 }
+	set_variable = { global.ai_deficit_weight@trm_light_tank_assault_gun_chassis = 100 }
+	set_variable = { global.ai_deficit_weight@trm_light_tank_artillery_chassis = 100 }
+	set_variable = { global.ai_deficit_weight@trm_light_tank_aa_chassis = 100 }
+	set_variable = { global.ai_deficit_weight@trm_light_tank_amphibious_chassis = 100 }
+	
+	set_variable = { global.ai_deficit_weight@trm_cavalry_tank_chassis = 100 }
+	set_variable = { global.ai_deficit_weight@trm_cavalry_tank_cs_chassis = 100 }
+	set_variable = { global.ai_deficit_weight@trm_cavalry_tank_destroyer_chassis = 100 }
+	set_variable = { global.ai_deficit_weight@trm_cavalry_tank_assault_gun_chassis = 100 }
+	set_variable = { global.ai_deficit_weight@trm_cavalry_tank_artillery_chassis = 100 }
+	set_variable = { global.ai_deficit_weight@trm_cavalry_tank_aa_chassis = 100 }
+	set_variable = { global.ai_deficit_weight@trm_cavalry_tank_amphibious_chassis = 100 }
+	
+	set_variable = { global.ai_deficit_weight@trm_medium_tank_chassis = 100 }
+	set_variable = { global.ai_deficit_weight@trm_medium_tank_cs_chassis = 100 }
+	set_variable = { global.ai_deficit_weight@trm_medium_tank_destroyer_chassis = 100 }
+	set_variable = { global.ai_deficit_weight@trm_medium_tank_assault_gun_chassis = 100 }
+	set_variable = { global.ai_deficit_weight@trm_medium_tank_artillery_chassis = 100 }
+	set_variable = { global.ai_deficit_weight@trm_medium_tank_aa_chassis = 100 }
+	set_variable = { global.ai_deficit_weight@trm_medium_tank_amphibious_chassis = 100 }
+	
+	set_variable = { global.ai_deficit_weight@trm_infantry_tank_chassis = 100 }
+	set_variable = { global.ai_deficit_weight@trm_infantry_tank_cs_chassis = 100 }
+	set_variable = { global.ai_deficit_weight@trm_infantry_tank_destroyer_chassis = 100 }
+	set_variable = { global.ai_deficit_weight@trm_infantry_tank_assault_gun_chassis = 100 }
+	set_variable = { global.ai_deficit_weight@trm_infantry_tank_artillery_chassis = 100 }
+	set_variable = { global.ai_deficit_weight@trm_infantry_tank_aa_chassis = 100 }
+	set_variable = { global.ai_deficit_weight@trm_infantry_tank_amphibious_chassis = 100 }
+}
+
+##################################### newly researched equipment introduction
+
+@AI_EQUIPMENT_INTRO_RATIO_TRIGGER = 0.70 #how much equipment we need to have supplied in field to introduce the equipment to the next unit group. first introduction of a new equipment bypasses this
+@AI_DAYS_TO_SKIP_RATIO_TRIGGER = 90 #after this many days it skips the above trigger, cuz AI is just retarted
+@AI_DAYS_BETWEEN_EQUIPMENT_INTRO = 40 #min days between introducing equipments to unit groups
+
+
+########################################################## AI AIR PRODUCTION 
+##################################### Air Equipment Triggers for Production
+
+@AI_FTR_RATIO/interceptor_equipment = 0.0 #if deployed fighter types is higher than "ai_fighter_target_buffer * This" the mentioned equipments can be produced
+@AI_FTR_RATIO/fighter_alt_equipment = 0.0
+@AI_FTR_RATIO/mr_fighter_equipment = 0.0
+@AI_FTR_RATIO/heavy_fighter_equipment = 0.6
+@AI_FTR_RATIO/CAS_equipment = 0.6
+@AI_FTR_RATIO/twin_cas_equipment = 1.2
+@AI_FTR_RATIO/tac_bomber_equipment = 1.0
+@AI_FTR_RATIO/flying_boat_equipment = 1.2
+@AI_FTR_RATIO/nav_bomber_equipment = 1.2
+@AI_FTR_RATIO/light_bomber_equipment = 1.0
+@AI_FTR_RATIO/fast_bomber_equipment = 1.0
+@AI_FTR_RATIO/quad_engine_bomber_equipment = 1.2
+
+@AI_AIR_FACTORY_RATIO_PRECISION = 3
+@AI_AIR_EQUIPMENT_PRODUCTION_PRECISION = 5
+
+@AI_AIR_MAX_CIC_RATIO_FOR_POTENTIAL_ALUMINIUM_IMPORT = 0.4 #when checking how much alu is available from allies for import it caps the potential import at num_civilian_factories * THIS * 10 
+
+########################################################## AI NAVAL PRODUCTION 
+##################################### AI Convoy Target
+
+@AI_MAX_CONVOY_NEED = 100
+
+@AI_CONVOY_NEED_PER_COASTAL_STATE = 0.2
+@AI_CONVOY_NEED_PER_DIVISION = 0.075
+@AI_CONVOY_NEED_PER_SHIP = 0.1
+@AI_CONVOY_NEED_PER_DOCKYARD = 0.75
+@AI_CONVOY_NEED_PER_DANGER = 20
+@AI_CONVOY_NEED_PER_INVASION = 0.5
+
+@AI_CONVOY_NEED_MULT_AT_PEACE = 0.5
+
+@AI_CONVOY_PRODUCTION_REQUIRED_NEED = 30 #required need to affect production
+
+@AI_CONVOY_PRODUCTION_MAX_DOCKYARDS = 100
+@AI_CONVOY_PRODUCTION_MAX_NIC_RATIO = 0.3 #when at AI_MAX_CONVOY_NEED ai uses this much of its NIC for convoy production
+@AI_CONVOY_PRODUCTION_MIN_NIC_RATIO = 0.05 #when above AI_CONVOY_PRODUCTION_REQUIRED_NEED ai uses atleast this much
+
+@AI_CONVOY_PRODUCTION_MAX_RATIO_INCREASE = 0.05 #per update it can increase the ratio of NIC assigned by this much
+@AI_CONVOY_PRODUCTION_MAX_RATIO_DECREASE = 0.1  #same as above but for decrease. this is so ai doesnt shuffle too much
+
+score_military_industrial_organisations = {
+	hidden_effect = {
+		every_military_industrial_organization = {
+			if = {
+				limit = {
+					OR = {
+						has_mio_equipment_type = armor
+						meta_trigger = {
+							text = {
+								has_mio_equipment_type = [E]
+							}
+							E = "[?equipment_type.GetTokenKey]"
+						}
+						
+						if = {
+							limit = {
+								check_variable = { equipment_type = token:trm_light_tank_chassis }
+							}
+							has_mio_equipment_type = mio_cat_eq_light_only
+						}
+						else_if = {
+							limit = {
+								check_variable = { equipment_type = token:trm_medium_tank_chassis }
+							}
+							has_mio_equipment_type = mio_cat_eq_medium_only
+						}
+						else = {
+							always = no
+						}
+					}
+				}
+				
+				set_temp_variable = { weight = mtth:ai_military_industrial_organisation_weight }
+				
+				if = {
+					limit = {
+						check_variable = { weight > best_weight }
+					}
+					set_temp_variable = { best_weight = weight }
+					set_temp_variable = { best_designer = THIS }
+				}
+				
+				#log = "[This.GetName] NAME | [?equipment_type.GetTokenKey] KEY | [?weight] WEIGHT"
+			}
+		}
+		#log = "[?best_designer.GetName] BEST DESIGNER"
+	}
+}
+score_military_industrial_organisations_variant = {
+	hidden_effect = {
+		every_military_industrial_organization = {
+			if = {
+				limit = {
+					meta_trigger = {
+						text = {
+							has_mio_equipment_type = [E]
+						}
+						E = "[?variant_archetype.GetTokenKey]"
+					}
+				}
+				
+				set_temp_variable = { weight = mtth:ai_military_industrial_organisation_weight }
+				
+				if = {
+					limit = {
+						check_variable = { weight > variant_best_weight }
+					}
+					set_temp_variable = { variant_best_weight = weight }
+					set_temp_variable = { variant_best_designer = THIS }
+				}
+				
+				#log = "[This.GetName] NAME | [?variant_archetype.GetTokenKey] KEY | [?weight] WEIGHT"
+			}
+		}
+		#log = "[?variant_best_designer.GetName] ([?variant_best_designer]) BEST DESIGNER for [?selected_variant.GetTokenKey]"
+	}
+}
+
+ai_update_convoy_production = {
+	set_temp_variable = { t1 = num_coastal_states }
+	multiply_temp_variable = { t1 = @AI_CONVOY_NEED_PER_COASTAL_STATE }
+	add_to_temp_variable = { ai_convoy_need = t1 }
+	
+	set_temp_variable = { t1 = num_divisions }
+	multiply_temp_variable = { t1 = @AI_CONVOY_NEED_PER_DIVISION }
+	add_to_temp_variable = { ai_convoy_need = t1 }
+	
+	set_temp_variable = { t1 = num_ships }
+	multiply_temp_variable = { t1 = @AI_CONVOY_NEED_PER_SHIP }
+	add_to_temp_variable = { ai_convoy_need = t1 }
+	
+	set_temp_variable = { t1 = num_of_naval_factories }
+	multiply_temp_variable = { t1 = @AI_CONVOY_NEED_PER_DOCKYARD }
+	add_to_temp_variable = { ai_convoy_need = t1 }
+	
+	set_temp_variable = { t1 = modifier@naval_invasion_capacity }
+	multiply_temp_variable = { t1 = @AI_CONVOY_NEED_PER_INVASION }
+	add_to_temp_variable = { ai_convoy_need = t1 }
+	
+	set_temp_variable = { t1 = convoy_threat }
+	multiply_temp_variable = { t1 = @AI_CONVOY_NEED_PER_DANGER }
+	add_to_temp_variable = { ai_convoy_need = t1 }
+	
+	set_temp_variable = { max_value = @AI_MAX_CONVOY_NEED }
+	clamp_temp_variable = { var = ai_convoy_need max = max_value }
+	
+	if = {
+		limit = {
+			has_war = no 
+		}
+		multiply_temp_variable = { ai_convoy_need = @AI_CONVOY_NEED_MULT_AT_PEACE }
+	}
+	
+	
+	
+	if = {
+		limit = {
+			check_variable = { ai_target_convoys = 0 }
+		}
+		set_temp_variable = { ai_target_convoys = 50 }
+	}
+	
+	count_convoys = yes
+	
+	if = {
+		limit = {
+			check_variable = { convoy_count > 0 }
+		}
+		if = {
+			limit = {
+				check_variable = { convoy_count > ai_target_convoys }
+			}
+			multiply_temp_variable = { convoy_count = 1.5 }
+		}
+		set_temp_variable = { over_target_mult = ai_target_convoys }
+		divide_temp_variable = { over_target_mult = convoy_count }
+		multiply_temp_variable = { ai_convoy_need = over_target_mult }
+	}
+		
+		#log = "[This.GetTag] | CONVOY NEED: [?ai_convoy_need] (Has: [?convoy_count]) (Mult: [?over_target_mult])"
+		#log = "[This.GetTag] | CONVOY PROD: [?ai_convoy_nic]"
+		
+	if = {
+		limit = {
+			check_variable = { ai_convoy_need > @AI_CONVOY_PRODUCTION_REQUIRED_NEED }
+		}
+		
+		######### CONVOY PRODUCTION RATIO 
+		
+		set_temp_variable = { factor = @AI_CONVOY_PRODUCTION_MAX_NIC_RATIO }
+		divide_temp_variable = { factor = @AI_MAX_CONVOY_NEED }
+		
+		set_temp_variable = { ai_convoy_nic_ratio_new = ai_convoy_need }
+		multiply_temp_variable = { ai_convoy_nic_ratio_new = factor }
+		set_temp_variable = { min_value = @AI_CONVOY_PRODUCTION_MIN_NIC_RATIO }
+		clamp_temp_variable = { var = ai_convoy_nic_ratio_new min = min_value }
+
+		### increase 
+		
+		if = { 
+			limit = {
+				check_variable = { ai_convoy_nic_ratio_new > ai_convoy_nic_ratio }
+			}
+			set_temp_variable = { ai_ratio_diff = ai_convoy_nic_ratio_new }
+			subtract_from_temp_variable = { ai_ratio_diff = ai_convoy_nic_ratio }
+			
+			set_temp_variable = { max_value = @AI_CONVOY_PRODUCTION_MAX_RATIO_INCREASE }
+			clamp_temp_variable = { var = ai_ratio_diff max = max_value }
+			
+			add_to_variable = { ai_convoy_nic_ratio = ai_ratio_diff }
+		
+		}
+		
+		### decrease 
+		
+		else_if = { 
+			limit = {
+				check_variable = { ai_convoy_nic_ratio > ai_convoy_nic_ratio_new }
+			}
+			set_temp_variable = { ai_ratio_diff = ai_convoy_nic_ratio }
+			subtract_from_temp_variable = { ai_ratio_diff = ai_convoy_nic_ratio_new }
+			
+			set_temp_variable = { max_value = @AI_CONVOY_PRODUCTION_MAX_RATIO_INCREASE }
+			clamp_temp_variable = { var = ai_ratio_diff max = max_value }
+			
+			subtract_from_variable = { ai_convoy_nic_ratio = ai_ratio_diff }
+		
+		}
+		
+		### set ai_convoy_nic_new flat value
+		
+		set_temp_variable = { ai_convoy_nic_new = num_of_naval_factories }
+		multiply_temp_variable = { ai_convoy_nic_new = ai_convoy_nic_ratio }
+		set_temp_variable = { max_value = @AI_CONVOY_PRODUCTION_MAX_DOCKYARDS }
+		clamp_temp_variable = { var = ai_convoy_nic_new max = max_value }
+		round_temp_variable = ai_convoy_nic_new
+		
+		if = { 
+			limit = { #only update if value has changed
+				OR = { 
+					check_variable = { ai_convoy_nic_new > 0 }
+					check_variable = { ai_convoy_nic > 0 }
+				}
+				NOT = { check_variable = { ai_convoy_nic = ai_convoy_nic_new } } 
+			}
+			
+			
+			if = { limit = { check_variable = { ai_convoy_nic = 0 } }
+				clear_variable = ai_convoy_nic
+			}
+		
+			if = {
+				limit = {
+					has_variable = ai_convoy_nic
+				}
+				multiply_variable = { ai_convoy_nic = -1 }
+				meta_effect = {
+					text = {
+						add_ai_strategy = {
+							type = equipment_production_min_factories
+							id = convoy
+							value = [NIC]
+						}
+					}
+					NIC = "[?ai_convoy_nic]"
+				}
+			}
+			
+			set_variable = { ai_convoy_nic = ai_convoy_nic_new }
+			
+			if = { limit = { check_variable = { ai_convoy_nic = 0 } }
+				clear_variable = ai_convoy_nic
+			}
+
+			if = {
+				limit = {
+					has_variable = ai_convoy_nic
+				}
+				#Apply new value
+				meta_effect = {
+					text = {
+						add_ai_strategy = {
+							type = equipment_production_min_factories
+							id = convoy
+							value = [NIC]
+						}
+					}
+					NIC = "[?ai_convoy_nic]"
+				}
+			}
+		}
+	}
+	else_if = {
+		limit = {
+			has_variable = ai_convoy_nic
+		}
+		multiply_variable = { ai_convoy_nic = -1 }
+		meta_effect = {
+			text = {
+				add_ai_strategy = {
+					type = equipment_production_min_factories
+					id = convoy
+					value = [NIC]
+				}
+			}
+			NIC = "[?ai_convoy_nic]"
+		}
+		clear_variable = ai_convoy_nic
+	}
+}
+
+ai_update_equipment_introduction = {
+	### MORTAR EQUIPMENT 
+	if = {
+		limit = {
+			has_tech = mortars 
+			NOT = { has_country_flag = mortar_equipment_intro/complete }
+			NOT = { has_country_flag = ai_mortar_equipment_intro }
+			
+			if = {
+				limit = {
+					check_variable = { num_target_equipment_in_armies@mortar_equipment > 0 }
+				}
+				set_temp_variable = { field_ratio = num_equipment_in_armies@mortar_equipment }
+				divide_temp_variable = { field_ratio = num_target_equipment_in_armies@mortar_equipment }
+				
+				OR = {
+					check_variable = { field_ratio > @AI_EQUIPMENT_INTRO_RATIO_TRIGGER }
+					
+					#why are you wasting so much time?
+					has_country_flag = { flag = ai_last_intro/mortar_equipment days > @AI_DAYS_TO_SKIP_RATIO_TRIGGER value = 1 }
+				}
+			}
+		}
+		
+		set_country_flag = { flag = ai_mortar_equipment_intro days = @AI_DAYS_BETWEEN_EQUIPMENT_INTRO value = 1 }
+		set_country_flag = ai_last_intro/mortar_equipment
+		if = {
+			limit = {
+				NOT = { has_country_flag = mortar_equipment_intro/infantry_group }
+			}
+			set_country_flag = mortar_equipment_intro/infantry_group
+			set_technology = { mortar_equipment_infantry_group_tech = 1 }
+		}
+		else_if = {
+			limit = {
+				NOT = { has_country_flag = mortar_equipment_intro/mobile_group }
+			}
+			set_country_flag = mortar_equipment_intro/mobile_group
+			set_technology = { mortar_equipment_mobile_group_tech = 1 }
+		}
+		else_if = {
+			limit = {
+				NOT = { has_country_flag = mortar_equipment_intro/special_forces_group }
+			}
+			set_country_flag = mortar_equipment_intro/special_forces_group
+			set_technology = { mortar_equipment_special_forces_group_tech = 1 }
+		}
+		
+		### Fully done, reduce to only 1 flag
+		if = {
+			limit = {
+				has_country_flag = mortar_equipment_intro/infantry_group
+				has_country_flag = mortar_equipment_intro/mobile_group
+				has_country_flag = mortar_equipment_intro/special_forces_group
+			}
+			clr_country_flag = mortar_equipment_intro/infantry_group
+			clr_country_flag = mortar_equipment_intro/mobile_group
+			clr_country_flag = mortar_equipment_intro/special_forces_group
+			
+			set_country_flag = mortar_equipment_intro/complete
+			
+			clr_country_flag = ai_last_intro/mortar_equipment
+		}
+	}
+		
+	### HMG EQUIPMENT
+	if = {
+		limit = {
+			has_tech = hmg 
+			NOT = { has_country_flag = HMG_equipment_intro/complete }
+			NOT = { has_country_flag = ai_HMG_equipment_intro }
+			
+			if = {
+				limit = {
+					check_variable = { num_target_equipment_in_armies@HMG_equipment > 0 }
+				}
+				set_temp_variable = { field_ratio = num_equipment_in_armies@HMG_equipment }
+				divide_temp_variable = { field_ratio = num_target_equipment_in_armies@HMG_equipment }
+				
+				OR = {
+					check_variable = { field_ratio > @AI_EQUIPMENT_INTRO_RATIO_TRIGGER }
+					
+					#why are you wasting so much time?
+					has_country_flag = { flag = ai_last_intro/HMG_equipment days > @AI_DAYS_TO_SKIP_RATIO_TRIGGER value = 1 }
+				}
+			}
+		}
+		
+		set_country_flag = { flag = ai_HMG_equipment_intro days = @AI_DAYS_BETWEEN_EQUIPMENT_INTRO value = 1 }
+		set_country_flag = ai_last_intro/HMG_equipment
+		if = {
+			limit = {
+				NOT = { has_country_flag = HMG_equipment_intro/infantry_group }
+			}
+			set_country_flag = HMG_equipment_intro/infantry_group
+			set_technology = { HMG_equipment_infantry_group_tech = 1 }
+		}
+		else_if = {
+			limit = {
+				NOT = { has_country_flag = HMG_equipment_intro/mobile_group }
+			}
+			set_country_flag = HMG_equipment_intro/mobile_group
+			set_technology = { HMG_equipment_mobile_group_tech = 1 }
+		}
+		else_if = {
+			limit = {
+				NOT = { has_country_flag = HMG_equipment_intro/special_forces_group }
+			}
+			set_country_flag = HMG_equipment_intro/special_forces_group
+			set_technology = { HMG_equipment_special_forces_group_tech = 1 }
+		}
+		
+		### Fully done, reduce to only 1 flag
+		if = {
+			limit = {
+				has_country_flag = HMG_equipment_intro/infantry_group
+				has_country_flag = HMG_equipment_intro/mobile_group
+				has_country_flag = HMG_equipment_intro/special_forces_group
+			}
+			clr_country_flag = HMG_equipment_intro/infantry_group
+			clr_country_flag = HMG_equipment_intro/mobile_group
+			clr_country_flag = HMG_equipment_intro/special_forces_group
+			
+			set_country_flag = HMG_equipment_intro/complete
+			
+			clr_country_flag = ai_last_intro/HMG_equipment
+		}
+	}	
+	
+	### INFANTRY GUN
+	if = {
+		limit = {
+			has_tech = infantry_guns 
+			NOT = { has_country_flag = infantrygun_equipment_intro/complete }
+			NOT = { has_country_flag = ai_infantrygun_equipment_intro }
+			
+			if = {
+				limit = {
+					check_variable = { num_target_equipment_in_armies@infantrygun_equipment > 0 }
+				}
+				set_temp_variable = { field_ratio = num_equipment_in_armies@infantrygun_equipment }
+				divide_temp_variable = { field_ratio = num_target_equipment_in_armies@infantrygun_equipment }
+				
+				OR = {
+					check_variable = { field_ratio > @AI_EQUIPMENT_INTRO_RATIO_TRIGGER }
+					
+					#why are you wasting so much time?
+					has_country_flag = { flag = ai_last_intro/infantrygun_equipment days > @AI_DAYS_TO_SKIP_RATIO_TRIGGER value = 1 }
+				}
+			}
+		}
+		
+		set_country_flag = { flag = ai_infantrygun_equipment_intro days = @AI_DAYS_BETWEEN_EQUIPMENT_INTRO value = 1 }
+		set_country_flag = ai_last_intro/infantrygun_equipment
+		if = {
+			limit = {
+				NOT = { has_country_flag = infantrygun_equipment_intro/infantry_group }
+			}
+			set_country_flag = infantrygun_equipment_intro/infantry_group
+			set_technology = { infantrygun_equipment_infantry_group_tech = 1 }
+		}
+		else_if = {
+			limit = {
+				NOT = { has_country_flag = infantrygun_equipment_intro/mobile_group }
+			}
+			set_country_flag = infantrygun_equipment_intro/mobile_group
+			set_technology = { infantrygun_equipment_mobile_group_tech = 1 }
+		}
+		
+		### Fully done, reduce to only 1 flag
+		if = {
+			limit = {
+				has_country_flag = infantrygun_equipment_intro/infantry_group
+				has_country_flag = infantrygun_equipment_intro/mobile_group
+			}
+			clr_country_flag = infantrygun_equipment_intro/infantry_group
+			clr_country_flag = infantrygun_equipment_intro/mobile_group
+			
+			set_country_flag = infantrygun_equipment_intro/complete
+			
+			clr_country_flag = ai_last_intro/infantrygun_equipment
+		}
+	}
+	
+	### HANDHELD AT
+	if = {
+		limit = {
+			has_tech = infantry_at
+			NOT = { has_country_flag = handheld_at_equipment_intro/complete }
+			NOT = { has_country_flag = ai_handheld_at_equipment_intro }
+			
+			if = {
+				limit = {
+					check_variable = { num_target_equipment_in_armies@handheld_at_equipment > 0 }
+				}
+				set_temp_variable = { field_ratio = num_equipment_in_armies@handheld_at_equipment }
+				divide_temp_variable = { field_ratio = num_target_equipment_in_armies@handheld_at_equipment }
+				
+				OR = {
+					check_variable = { field_ratio > @AI_EQUIPMENT_INTRO_RATIO_TRIGGER }
+					
+					#why are you wasting so much time?
+					has_country_flag = { flag = ai_last_intro/handheld_at_equipment days > @AI_DAYS_TO_SKIP_RATIO_TRIGGER value = 1 }
+				}
+			}
+		}
+		
+		set_country_flag = { flag = ai_handheld_at_equipment_intro days = @AI_DAYS_BETWEEN_EQUIPMENT_INTRO value = 1 }
+		set_country_flag = ai_last_intro/handheld_at_equipment
+		if = {
+			limit = {
+				NOT = { has_country_flag = handheld_at_equipment_intro/infantry_group }
+			}
+			set_country_flag = handheld_at_equipment_intro/infantry_group
+			set_technology = { handheld_at_equipment_infantry_group_tech = 1 }
+		}
+		else_if = {
+			limit = {
+				NOT = { has_country_flag = handheld_at_equipment_intro/mobile_group }
+			}
+			set_country_flag = handheld_at_equipment_intro/mobile_group
+			set_technology = { handheld_at_equipment_mobile_group_tech = 1 }
+		}
+		else_if = {
+			limit = {
+				NOT = { has_country_flag = handheld_at_equipment_intro/special_forces_group }
+			}
+			set_country_flag = handheld_at_equipment_intro/special_forces_group
+			set_technology = { handheld_at_equipment_special_forces_group_tech = 1 }
+		}
+		
+		### Fully done, reduce to only 1 flag
+		if = {
+			limit = {
+				has_country_flag = handheld_at_equipment_intro/infantry_group
+				has_country_flag = handheld_at_equipment_intro/mobile_group
+				has_country_flag = handheld_at_equipment_intro/special_forces_group
+			}
+			clr_country_flag = handheld_at_equipment_intro/infantry_group
+			clr_country_flag = handheld_at_equipment_intro/mobile_group
+			clr_country_flag = handheld_at_equipment_intro/special_forces_group
+			
+			set_country_flag = handheld_at_equipment_intro/complete
+			
+			clr_country_flag = ai_last_intro/handheld_at_equipment
+		}
+	}
+	
+	if = {
+		limit = {
+			has_tech = mechanised_infantry2
+		}
+			
+		### MECHANIZED HMG
+		if = {
+			limit = {
+				has_tech = mechanized_hmg_tech
+				NOT = { has_country_flag = mechanized_hmg_intro/complete }
+				
+				set_temp_variable = { field_ratio = num_equipment_in_armies@mechanized_equipment }
+				divide_temp_variable = { field_ratio = num_target_equipment_in_armies@mechanized_equipment }
+				
+				OR = {
+					check_variable = { field_ratio > @AI_EQUIPMENT_INTRO_RATIO_TRIGGER }
+					
+					#why are you wasting so much time?
+					has_country_flag = { flag = ai_last_intro/mechanized_hmg days > @AI_DAYS_TO_SKIP_RATIO_TRIGGER value = 1 }
+				}
+			}
+			
+			if = {
+				limit = {
+					NOT = { has_country_flag = mechanized_hmg_intro/mobile_group }
+				}
+				set_country_flag = mechanized_hmg_intro/mobile_group
+				set_technology = { mechanized_hmg_mobile_group_tech = 1 }
+			}
+			
+			### Fully done, reduce to only 1 flag
+			if = {
+				limit = {
+					has_country_flag = mechanized_hmg_intro/mobile_group
+				}
+				clr_country_flag = mechanized_hmg_intro/mobile_group
+				
+				set_country_flag = mechanized_hmg_intro/complete
+				
+				clr_country_flag = ai_last_intro/mechanized_hmg
+			}
+		}
+		
+		### MECHANIZED MORTAR
+		if = {
+			limit = {
+				has_tech = mechanized_mortar_tech
+				NOT = { has_country_flag = mechanized_mortar_intro/complete }
+				
+				set_temp_variable = { field_ratio = num_equipment_in_armies@mechanized_equipment }
+				divide_temp_variable = { field_ratio = num_target_equipment_in_armies@mechanized_equipment }
+				
+				OR = {
+					check_variable = { field_ratio > @AI_EQUIPMENT_INTRO_RATIO_TRIGGER }
+					
+					#why are you wasting so much time?
+					has_country_flag = { flag = ai_last_intro/mechanized_mortar days > @AI_DAYS_TO_SKIP_RATIO_TRIGGER value = 1 }
+				}
+			}
+			
+			if = {
+				limit = {
+					NOT = { has_country_flag = mechanized_mortar_intro/mobile_group }
+				}
+				set_country_flag = mechanized_mortar_intro/mobile_group
+				set_technology = { mechanized_mortar_mobile_group_tech = 1 }
+			}
+			
+			### Fully done, reduce to only 1 flag
+			if = {
+				limit = {
+					has_country_flag = mechanized_mortar_intro/mobile_group
+				}
+				clr_country_flag = mechanized_mortar_intro/mobile_group
+				
+				set_country_flag = mechanized_mortar_intro/complete
+				
+				clr_country_flag = ai_last_intro/mechanized_mortar
+			}
+		}
+		
+		### MECHANIZED AA
+		if = {
+			limit = {
+				has_tech = mechanized_aa_tech
+				NOT = { has_country_flag = mechanized_aa_intro/complete }
+				
+				set_temp_variable = { field_ratio = num_equipment_in_armies@mechanized_equipment }
+				divide_temp_variable = { field_ratio = num_target_equipment_in_armies@mechanized_equipment }
+				
+				OR = {
+					check_variable = { field_ratio > @AI_EQUIPMENT_INTRO_RATIO_TRIGGER }
+					
+					#why are you wasting so much time?
+					has_country_flag = { flag = ai_last_intro/mechanized_aa days > @AI_DAYS_TO_SKIP_RATIO_TRIGGER value = 1 }
+				}
+			}
+			
+			if = {
+				limit = {
+					NOT = { has_country_flag = mechanized_aa_intro/mobile_group }
+				}
+				set_country_flag = mechanized_aa_intro/mobile_group
+				set_technology = { mechanized_aa_mobile_group_tech = 1 }
+			}
+			
+			### Fully done, reduce to only 1 flag
+			if = {
+				limit = {
+					has_country_flag = mechanized_aa_intro/mobile_group
+				}
+				clr_country_flag = mechanized_aa_intro/mobile_group
+				
+				set_country_flag = mechanized_aa_intro/complete
+				
+				clr_country_flag = ai_last_intro/mechanized_aa
+			}
+		}
+		
+		### MECHANIZED AT
+		if = {
+			limit = {
+				has_tech = mechanized_at_tech
+				NOT = { has_country_flag = mechanized_at_intro/complete }
+				
+				set_temp_variable = { field_ratio = num_equipment_in_armies@mechanized_equipment }
+				divide_temp_variable = { field_ratio = num_target_equipment_in_armies@mechanized_equipment }
+				
+				OR = {
+					check_variable = { field_ratio > @AI_EQUIPMENT_INTRO_RATIO_TRIGGER }
+					
+					#why are you wasting so much time?
+					has_country_flag = { flag = ai_last_intro/mechanized_at days > @AI_DAYS_TO_SKIP_RATIO_TRIGGER value = 1 }
+				}
+			}
+			
+			if = {
+				limit = {
+					NOT = { has_country_flag = mechanized_at_intro/mobile_group }
+				}
+				set_country_flag = mechanized_at_intro/mobile_group
+				set_technology = { mechanized_at_mobile_group_tech = 1 }
+			}
+			
+			### Fully done, reduce to only 1 flag
+			if = {
+				limit = {
+					has_country_flag = mechanized_at_intro/mobile_group
+				}
+				clr_country_flag = mechanized_at_intro/mobile_group
+				
+				set_country_flag = mechanized_at_intro/complete
+				
+				clr_country_flag = ai_last_intro/mechanized_at
+			}
+		}
+	}
+	
+	### RADIO EQUIPMENT
+	if = {
+		limit = {
+			has_tech = radio_technology 
+			NOT = { has_country_flag = radio_equipment_intro/complete }
+			NOT = { has_country_flag = ai_radio_equipment_intro }
+			
+			if = {
+				limit = {
+					check_variable = { num_target_equipment_in_armies@radio_equipment > 0 }
+				}
+				set_temp_variable = { field_ratio = num_equipment_in_armies@radio_equipment }
+				divide_temp_variable = { field_ratio = num_target_equipment_in_armies@radio_equipment }
+				
+				OR = {
+					check_variable = { field_ratio > @AI_EQUIPMENT_INTRO_RATIO_TRIGGER }
+					
+					#why are you wasting so much time?
+					has_country_flag = { flag = ai_last_intro/radio_equipment days > @AI_DAYS_TO_SKIP_RATIO_TRIGGER value = 1 }
+				}
+			}
+		}
+		
+		set_country_flag = { flag = ai_radio_equipment_intro days = @AI_DAYS_BETWEEN_EQUIPMENT_INTRO value = 1 }
+		set_country_flag = ai_last_intro/radio_equipment
+		if = {
+			limit = {
+				NOT = { has_country_flag = radio_equipment_intro/infantry_group }
+				has_tech = infantry_radio
+			}
+			set_country_flag = radio_equipment_intro/infantry_group
+			set_technology = { radio_equipment_infantry_group_tech = 1 }
+		}
+		else_if = {
+			limit = {
+				NOT = { has_country_flag = radio_equipment_intro/special_forces_group }
+				has_tech = infantry_radio
+			}
+			set_country_flag = radio_equipment_intro/special_forces_group
+			set_technology = { radio_equipment_special_forces_group_tech = 1 }
+		}
+		else_if = {
+			limit = {
+				NOT = { has_country_flag = radio_equipment_intro/support_group }
+			}
+			set_country_flag = radio_equipment_intro/support_group
+			set_technology = { radio_equipment_support_group_tech = 1 }
+		}
+		else_if = {
+			limit = {
+				NOT = { has_country_flag = radio_equipment_intro/mobile_group }
+				has_tech = vehicle_radio
+			}
+			set_country_flag = radio_equipment_intro/mobile_group
+			set_technology = { radio_equipment_mobile_group_tech = 1 }
+		}
+		
+		### Fully done, reduce to only 1 flag
+		if = {
+			limit = {
+				has_country_flag = radio_equipment_intro/infantry_group
+				has_country_flag = radio_equipment_intro/mobile_group
+				has_country_flag = radio_equipment_intro/special_forces_group
+				has_country_flag = radio_equipment_intro/support_group
+			}
+			clr_country_flag = radio_equipment_intro/infantry_group
+			clr_country_flag = radio_equipment_intro/mobile_group
+			clr_country_flag = radio_equipment_intro/special_forces_group
+			clr_country_flag = radio_equipment_intro/support_group
+			
+			set_country_flag = radio_equipment_intro/complete
+			
+			clr_country_flag = ai_last_intro/radio_equipment
+		}
+	}
+}
+
+ai_update_equipment_production = { #adds extra equipment_variant_production_factor to equipments with a deficit
+	
+	if = { #eq_stock_for_abort = % in storage to abort the ai strategy
+		limit = {
+			has_war = no
+		}
+		set_temp_variable = { eq_stock_for_abort = 0.075 }
+	}
+	else = {
+		set_temp_variable = { eq_stock_for_abort = 0.05 }
+	}
+		
+	# check the equipments already in the array first if any are invalid
+	for_each_loop = {
+		array = ai_deficit_production
+		
+		if = {
+			limit = { #abort at 5% stock ratio
+				check_variable = { num_equipment_in_armies@var:v > 0 }
+				set_temp_variable = { t = num_equipment@var:v }
+				divide_temp_variable = { t = num_equipment_in_armies@var:v }
+				check_variable = { t > eq_stock_for_abort }
+			}
+			
+			meta_effect = {
+				text = {
+					add_ai_strategy = {
+						type = equipment_variant_production_factor
+						id = [X]
+						value = -[Y]
+					}
+				}
+				X = "[?v.GetTokenKey]"
+				Y = "[?global.ai_deficit_weight@var:v?50]"
+			}
+			add_to_temp_array = { remove_deficit = v }
+			#log = "REMOVE_PRODUCTION [?v.GetTokenKey]"
+			
+		}
+	}
+	
+	# check all archetypes for deficits
+	for_each_loop = {
+		array = global.archetypes
+		
+		if = {
+			limit = {
+				check_variable = { num_target_equipment_in_armies@var:v > 0 }
+				check_variable = { ai_deficit@var:v = 0 }
+				check_variable = { num_equipment@var:v < 1 }
+				
+				#NOT = { is_in_array = { ai_deficit_production = v } }
+			}
+			
+			meta_effect = {
+				text = {
+					add_ai_strategy = {
+						type = equipment_variant_production_factor
+						id = [X]
+						value = [Y]
+					}
+				}
+				X = "[?v.GetTokenKey]"
+				Y = "[?global.ai_deficit_weight@var:v?50]"
+			}
+			add_to_variable = { ai_deficit@var:v = 1 }
+			add_to_array = { ai_deficit_production = v }
+			#log = "ADD_PRODUCTION [?v.GetTokenKey]"
+			
+		}
+	}
+	for_each_loop = { #remove from array
+		array = remove_deficit
+		
+		add_to_variable = { ai_deficit@var:v = -1 }
+		remove_from_array = { ai_deficit_production = v }
+	}
+	
+	update_ai_stockpile_target = yes
+	update_ai_train_production = yes
+}
+
+update_ai_train_production = {
+
+	set_temp_variable = { target_stockpile = 1.1 }
+	
+	get_supply_vehicles_temp = { 
+		var = num_supply_train
+		type = train
+		need = yes
+	} 
+
+	if = {
+		limit = { #abort at 10% stock ratio compared to used
+			check_variable = { ai_deficit@token:train_equipment = 1 }
+			
+			set_temp_variable = { target = num_supply_train }
+			multiply_temp_variable = { target = target_stockpile }
+			
+			check_variable = { num_equipment@train_equipment > target }
+		}
+		
+		meta_effect = {
+			text = {
+				add_ai_strategy = {
+					type = equipment_variant_production_factor
+					id = train_equipment
+					value = -[Y]
+				}
+			}
+			Y = "[?global.ai_deficit_weight@token:train_equipment]"
+		}
+		add_to_variable = { ai_deficit@token:train_equipment = -1 }
+		#log = "REMOVE_PRODUCTION [?v.GetTokenKey]"
+		
+	}
+	
+	# train specific
+	if = {
+		limit = {
+			check_variable = { ai_deficit@token:train_equipment = 0 }
+			check_variable = { num_equipment@train_equipment < num_supply_train }
+			
+			#NOT = { is_in_array = { ai_deficit_production = token:train_equipment } }
+		}
+		
+		meta_effect = {
+			text = {
+				add_ai_strategy = {
+					type = equipment_variant_production_factor
+					id = train_equipment
+					value = [Y]
+				}
+			}
+			Y = "[?global.ai_deficit_weight@token:train_equipment]"
+		}
+		add_to_variable = { ai_deficit@token:train_equipment = 1 }
+		#log = "ADD_PRODUCTION [?v.GetTokenKey]"
+		
+	}
+}
+
+update_ai_stockpile_target = {
+	if = {
+		limit = {
+			major_country = yes
+		}
+		
+		if = {
+			limit = {
+				NOT = { has_country_flag = ai_stockpile_1 }
+				check_variable = { stock_ratio > 0.15 }
+			}
+			set_country_flag = ai_stockpile_1
+			add_ai_strategy = {
+				type = equipment_stockpile_surplus_ratio
+				value = 5
+			}
+		}
+		else_if = {
+			limit = {
+				has_country_flag = ai_stockpile_1
+				check_variable = { stock_ratio < 0.1 }
+			}
+			clr_country_flag = ai_stockpile_1
+			add_ai_strategy = {
+				type = equipment_stockpile_surplus_ratio
+				value = -5
+			}
+		}
+		
+		if = {
+			limit = {
+				NOT = { has_country_flag = ai_stockpile_2 }
+				check_variable = { stock_ratio > 0.2 }
+			}
+			set_country_flag = ai_stockpile_2
+			add_ai_strategy = {
+				type = equipment_stockpile_surplus_ratio
+				value = 5
+			}
+		}
+		else_if = {
+			limit = {
+				has_country_flag = ai_stockpile_2
+				check_variable = { stock_ratio < 0.15 }
+			}
+			clr_country_flag = ai_stockpile_2
+			add_ai_strategy = {
+				type = equipment_stockpile_surplus_ratio
+				value = -5
+			}
+		}
+		
+		if = {
+			limit = {
+				NOT = { has_country_flag = ai_stockpile_3 }
+				check_variable = { stock_ratio > 0.25 }
+			}
+			set_country_flag = ai_stockpile_3
+			add_ai_strategy = {
+				type = equipment_stockpile_surplus_ratio
+				value = 5
+			}
+		}
+		else_if = {
+			limit = {
+				has_country_flag = ai_stockpile_3
+				check_variable = { stock_ratio < 0.20 }
+			}
+			clr_country_flag = ai_stockpile_3
+			add_ai_strategy = {
+				type = equipment_stockpile_surplus_ratio
+				value = -5
+			}
+		}
+		
+		if = {
+			limit = {
+				NOT = { has_country_flag = ai_stockpile_4 }
+				check_variable = { stock_ratio > 0.3 }
+			}
+			set_country_flag = ai_stockpile_4
+			add_ai_strategy = {
+				type = equipment_stockpile_surplus_ratio
+				value = 5
+			}
+		}
+		else_if = {
+			limit = {
+				has_country_flag = ai_stockpile_4
+				check_variable = { stock_ratio < 0.25 }
+			}
+			clr_country_flag = ai_stockpile_4
+			add_ai_strategy = {
+				type = equipment_stockpile_surplus_ratio
+				value = -5
+			}
+		}
+		
+		if = {
+			limit = {
+				NOT = { has_country_flag = ai_stockpile_5 }
+				check_variable = { stock_ratio > 0.35 }
+			}
+			set_country_flag = ai_stockpile_5
+			add_ai_strategy = {
+				type = equipment_stockpile_surplus_ratio
+				value = 50
+			}
+		}
+		else_if = {
+			limit = {
+				has_country_flag = ai_stockpile_5
+				check_variable = { stock_ratio < 0.3 }
+			}
+			clr_country_flag = ai_stockpile_5
+			add_ai_strategy = {
+				type = equipment_stockpile_surplus_ratio
+				value = -50
+			}
+		}
+		
+	}
+	else = {
+	
+		if = {
+			limit = {
+				NOT = { has_country_flag = ai_stockpile_1 }
+				check_variable = { stock_ratio > 0.15 }
+			}
+			set_country_flag = ai_stockpile_1
+			add_ai_strategy = {
+				type = equipment_stockpile_surplus_ratio
+				value = 50
+			}
+		}
+		else_if = {
+			limit = {
+				has_country_flag = ai_stockpile_1
+				check_variable = { stock_ratio < 0.1 }
+			}
+			clr_country_flag = ai_stockpile_1
+			add_ai_strategy = {
+				type = equipment_stockpile_surplus_ratio
+				value = -50
+			}
+		}
+		
+		if = {
+			limit = {
+				has_country_flag = ai_stockpile_1
+				NOT = { has_country_flag = ai_stockpile_2 }
+				check_variable = { stock_ratio > 0.50 }
+			}
+			set_country_flag = ai_stockpile_2
+			add_ai_strategy = {
+				type = equipment_stockpile_surplus_ratio
+				value = 50
+			}
+		}
+		else_if = {
+			limit = {
+				has_country_flag = ai_stockpile_2
+				check_variable = { stock_ratio < 0.40 }
+			}
+			clr_country_flag = ai_stockpile_2
+			add_ai_strategy = {
+				type = equipment_stockpile_surplus_ratio
+				value = -50
+			}
+		}
+		
+		if = {
+			limit = {
+				has_country_flag = ai_stockpile_2
+				check_variable = { stock_ratio > 1 }
+				NOT = { has_country_flag = ai_production_fallback }
+			}
+			set_country_flag = ai_production_fallback
+		}
+		else_if = {
+			limit = {
+				has_country_flag = ai_production_fallback
+				check_variable = { stock_ratio < 0.5 }
+			}
+			clr_country_flag = ai_production_fallback
+		}
+	}
+}
+	
+ai_equipment_surplus = { #deprecated
+	
+	for_each_loop = {
+		array = global.archetypes_infantry
+		
+		if = {
+			limit = {
+				#check_variable = { num_equipment@var:v > 0 }
+				check_variable = { num_equipment_in_armies_k@var:v > 0 }
+				NOT = { is_in_array = { ai_surplus_equipments = v } }
+			}
+			
+			meta_effect = {
+				text = {
+					add_ai_strategy = {
+						type = equipment_production_surplus_management
+						id = [X]
+						value = 5
+					}
+				}
+				X = "[?v.GetTokenKey]"
+			}
+			add_to_array = { ai_surplus_equipments = v }
+			
+		}
+	}
+	
+	if = {
+		limit = {
+			check_variable = { num_armor > 0 }
+		}
+		for_each_loop = {
+			array = global.archetypes_armor
+			
+			if = {
+				limit = {
+					#check_variable = { num_equipment@var:v > 0 }
+					check_variable = { num_equipment_in_armies_k@var:v > 0 }
+					NOT = { is_in_array = { ai_surplus_equipments = v } }
+				}
+				
+				meta_effect = {
+					text = {
+						add_ai_strategy = {
+							type = equipment_production_surplus_management
+							id = [X]
+							value = 5
+						}
+					}
+					X = "[?v.GetTokenKey]"
+				}
+				add_to_array = { ai_surplus_equipments = v }
+				
+			}
+		}
+	}
+	
+	## clear invalid surplus equipment entries
+	
+	for_each_loop = {
+		array = ai_surplus_equipments
+		
+		if = {
+			limit = {
+				check_variable = { num_target_equipment_in_armies@var:v = 0 }
+			}
+			meta_effect = {
+				text = {
+					add_ai_strategy = {
+						type = equipment_production_surplus_management
+						id = [X]
+						value = -5
+					}
+				}
+				X = "[?v.GetTokenKey]"
+			}
+			add_to_temp_array = { remove_surplus = v }
+		}
+	}
+	
+	for_each_loop = {
+		array = remove_surplus
+		
+		remove_from_array = { ai_surplus_equipments = v }
+	}
+}
+
+
+##################################################################
+#### AI AIR PRODUCTION 
+####
+
+ai_update_air_production = {
+
+	get_sorted_scored_countries_temp = {
+		scorer = ai_GetMainAirEnemy
+		array = ai_main_air_enemies
+	}
+	
+	set_variable = { ai_main_air_enemy = ai_main_air_enemies^0 }
+					
+	###### CALCULATE FIGHTER-TYPE TARGET
+	
+	ai_check_air_strategic_regions = yes
+		
+	ai_calculate_deployed_fighter_type = yes # get all fighter types added together into ai_fighter_strength
+	
+	set_temp_variable = { ai_own_fighter_strength = ai_fighter_strength }
+	
+	set_temp_variable = { ai_max_enemy_fighter_strength = ai_own_fighter_strength }
+	multiply_temp_variable = { ai_max_enemy_fighter_strength = max_enemy_fighter_ratio }
+	
+	if = {
+		limit = {
+			has_variable = ai_main_air_enemies^0
+		}
+		var:ai_main_air_enemies^0 = { # get the fighter compared to enemy ratio
+		
+			ai_calculate_deployed_fighter_type = yes
+			
+			set_temp_variable = { ai_enemy_fighter_strength = ai_fighter_strength }
+		}
+	}
+	if = {
+		limit = {
+			has_variable = ai_main_air_enemies^1
+		}
+		var:ai_main_air_enemies^1 = { # get the fighter compared to enemy ratio
+		
+			ai_calculate_deployed_fighter_type = yes
+			
+			set_temp_variable = { t1 = ai_fighter_strength }
+			multiply_temp_variable = { t1 = 0.5 }
+			add_to_temp_variable = { ai_enemy_fighter_strength = t1 }
+		}
+	}
+	if = {
+		limit = {
+			has_variable = ai_main_air_enemies^2
+		}
+		var:ai_main_air_enemies^2 = { # get the fighter compared to enemy ratio
+		
+			ai_calculate_deployed_fighter_type = yes
+			
+			set_temp_variable = { t1 = ai_fighter_strength }
+			multiply_temp_variable = { t1 = 0.25 }
+			add_to_temp_variable = { ai_enemy_fighter_strength = t1 }
+		}
+	}
+	
+	clamp_temp_variable = { var = ai_enemy_fighter_strength max = ai_max_enemy_fighter_strength }
+	
+	add_to_temp_variable = { ai_fighter_target = ai_enemy_fighter_strength }
+	add_to_temp_variable = { ai_fighter_target = ai_region_fighter_target }
+	divide_temp_variable = { ai_fighter_target = 2 }
+	
+	set_variable = { ai_fighter_target_ratio = ai_own_fighter_strength }
+	divide_variable = { ai_fighter_target_ratio = ai_fighter_target }
+	
+	set_temp_variable = { ai_fighter_buffer_ratio = ai_own_fighter_strength }
+	divide_temp_variable = { ai_fighter_buffer_ratio = ai_fighter_target_buffer }
+	
+	
+	if = {
+		limit = {
+			check_variable = { ai_fighter_target_ratio < enable_ratio }
+		}
+		
+		set_temp_variable = { scale = ai_fighter_target_ratio }
+		#log = "[?scale] SCALE ONE"
+		subtract_from_temp_variable = { scale = minimum_ratio }
+		clamp_temp_variable = { var = scale min = 0 }
+		#log = "[?scale] SCALE TWO"
+		set_temp_variable = { enable = enable_ratio }
+		subtract_from_temp_variable = { enable = minimum_ratio }
+		divide_temp_variable = { scale = enable }
+		#log = "[?scale] SCALE THREE"
+		clamp_temp_variable = { var = scale min = 0 max = 1 }
+		
+		set_temp_variable = { mult = 1 }
+		subtract_from_temp_variable = { mult = scale }
+	}
+		
+	
+	if = {
+		limit = {
+			has_global_flag = ai_track_extra_fighter_production
+		}
+		set_variable = { debug_max_enemy_fighter_ratio = max_enemy_fighter_ratio }
+		set_variable = { debug_ai_fighter_buffer_ratio = ai_fighter_buffer_ratio }
+		set_variable = { debug_ai_fighter_target_buffer = ai_fighter_target_buffer }
+		set_variable = { debug_ai_own_fighter_strength = ai_own_fighter_strength }
+		set_variable = { debug_ai_fighter_target = ai_fighter_target }
+		set_variable = { debug_ai_enemy_fighter_strength = ai_enemy_fighter_strength }
+		set_variable = { debug_ai_max_enemy_fighter_strength = ai_max_enemy_fighter_strength }
+		
+		set_variable = { debug_main_air_enemy_1 = ai_main_air_enemies^0 }
+		set_variable = { debug_main_air_enemy_2 = ai_main_air_enemies^1 }
+		set_variable = { debug_main_air_enemy_3 = ai_main_air_enemies^2 }
+		
+		set_variable = { debug_production_mult = mult }
+	}
+	
+	
+	##### CHECK AVAILABLE AIR ARCHETYPES
+
+	ai_check_allowed_air_production = yes
+
+	##### CALCULATE AIR FACTORY RATIO
+	
+	ai_calculate_air_factory_ratio = yes
+	
+		
+	
+	ai_set_air_production_strategies = yes 
+	
+	#log = "=========[This.GetTag]========="
+	#log = "[?ai_own_fighter_strength] ai_own_fighter_strength"
+	#log = "[?ai_enemy_fighter_strength] ai_enemy_fighter_strength RATIO"
+	#log = "[?ai_fighter_target] ai_fighter_target"
+	#log = "[?ai_region_fighter_target] ai_region_fighter_target"
+	#log = "[?ai_fighter_target_ratio] ai_fighter_target_ratio"
+	#log = " " 
+	#log = "[?mult] mult for AI FIGHTER NEED"
+	#log = " " 
+	#d_ai_log_air_production = yes
+}
+
+ai_set_air_production_strategies = {
+
+	set_temp_variable = { precision = @AI_AIR_EQUIPMENT_PRODUCTION_PRECISION }
+
+	for_each_loop = {
+		array = ai_air_production
+		
+		set_temp_variable = { ratio = RATIO@var:v }
+		add_to_temp_variable = { ratio = ui_ai_air_need@var:v }
+		set_temp_variable = { factor = extra_mult@var:v?1 }
+		add_to_temp_variable = { factor = ui_ai_air_need_mult@var:v }
+		multiply_temp_variable = { ratio = factor }
+		clamp_temp_variable = { var = ratio min = -100 }
+		add_to_temp_variable = { ratio = 100 }
+		
+		divide_temp_variable = { ratio = precision }
+		round_temp_variable = ratio 
+		multiply_temp_variable = { ratio = precision }
+		
+		if = {
+			limit = {
+				OR = {
+					check_variable = { ratio > 0 }
+					check_variable = { ai_need@var:v > 0 }
+				}
+				NOT = { check_variable = { ratio = ai_need@var:v } }
+			}
+			
+			set_temp_variable = { change = ratio }
+			subtract_from_temp_variable = { change = ai_need@var:v }
+			
+			meta_effect = {
+				text = {
+					add_ai_strategy = {
+						type = equipment_variant_production_factor 
+						id = [V] 
+						value = [X]
+					}
+				}
+				V = "[?v.GetTokenKey]"
+				X = "[?change]"
+			}
+			
+			set_variable = { ai_need@var:v = ratio }
+		}
+		
+	}
+	
+}
+	
+ai_check_allowed_air_production = {
+
+	##### CHECK ALLOWED AIR ARCHETYPES FOR PRODUCTION 
+	### fighter_equipment
+	if = { 
+		limit = { 
+			ai_production/fighter_equipment = yes 
+		}
+		
+		add_to_temp_variable = { FIGHTER_RATIO_TOTAL = RATIO@fighter_equipment }
+		
+		if = {
+			limit = {
+				NOT = { has_country_flag = ai_production/fighter_equipment }
+			}
+			set_country_flag = ai_production/fighter_equipment
+			add_to_array = { ai_air_production = token:fighter_equipment }
+		}
+		
+		set_temp_variable = { extra_mult@fighter_equipment = mult }
+		multiply_temp_variable = { extra_mult@fighter_equipment = MAX_EXTRA_FIGHTER_RATIO_MULT^0 }
+		add_to_temp_variable = { extra_mult@fighter_equipment = 1 }
+	}
+	else_if = {
+		limit = {
+			has_country_flag = ai_production/fighter_equipment
+		}
+		clr_country_flag = ai_production/fighter_equipment 
+		remove_from_array = { ai_air_production = token:fighter_equipment }
+		
+		set_temp_variable = { change = ai_need@fighter_equipment }
+		multiply_temp_variable = { change = -1 }
+		
+		meta_effect = {
+			text = {
+				add_ai_strategy = {
+					type = equipment_variant_production_factor 
+					id = fighter_equipment
+					value = [X]
+				}
+			}
+			X = "[?change]"
+		}
+		clear_variable = ai_need@fighter_equipment
+	}
+		
+	
+	### fighter_alt_equipment
+	if = { 
+		limit = { 
+			ai_production/fighter_alt_equipment = yes 
+		}
+		
+		add_to_temp_variable = { FIGHTER_RATIO_TOTAL = RATIO@fighter_alt_equipment }
+		
+		if = {
+			limit = {
+				NOT = { has_country_flag = ai_production/fighter_alt_equipment }
+			}
+			set_country_flag = ai_production/fighter_alt_equipment
+			add_to_array = { ai_air_production = token:fighter_alt_equipment }
+		}
+		
+		set_temp_variable = { extra_mult@fighter_alt_equipment = mult }
+		multiply_temp_variable = { extra_mult@fighter_alt_equipment = MAX_EXTRA_FIGHTER_RATIO_MULT^4 }
+		add_to_temp_variable = { extra_mult@fighter_alt_equipment = 1 }
+	}
+	else_if = {
+		limit = {
+			has_country_flag = ai_production/fighter_alt_equipment
+		}
+		clr_country_flag = ai_production/fighter_alt_equipment 
+		remove_from_array = { ai_air_production = token:fighter_alt_equipment }
+		
+		set_temp_variable = { change = ai_need@fighter_alt_equipment }
+		multiply_temp_variable = { change = -1 }
+		
+		meta_effect = {
+			text = {
+				add_ai_strategy = {
+					type = equipment_variant_production_factor 
+					id = fighter_alt_equipment
+					value = [X]
+				}
+			}
+			X = "[?change]"
+		}
+		clear_variable = ai_need@fighter_alt_equipment
+	}
+			
+	### heavy_fighter_equipment
+	if = { 
+		limit = { 
+			set_temp_variable = { trigger = @AI_FTR_RATIO/heavy_fighter_equipment }
+			ai_production/heavy_fighter_equipment = yes 
+		}
+
+		add_to_temp_variable = { FIGHTER_RATIO_TOTAL = RATIO@heavy_fighter_equipment }
+		
+		if = {
+			limit = {
+				NOT = { has_country_flag = ai_production/heavy_fighter_equipment }
+			}
+			set_country_flag = ai_production/heavy_fighter_equipment
+			add_to_array = { ai_air_production = token:heavy_fighter_equipment }
+		}
+		
+		set_temp_variable = { extra_mult@heavy_fighter_equipment = mult }
+		multiply_temp_variable = { extra_mult@heavy_fighter_equipment = MAX_EXTRA_FIGHTER_RATIO_MULT^3 }
+		add_to_temp_variable = { extra_mult@heavy_fighter_equipment = 1 }
+	}
+	else_if = {
+		limit = {
+			has_country_flag = ai_production/heavy_fighter_equipment
+		}
+		clr_country_flag = ai_production/heavy_fighter_equipment 
+		remove_from_array = { ai_air_production = token:heavy_fighter_equipment }
+		
+		set_temp_variable = { change = ai_need@heavy_fighter_equipment }
+		multiply_temp_variable = { change = -1 }
+		
+		meta_effect = {
+			text = {
+				add_ai_strategy = {
+					type = equipment_variant_production_factor 
+					id = heavy_fighter_equipment
+					value = [X]
+				}
+			}
+			X = "[?change]"
+		}
+		clear_variable = ai_need@heavy_fighter_equipment
+	}
+	
+	### interceptor_equipment
+	if = { 
+		limit = { 
+			set_temp_variable = { trigger = @AI_FTR_RATIO/interceptor_equipment }
+			ai_production/interceptor_equipment = yes 
+		}
+
+		add_to_temp_variable = { FIGHTER_RATIO_TOTAL = RATIO@interceptor_equipment }
+		
+		if = {
+			limit = {
+				NOT = { has_country_flag = ai_production/interceptor_equipment }
+			}
+			set_country_flag = ai_production/interceptor_equipment
+			add_to_array = { ai_air_production = token:interceptor_equipment }
+		}
+		
+		set_temp_variable = { extra_mult@interceptor_equipment = mult }
+		multiply_temp_variable = { extra_mult@interceptor_equipment = MAX_EXTRA_FIGHTER_RATIO_MULT^1 }
+		add_to_temp_variable = { extra_mult@interceptor_equipment = 1 }
+	}
+	else_if = {
+		limit = {
+			has_country_flag = ai_production/interceptor_equipment
+		}
+		clr_country_flag = ai_production/interceptor_equipment 
+		remove_from_array = { ai_air_production = token:interceptor_equipment }
+		
+		set_temp_variable = { change = ai_need@interceptor_equipment }
+		multiply_temp_variable = { change = -1 }
+		
+		meta_effect = {
+			text = {
+				add_ai_strategy = {
+					type = equipment_variant_production_factor 
+					id = interceptor_equipment
+					value = [X]
+				}
+			}
+			X = "[?change]"
+		}
+		clear_variable = ai_need@interceptor_equipment
+	}
+
+	### mr_fighter_equipment
+	if = { 
+		limit = { 
+			set_temp_variable = { trigger = @AI_FTR_RATIO/mr_fighter_equipment }
+			ai_production/mr_fighter_equipment = yes 
+		}
+
+		add_to_temp_variable = { CAS_RATIO_TOTAL = RATIO@mr_fighter_equipment }
+		add_to_temp_variable = { FIGHTER_RATIO_TOTAL = RATIO@mr_fighter_equipment }
+		
+		if = {
+			limit = {
+				NOT = { has_country_flag = ai_production/mr_fighter_equipment }
+			}
+			set_country_flag = ai_production/mr_fighter_equipment
+			add_to_array = { ai_air_production = token:mr_fighter_equipment }
+		}
+		
+		set_temp_variable = { extra_mult@mr_fighter_equipment = mult }
+		multiply_temp_variable = { extra_mult@mr_fighter_equipment = MAX_EXTRA_FIGHTER_RATIO_MULT^2 }
+		add_to_temp_variable = { extra_mult@mr_fighter_equipment = 1 }
+	}
+	else_if = {
+		limit = {
+			has_country_flag = ai_production/mr_fighter_equipment
+		}
+		clr_country_flag = ai_production/mr_fighter_equipment 
+		remove_from_array = { ai_air_production = token:mr_fighter_equipment }
+		
+		set_temp_variable = { change = ai_need@mr_fighter_equipment }
+		multiply_temp_variable = { change = -1 }
+		
+		meta_effect = {
+			text = {
+				add_ai_strategy = {
+					type = equipment_variant_production_factor 
+					id = mr_fighter_equipment
+					value = [X]
+				}
+			}
+			X = "[?change]"
+		}
+		clear_variable = ai_need@mr_fighter_equipment
+	}
+
+	### CAS_equipment
+	if = { 
+		limit = { 
+			set_temp_variable = { trigger = @AI_FTR_RATIO/CAS_equipment }
+			ai_production/CAS_equipment = yes 
+		}
+
+		add_to_temp_variable = { CAS_RATIO_TOTAL = RATIO@CAS_equipment }
+		
+		if = {
+			limit = {
+				NOT = { has_country_flag = ai_production/CAS_equipment }
+			}
+			set_country_flag = ai_production/CAS_equipment
+			add_to_array = { ai_air_production = token:CAS_equipment }
+		}
+		
+	}
+	else_if = {
+		limit = {
+			has_country_flag = ai_production/CAS_equipment
+		}
+		clr_country_flag = ai_production/CAS_equipment 
+		remove_from_array = { ai_air_production = token:CAS_equipment }
+		
+		set_temp_variable = { change = ai_need@CAS_equipment }
+		multiply_temp_variable = { change = -1 }
+		
+		meta_effect = {
+			text = {
+				add_ai_strategy = {
+					type = equipment_variant_production_factor 
+					id = CAS_equipment
+					value = [X]
+				}
+			}
+			X = "[?change]"
+		}
+		clear_variable = ai_need@CAS_equipment
+	}
+
+	### twin_cas_equipment
+	if = { 
+		limit = { 
+			set_temp_variable = { trigger = @AI_FTR_RATIO/twin_cas_equipment }
+			ai_production/twin_cas_equipment = yes 
+		}
+
+		add_to_temp_variable = { CAS_RATIO_TOTAL = RATIO@twin_cas_equipment }
+		
+		if = {
+			limit = {
+				NOT = { has_country_flag = ai_production/twin_cas_equipment }
+			}
+			set_country_flag = ai_production/twin_cas_equipment
+			add_to_array = { ai_air_production = token:twin_cas_equipment }
+		}
+		
+	}
+	else_if = {
+		limit = {
+			has_country_flag = ai_production/twin_cas_equipment
+		}
+		clr_country_flag = ai_production/twin_cas_equipment 
+		remove_from_array = { ai_air_production = token:twin_cas_equipment }
+		
+		set_temp_variable = { change = ai_need@twin_cas_equipment }
+		multiply_temp_variable = { change = -1 }
+		
+		meta_effect = {
+			text = {
+				add_ai_strategy = {
+					type = equipment_variant_production_factor 
+					id = twin_cas_equipment
+					value = [X]
+				}
+			}
+			X = "[?change]"
+		}
+		clear_variable = ai_need@twin_cas_equipment
+	}
+
+	### tac_bomber_equipment
+	if = { 
+		limit = { 
+			set_temp_variable = { trigger = @AI_FTR_RATIO/tac_bomber_equipment }
+			ai_production/tac_bomber_equipment = yes 
+		}
+
+		add_to_temp_variable = { STRAT_RATIO_TOTAL = RATIO@tac_bomber_equipment }
+		add_to_temp_variable = { CAS_RATIO_TOTAL = RATIO@tac_bomber_equipment }
+		
+		if = {
+			limit = {
+				NOT = { has_country_flag = ai_production/tac_bomber_equipment }
+			}
+			set_country_flag = ai_production/tac_bomber_equipment
+			add_to_array = { ai_air_production = token:tac_bomber_equipment }
+		}
+		
+	}
+	else_if = {
+		limit = {
+			has_country_flag = ai_production/tac_bomber_equipment
+		}
+		clr_country_flag = ai_production/tac_bomber_equipment 
+		remove_from_array = { ai_air_production = token:tac_bomber_equipment }
+		
+		set_temp_variable = { change = ai_need@tac_bomber_equipment }
+		multiply_temp_variable = { change = -1 }
+		
+		meta_effect = {
+			text = {
+				add_ai_strategy = {
+					type = equipment_variant_production_factor 
+					id = tac_bomber_equipment
+					value = [X]
+				}
+			}
+			X = "[?change]"
+		}
+		clear_variable = ai_need@tac_bomber_equipment
+	}
+
+	### nav_bomber_equipment
+	if = { 
+		limit = { 
+			set_temp_variable = { trigger = @AI_FTR_RATIO/nav_bomber_equipment }
+			ai_production/nav_bomber_equipment = yes 
+		}
+
+		add_to_temp_variable = { CAS_RATIO_TOTAL = RATIO@nav_bomber_equipment }
+		
+		if = {
+			limit = {
+				NOT = { has_country_flag = ai_production/nav_bomber_equipment }
+			}
+			set_country_flag = ai_production/nav_bomber_equipment
+			add_to_array = { ai_air_production = token:nav_bomber_equipment }
+		}
+		
+	}
+	else_if = {
+		limit = {
+			has_country_flag = ai_production/nav_bomber_equipment
+		}
+		clr_country_flag = ai_production/nav_bomber_equipment 
+		remove_from_array = { ai_air_production = token:nav_bomber_equipment }
+		
+		set_temp_variable = { change = ai_need@nav_bomber_equipment }
+		multiply_temp_variable = { change = -1 }
+		
+		meta_effect = {
+			text = {
+				add_ai_strategy = {
+					type = equipment_variant_production_factor 
+					id = nav_bomber_equipment
+					value = [X]
+				}
+			}
+			X = "[?change]"
+		}
+		clear_variable = ai_need@nav_bomber_equipment
+	}
+
+	### flying_boat_equipment
+	if = { 
+		limit = { 
+			set_temp_variable = { trigger = @AI_FTR_RATIO/flying_boat_equipment }
+			ai_production/flying_boat_equipment = yes 
+		}
+
+		add_to_temp_variable = { CAS_RATIO_TOTAL = RATIO@flying_boat_equipment }
+		
+		if = {
+			limit = {
+				NOT = { has_country_flag = ai_production/flying_boat_equipment }
+			}
+			set_country_flag = ai_production/flying_boat_equipment
+			add_to_array = { ai_air_production = token:flying_boat_equipment }
+		}
+		
+	}
+	else_if = {
+		limit = {
+			has_country_flag = ai_production/flying_boat_equipment
+		}
+		clr_country_flag = ai_production/flying_boat_equipment 
+		remove_from_array = { ai_air_production = token:flying_boat_equipment }
+		
+		set_temp_variable = { change = ai_need@flying_boat_equipment }
+		multiply_temp_variable = { change = -1 }
+		
+		meta_effect = {
+			text = {
+				add_ai_strategy = {
+					type = equipment_variant_production_factor 
+					id = flying_boat_equipment
+					value = [X]
+				}
+			}
+			X = "[?change]"
+		}
+		clear_variable = ai_need@flying_boat_equipment
+	}
+
+	### light_bomber_equipment
+	if = { 
+		limit = { 
+			set_temp_variable = { trigger = @AI_FTR_RATIO/light_bomber_equipment }
+			ai_production/light_bomber_equipment = yes 
+		}
+
+		add_to_temp_variable = { STRAT_RATIO_TOTAL = RATIO@light_bomber_equipment }
+		add_to_temp_variable = { CAS_RATIO_TOTAL = RATIO@light_bomber_equipment }
+		
+		if = {
+			limit = {
+				NOT = { has_country_flag = ai_production/light_bomber_equipment }
+			}
+			set_country_flag = ai_production/light_bomber_equipment
+			add_to_array = { ai_air_production = token:light_bomber_equipment }
+		}
+		
+	}
+	else_if = {
+		limit = {
+			has_country_flag = ai_production/light_bomber_equipment
+		}
+		clr_country_flag = ai_production/light_bomber_equipment 
+		remove_from_array = { ai_air_production = token:light_bomber_equipment }
+		
+		set_temp_variable = { change = ai_need@light_bomber_equipment }
+		multiply_temp_variable = { change = -1 }
+		
+		meta_effect = {
+			text = {
+				add_ai_strategy = {
+					type = equipment_variant_production_factor 
+					id = light_bomber_equipment
+					value = [X]
+				}
+			}
+			X = "[?change]"
+		}
+		clear_variable = ai_need@light_bomber_equipment
+	}
+
+	### fast_bomber_equipment
+	if = { 
+		limit = { 
+			set_temp_variable = { trigger = @AI_FTR_RATIO/fast_bomber_equipment } 
+			ai_production/fast_bomber_equipment = yes 
+		}
+
+		add_to_temp_variable = { STRAT_RATIO_TOTAL = RATIO@fast_bomber_equipment }
+		add_to_temp_variable = { CAS_RATIO_TOTAL = RATIO@fast_bomber_equipment }
+		
+		if = {
+			limit = {
+				NOT = { has_country_flag = ai_production/fast_bomber_equipment }
+			}
+			set_country_flag = ai_production/fast_bomber_equipment
+			add_to_array = { ai_air_production = token:fast_bomber_equipment }
+		}
+		
+	}
+	else_if = {
+		limit = {
+			has_country_flag = ai_production/fast_bomber_equipment
+		}
+		clr_country_flag = ai_production/fast_bomber_equipment 
+		remove_from_array = { ai_air_production = token:fast_bomber_equipment }
+		
+		set_temp_variable = { change = ai_need@fast_bomber_equipment }
+		multiply_temp_variable = { change = -1 }
+		
+		meta_effect = {
+			text = {
+				add_ai_strategy = {
+					type = equipment_variant_production_factor 
+					id = fast_bomber_equipment
+					value = [X]
+				}
+			}
+			X = "[?change]"
+		}
+		clear_variable = ai_need@fast_bomber_equipment
+	}
+
+	### quad_engine_bomber_equipment
+	if = { 
+		limit = { 
+			set_temp_variable = { trigger = @AI_FTR_RATIO/quad_engine_bomber_equipment }
+			ai_production/quad_engine_bomber_equipment = yes 
+		}
+
+		add_to_temp_variable = { STRAT_RATIO_TOTAL = RATIO@quad_engine_bomber_equipment }
+		
+		if = {
+			limit = {
+				NOT = { has_country_flag = ai_production/quad_engine_bomber_equipment }
+			}
+			set_country_flag = ai_production/quad_engine_bomber_equipment
+			add_to_array = { ai_air_production = token:quad_engine_bomber_equipment }
+		}
+		
+	}
+	else_if = {
+		limit = {
+			has_country_flag = ai_production/quad_engine_bomber_equipment
+		}
+		clr_country_flag = ai_production/quad_engine_bomber_equipment 
+		remove_from_array = { ai_air_production = token:quad_engine_bomber_equipment }
+		
+		set_temp_variable = { change = ai_need@quad_engine_bomber_equipment }
+		multiply_temp_variable = { change = -1 }
+		
+		meta_effect = {
+			text = {
+				add_ai_strategy = {
+					type = equipment_variant_production_factor 
+					id = quad_engine_bomber_equipment
+					value = [X]
+				}
+			}
+			X = "[?change]"
+		}
+		clear_variable = ai_need@quad_engine_bomber_equipment
+	}
+
+	### cv_fighter_equipment
+	if = { 
+		limit = { 
+			ai_production/cv_fighter_equipment = yes 
+		}
+
+		add_to_temp_variable = { CV_RATIO_TOTAL = RATIO@cv_fighter_equipment }
+		
+		if = {
+			limit = {
+				NOT = { has_country_flag = ai_production/cv_fighter_equipment }
+			}
+			set_country_flag = ai_production/cv_fighter_equipment
+			add_to_array = { ai_air_production = token:cv_fighter_equipment }
+		}
+		
+	}
+	else_if = {
+		limit = {
+			has_country_flag = ai_production/cv_fighter_equipment
+		}
+		clr_country_flag = ai_production/cv_fighter_equipment 
+		remove_from_array = { ai_air_production = token:cv_fighter_equipment }
+		
+		set_temp_variable = { change = ai_need@cv_fighter_equipment }
+		multiply_temp_variable = { change = -1 }
+		
+		meta_effect = {
+			text = {
+				add_ai_strategy = {
+					type = equipment_variant_production_factor 
+					id = cv_fighter_equipment
+					value = [X]
+				}
+			}
+			X = "[?change]"
+		}
+		clear_variable = ai_need@cv_fighter_equipment
+	}
+
+	### cv_nav_bomber_equipment
+	if = { 
+		limit = { 
+			ai_production/cv_nav_bomber_equipment = yes 
+		}
+
+		add_to_temp_variable = { CV_RATIO_TOTAL = RATIO@cv_nav_bomber_equipment }
+		
+		if = {
+			limit = {
+				NOT = { has_country_flag = ai_production/cv_nav_bomber_equipment }
+			}
+			set_country_flag = ai_production/cv_nav_bomber_equipment
+			add_to_array = { ai_air_production = token:cv_nav_bomber_equipment }
+		}
+		
+	}
+	else_if = {
+		limit = {
+			has_country_flag = ai_production/cv_nav_bomber_equipment
+		}
+		clr_country_flag = ai_production/cv_nav_bomber_equipment 
+		remove_from_array = { ai_air_production = token:cv_nav_bomber_equipment }
+		
+		set_temp_variable = { change = ai_need@cv_nav_bomber_equipment }
+		multiply_temp_variable = { change = -1 }
+		
+		meta_effect = {
+			text = {
+				add_ai_strategy = {
+					type = equipment_variant_production_factor 
+					id = cv_nav_bomber_equipment
+					value = [X]
+				}
+			}
+			X = "[?change]"
+		}
+		clear_variable = ai_need@cv_nav_bomber_equipment
+	}
+	
+	### cv_CAS_equipment
+	if = { 
+		limit = { 
+			ai_production/cv_CAS_equipment = yes 
+		}
+
+		add_to_temp_variable = { CV_RATIO_TOTAL = RATIO@cv_CAS_equipment }
+		
+		if = {
+			limit = {
+				NOT = { has_country_flag = ai_production/cv_CAS_equipment }
+			}
+			set_country_flag = ai_production/cv_CAS_equipment
+			add_to_array = { ai_air_production = token:cv_CAS_equipment }
+		}
+		
+	}
+	else_if = {
+		limit = {
+			has_country_flag = ai_production/cv_CAS_equipment
+		}
+		clr_country_flag = ai_production/cv_CAS_equipment 
+		remove_from_array = { ai_air_production = token:cv_CAS_equipment }
+		
+		set_temp_variable = { change = ai_need@cv_CAS_equipment }
+		multiply_temp_variable = { change = -1 }
+		
+		meta_effect = {
+			text = {
+				add_ai_strategy = {
+					type = equipment_variant_production_factor 
+					id = cv_CAS_equipment
+					value = [X]
+				}
+			}
+			X = "[?change]"
+		}
+		clear_variable = ai_need@cv_CAS_equipment
+	}
+	
+	
+	### jet_fighter_equipment
+	if = { 
+		limit = { 
+			ai_production/jet_fighter_equipment = yes 
+		}
+
+		add_to_temp_variable = { FIGHTER_RATIO_TOTAL = RATIO@jet_fighter_equipment }
+		
+		if = {
+			limit = {
+				NOT = { has_country_flag = ai_production/jet_fighter_equipment }
+			}
+			set_country_flag = ai_production/jet_fighter_equipment
+			add_to_array = { ai_air_production = token:jet_fighter_equipment }
+		}
+		
+		set_temp_variable = { extra_mult@jet_fighter_equipment = mult }
+		multiply_temp_variable = { extra_mult@jet_fighter_equipment = MAX_EXTRA_FIGHTER_RATIO_MULT^5 }
+		add_to_temp_variable = { extra_mult@jet_fighter_equipment = 1 }
+	}
+	else_if = {
+		limit = {
+			has_country_flag = ai_production/jet_fighter_equipment
+		}
+		clr_country_flag = ai_production/jet_fighter_equipment 
+		remove_from_array = { ai_air_production = token:jet_fighter_equipment }
+		
+		set_temp_variable = { change = ai_need@jet_fighter_equipment }
+		multiply_temp_variable = { change = -1 }
+		
+		meta_effect = {
+			text = {
+				add_ai_strategy = {
+					type = equipment_variant_production_factor 
+					id = jet_fighter_equipment
+					value = [X]
+				}
+			}
+			X = "[?change]"
+		}
+		clear_variable = ai_need@jet_fighter_equipment
+	}
+
+	### jet_mr_fighter_equipment
+	if = { 
+		limit = { 
+			ai_production/jet_mr_fighter_equipment = yes 
+		}
+
+		add_to_temp_variable = { CAS_RATIO_TOTAL = RATIO@jet_mr_fighter_equipment }
+		
+		if = {
+			limit = {
+				NOT = { has_country_flag = ai_production/jet_mr_fighter_equipment }
+			}
+			set_country_flag = ai_production/jet_mr_fighter_equipment
+			add_to_array = { ai_air_production = token:jet_mr_fighter_equipment }
+		}
+	}
+	else_if = {
+		limit = {
+			has_country_flag = ai_production/jet_mr_fighter_equipment
+		}
+		clr_country_flag = ai_production/jet_mr_fighter_equipment 
+		remove_from_array = { ai_air_production = token:jet_mr_fighter_equipment }
+		
+		set_temp_variable = { change = ai_need@jet_mr_fighter_equipment }
+		multiply_temp_variable = { change = -1 }
+		
+		meta_effect = {
+			text = {
+				add_ai_strategy = {
+					type = equipment_variant_production_factor 
+					id = jet_mr_fighter_equipment
+					value = [X]
+				}
+			}
+			X = "[?change]"
+		}
+		clear_variable = ai_need@jet_mr_fighter_equipment
+	}
+	
+	### jet_tac_bomber_equipment
+	if = { 
+		limit = { 
+			ai_production/jet_tac_bomber_equipment = yes 
+		}
+
+		add_to_temp_variable = { CAS_RATIO_TOTAL = RATIO@jet_tac_bomber_equipment }
+		
+		if = {
+			limit = {
+				NOT = { has_country_flag = ai_production/jet_tac_bomber_equipment }
+			}
+			set_country_flag = ai_production/jet_tac_bomber_equipment
+			add_to_array = { ai_air_production = token:jet_tac_bomber_equipment }
+		}
+	}
+	else_if = {
+		limit = {
+			has_country_flag = ai_production/jet_tac_bomber_equipment
+		}
+		clr_country_flag = ai_production/jet_tac_bomber_equipment 
+		remove_from_array = { ai_air_production = token:jet_tac_bomber_equipment }
+		
+		set_temp_variable = { change = ai_need@jet_tac_bomber_equipment }
+		multiply_temp_variable = { change = -1 }
+		
+		meta_effect = {
+			text = {
+				add_ai_strategy = {
+					type = equipment_variant_production_factor 
+					id = jet_tac_bomber_equipment
+					value = [X]
+				}
+			}
+			X = "[?change]"
+		}
+		clear_variable = ai_need@jet_tac_bomber_equipment
+	}
+	
+	### jet_strat_bomber_equipment
+	if = { 
+		limit = { 
+			ai_production/jet_strat_bomber_equipment = yes 
+		}
+
+		add_to_temp_variable = { STRAT_RATIO_TOTAL = RATIO@jet_strat_bomber_equipment }
+		
+		if = {
+			limit = {
+				NOT = { has_country_flag = ai_production/jet_strat_bomber_equipment }
+			}
+			set_country_flag = ai_production/jet_strat_bomber_equipment
+			add_to_array = { ai_air_production = token:jet_strat_bomber_equipment }
+		}
+	}
+	else_if = {
+		limit = {
+			has_country_flag = ai_production/jet_strat_bomber_equipment
+		}
+		clr_country_flag = ai_production/jet_strat_bomber_equipment 
+		remove_from_array = { ai_air_production = token:jet_strat_bomber_equipment }
+		
+		set_temp_variable = { change = ai_need@jet_strat_bomber_equipment }
+		multiply_temp_variable = { change = -1 }
+		
+		meta_effect = {
+			text = {
+				add_ai_strategy = {
+					type = equipment_variant_production_factor 
+					id = jet_strat_bomber_equipment
+					value = [X]
+				}
+			}
+			X = "[?change]"
+		}
+		clear_variable = ai_need@jet_strat_bomber_equipment
+	}
+
+	if = {
+		limit = {
+			OR = {
+				NOT = { check_variable = { FIGHTER_RATIO_TOTAL = 0 } }
+				NOT = { check_variable = { CAS_RATIO_TOTAL = 0 } }
+				NOT = { check_variable = { STRAT_RATIO_TOTAL = 0 } }
+				NOT = { check_variable = { CV_RATIO_TOTAL = 0 } }
+			}
+		}
+		set_country_flag = ai_has_air_production 
+	}
+	else = {
+		clr_country_flag = ai_has_air_production
+	}
+}
+
+ai_calculate_deployed_fighter_type = {
+	
+	set_temp_variable = { ai_fighter_strength = 0 }
+	
+	set_temp_variable = { t1 = num_deployed_planes_with_type@fighter_equipment }
+	multiply_temp_variable = { t1 = FIGHTER_WEIGHT^0 }
+	add_to_temp_variable = { ai_fighter_strength = t1 }
+	
+	set_temp_variable = { t1 = num_deployed_planes_with_type@interceptor_equipment }
+	multiply_temp_variable = { t1 = FIGHTER_WEIGHT^1 }
+	add_to_temp_variable = { ai_fighter_strength = t1 }
+	
+	set_temp_variable = { t1 = num_deployed_planes_with_type@mr_fighter_equipment }
+	multiply_temp_variable = { t1 = FIGHTER_WEIGHT^2 }
+	add_to_temp_variable = { ai_fighter_strength = t1 }
+	
+	set_temp_variable = { t1 = num_deployed_planes_with_type@heavy_fighter_equipment }
+	multiply_temp_variable = { t1 = FIGHTER_WEIGHT^3 }
+	add_to_temp_variable = { ai_fighter_strength = t1 }
+	
+	set_temp_variable = { t1 = num_deployed_planes_with_type@fighter_alt_equipment }
+	multiply_temp_variable = { t1 = FIGHTER_WEIGHT^4 }
+	add_to_temp_variable = { ai_fighter_strength = t1 }
+	
+	set_temp_variable = { t1 = num_deployed_planes_with_type@jet_fighter_equipment }
+	multiply_temp_variable = { t1 = FIGHTER_WEIGHT^5 }
+	add_to_temp_variable = { ai_fighter_strength = t1 }
+	
+}
+
+ai_calculate_deployed_bomber_type = {
+	
+	set_temp_variable = { ai_bomber_strength = num_deployed_planes_with_type@quad_engine_bomber_equipment }
+	add_to_temp_variable = { ai_bomber_strength = num_deployed_planes_with_type@tac_bomber_equipment }
+	add_to_temp_variable = { ai_bomber_strength = num_deployed_planes_with_type@light_bomber_equipment }
+	add_to_temp_variable = { ai_bomber_strength = num_deployed_planes_with_type@fast_bomber_equipment }
+}
+
+ai_check_air_strategic_regions = {
+	every_controlled_state = {
+		if = {
+			limit = {
+				NOT = { is_in_array = { arc = region } }
+			}
+			add_to_temp_array = { arc = region }
+			
+			set_temp_variable = { num_region_home = 0 }
+			set_temp_variable = { num_region_core = 0 }
+			set_temp_variable = { num_region_owned = 0 }
+			set_temp_variable = { num_region_controlled = 0 }
+			
+			for_each_scope_loop = {
+				array = global.region_states@var:region
+				
+				if = {
+					limit = {
+						is_controlled_by = ROOT 
+					}
+					
+					if = {
+						limit = { is_in_home_area = yes }
+						
+						add_to_temp_variable = { num_region_home = 1 }
+					}
+					else_if = {
+						limit = { is_core_of = ROOT }
+						
+						add_to_temp_variable = { num_region_core = 1 }
+					}
+					else_if = {
+						limit = { is_owned_by = ROOT }
+						
+						add_to_temp_variable = { num_region_owned = 1 }
+					}
+					else = {
+						add_to_temp_variable = { num_region_controlled = 1 }
+					}
+				}
+			}
+			
+			set_temp_variable = { divisor = global.region_states@var:region^num }
+			
+			divide_temp_variable = { num_region_home = divisor }
+			divide_temp_variable = { num_region_core = divisor }
+			divide_temp_variable = { num_region_owned = divisor }
+			divide_temp_variable = { num_region_controlled = divisor }
+			
+			multiply_temp_variable = { num_region_home = REGION_FIGHTER_NEED^0 }
+			multiply_temp_variable = { num_region_core = REGION_FIGHTER_NEED^1 }
+			multiply_temp_variable = { num_region_owned = REGION_FIGHTER_NEED^2 }
+			multiply_temp_variable = { num_region_controlled = REGION_FIGHTER_NEED^3 }
+
+			add_to_temp_variable = { ai_region_fighter_target = num_region_home }
+			add_to_temp_variable = { ai_region_fighter_target = num_region_core }
+			add_to_temp_variable = { ai_region_fighter_target = num_region_owned }
+			add_to_temp_variable = { ai_region_fighter_target = num_region_controlled }
+		}
+		
+	}
+	
+	#log = "[?ai_region_fighter_target] ai_region_fighter_target"
+}
+		
+ai_calculate_air_factory_ratio = {
+	if = {
+		limit = {
+			has_country_flag = ai_has_air_production
+		}
+			
+		### RESOURCE ALLOCATION
+
+		### ALU
+		set_variable = { alu_plane_cap = resource_produced@aluminium }
+		subtract_from_variable = { alu_plane_cap = resource_exported@aluminium }
+		
+		#set_temp_variable = { imported = resource_imported@aluminium }
+		#multiply_temp_variable = { imported = 0.90 }
+		
+		#add_to_variable = { alu_plane_cap = imported }
+		
+		#log= "Air Ratio [?This.GetTag]"
+		#log= "[?alu_plane_cap] ALUMINIUM VALUE"
+		#Faction Additions
+		if = {
+			limit = {
+				tag = GER
+			}
+			if = {
+				limit = {
+					#is_in_faction_with = HUN
+					country_exists = HUN
+				}
+				set_temp_variable = { z_HUN_alu_count = HUN.resource_exported@aluminium }
+				multiply_temp_variable = { z_HUN_alu_count = 0.75 }
+				add_to_temp_variable = { alu_import_potential = z_HUN_alu_count }
+			}
+			if = {
+				limit = {
+					#is_in_faction_with = ITA
+					country_exists = ITA
+				}
+				set_temp_variable = { z_ITA_alu_count = ITA.resource_exported@aluminium }
+				multiply_temp_variable = { z_ITA_alu_count = 0.75 }
+				add_to_temp_variable = { alu_import_potential = z_ITA_alu_count }
+			}
+			if = {
+				limit = {
+					country_exists = SWI
+				}
+				set_temp_variable = { z_SWI_alu_count = SWI.resource_exported@aluminium }
+				multiply_temp_variable = { z_SWI_alu_count = 0.75 }
+				add_to_temp_variable = { alu_import_potential = z_SWI_alu_count }
+			}
+			if = {
+				limit = {
+					country_exists = SWE
+				}
+				set_temp_variable = { z_SWE_alu_count = SWE.resource_exported@aluminium }
+				multiply_temp_variable = { z_SWE_alu_count = 0.75 }
+				add_to_temp_variable = { alu_import_potential = z_SWE_alu_count }
+			}
+			if = {
+				limit = {
+					country_exists = DEN
+				}
+				set_temp_variable = { z_DEN_alu_count = DEN.resource_exported@aluminium }
+				multiply_temp_variable = { z_DEN_alu_count = 0.75 }
+				add_to_temp_variable = { alu_import_potential = z_DEN_alu_count }
+			}
+			if = {
+				limit = {
+					country_exists = VIC
+					NOT = { has_war_with = VIC }
+				}
+				set_temp_variable = { z_VIC_alu_count = VIC.resource_exported@aluminium }
+				multiply_temp_variable = { z_VIC_alu_count = 0.75 }
+				add_to_temp_variable = { alu_import_potential = z_VIC_alu_count }
+			}
+		}
+		else_if = {
+			limit = {
+				tag = JAP
+			}
+			if = {
+				limit = {
+					country_exists = MAN
+					MAN = { is_subject_of = JAP }
+					JAP = { NOT = { has_war_with = MAN } }
+				}
+				set_temp_variable = { z_MAN_alu_count = MAN.resource_exported@aluminium }
+				multiply_temp_variable = { z_MAN_alu_count = 0.75 }
+				add_to_temp_variable = { alu_import_potential = z_MAN_alu_count }
+			}
+			if = {
+				limit = {
+					country_exists = MEN
+					MEN = { is_subject_of = JAP }
+					JAP = { NOT = { has_war_with = MEN } }
+				}
+				set_temp_variable = { z_MEN_alu_count = MEN.resource_exported@aluminium }
+				multiply_temp_variable = { z_MEN_alu_count = 0.5 }
+				add_to_temp_variable = { alu_import_potential = z_MEN_alu_count }
+			}
+			if = {
+				limit = {
+					country_exists = RGR
+					RGR = { is_subject_of = JAP }
+					JAP = { NOT = { has_war_with = RGR } }
+				}
+				set_temp_variable = { z_RGR_alu_count = RGR.resource_exported@aluminium }
+				multiply_temp_variable = { z_RGR_alu_count = 0.5 }
+				add_to_temp_variable = { alu_import_potential = z_RGR_alu_count }
+			}
+			if = {
+				limit = {
+					country_exists = CHI
+					CHI = { is_subject_of = JAP }
+					JAP = { NOT = { has_war_with = CHI } }
+				}
+				set_temp_variable = { z_CHI_alu_count = CHI.resource_exported@aluminium }
+				multiply_temp_variable = { z_CHI_alu_count = 0.5 }
+				add_to_temp_variable = { alu_import_potential = z_CHI_alu_count }
+			}
+		}
+		else_if = {
+			limit = {
+				tag = ENG
+			}
+			if = {
+				limit = {
+					CAN = { is_in_faction_with = ENG }
+				}
+				set_temp_variable = { z_CAN_alu_count = CAN.resource_exported@aluminium }
+				multiply_temp_variable = { z_CAN_alu_count = 0.75 }
+				add_to_temp_variable = { alu_import_potential = z_CAN_alu_count }
+			}
+			if = {
+				limit = {
+					FRA = { is_in_faction_with = ENG }
+				}
+				set_temp_variable = { z_FRA_alu_count = FRA.resource_exported@aluminium }
+				multiply_temp_variable = { z_FRA_alu_count = 0.50 }
+				add_to_temp_variable = { alu_import_potential = z_FRA_alu_count }
+			}
+			if = {
+				limit = {
+					OR = {
+						USA = { is_in_faction_with = ENG }
+						stockpile_ratio = { archetype = convoy ratio > 400 }
+					}
+					country_exists = USA
+					USA = { democratic_govt = yes }
+				}
+				set_temp_variable = { z_USA_alu_count = USA.resource_exported@aluminium }
+				multiply_temp_variable = { z_USA_alu_count = 0.75 }
+				add_to_temp_variable = { alu_import_potential = z_USA_alu_count }
+			}
+			else_if = {
+				limit = {
+					country_exists = USA
+					USA = { democratic_govt = yes }
+				}
+				set_temp_variable = { z_USA_alu_count = USA.resource_exported@aluminium }
+				multiply_temp_variable = { z_USA_alu_count = 0.4 }
+				add_to_temp_variable = { alu_import_potential = z_USA_alu_count }
+			}
+		}
+		else_if = {
+			limit = {
+				tag = USA
+			}
+			if = {
+				limit = {
+					ENG = { has_capitulated = no }
+				}
+				set_temp_variable = { z_ENG_alu_count = ENG.resource_exported@aluminium }
+				multiply_temp_variable = { z_ENG_alu_count = 0.75 }
+				add_to_temp_variable = { alu_import_potential = z_ENG_alu_count }
+			}
+		}
+		else_if = {
+			limit = {
+				tag = SOV
+			}
+			if = {
+				limit = {
+					OR = {
+						USA = { is_in_faction_with = ENG }
+						stockpile_ratio = { archetype = convoy ratio > 400 }
+					}
+					country_exists = USA
+				}
+				set_temp_variable = { z_USA_alu_count = USA.resource_exported@aluminium }
+				multiply_temp_variable = { z_USA_alu_count = 0.25 }
+				add_to_temp_variable = { alu_import_potential = z_USA_alu_count }
+			}
+			else_if = {
+				limit = {
+					country_exists = USA
+				}
+				set_temp_variable = { z_USA_alu_count = USA.resource_exported@aluminium }
+				multiply_temp_variable = { z_USA_alu_count = 0.1 }
+				add_to_temp_variable = { alu_import_potential = z_USA_alu_count }
+			}
+			else_if = {
+				limit = {
+					ENG = { has_capitulated = no }
+				}
+				set_temp_variable = { z_ENG_alu_count = ENG.resource_exported@aluminium }
+				multiply_temp_variable = { z_ENG_alu_count = 0.25 }
+				add_to_temp_variable = { alu_import_potential = z_ENG_alu_count }
+			}
+		}
+		else_if = {
+			limit = {
+				OR = {
+					is_in_faction_with = USA
+					is_in_faction_with = ENG
+				}
+				major_country = no
+			}
+			if = {
+				limit = {
+					country_exists = USA
+					USA = { democratic_govt = yes }
+				}
+				set_temp_variable = { z_USA_alu_count = USA.resource_exported@aluminium }
+				multiply_temp_variable = { z_USA_alu_count = 0.15 }
+				add_to_temp_variable = { alu_import_potential = z_USA_alu_count }
+			}
+			if = {
+				limit = {
+					country_exists = ENG
+					ENG = { democratic_govt = yes }
+				}
+				set_temp_variable = { z_ENG_alu_count = ENG.resource_exported@aluminium }
+				multiply_temp_variable = { z_ENG_alu_count = 0.15 }
+				add_to_temp_variable = { alu_import_potential = z_ENG_alu_count }
+			}
+		}
+		else_if = {
+			limit = {
+				is_in_faction_with = GER
+				major_country = no
+			}
+		
+			set_temp_variable = { z_GER_alu_count = GER.resource_exported@aluminium }
+			multiply_temp_variable = { z_GER_alu_count = 0.2 }
+			add_to_temp_variable = { alu_import_potential = z_GER_alu_count }
+		}
+		else = {
+			add_to_temp_variable = { alu_import_potential = 30 }
+		}
+
+		set_temp_variable = { max_cic = num_of_civilian_factories }
+		multiply_temp_variable = { max_cic = @AI_AIR_MAX_CIC_RATIO_FOR_POTENTIAL_ALUMINIUM_IMPORT }
+		multiply_temp_variable = { max_cic = 10 }
+		if = {
+			limit = {
+				OR = {
+					tag = ENG
+					tag = CAN
+				}
+				USA = { has_idea = USA_lend_lease_act_idea_eng }
+			}
+			multiply_temp_variable = { max_cic = 2 } # Cheap LL Alu
+		}
+		else_if = {
+			limit = {
+				tag = SOV
+				USA = { has_idea = USA_lend_lease_act_idea_sov }
+			}
+			multiply_temp_variable = { max_cic = 2 } # Cheap LL Alu
+		}
+		
+		#log= "[?alu_import_potential] POTENTIAL"
+		clamp_temp_variable = { var = alu_import_potential max = max_cic }
+
+		#log= "[?alu_import_potential] POTENTIAL CLAMPED"
+		add_to_variable = { alu_plane_cap = alu_import_potential }
+		
+		if = { 
+            limit = {date < 1938.1.1 }
+            set_temp_variable = { alu_plane_cost = 3.0 }
+        }
+        else_if = { 
+            limit = {date < 1940.1.1 }
+            set_temp_variable = { alu_plane_cost = 3.5 }
+        }
+        else_if = { 
+            limit = {date < 1941.6.1 }
+            set_temp_variable = { alu_plane_cost = 4.0 }
+        }
+        else_if = { 
+            limit = {date < 1943.1.1 }
+            set_temp_variable = { alu_plane_cost = 4.5 }
+        }
+        else = {
+            set_temp_variable = { alu_plane_cost = 5.0 }
+        }
+        if = { 
+            limit = {tag = SOV} 
+            divide_temp_variable = { alu_plane_cost = 2.0 } # wood planes
+        }
+		if = { 
+			limit = {
+				NOT = {
+					has_country_flag = GER_air
+					has_country_flag = ITA_air
+					has_country_flag = JAP_air
+					has_country_flag = USA_air
+					has_country_flag = ENG_air
+					has_country_flag = FRA_air
+					has_country_flag = SOV_air
+				}
+			} 
+			subtract_from_temp_variable = { alu_plane_cost = 1 } # generic planes
+		}
+
+		divide_variable = { alu_plane_cap = alu_plane_cost }
+		#log= "[?alu_plane_cap] ALU Plane Cap"
+		
+		### Air Assembly Cap
+		
+		set_variable = { ap_plane_cap = num_air_assembly } 
+		multiply_variable = { ap_plane_cap = modifier@air_production_capacity }
+	
+		if = { 
+			limit = {date < 1938.6.1 }
+			set_temp_variable = { ap_plane_cost = 5 }
+		}
+		if = { 
+			limit = {date > 1941.3.1 }
+			set_temp_variable = { ap_plane_cost = 6 }
+		}
+		else = {
+			set_temp_variable = { ap_plane_cost = 7 }
+		}
+		if = { 
+			limit = {
+				NOT = {
+					has_country_flag = GER_air
+					has_country_flag = ITA_air
+					has_country_flag = JAP_air
+					has_country_flag = USA_air
+					has_country_flag = ENG_air
+					has_country_flag = FRA_air
+					has_country_flag = SOV_air
+				}
+			} 
+			subtract_from_temp_variable = { ap_plane_cost = 1 } # generic planes
+		}
+		
+		divide_variable = { ap_plane_cap = ap_plane_cost }
+		#log= "[?ap_plane_cap] AirProduction Plane Cap"
+		
+		### MIC Cap
+		
+		set_variable = {mic_plane_cap = 1}
+		if = {  
+			limit = {num_of_military_factories > 180 } 
+			set_temp_variable = { temp_MIC = num_of_military_factories }
+			subtract_from_temp_variable = { temp_MIC = 180 }
+			multiply_temp_variable = {temp_MIC = 0.45 }
+			add_to_variable = { mic_plane_cap = temp_MIC }
+			add_to_variable = { mic_plane_cap = 42 } # = 4 + (90-30)*0.3  #should this be doubled?
+		}
+		else_if = {  
+			limit = {num_of_military_factories > 60} 
+			set_temp_variable = { temp_MIC = num_of_military_factories }
+			subtract_from_temp_variable = { temp_MIC = 60 }
+			multiply_temp_variable = {temp_MIC = 0.3 }
+			add_to_variable = { mic_plane_cap = temp_MIC }
+			add_to_variable = { mic_plane_cap = 6 } # = 0 + (30-10)*0.15
+		}
+		else_if = {  
+			limit = {num_of_military_factories > 20} 
+			set_temp_variable = { temp_MIC = num_of_military_factories }
+			subtract_from_temp_variable = { temp_MIC = 20 }
+			multiply_temp_variable = {temp_MIC = 0.15 }
+			add_to_variable = { mic_plane_cap = temp_MIC }
+		}
+		
+		# country specific modifiers
+		if = {
+			limit = {
+				tag = ITA 
+				date > 1938.6.1
+			}
+			multiply_variable = { mic_plane_cap = 1.6 } # Regia Aeronautica
+		}
+		else_if = {
+			limit = {
+				tag = SOV 
+				has_completed_focus = SOV_Gosplan_aircraft_factories 
+			}
+			multiply_variable = { mic_plane_cap = 0.85 }
+		}
+		else_if = {
+			limit = {
+				tag = SOV 
+				OR = {
+					has_country_flag = ai_production/fighter_alt_equipment
+					has_war_with_major = yes
+				}
+			}
+			multiply_variable = { mic_plane_cap = 0.65 }
+		}
+		else_if = {
+			limit = {
+				tag = SOV
+			}
+			multiply_variable = { mic_plane_cap = 0.45 }
+		}
+
+		else_if = {
+			limit = {
+				tag = USA
+				#has_war = yes
+				num_of_military_factories > 180
+			}
+			multiply_variable = { mic_plane_cap = 1.6 } #USAF
+		}
+		else_if = {
+			limit = {
+				tag = USA
+			}
+			multiply_variable = { mic_plane_cap = 1.3 } #USAF
+		}
+		else_if = {
+			limit = {
+				has_global_flag = fall_of_france
+				tag = ENG 
+			}
+			multiply_variable = { mic_plane_cap = 2.2} #RAF
+		}
+		else_if = {
+			limit = {
+				has_country_flag = ai_production/fighter_equipment
+				tag = ENG 
+			}
+			multiply_variable = { mic_plane_cap = 1.6 } #RAF
+		}
+		else_if = {
+			limit = {
+				tag = CAN 
+				has_completed_focus = CAN_victory_aircraft_limited
+			}
+			multiply_variable = { mic_plane_cap = 4 } #OH CANADA
+		}
+		else_if = {
+			limit = {
+				tag = CAN 
+			}
+			multiply_variable = { mic_plane_cap = 2 } #Oh Canada
+		}
+
+		# US/ENG / GER  AI vs player
+		if = {
+			limit = {
+				GER = { is_player = yes }
+				OR = {
+					tag = ENG 
+					tag = USA
+				}
+			}
+			multiply_variable = { mic_plane_cap = 1.15 } #dont fall behind the player
+		}
+		else_if = {
+			limit = {
+				ENG = { is_player = yes }
+				tag = GER 
+			}
+			multiply_variable = { mic_plane_cap = 1.15 } #dont fall behind the player
+		}
+		# Global Difficulty
+		if = {
+			limit = { check_variable = { global.ai_difficulty = 4 }}
+			multiply_variable = { mic_plane_cap = 1.3 } #dont fall behind the player 
+		}
+		else_if  = {
+			limit = { check_variable = { global.ai_difficulty = 3 }}
+			multiply_variable = { mic_plane_cap = 1.15 } #dont fall behind the player
+		}
+		
+		set_temp_variable = { modifiers = modifier@ai_desired_planes }
+		add_to_temp_variable = { modifiers = 1 }
+		add_to_temp_variable = { modifiers = air_ratio_mic_factor }
+		multiply_variable = { mic_plane_cap = modifiers }
+		
+		if = {
+			limit = {
+				check_variable = { air_ratio_mic_min > 0 }
+			}
+			clamp_variable = { var = mic_plane_cap min = air_ratio_mic_min }
+		}
+		
+		if = {
+			limit = {
+				check_variable = { air_ratio_max_unused_resource_limit_to_mic > 0 }
+				check_variable = { alu_plane_cap > mic_plane_cap }
+				check_variable = { ap_plane_cap > mic_plane_cap }
+			}
+			
+			if = {
+				limit = {
+					check_variable = { alu_plane_cap > ap_plane_cap }
+				}
+				set_temp_variable = { t = ap_plane_cap }
+			}
+			else = {
+				set_temp_variable = { t = alu_plane_cap }
+			}
+			
+			subtract_from_temp_variable = { t = mic_plane_cap }
+			multiply_temp_variable = { t = air_ratio_max_unused_resource_limit_to_mic }
+			add_to_variable = { mic_plane_cap = t }
+		}
+		#log= "[?mic_plane_cap] MIC Plane Cap"
+
+		### Clamp to Lowest
+		
+		set_variable = { air_ratio = mic_plane_cap }
+		if = {
+			limit = { check_variable = {air_ratio > alu_plane_cap} }
+			set_country_flag = ai_expand_alu
+		}
+		else = {
+			clr_country_flag = ai_expand_alu
+		}
+		clamp_variable = {
+			var = air_ratio
+			max = alu_plane_cap
+		}
+		
+		# Ai gets some wiggle room for Air Assembly cap
+		set_temp_variable = {clamp_ap_plane_cap = ap_plane_cap}
+		clamp_temp_variable = {
+			var = clamp_ap_plane_cap
+			min = 1
+		}
+		multiply_temp_variable = {clamp_ap_plane_cap = 1.2}
+
+		# Set flag if air_ratio limited by Air Assembly cap
+		set_variable = {ai_delta_air_assembly = air_ratio}
+		subtract_from_variable = {ai_delta_air_assembly = ap_plane_cap}
+		multiply_variable = {ai_delta_air_assembly = ap_plane_cost}
+		
+		if = {
+			limit = { check_variable = {ai_delta_air_assembly > 0} }
+			set_country_flag = ai_build_air_assembly
+		}
+		else = {
+			clr_country_flag = ai_build_air_assembly
+		}
+		
+		clamp_variable = {
+			var = air_ratio
+			max = clamp_ap_plane_cap
+		}
+		
+		set_variable = {air_mic = air_ratio }
+		round_variable = air_mic
+
+		### Final Calculation
+		
+		# Cracked daPlane code
+		multiply_variable = { air_ratio = 5 }
+		divide_variable = { air_ratio = num_of_military_factories }
+		subtract_from_variable = { air_ratio = 1}
+		multiply_variable = {air_ratio = 100}
+		
+		# Precision 
+		
+		divide_variable = { air_ratio = @AI_AIR_FACTORY_RATIO_PRECISION }
+		round_variable = air_ratio
+		multiply_variable = { air_ratio = @AI_AIR_FACTORY_RATIO_PRECISION }
+		
+		# Final Nation-Specific Clamps
+		if = {
+			limit = {
+				OR = {
+					original_tag = ENG
+				}
+			}
+			clamp_variable = {
+				var = air_ratio
+				min = -50 #10%
+				max = 300 #80%
+			}
+		}
+		else_if = {
+			limit = {
+				OR = {
+					#original_tag = FRA
+					original_tag = GER
+					original_tag = ITA
+					original_tag = JAP
+					original_tag = USA
+					original_tag = CAN
+				}
+			}
+			clamp_variable = {
+				var = air_ratio
+				min = -75 #5%
+				max = 200 #60%
+			}
+		}
+		else = {
+			clamp_variable = {
+				var = air_ratio
+				min = -100 #0%
+				max = 100  #40%
+			}
+		}
+		#log= "Final Air Ratio: [?air_ratio]"
+		#log= "Air Mils: [?air_mic] / [?num_of_military_factories] Total"
+		
+	
+		
+		#Only clear old target and proceed if its different than new one and atleast one var higher than 0 
+		if = { 
+			limit = { 
+				OR = { 
+					check_variable = { ai_air_factory_ratio > 0 }
+					check_variable = { air_ratio > 0 }
+					check_variable = { ai_air_factory_ratio < 0 }
+					check_variable = { air_ratio < 0 }
+				}
+				#log = "[?ai_air_factory_ratio] FRACTION"
+				#log = "[?air_ratio] COUNT"
+				NOT = { check_variable = { ai_air_factory_ratio = air_ratio } } 
+				#log = "UPDATE AI AIR RATIO"
+			}
+			
+			set_temp_variable = { ratio_diff = air_ratio }
+			subtract_from_temp_variable = { ratio_diff = ai_air_factory_ratio }
+			
+			meta_effect = {
+				text = {
+					add_ai_strategy = {
+						type = air_factory_balance
+						value = [AIR_FACTORY]
+					}
+				}
+				AIR_FACTORY = "[?ratio_diff]"
+			}
+			
+			set_variable = { ai_air_factory_ratio = air_ratio }
+			
+		}
+		clear_variable = air_ratio
+	}
+}
+
+d_check_minor_air_production = {
+	every_country = {
+		limit = {
+			has_country_flag = ai_start_air_production
+		}
+		log = "[This.GetTag]"
+	}
+}
+
+ai_update_division_production = {
+
+	if = {
+		limit = {
+			has_country_flag = ui_ai_army_production_lock
+		}
+		
+		if = {
+			limit = {
+				has_country_flag = ui_ai_army_production_lock_save
+			}
+			clr_country_flag = ui_ai_army_production_lock_save
+			for_each_loop = {
+				array = ai_roles
+				
+				set_variable = { ai_unit_need_lock@var:v = BASE@var:v }
+			}
+		}
+		else = {
+			for_each_loop = {
+				array = ai_roles
+				
+				set_temp_variable = { BASE@var:v = ai_unit_need_lock@var:v }
+			}
+		}
+		
+	}
+	else_if = {
+		limit = {
+			check_variable = { disable_build = 1 }
+		}
+		set_temp_variable = { unit_target_factor = 0 }
+	}
+	else = {
+		
+		# Manpower Law Level Reduction
+		set_temp_variable = { mp_level_start = @MANPOWER_LEVEL_START_REDUCTION }
+
+		if = {
+			limit = {
+				set_temp_variable = { law_level = law_level@age_laws }
+				add_to_temp_variable = { law_level = law_level@conscription_law }
+			
+				check_variable = { law_level > mp_level_start }
+			}
+			set_temp_variable = { mp_per_law = @DIVISION_REDUCTION_PER_MP_LAW }
+		
+			set_temp_variable = { target_reduction_from_manpower = law_level }
+			subtract_from_temp_variable = { target_reduction_from_manpower = mp_level_start }
+			multiply_temp_variable = { target_reduction_from_manpower = mp_per_law }
+			#log = "[?target_reduction_from_manpower] target_reduction_from_manpower"
+		}
+			
+		### MULTIPLIER
+
+		set_temp_variable = { unit_target_factor = modifier@ai_desired_units }
+		add_to_temp_variable = { unit_target_factor = production_ratio }
+		add_to_temp_variable = { unit_target_factor = ai_extra_unit_production }
+		
+	}
+		
+	for_each_loop = {
+		array = ai_roles
+		
+		add_to_temp_variable = { BASE@var:v = ui_ai_unit_need@var:v }
+		set_temp_variable = { unit_role_factor = unit_target_factor }
+		add_to_temp_variable = { unit_role_factor = ui_ai_unit_need_mult@var:v }
+		add_to_temp_variable = { unit_role_factor = 1 }
+		multiply_temp_variable = { BASE@var:v = unit_role_factor }
+		round_temp_variable = BASE@var:v
+		clamp_temp_variable = { var = BASE@var:v min = 0 }
+		if = {
+			limit = {
+				OR = {
+					check_variable = { BASE@var:v > 0 }
+					check_variable = { ai_unit_need@var:v > 0 }
+				}
+				NOT = { check_variable = { BASE@var:v = ai_unit_need@var:v } }
+			}
+			
+			set_temp_variable = { change = BASE@var:v }
+			subtract_from_temp_variable = { change = ai_unit_need@var:v }
+			
+			meta_effect = {
+				text = {
+					add_ai_strategy = {
+						type = build_army 
+						id = [V] 
+						value = [X]
+					}
+				}
+				V = "[?v.GetTokenLocalizedKey]"
+				X = "[?change]"
+			}
+			
+			set_variable = { ai_unit_need@var:v = BASE@var:v }
+		}
+		
+		add_to_temp_variable = { ai_division_limit = BASE@var:v }
+	}
+	
+	### Create ai_division_limit_ratio variable
+	
+	if = {
+		limit = {
+			check_variable = { ai_division_limit > 0 }
+		}
+		set_variable = { ai_division_target = ai_division_limit }
+		set_variable = { ai_division_limit_ratio = num_divisions }
+		divide_variable = { ai_division_limit_ratio = ai_division_limit }
+	}
+	else = {
+		clear_variable = ai_division_limit_ratio
+		clear_variable = ai_division_target
+	}
+}
+
+ai_update_ship_production = {
+
+	if = {
+		limit = {
+			check_variable = { global.ai_ship_archetypes^num = 0 }
+		}
+			
+		#add_to_array = { global.ai_ship_roles = token:naval_capital_bb }
+		#add_to_array = { global.ai_ship_roles = token:naval_capital_bc }
+		#add_to_array = { global.ai_ship_roles = token:naval_cruiser_heavy }
+		#add_to_array = { global.ai_ship_roles = token:naval_cruiser_light }
+		#add_to_array = { global.ai_ship_roles = token:naval_carrier }
+		#add_to_array = { global.ai_ship_roles = token:naval_carrier_light }
+		#add_to_array = { global.ai_ship_roles = token:naval_screen }
+		#add_to_array = { global.ai_ship_roles = token:naval_submarine }
+		
+		add_to_array = { global.ai_ship_archetypes = token:nrm_ship_hull_capital }
+		add_to_array = { global.ai_ship_archetypes = token:nrm_ship_hull_carrier }
+		add_to_array = { global.ai_ship_archetypes = token:nrm_ship_hull_carrier_escort }
+		add_to_array = { global.ai_ship_archetypes = token:nrm_ship_hull_carrier_light }
+		#add_to_array = { global.ai_ship_archetypes = token:nrm_ship_hull_large_cruiser }
+		#add_to_array = { global.ai_ship_archetypes = token:nrm_ship_hull_cruiser }
+		
+	}
+		
+	for_each_loop = {
+		array = ai_ship_roles
+		
+		add_to_temp_variable = { RATIO@var:v = ui_ai_ship_need@var:v }
+		set_temp_variable = { factor = 1 }
+		add_to_temp_variable = { factor = ui_ai_ship_need_mult@var:v }
+		multiply_temp_variable = { RATIO@var:v = factor }
+		round_temp_variable = RATIO@var:v
+		clamp_temp_variable = { var = RATIO@var:v min = 0 }
+		if = {
+			limit = {
+				OR = {
+					check_variable = { RATIO@var:v > 0 }
+					check_variable = { ai_ship_need@var:v > 0 }
+				}
+				NOT = { check_variable = { RATIO@var:v = ai_ship_need@var:v } }
+			}
+			
+			set_temp_variable = { change = RATIO@var:v }
+			subtract_from_temp_variable = { change = ai_ship_need@var:v }
+			
+			meta_effect = {
+				text = {
+					add_ai_strategy = {
+						type = role_ratio 
+						id = [V] 
+						value = [X]
+					}
+				}
+				V = "[?v.GetTokenKey]" #NO localized key here!
+				X = "[?change]"
+			}
+			
+			#log = "[?v.GetTokenKey] key | [?change]"
+			set_variable = { ai_ship_need@var:v = RATIO@var:v }
+		}
+	}
+	
+	for_each_loop = {
+		array = global.ai_ship_archetypes
+			
+		if = {
+			limit = {
+				OR = {
+					check_variable = { min_dockyard@var:v > 0 }
+					check_variable = { ai_min_dockyard@var:v > 0 }
+				}
+				NOT = { check_variable = { min_dockyard@var:v = ai_min_dockyard@var:v } }
+			}
+			
+			set_temp_variable = { change = min_dockyard@var:v }
+			subtract_from_temp_variable = { change = ai_min_dockyard@var:v }
+			
+			meta_effect = {
+				text = {
+					add_ai_strategy = {
+						type = equipment_production_min_factories_archetype
+						id = [V]
+						value = [X]
+					}
+				}
+				V = "[?v.GetTokenKey]"
+				X = "[?change]"
+			}
+			
+			set_variable = { ai_min_dockyard@var:v = min_dockyard@var:v }
+		}
+	}
+}
+
+ai_update_resource_storage = { #ai enabling storage use when it has x days of resources in stock
+
+	if = {
+		limit = {
+			has_war = yes
+		}
+			
+		for_each_loop = {
+			array = global.storage
+			
+			if = {
+				limit = {
+					check_variable = { storage@var:v > 0 }
+					check_variable = { storage_output@var:v = 0 }
+				}
+					
+				
+				set_temp_variable = { factor = modifier@storage_output_factor }
+				add_to_temp_variable = { factor = 1 }
+				
+				set_temp_variable = { output = global.resource_cost@var:v }
+				multiply_temp_variable = { output = factor }
+				
+				set_temp_variable = { output_total = output }
+				multiply_temp_variable = { output_total = num_storage@var:v }
+				add_to_temp_variable = { output_total = output }
+					
+				set_temp_variable = { in_store = storage@var:v }
+				divide_temp_variable = { in_store = output_total }
+				
+				if = {
+					limit = {
+						check_variable = { in_store > @AI_STORAGE_DAYS_FOR_OUTPUT }
+					}
+
+					set_variable = { storage_output@var:v = global.resource_cost@var:v }
+					multiply_variable = { storage_output@var:v = factor }
+					set_temp_variable = { x = storage_output@var:v }
+					multiply_variable = { storage_output@var:v = num_storage@var:v }
+					add_to_variable = { storage_output@var:v = x }
+					
+					if = {
+						limit = {
+							NOT = { has_dynamic_modifier = { modifier = storage } }
+						}
+						add_dynamic_modifier = { modifier = storage }
+					}
+				}
+			}
+		}
+		
+		add_to_variable = { ui_storage = 1 }
+	}
+}
+

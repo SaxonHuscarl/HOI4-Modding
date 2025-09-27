@@ -1,0 +1,1487 @@
+operations = {
+	IEA_resist = {
+
+		allowed = {
+			original_tag = ETH
+		}
+
+		available = {
+			surrender_progress > 0.05
+			ITA = {
+				controls_state = 452
+			}
+		}
+		ai_will_do = {
+			factor = 50
+		}
+
+		visible = {
+			has_war = yes
+			has_government = fascism
+		}
+		custom_cost_trigger = {
+			command_power > 24.9
+		}
+		custom_cost_text = cp_atleast_25
+		
+
+		complete_effect = {
+			division_template = {
+				name = "Polizia Coloniale"
+				template_counter = 44
+				
+				regiments = {
+					light_infantry = { x = 0 y = 0 }
+					light_infantry = { x = 0 y = 0 }
+				}
+				support = {
+					DIV_HQ = { x = 0 y = 0 }
+					recon_ac = { x = 0 y = 1 }
+					desert_support = { x = 0 y = 2 }
+					military_police = { x = 0 y = 3 }
+				}
+			}
+			
+			452 = {
+				create_unit = {
+					division = "name = \"1. Polizia Coloniale recruits\" division_template = \"Polizia Coloniale\" start_experience_factor = 0.0 start_equipment_factor = 0.5 start_manpower_factor = 0.01"
+					owner = ETH
+				}
+				add_compliance = 10 
+			}
+		    hidden_effect = {
+				add_command_power = -25
+			}
+		}
+		days_re_enable = 150
+	}
+	ITA_malta = {
+		allowed = {
+			tag = ITA
+		}
+        available = {
+			command_power > 24.9
+        }
+		custom_cost_trigger = {
+			command_power > 24.9
+		}
+		custom_cost_text = cp_atleast_25
+		
+        visible = {
+			if = {
+				limit = { has_dlc = "La Resistance" }
+				has_tech = basic_decryption_lar
+			}
+			else = {
+				has_tech = basic_decryption
+			}
+			has_war_with = ENG
+			116 = { is_controlled_by_ROOT_or_ally = no }
+        }
+		ai_will_do = {
+			factor = 2
+		}
+		days_remove = 50
+		days_re_enable = 10
+		fire_only_once = no
+		modifier = {
+			command_power_gain_mult = -0.5			
+		}
+		complete_effect = {
+			hidden_effect = {
+				add_command_power = -25
+			}
+		}
+		fixed_random_seed = no
+		remove_effect = {
+			if = {
+				limit = {
+					OR = {
+						has_tech = advanced_decryption
+						has_tech = advanced_decryption_lar
+					}
+				}
+				random_list = {
+					25 = {
+						116 = {
+							add_manpower = -100
+						}
+					}
+					25 = {
+						116 = {
+							damage_building = {
+								type = infrastructure
+								damage = 1
+							}
+						}
+					}
+					25 = {
+						116 = {
+							damage_building = {
+								type = air_base
+								damage = 1
+							}
+						}
+					}
+					20 = {
+						116 = {
+							damage_building = {
+								type = anti_air_building
+								damage = 1
+							}
+						}
+					}
+					5 = {
+						116 = {
+							damage_building = {
+								type = coastal_bunker
+								damage = 1
+							}
+						}
+					}
+				}
+			}
+			else_if = {
+				limit = {
+					OR = {
+						has_tech = improved_decryption
+						has_tech = improved_decryption_lar
+					}
+				}				
+				random_list = {
+					35 = {
+						116 = {
+							add_manpower = -100
+						}
+					}
+					30 = {
+						116 = {
+							damage_building = {
+								type = infrastructure
+								damage = 1
+							}
+						}
+					}
+					20 = {
+						116 = {
+							damage_building = {
+								type = air_base
+								damage = 1
+							}
+						}
+					}
+					10 = {
+						116 = {
+							damage_building = {
+								type = anti_air_building
+								damage = 1
+							}
+						}
+					}
+					5 = {
+					}
+				}
+			}
+			else = {
+				random_list = {
+					40 = {
+						116 = {
+							add_manpower = -100
+						}
+					}
+					20 = {
+						116 = {
+							damage_building = {
+								type = infrastructure
+								damage = 1
+							}
+						}
+					}
+					10 = {
+						116 = {
+							damage_building = {
+								type = air_base
+								damage = 1
+							}
+						}
+					}
+					5 = {
+						116 = {
+							damage_building = {
+								type = anti_air_building
+								damage = 1
+							}
+						}
+					}
+					25 = {
+					}
+				}
+			}
+		}
+	}
+}
+foreign_politics = {
+	ITA_help_per = {
+		allowed = {
+			original_tag = ITA
+		}
+
+		available = {
+			PER = {
+				not = { 
+					or = {
+						is_in_faction_with = ENG
+						is_in_faction_with = SOV
+					}
+				}
+			}
+		}
+
+		cost = 50
+
+		fire_only_once = yes
+
+		ai_will_do = {
+			factor = 0
+			modifier = {
+				add = 50
+				PER = {
+					is_ai = no
+				}
+			}
+		}
+		
+		cosmetic_tag = PER
+		cosmetic_ideology = monarchism
+
+		visible = {
+			PER = { 
+				exists = yes
+				not = { 
+					or = {
+						is_in_faction_with = ENG
+						is_in_faction_with = SOV
+					}
+				}
+				or = {
+					has_government = monarchism
+					has_government = fascism
+				}
+				has_country_flag = industry_aid_removed
+				has_completed_focus = PER_ita_business
+			}
+			#has_dlc = "Waking the Tiger" 
+		}
+		days_remove = 90
+		modifier = {
+			civilian_factory_use = 1
+		}
+		complete_effect = {
+			add_tech_bonus = {
+				name = industry_bonus
+				bonus = 0.15
+				ahead_reduction = 0.5
+				uses = 1
+				category = industry
+			}
+			reverse_add_opinion_modifier = {
+				target = PER
+				modifier = aided_industry
+			}
+			PER = {
+				add_ideas = ITA_fight_the_burocracy_idea		
+				hidden_effect = {
+					if = {
+						limit = {
+							PER = { is_ai = yes }
+						}
+						swap_ideas = {
+							remove_idea = PER_neutral
+							add_idea = neutrality_idea
+						}
+					}
+				}
+			}
+		}
+	}
+	
+	ITA_IEA_patrols = {
+
+		icon = ger_reichskommissariats
+		
+		
+		allowed = {
+			tag = ITA
+		}
+        available = {
+			hidden_trigger = {
+				command_power > 24.9
+			}
+        }
+		custom_cost_trigger = {
+			command_power > 24.9
+		}
+		custom_cost_text = cp_atleast_25
+		cosmetic_tag = ETH
+		visible = {
+			ETH = {
+				is_subject_of = ITA
+				has_war = no
+				OR = {
+					has_idea = IEA_kings_men
+					has_idea = IEA_kings_men2
+					has_idea = IEA_kings_men3
+					has_idea = IEA_kings_men4
+				}
+			}
+		}
+		
+		ai_will_do = {
+			factor = 0
+			modifier = {
+				add = 10
+				ETH = {
+					is_ai = no
+				}
+			}
+			modifier = {
+				add = 10
+				ETH = {
+					fascism < 0.5
+				}
+			}
+			modifier = {
+				add = 10
+				ETH = {
+					monarchism > 0.25
+				}
+			}
+		}
+		modifier = {
+			political_power_gain = -0.05 
+		}
+		remove_effect = {
+		    army_experience = 10
+			random_army_leader = {
+				set_temp_variable = { xp_gained = 35 }
+				
+				set_temp_variable = { per_level = 50 }
+				multiply_temp_variable = { per_level = skill_level }
+				clamp_temp_variable = { var = per_level max = 150 }
+				add_to_temp_variable = { xp_gained = per_level }
+				
+				set_temp_variable = { xp_random = global.daily_random }
+				multiply_temp_variable = { xp_random = 100 }
+				add_to_temp_variable = { xp_gained = xp_random }
+				multiply_temp_variable = { xp_gained = xp_mult?1 }
+				
+				meta_effect = {
+					text = {
+						gain_xp = [X]
+					}
+					X = "[?xp_gained]"
+				}
+			}	
+			ETH = {
+				random_army_leader = {
+					set_temp_variable = { xp_gained = 15 }
+					
+					set_temp_variable = { per_level = 50 }
+					multiply_temp_variable = { per_level = skill_level }
+					clamp_temp_variable = { var = per_level max = 150 }
+					add_to_temp_variable = { xp_gained = per_level }
+					
+					set_temp_variable = { xp_random = global.daily_random }
+					multiply_temp_variable = { xp_random = 100 }
+					add_to_temp_variable = { xp_gained = xp_random }
+					multiply_temp_variable = { xp_gained = xp_mult?1 }
+					
+					meta_effect = {
+						text = {
+							gain_xp = [X]
+						}
+						X = "[?xp_gained]"
+					}
+				}
+			}
+		}
+		days_remove = 100
+		days_re_enable = 50		
+		complete_effect = {
+			ETH = {
+				add_timed_idea = {
+					idea = IEA_patrols
+					days = 100
+				}
+			}
+			hidden_effect = {
+				add_command_power = -25
+			}
+		}
+	}
+	ITA_IEA_police = {
+
+		icon = ger_reichskommissariats
+
+		fire_only_once = yes
+		
+		allowed = {
+			tag = ITA
+		}
+        available = {
+			
+			has_equipment = {
+				garrison_equipment > 500
+			}
+			hidden_trigger = {
+				command_power > 24.9
+			}
+        }
+		custom_cost_trigger = {
+			command_power > 24.9
+		}
+		custom_cost_text = cp_atleast_25
+		cosmetic_tag = ETH
+		visible = {
+			ETH = {
+				is_subject_of = ITA
+				has_completed_focus = IEA_police
+				has_war = no
+			}
+		}
+		
+		ai_will_do = {
+			factor = 0
+			modifier = {
+				add = 10
+				ETH = {
+					is_ai = no
+				}
+			}
+		}
+		
+		complete_effect = {
+			add_equipment_to_stockpile = {
+				type = garrison_equipment
+				amount = -500
+			}
+			hidden_effect = {
+				add_command_power = -25
+				ETH = {
+					550 = {
+						create_unit = {
+							division = "name = \"1. Polizia Coloniale recruits\" division_template = \"Polizia Coloniale\" start_experience_factor = 0.0 start_equipment_factor = 0.5 start_manpower_factor = 0.01"
+							owner = ETH
+						}
+					}
+					559 = { 
+						create_unit = {
+							division = "name = \"2. Polizia Coloniale recruits\" division_template = \"Polizia Coloniale\" start_experience_factor = 0.0 start_equipment_factor = 0.5 start_manpower_factor = 0.01"
+							owner = ETH
+						}
+					}
+				}
+			}
+		}
+	}
+}
+spanish_civil_war ={ 
+	ITA_blockade = {
+		allowed = {
+			tag = ITA
+		}
+        available = {
+			command_power > 24.9
+			has_fuel > 100
+        }
+		custom_cost_trigger = {
+			command_power > 24.9
+		}
+		custom_cost_text = cp_atleast_25
+		
+		highlight_states = {
+			highlight_state_targets = {
+				state = 177
+			}
+		}
+		cosmetic_tag = SPR
+		
+        visible = {
+			SPR = {
+				has_civil_war = yes
+			}
+        }
+		ai_will_do = {
+			factor = 50
+		}
+		days_remove = 50
+		days_re_enable = 10
+		fire_only_once = no
+		modifier = {
+			experience_gain_navy = 0.10
+		}
+		complete_effect = {
+			hidden_effect = {
+				add_command_power = -25
+			}
+			add_fuel = -100
+			
+			custom_effect_tooltip = OUTCOME_DETERMINED_TT
+			random_list = {
+				77 = { 
+					effect_tooltip = {
+						SPR = {
+							add_equipment_to_stockpile = {
+								type = convoy_1
+								amount = -5
+							}	
+						}
+					}
+					set_variable = { ITA_blockade_outcome = 1 }
+					modifier = {
+						factor = 0 
+						has_equipment = { convoy < 4 }
+					}
+				}
+				3 = {
+					effect_tooltip = {
+						SPR = {
+							add_offsite_building = { type = arms_factory level = -1 }
+						}
+					}
+					set_variable = { ITA_blockade_outcome = 2 }
+				}
+				10 = {
+					effect_tooltip = {
+						SOV = {
+							add_equipment_to_stockpile = {
+								type = convoy_1
+								amount = -5
+							}
+							add_opinion_modifier = {
+								target = ITA
+								modifier = protest_action_light
+							}
+						}
+					}
+					set_variable = { ITA_blockade_outcome = 3 }
+					
+					modifier = {
+						factor = 0 
+						SOV = { has_equipment = { convoy < 5 } }
+					}
+				}
+				5 = { 
+					effect_tooltip = {
+						FRA = {
+							add_equipment_to_stockpile = {
+								type = convoy_1
+								amount = -5
+							}
+							add_opinion_modifier = {
+								target = ITA
+								modifier = protest_action_light
+							}
+						}
+					}
+					set_variable = { ITA_blockade_outcome = 4 }
+					modifier = {
+						factor = 0 
+						FRA = { has_equipment = { convoy < 5 } }
+					}
+				}
+				4 = { 
+					effect_tooltip = {
+						PAN = {
+							add_equipment_to_stockpile = {
+								type = convoy_1
+								amount = -1
+							}
+							add_opinion_modifier = {
+								target = ITA
+								modifier = protest_action_light
+							}
+						}
+					}
+					set_variable = { ITA_blockade_outcome = 5 }
+					modifier = {
+						factor = 0 
+						PAN = { has_equipment = { convoy < 1 } }
+					}
+				}	
+				1 = {
+					effect_tooltip = {
+						SPR = {
+							destroy_ships = {
+								type = nrm_ship_hull_destroyer
+								count = 1
+							}
+						}
+					}
+					set_variable = { ITA_blockade_outcome = 6 }
+				}
+			}
+		}
+		fixed_random_seed = no
+		remove_effect = {
+			SPA = {
+				add_opinion_modifier = {
+					target = ROOT
+					modifier = offered_support
+				}
+			}
+			
+			if = {
+				limit = {
+					check_variable = { ITA_blockade_outcome = 1 }
+				}
+				SPR = {
+					add_equipment_to_stockpile = {
+						type = convoy_1
+						amount = -5
+					}	
+				}
+			}
+			else_if = {
+				limit = {
+					check_variable = { ITA_blockade_outcome = 2 }
+				}
+				SPR = {
+					add_offsite_building = { type = arms_factory level = -1 }
+					add_to_variable = { civil_war_ic = -1 }
+					clamp_variable = { var = civil_war_ic min = 0 }
+				}
+			}
+			else_if = {
+				limit = {
+					check_variable = { ITA_blockade_outcome = 3 }
+				}
+				SOV = {
+					add_equipment_to_stockpile = {
+						type = convoy_1
+						amount = -5
+					}
+					add_opinion_modifier = {
+						target = ITA
+						modifier = protest_action_light
+					}
+				}
+			}
+			else_if = {
+				limit = {
+					check_variable = { ITA_blockade_outcome = 4 }
+				}
+				FRA = {
+					add_equipment_to_stockpile = {
+						type = convoy_1
+						amount = -5
+					}
+					add_opinion_modifier = {
+						target = ITA
+						modifier = protest_action_light
+					}
+				}
+			}
+			else_if = {
+				limit = {
+					check_variable = { ITA_blockade_outcome = 5 }
+				}
+				PAN = {
+					add_equipment_to_stockpile = {
+						type = convoy_1
+						amount = -1
+					}
+					add_opinion_modifier = {
+						target = ITA
+						modifier = protest_action_light
+					}
+				}
+			}
+			else_if = {
+				limit = {
+					check_variable = { ITA_blockade_outcome = 6 }
+				}
+				SPR = {
+					destroy_ships = {
+						type = nrm_ship_hull_destroyer
+						count = 1
+					}
+				}
+			}
+			
+			clear_variable = ITA_blockade_outcome
+		}		
+	}
+	ITA_madrid = {
+		allowed = {
+			tag = ITA
+		}
+        available = {
+			command_power > 24.9
+			876 = { is_controlled_by = SPR }
+        }
+		custom_cost_trigger = {
+			command_power > 24.9
+		}
+		custom_cost_text = cp_atleast_25
+		
+		highlight_states = {
+			highlight_state_targets = {
+				state = 876
+			}
+		}
+		cosmetic_tag = SPR
+		
+        visible = {
+			SPR = {
+				has_civil_war = yes
+			}
+        }
+		ai_will_do = {
+			factor = 25
+		}
+		fire_only_once = yes
+		days_remove = 10
+		complete_effect = {
+			hidden_effect = {
+				add_command_power = -25
+			}
+		}
+		remove_effect = { 
+			effect_tooltip = {
+				add_ace = {
+					name = "Mario"
+					surname = "Bonzano"
+					callsign = " "
+					type = gamer_ace
+					is_female = no
+				}
+			}
+			
+			air_experience = 15
+			#custom_effect_tooltip = ITA_madrid_tt
+			876 = {
+				#add_manpower = -2000
+				damage_building = {
+					type = infrastructure
+					damage = 5
+				}
+				damage_building = {
+					type = industrial_complex
+					damage = 8
+				}
+				damage_building = {
+					type = arms_factory
+					damage = 5
+				}
+			}
+			
+			SPA = {
+				add_opinion_modifier = {
+					target = ROOT
+					modifier = offered_support
+				}
+			}
+			hidden_effect = {
+				random_list = {
+					50 = {
+						add_ace = {
+							name = "Mario"
+							surname = "Bonzano"
+							callsign = ""
+							type = gamer_ace
+							is_female = no
+						}
+					}
+					30 = { 
+						add_ace = {
+							name = "Mario"
+							surname = "Bonzano"
+							callsign = ""
+							type = support_good
+							is_female = no
+						}
+					}
+					15 = {
+						add_ace = {
+							name = "Mario"
+							surname = "Bonzano"
+							callsign = ""
+							type = support_unique
+							is_female = no
+						}
+					}
+					5 = {
+						add_ace = {
+							name = "Mario"
+							surname = "Bonzano"
+							callsign = ""
+							type = support_genius
+							is_female = no
+						}
+					}
+				}
+			}
+		}
+	}
+	ITA_barcelona = {
+		allowed = {
+			tag = ITA
+		}
+        available = {
+			command_power > 24.9
+			165 = { is_controlled_by = SPR }
+        }
+		custom_cost_trigger = {
+			command_power > 24.9
+		}
+		custom_cost_text = cp_atleast_25
+		
+		highlight_states = {
+			highlight_state_targets = {
+				state = 165
+			}
+		}
+		cosmetic_tag = SPR
+		
+        visible = {
+			SPR = {
+				has_civil_war = yes
+			}
+        }
+		ai_will_do = {
+			factor = 0
+			modifier = {
+				add = 45
+				SPR = {
+					NOT = { has_full_control_of_state = 165 }
+				}
+			}
+		}
+		fire_only_once = yes
+		days_remove = 10
+		complete_effect = {
+			hidden_effect = {
+				add_command_power = -25
+			}
+		}
+		remove_effect = { 
+			effect_tooltip = {
+				add_ace = {
+					name = "Adriano"
+					surname = "Mantelli"
+					callsign = ""
+					type = gamer_ace
+					is_female = no
+				}
+			}
+			air_experience = 15
+			#custom_effect_tooltip = ITA_barcelona_tt
+			165 = {
+				#add_manpower = -3300
+				damage_building = {
+					type = infrastructure
+					damage = 6
+				}
+				damage_building = {
+					type = industrial_complex
+					damage = 5
+				}
+				damage_building = {
+					type = arms_factory
+					damage = 2
+				}
+				damage_building = {
+					type = dockyard
+					damage = 1
+				}
+				damage_building = {
+					type = air_base
+					damage = 1
+				}
+			}
+			SPA = {
+				add_opinion_modifier = {
+					target = ROOT
+					modifier = offered_support
+				}
+			}
+			hidden_effect = {
+				random_list = {
+					30 = {
+						add_ace = {
+							name = "Adriano"
+							surname = "Mantelli"
+							callsign = ""
+							type = gamer_ace
+							is_female = no
+						}
+					}
+					45 = { 
+						add_ace = {
+							name = "Adriano"
+							surname = "Mantelli"
+							callsign = ""
+							type = bomber_good
+							is_female = no
+						}
+					}
+					20 = {
+						add_ace = {
+							name = "Adriano"
+							surname = "Mantelli"
+							callsign = ""
+							type = bomber_unique
+							is_female = no
+						}
+					}
+					5 = {
+						add_ace = {
+							name = "Adriano"
+							surname = "Mantelli"
+							callsign = ""
+							type = bomber_genius
+							is_female = no
+						}
+					}
+				}
+				every_country = { 
+					limit = { 
+						NOT = { has_government = fascism }
+						has_country_flag = league_member
+					}
+					add_opinion_modifier = {
+						target = ITA
+						modifier = protest_action_light
+					}		
+				}
+			}
+		}
+	}
+	ITA_alicante = {
+		allowed = {
+			tag = ITA
+		}
+        available = {
+			command_power > 24.9
+			167 = { is_controlled_by = SPR }
+        }
+		custom_cost_trigger = {
+			command_power > 24.9
+		}
+		custom_cost_text = cp_atleast_25
+		
+		highlight_states = {
+			highlight_state_targets = {
+				state = 167
+			}
+		}
+		cosmetic_tag = SPR
+		
+        visible = {
+			SPR = {
+				has_civil_war = yes
+			}
+        }
+		ai_will_do = {
+			factor = 0
+			modifier = {
+				add = 33
+				date > 1938.5.24
+			}
+		}
+		fire_only_once = yes
+		days_remove = 10
+		complete_effect = {
+			hidden_effect = {
+				add_command_power = -25
+			}
+		}
+		remove_effect = {
+			effect_tooltip = {
+				add_ace = {
+					name = "Corrado"
+					surname = "Ricci"
+					callsign = ""
+					type = gamer_ace
+					is_female = no
+				}
+			}
+			air_experience = 15
+			#custom_effect_tooltip = ITA_alicante_tt
+			167 = {
+				#add_manpower = -393
+				damage_building = {
+					type = infrastructure
+					damage = 5
+				}
+				damage_building = {
+					type = dockyard
+					damage = 1
+				}
+			}
+			SPR = {
+				add_offsite_building = { type = arms_factory level = -1 }
+				add_to_variable = { civil_war_mic = -1 }
+				clamp_variable = { var = civil_war_mic min = 0 }
+				
+				add_equipment_to_stockpile = {
+					type = convoy
+					amount = -20
+				}
+			}
+			
+			ENG = {
+				add_equipment_to_stockpile = {
+					type = convoy
+					amount = -5
+				}
+				add_opinion_modifier = {
+					target = ITA
+					modifier = protest_action
+				}
+			}
+			SPA = {
+				add_opinion_modifier = {
+					target = ROOT
+					modifier = offered_support
+				}
+			}		
+			hidden_effect = {
+				random_list = {
+					50 = {
+						add_ace = {
+							name = "Corrado"
+							surname = "Ricci"
+							callsign = ""
+							type = gamer_ace
+							is_female = no
+						}
+					}
+					30 = { 
+						add_ace = {
+							name = "Corrado"
+							surname = "Ricci"
+							callsign = ""
+							type = support_good
+							is_female = no
+						}
+					}
+					15 = {
+						add_ace = {
+							name = "Corrado"
+							surname = "Ricci"
+							callsign = ""
+							type = support_unique
+							is_female = no
+						}
+					}
+					5 = {
+						add_ace = {
+							name = "Corrado"
+							surname = "Ricci"
+							callsign = ""
+							type = support_genius
+							is_female = no
+						}
+					}
+				}
+				
+			}
+		}
+	}
+	
+	ITA_guns_for_spain = {
+
+		icon = generic_prepare_civil_war
+
+		allowed = {
+			original_tag = ITA
+		}
+
+		available = {
+			has_equipment = { infantry_equipment > 1999 }
+			command_power > 4.9
+		}
+
+		visible = {
+			SPR = { has_civil_war = yes }
+		}
+		ai_will_do = {
+			base = 80
+		}
+
+		custom_cost_trigger = {
+			command_power > 4.9
+		}
+		custom_cost_text = cp_atleast_5
+
+		fire_only_once = no	
+
+		days_re_enable = 180
+
+		complete_effect = {
+			army_experience = 5
+			SPA = {
+				add_opinion_modifier = {
+					target = ROOT
+					modifier = offered_support
+				}
+			}		
+			send_equipment = {
+				target = SPA 
+				type = infantry_equipment
+				amount = 2000
+				old_prioritised = yes
+			}
+			hidden_effect = {
+				add_command_power = -5
+			}
+		}
+	}
+	
+	ITA_franco_factories = {
+
+		icon = generic_industry
+
+		allowed = {
+			original_tag = ITA
+			has_dlc = "Waking the Tiger"
+		}
+
+		available = {
+			command_power > 4.9			
+		}
+
+		visible = {
+			SPR = { has_civil_war = yes }
+		}
+		ai_will_do = {
+			base = 50
+		}
+
+		custom_cost_trigger = {
+			command_power > 4.9
+		}
+		custom_cost_text = cp_atleast_5
+
+		fire_only_once = no
+
+		modifier = {
+			civilian_factory_use = 3			
+		}
+
+		days_remove = 180
+
+		complete_effect = {
+			hidden_effect = {
+				add_command_power = -5
+			}
+			SPA = {
+				add_offsite_building = { type = arms_factory level = 5 }
+				add_to_variable = { civil_war_mic = 5 }
+				
+				add_opinion_modifier = {
+					target = ROOT
+					modifier = offered_support
+				}
+			}
+		}
+
+		remove_effect = {
+			add_war_support = 0.05
+			SPA = {	
+				add_offsite_building = { type = arms_factory level = -5 }
+				add_to_variable = { civil_war_mic = -5 }
+				clamp_variable = { var = civil_war_mic min = 0 }
+			}
+		}
+	}
+	ITA_planes_for_franco = {
+		icon = generic_prepare_civil_war
+		
+		allowed = {
+			original_tag = ITA
+			has_dlc = "Waking the Tiger"
+		}
+
+		available = {
+			command_power > 4.9
+			
+		}
+
+		visible = {
+			SPR = { has_civil_war = yes }
+		}
+		ai_will_do = {
+			base = 65
+		}
+
+		custom_cost_trigger = {
+			command_power > 4.9
+		}
+		custom_cost_text = cp_atleast_5
+
+		fire_only_once = yes
+
+		modifier = {
+			civilian_factory_use = 4			
+		}
+
+		days_remove = 30
+		
+
+
+		complete_effect = {
+			hidden_effect = {
+				add_command_power = -5
+			}
+			air_experience = 40
+			SPA = {
+				add_equipment_to_stockpile = { type = cr_32_fighter_equipment_1  amount = 100 producer = ITA }
+				add_equipment_to_stockpile = { type = cr_32_fighter_equipment_2  amount = 100 producer = ITA }
+				
+				add_opinion_modifier = {
+					target = ROOT
+					modifier = offered_support
+				}
+			}
+			
+		}
+	}
+
+	ITA_volunteers = {
+		icon = generic_prepare_civil_war
+		
+		allowed = {
+			original_tag = ITA
+		}
+
+		available = {
+			command_power > 4.9			
+		}
+		ai_will_do = {
+			base = 75
+		}
+		visible = {
+			SPR = { has_civil_war = yes }
+		}
+
+		custom_cost_trigger = {
+			command_power > 4.9
+		}
+		custom_cost_text = cp_atleast_5
+
+		fire_only_once = yes
+		
+		complete_effect = {
+			hidden_effect = {
+				add_command_power = -5
+			}
+			add_ideas = ITA_Corpo_truppe_volontarie_focus
+			
+		}
+	}
+}
+
+ITA_historical_politics = {
+	ITA_trains_on_time = {
+
+		allowed = {
+			original_tag = ITA
+		}
+
+		available = {
+			271 = {
+				CONTROLLER = {
+					OR = {
+						tag = ITA
+						is_subject_of = ITA
+					}
+				}
+			}	
+		}
+		ai_will_do = {
+			factor = 50
+		}
+
+		visible = {
+			271 = {
+				CONTROLLER = {
+					OR = {
+						tag = ITA
+						is_subject_of = ITA
+					}
+				}
+			}
+		}
+		cost = 75
+
+		fire_only_once = yes
+
+		modifier = {		
+			industrial_capacity_factory = 0.05
+			industrial_capacity_dockyard = 0.05
+			consumer_goods_expected_value = -0.06
+		}
+		complete_effect = {
+		    add_stability = 0.04
+		}
+		days_remove = 365
+	}
+	
+	ITA_millions_of_bayonets ={
+		allowed = {
+			original_tag = ITA
+		}
+
+		available = {
+			ITA = { 
+					has_war_with = ENG
+			}
+		}
+
+		visible = {
+			ITA = { 
+					has_war_with = ENG
+			}	
+		}
+		cost = 50
+		ai_will_do = {
+			factor = 50
+		}
+		fire_only_once = yes
+
+		modifier = {
+			consumer_goods_expected_value = -0.04
+		}
+		complete_effect = {
+			add_war_support = 0.05
+			add_ideas = ITA_backstabber
+			if = { limit = { is_ai = no }
+				hidden_effect = {
+				sound_effect = sp_ita_waronallies
+				}
+			}
+		}
+
+		remove_effect = {
+			remove_ideas = ITA_backstabber
+		}
+
+		days_remove = 120
+	}
+
+	fonda_pomezia = {
+
+		icon = ger_reichskommissariats
+
+		fire_only_once = yes		
+		
+		allowed = {
+			tag = ITA
+		}
+		cost = 15
+		available = {
+			has_government = fascism
+		}
+		
+		visible = {
+			has_completed_focus = ITA_bonifica
+		}
+		
+		ai_will_do = {
+			factor = 100
+		}
+		
+		complete_effect = {
+			add_popularity = { ideology = fascism popularity = 0.02 }
+			add_stability = 0.01 					
+			846 = {
+				add_extra_state_shared_building_slots = 1
+			}
+		}
+		
+	}
+
+	cinema_venezia = {
+
+		icon = ger_reichskommissariats
+
+		fire_only_once = yes		
+		
+		allowed = {
+			tag = ITA
+		}
+		cost = 30
+		available = {
+			has_government = fascism			
+			has_completed_focus = ITA_cinecitta
+		}
+		
+		visible = {
+			ITA = { has_completed_focus = ITA_cinecitta }
+		}
+		
+		ai_will_do = {
+			factor = 100
+			modifier = {
+			factor = 2
+			fascism < 0.74
+			}
+			modifier = {
+			factor = 2
+			fascism < 0.6
+			}
+		}
+		
+		complete_effect = {
+			add_popularity = { ideology = fascism popularity = 0.04 }
+			add_stability = 0.02	
+			
+		}
+		
+	}
+
+	operai_piacenza = {
+
+		icon = ger_reichskommissariats
+
+		fire_only_once = yes	
+		
+		allowed = {
+			tag = ITA
+		}
+		cost = 30
+		available = {
+			has_government = fascism			
+			has_completed_focus = ITA_gentile_reform
+		}
+		
+		visible = {
+			ITA = { has_completed_focus = ITA_gentile_reform }
+		}
+		
+		ai_will_do = {
+			factor = 100
+			modifier = {
+			factor = 2
+			fascism < 0.74
+			}
+			modifier = {
+			factor = 2
+			fascism < 0.6
+			}
+		}
+		
+		complete_effect = {
+		add_stability = 0.01
+			add_tech_bonus = {
+				name = industry_bonus
+				bonus = 0.15
+				uses = 2
+				category = industry
+			}				
+		}
+	}
+}

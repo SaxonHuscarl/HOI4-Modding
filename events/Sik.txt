@@ -1,0 +1,433 @@
+﻿###########################
+# Sinkiang Events
+###########################
+
+add_namespace = xinjiang
+
+#Sinkiang civil war
+country_event = {
+	id = xinjiang.1
+	title = xinjiang.1.t
+	desc = xinjiang.1.d
+	picture = GFX_report_event_indian_soldiers
+
+	is_triggered_only = yes
+	option = { 
+		name = xinjiang.1.a
+		ai_chance = {
+			factor = 100
+		}
+		hidden_effect = {
+			every_core_state = {
+				add_state_modifier = {
+					modifier = {
+						local_supplies = 1.5
+					}
+				}
+			}
+			861 = {
+				add_building_construction = {
+					type = air_base
+					level = 1
+					instant_build = yes
+				}
+			}
+			add_ideas = mob_general
+			remove_ideas = SIK_divided_nation
+			leave_faction = yes
+			617 = {
+				add_building_construction = {
+					type = supply_node
+					province = 4709
+					level = 1
+					instant_build = yes
+				}
+			}
+			287 = {
+				add_extra_state_shared_building_slots = 2
+				add_building_construction = {
+					type = supply_node
+					province = 8112
+					level = 1
+					instant_build = yes
+				}
+			}
+			851 = {
+				add_extra_state_shared_building_slots = 2
+			}
+			start_civil_war = {
+				ruling_party = communism
+				ideology = neutrality
+				size = 0.65
+				capital = 287
+				states = { 
+					287 619 918 754 851 
+				}
+				
+				save_global_event_target_as = SIK_warlord
+				SIK = {
+					SIK_Ma_HuShan = {
+						set_nationality = event_target:SIK_warlord
+					}
+				}
+				add_offsite_building = { type = arms_factory level = 5 }
+				load_oob = SIK_civil_war
+				load_focus_tree = china_warlord_focus
+				add_country_leader_role = { 
+					character = SIK_Ma_HuShan
+					country_leader = {
+						ideology = reactionism 
+						expire = "1965.1.1.1" 
+						traits = { 
+							spirit_of_genghis
+						} 
+					} 
+				}
+				SIK_Ma_HuShan = {
+					promote_character = yes
+				}
+				add_ideas = CHI_ineffective_bureaucracy_warlord
+				add_timed_idea = {
+					idea = PER_neutral
+					days = 210
+				}
+				if = {
+					limit = {
+						SIK = { is_ai = yes }
+					}		
+					add_ideas = KMT_weak_army
+				}
+			}
+			country_event = { id = xinjiang.2 days = 2 }
+			CHI = { country_event = { id = xinjiang.6 days = 5 } }
+		}
+	}
+}
+#Sinkiang needs soviet aid
+country_event = {
+	id = xinjiang.2
+	title = xinjiang.2.t
+	desc = xinjiang.2.d
+	picture = GFX_report_event_stalin_approves
+
+	is_triggered_only = yes
+	#Save us Pappa Stalin
+	option = { 
+		name = xinjiang.2.a
+		ai_chance = {
+			factor = 100
+		}
+		SOV = {
+			country_event = { id = xinjiang.3 }
+		}
+	}
+	#Who needs communism
+	option = { 
+		name = xinjiang.2.b
+		ai_chance = {
+			factor = 0
+		}
+		add_popularity = {
+			ideology = communism
+			popularity = -0.25
+		}		
+	}
+}
+#Question for Soviets? Aid SIK?
+country_event = {
+	id = xinjiang.3
+	title = xinjiang.3.t
+	desc = xinjiang.3.d
+	picture = GFX_report_event_stalin_approves
+
+	is_triggered_only = yes
+	#Help out
+	option = { 
+		name = xinjiang.3.a
+		ai_chance = {
+			factor = 100
+		}
+		random_other_country = {
+			limit = {
+				original_tag = SIK
+				has_government = communism
+			}
+			add_country_leader_trait = stalins_puppet
+			hidden_effect = {
+				set_technology = {
+					interwar_Hvartillery = 1
+					tech_liaison_cars = 1
+					tech_ac_recon = 1
+					soviet_air_tech = 1
+					tech_po_2_bomber_equipment_1 = 1
+					tech_i_15_equipment_1 = 1
+					tech_i_15_equipment_2 = 1
+					tech_i_16_equipment_1 = 1
+					tech_i_16_equipment_2 = 1
+					tech_i_14_fighter_equipment_1 = 1
+					tech_ip_1_fighter_equipment_1 = 1
+					tech_r_5_bomber_equipment_2 = 1
+					SMG_team = 1
+					tech_support = 1
+					gw_artillery = 1
+					interwar_artillery = 1
+				}
+				country_event = { id = xinjiang.4 }
+				set_country_flag = sov_aid
+				set_country_flag = SOV_air
+			}
+		}
+		send_equipment = {
+			equipment = trm_light_tank_chassis
+			amount = 100
+			target = FROM
+		}
+		send_equipment = {
+			equipment = motorized_AC_equipment
+			amount = 50
+			target = FROM
+		}
+		send_equipment = {
+			equipment = infantry_equipment
+			amount = 2000
+			target = FROM
+		}
+		send_equipment = {
+			equipment = garrison_equipment
+			amount = 500
+			target = FROM
+		}
+		send_equipment = {
+			equipment = infantry_uniforms
+			amount = 1000
+			target = FROM
+		}
+		send_equipment = {
+			equipment = support_equipment
+			amount = 400
+			target = FROM
+		}
+		add_ai_strategy = {
+			type = send_volunteers_desire
+			id = FROM
+			value = 2500
+		}
+	}
+	#Who needs em
+	option = { 
+		name = xinjiang.3.b
+		ai_chance = {
+			factor = 0
+		}
+		add_popularity = {
+			ideology = communism
+			popularity = -0.25
+		}
+		random_other_country = {
+			limit = {
+				original_tag = SIK
+				has_government = communism
+			}
+			add_popularity = {
+				ideology = communism
+				popularity = -0.25
+			}			
+			add_opinion_modifier = {
+				target = SOV
+				modifier = refused_help
+			}
+		}
+		MON = {
+			add_popularity = {
+				ideology = communism
+				popularity = -0.25
+			}
+		}
+		PRC = {
+			add_opinion_modifier = {
+				target = SOV
+				modifier = refused_help
+			}
+		}
+	}
+}
+#Soviets said yes
+country_event = {
+	id = xinjiang.4
+	title = xinjiang.4.t
+	desc = xinjiang.4.d
+	picture = GFX_report_event_stalin_approves
+
+	is_triggered_only = yes
+	option = { 
+		name = xinjiang.4.a
+		ai_chance = {
+			factor = 100
+		}
+		add_manpower = 1000
+		add_corps_commander_role = {
+			character = SIK_ishaq_beg_munonov
+			traits = { spearhead_specialist trickster_CC }
+			skill = 3
+			attack_skill = 3
+			defense_skill = 2
+			planning_skill = 3
+			logistics_skill = 2
+		}		
+		hidden_effect = {
+			load_oob = SIK_sov_help
+			if = {
+				limit = {
+					is_ai = yes
+					SOV = {
+						is_ai = yes
+					}
+				}
+				#dbl the troops if its all AI to ensure a swift victory
+				load_oob = SIK_sov_help
+			}
+		}
+		add_opinion_modifier = {
+			target = SOV
+			modifier = offered_support
+		}
+	}
+}
+#soviet Payment time
+country_event = {
+	id = xinjiang.5
+	title = xinjiang.5.t
+	desc = xinjiang.5.d
+	picture = GFX_report_event_stalin_approves
+
+	is_triggered_only = yes
+	#ok
+	option = { 
+		name = xinjiang.5.a
+		ai_chance = {
+			factor = 100
+		}
+		SOV = {
+			add_to_faction = SIK	
+			if = {
+				limit = {
+					has_dlc = "Together for Victory"
+				}			
+				set_autonomy = {
+					target = SIK
+					autonomous_state = autonomy_puppet
+					freedom_level = 0.77
+				}
+				else = {
+					set_autonomy = {
+						target = SIK
+						autonomous_state = autonomy_puppet
+					}
+				}
+			}
+		}
+		remove_ideas = SIK_soviet_tribute
+	}
+	#This way leads to death
+	option = { 
+		name = xinjiang.5.b
+		ai_chance = {
+			factor = 0
+		}
+		leave_faction = yes
+		declare_war_on = {
+			target = SOV
+			type = annex_everything
+		}
+	}	
+}
+#Aid from China for Ma Hu-shan
+country_event = {
+	id = xinjiang.6
+	title = xinjiang.6.t
+	desc = xinjiang.6.d
+	picture = GFX_report_event_chinese_soldiers_fighting
+
+	is_triggered_only = yes
+	#Help out
+	option = { 
+		name = xinjiang.6.a
+		ai_chance = {
+			factor = 40
+		}
+		send_equipment = {
+			equipment = infantry_equipment
+			amount = 100
+			target = D02
+		}
+		send_equipment = {
+			equipment = infantry_uniforms
+			amount = 50
+			target = D02
+		}
+		send_equipment = {
+			equipment = support_equipment
+			amount = 40
+			target = D02
+		}
+		army_experience = 35
+		add_opinion_modifier = {
+			target = D02
+			modifier = offered_support
+		}		
+		hidden_effect = {
+			add_ai_strategy = {
+				type = send_volunteers_desire
+				id = D02
+				value = 2000
+			}
+		}	
+	}
+	#Who needs em
+	option = { 
+		name = xinjiang.6.b
+		ai_chance = {
+			factor = 60
+		}
+	}
+}
+#Sik warlord attacks soviets
+country_event = {
+	id = xinjiang.7
+	title = xinjiang.7.t
+	desc = xinjiang.7.d
+	picture = GFX_report_event_chinese_soldiers_fighting
+
+	is_triggered_only = yes
+	#Its time
+	option = { 
+		name = xinjiang.7.a
+		ai_chance = {
+			factor = 100
+		}
+		set_rule = { can_create_factions = yes }
+		create_faction = Republic_of_Uyghursta_faction
+		load_oob = SIK_civil_war
+		declare_war_on = {
+			target = SOV
+			type = annex_everything
+		}
+		if = {
+			limit = {
+				AFG = {
+					is_in_faction = no
+				}
+			}
+			SIK = {
+				add_to_faction = AFG
+			}
+			AFG = {
+				declare_war_on = {
+					target = SOV
+					type = annex_everything
+				}
+			}
+		}		
+	}
+}
+				

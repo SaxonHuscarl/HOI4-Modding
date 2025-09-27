@@ -1,0 +1,548 @@
+
+template_bypass = { 
+	# this trigger gets checked if ai_skip_template is 1, meaning the triggers for a template already get bypassed
+	# now it checks if it should bypass the templates themselves as well
+	
+	#log = "TEMPLATE BYPASS"
+	if = {
+		limit = {
+			check_variable = { ai_template_skip@var:current_role_token = 0 }
+		}
+		always = no #if the triggers dont get skipped for the current role, then dont load ANY template of this role
+	}
+	
+
+}
+
+template_is_complete = {
+	check_variable = { ai_either_support_tech@var:current_role_token^num = 0 }
+	check_variable = { ai_either_regiment_tech@var:current_role_token^num = 0 }
+}
+
+
+
+####################################
+## UNIT TRIGGERS - jesus christ the tech naming "system" is absolutely horrible, so we have this now
+
+# ai_has_<subunit_name>
+
+ai_has_infantry_assault = {
+	add_to_temp_array = { unit_techs = token:SMG_team }
+	add_to_temp_array = { unit_techs_year = 1936 }
+	
+	has_tech = SMG_team 
+	
+	remove_from_temp_array = { unit_techs = token:SMG_team }
+	remove_from_temp_array = { array = unit_techs_year }
+}
+ai_has_marine = {
+	add_to_temp_array = { unit_techs = token:marines }
+	add_to_temp_array = { unit_techs_year = 1941 }
+	
+	has_tech = marines 
+	
+	remove_from_temp_array = { unit_techs = token:marines }
+	remove_from_temp_array = { array = unit_techs_year }
+}
+ai_has_marine_assault = {
+	add_to_temp_array = { unit_techs = token:marine_smg }
+	add_to_temp_array = { unit_techs_year = 1941 }
+	
+	has_tech = marine_smg 
+	
+	remove_from_temp_array = { unit_techs = token:marine_smg }
+	remove_from_temp_array = { array = unit_techs_year }
+}
+ai_has_amph_support = {
+	add_to_temp_array = { unit_techs = token:amphibious_equipment }
+	add_to_temp_array = { unit_techs_year = 1938 }
+	
+	has_tech = amphibious_equipment 
+	
+	remove_from_temp_array = { unit_techs = token:amphibious_equipment }
+	remove_from_temp_array = { array = unit_techs_year }
+}
+ai_has_amph_mech = {
+	add_to_temp_array = { unit_techs = token:amphibious_mechanized_infantry }
+	add_to_temp_array = { unit_techs_year = 1941 }
+	
+	has_tech = amphibious_mechanized_infantry 
+	
+	remove_from_temp_array = { unit_techs = token:amphibious_mechanized_infantry }
+	remove_from_temp_array = { array = unit_techs_year }
+}
+ai_USA_has_lvt = {
+	add_to_temp_array = { unit_techs = token:tech_amph_american_lv_equipment_1 }
+	add_to_temp_array = { unit_techs_year = 1941 }
+	
+	has_tech = tech_amph_american_lv_equipment_1 
+	
+	remove_from_temp_array = { unit_techs = token:tech_amph_american_lv_equipment_1 }
+	remove_from_temp_array = { array = unit_techs_year }
+}
+ai_has_mountaineers = {
+	add_to_temp_array = { unit_techs = token:tech_mountaineers }
+	add_to_temp_array = { unit_techs_year = 1936 }
+	
+	has_tech = tech_mountaineers 
+	
+	remove_from_temp_array = { unit_techs = token:tech_mountaineers }
+	remove_from_temp_array = { array = unit_techs_year }
+}
+ai_has_mount_support = {
+	add_to_temp_array = { unit_techs = token:mountain_equipment }
+	add_to_temp_array = { unit_techs_year = 1938 }
+	
+	has_tech = mountain_equipment 
+	
+	remove_from_temp_array = { unit_techs = token:mountain_equipment }
+	remove_from_temp_array = { array = unit_techs_year }
+}
+
+ai_has_semi_motorized = {
+	add_to_temp_array = { unit_techs = token:semi_motorised_infantry }
+	add_to_temp_array = { unit_techs_year = 1936 }
+	
+	has_tech = semi_motorised_infantry 
+	
+	remove_from_temp_array = { unit_techs = token:semi_motorised_infantry }
+	remove_from_temp_array = { array = unit_techs_year }
+}
+ai_has_semi_motorized_assault = {
+	add_to_temp_array = { unit_techs = token:semi_motorised_infantry }
+	add_to_temp_array = { unit_techs_year = 1936 }
+	
+	has_tech = semi_motorised_infantry 
+	
+	remove_from_temp_array = { unit_techs = token:semi_motorised_infantry }
+	remove_from_temp_array = { array = unit_techs_year }
+}
+ai_has_motorcycle_infantry = {
+	add_to_temp_array = { unit_techs = token:motorcycle_infantry_unit }
+	add_to_temp_array = { unit_techs_year = 1936 }
+	
+	has_tech = motorcycle_infantry_unit 
+	
+	remove_from_temp_array = { unit_techs = token:motorcycle_infantry_unit }
+	remove_from_temp_array = { array = unit_techs_year }
+}
+ai_has_motorized = {
+	add_to_temp_array = { unit_techs = token:motorised_infantry }
+	add_to_temp_array = { unit_techs_year = 1938 }
+	
+	has_tech = motorised_infantry 
+	
+	remove_from_temp_array = { unit_techs = token:motorised_infantry }
+	remove_from_temp_array = { array = unit_techs_year }
+}
+ai_has_motorized_assault = {
+	add_to_temp_array = { unit_techs = token:motorised_infantry }
+	add_to_temp_array = { unit_techs_year = 1938 }
+	
+	has_tech = motorised_infantry 
+	
+	remove_from_temp_array = { unit_techs = token:motorised_infantry }
+	remove_from_temp_array = { array = unit_techs_year }
+}
+
+ai_has_mechanized = {
+	add_to_temp_array = { unit_techs = token:mechanised_infantry }
+	add_to_temp_array = { unit_techs_year = 1940 }
+	
+	has_tech = mechanised_infantry
+	
+	remove_from_temp_array = { unit_techs = token:mechanised_infantry }
+	remove_from_temp_array = { array = unit_techs_year }
+}
+
+ai_has_DIV_HQ = {
+	add_to_temp_array = { unit_techs = token:tech_Headquarters }
+	add_to_temp_array = { unit_techs_year = 1936 }
+	
+	has_tech = tech_Headquarters
+	
+	remove_from_temp_array = { unit_techs = token:tech_Headquarters }
+	remove_from_temp_array = { array = unit_techs_year }
+}
+ai_has_DIV_HQ_car = {
+	add_to_temp_array = { unit_techs = token:tech_Headquarters_cars }
+	add_to_temp_array = { unit_techs_year = 1936 }
+	
+	has_tech = tech_Headquarters_cars
+	
+	remove_from_temp_array = { unit_techs = token:tech_Headquarters_cars }
+	remove_from_temp_array = { array = unit_techs_year }
+}
+ai_has_DIV_HQ_mech = {
+	add_to_temp_array = { unit_techs = token:tech_Headquarters2 }
+	add_to_temp_array = { unit_techs_year = 1940 }
+	
+	has_tech = tech_Headquarters2
+	
+	remove_from_temp_array = { unit_techs = token:tech_Headquarters2 }
+	remove_from_temp_array = { array = unit_techs_year }
+}
+#ai_has_DIV_HQ_arm = { #TODO_AI
+#	add_to_temp_array = { unit_techs = token:tech_command_tanks }
+#	add_to_temp_array = { unit_techs_year = 1936 }
+#	
+#	has_tech = tech_command_tanks
+#	
+#	remove_from_temp_array = { unit_techs = token:tech_command_tanks }
+#	remove_from_temp_array = { array = unit_techs_year }
+#}
+
+ai_has_garrison = {
+	add_to_temp_array = { unit_techs = token:tech_Garrison }
+	add_to_temp_array = { unit_techs_year = 1936 }
+	
+	has_tech = tech_Garrison
+	
+	remove_from_temp_array = { unit_techs = token:tech_Garrison }
+	remove_from_temp_array = { array = unit_techs_year }
+}
+ai_has_jungle_support = {
+	add_to_temp_array = { unit_techs = token:jungle_equipment }
+	add_to_temp_array = { unit_techs_year = 1941 }
+	
+	has_tech = jungle_equipment
+	
+	remove_from_temp_array = { unit_techs = token:jungle_equipment }
+	remove_from_temp_array = { array = unit_techs_year }
+}
+ai_has_arctic_support = {
+	add_to_temp_array = { unit_techs = token:arctic_equipment }
+	add_to_temp_array = { unit_techs_year = 1941 }
+	
+	has_tech = arctic_equipment
+	
+	remove_from_temp_array = { unit_techs = token:jungle_equipment }
+	remove_from_temp_array = { array = unit_techs_year }
+}
+ai_has_commando = {
+	add_to_temp_array = { unit_techs = token:commando_team }
+	add_to_temp_array = { unit_techs_year = 1940 }
+	
+	has_tech = commando_team
+	
+	remove_from_temp_array = { unit_techs = token:commando_team }
+	remove_from_temp_array = { array = unit_techs_year }
+}
+
+
+ai_has_engineer = {
+	add_to_temp_array = { unit_techs = token:tech_engineers }
+	add_to_temp_array = { unit_techs_year = 1936 }
+	
+	has_tech = tech_engineers
+	
+	remove_from_temp_array = { unit_techs = token:tech_engineers }
+	remove_from_temp_array = { array = unit_techs_year }
+}
+ai_has_engineer_mot = {
+	add_to_temp_array = { unit_techs = token:tech_engineers }
+	add_to_temp_array = { unit_techs_year = 1936 }
+	
+	has_tech = tech_engineers
+	
+	remove_from_temp_array = { unit_techs = token:tech_engineers }
+	remove_from_temp_array = { array = unit_techs_year }
+}
+ai_has_engineer_mech = {
+	add_to_temp_array = { unit_techs = token:tech_engineers2 }
+	add_to_temp_array = { unit_techs_year = 1939 }
+	
+	has_tech = tech_engineers2
+	
+	remove_from_temp_array = { unit_techs = token:tech_engineers2 }
+	remove_from_temp_array = { array = unit_techs_year }
+}
+ai_has_engineer_arm = {
+	add_to_temp_array = { unit_techs = token:tech_recovery_tanks }
+	add_to_temp_array = { unit_techs_year = 1939 }
+	
+	has_tech = tech_recovery_tanks
+	
+	remove_from_temp_array = { unit_techs = token:tech_recovery_tanks }
+	remove_from_temp_array = { array = unit_techs_year }
+}
+ai_has_combat_engineer = {
+	add_to_temp_array = { unit_techs = token:tech_combat_engineers }
+	add_to_temp_array = { unit_techs_year = 1936 }
+	
+	has_tech = tech_combat_engineers
+	
+	remove_from_temp_array = { unit_techs = token:tech_combat_engineers }
+	remove_from_temp_array = { array = unit_techs_year }
+}
+ai_has_combat_engineer_mot = {
+	add_to_temp_array = { unit_techs = token:tech_combat_engineers }
+	add_to_temp_array = { unit_techs_year = 1936 }
+	
+	has_tech = tech_combat_engineers
+	
+	remove_from_temp_array = { unit_techs = token:tech_combat_engineers }
+	remove_from_temp_array = { array = unit_techs_year }
+}
+ai_has_combat_engineer_mech = {
+	add_to_temp_array = { unit_techs = token:tech_combat_engineers2 }
+	add_to_temp_array = { unit_techs_year = 1939 }
+	
+	has_tech = tech_combat_engineers2
+	
+	remove_from_temp_array = { unit_techs = token:tech_combat_engineers2 }
+	remove_from_temp_array = { array = unit_techs_year }
+}
+ai_has_combat_engineer_arm = {
+	add_to_temp_array = { unit_techs = token:tech_recovery_tanks }
+	add_to_temp_array = { unit_techs_year = 1939 }
+	
+	has_tech = tech_recovery_tanks
+	
+	remove_from_temp_array = { unit_techs = token:tech_recovery_tanks }
+	remove_from_temp_array = { array = unit_techs_year }
+}
+ai_has_logistics_company = {
+	add_to_temp_array = { unit_techs = token:tech_logistics_company }
+	add_to_temp_array = { unit_techs_year = 1936 }
+	
+	has_tech = tech_logistics_company
+	
+	remove_from_temp_array = { unit_techs = token:tech_logistics_company }
+	remove_from_temp_array = { array = unit_techs_year }
+}
+ai_has_logistics_company_car = {
+	add_to_temp_array = { unit_techs = token:tech_logistics_company }
+	add_to_temp_array = { unit_techs_year = 1936 }
+	
+	has_tech = tech_logistics_company
+	
+	remove_from_temp_array = { unit_techs = token:tech_logistics_company }
+	remove_from_temp_array = { array = unit_techs_year }
+}
+ai_has_logistics_company_mot = {
+	add_to_temp_array = { unit_techs = token:tech_logistics_company2 }
+	add_to_temp_array = { unit_techs_year = 1939 }
+	
+	has_tech = tech_logistics_company2
+	
+	remove_from_temp_array = { unit_techs = token:tech_logistics_company2 }
+	remove_from_temp_array = { array = unit_techs_year }
+}
+ai_has_logistics_company_mech = {
+	add_to_temp_array = { unit_techs = token:tech_logistics_company2 }
+	add_to_temp_array = { unit_techs_year = 1939 }
+	
+	has_tech = tech_logistics_company2
+	
+	remove_from_temp_array = { unit_techs = token:tech_logistics_company2 }
+	remove_from_temp_array = { array = unit_techs_year }
+}
+ai_has_field_hospital = {
+	add_to_temp_array = { unit_techs = token:tech_field_hospital }
+	add_to_temp_array = { unit_techs_year = 1936 }
+	
+	has_tech = tech_field_hospital
+	
+	remove_from_temp_array = { unit_techs = token:tech_field_hospital }
+	remove_from_temp_array = { array = unit_techs_year }
+}
+ai_has_signal_company = {
+	add_to_temp_array = { unit_techs = token:tech_signal_company }
+	add_to_temp_array = { unit_techs_year = 1937 }
+	
+	has_tech = tech_signal_company
+	
+	remove_from_temp_array = { unit_techs = token:tech_signal_company }
+	remove_from_temp_array = { array = unit_techs_year }
+}
+ai_has_signal_company_mot = {
+	add_to_temp_array = { unit_techs = token:tech_signal_company }
+	add_to_temp_array = { unit_techs_year = 1937 }
+	
+	has_tech = tech_signal_company
+	
+	remove_from_temp_array = { unit_techs = token:tech_signal_company }
+	remove_from_temp_array = { array = unit_techs_year }
+}
+ai_has_recon = {
+	add_to_temp_array = { unit_techs = token:tech_recon }
+	add_to_temp_array = { unit_techs_year = 1936 }
+	
+	has_tech = tech_recon
+	
+	remove_from_temp_array = { unit_techs = token:tech_recon }
+	remove_from_temp_array = { array = unit_techs_year }
+}
+ai_has_recon_cav = {
+	add_to_temp_array = { unit_techs = token:subtech_recon_cav_1 }
+	add_to_temp_array = { unit_techs_year = 1936 }
+	
+	has_tech = subtech_recon_cav_1
+	
+	remove_from_temp_array = { unit_techs = token:subtech_recon_cav_1 }
+	remove_from_temp_array = { array = unit_techs_year }
+}
+ai_has_recon_mot = {
+	add_to_temp_array = { unit_techs = token:subtech_recon_mech_1 }
+	add_to_temp_array = { unit_techs_year = 1936 }
+	
+	has_tech = subtech_recon_mot_1
+	
+	remove_from_temp_array = { unit_techs = token:subtech_recon_mech_1 }
+	remove_from_temp_array = { array = unit_techs_year }
+}
+ai_has_recon_mech = {
+	add_to_temp_array = { unit_techs = token:subtech_recon_mech_1 }
+	add_to_temp_array = { unit_techs_year = 1942 }
+	
+	has_tech = subtech_recon_mech_1
+	
+	remove_from_temp_array = { unit_techs = token:subtech_recon_mech_1 }
+	remove_from_temp_array = { array = unit_techs_year }
+}
+ai_has_recon_ac = {
+	add_to_temp_array = { unit_techs = token:tech_ac_recon }
+	add_to_temp_array = { unit_techs_year = 1936 }
+	
+	has_tech = tech_ac_recon
+	
+	remove_from_temp_array = { unit_techs = token:tech_ac_recon }
+	remove_from_temp_array = { array = unit_techs_year }
+}
+ai_has_armored_car = {
+	add_to_temp_array = { unit_techs = token:tech_ac_recon }
+	add_to_temp_array = { unit_techs_year = 1936 }
+	
+	has_tech = tech_ac_recon
+	
+	remove_from_temp_array = { unit_techs = token:tech_ac_recon }
+	remove_from_temp_array = { array = unit_techs_year }
+}
+ai_has_rocket_artillery = {
+	add_to_temp_array = { unit_techs = token:rocket_artillery }
+	add_to_temp_array = { unit_techs_year = 1940 }
+	
+	has_tech = rocket_artillery
+	
+	remove_from_temp_array = { unit_techs = token:rocket_artillery }
+	remove_from_temp_array = { array = unit_techs_year }
+}
+ai_has_maintenance_company = {
+	add_to_temp_array = { unit_techs = token:tech_maintenance_company }
+	add_to_temp_array = { unit_techs_year = 1936 }
+	
+	has_tech = tech_maintenance_company
+	
+	remove_from_temp_array = { unit_techs = token:tech_maintenance_company }
+	remove_from_temp_array = { array = unit_techs_year }
+}
+ai_has_maintenance_company_arm = {
+	add_to_temp_array = { unit_techs = token:tech_recovery_tanks_II }
+	add_to_temp_array = { unit_techs_year = 1944 }
+	
+	has_tech = tech_recovery_tanks_II
+	
+	remove_from_temp_array = { unit_techs = token:tech_recovery_tanks_II }
+	remove_from_temp_array = { array = unit_techs_year }
+}
+
+ai_has_mountain_artillery_brigade = {
+	add_to_temp_array = { unit_techs = token:gw_artillery }
+	add_to_temp_array = { unit_techs_year = 1936 }
+	
+	has_tech = gw_artillery
+	
+	remove_from_temp_array = { unit_techs = token:gw_artillery }
+	remove_from_temp_array = { array = unit_techs_year }
+}
+ai_has_spotter_air = {
+	add_to_temp_array = { unit_techs = token:artillery_spotter_planes }
+	add_to_temp_array = { unit_techs_year = 1938 }
+	
+	has_tech = artillery_spotter_planes
+	
+	remove_from_temp_array = { unit_techs = token:artillery_spotter_planes }
+	remove_from_temp_array = { array = unit_techs_year }
+}
+ai_has_artillery_brigade = {
+	add_to_temp_array = { unit_techs = token:gw_artillery }
+	add_to_temp_array = { unit_techs_year = 1936 }
+	
+	has_tech = gw_artillery
+	
+	remove_from_temp_array = { unit_techs = token:gw_artillery }
+	remove_from_temp_array = { array = unit_techs_year }
+}
+ai_has_artillery_brigade_39 = {
+	add_to_temp_array = { unit_techs = token:artillery2 }
+	add_to_temp_array = { unit_techs_year = 1939 }
+	
+	has_tech = artillery2
+	
+	remove_from_temp_array = { unit_techs = token:artillery2 }
+	remove_from_temp_array = { array = unit_techs_year }
+}
+ai_has_artillery_brigade_med_39 = {
+	add_to_temp_array = { unit_techs = token:medartillery2 }
+	add_to_temp_array = { unit_techs_year = 1939 }
+	
+	has_tech = medartillery2
+	
+	remove_from_temp_array = { unit_techs = token:medartillery2 }
+	remove_from_temp_array = { array = unit_techs_year }
+}
+ai_has_anti_air = {
+	add_to_temp_array = { unit_techs = token:interwar_antiair }
+	add_to_temp_array = { unit_techs_year = 1936 }
+	
+	has_tech = interwar_antiair
+	
+	remove_from_temp_array = { unit_techs = token:interwar_antiair }
+	remove_from_temp_array = { array = unit_techs_year }
+}
+ai_has_anti_air_heavy = {
+	add_to_temp_array = { unit_techs = token:HVantiair2 }
+	add_to_temp_array = { unit_techs_year = 1937 }
+	
+	has_tech = HVantiair2
+	
+	remove_from_temp_array = { unit_techs = token:HVantiair2 }
+	remove_from_temp_array = { array = unit_techs_year }
+}
+ai_has_anti_tank = {
+	add_to_temp_array = { unit_techs = token:interwar_antitank }
+	add_to_temp_array = { unit_techs_year = 1936 }
+	
+	has_tech = interwar_antitank
+	
+	remove_from_temp_array = { unit_techs = token:interwar_antitank }
+	remove_from_temp_array = { array = unit_techs_year }
+}
+ai_has_anti_tank_brigade = {
+	add_to_temp_array = { unit_techs = token:interwar_antitank }
+	add_to_temp_array = { unit_techs_year = 1936 }
+	
+	has_tech = interwar_antitank
+	
+	remove_from_temp_array = { unit_techs = token:interwar_antitank }
+	remove_from_temp_array = { array = unit_techs_year }
+}
+ai_has_anti_tank_brigade_med = {
+	add_to_temp_array = { unit_techs = token:antitank2 }
+	add_to_temp_array = { unit_techs_year = 1940 }
+	
+	has_tech = antitank2
+	
+	remove_from_temp_array = { unit_techs = token:antitank2 }
+	remove_from_temp_array = { array = unit_techs_year }
+}
+ai_has_anti_tank_heavy = {
+	add_to_temp_array = { unit_techs = token:HVantitank1 }
+	add_to_temp_array = { unit_techs_year = 1943 }
+	
+	has_tech = HVantitank1
+	
+	remove_from_temp_array = { unit_techs = token:HVantitank1 }
+	remove_from_temp_array = { array = unit_techs_year }
+}

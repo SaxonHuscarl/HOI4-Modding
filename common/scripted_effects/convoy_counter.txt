@@ -1,0 +1,3697 @@
+count_convoys = {
+	
+  set_temp_variable = { convoy_count = 0 }
+
+  set_temp_variable = { temp = 4096}
+  add_to_temp_variable = { temp = convoy_count}
+  if = { 
+    limit = { 
+      meta_trigger = {
+        text = {
+           stockpile_ratio = { archetype = convoy ratio > [X] }
+        }
+        X = "[?temp]"
+      }
+    }
+    add_to_temp_variable = {convoy_count = 4096}
+  } 
+    
+  set_temp_variable = { temp = 2048}
+  add_to_temp_variable = { temp = convoy_count}
+  if = { 
+    limit = { 
+      meta_trigger = {
+        text = {
+           stockpile_ratio = { archetype = convoy ratio > [X] }
+        }
+        X = "[?temp]"
+      }
+    }
+    add_to_temp_variable = {convoy_count = 2048}
+  } 
+    
+  set_temp_variable = { temp = 1024}
+  add_to_temp_variable = { temp = convoy_count}
+  if = { 
+    limit = { 
+      meta_trigger = {
+        text = {
+           stockpile_ratio = { archetype = convoy ratio > [X] }
+        }
+        X = "[?temp]"
+      }
+    }
+    add_to_temp_variable = {convoy_count = 1024}
+  } 
+
+  set_temp_variable = { temp = 512}
+  add_to_temp_variable = { temp = convoy_count}
+  if = { 
+    limit = { 
+      meta_trigger = {
+        text = {
+           stockpile_ratio = { archetype = convoy ratio > [X] }
+        }
+        X = "[?temp]"
+      }
+    }
+    add_to_temp_variable = {convoy_count = 512}
+  }     
+
+  set_temp_variable = { temp = 256}
+  add_to_temp_variable = { temp = convoy_count}
+  if = { 
+    limit = { 
+      meta_trigger = {
+        text = {
+           stockpile_ratio = { archetype = convoy ratio > [X] }
+        }
+        X = "[?temp]"
+      }
+    }
+    add_to_temp_variable = {convoy_count = 256}
+  } 
+
+  set_temp_variable = { temp = 128}
+  add_to_temp_variable = { temp = convoy_count}
+  if = { 
+    limit = { 
+      meta_trigger = {
+        text = {
+           stockpile_ratio = { archetype = convoy ratio > [X] }
+        }
+        X = "[?temp]"
+      }
+    }
+    add_to_temp_variable = {convoy_count = 128}
+  } 
+
+  set_temp_variable = { temp = 64}
+  add_to_temp_variable = { temp = convoy_count}
+  if = { 
+    limit = { 
+      meta_trigger = {
+        text = {
+           stockpile_ratio = { archetype = convoy ratio > [X] }
+        }
+        X = "[?temp]"
+      }
+    }
+    add_to_temp_variable = {convoy_count = 64}
+  } 
+
+  set_temp_variable = { temp = 32}
+  add_to_temp_variable = { temp = convoy_count}
+  if = { 
+    limit = { 
+      meta_trigger = {
+        text = {
+           stockpile_ratio = { archetype = convoy ratio > [X] }
+        }
+        X = "[?temp]"
+      }
+    }
+    add_to_temp_variable = {convoy_count = 32}
+  } 
+
+  set_temp_variable = { temp = 16}
+  add_to_temp_variable = { temp = convoy_count}
+  if = { 
+    limit = { 
+      meta_trigger = {
+        text = {
+           stockpile_ratio = { archetype = convoy ratio > [X] }
+        }
+        X = "[?temp]"
+      }
+    }
+    add_to_temp_variable = {convoy_count = 16}
+  } 
+
+  set_temp_variable = { temp = 8}
+  add_to_temp_variable = { temp = convoy_count}
+  if = { 
+    limit = { 
+      meta_trigger = {
+        text = {
+           stockpile_ratio = { archetype = convoy ratio > [X] }
+        }
+        X = "[?temp]"
+      }
+    }
+    add_to_temp_variable = {convoy_count = 8}
+  } 
+  
+  set_temp_variable = { temp = 4}
+  add_to_temp_variable = { temp = convoy_count}
+  if = { 
+    limit = { 
+      meta_trigger = {
+        text = {
+           stockpile_ratio = { archetype = convoy ratio > [X] }
+        }
+        X = "[?temp]"
+      }
+    }
+    add_to_temp_variable = {convoy_count = 4}
+  } 
+
+  set_temp_variable = { temp = 2}
+  add_to_temp_variable = { temp = convoy_count}
+  if = { 
+    limit = { 
+      meta_trigger = {
+        text = {
+           stockpile_ratio = { archetype = convoy ratio > [X] }
+        }
+        X = "[?temp]"
+      }
+    }
+    add_to_temp_variable = {convoy_count = 2}
+  } 
+
+  #log = "[?convoy_count] CONVOYS"
+  
+}
+
+get_highest_port_provinces_coastal = {
+	get_coastal_provinces = yes
+	
+	set_temp_variable = { building = token:naval_base }
+	
+	#log = "[?coastal_provinces^num] coastal_provinces"
+	for_each_loop = {
+		array = coastal_provinces
+		
+		count_province_building = yes
+		if = {
+			limit = {
+				check_variable = { province_level > highest_province_level }
+			}
+			set_temp_variable = { highest_province_level = province_level }
+			set_temp_variable = { province = v }
+		}
+	}
+	
+	#log = "[?province] province | [?highest_province_level] highest_province_level"
+	
+	if = {
+		limit = {
+			check_variable = { province > 0 }
+		}
+		
+		remove_from_temp_array = { coastal_provinces = province }
+		
+		set_temp_variable = { province_level = 0 }
+		set_temp_variable = { highest_province_level = 0 }
+		for_each_loop = {
+			array = coastal_provinces
+		
+			count_province_building = yes
+			if = {
+				limit = {
+					check_variable = { province_level > second_highest_province_level }
+				}
+				set_temp_variable = { second_highest_province_level = province_level }
+				set_temp_variable = { second_province = v }
+			}
+		}
+		#log = "[?second_province] second_province | [?second_highest_province_level] second_highest_province_level"
+	}
+}
+
+count_province_building = {
+
+	if = {
+		limit = {
+			meta_trigger = {
+				text = {
+					any_province_building_level = {
+						province = { id = [P] }
+						building = [B]
+						level > 9
+					}
+				}
+				P = "[?v]"
+				B = "[?building.GetTokenKey]"
+			}
+		}
+		set_temp_variable = { province_level = 10 }
+	}
+	else_if = {
+		limit = {
+			meta_trigger = {
+				text = {
+					any_province_building_level = {
+						province = { id = [P] }
+						building = [B]
+						level > 8
+					}
+				}
+				P = "[?v]"
+				B = "[?building.GetTokenKey]"
+			}
+		}
+		set_temp_variable = { province_level = 9 }
+	}
+	else_if = {
+		limit = {
+			meta_trigger = {
+				text = {
+					any_province_building_level = {
+						province = { id = [P] }
+						building = [B]
+						level > 7
+					}
+				}
+				P = "[?v]"
+				B = "[?building.GetTokenKey]"
+			}
+		}
+		set_temp_variable = { province_level = 8 }
+	}
+	else_if = {
+		limit = {
+			meta_trigger = {
+				text = {
+					any_province_building_level = {
+						province = { id = [P] }
+						building = [B]
+						level > 6
+					}
+				}
+				P = "[?v]"
+				B = "[?building.GetTokenKey]"
+			}
+		}
+		set_temp_variable = { province_level = 7 }
+	}
+	else_if = {
+		limit = {
+			meta_trigger = {
+				text = {
+					any_province_building_level = {
+						province = { id = [P] }
+						building = [B]
+						level > 5
+					}
+				}
+				P = "[?v]"
+				B = "[?building.GetTokenKey]"
+			}
+		}
+		set_temp_variable = { province_level = 6 }
+	}
+	else_if = {
+		limit = {
+			meta_trigger = {
+				text = {
+					any_province_building_level = {
+						province = { id = [P] }
+						building = [B]
+						level > 4
+					}
+				}
+				P = "[?v]"
+				B = "[?building.GetTokenKey]"
+			}
+		}
+		set_temp_variable = { province_level = 5 }
+	}
+	else_if = {
+		limit = {
+			meta_trigger = {
+				text = {
+					any_province_building_level = {
+						province = { id = [P] }
+						building = [B]
+						level > 3
+					}
+				}
+				P = "[?v]"
+				B = "[?building.GetTokenKey]"
+			}
+		}
+		set_temp_variable = { province_level = 4 }
+	}
+	else_if = {
+		limit = {
+			meta_trigger = {
+				text = {
+					any_province_building_level = {
+						province = { id = [P] }
+						building = [B]
+						level > 2
+					}
+				}
+				P = "[?v]"
+				B = "[?building.GetTokenKey]"
+			}
+		}
+		set_temp_variable = { province_level = 3 }
+	}
+	else_if = {
+		limit = {
+			meta_trigger = {
+				text = {
+					any_province_building_level = {
+						province = { id = [P] }
+						building = [B]
+						level > 1
+					}
+				}
+				P = "[?v]"
+				B = "[?building.GetTokenKey]"
+			}
+		}
+		set_temp_variable = { province_level = 2 }
+	}
+	else_if = {
+		limit = {
+			meta_trigger = {
+				text = {
+					any_province_building_level = {
+						province = { id = [P] }
+						building = [B]
+						level > 0
+					}
+				}
+				P = "[?v]"
+				B = "[?building.GetTokenKey]"
+			}
+		}
+		set_temp_variable = { province_level = 1 }
+	}
+}
+
+generate_get_coastal_provinces = {
+	every_state = {
+		limit = { is_coastal = yes }
+		clear_array = coastal_provinces
+		set_building_level = {
+			type = naval_base #naval_base_test
+			level = 3
+			province = {
+				all_provinces = yes
+				limit_to_coastal = yes
+			}
+		}
+		log = "else_if = { limit = { state = [This.GetID] }"
+		
+		for_each_loop = {
+			array = global.province_controllers
+			
+			if = {
+				limit = {
+					meta_trigger = {
+						text = {
+							any_province_building_level = {
+								province = {
+									id = [PROVINCE]
+								}
+								building = naval_base #naval_base_test
+								level > 2
+							}
+						}
+						PROVINCE = "[?i]"
+					}
+				}
+				log = "    add_to_temp_array = { coastal_provinces = [?i] }"
+				#add_to_array = { coastal_provinces = i }
+			}
+		}
+		log = "}"
+		
+		set_building_level = {
+			type = naval_base ##naval_base_test
+			level = 0
+			province = {
+				all_provinces = yes
+				limit_to_coastal = yes
+			}
+		}
+	}
+	
+	
+			
+}
+		
+get_coastal_provinces = {
+	if = { limit = { state = 1 }
+		add_to_temp_array = { coastal_provinces = 3838 }
+		add_to_temp_array = { coastal_provinces = 9851 }
+		add_to_temp_array = { coastal_provinces = 11804 }
+	}
+	else_if = { limit = { state = 2 }
+		add_to_temp_array = { coastal_provinces = 923 }
+		add_to_temp_array = { coastal_provinces = 11751 }
+		add_to_temp_array = { coastal_provinces = 11846 }
+	}
+	else_if = { limit = { state = 5 }
+		add_to_temp_array = { coastal_provinces = 348 }
+		add_to_temp_array = { coastal_provinces = 6332 }
+		add_to_temp_array = { coastal_provinces = 11265 }
+	}
+	else_if = { limit = { state = 6 }
+		add_to_temp_array = { coastal_provinces = 6446 }
+		add_to_temp_array = { coastal_provinces = 6560 }
+		add_to_temp_array = { coastal_provinces = 6598 }
+	}
+	else_if = { limit = { state = 7 }
+		add_to_temp_array = { coastal_provinces = 68 }
+		add_to_temp_array = { coastal_provinces = 480 }
+		add_to_temp_array = { coastal_provinces = 3211 }
+		add_to_temp_array = { coastal_provinces = 3314 }
+		add_to_temp_array = { coastal_provinces = 9431 }
+		add_to_temp_array = { coastal_provinces = 9498 }
+	}
+	else_if = { limit = { state = 12 }
+		add_to_temp_array = { coastal_provinces = 9240 }
+		add_to_temp_array = { coastal_provinces = 9317 }
+		add_to_temp_array = { coastal_provinces = 9340 }
+	}
+	else_if = { limit = { state = 13 }
+		add_to_temp_array = { coastal_provinces = 83 }
+		add_to_temp_array = { coastal_provinces = 185 }
+		add_to_temp_array = { coastal_provinces = 567 }
+		add_to_temp_array = { coastal_provinces = 3152 }
+		add_to_temp_array = { coastal_provinces = 3174 }
+		add_to_temp_array = { coastal_provinces = 6201 }
+		add_to_temp_array = { coastal_provinces = 11127 }
+		add_to_temp_array = { coastal_provinces = 11291 }
+		add_to_temp_array = { coastal_provinces = 11426 }
+	}
+	else_if = { limit = { state = 14 }
+		add_to_temp_array = { coastal_provinces = 542 }
+		add_to_temp_array = { coastal_provinces = 3552 }
+		add_to_temp_array = { coastal_provinces = 6536 }
+		add_to_temp_array = { coastal_provinces = 6572 }
+		add_to_temp_array = { coastal_provinces = 9510 }
+		add_to_temp_array = { coastal_provinces = 9525 }
+		add_to_temp_array = { coastal_provinces = 11508 }
+	}
+	else_if = { limit = { state = 15 }
+		add_to_temp_array = { coastal_provinces = 485 }
+		add_to_temp_array = { coastal_provinces = 3579 }
+		add_to_temp_array = { coastal_provinces = 6449 }
+		add_to_temp_array = { coastal_provinces = 6599 }
+		add_to_temp_array = { coastal_provinces = 9434 }
+		add_to_temp_array = { coastal_provinces = 9550 }
+		add_to_temp_array = { coastal_provinces = 11535 }
+	}
+	else_if = { limit = { state = 19 }
+		add_to_temp_array = { coastal_provinces = 743 }
+		add_to_temp_array = { coastal_provinces = 6621 }
+		add_to_temp_array = { coastal_provinces = 6777 }
+		add_to_temp_array = { coastal_provinces = 9710 }
+		add_to_temp_array = { coastal_provinces = 9737 }
+		add_to_temp_array = { coastal_provinces = 11565 }
+	}
+	else_if = { limit = { state = 21 }
+		add_to_temp_array = { coastal_provinces = 911 }
+		add_to_temp_array = { coastal_provinces = 3928 }
+		add_to_temp_array = { coastal_provinces = 11834 }
+		add_to_temp_array = { coastal_provinces = 11849 }
+	}
+	else_if = { limit = { state = 22 }
+		add_to_temp_array = { coastal_provinces = 6960 }
+		add_to_temp_array = { coastal_provinces = 9898 }
+		add_to_temp_array = { coastal_provinces = 11877 }
+	}
+	else_if = { limit = { state = 23 }
+		add_to_temp_array = { coastal_provinces = 6657 }
+		add_to_temp_array = { coastal_provinces = 9597 }
+		add_to_temp_array = { coastal_provinces = 11600 }
+	}
+	else_if = { limit = { state = 29 }
+		add_to_temp_array = { coastal_provinces = 575 }
+		add_to_temp_array = { coastal_provinces = 9500 }
+		add_to_temp_array = { coastal_provinces = 11548 }
+	}
+	else_if = { limit = { state = 30 }
+		add_to_temp_array = { coastal_provinces = 11465 }
+		add_to_temp_array = { coastal_provinces = 11616 }
+	}
+	else_if = { limit = { state = 31 }
+		add_to_temp_array = { coastal_provinces = 3946 }
+		add_to_temp_array = { coastal_provinces = 9853 }
+	}
+	else_if = { limit = { state = 36 }
+		add_to_temp_array = { coastal_provinces = 6241 }
+		add_to_temp_array = { coastal_provinces = 6286 }
+		add_to_temp_array = { coastal_provinces = 6336 }
+		add_to_temp_array = { coastal_provinces = 9335 }
+		add_to_temp_array = { coastal_provinces = 11318 }
+	}
+	else_if = { limit = { state = 37 }
+		add_to_temp_array = { coastal_provinces = 3260 }
+		add_to_temp_array = { coastal_provinces = 3305 }
+		add_to_temp_array = { coastal_provinces = 3325 }
+		add_to_temp_array = { coastal_provinces = 3374 }
+		add_to_temp_array = { coastal_provinces = 6361 }
+		add_to_temp_array = { coastal_provinces = 6393 }
+	}
+	else_if = { limit = { state = 38 }
+		add_to_temp_array = { coastal_provinces = 130 }
+		add_to_temp_array = { coastal_provinces = 205 }
+		add_to_temp_array = { coastal_provinces = 3045 }
+		add_to_temp_array = { coastal_provinces = 9088 }
+		add_to_temp_array = { coastal_provinces = 9151 }
+		add_to_temp_array = { coastal_provinces = 11040 }
+		add_to_temp_array = { coastal_provinces = 11091 }
+		add_to_temp_array = { coastal_provinces = 11147 }
+	}
+	else_if = { limit = { state = 44 }
+		add_to_temp_array = { coastal_provinces = 9780 }
+		add_to_temp_array = { coastal_provinces = 9914 }
+	}
+	else_if = { limit = { state = 47 }
+		add_to_temp_array = { coastal_provinces = 976 }
+		add_to_temp_array = { coastal_provinces = 1109 }
+		add_to_temp_array = { coastal_provinces = 3401 }
+		add_to_temp_array = { coastal_provinces = 3844 }
+		add_to_temp_array = { coastal_provinces = 3864 }
+		add_to_temp_array = { coastal_provinces = 3973 }
+		add_to_temp_array = { coastal_provinces = 3988 }
+		add_to_temp_array = { coastal_provinces = 7127 }
+	}
+	else_if = { limit = { state = 56 }
+		add_to_temp_array = { coastal_provinces = 241 }
+		add_to_temp_array = { coastal_provinces = 11360 }
+	}
+	else_if = { limit = { state = 58 }
+		add_to_temp_array = { coastal_provinces = 317 }
+		add_to_temp_array = { coastal_provinces = 3231 }
+		add_to_temp_array = { coastal_provinces = 3368 }
+		add_to_temp_array = { coastal_provinces = 6389 }
+		add_to_temp_array = { coastal_provinces = 9347 }
+		add_to_temp_array = { coastal_provinces = 11331 }
+		add_to_temp_array = { coastal_provinces = 11366 }
+	}
+	else_if = { limit = { state = 59 }
+		add_to_temp_array = { coastal_provinces = 374 }
+		add_to_temp_array = { coastal_provinces = 3326 }
+		add_to_temp_array = { coastal_provinces = 6325 }
+		add_to_temp_array = { coastal_provinces = 6349 }
+	}
+	else_if = { limit = { state = 61 }
+		add_to_temp_array = { coastal_provinces = 321 }
+		add_to_temp_array = { coastal_provinces = 11305 }
+	}
+	else_if = { limit = { state = 62 }
+		add_to_temp_array = { coastal_provinces = 349 }
+		add_to_temp_array = { coastal_provinces = 3340 }
+		add_to_temp_array = { coastal_provinces = 9388 }
+	}
+	else_if = { limit = { state = 63 }
+		add_to_temp_array = { coastal_provinces = 9361 }
+		add_to_temp_array = { coastal_provinces = 11343 }
+		add_to_temp_array = { coastal_provinces = 11372 }
+	}
+	else_if = { limit = { state = 77 }
+		add_to_temp_array = { coastal_provinces = 11597 }
+	}
+	else_if = { limit = { state = 85 }
+		add_to_temp_array = { coastal_provinces = 9263 }
+	}
+	else_if = { limit = { state = 99 }
+		add_to_temp_array = { coastal_provinces = 316 }
+		add_to_temp_array = { coastal_provinces = 332 }
+		add_to_temp_array = { coastal_provinces = 394 }
+		add_to_temp_array = { coastal_provinces = 399 }
+		add_to_temp_array = { coastal_provinces = 3206 }
+		add_to_temp_array = { coastal_provinces = 3277 }
+		add_to_temp_array = { coastal_provinces = 6235 }
+		add_to_temp_array = { coastal_provinces = 6364 }
+		add_to_temp_array = { coastal_provinces = 11251 }
+	}
+	else_if = { limit = { state = 100 }
+		add_to_temp_array = { coastal_provinces = 4861 }
+		add_to_temp_array = { coastal_provinces = 12674 }
+		add_to_temp_array = { coastal_provinces = 12689 }
+	}
+	else_if = { limit = { state = 101 }
+		add_to_temp_array = { coastal_provinces = 10245 }
+		add_to_temp_array = { coastal_provinces = 10636 }
+		add_to_temp_array = { coastal_provinces = 12512 }
+		add_to_temp_array = { coastal_provinces = 13066 }
+	}
+	else_if = { limit = { state = 103 }
+		add_to_temp_array = { coastal_provinces = 591 }
+		add_to_temp_array = { coastal_provinces = 6611 }
+	}
+	else_if = { limit = { state = 105 }
+		add_to_temp_array = { coastal_provinces = 9809 }
+		add_to_temp_array = { coastal_provinces = 9821 }
+	}
+	else_if = { limit = { state = 110 }
+		add_to_temp_array = { coastal_provinces = 14 }
+		add_to_temp_array = { coastal_provinces = 3171 }
+		add_to_temp_array = { coastal_provinces = 6151 }
+		add_to_temp_array = { coastal_provinces = 9174 }
+		add_to_temp_array = { coastal_provinces = 11151 }
+	}
+	else_if = { limit = { state = 111 }
+		add_to_temp_array = { coastal_provinces = 169 }
+		add_to_temp_array = { coastal_provinces = 204 }
+		add_to_temp_array = { coastal_provinces = 3061 }
+		add_to_temp_array = { coastal_provinces = 3083 }
+		add_to_temp_array = { coastal_provinces = 3117 }
+		add_to_temp_array = { coastal_provinces = 3161 }
+		add_to_temp_array = { coastal_provinces = 6009 }
+		add_to_temp_array = { coastal_provinces = 6066 }
+		add_to_temp_array = { coastal_provinces = 6108 }
+		add_to_temp_array = { coastal_provinces = 6186 }
+		add_to_temp_array = { coastal_provinces = 9194 }
+		add_to_temp_array = { coastal_provinces = 11105 }
+	}
+	else_if = { limit = { state = 112 }
+		add_to_temp_array = { coastal_provinces = 799 }
+		add_to_temp_array = { coastal_provinces = 970 }
+		add_to_temp_array = { coastal_provinces = 3861 }
+		add_to_temp_array = { coastal_provinces = 6924 }
+		add_to_temp_array = { coastal_provinces = 11805 }
+	}
+	else_if = { limit = { state = 113 }
+		add_to_temp_array = { coastal_provinces = 285 }
+		add_to_temp_array = { coastal_provinces = 3359 }
+		add_to_temp_array = { coastal_provinces = 7377 }
+		add_to_temp_array = { coastal_provinces = 11293 }
+	}
+	else_if = { limit = { state = 114 }
+		add_to_temp_array = { coastal_provinces = 902 }
+		add_to_temp_array = { coastal_provinces = 6891 }
+		add_to_temp_array = { coastal_provinces = 9772 }
+		add_to_temp_array = { coastal_provinces = 9863 }
+		add_to_temp_array = { coastal_provinces = 11755 }
+		add_to_temp_array = { coastal_provinces = 11773 }
+		add_to_temp_array = { coastal_provinces = 11824 }
+		add_to_temp_array = { coastal_provinces = 11874 }
+	}
+	else_if = { limit = { state = 115 }
+		add_to_temp_array = { coastal_provinces = 1009 }
+		add_to_temp_array = { coastal_provinces = 1156 }
+		add_to_temp_array = { coastal_provinces = 3857 }
+		add_to_temp_array = { coastal_provinces = 4014 }
+		add_to_temp_array = { coastal_provinces = 4159 }
+		add_to_temp_array = { coastal_provinces = 7059 }
+		add_to_temp_array = { coastal_provinces = 7147 }
+		add_to_temp_array = { coastal_provinces = 10074 }
+	}
+	else_if = { limit = { state = 116 }
+		add_to_temp_array = { coastal_provinces = 12003 }
+	}
+	else_if = { limit = { state = 117 }
+		add_to_temp_array = { coastal_provinces = 819 }
+		add_to_temp_array = { coastal_provinces = 851 }
+		add_to_temp_array = { coastal_provinces = 955 }
+		add_to_temp_array = { coastal_provinces = 9826 }
+	}
+	else_if = { limit = { state = 118 }
+		add_to_temp_array = { coastal_provinces = 4135 }
+	}
+	else_if = { limit = { state = 119 }
+		add_to_temp_array = { coastal_provinces = 276 }
+		add_to_temp_array = { coastal_provinces = 3242 }
+		add_to_temp_array = { coastal_provinces = 3329 }
+		add_to_temp_array = { coastal_provinces = 3379 }
+	}
+	else_if = { limit = { state = 120 }
+		add_to_temp_array = { coastal_provinces = 131 }
+		add_to_temp_array = { coastal_provinces = 284 }
+		add_to_temp_array = { coastal_provinces = 3159 }
+		add_to_temp_array = { coastal_provinces = 3178 }
+		add_to_temp_array = { coastal_provinces = 3373 }
+		add_to_temp_array = { coastal_provinces = 6046 }
+		add_to_temp_array = { coastal_provinces = 6062 }
+		add_to_temp_array = { coastal_provinces = 6104 }
+		add_to_temp_array = { coastal_provinces = 6205 }
+		add_to_temp_array = { coastal_provinces = 9075 }
+		add_to_temp_array = { coastal_provinces = 9090 }
+		add_to_temp_array = { coastal_provinces = 11064 }
+		add_to_temp_array = { coastal_provinces = 11161 }
+		add_to_temp_array = { coastal_provinces = 11266 }
+		add_to_temp_array = { coastal_provinces = 13263 }
+	}
+	else_if = { limit = { state = 121 }
+		add_to_temp_array = { coastal_provinces = 6300 }
+		add_to_temp_array = { coastal_provinces = 9383 }
+		add_to_temp_array = { coastal_provinces = 9392 }
+		add_to_temp_array = { coastal_provinces = 11378 }
+	}
+	else_if = { limit = { state = 122 }
+		add_to_temp_array = { coastal_provinces = 377 }
+		add_to_temp_array = { coastal_provinces = 407 }
+		add_to_temp_array = { coastal_provinces = 3274 }
+		add_to_temp_array = { coastal_provinces = 6363 }
+		add_to_temp_array = { coastal_provinces = 9364 }
+		add_to_temp_array = { coastal_provinces = 11361 }
+	}
+	else_if = { limit = { state = 123 }
+		add_to_temp_array = { coastal_provinces = 540 }
+		add_to_temp_array = { coastal_provinces = 3422 }
+		add_to_temp_array = { coastal_provinces = 3463 }
+		add_to_temp_array = { coastal_provinces = 6526 }
+		add_to_temp_array = { coastal_provinces = 9562 }
+		add_to_temp_array = { coastal_provinces = 11406 }
+	}
+	else_if = { limit = { state = 124 }
+		add_to_temp_array = { coastal_provinces = 408 }
+		add_to_temp_array = { coastal_provinces = 6258 }
+	}
+	else_if = { limit = { state = 125 }
+		add_to_temp_array = { coastal_provinces = 221 }
+		add_to_temp_array = { coastal_provinces = 271 }
+		add_to_temp_array = { coastal_provinces = 322 }
+		add_to_temp_array = { coastal_provinces = 3287 }
+		add_to_temp_array = { coastal_provinces = 11374 }
+	}
+	else_if = { limit = { state = 127 }
+		add_to_temp_array = { coastal_provinces = 3501 }
+		add_to_temp_array = { coastal_provinces = 6489 }
+		add_to_temp_array = { coastal_provinces = 9458 }
+		add_to_temp_array = { coastal_provinces = 11446 }
+		add_to_temp_array = { coastal_provinces = 13070 }
+	}
+	else_if = { limit = { state = 129 }
+		add_to_temp_array = { coastal_provinces = 3353 }
+		add_to_temp_array = { coastal_provinces = 9250 }
+		add_to_temp_array = { coastal_provinces = 9322 }
+	}
+	else_if = { limit = { state = 130 }
+		add_to_temp_array = { coastal_provinces = 11297 }
+		add_to_temp_array = { coastal_provinces = 11317 }
+	}
+	else_if = { limit = { state = 131 }
+		add_to_temp_array = { coastal_provinces = 351 }
+		add_to_temp_array = { coastal_provinces = 3311 }
+		add_to_temp_array = { coastal_provinces = 6399 }
+		add_to_temp_array = { coastal_provinces = 11270 }
+		add_to_temp_array = { coastal_provinces = 11299 }
+		add_to_temp_array = { coastal_provinces = 11332 }
+	}
+	else_if = { limit = { state = 132 }
+		add_to_temp_array = { coastal_provinces = 3205 }
+		add_to_temp_array = { coastal_provinces = 6335 }
+		add_to_temp_array = { coastal_provinces = 6384 }
+	}
+	else_if = { limit = { state = 133 }
+		add_to_temp_array = { coastal_provinces = 6350 }
+		add_to_temp_array = { coastal_provinces = 6385 }
+		add_to_temp_array = { coastal_provinces = 6395 }
+		add_to_temp_array = { coastal_provinces = 9237 }
+		add_to_temp_array = { coastal_provinces = 9350 }
+		add_to_temp_array = { coastal_provinces = 11218 }
+	}
+	else_if = { limit = { state = 134 }
+		add_to_temp_array = { coastal_provinces = 337 }
+		add_to_temp_array = { coastal_provinces = 3396 }
+		add_to_temp_array = { coastal_provinces = 9303 }
+		add_to_temp_array = { coastal_provinces = 9321 }
+		add_to_temp_array = { coastal_provinces = 9369 }
+		add_to_temp_array = { coastal_provinces = 11371 }
+	}
+	else_if = { limit = { state = 135 }
+		add_to_temp_array = { coastal_provinces = 6289 }
+		add_to_temp_array = { coastal_provinces = 6405 }
+		add_to_temp_array = { coastal_provinces = 7394 }
+		add_to_temp_array = { coastal_provinces = 9405 }
+		add_to_temp_array = { coastal_provinces = 11237 }
+		add_to_temp_array = { coastal_provinces = 11334 }
+	}
+	else_if = { limit = { state = 136 }
+		add_to_temp_array = { coastal_provinces = 200 }
+		add_to_temp_array = { coastal_provinces = 3150 }
+		add_to_temp_array = { coastal_provinces = 9161 }
+		add_to_temp_array = { coastal_provinces = 11136 }
+		add_to_temp_array = { coastal_provinces = 11207 }
+	}
+	else_if = { limit = { state = 137 }
+		add_to_temp_array = { coastal_provinces = 705 }
+		add_to_temp_array = { coastal_provinces = 3686 }
+		add_to_temp_array = { coastal_provinces = 3722 }
+		add_to_temp_array = { coastal_provinces = 6704 }
+		add_to_temp_array = { coastal_provinces = 9677 }
+		add_to_temp_array = { coastal_provinces = 9680 }
+		add_to_temp_array = { coastal_provinces = 9718 }
+		add_to_temp_array = { coastal_provinces = 11649 }
+	}
+	else_if = { limit = { state = 138 }
+		add_to_temp_array = { coastal_provinces = 3307 }
+		add_to_temp_array = { coastal_provinces = 6120 }
+		add_to_temp_array = { coastal_provinces = 6345 }
+		add_to_temp_array = { coastal_provinces = 6412 }
+		add_to_temp_array = { coastal_provinces = 9279 }
+		add_to_temp_array = { coastal_provinces = 9362 }
+		add_to_temp_array = { coastal_provinces = 11160 }
+		add_to_temp_array = { coastal_provinces = 11215 }
+		add_to_temp_array = { coastal_provinces = 11327 }
+		add_to_temp_array = { coastal_provinces = 11376 }
+	}
+	else_if = { limit = { state = 139 }
+		add_to_temp_array = { coastal_provinces = 211 }
+		add_to_temp_array = { coastal_provinces = 299 }
+		add_to_temp_array = { coastal_provinces = 329 }
+		add_to_temp_array = { coastal_provinces = 3229 }
+		add_to_temp_array = { coastal_provinces = 11380 }
+		add_to_temp_array = { coastal_provinces = 11390 }
+	}
+	else_if = { limit = { state = 140 }
+		add_to_temp_array = { coastal_provinces = 171 }
+		add_to_temp_array = { coastal_provinces = 383 }
+		add_to_temp_array = { coastal_provinces = 6310 }
+	}
+	else_if = { limit = { state = 141 }
+		add_to_temp_array = { coastal_provinces = 161 }
+		add_to_temp_array = { coastal_provinces = 3182 }
+		add_to_temp_array = { coastal_provinces = 6050 }
+		add_to_temp_array = { coastal_provinces = 6209 }
+		add_to_temp_array = { coastal_provinces = 11082 }
+		add_to_temp_array = { coastal_provinces = 11278 }
+	}
+	else_if = { limit = { state = 142 }
+		add_to_temp_array = { coastal_provinces = 53 }
+		add_to_temp_array = { coastal_provinces = 65 }
+		add_to_temp_array = { coastal_provinces = 122 }
+		add_to_temp_array = { coastal_provinces = 137 }
+		add_to_temp_array = { coastal_provinces = 188 }
+		add_to_temp_array = { coastal_provinces = 199 }
+		add_to_temp_array = { coastal_provinces = 3090 }
+		add_to_temp_array = { coastal_provinces = 3096 }
+		add_to_temp_array = { coastal_provinces = 3114 }
+		add_to_temp_array = { coastal_provinces = 3188 }
+		add_to_temp_array = { coastal_provinces = 3192 }
+		add_to_temp_array = { coastal_provinces = 6145 }
+		add_to_temp_array = { coastal_provinces = 6176 }
+		add_to_temp_array = { coastal_provinces = 9096 }
+		add_to_temp_array = { coastal_provinces = 9127 }
+		add_to_temp_array = { coastal_provinces = 9216 }
+		add_to_temp_array = { coastal_provinces = 9296 }
+		add_to_temp_array = { coastal_provinces = 11100 }
+		add_to_temp_array = { coastal_provinces = 11176 }
+		add_to_temp_array = { coastal_provinces = 11367 }
+	}
+	else_if = { limit = { state = 143 }
+		add_to_temp_array = { coastal_provinces = 21 }
+		add_to_temp_array = { coastal_provinces = 107 }
+		add_to_temp_array = { coastal_provinces = 3018 }
+		add_to_temp_array = { coastal_provinces = 3022 }
+		add_to_temp_array = { coastal_provinces = 6038 }
+		add_to_temp_array = { coastal_provinces = 6041 }
+		add_to_temp_array = { coastal_provinces = 6116 }
+		add_to_temp_array = { coastal_provinces = 9132 }
+	}
+	else_if = { limit = { state = 144 }
+		add_to_temp_array = { coastal_provinces = 38 }
+		add_to_temp_array = { coastal_provinces = 44 }
+		add_to_temp_array = { coastal_provinces = 91 }
+		add_to_temp_array = { coastal_provinces = 192 }
+		add_to_temp_array = { coastal_provinces = 3034 }
+		add_to_temp_array = { coastal_provinces = 3048 }
+		add_to_temp_array = { coastal_provinces = 3058 }
+		add_to_temp_array = { coastal_provinces = 3088 }
+		add_to_temp_array = { coastal_provinces = 3126 }
+		add_to_temp_array = { coastal_provinces = 3132 }
+		add_to_temp_array = { coastal_provinces = 3145 }
+		add_to_temp_array = { coastal_provinces = 6071 }
+		add_to_temp_array = { coastal_provinces = 6187 }
+		add_to_temp_array = { coastal_provinces = 6214 }
+		add_to_temp_array = { coastal_provinces = 9126 }
+		add_to_temp_array = { coastal_provinces = 11050 }
+		add_to_temp_array = { coastal_provinces = 11090 }
+		add_to_temp_array = { coastal_provinces = 11157 }
+	}
+	else_if = { limit = { state = 145 }
+		add_to_temp_array = { coastal_provinces = 9228 }
+	}
+	else_if = { limit = { state = 146 }
+		add_to_temp_array = { coastal_provinces = 3060 }
+		add_to_temp_array = { coastal_provinces = 9100 }
+		add_to_temp_array = { coastal_provinces = 9206 }
+	}
+	else_if = { limit = { state = 148 }
+		add_to_temp_array = { coastal_provinces = 11125 }
+		add_to_temp_array = { coastal_provinces = 11164 }
+	}
+	else_if = { limit = { state = 149 }
+		add_to_temp_array = { coastal_provinces = 66 }
+		add_to_temp_array = { coastal_provinces = 158 }
+		add_to_temp_array = { coastal_provinces = 195 }
+		add_to_temp_array = { coastal_provinces = 3122 }
+		add_to_temp_array = { coastal_provinces = 3172 }
+		add_to_temp_array = { coastal_provinces = 11065 }
+		add_to_temp_array = { coastal_provinces = 11081 }
+		add_to_temp_array = { coastal_provinces = 11121 }
+		add_to_temp_array = { coastal_provinces = 11126 }
+	}
+	else_if = { limit = { state = 156 }
+		add_to_temp_array = { coastal_provinces = 3901 }
+		add_to_temp_array = { coastal_provinces = 3968 }
+		add_to_temp_array = { coastal_provinces = 9856 }
+		add_to_temp_array = { coastal_provinces = 9990 }
+		add_to_temp_array = { coastal_provinces = 10027 }
+		add_to_temp_array = { coastal_provinces = 12066 }
+		add_to_temp_array = { coastal_provinces = 12098 }
+	}
+	else_if = { limit = { state = 157 }
+		add_to_temp_array = { coastal_provinces = 6831 }
+		add_to_temp_array = { coastal_provinces = 9838 }
+	}
+	else_if = { limit = { state = 160 }
+		add_to_temp_array = { coastal_provinces = 9582 }
+		add_to_temp_array = { coastal_provinces = 11584 }
+	}
+	else_if = { limit = { state = 161 }
+		add_to_temp_array = { coastal_provinces = 782 }
+		add_to_temp_array = { coastal_provinces = 6793 }
+		add_to_temp_array = { coastal_provinces = 9924 }
+	}
+	else_if = { limit = { state = 162 }
+		add_to_temp_array = { coastal_provinces = 6862 }
+		add_to_temp_array = { coastal_provinces = 6875 }
+		add_to_temp_array = { coastal_provinces = 6946 }
+		add_to_temp_array = { coastal_provinces = 11833 }
+	}
+	else_if = { limit = { state = 163 }
+		add_to_temp_array = { coastal_provinces = 3943 }
+	}
+	else_if = { limit = { state = 164 }
+		add_to_temp_array = { coastal_provinces = 7003 }
+		add_to_temp_array = { coastal_provinces = 10007 }
+	}
+	else_if = { limit = { state = 165 }
+		add_to_temp_array = { coastal_provinces = 854 }
+		add_to_temp_array = { coastal_provinces = 6812 }
+		add_to_temp_array = { coastal_provinces = 6927 }
+		add_to_temp_array = { coastal_provinces = 6966 }
+		add_to_temp_array = { coastal_provinces = 9764 }
+		add_to_temp_array = { coastal_provinces = 9824 }
+	}
+	else_if = { limit = { state = 167 }
+		add_to_temp_array = { coastal_provinces = 962 }
+		add_to_temp_array = { coastal_provinces = 3873 }
+		add_to_temp_array = { coastal_provinces = 4098 }
+		add_to_temp_array = { coastal_provinces = 6817 }
+		add_to_temp_array = { coastal_provinces = 6906 }
+		add_to_temp_array = { coastal_provinces = 6959 }
+		add_to_temp_array = { coastal_provinces = 9896 }
+	}
+	else_if = { limit = { state = 168 }
+		add_to_temp_array = { coastal_provinces = 10024 }
+		add_to_temp_array = { coastal_provinces = 10109 }
+	}
+	else_if = { limit = { state = 169 }
+		add_to_temp_array = { coastal_provinces = 1048 }
+		add_to_temp_array = { coastal_provinces = 4080 }
+		add_to_temp_array = { coastal_provinces = 9815 }
+		add_to_temp_array = { coastal_provinces = 12070 }
+		add_to_temp_array = { coastal_provinces = 13247 }
+	}
+	else_if = { limit = { state = 171 }
+		add_to_temp_array = { coastal_provinces = 758 }
+		add_to_temp_array = { coastal_provinces = 3761 }
+		add_to_temp_array = { coastal_provinces = 6734 }
+		add_to_temp_array = { coastal_provinces = 6764 }
+		add_to_temp_array = { coastal_provinces = 9689 }
+		add_to_temp_array = { coastal_provinces = 11710 }
+	}
+	else_if = { limit = { state = 172 }
+		add_to_temp_array = { coastal_provinces = 740 }
+		add_to_temp_array = { coastal_provinces = 3737 }
+		add_to_temp_array = { coastal_provinces = 6756 }
+		add_to_temp_array = { coastal_provinces = 9703 }
+		add_to_temp_array = { coastal_provinces = 11688 }
+	}
+	else_if = { limit = { state = 173 }
+		add_to_temp_array = { coastal_provinces = 747 }
+		add_to_temp_array = { coastal_provinces = 4065 }
+		add_to_temp_array = { coastal_provinces = 7068 }
+		add_to_temp_array = { coastal_provinces = 7153 }
+		add_to_temp_array = { coastal_provinces = 9979 }
+		add_to_temp_array = { coastal_provinces = 10063 }
+		add_to_temp_array = { coastal_provinces = 12038 }
+	}
+	else_if = { limit = { state = 177 }
+		add_to_temp_array = { coastal_provinces = 7114 }
+		add_to_temp_array = { coastal_provinces = 9793 }
+		add_to_temp_array = { coastal_provinces = 9845 }
+	}
+	else_if = { limit = { state = 178 }
+		add_to_temp_array = { coastal_provinces = 13071 }
+	}
+	else_if = { limit = { state = 179 }
+		add_to_temp_array = { coastal_provinces = 980 }
+		add_to_temp_array = { coastal_provinces = 3790 }
+		add_to_temp_array = { coastal_provinces = 3866 }
+		add_to_temp_array = { coastal_provinces = 6880 }
+	}
+	else_if = { limit = { state = 180 }
+		add_to_temp_array = { coastal_provinces = 9817 }
+		add_to_temp_array = { coastal_provinces = 11673 }
+	}
+	else_if = { limit = { state = 182 }
+		add_to_temp_array = { coastal_provinces = 1164 }
+		add_to_temp_array = { coastal_provinces = 4170 }
+		add_to_temp_array = { coastal_provinces = 9940 }
+		add_to_temp_array = { coastal_provinces = 12058 }
+	}
+	else_if = { limit = { state = 183 }
+		add_to_temp_array = { coastal_provinces = 7193 }
+		add_to_temp_array = { coastal_provinces = 11984 }
+	}
+	else_if = { limit = { state = 184 }
+		add_to_temp_array = { coastal_provinces = 9930 }
+		add_to_temp_array = { coastal_provinces = 11774 }
+		add_to_temp_array = { coastal_provinces = 11905 }
+	}
+	else_if = { limit = { state = 185 }
+		add_to_temp_array = { coastal_provinces = 1106 }
+		add_to_temp_array = { coastal_provinces = 1205 }
+		add_to_temp_array = { coastal_provinces = 9805 }
+		add_to_temp_array = { coastal_provinces = 9916 }
+		add_to_temp_array = { coastal_provinces = 10203 }
+		add_to_temp_array = { coastal_provinces = 12001 }
+	}
+	else_if = { limit = { state = 186 }
+		add_to_temp_array = { coastal_provinces = 1173 }
+		add_to_temp_array = { coastal_provinces = 4178 }
+		add_to_temp_array = { coastal_provinces = 4193 }
+		add_to_temp_array = { coastal_provinces = 7096 }
+		add_to_temp_array = { coastal_provinces = 7211 }
+		add_to_temp_array = { coastal_provinces = 11965 }
+	}
+	else_if = { limit = { state = 187 }
+		add_to_temp_array = { coastal_provinces = 6550 }
+		add_to_temp_array = { coastal_provinces = 8435 }
+	}
+	else_if = { limit = { state = 188 }
+		add_to_temp_array = { coastal_provinces = 3288 }
+	}
+	else_if = { limit = { state = 189 }
+		add_to_temp_array = { coastal_provinces = 6314 }
+	}
+	else_if = { limit = { state = 190 }
+		add_to_temp_array = { coastal_provinces = 3296 }
+		add_to_temp_array = { coastal_provinces = 3319 }
+		add_to_temp_array = { coastal_provinces = 3525 }
+		add_to_temp_array = { coastal_provinces = 6222 }
+		add_to_temp_array = { coastal_provinces = 6322 }
+		add_to_temp_array = { coastal_provinces = 9262 }
+	}
+	else_if = { limit = { state = 191 }
+		add_to_temp_array = { coastal_provinces = 4640 }
+		add_to_temp_array = { coastal_provinces = 11443 }
+	}
+	else_if = { limit = { state = 192 }
+		add_to_temp_array = { coastal_provinces = 3738 }
+		add_to_temp_array = { coastal_provinces = 11670 }
+		add_to_temp_array = { coastal_provinces = 11703 }
+	}
+	else_if = { limit = { state = 195 }
+		add_to_temp_array = { coastal_provinces = 3151 }
+		add_to_temp_array = { coastal_provinces = 6174 }
+	}
+	else_if = { limit = { state = 196 }
+		add_to_temp_array = { coastal_provinces = 568 }
+		add_to_temp_array = { coastal_provinces = 721 }
+		add_to_temp_array = { coastal_provinces = 6771 }
+		add_to_temp_array = { coastal_provinces = 9712 }
+	}
+	else_if = { limit = { state = 197 }
+		add_to_temp_array = { coastal_provinces = 3755 }
+		add_to_temp_array = { coastal_provinces = 11546 }
+		add_to_temp_array = { coastal_provinces = 11683 }
+	}
+	else_if = { limit = { state = 200 }
+		add_to_temp_array = { coastal_provinces = 9571 }
+		add_to_temp_array = { coastal_provinces = 9729 }
+		add_to_temp_array = { coastal_provinces = 11700 }
+	}
+	else_if = { limit = { state = 208 }
+		add_to_temp_array = { coastal_provinces = 104 }
+		add_to_temp_array = { coastal_provinces = 9097 }
+		add_to_temp_array = { coastal_provinces = 11186 }
+	}
+	else_if = { limit = { state = 211 }
+		add_to_temp_array = { coastal_provinces = 9902 }
+		add_to_temp_array = { coastal_provinces = 9919 }
+	}
+	else_if = { limit = { state = 212 }
+		add_to_temp_array = { coastal_provinces = 9783 }
+	}
+	else_if = { limit = { state = 213 }
+		add_to_temp_array = { coastal_provinces = 116 }
+		add_to_temp_array = { coastal_provinces = 3121 }
+		add_to_temp_array = { coastal_provinces = 3134 }
+		add_to_temp_array = { coastal_provinces = 3170 }
+		add_to_temp_array = { coastal_provinces = 6117 }
+		add_to_temp_array = { coastal_provinces = 6181 }
+		add_to_temp_array = { coastal_provinces = 9162 }
+		add_to_temp_array = { coastal_provinces = 9179 }
+		add_to_temp_array = { coastal_provinces = 9215 }
+		add_to_temp_array = { coastal_provinces = 11140 }
+		add_to_temp_array = { coastal_provinces = 11183 }
+		add_to_temp_array = { coastal_provinces = 11196 }
+	}
+	else_if = { limit = { state = 214 }
+		add_to_temp_array = { coastal_provinces = 312 }
+		add_to_temp_array = { coastal_provinces = 3080 }
+		add_to_temp_array = { coastal_provinces = 3092 }
+		add_to_temp_array = { coastal_provinces = 3168 }
+		add_to_temp_array = { coastal_provinces = 3338 }
+		add_to_temp_array = { coastal_provinces = 9041 }
+		add_to_temp_array = { coastal_provinces = 9248 }
+		add_to_temp_array = { coastal_provinces = 11038 }
+	}
+	else_if = { limit = { state = 215 }
+		add_to_temp_array = { coastal_provinces = 86 }
+		add_to_temp_array = { coastal_provinces = 94 }
+		add_to_temp_array = { coastal_provinces = 3008 }
+		add_to_temp_array = { coastal_provinces = 3189 }
+		add_to_temp_array = { coastal_provinces = 6029 }
+		add_to_temp_array = { coastal_provinces = 9045 }
+		add_to_temp_array = { coastal_provinces = 9055 }
+		add_to_temp_array = { coastal_provinces = 9195 }
+	}
+	else_if = { limit = { state = 218 }
+		add_to_temp_array = { coastal_provinces = 6445 }
+		add_to_temp_array = { coastal_provinces = 9417 }
+		add_to_temp_array = { coastal_provinces = 9430 }
+		add_to_temp_array = { coastal_provinces = 11559 }
+	}
+	else_if = { limit = { state = 227 }
+		add_to_temp_array = { coastal_provinces = 3421 }
+		add_to_temp_array = { coastal_provinces = 6420 }
+	}
+	else_if = { limit = { state = 231 }
+		add_to_temp_array = { coastal_provinces = 772 }
+		add_to_temp_array = { coastal_provinces = 3653 }
+		add_to_temp_array = { coastal_provinces = 11599 }
+		add_to_temp_array = { coastal_provinces = 11617 }
+	}
+	else_if = { limit = { state = 233 }
+		add_to_temp_array = { coastal_provinces = 3698 }
+		add_to_temp_array = { coastal_provinces = 9663 }
+		add_to_temp_array = { coastal_provinces = 11647 }
+	}
+	else_if = { limit = { state = 234 }
+		add_to_temp_array = { coastal_provinces = 717 }
+		add_to_temp_array = { coastal_provinces = 719 }
+		add_to_temp_array = { coastal_provinces = 750 }
+		add_to_temp_array = { coastal_provinces = 6741 }
+		add_to_temp_array = { coastal_provinces = 6755 }
+		add_to_temp_array = { coastal_provinces = 6783 }
+		add_to_temp_array = { coastal_provinces = 11668 }
+		add_to_temp_array = { coastal_provinces = 11729 }
+	}
+	else_if = { limit = { state = 262 }
+		add_to_temp_array = { coastal_provinces = 105 }
+		add_to_temp_array = { coastal_provinces = 198 }
+		add_to_temp_array = { coastal_provinces = 3147 }
+		add_to_temp_array = { coastal_provinces = 6040 }
+		add_to_temp_array = { coastal_provinces = 6192 }
+		add_to_temp_array = { coastal_provinces = 9205 }
+		add_to_temp_array = { coastal_provinces = 10207 }
+		add_to_temp_array = { coastal_provinces = 11047 }
+		add_to_temp_array = { coastal_provinces = 11119 }
+		add_to_temp_array = { coastal_provinces = 12530 }
+	}
+	else_if = { limit = { state = 268 }
+		add_to_temp_array = { coastal_provinces = 4985 }
+		add_to_temp_array = { coastal_provinces = 8124 }
+	}
+	else_if = { limit = { state = 269 }
+		add_to_temp_array = { coastal_provinces = 10777 }
+		add_to_temp_array = { coastal_provinces = 10833 }
+		add_to_temp_array = { coastal_provinces = 10921 }
+		add_to_temp_array = { coastal_provinces = 12759 }
+	}
+	else_if = { limit = { state = 270 }
+		add_to_temp_array = { coastal_provinces = 1280 }
+	}
+	else_if = { limit = { state = 272 }
+		add_to_temp_array = { coastal_provinces = 4948 }
+		add_to_temp_array = { coastal_provinces = 7972 }
+		add_to_temp_array = { coastal_provinces = 12834 }
+	}
+	else_if = { limit = { state = 274 }
+		add_to_temp_array = { coastal_provinces = 10862 }
+		add_to_temp_array = { coastal_provinces = 12742 }
+		add_to_temp_array = { coastal_provinces = 12785 }
+	}
+	else_if = { limit = { state = 278 }
+		add_to_temp_array = { coastal_provinces = 1624 }
+		add_to_temp_array = { coastal_provinces = 1639 }
+		add_to_temp_array = { coastal_provinces = 4573 }
+		add_to_temp_array = { coastal_provinces = 4643 }
+		add_to_temp_array = { coastal_provinces = 7621 }
+		add_to_temp_array = { coastal_provinces = 12321 }
+		add_to_temp_array = { coastal_provinces = 12364 }
+		add_to_temp_array = { coastal_provinces = 12379 }
+		add_to_temp_array = { coastal_provinces = 12494 }
+	}
+	else_if = { limit = { state = 279 }
+		add_to_temp_array = { coastal_provinces = 5121 }
+		add_to_temp_array = { coastal_provinces = 5169 }
+		add_to_temp_array = { coastal_provinces = 5191 }
+		add_to_temp_array = { coastal_provinces = 8194 }
+		add_to_temp_array = { coastal_provinces = 8222 }
+		add_to_temp_array = { coastal_provinces = 12954 }
+		add_to_temp_array = { coastal_provinces = 12984 }
+	}
+	else_if = { limit = { state = 281 }
+		add_to_temp_array = { coastal_provinces = 4967 }
+	}
+	else_if = { limit = { state = 282 }
+		add_to_temp_array = { coastal_provinces = 4100 }
+		add_to_temp_array = { coastal_provinces = 7016 }
+	}
+	else_if = { limit = { state = 284 }
+		add_to_temp_array = { coastal_provinces = 1565 }
+		add_to_temp_array = { coastal_provinces = 1713 }
+		add_to_temp_array = { coastal_provinces = 1801 }
+		add_to_temp_array = { coastal_provinces = 1814 }
+		add_to_temp_array = { coastal_provinces = 4543 }
+		add_to_temp_array = { coastal_provinces = 4615 }
+		add_to_temp_array = { coastal_provinces = 4718 }
+		add_to_temp_array = { coastal_provinces = 4748 }
+		add_to_temp_array = { coastal_provinces = 4804 }
+		add_to_temp_array = { coastal_provinces = 7742 }
+		add_to_temp_array = { coastal_provinces = 7783 }
+		add_to_temp_array = { coastal_provinces = 7826 }
+		add_to_temp_array = { coastal_provinces = 7887 }
+		add_to_temp_array = { coastal_provinces = 10334 }
+		add_to_temp_array = { coastal_provinces = 10373 }
+		add_to_temp_array = { coastal_provinces = 10609 }
+		add_to_temp_array = { coastal_provinces = 10710 }
+		add_to_temp_array = { coastal_provinces = 12362 }
+		add_to_temp_array = { coastal_provinces = 12604 }
+		add_to_temp_array = { coastal_provinces = 12617 }
+		add_to_temp_array = { coastal_provinces = 12664 }
+	}
+	else_if = { limit = { state = 285 }
+		add_to_temp_array = { coastal_provinces = 1611 }
+		add_to_temp_array = { coastal_provinces = 4673 }
+		add_to_temp_array = { coastal_provinces = 4763 }
+		add_to_temp_array = { coastal_provinces = 4864 }
+		add_to_temp_array = { coastal_provinces = 7450 }
+		add_to_temp_array = { coastal_provinces = 7520 }
+		add_to_temp_array = { coastal_provinces = 12406 }
+		add_to_temp_array = { coastal_provinces = 12560 }
+	}
+	else_if = { limit = { state = 286 }
+		add_to_temp_array = { coastal_provinces = 1396 }
+		add_to_temp_array = { coastal_provinces = 1423 }
+		add_to_temp_array = { coastal_provinces = 4223 }
+		add_to_temp_array = { coastal_provinces = 4284 }
+		add_to_temp_array = { coastal_provinces = 4341 }
+		add_to_temp_array = { coastal_provinces = 4401 }
+		add_to_temp_array = { coastal_provinces = 7303 }
+		add_to_temp_array = { coastal_provinces = 7331 }
+	}
+	else_if = { limit = { state = 288 }
+		add_to_temp_array = { coastal_provinces = 1330 }
+		add_to_temp_array = { coastal_provinces = 4336 }
+		add_to_temp_array = { coastal_provinces = 7382 }
+		add_to_temp_array = { coastal_provinces = 10223 }
+		add_to_temp_array = { coastal_provinces = 10267 }
+		add_to_temp_array = { coastal_provinces = 12127 }
+		add_to_temp_array = { coastal_provinces = 12267 }
+	}
+	else_if = { limit = { state = 289 }
+		add_to_temp_array = { coastal_provinces = 1244 }
+		add_to_temp_array = { coastal_provinces = 4433 }
+		add_to_temp_array = { coastal_provinces = 7225 }
+		add_to_temp_array = { coastal_provinces = 7292 }
+		add_to_temp_array = { coastal_provinces = 7408 }
+	}
+	else_if = { limit = { state = 290 }
+		add_to_temp_array = { coastal_provinces = 9945 }
+		add_to_temp_array = { coastal_provinces = 12100 }
+	}
+	else_if = { limit = { state = 292 }
+		add_to_temp_array = { coastal_provinces = 1955 }
+		add_to_temp_array = { coastal_provinces = 10791 }
+		add_to_temp_array = { coastal_provinces = 12702 }
+	}
+	else_if = { limit = { state = 293 }
+		add_to_temp_array = { coastal_provinces = 1920 }
+		add_to_temp_array = { coastal_provinces = 10752 }
+		add_to_temp_array = { coastal_provinces = 10840 }
+	}
+	else_if = { limit = { state = 294 }
+		add_to_temp_array = { coastal_provinces = 1947 }
+		add_to_temp_array = { coastal_provinces = 2103 }
+		add_to_temp_array = { coastal_provinces = 4993 }
+		add_to_temp_array = { coastal_provinces = 8002 }
+		add_to_temp_array = { coastal_provinces = 8020 }
+		add_to_temp_array = { coastal_provinces = 10760 }
+	}
+	else_if = { limit = { state = 295 }
+		add_to_temp_array = { coastal_provinces = 10968 }
+	}
+	else_if = { limit = { state = 296 }
+		add_to_temp_array = { coastal_provinces = 12747 }
+		add_to_temp_array = { coastal_provinces = 12891 }
+	}
+	else_if = { limit = { state = 297 }
+		add_to_temp_array = { coastal_provinces = 1903 }
+		add_to_temp_array = { coastal_provinces = 8244 }
+	}
+	else_if = { limit = { state = 298 }
+		add_to_temp_array = { coastal_provinces = 7959 }
+		add_to_temp_array = { coastal_provinces = 8006 }
+	}
+	else_if = { limit = { state = 299 }
+		add_to_temp_array = { coastal_provinces = 12960 }
+	}
+	else_if = { limit = { state = 300 }
+		add_to_temp_array = { coastal_provinces = 4457 }
+		add_to_temp_array = { coastal_provinces = 10347 }
+		add_to_temp_array = { coastal_provinces = 10362 }
+		add_to_temp_array = { coastal_provinces = 10502 }
+		add_to_temp_array = { coastal_provinces = 12336 }
+	}
+	else_if = { limit = { state = 303 }
+		add_to_temp_array = { coastal_provinces = 2156 }
+		add_to_temp_array = { coastal_provinces = 5190 }
+		add_to_temp_array = { coastal_provinces = 8199 }
+		add_to_temp_array = { coastal_provinces = 12983 }
+		add_to_temp_array = { coastal_provinces = 12997 }
+	}
+	else_if = { limit = { state = 304 }
+		add_to_temp_array = { coastal_provinces = 1633 }
+		add_to_temp_array = { coastal_provinces = 4611 }
+		add_to_temp_array = { coastal_provinces = 4624 }
+		add_to_temp_array = { coastal_provinces = 7630 }
+		add_to_temp_array = { coastal_provinces = 10482 }
+	}
+	else_if = { limit = { state = 305 }
+		add_to_temp_array = { coastal_provinces = 5120 }
+		add_to_temp_array = { coastal_provinces = 8047 }
+		add_to_temp_array = { coastal_provinces = 8252 }
+	}
+	else_if = { limit = { state = 306 }
+		add_to_temp_array = { coastal_provinces = 7936 }
+		add_to_temp_array = { coastal_provinces = 7991 }
+	}
+	else_if = { limit = { state = 307 }
+		add_to_temp_array = { coastal_provinces = 7968 }
+		add_to_temp_array = { coastal_provinces = 8113 }
+		add_to_temp_array = { coastal_provinces = 10767 }
+		add_to_temp_array = { coastal_provinces = 10823 }
+		add_to_temp_array = { coastal_provinces = 10912 }
+	}
+	else_if = { limit = { state = 308 }
+		add_to_temp_array = { coastal_provinces = 4450 }
+		add_to_temp_array = { coastal_provinces = 7123 }
+	}
+	else_if = { limit = { state = 309 }
+		add_to_temp_array = { coastal_provinces = 10906 }
+		add_to_temp_array = { coastal_provinces = 12828 }
+	}
+	else_if = { limit = { state = 310 }
+		add_to_temp_array = { coastal_provinces = 12885 }
+	}
+	else_if = { limit = { state = 311 }
+		add_to_temp_array = { coastal_provinces = 2077 }
+	}
+	else_if = { limit = { state = 312 }
+		add_to_temp_array = { coastal_provinces = 2031 }
+		add_to_temp_array = { coastal_provinces = 8017 }
+		add_to_temp_array = { coastal_provinces = 12865 }
+	}
+	else_if = { limit = { state = 313 }
+		add_to_temp_array = { coastal_provinces = 10886 }
+		add_to_temp_array = { coastal_provinces = 13085 }
+	}
+	else_if = { limit = { state = 314 }
+		add_to_temp_array = { coastal_provinces = 12823 }
+		add_to_temp_array = { coastal_provinces = 13093 }
+	}
+	else_if = { limit = { state = 315 }
+		add_to_temp_array = { coastal_provinces = 1550 }
+		add_to_temp_array = { coastal_provinces = 4476 }
+		add_to_temp_array = { coastal_provinces = 4600 }
+		add_to_temp_array = { coastal_provinces = 7451 }
+		add_to_temp_array = { coastal_provinces = 7546 }
+		add_to_temp_array = { coastal_provinces = 7590 }
+		add_to_temp_array = { coastal_provinces = 7622 }
+		add_to_temp_array = { coastal_provinces = 10374 }
+		add_to_temp_array = { coastal_provinces = 10498 }
+		add_to_temp_array = { coastal_provinces = 12347 }
+	}
+	else_if = { limit = { state = 316 }
+		add_to_temp_array = { coastal_provinces = 12878 }
+		add_to_temp_array = { coastal_provinces = 13087 }
+		add_to_temp_array = { coastal_provinces = 13092 }
+	}
+	else_if = { limit = { state = 317 }
+		add_to_temp_array = { coastal_provinces = 1988 }
+		add_to_temp_array = { coastal_provinces = 2075 }
+		add_to_temp_array = { coastal_provinces = 12738 }
+	}
+	else_if = { limit = { state = 318 }
+		add_to_temp_array = { coastal_provinces = 1594 }
+		add_to_temp_array = { coastal_provinces = 1635 }
+		add_to_temp_array = { coastal_provinces = 4641 }
+	}
+	else_if = { limit = { state = 319 }
+		add_to_temp_array = { coastal_provinces = 4598 }
+		add_to_temp_array = { coastal_provinces = 7632 }
+		add_to_temp_array = { coastal_provinces = 7660 }
+		add_to_temp_array = { coastal_provinces = 10484 }
+	}
+	else_if = { limit = { state = 320 }
+		add_to_temp_array = { coastal_provinces = 10149 }
+	}
+	else_if = { limit = { state = 321 }
+		add_to_temp_array = { coastal_provinces = 1273 }
+	}
+	else_if = { limit = { state = 326 }
+		add_to_temp_array = { coastal_provinces = 10062 }
+	}
+	else_if = { limit = { state = 327 }
+		add_to_temp_array = { coastal_provinces = 1221 }
+		add_to_temp_array = { coastal_provinces = 1288 }
+		add_to_temp_array = { coastal_provinces = 7275 }
+		add_to_temp_array = { coastal_provinces = 7323 }
+		add_to_temp_array = { coastal_provinces = 7351 }
+		add_to_temp_array = { coastal_provinces = 10236 }
+		add_to_temp_array = { coastal_provinces = 10265 }
+		add_to_temp_array = { coastal_provinces = 12236 }
+	}
+	else_if = { limit = { state = 331 }
+		add_to_temp_array = { coastal_provinces = 7758 }
+		add_to_temp_array = { coastal_provinces = 7788 }
+		add_to_temp_array = { coastal_provinces = 12505 }
+		add_to_temp_array = { coastal_provinces = 12680 }
+		add_to_temp_array = { coastal_provinces = 12698 }
+	}
+	else_if = { limit = { state = 332 }
+		add_to_temp_array = { coastal_provinces = 1426 }
+		add_to_temp_array = { coastal_provinces = 4720 }
+		add_to_temp_array = { coastal_provinces = 12503 }
+	}
+	else_if = { limit = { state = 333 }
+		add_to_temp_array = { coastal_provinces = 1208 }
+		add_to_temp_array = { coastal_provinces = 4216 }
+		add_to_temp_array = { coastal_provinces = 4396 }
+		add_to_temp_array = { coastal_provinces = 7371 }
+		add_to_temp_array = { coastal_provinces = 10285 }
+		add_to_temp_array = { coastal_provinces = 12283 }
+		add_to_temp_array = { coastal_provinces = 12905 }
+	}
+	else_if = { limit = { state = 334 }
+		add_to_temp_array = { coastal_provinces = 1252 }
+		add_to_temp_array = { coastal_provinces = 1316 }
+		add_to_temp_array = { coastal_provinces = 1404 }
+		add_to_temp_array = { coastal_provinces = 1416 }
+		add_to_temp_array = { coastal_provinces = 4279 }
+		add_to_temp_array = { coastal_provinces = 4409 }
+		add_to_temp_array = { coastal_provinces = 7227 }
+		add_to_temp_array = { coastal_provinces = 7231 }
+		add_to_temp_array = { coastal_provinces = 7296 }
+		add_to_temp_array = { coastal_provinces = 7415 }
+		add_to_temp_array = { coastal_provinces = 10138 }
+		add_to_temp_array = { coastal_provinces = 10178 }
+		add_to_temp_array = { coastal_provinces = 10181 }
+		add_to_temp_array = { coastal_provinces = 10237 }
+		add_to_temp_array = { coastal_provinces = 10282 }
+		add_to_temp_array = { coastal_provinces = 10310 }
+		add_to_temp_array = { coastal_provinces = 10325 }
+		add_to_temp_array = { coastal_provinces = 12110 }
+		add_to_temp_array = { coastal_provinces = 12129 }
+		add_to_temp_array = { coastal_provinces = 12196 }
+		add_to_temp_array = { coastal_provinces = 12225 }
+		add_to_temp_array = { coastal_provinces = 12243 }
+		add_to_temp_array = { coastal_provinces = 12252 }
+		add_to_temp_array = { coastal_provinces = 12280 }
+	}
+	else_if = { limit = { state = 335 }
+		add_to_temp_array = { coastal_provinces = 1209 }
+		add_to_temp_array = { coastal_provinces = 1386 }
+		add_to_temp_array = { coastal_provinces = 1398 }
+		add_to_temp_array = { coastal_provinces = 1413 }
+		add_to_temp_array = { coastal_provinces = 1425 }
+		add_to_temp_array = { coastal_provinces = 4306 }
+		add_to_temp_array = { coastal_provinces = 4390 }
+		add_to_temp_array = { coastal_provinces = 4434 }
+		add_to_temp_array = { coastal_provinces = 4608 }
+		add_to_temp_array = { coastal_provinces = 4621 }
+		add_to_temp_array = { coastal_provinces = 7223 }
+		add_to_temp_array = { coastal_provinces = 7381 }
+		add_to_temp_array = { coastal_provinces = 7642 }
+		add_to_temp_array = { coastal_provinces = 7654 }
+		add_to_temp_array = { coastal_provinces = 10135 }
+		add_to_temp_array = { coastal_provinces = 10279 }
+		add_to_temp_array = { coastal_provinces = 10307 }
+		add_to_temp_array = { coastal_provinces = 10479 }
+		add_to_temp_array = { coastal_provinces = 12249 }
+		add_to_temp_array = { coastal_provinces = 12277 }
+		add_to_temp_array = { coastal_provinces = 12472 }
+	}
+	else_if = { limit = { state = 336 }
+		add_to_temp_array = { coastal_provinces = 12113 }
+		add_to_temp_array = { coastal_provinces = 12299 }
+	}
+	else_if = { limit = { state = 337 }
+		add_to_temp_array = { coastal_provinces = 13003 }
+	}
+	else_if = { limit = { state = 338 }
+		add_to_temp_array = { coastal_provinces = 3369 }
+		add_to_temp_array = { coastal_provinces = 6378 }
+		add_to_temp_array = { coastal_provinces = 9484 }
+	}
+	else_if = { limit = { state = 339 }
+		add_to_temp_array = { coastal_provinces = 4112 }
+		add_to_temp_array = { coastal_provinces = 7130 }
+		add_to_temp_array = { coastal_provinces = 10038 }
+		add_to_temp_array = { coastal_provinces = 11848 }
+	}
+	else_if = { limit = { state = 340 }
+		add_to_temp_array = { coastal_provinces = 947 }
+		add_to_temp_array = { coastal_provinces = 3851 }
+		add_to_temp_array = { coastal_provinces = 6864 }
+		add_to_temp_array = { coastal_provinces = 6912 }
+		add_to_temp_array = { coastal_provinces = 9799 }
+		add_to_temp_array = { coastal_provinces = 9887 }
+		add_to_temp_array = { coastal_provinces = 11867 }
+	}
+	else_if = { limit = { state = 341 }
+		add_to_temp_array = { coastal_provinces = 849 }
+		add_to_temp_array = { coastal_provinces = 922 }
+		add_to_temp_array = { coastal_provinces = 3879 }
+		add_to_temp_array = { coastal_provinces = 6895 }
+	}
+	else_if = { limit = { state = 342 }
+		add_to_temp_array = { coastal_provinces = 1005 }
+		add_to_temp_array = { coastal_provinces = 1119 }
+		add_to_temp_array = { coastal_provinces = 9941 }
+		add_to_temp_array = { coastal_provinces = 10122 }
+		add_to_temp_array = { coastal_provinces = 12096 }
+	}
+	else_if = { limit = { state = 344 }
+		add_to_temp_array = { coastal_provinces = 806 }
+		add_to_temp_array = { coastal_provinces = 11746 }
+		add_to_temp_array = { coastal_provinces = 11810 }
+	}
+	else_if = { limit = { state = 345 }
+		add_to_temp_array = { coastal_provinces = 1122 }
+		add_to_temp_array = { coastal_provinces = 4008 }
+		add_to_temp_array = { coastal_provinces = 4124 }
+		add_to_temp_array = { coastal_provinces = 4127 }
+		add_to_temp_array = { coastal_provinces = 7026 }
+		add_to_temp_array = { coastal_provinces = 10056 }
+	}
+	else_if = { limit = { state = 347 }
+		add_to_temp_array = { coastal_provinces = 904 }
+		add_to_temp_array = { coastal_provinces = 11811 }
+		add_to_temp_array = { coastal_provinces = 11866 }
+		add_to_temp_array = { coastal_provinces = 11883 }
+	}
+	else_if = { limit = { state = 354 }
+		add_to_temp_array = { coastal_provinces = 3714 }
+		add_to_temp_array = { coastal_provinces = 9932 }
+		add_to_temp_array = { coastal_provinces = 11753 }
+	}
+	else_if = { limit = { state = 355 }
+		add_to_temp_array = { coastal_provinces = 975 }
+		add_to_temp_array = { coastal_provinces = 11881 }
+		add_to_temp_array = { coastal_provinces = 11894 }
+	}
+	else_if = { limit = { state = 356 }
+		add_to_temp_array = { coastal_provinces = 979 }
+		add_to_temp_array = { coastal_provinces = 3967 }
+		add_to_temp_array = { coastal_provinces = 3982 }
+		add_to_temp_array = { coastal_provinces = 6995 }
+	}
+	else_if = { limit = { state = 357 }
+		add_to_temp_array = { coastal_provinces = 1338 }
+		add_to_temp_array = { coastal_provinces = 1619 }
+		add_to_temp_array = { coastal_provinces = 3732 }
+		add_to_temp_array = { coastal_provinces = 7462 }
+		add_to_temp_array = { coastal_provinces = 12459 }
+	}
+	else_if = { limit = { state = 358 }
+		add_to_temp_array = { coastal_provinces = 859 }
+		add_to_temp_array = { coastal_provinces = 3878 }
+	}
+	else_if = { limit = { state = 359 }
+		add_to_temp_array = { coastal_provinces = 6882 }
+		add_to_temp_array = { coastal_provinces = 9801 }
+		add_to_temp_array = { coastal_provinces = 9864 }
+		add_to_temp_array = { coastal_provinces = 11740 }
+		add_to_temp_array = { coastal_provinces = 11782 }
+		add_to_temp_array = { coastal_provinces = 11900 }
+	}
+	else_if = { limit = { state = 360 }
+		add_to_temp_array = { coastal_provinces = 6845 }
+	}
+	else_if = { limit = { state = 361 }
+		add_to_temp_array = { coastal_provinces = 6892 }
+		add_to_temp_array = { coastal_provinces = 6984 }
+		add_to_temp_array = { coastal_provinces = 9758 }
+		add_to_temp_array = { coastal_provinces = 9786 }
+		add_to_temp_array = { coastal_provinces = 11892 }
+	}
+	else_if = { limit = { state = 362 }
+		add_to_temp_array = { coastal_provinces = 788 }
+		add_to_temp_array = { coastal_provinces = 865 }
+		add_to_temp_array = { coastal_provinces = 873 }
+		add_to_temp_array = { coastal_provinces = 3917 }
+		add_to_temp_array = { coastal_provinces = 6846 }
+		add_to_temp_array = { coastal_provinces = 11738 }
+	}
+	else_if = { limit = { state = 363 }
+		add_to_temp_array = { coastal_provinces = 1019 }
+		add_to_temp_array = { coastal_provinces = 1077 }
+		add_to_temp_array = { coastal_provinces = 1132 }
+		add_to_temp_array = { coastal_provinces = 1163 }
+		add_to_temp_array = { coastal_provinces = 4168 }
+		add_to_temp_array = { coastal_provinces = 6943 }
+		add_to_temp_array = { coastal_provinces = 9876 }
+	}
+	else_if = { limit = { state = 364 }
+		add_to_temp_array = { coastal_provinces = 1547 }
+		add_to_temp_array = { coastal_provinces = 7202 }
+		add_to_temp_array = { coastal_provinces = 10047 }
+		add_to_temp_array = { coastal_provinces = 11927 }
+	}
+	else_if = { limit = { state = 365 }
+		add_to_temp_array = { coastal_provinces = 1480 }
+		add_to_temp_array = { coastal_provinces = 11975 }
+	}
+	else_if = { limit = { state = 366 }
+		add_to_temp_array = { coastal_provinces = 866 }
+		add_to_temp_array = { coastal_provinces = 1556 }
+		add_to_temp_array = { coastal_provinces = 1572 }
+		add_to_temp_array = { coastal_provinces = 1584 }
+		add_to_temp_array = { coastal_provinces = 1843 }
+		add_to_temp_array = { coastal_provinces = 1913 }
+		add_to_temp_array = { coastal_provinces = 7388 }
+		add_to_temp_array = { coastal_provinces = 9834 }
+		add_to_temp_array = { coastal_provinces = 10352 }
+		add_to_temp_array = { coastal_provinces = 10380 }
+		add_to_temp_array = { coastal_provinces = 10407 }
+		add_to_temp_array = { coastal_provinces = 10489 }
+		add_to_temp_array = { coastal_provinces = 12381 }
+		add_to_temp_array = { coastal_provinces = 12439 }
+		add_to_temp_array = { coastal_provinces = 12752 }
+	}
+	else_if = { limit = { state = 367 }
+		add_to_temp_array = { coastal_provinces = 7480 }
+		add_to_temp_array = { coastal_provinces = 10520 }
+	}
+	else_if = { limit = { state = 370 }
+		add_to_temp_array = { coastal_provinces = 4464 }
+		add_to_temp_array = { coastal_provinces = 7668 }
+	}
+	else_if = { limit = { state = 371 }
+		add_to_temp_array = { coastal_provinces = 4507 }
+		add_to_temp_array = { coastal_provinces = 4535 }
+		add_to_temp_array = { coastal_provinces = 7524 }
+		add_to_temp_array = { coastal_provinces = 7552 }
+		add_to_temp_array = { coastal_provinces = 12313 }
+		add_to_temp_array = { coastal_provinces = 12398 }
+	}
+	else_if = { limit = { state = 375 }
+		add_to_temp_array = { coastal_provinces = 1500 }
+		add_to_temp_array = { coastal_provinces = 2042 }
+		add_to_temp_array = { coastal_provinces = 4884 }
+		add_to_temp_array = { coastal_provinces = 6785 }
+		add_to_temp_array = { coastal_provinces = 10337 }
+		add_to_temp_array = { coastal_provinces = 12369 }
+		add_to_temp_array = { coastal_provinces = 12410 }
+	}
+	else_if = { limit = { state = 378 }
+		add_to_temp_array = { coastal_provinces = 610 }
+		add_to_temp_array = { coastal_provinces = 677 }
+		add_to_temp_array = { coastal_provinces = 986 }
+		add_to_temp_array = { coastal_provinces = 1562 }
+		add_to_temp_array = { coastal_provinces = 3644 }
+		add_to_temp_array = { coastal_provinces = 3678 }
+		add_to_temp_array = { coastal_provinces = 3840 }
+		add_to_temp_array = { coastal_provinces = 6681 }
+		add_to_temp_array = { coastal_provinces = 6699 }
+		add_to_temp_array = { coastal_provinces = 6757 }
+		add_to_temp_array = { coastal_provinces = 6881 }
+		add_to_temp_array = { coastal_provinces = 7517 }
+		add_to_temp_array = { coastal_provinces = 9637 }
+		add_to_temp_array = { coastal_provinces = 9671 }
+		add_to_temp_array = { coastal_provinces = 9713 }
+		add_to_temp_array = { coastal_provinces = 9730 }
+		add_to_temp_array = { coastal_provinces = 9814 }
+		add_to_temp_array = { coastal_provinces = 11658 }
+		add_to_temp_array = { coastal_provinces = 11757 }
+		add_to_temp_array = { coastal_provinces = 11859 }
+	}
+	else_if = { limit = { state = 385 }
+		add_to_temp_array = { coastal_provinces = 505 }
+		add_to_temp_array = { coastal_provinces = 4380 }
+		add_to_temp_array = { coastal_provinces = 10183 }
+		add_to_temp_array = { coastal_provinces = 11495 }
+		add_to_temp_array = { coastal_provinces = 12211 }
+		add_to_temp_array = { coastal_provinces = 12281 }
+	}
+	else_if = { limit = { state = 386 }
+		add_to_temp_array = { coastal_provinces = 4296 }
+		add_to_temp_array = { coastal_provinces = 4398 }
+		add_to_temp_array = { coastal_provinces = 7315 }
+		add_to_temp_array = { coastal_provinces = 7386 }
+		add_to_temp_array = { coastal_provinces = 10157 }
+		add_to_temp_array = { coastal_provinces = 10242 }
+		add_to_temp_array = { coastal_provinces = 10271 }
+	}
+	else_if = { limit = { state = 408 }
+		add_to_temp_array = { coastal_provinces = 957 }
+		add_to_temp_array = { coastal_provinces = 3739 }
+		add_to_temp_array = { coastal_provinces = 3753 }
+		add_to_temp_array = { coastal_provinces = 6715 }
+		add_to_temp_array = { coastal_provinces = 6833 }
+		add_to_temp_array = { coastal_provinces = 6961 }
+		add_to_temp_array = { coastal_provinces = 9895 }
+		add_to_temp_array = { coastal_provinces = 11626 }
+		add_to_temp_array = { coastal_provinces = 11745 }
+		add_to_temp_array = { coastal_provinces = 11879 }
+		add_to_temp_array = { coastal_provinces = 11904 }
+	}
+	else_if = { limit = { state = 409 }
+		add_to_temp_array = { coastal_provinces = 4404 }
+		add_to_temp_array = { coastal_provinces = 7309 }
+		add_to_temp_array = { coastal_provinces = 9604 }
+		add_to_temp_array = { coastal_provinces = 11575 }
+		add_to_temp_array = { coastal_provinces = 11719 }
+	}
+	else_if = { limit = { state = 410 }
+		add_to_temp_array = { coastal_provinces = 1889 }
+		add_to_temp_array = { coastal_provinces = 4891 }
+	}
+	else_if = { limit = { state = 412 }
+		add_to_temp_array = { coastal_provinces = 4959 }
+		add_to_temp_array = { coastal_provinces = 7982 }
+		add_to_temp_array = { coastal_provinces = 10797 }
+		add_to_temp_array = { coastal_provinces = 12832 }
+	}
+	else_if = { limit = { state = 413 }
+		add_to_temp_array = { coastal_provinces = 5005 }
+		add_to_temp_array = { coastal_provinces = 5089 }
+	}
+	else_if = { limit = { state = 422 }
+		add_to_temp_array = { coastal_provinces = 4219 }
+		add_to_temp_array = { coastal_provinces = 7260 }
+		add_to_temp_array = { coastal_provinces = 7344 }
+		add_to_temp_array = { coastal_provinces = 10201 }
+		add_to_temp_array = { coastal_provinces = 10229 }
+		add_to_temp_array = { coastal_provinces = 12258 }
+	}
+	else_if = { limit = { state = 423 }
+		add_to_temp_array = { coastal_provinces = 1238 }
+		add_to_temp_array = { coastal_provinces = 1321 }
+		add_to_temp_array = { coastal_provinces = 1381 }
+		add_to_temp_array = { coastal_provinces = 4327 }
+		add_to_temp_array = { coastal_provinces = 4416 }
+		add_to_temp_array = { coastal_provinces = 7265 }
+		add_to_temp_array = { coastal_provinces = 7402 }
+		add_to_temp_array = { coastal_provinces = 7447 }
+		add_to_temp_array = { coastal_provinces = 10278 }
+		add_to_temp_array = { coastal_provinces = 12164 }
+	}
+	else_if = { limit = { state = 424 }
+		add_to_temp_array = { coastal_provinces = 1430 }
+		add_to_temp_array = { coastal_provinces = 4321 }
+		add_to_temp_array = { coastal_provinces = 7297 }
+		add_to_temp_array = { coastal_provinces = 7340 }
+		add_to_temp_array = { coastal_provinces = 10152 }
+		add_to_temp_array = { coastal_provinces = 12180 }
+	}
+	else_if = { limit = { state = 425 }
+		add_to_temp_array = { coastal_provinces = 4395 }
+		add_to_temp_array = { coastal_provinces = 7244 }
+		add_to_temp_array = { coastal_provinces = 7391 }
+		add_to_temp_array = { coastal_provinces = 7395 }
+		add_to_temp_array = { coastal_provinces = 10190 }
+		add_to_temp_array = { coastal_provinces = 12208 }
+	}
+	else_if = { limit = { state = 426 }
+		add_to_temp_array = { coastal_provinces = 4104 }
+		add_to_temp_array = { coastal_provinces = 4237 }
+		add_to_temp_array = { coastal_provinces = 10001 }
+		add_to_temp_array = { coastal_provinces = 10088 }
+		add_to_temp_array = { coastal_provinces = 10116 }
+		add_to_temp_array = { coastal_provinces = 10255 }
+		add_to_temp_array = { coastal_provinces = 11978 }
+		add_to_temp_array = { coastal_provinces = 12063 }
+		add_to_temp_array = { coastal_provinces = 12462 }
+	}
+	else_if = { limit = { state = 428 }
+		add_to_temp_array = { coastal_provinces = 1061 }
+		add_to_temp_array = { coastal_provinces = 1190 }
+		add_to_temp_array = { coastal_provinces = 4090 }
+		add_to_temp_array = { coastal_provinces = 4132 }
+		add_to_temp_array = { coastal_provinces = 4187 }
+		add_to_temp_array = { coastal_provinces = 7020 }
+		add_to_temp_array = { coastal_provinces = 7150 }
+		add_to_temp_array = { coastal_provinces = 7207 }
+		add_to_temp_array = { coastal_provinces = 9975 }
+		add_to_temp_array = { coastal_provinces = 10118 }
+		add_to_temp_array = { coastal_provinces = 11952 }
+		add_to_temp_array = { coastal_provinces = 12037 }
+	}
+	else_if = { limit = { state = 429 }
+		add_to_temp_array = { coastal_provinces = 1349 }
+		add_to_temp_array = { coastal_provinces = 7013 }
+		add_to_temp_array = { coastal_provinces = 7232 }
+		add_to_temp_array = { coastal_provinces = 12269 }
+	}
+	else_if = { limit = { state = 430 }
+		add_to_temp_array = { coastal_provinces = 4162 }
+		add_to_temp_array = { coastal_provinces = 7078 }
+		add_to_temp_array = { coastal_provinces = 9935 }
+		add_to_temp_array = { coastal_provinces = 9991 }
+		add_to_temp_array = { coastal_provinces = 10035 }
+		add_to_temp_array = { coastal_provinces = 11911 }
+		add_to_temp_array = { coastal_provinces = 11929 }
+		add_to_temp_array = { coastal_provinces = 11968 }
+		add_to_temp_array = { coastal_provinces = 12010 }
+	}
+	else_if = { limit = { state = 431 }
+		add_to_temp_array = { coastal_provinces = 1159 }
+		add_to_temp_array = { coastal_provinces = 4062 }
+		add_to_temp_array = { coastal_provinces = 4245 }
+	}
+	else_if = { limit = { state = 443 }
+		add_to_temp_array = { coastal_provinces = 3456 }
+		add_to_temp_array = { coastal_provinces = 4003 }
+	}
+	else_if = { limit = { state = 444 }
+		add_to_temp_array = { coastal_provinces = 1179 }
+		add_to_temp_array = { coastal_provinces = 7917 }
+		add_to_temp_array = { coastal_provinces = 12774 }
+	}
+	else_if = { limit = { state = 446 }
+		add_to_temp_array = { coastal_provinces = 10005 }
+	}
+	else_if = { limit = { state = 447 }
+		add_to_temp_array = { coastal_provinces = 4076 }
+		add_to_temp_array = { coastal_provinces = 4145 }
+		add_to_temp_array = { coastal_provinces = 7091 }
+		add_to_temp_array = { coastal_provinces = 11964 }
+	}
+	else_if = { limit = { state = 448 }
+		add_to_temp_array = { coastal_provinces = 1118 }
+		add_to_temp_array = { coastal_provinces = 1149 }
+		add_to_temp_array = { coastal_provinces = 1189 }
+		add_to_temp_array = { coastal_provinces = 4194 }
+		add_to_temp_array = { coastal_provinces = 7209 }
+		add_to_temp_array = { coastal_provinces = 9980 }
+		add_to_temp_array = { coastal_provinces = 12039 }
+	}
+	else_if = { limit = { state = 449 }
+		add_to_temp_array = { coastal_provinces = 1041 }
+		add_to_temp_array = { coastal_provinces = 1198 }
+		add_to_temp_array = { coastal_provinces = 4047 }
+		add_to_temp_array = { coastal_provinces = 4057 }
+		add_to_temp_array = { coastal_provinces = 10046 }
+		add_to_temp_array = { coastal_provinces = 10117 }
+		add_to_temp_array = { coastal_provinces = 12088 }
+	}
+	else_if = { limit = { state = 450 }
+		add_to_temp_array = { coastal_provinces = 1127 }
+		add_to_temp_array = { coastal_provinces = 4120 }
+		add_to_temp_array = { coastal_provinces = 10123 }
+		add_to_temp_array = { coastal_provinces = 11954 }
+	}
+	else_if = { limit = { state = 451 }
+		add_to_temp_array = { coastal_provinces = 1130 }
+		add_to_temp_array = { coastal_provinces = 1204 }
+		add_to_temp_array = { coastal_provinces = 4136 }
+		add_to_temp_array = { coastal_provinces = 4151 }
+		add_to_temp_array = { coastal_provinces = 7082 }
+		add_to_temp_array = { coastal_provinces = 9992 }
+		add_to_temp_array = { coastal_provinces = 10120 }
+		add_to_temp_array = { coastal_provinces = 12094 }
+	}
+	else_if = { limit = { state = 452 }
+		add_to_temp_array = { coastal_provinces = 1071 }
+		add_to_temp_array = { coastal_provinces = 10061 }
+		add_to_temp_array = { coastal_provinces = 11910 }
+	}
+	else_if = { limit = { state = 453 }
+		add_to_temp_array = { coastal_provinces = 1112 }
+		add_to_temp_array = { coastal_provinces = 4161 }
+		add_to_temp_array = { coastal_provinces = 10099 }
+		add_to_temp_array = { coastal_provinces = 11979 }
+		add_to_temp_array = { coastal_provinces = 12073 }
+	}
+	else_if = { limit = { state = 454 }
+		add_to_temp_array = { coastal_provinces = 1015 }
+		add_to_temp_array = { coastal_provinces = 1065 }
+		add_to_temp_array = { coastal_provinces = 1201 }
+		add_to_temp_array = { coastal_provinces = 4206 }
+	}
+	else_if = { limit = { state = 455 }
+		add_to_temp_array = { coastal_provinces = 4115 }
+	}
+	else_if = { limit = { state = 457 }
+		add_to_temp_array = { coastal_provinces = 4068 }
+		add_to_temp_array = { coastal_provinces = 9957 }
+		add_to_temp_array = { coastal_provinces = 10126 }
+		add_to_temp_array = { coastal_provinces = 12002 }
+		add_to_temp_array = { coastal_provinces = 12889 }
+		add_to_temp_array = { coastal_provinces = 13209 }
+		add_to_temp_array = { coastal_provinces = 13213 }
+		add_to_temp_array = { coastal_provinces = 13217 }
+	}
+	else_if = { limit = { state = 458 }
+		add_to_temp_array = { coastal_provinces = 4163 }
+		add_to_temp_array = { coastal_provinces = 7162 }
+		add_to_temp_array = { coastal_provinces = 9994 }
+		add_to_temp_array = { coastal_provinces = 10091 }
+		add_to_temp_array = { coastal_provinces = 11921 }
+		add_to_temp_array = { coastal_provinces = 11969 }
+	}
+	else_if = { limit = { state = 459 }
+		add_to_temp_array = { coastal_provinces = 1013 }
+		add_to_temp_array = { coastal_provinces = 1145 }
+		add_to_temp_array = { coastal_provinces = 4116 }
+		add_to_temp_array = { coastal_provinces = 7132 }
+		add_to_temp_array = { coastal_provinces = 9964 }
+		add_to_temp_array = { coastal_provinces = 11923 }
+		add_to_temp_array = { coastal_provinces = 11939 }
+	}
+	else_if = { limit = { state = 460 }
+		add_to_temp_array = { coastal_provinces = 1160 }
+		add_to_temp_array = { coastal_provinces = 4046 }
+		add_to_temp_array = { coastal_provinces = 7081 }
+		add_to_temp_array = { coastal_provinces = 7166 }
+		add_to_temp_array = { coastal_provinces = 10078 }
+		add_to_temp_array = { coastal_provinces = 12051 }
+	}
+	else_if = { limit = { state = 461 }
+		add_to_temp_array = { coastal_provinces = 989 }
+		add_to_temp_array = { coastal_provinces = 1194 }
+		add_to_temp_array = { coastal_provinces = 7069 }
+		add_to_temp_array = { coastal_provinces = 10070 }
+		add_to_temp_array = { coastal_provinces = 11943 }
+	}
+	else_if = { limit = { state = 462 }
+		add_to_temp_array = { coastal_provinces = 1102 }
+		add_to_temp_array = { coastal_provinces = 5046 }
+		add_to_temp_array = { coastal_provinces = 7203 }
+	}
+	else_if = { limit = { state = 463 }
+		add_to_temp_array = { coastal_provinces = 1135 }
+		add_to_temp_array = { coastal_provinces = 1830 }
+		add_to_temp_array = { coastal_provinces = 4833 }
+		add_to_temp_array = { coastal_provinces = 4848 }
+		add_to_temp_array = { coastal_provinces = 7855 }
+		add_to_temp_array = { coastal_provinces = 7884 }
+		add_to_temp_array = { coastal_provinces = 10679 }
+		add_to_temp_array = { coastal_provinces = 10694 }
+		add_to_temp_array = { coastal_provinces = 10707 }
+		add_to_temp_array = { coastal_provinces = 12661 }
+		add_to_temp_array = { coastal_provinces = 13090 }
+		add_to_temp_array = { coastal_provinces = 13091 }
+		add_to_temp_array = { coastal_provinces = 13202 }
+		add_to_temp_array = { coastal_provinces = 13203 }
+	}
+	else_if = { limit = { state = 464 }
+		add_to_temp_array = { coastal_provinces = 1354 }
+		add_to_temp_array = { coastal_provinces = 4360 }
+		add_to_temp_array = { coastal_provinces = 4430 }
+		add_to_temp_array = { coastal_provinces = 4623 }
+		add_to_temp_array = { coastal_provinces = 7304 }
+		add_to_temp_array = { coastal_provinces = 7361 }
+		add_to_temp_array = { coastal_provinces = 7644 }
+		add_to_temp_array = { coastal_provinces = 10244 }
+	}
+	else_if = { limit = { state = 465 }
+		add_to_temp_array = { coastal_provinces = 1424 }
+		add_to_temp_array = { coastal_provinces = 4285 }
+		add_to_temp_array = { coastal_provinces = 4342 }
+		add_to_temp_array = { coastal_provinces = 4432 }
+		add_to_temp_array = { coastal_provinces = 7379 }
+	}
+	else_if = { limit = { state = 466 }
+		add_to_temp_array = { coastal_provinces = 490 }
+		add_to_temp_array = { coastal_provinces = 3208 }
+		add_to_temp_array = { coastal_provinces = 7364 }
+		add_to_temp_array = { coastal_provinces = 11682 }
+		add_to_temp_array = { coastal_provinces = 12147 }
+		add_to_temp_array = { coastal_provinces = 13196 }
+	}
+	else_if = { limit = { state = 467 }
+		add_to_temp_array = { coastal_provinces = 5239 }
+		add_to_temp_array = { coastal_provinces = 7185 }
+		add_to_temp_array = { coastal_provinces = 10605 }
+	}
+	else_if = { limit = { state = 468 }
+		add_to_temp_array = { coastal_provinces = 1284 }
+		add_to_temp_array = { coastal_provinces = 1356 }
+		add_to_temp_array = { coastal_provinces = 4305 }
+		add_to_temp_array = { coastal_provinces = 4422 }
+		add_to_temp_array = { coastal_provinces = 4769 }
+		add_to_temp_array = { coastal_provinces = 7433 }
+		add_to_temp_array = { coastal_provinces = 7683 }
+		add_to_temp_array = { coastal_provinces = 7807 }
+		add_to_temp_array = { coastal_provinces = 7810 }
+		add_to_temp_array = { coastal_provinces = 10534 }
+		add_to_temp_array = { coastal_provinces = 10715 }
+		add_to_temp_array = { coastal_provinces = 12149 }
+		add_to_temp_array = { coastal_provinces = 12291 }
+	}
+	else_if = { limit = { state = 471 }
+		add_to_temp_array = { coastal_provinces = 362 }
+	}
+	else_if = { limit = { state = 472 }
+		add_to_temp_array = { coastal_provinces = 1712 }
+		add_to_temp_array = { coastal_provinces = 3691 }
+		add_to_temp_array = { coastal_provinces = 7813 }
+		add_to_temp_array = { coastal_provinces = 10721 }
+	}
+	else_if = { limit = { state = 473 }
+		add_to_temp_array = { coastal_provinces = 1393 }
+		add_to_temp_array = { coastal_provinces = 1408 }
+		add_to_temp_array = { coastal_provinces = 1799 }
+		add_to_temp_array = { coastal_provinces = 4385 }
+		add_to_temp_array = { coastal_provinces = 4428 }
+		add_to_temp_array = { coastal_provinces = 10228 }
+		add_to_temp_array = { coastal_provinces = 10258 }
+		add_to_temp_array = { coastal_provinces = 10548 }
+		add_to_temp_array = { coastal_provinces = 12231 }
+	}
+	else_if = { limit = { state = 474 }
+		add_to_temp_array = { coastal_provinces = 4904 }
+		add_to_temp_array = { coastal_provinces = 4965 }
+		add_to_temp_array = { coastal_provinces = 12715 }
+	}
+	else_if = { limit = { state = 475 }
+		add_to_temp_array = { coastal_provinces = 12753 }
+		add_to_temp_array = { coastal_provinces = 12867 }
+	}
+	else_if = { limit = { state = 476 }
+		add_to_temp_array = { coastal_provinces = 2021 }
+		add_to_temp_array = { coastal_provinces = 8236 }
+		add_to_temp_array = { coastal_provinces = 10889 }
+		add_to_temp_array = { coastal_provinces = 12712 }
+	}
+	else_if = { limit = { state = 477 }
+		add_to_temp_array = { coastal_provinces = 8079 }
+		add_to_temp_array = { coastal_provinces = 10732 }
+		add_to_temp_array = { coastal_provinces = 12810 }
+	}
+	else_if = { limit = { state = 478 }
+		add_to_temp_array = { coastal_provinces = 2051 }
+		add_to_temp_array = { coastal_provinces = 12746 }
+		add_to_temp_array = { coastal_provinces = 12873 }
+	}
+	else_if = { limit = { state = 479 }
+		add_to_temp_array = { coastal_provinces = 5015 }
+		add_to_temp_array = { coastal_provinces = 5021 }
+		add_to_temp_array = { coastal_provinces = 13088 }
+	}
+	else_if = { limit = { state = 481 }
+		add_to_temp_array = { coastal_provinces = 1945 }
+		add_to_temp_array = { coastal_provinces = 8057 }
+		add_to_temp_array = { coastal_provinces = 10895 }
+	}
+	else_if = { limit = { state = 483 }
+		add_to_temp_array = { coastal_provinces = 2069 }
+		add_to_temp_array = { coastal_provinces = 4908 }
+		add_to_temp_array = { coastal_provinces = 4977 }
+		add_to_temp_array = { coastal_provinces = 10848 }
+		add_to_temp_array = { coastal_provinces = 12833 }
+	}
+	else_if = { limit = { state = 484 }
+		add_to_temp_array = { coastal_provinces = 1892 }
+		add_to_temp_array = { coastal_provinces = 1904 }
+		add_to_temp_array = { coastal_provinces = 7964 }
+		add_to_temp_array = { coastal_provinces = 8119 }
+		add_to_temp_array = { coastal_provinces = 12461 }
+		add_to_temp_array = { coastal_provinces = 12736 }
+		add_to_temp_array = { coastal_provinces = 12859 }
+	}
+	else_if = { limit = { state = 485 }
+		add_to_temp_array = { coastal_provinces = 5066 }
+		add_to_temp_array = { coastal_provinces = 8032 }
+		add_to_temp_array = { coastal_provinces = 10730 }
+	}
+	else_if = { limit = { state = 488 }
+		add_to_temp_array = { coastal_provinces = 1981 }
+	}
+	else_if = { limit = { state = 489 }
+		add_to_temp_array = { coastal_provinces = 1944 }
+		add_to_temp_array = { coastal_provinces = 1997 }
+		add_to_temp_array = { coastal_provinces = 4526 }
+		add_to_temp_array = { coastal_provinces = 5088 }
+		add_to_temp_array = { coastal_provinces = 10855 }
+		add_to_temp_array = { coastal_provinces = 12772 }
+	}
+	else_if = { limit = { state = 492 }
+		add_to_temp_array = { coastal_provinces = 2210 }
+		add_to_temp_array = { coastal_provinces = 2225 }
+		add_to_temp_array = { coastal_provinces = 5202 }
+		add_to_temp_array = { coastal_provinces = 13086 }
+	}
+	else_if = { limit = { state = 493 }
+		add_to_temp_array = { coastal_provinces = 1937 }
+		add_to_temp_array = { coastal_provinces = 2085 }
+		add_to_temp_array = { coastal_provinces = 4969 }
+		add_to_temp_array = { coastal_provinces = 8056 }
+		add_to_temp_array = { coastal_provinces = 10494 }
+		add_to_temp_array = { coastal_provinces = 10864 }
+		add_to_temp_array = { coastal_provinces = 12790 }
+	}
+	else_if = { limit = { state = 495 }
+		add_to_temp_array = { coastal_provinces = 2035 }
+		add_to_temp_array = { coastal_provinces = 4980 }
+	}
+	else_if = { limit = { state = 496 }
+		add_to_temp_array = { coastal_provinces = 8196 }
+		add_to_temp_array = { coastal_provinces = 10999 }
+	}
+	else_if = { limit = { state = 498 }
+		add_to_temp_array = { coastal_provinces = 2132 }
+		add_to_temp_array = { coastal_provinces = 2175 }
+		add_to_temp_array = { coastal_provinces = 2227 }
+		add_to_temp_array = { coastal_provinces = 5107 }
+		add_to_temp_array = { coastal_provinces = 5168 }
+		add_to_temp_array = { coastal_provinces = 8143 }
+		add_to_temp_array = { coastal_provinces = 8179 }
+		add_to_temp_array = { coastal_provinces = 10933 }
+		add_to_temp_array = { coastal_provinces = 10939 }
+		add_to_temp_array = { coastal_provinces = 10998 }
+	}
+	else_if = { limit = { state = 499 }
+		add_to_temp_array = { coastal_provinces = 8197 }
+		add_to_temp_array = { coastal_provinces = 10419 }
+		add_to_temp_array = { coastal_provinces = 10946 }
+		add_to_temp_array = { coastal_provinces = 11002 }
+	}
+	else_if = { limit = { state = 500 }
+		add_to_temp_array = { coastal_provinces = 2153 }
+		add_to_temp_array = { coastal_provinces = 5172 }
+		add_to_temp_array = { coastal_provinces = 8190 }
+		add_to_temp_array = { coastal_provinces = 10980 }
+		add_to_temp_array = { coastal_provinces = 12996 }
+	}
+	else_if = { limit = { state = 501 }
+		add_to_temp_array = { coastal_provinces = 5112 }
+		add_to_temp_array = { coastal_provinces = 5167 }
+		add_to_temp_array = { coastal_provinces = 7553 }
+		add_to_temp_array = { coastal_provinces = 8181 }
+		add_to_temp_array = { coastal_provinces = 10432 }
+	}
+	else_if = { limit = { state = 502 }
+		add_to_temp_array = { coastal_provinces = 4436 }
+		add_to_temp_array = { coastal_provinces = 4533 }
+		add_to_temp_array = { coastal_provinces = 4548 }
+		add_to_temp_array = { coastal_provinces = 7638 }
+		add_to_temp_array = { coastal_provinces = 10405 }
+		add_to_temp_array = { coastal_provinces = 10447 }
+		add_to_temp_array = { coastal_provinces = 12396 }
+	}
+	else_if = { limit = { state = 506 }
+		add_to_temp_array = { coastal_provinces = 5131 }
+		add_to_temp_array = { coastal_provinces = 5171 }
+		add_to_temp_array = { coastal_provinces = 5228 }
+		add_to_temp_array = { coastal_provinces = 8217 }
+		add_to_temp_array = { coastal_provinces = 11000 }
+		add_to_temp_array = { coastal_provinces = 12994 }
+	}
+	else_if = { limit = { state = 507 }
+		add_to_temp_array = { coastal_provinces = 2161 }
+		add_to_temp_array = { coastal_provinces = 5118 }
+		add_to_temp_array = { coastal_provinces = 5159 }
+		add_to_temp_array = { coastal_provinces = 5201 }
+		add_to_temp_array = { coastal_provinces = 5209 }
+		add_to_temp_array = { coastal_provinces = 5215 }
+		add_to_temp_array = { coastal_provinces = 8198 }
+		add_to_temp_array = { coastal_provinces = 8218 }
+		add_to_temp_array = { coastal_provinces = 8913 }
+		add_to_temp_array = { coastal_provinces = 10961 }
+		add_to_temp_array = { coastal_provinces = 11009 }
+	}
+	else_if = { limit = { state = 510 }
+		add_to_temp_array = { coastal_provinces = 10515 }
+		add_to_temp_array = { coastal_provinces = 12453 }
+	}
+	else_if = { limit = { state = 512 }
+		add_to_temp_array = { coastal_provinces = 5173 }
+		add_to_temp_array = { coastal_provinces = 10953 }
+		add_to_temp_array = { coastal_provinces = 10981 }
+		add_to_temp_array = { coastal_provinces = 12349 }
+		add_to_temp_array = { coastal_provinces = 12952 }
+	}
+	else_if = { limit = { state = 517 }
+		add_to_temp_array = { coastal_provinces = 1759 }
+		add_to_temp_array = { coastal_provinces = 4791 }
+		add_to_temp_array = { coastal_provinces = 7798 }
+		add_to_temp_array = { coastal_provinces = 7811 }
+		add_to_temp_array = { coastal_provinces = 10622 }
+		add_to_temp_array = { coastal_provinces = 10637 }
+	}
+	else_if = { limit = { state = 518 }
+		add_to_temp_array = { coastal_provinces = 2183 }
+		add_to_temp_array = { coastal_provinces = 2189 }
+		add_to_temp_array = { coastal_provinces = 5181 }
+		add_to_temp_array = { coastal_provinces = 5187 }
+		add_to_temp_array = { coastal_provinces = 10665 }
+		add_to_temp_array = { coastal_provinces = 12645 }
+	}
+	else_if = { limit = { state = 519 }
+		add_to_temp_array = { coastal_provinces = 1773 }
+		add_to_temp_array = { coastal_provinces = 2219 }
+		add_to_temp_array = { coastal_provinces = 5183 }
+		add_to_temp_array = { coastal_provinces = 5197 }
+		add_to_temp_array = { coastal_provinces = 5225 }
+		add_to_temp_array = { coastal_provinces = 7567 }
+		add_to_temp_array = { coastal_provinces = 8186 }
+		add_to_temp_array = { coastal_provinces = 8220 }
+		add_to_temp_array = { coastal_provinces = 10925 }
+		add_to_temp_array = { coastal_provinces = 12910 }
+		add_to_temp_array = { coastal_provinces = 12924 }
+	}
+	else_if = { limit = { state = 520 }
+		add_to_temp_array = { coastal_provinces = 1410 }
+		add_to_temp_array = { coastal_provinces = 1422 }
+		add_to_temp_array = { coastal_provinces = 1431 }
+		add_to_temp_array = { coastal_provinces = 4415 }
+		add_to_temp_array = { coastal_provinces = 4462 }
+		add_to_temp_array = { coastal_provinces = 7457 }
+		add_to_temp_array = { coastal_provinces = 7481 }
+		add_to_temp_array = { coastal_provinces = 7669 }
+		add_to_temp_array = { coastal_provinces = 10276 }
+		add_to_temp_array = { coastal_provinces = 10288 }
+		add_to_temp_array = { coastal_provinces = 12246 }
+		add_to_temp_array = { coastal_provinces = 12290 }
+		add_to_temp_array = { coastal_provinces = 12326 }
+		add_to_temp_array = { coastal_provinces = 12499 }
+	}
+	else_if = { limit = { state = 521 }
+		add_to_temp_array = { coastal_provinces = 1501 }
+		add_to_temp_array = { coastal_provinces = 1514 }
+		add_to_temp_array = { coastal_provinces = 1644 }
+		add_to_temp_array = { coastal_provinces = 2166 }
+		add_to_temp_array = { coastal_provinces = 4481 }
+		add_to_temp_array = { coastal_provinces = 4520 }
+		add_to_temp_array = { coastal_provinces = 4560 }
+		add_to_temp_array = { coastal_provinces = 4648 }
+		add_to_temp_array = { coastal_provinces = 7506 }
+		add_to_temp_array = { coastal_provinces = 7522 }
+		add_to_temp_array = { coastal_provinces = 7535 }
+		add_to_temp_array = { coastal_provinces = 7564 }
+		add_to_temp_array = { coastal_provinces = 7566 }
+		add_to_temp_array = { coastal_provinces = 10338 }
+		add_to_temp_array = { coastal_provinces = 10350 }
+		add_to_temp_array = { coastal_provinces = 10365 }
+		add_to_temp_array = { coastal_provinces = 10378 }
+		add_to_temp_array = { coastal_provinces = 10445 }
+		add_to_temp_array = { coastal_provinces = 10458 }
+		add_to_temp_array = { coastal_provinces = 10460 }
+		add_to_temp_array = { coastal_provinces = 10475 }
+		add_to_temp_array = { coastal_provinces = 10487 }
+		add_to_temp_array = { coastal_provinces = 12308 }
+		add_to_temp_array = { coastal_provinces = 12367 }
+		add_to_temp_array = { coastal_provinces = 12957 }
+	}
+	else_if = { limit = { state = 522 }
+		add_to_temp_array = { coastal_provinces = 1511 }
+		add_to_temp_array = { coastal_provinces = 1540 }
+		add_to_temp_array = { coastal_provinces = 1652 }
+		add_to_temp_array = { coastal_provinces = 2191 }
+		add_to_temp_array = { coastal_provinces = 2201 }
+		add_to_temp_array = { coastal_provinces = 4630 }
+		add_to_temp_array = { coastal_provinces = 4645 }
+		add_to_temp_array = { coastal_provinces = 5125 }
+		add_to_temp_array = { coastal_provinces = 5207 }
+		add_to_temp_array = { coastal_provinces = 7453 }
+		add_to_temp_array = { coastal_provinces = 8130 }
+		add_to_temp_array = { coastal_provinces = 8152 }
+		add_to_temp_array = { coastal_provinces = 8209 }
+		add_to_temp_array = { coastal_provinces = 8228 }
+		add_to_temp_array = { coastal_provinces = 8243 }
+		add_to_temp_array = { coastal_provinces = 8247 }
+		add_to_temp_array = { coastal_provinces = 10971 }
+		add_to_temp_array = { coastal_provinces = 11011 }
+		add_to_temp_array = { coastal_provinces = 11016 }
+		add_to_temp_array = { coastal_provinces = 12323 }
+		add_to_temp_array = { coastal_provinces = 12948 }
+		add_to_temp_array = { coastal_provinces = 12976 }
+		add_to_temp_array = { coastal_provinces = 12990 }
+	}
+	else_if = { limit = { state = 523 }
+		add_to_temp_array = { coastal_provinces = 1222 }
+		add_to_temp_array = { coastal_provinces = 1242 }
+		add_to_temp_array = { coastal_provinces = 1283 }
+		add_to_temp_array = { coastal_provinces = 1310 }
+		add_to_temp_array = { coastal_provinces = 1389 }
+		add_to_temp_array = { coastal_provinces = 4289 }
+		add_to_temp_array = { coastal_provinces = 4329 }
+		add_to_temp_array = { coastal_provinces = 4346 }
+		add_to_temp_array = { coastal_provinces = 4393 }
+		add_to_temp_array = { coastal_provinces = 4418 }
+		add_to_temp_array = { coastal_provinces = 7305 }
+		add_to_temp_array = { coastal_provinces = 7333 }
+		add_to_temp_array = { coastal_provinces = 7349 }
+		add_to_temp_array = { coastal_provinces = 7365 }
+		add_to_temp_array = { coastal_provinces = 7614 }
+		add_to_temp_array = { coastal_provinces = 10147 }
+		add_to_temp_array = { coastal_provinces = 10231 }
+		add_to_temp_array = { coastal_provinces = 10248 }
+		add_to_temp_array = { coastal_provinces = 10251 }
+		add_to_temp_array = { coastal_provinces = 10260 }
+		add_to_temp_array = { coastal_provinces = 10423 }
+		add_to_temp_array = { coastal_provinces = 10974 }
+		add_to_temp_array = { coastal_provinces = 12123 }
+		add_to_temp_array = { coastal_provinces = 12135 }
+		add_to_temp_array = { coastal_provinces = 12154 }
+		add_to_temp_array = { coastal_provinces = 12193 }
+		add_to_temp_array = { coastal_provinces = 12237 }
+		add_to_temp_array = { coastal_provinces = 12240 }
+		add_to_temp_array = { coastal_provinces = 12400 }
+		add_to_temp_array = { coastal_provinces = 12484 }
+		add_to_temp_array = { coastal_provinces = 12995 }
+	}
+	else_if = { limit = { state = 524 }
+		add_to_temp_array = { coastal_provinces = 1091 }
+		add_to_temp_array = { coastal_provinces = 1175 }
+		add_to_temp_array = { coastal_provinces = 4096 }
+		add_to_temp_array = { coastal_provinces = 7186 }
+		add_to_temp_array = { coastal_provinces = 7214 }
+		add_to_temp_array = { coastal_provinces = 9955 }
+		add_to_temp_array = { coastal_provinces = 11914 }
+		add_to_temp_array = { coastal_provinces = 11959 }
+		add_to_temp_array = { coastal_provinces = 12068 }
+	}
+	else_if = { limit = { state = 525 }
+		add_to_temp_array = { coastal_provinces = 7125 }
+		add_to_temp_array = { coastal_provinces = 7221 }
+	}
+	else_if = { limit = { state = 526 }
+		add_to_temp_array = { coastal_provinces = 1123 }
+		add_to_temp_array = { coastal_provinces = 7115 }
+		add_to_temp_array = { coastal_provinces = 10124 }
+		add_to_temp_array = { coastal_provinces = 11932 }
+	}
+	else_if = { limit = { state = 527 }
+		add_to_temp_array = { coastal_provinces = 912 }
+		add_to_temp_array = { coastal_provinces = 4052 }
+		add_to_temp_array = { coastal_provinces = 9790 }
+		add_to_temp_array = { coastal_provinces = 10065 }
+		add_to_temp_array = { coastal_provinces = 11835 }
+	}
+	else_if = { limit = { state = 528 }
+		add_to_temp_array = { coastal_provinces = 1020 }
+		add_to_temp_array = { coastal_provinces = 1025 }
+		add_to_temp_array = { coastal_provinces = 1158 }
+		add_to_temp_array = { coastal_provinces = 1183 }
+		add_to_temp_array = { coastal_provinces = 4027 }
+		add_to_temp_array = { coastal_provinces = 4102 }
+		add_to_temp_array = { coastal_provinces = 4164 }
+		add_to_temp_array = { coastal_provinces = 4198 }
+		add_to_temp_array = { coastal_provinces = 7110 }
+		add_to_temp_array = { coastal_provinces = 7178 }
+		add_to_temp_array = { coastal_provinces = 9950 }
+		add_to_temp_array = { coastal_provinces = 10011 }
+		add_to_temp_array = { coastal_provinces = 10092 }
+		add_to_temp_array = { coastal_provinces = 11925 }
+		add_to_temp_array = { coastal_provinces = 11949 }
+		add_to_temp_array = { coastal_provinces = 12006 }
+		add_to_temp_array = { coastal_provinces = 12032 }
+	}
+	else_if = { limit = { state = 529 }
+		add_to_temp_array = { coastal_provinces = 1092 }
+		add_to_temp_array = { coastal_provinces = 1167 }
+		add_to_temp_array = { coastal_provinces = 1191 }
+		add_to_temp_array = { coastal_provinces = 7050 }
+		add_to_temp_array = { coastal_provinces = 7145 }
+		add_to_temp_array = { coastal_provinces = 7212 }
+		add_to_temp_array = { coastal_provinces = 10052 }
+		add_to_temp_array = { coastal_provinces = 10055 }
+		add_to_temp_array = { coastal_provinces = 11946 }
+		add_to_temp_array = { coastal_provinces = 11985 }
+	}
+	else_if = { limit = { state = 530 }
+		add_to_temp_array = { coastal_provinces = 4094 }
+		add_to_temp_array = { coastal_provinces = 4179 }
+		add_to_temp_array = { coastal_provinces = 7046 }
+		add_to_temp_array = { coastal_provinces = 7197 }
+		add_to_temp_array = { coastal_provinces = 9965 }
+		add_to_temp_array = { coastal_provinces = 11997 }
+		add_to_temp_array = { coastal_provinces = 12028 }
+		add_to_temp_array = { coastal_provinces = 13246 }
+	}
+	else_if = { limit = { state = 531 }
+		add_to_temp_array = { coastal_provinces = 1051 }
+		add_to_temp_array = { coastal_provinces = 1067 }
+		add_to_temp_array = { coastal_provinces = 1133 }
+		add_to_temp_array = { coastal_provinces = 1136 }
+		add_to_temp_array = { coastal_provinces = 4054 }
+		add_to_temp_array = { coastal_provinces = 4142 }
+		add_to_temp_array = { coastal_provinces = 7072 }
+		add_to_temp_array = { coastal_provinces = 7113 }
+		add_to_temp_array = { coastal_provinces = 9985 }
+		add_to_temp_array = { coastal_provinces = 12031 }
+	}
+	else_if = { limit = { state = 532 }
+		add_to_temp_array = { coastal_provinces = 7087 }
+		add_to_temp_array = { coastal_provinces = 7157 }
+		add_to_temp_array = { coastal_provinces = 10125 }
+		add_to_temp_array = { coastal_provinces = 12097 }
+	}
+	else_if = { limit = { state = 533 }
+		add_to_temp_array = { coastal_provinces = 1024 }
+		add_to_temp_array = { coastal_provinces = 1063 }
+		add_to_temp_array = { coastal_provinces = 1165 }
+		add_to_temp_array = { coastal_provinces = 4067 }
+		add_to_temp_array = { coastal_provinces = 4118 }
+		add_to_temp_array = { coastal_provinces = 6870 }
+		add_to_temp_array = { coastal_provinces = 6873 }
+		add_to_temp_array = { coastal_provinces = 6994 }
+		add_to_temp_array = { coastal_provinces = 7169 }
+		add_to_temp_array = { coastal_provinces = 9859 }
+		add_to_temp_array = { coastal_provinces = 9865 }
+		add_to_temp_array = { coastal_provinces = 11847 }
+	}
+	else_if = { limit = { state = 534 }
+		add_to_temp_array = { coastal_provinces = 1117 }
+		add_to_temp_array = { coastal_provinces = 9952 }
+		add_to_temp_array = { coastal_provinces = 10128 }
+		add_to_temp_array = { coastal_provinces = 11930 }
+		add_to_temp_array = { coastal_provinces = 12007 }
+	}
+	else_if = { limit = { state = 535 }
+		add_to_temp_array = { coastal_provinces = 998 }
+		add_to_temp_array = { coastal_provinces = 7102 }
+		add_to_temp_array = { coastal_provinces = 10032 }
+	}
+	else_if = { limit = { state = 536 }
+		add_to_temp_array = { coastal_provinces = 1512 }
+		add_to_temp_array = { coastal_provinces = 1642 }
+		add_to_temp_array = { coastal_provinces = 3962 }
+		add_to_temp_array = { coastal_provinces = 4576 }
+		add_to_temp_array = { coastal_provinces = 4646 }
+		add_to_temp_array = { coastal_provinces = 7532 }
+		add_to_temp_array = { coastal_provinces = 10444 }
+		add_to_temp_array = { coastal_provinces = 10512 }
+		add_to_temp_array = { coastal_provinces = 12352 }
+		add_to_temp_array = { coastal_provinces = 12493 }
+	}
+	else_if = { limit = { state = 537 }
+		add_to_temp_array = { coastal_provinces = 1322 }
+		add_to_temp_array = { coastal_provinces = 1820 }
+		add_to_temp_array = { coastal_provinces = 12446 }
+	}
+	else_if = { limit = { state = 539 }
+		add_to_temp_array = { coastal_provinces = 5036 }
+		add_to_temp_array = { coastal_provinces = 5139 }
+		add_to_temp_array = { coastal_provinces = 6039 }
+		add_to_temp_array = { coastal_provinces = 8207 }
+		add_to_temp_array = { coastal_provinces = 12975 }
+	}
+	else_if = { limit = { state = 540 }
+		add_to_temp_array = { coastal_provinces = 2115 }
+		add_to_temp_array = { coastal_provinces = 5158 }
+		add_to_temp_array = { coastal_provinces = 8219 }
+		add_to_temp_array = { coastal_provinces = 8248 }
+		add_to_temp_array = { coastal_provinces = 12958 }
+		add_to_temp_array = { coastal_provinces = 12985 }
+	}
+	else_if = { limit = { state = 541 }
+		add_to_temp_array = { coastal_provinces = 2207 }
+		add_to_temp_array = { coastal_provinces = 2229 }
+		add_to_temp_array = { coastal_provinces = 5154 }
+		add_to_temp_array = { coastal_provinces = 10978 }
+		add_to_temp_array = { coastal_provinces = 12921 }
+	}
+	else_if = { limit = { state = 543 }
+		add_to_temp_array = { coastal_provinces = 2200 }
+		add_to_temp_array = { coastal_provinces = 5128 }
+		add_to_temp_array = { coastal_provinces = 5185 }
+		add_to_temp_array = { coastal_provinces = 5222 }
+		add_to_temp_array = { coastal_provinces = 8180 }
+		add_to_temp_array = { coastal_provinces = 8188 }
+		add_to_temp_array = { coastal_provinces = 8246 }
+		add_to_temp_array = { coastal_provinces = 10993 }
+		add_to_temp_array = { coastal_provinces = 11015 }
+		add_to_temp_array = { coastal_provinces = 12956 }
+	}
+	else_if = { limit = { state = 544 }
+		add_to_temp_array = { coastal_provinces = 2120 }
+		add_to_temp_array = { coastal_provinces = 2123 }
+		add_to_temp_array = { coastal_provinces = 2193 }
+		add_to_temp_array = { coastal_provinces = 2202 }
+		add_to_temp_array = { coastal_provinces = 5164 }
+		add_to_temp_array = { coastal_provinces = 5212 }
+		add_to_temp_array = { coastal_provinces = 8245 }
+		add_to_temp_array = { coastal_provinces = 12935 }
+		add_to_temp_array = { coastal_provinces = 12971 }
+	}
+	else_if = { limit = { state = 546 }
+		add_to_temp_array = { coastal_provinces = 2196 }
+		add_to_temp_array = { coastal_provinces = 8182 }
+		add_to_temp_array = { coastal_provinces = 8183 }
+		add_to_temp_array = { coastal_provinces = 12944 }
+	}
+	else_if = { limit = { state = 547 }
+		add_to_temp_array = { coastal_provinces = 5210 }
+		add_to_temp_array = { coastal_provinces = 10976 }
+	}
+	else_if = { limit = { state = 550 }
+		add_to_temp_array = { coastal_provinces = 5047 }
+		add_to_temp_array = { coastal_provinces = 5091 }
+		add_to_temp_array = { coastal_provinces = 8043 }
+		add_to_temp_array = { coastal_provinces = 12766 }
+	}
+	else_if = { limit = { state = 551 }
+		add_to_temp_array = { coastal_provinces = 1977 }
+		add_to_temp_array = { coastal_provinces = 2003 }
+		add_to_temp_array = { coastal_provinces = 12725 }
+	}
+	else_if = { limit = { state = 553 }
+		add_to_temp_array = { coastal_provinces = 792 }
+		add_to_temp_array = { coastal_provinces = 1108 }
+		add_to_temp_array = { coastal_provinces = 11919 }
+	}
+	else_if = { limit = { state = 555 }
+		add_to_temp_array = { coastal_provinces = 1399 }
+		add_to_temp_array = { coastal_provinces = 1515 }
+		add_to_temp_array = { coastal_provinces = 13037 }
+	}
+	else_if = { limit = { state = 556 }
+		add_to_temp_array = { coastal_provinces = 1909 }
+		add_to_temp_array = { coastal_provinces = 1951 }
+		add_to_temp_array = { coastal_provinces = 10762 }
+		add_to_temp_array = { coastal_provinces = 10803 }
+		add_to_temp_array = { coastal_provinces = 10919 }
+		add_to_temp_array = { coastal_provinces = 12858 }
+	}
+	else_if = { limit = { state = 557 }
+		add_to_temp_array = { coastal_provinces = 5034 }
+		add_to_temp_array = { coastal_provinces = 7992 }
+	}
+	else_if = { limit = { state = 558 }
+		add_to_temp_array = { coastal_provinces = 2050 }
+		add_to_temp_array = { coastal_provinces = 4952 }
+		add_to_temp_array = { coastal_provinces = 8034 }
+		add_to_temp_array = { coastal_provinces = 10831 }
+	}
+	else_if = { limit = { state = 559 }
+		add_to_temp_array = { coastal_provinces = 1966 }
+		add_to_temp_array = { coastal_provinces = 5065 }
+		add_to_temp_array = { coastal_provinces = 8164 }
+		add_to_temp_array = { coastal_provinces = 10818 }
+		add_to_temp_array = { coastal_provinces = 10891 }
+		add_to_temp_array = { coastal_provinces = 10928 }
+		add_to_temp_array = { coastal_provinces = 12840 }
+		add_to_temp_array = { coastal_provinces = 12941 }
+		add_to_temp_array = { coastal_provinces = 12991 }
+	}
+	else_if = { limit = { state = 560 }
+		add_to_temp_array = { coastal_provinces = 1772 }
+		add_to_temp_array = { coastal_provinces = 4841 }
+		add_to_temp_array = { coastal_provinces = 4844 }
+		add_to_temp_array = { coastal_provinces = 7868 }
+		add_to_temp_array = { coastal_provinces = 7871 }
+		add_to_temp_array = { coastal_provinces = 10577 }
+		add_to_temp_array = { coastal_provinces = 12559 }
+	}
+	else_if = { limit = { state = 562 }
+		add_to_temp_array = { coastal_provinces = 1865 }
+		add_to_temp_array = { coastal_provinces = 4810 }
+		add_to_temp_array = { coastal_provinces = 10540 }
+		add_to_temp_array = { coastal_provinces = 10598 }
+		add_to_temp_array = { coastal_provinces = 12518 }
+		add_to_temp_array = { coastal_provinces = 12551 }
+		add_to_temp_array = { coastal_provinces = 12683 }
+	}
+	else_if = { limit = { state = 579 }
+		add_to_temp_array = { coastal_provinces = 4669 }
+		add_to_temp_array = { coastal_provinces = 8461 }
+	}
+	else_if = { limit = { state = 581 }
+		add_to_temp_array = { coastal_provinces = 13076 }
+	}
+	else_if = { limit = { state = 591 }
+		add_to_temp_array = { coastal_provinces = 994 }
+		add_to_temp_array = { coastal_provinces = 1038 }
+		add_to_temp_array = { coastal_provinces = 1070 }
+		add_to_temp_array = { coastal_provinces = 11963 }
+		add_to_temp_array = { coastal_provinces = 11990 }
+	}
+	else_if = { limit = { state = 592 }
+		add_to_temp_array = { coastal_provinces = 1047 }
+		add_to_temp_array = { coastal_provinces = 11938 }
+	}
+	else_if = { limit = { state = 593 }
+		add_to_temp_array = { coastal_provinces = 4050 }
+		add_to_temp_array = { coastal_provinces = 7067 }
+		add_to_temp_array = { coastal_provinces = 7108 }
+		add_to_temp_array = { coastal_provinces = 9938 }
+		add_to_temp_array = { coastal_provinces = 9978 }
+	}
+	else_if = { limit = { state = 595 }
+		add_to_temp_array = { coastal_provinces = 4169 }
+		add_to_temp_array = { coastal_provinces = 4196 }
+		add_to_temp_array = { coastal_provinces = 7027 }
+		add_to_temp_array = { coastal_provinces = 10069 }
+	}
+	else_if = { limit = { state = 596 }
+		add_to_temp_array = { coastal_provinces = 4042 }
+		add_to_temp_array = { coastal_provinces = 7191 }
+	}
+	else_if = { limit = { state = 597 }
+		add_to_temp_array = { coastal_provinces = 1104 }
+		add_to_temp_array = { coastal_provinces = 1184 }
+		add_to_temp_array = { coastal_provinces = 1200 }
+		add_to_temp_array = { coastal_provinces = 4157 }
+		add_to_temp_array = { coastal_provinces = 4186 }
+		add_to_temp_array = { coastal_provinces = 7105 }
+		add_to_temp_array = { coastal_provinces = 9971 }
+		add_to_temp_array = { coastal_provinces = 10018 }
+		add_to_temp_array = { coastal_provinces = 12074 }
+	}
+	else_if = { limit = { state = 598 }
+		add_to_temp_array = { coastal_provinces = 4031 }
+		add_to_temp_array = { coastal_provinces = 9953 }
+		add_to_temp_array = { coastal_provinces = 12067 }
+	}
+	else_if = { limit = { state = 603 }
+		add_to_temp_array = { coastal_provinces = 1291 }
+		add_to_temp_array = { coastal_provinces = 4355 }
+		add_to_temp_array = { coastal_provinces = 7329 }
+		add_to_temp_array = { coastal_provinces = 7342 }
+		add_to_temp_array = { coastal_provinces = 12144 }
+		add_to_temp_array = { coastal_provinces = 12199 }
+	}
+	else_if = { limit = { state = 609 }
+		add_to_temp_array = { coastal_provinces = 1052 }
+		add_to_temp_array = { coastal_provinces = 3900 }
+		add_to_temp_array = { coastal_provinces = 12043 }
+	}
+	else_if = { limit = { state = 613 }
+		add_to_temp_array = { coastal_provinces = 7014 }
+		add_to_temp_array = { coastal_provinces = 11928 }
+		add_to_temp_array = { coastal_provinces = 12076 }
+	}
+	else_if = { limit = { state = 623 }
+		add_to_temp_array = { coastal_provinces = 1388 }
+		add_to_temp_array = { coastal_provinces = 1415 }
+		add_to_temp_array = { coastal_provinces = 4101 }
+		add_to_temp_array = { coastal_provinces = 4214 }
+		add_to_temp_array = { coastal_provinces = 4233 }
+		add_to_temp_array = { coastal_provinces = 4350 }
+		add_to_temp_array = { coastal_provinces = 4368 }
+		add_to_temp_array = { coastal_provinces = 7439 }
+		add_to_temp_array = { coastal_provinces = 10241 }
+		add_to_temp_array = { coastal_provinces = 10252 }
+		add_to_temp_array = { coastal_provinces = 10280 }
+		add_to_temp_array = { coastal_provinces = 12213 }
+		add_to_temp_array = { coastal_provinces = 12253 }
+	}
+	else_if = { limit = { state = 624 }
+		add_to_temp_array = { coastal_provinces = 1372 }
+		add_to_temp_array = { coastal_provinces = 4228 }
+		add_to_temp_array = { coastal_provinces = 4288 }
+		add_to_temp_array = { coastal_provinces = 4377 }
+		add_to_temp_array = { coastal_provinces = 7307 }
+		add_to_temp_array = { coastal_provinces = 10272 }
+		add_to_temp_array = { coastal_provinces = 10306 }
+		add_to_temp_array = { coastal_provinces = 12279 }
+	}
+	else_if = { limit = { state = 625 }
+		add_to_temp_array = { coastal_provinces = 1224 }
+		add_to_temp_array = { coastal_provinces = 1311 }
+		add_to_temp_array = { coastal_provinces = 1340 }
+		add_to_temp_array = { coastal_provinces = 4269 }
+		add_to_temp_array = { coastal_provinces = 4373 }
+	}
+	else_if = { limit = { state = 626 }
+		add_to_temp_array = { coastal_provinces = 4429 }
+		add_to_temp_array = { coastal_provinces = 7419 }
+		add_to_temp_array = { coastal_provinces = 10145 }
+	}
+	else_if = { limit = { state = 627 }
+		add_to_temp_array = { coastal_provinces = 1234 }
+		add_to_temp_array = { coastal_provinces = 1293 }
+		add_to_temp_array = { coastal_provinces = 1379 }
+		add_to_temp_array = { coastal_provinces = 1421 }
+		add_to_temp_array = { coastal_provinces = 4241 }
+		add_to_temp_array = { coastal_provinces = 4266 }
+		add_to_temp_array = { coastal_provinces = 4399 }
+		add_to_temp_array = { coastal_provinces = 4427 }
+		add_to_temp_array = { coastal_provinces = 7284 }
+		add_to_temp_array = { coastal_provinces = 7360 }
+		add_to_temp_array = { coastal_provinces = 7389 }
+		add_to_temp_array = { coastal_provinces = 7417 }
+		add_to_temp_array = { coastal_provinces = 10184 }
+		add_to_temp_array = { coastal_provinces = 10214 }
+		add_to_temp_array = { coastal_provinces = 10243 }
+		add_to_temp_array = { coastal_provinces = 10300 }
+		add_to_temp_array = { coastal_provinces = 10328 }
+		add_to_temp_array = { coastal_provinces = 12116 }
+		add_to_temp_array = { coastal_provinces = 12158 }
+		add_to_temp_array = { coastal_provinces = 12160 }
+		add_to_temp_array = { coastal_provinces = 12188 }
+	}
+	else_if = { limit = { state = 628 }
+		add_to_temp_array = { coastal_provinces = 1261 }
+		add_to_temp_array = { coastal_provinces = 1368 }
+		add_to_temp_array = { coastal_provinces = 7385 }
+		add_to_temp_array = { coastal_provinces = 7423 }
+		add_to_temp_array = { coastal_provinces = 10186 }
+		add_to_temp_array = { coastal_provinces = 10302 }
+		add_to_temp_array = { coastal_provinces = 12112 }
+		add_to_temp_array = { coastal_provinces = 12118 }
+		add_to_temp_array = { coastal_provinces = 12153 }
+	}
+	else_if = { limit = { state = 629 }
+		add_to_temp_array = { coastal_provinces = 4180 }
+		add_to_temp_array = { coastal_provinces = 7112 }
+		add_to_temp_array = { coastal_provinces = 7195 }
+		add_to_temp_array = { coastal_provinces = 10048 }
+		add_to_temp_array = { coastal_provinces = 12021 }
+	}
+	else_if = { limit = { state = 630 }
+		add_to_temp_array = { coastal_provinces = 13051 }
+	}
+	else_if = { limit = { state = 631 }
+		add_to_temp_array = { coastal_provinces = 13052 }
+	}
+	else_if = { limit = { state = 632 }
+		add_to_temp_array = { coastal_provinces = 13047 }
+	}
+	else_if = { limit = { state = 633 }
+		add_to_temp_array = { coastal_provinces = 1002 }
+		add_to_temp_array = { coastal_provinces = 13039 }
+		add_to_temp_array = { coastal_provinces = 13040 }
+		add_to_temp_array = { coastal_provinces = 13041 }
+		add_to_temp_array = { coastal_provinces = 13042 }
+		add_to_temp_array = { coastal_provinces = 13043 }
+		add_to_temp_array = { coastal_provinces = 13044 }
+		add_to_temp_array = { coastal_provinces = 13045 }
+		add_to_temp_array = { coastal_provinces = 13046 }
+	}
+	else_if = { limit = { state = 634 }
+		add_to_temp_array = { coastal_provinces = 1042 }
+		add_to_temp_array = { coastal_provinces = 1085 }
+		add_to_temp_array = { coastal_provinces = 1269 }
+		add_to_temp_array = { coastal_provinces = 1358 }
+		add_to_temp_array = { coastal_provinces = 1370 }
+		add_to_temp_array = { coastal_provinces = 4226 }
+		add_to_temp_array = { coastal_provinces = 4252 }
+		add_to_temp_array = { coastal_provinces = 4292 }
+		add_to_temp_array = { coastal_provinces = 4378 }
+		add_to_temp_array = { coastal_provinces = 7437 }
+		add_to_temp_array = { coastal_provinces = 10234 }
+		add_to_temp_array = { coastal_provinces = 10291 }
+		add_to_temp_array = { coastal_provinces = 10319 }
+		add_to_temp_array = { coastal_provinces = 12265 }
+	}
+	else_if = { limit = { state = 635 }
+		add_to_temp_array = { coastal_provinces = 1237 }
+		add_to_temp_array = { coastal_provinces = 1263 }
+		add_to_temp_array = { coastal_provinces = 4231 }
+		add_to_temp_array = { coastal_provinces = 4247 }
+		add_to_temp_array = { coastal_provinces = 4268 }
+		add_to_temp_array = { coastal_provinces = 7264 }
+		add_to_temp_array = { coastal_provinces = 10160 }
+		add_to_temp_array = { coastal_provinces = 12120 }
+		add_to_temp_array = { coastal_provinces = 12132 }
+	}
+	else_if = { limit = { state = 636 }
+		add_to_temp_array = { coastal_provinces = 4286 }
+		add_to_temp_array = { coastal_provinces = 7302 }
+		add_to_temp_array = { coastal_provinces = 12159 }
+	}
+	else_if = { limit = { state = 637 }
+		add_to_temp_array = { coastal_provinces = 1823 }
+		add_to_temp_array = { coastal_provinces = 1839 }
+		add_to_temp_array = { coastal_provinces = 1863 }
+		add_to_temp_array = { coastal_provinces = 4728 }
+		add_to_temp_array = { coastal_provinces = 7878 }
+		add_to_temp_array = { coastal_provinces = 12207 }
+		add_to_temp_array = { coastal_provinces = 12522 }
+	}
+	else_if = { limit = { state = 638 }
+		add_to_temp_array = { coastal_provinces = 12140 }
+	}
+	else_if = { limit = { state = 639 }
+		add_to_temp_array = { coastal_provinces = 4387 }
+		add_to_temp_array = { coastal_provinces = 7393 }
+		add_to_temp_array = { coastal_provinces = 13020 }
+		add_to_temp_array = { coastal_provinces = 13021 }
+		add_to_temp_array = { coastal_provinces = 13022 }
+	}
+	else_if = { limit = { state = 641 }
+		add_to_temp_array = { coastal_provinces = 10188 }
+		add_to_temp_array = { coastal_provinces = 12148 }
+	}
+	else_if = { limit = { state = 642 }
+		add_to_temp_array = { coastal_provinces = 13050 }
+	}
+	else_if = { limit = { state = 643 }
+		add_to_temp_array = { coastal_provinces = 13054 }
+		add_to_temp_array = { coastal_provinces = 13055 }
+		add_to_temp_array = { coastal_provinces = 13056 }
+		add_to_temp_array = { coastal_provinces = 13057 }
+	}
+	else_if = { limit = { state = 644 }
+		add_to_temp_array = { coastal_provinces = 4744 }
+		add_to_temp_array = { coastal_provinces = 13063 }
+		add_to_temp_array = { coastal_provinces = 13204 }
+	}
+	else_if = { limit = { state = 645 }
+		add_to_temp_array = { coastal_provinces = 13025 }
+	}
+	else_if = { limit = { state = 646 }
+		add_to_temp_array = { coastal_provinces = 3995 }
+		add_to_temp_array = { coastal_provinces = 13023 }
+		add_to_temp_array = { coastal_provinces = 13024 }
+	}
+	else_if = { limit = { state = 647 }
+		add_to_temp_array = { coastal_provinces = 4357 }
+		add_to_temp_array = { coastal_provinces = 12103 }
+	}
+	else_if = { limit = { state = 648 }
+		add_to_temp_array = { coastal_provinces = 13026 }
+	}
+	else_if = { limit = { state = 649 }
+		add_to_temp_array = { coastal_provinces = 5023 }
+	}
+	else_if = { limit = { state = 650 }
+		add_to_temp_array = { coastal_provinces = 13067 }
+	}
+	else_if = { limit = { state = 655 }
+		add_to_temp_array = { coastal_provinces = 855 }
+		add_to_temp_array = { coastal_provinces = 1742 }
+		add_to_temp_array = { coastal_provinces = 1755 }
+	}
+	else_if = { limit = { state = 656 }
+		add_to_temp_array = { coastal_provinces = 8085 }
+	}
+	else_if = { limit = { state = 658 }
+		add_to_temp_array = { coastal_provinces = 2048 }
+		add_to_temp_array = { coastal_provinces = 7960 }
+		add_to_temp_array = { coastal_provinces = 8108 }
+		add_to_temp_array = { coastal_provinces = 10904 }
+	}
+	else_if = { limit = { state = 659 }
+		add_to_temp_array = { coastal_provinces = 2029 }
+		add_to_temp_array = { coastal_provinces = 5074 }
+		add_to_temp_array = { coastal_provinces = 8000 }
+		add_to_temp_array = { coastal_provinces = 12821 }
+		add_to_temp_array = { coastal_provinces = 13079 }
+	}
+	else_if = { limit = { state = 665 }
+		add_to_temp_array = { coastal_provinces = 7005 }
+		add_to_temp_array = { coastal_provinces = 10026 }
+		add_to_temp_array = { coastal_provinces = 11957 }
+	}
+	else_if = { limit = { state = 666 }
+		add_to_temp_array = { coastal_provinces = 182 }
+		add_to_temp_array = { coastal_provinces = 3113 }
+		add_to_temp_array = { coastal_provinces = 6083 }
+		add_to_temp_array = { coastal_provinces = 6132 }
+		add_to_temp_array = { coastal_provinces = 9108 }
+		add_to_temp_array = { coastal_provinces = 9143 }
+		add_to_temp_array = { coastal_provinces = 11201 }
+	}
+	else_if = { limit = { state = 667 }
+		add_to_temp_array = { coastal_provinces = 1298 }
+		add_to_temp_array = { coastal_provinces = 1339 }
+		add_to_temp_array = { coastal_provinces = 1355 }
+		add_to_temp_array = { coastal_provinces = 4273 }
+		add_to_temp_array = { coastal_provinces = 4301 }
+		add_to_temp_array = { coastal_provinces = 4358 }
+		add_to_temp_array = { coastal_provinces = 7293 }
+		add_to_temp_array = { coastal_provinces = 7321 }
+		add_to_temp_array = { coastal_provinces = 10175 }
+		add_to_temp_array = { coastal_provinces = 10191 }
+		add_to_temp_array = { coastal_provinces = 10219 }
+		add_to_temp_array = { coastal_provinces = 12151 }
+		add_to_temp_array = { coastal_provinces = 12162 }
+		add_to_temp_array = { coastal_provinces = 12219 }
+		add_to_temp_array = { coastal_provinces = 12234 }
+	}
+	else_if = { limit = { state = 668 }
+		add_to_temp_array = { coastal_provinces = 1351 }
+		add_to_temp_array = { coastal_provinces = 1419 }
+		add_to_temp_array = { coastal_provinces = 1437 }
+		add_to_temp_array = { coastal_provinces = 1574 }
+		add_to_temp_array = { coastal_provinces = 7369 }
+		add_to_temp_array = { coastal_provinces = 7413 }
+		add_to_temp_array = { coastal_provinces = 7557 }
+		add_to_temp_array = { coastal_provinces = 10141 }
+		add_to_temp_array = { coastal_provinces = 10342 }
+		add_to_temp_array = { coastal_provinces = 10409 }
+	}
+	else_if = { limit = { state = 669 }
+		add_to_temp_array = { coastal_provinces = 1546 }
+		add_to_temp_array = { coastal_provinces = 1629 }
+		add_to_temp_array = { coastal_provinces = 4468 }
+		add_to_temp_array = { coastal_provinces = 4509 }
+		add_to_temp_array = { coastal_provinces = 4524 }
+		add_to_temp_array = { coastal_provinces = 4593 }
+		add_to_temp_array = { coastal_provinces = 7269 }
+		add_to_temp_array = { coastal_provinces = 7487 }
+		add_to_temp_array = { coastal_provinces = 7512 }
+		add_to_temp_array = { coastal_provinces = 7529 }
+		add_to_temp_array = { coastal_provinces = 7542 }
+		add_to_temp_array = { coastal_provinces = 7585 }
+		add_to_temp_array = { coastal_provinces = 7627 }
+		add_to_temp_array = { coastal_provinces = 10369 }
+		add_to_temp_array = { coastal_provinces = 10505 }
+		add_to_temp_array = { coastal_provinces = 12315 }
+		add_to_temp_array = { coastal_provinces = 12371 }
+		add_to_temp_array = { coastal_provinces = 12386 }
+		add_to_temp_array = { coastal_provinces = 12457 }
+	}
+	else_if = { limit = { state = 671 }
+		add_to_temp_array = { coastal_provinces = 1157 }
+		add_to_temp_array = { coastal_provinces = 4119 }
+		add_to_temp_array = { coastal_provinces = 7093 }
+	}
+	else_if = { limit = { state = 672 }
+		add_to_temp_array = { coastal_provinces = 1246 }
+		add_to_temp_array = { coastal_provinces = 1277 }
+		add_to_temp_array = { coastal_provinces = 1332 }
+		add_to_temp_array = { coastal_provinces = 1342 }
+		add_to_temp_array = { coastal_provinces = 1345 }
+		add_to_temp_array = { coastal_provinces = 1401 }
+		add_to_temp_array = { coastal_provinces = 1428 }
+		add_to_temp_array = { coastal_provinces = 4211 }
+		add_to_temp_array = { coastal_provinces = 4320 }
+		add_to_temp_array = { coastal_provinces = 4361 }
+		add_to_temp_array = { coastal_provinces = 4364 }
+		add_to_temp_array = { coastal_provinces = 7308 }
+		add_to_temp_array = { coastal_provinces = 7368 }
+		add_to_temp_array = { coastal_provinces = 7384 }
+		add_to_temp_array = { coastal_provinces = 7396 }
+		add_to_temp_array = { coastal_provinces = 7440 }
+		add_to_temp_array = { coastal_provinces = 10194 }
+		add_to_temp_array = { coastal_provinces = 10225 }
+		add_to_temp_array = { coastal_provinces = 10354 }
+		add_to_temp_array = { coastal_provinces = 10382 }
+		add_to_temp_array = { coastal_provinces = 12126 }
+		add_to_temp_array = { coastal_provinces = 12138 }
+		add_to_temp_array = { coastal_provinces = 12165 }
+		add_to_temp_array = { coastal_provinces = 12168 }
+		add_to_temp_array = { coastal_provinces = 12184 }
+		add_to_temp_array = { coastal_provinces = 12209 }
+		add_to_temp_array = { coastal_provinces = 12268 }
+	}
+	else_if = { limit = { state = 673 }
+		add_to_temp_array = { coastal_provinces = 1098 }
+		add_to_temp_array = { coastal_provinces = 1289 }
+		add_to_temp_array = { coastal_provinces = 1484 }
+		add_to_temp_array = { coastal_provinces = 1505 }
+		add_to_temp_array = { coastal_provinces = 1518 }
+		add_to_temp_array = { coastal_provinces = 1589 }
+		add_to_temp_array = { coastal_provinces = 4262 }
+		add_to_temp_array = { coastal_provinces = 4307 }
+		add_to_temp_array = { coastal_provinces = 4308 }
+		add_to_temp_array = { coastal_provinces = 4349 }
+		add_to_temp_array = { coastal_provinces = 4493 }
+		add_to_temp_array = { coastal_provinces = 4537 }
+		add_to_temp_array = { coastal_provinces = 4564 }
+		add_to_temp_array = { coastal_provinces = 7311 }
+		add_to_temp_array = { coastal_provinces = 7336 }
+		add_to_temp_array = { coastal_provinces = 7598 }
+		add_to_temp_array = { coastal_provinces = 10153 }
+		add_to_temp_array = { coastal_provinces = 10169 }
+		add_to_temp_array = { coastal_provinces = 10197 }
+		add_to_temp_array = { coastal_provinces = 10222 }
+		add_to_temp_array = { coastal_provinces = 10263 }
+		add_to_temp_array = { coastal_provinces = 10450 }
+		add_to_temp_array = { coastal_provinces = 10464 }
+		add_to_temp_array = { coastal_provinces = 12330 }
+		add_to_temp_array = { coastal_provinces = 12358 }
+		add_to_temp_array = { coastal_provinces = 12444 }
+	}
+	else_if = { limit = { state = 677 }
+		add_to_temp_array = { coastal_provinces = 1088 }
+		add_to_temp_array = { coastal_provinces = 10087 }
+	}
+	else_if = { limit = { state = 678 }
+		add_to_temp_array = { coastal_provinces = 4932 }
+	}
+	else_if = { limit = { state = 679 }
+		add_to_temp_array = { coastal_provinces = 1033 }
+		add_to_temp_array = { coastal_provinces = 1923 }
+		add_to_temp_array = { coastal_provinces = 2033 }
+		add_to_temp_array = { coastal_provinces = 2095 }
+		add_to_temp_array = { coastal_provinces = 8073 }
+		add_to_temp_array = { coastal_provinces = 8092 }
+		add_to_temp_array = { coastal_provinces = 12101 }
+		add_to_temp_array = { coastal_provinces = 12883 }
+	}
+	else_if = { limit = { state = 681 }
+		add_to_temp_array = { coastal_provinces = 4528 }
+		add_to_temp_array = { coastal_provinces = 10415 }
+		add_to_temp_array = { coastal_provinces = 12547 }
+		add_to_temp_array = { coastal_provinces = 12589 }
+	}
+	else_if = { limit = { state = 682 }
+		add_to_temp_array = { coastal_provinces = 761 }
+		add_to_temp_array = { coastal_provinces = 4753 }
+		add_to_temp_array = { coastal_provinces = 9740 }
+		add_to_temp_array = { coastal_provinces = 10621 }
+	}
+	else_if = { limit = { state = 684 }
+		add_to_temp_array = { coastal_provinces = 2489 }
+		add_to_temp_array = { coastal_provinces = 13027 }
+		add_to_temp_array = { coastal_provinces = 13028 }
+		add_to_temp_array = { coastal_provinces = 13029 }
+		add_to_temp_array = { coastal_provinces = 13030 }
+		add_to_temp_array = { coastal_provinces = 13031 }
+		add_to_temp_array = { coastal_provinces = 13032 }
+		add_to_temp_array = { coastal_provinces = 13033 }
+		add_to_temp_array = { coastal_provinces = 13034 }
+		add_to_temp_array = { coastal_provinces = 13035 }
+		add_to_temp_array = { coastal_provinces = 13036 }
+	}
+	else_if = { limit = { state = 685 }
+		add_to_temp_array = { coastal_provinces = 7617 }
+	}
+	else_if = { limit = { state = 686 }
+		add_to_temp_array = { coastal_provinces = 1440 }
+		add_to_temp_array = { coastal_provinces = 4155 }
+	}
+	else_if = { limit = { state = 687 }
+		add_to_temp_array = { coastal_provinces = 4982 }
+	}
+	else_if = { limit = { state = 689 }
+		add_to_temp_array = { coastal_provinces = 12304 }
+		add_to_temp_array = { coastal_provinces = 12477 }
+	}
+	else_if = { limit = { state = 690 }
+		add_to_temp_array = { coastal_provinces = 4647 }
+		add_to_temp_array = { coastal_provinces = 7245 }
+		add_to_temp_array = { coastal_provinces = 10254 }
+	}
+	else_if = { limit = { state = 691 }
+		add_to_temp_array = { coastal_provinces = 3284 }
+		add_to_temp_array = { coastal_provinces = 13012 }
+	}
+	else_if = { limit = { state = 692 }
+		add_to_temp_array = { coastal_provinces = 379 }
+		add_to_temp_array = { coastal_provinces = 11106 }
+		add_to_temp_array = { coastal_provinces = 11350 }
+		add_to_temp_array = { coastal_provinces = 13009 }
+	}
+	else_if = { limit = { state = 693 }
+		add_to_temp_array = { coastal_provinces = 1513 }
+		add_to_temp_array = { coastal_provinces = 10440 }
+	}
+	else_if = { limit = { state = 694 }
+		add_to_temp_array = { coastal_provinces = 177 }
+		add_to_temp_array = { coastal_provinces = 9377 }
+		add_to_temp_array = { coastal_provinces = 13084 }
+	}
+	else_if = { limit = { state = 695 }
+		add_to_temp_array = { coastal_provinces = 153 }
+	}
+	else_if = { limit = { state = 696 }
+		add_to_temp_array = { coastal_provinces = 13010 }
+	}
+	else_if = { limit = { state = 697 }
+		add_to_temp_array = { coastal_provinces = 3118 }
+	}
+	else_if = { limit = { state = 698 }
+		add_to_temp_array = { coastal_provinces = 1751 }
+	}
+	else_if = { limit = { state = 699 }
+		add_to_temp_array = { coastal_provinces = 5012 }
+		add_to_temp_array = { coastal_provinces = 8038 }
+		add_to_temp_array = { coastal_provinces = 8111 }
+		add_to_temp_array = { coastal_provinces = 10875 }
+		add_to_temp_array = { coastal_provinces = 12857 }
+	}
+	else_if = { limit = { state = 700 }
+		add_to_temp_array = { coastal_provinces = 2038 }
+		add_to_temp_array = { coastal_provinces = 2094 }
+	}
+	else_if = { limit = { state = 701 }
+		add_to_temp_array = { coastal_provinces = 4989 }
+	}
+	else_if = { limit = { state = 702 }
+		add_to_temp_array = { coastal_provinces = 13014 }
+	}
+	else_if = { limit = { state = 703 }
+		add_to_temp_array = { coastal_provinces = 13013 }
+	}
+	else_if = { limit = { state = 704 }
+		add_to_temp_array = { coastal_provinces = 13016 }
+	}
+	else_if = { limit = { state = 705 }
+		add_to_temp_array = { coastal_provinces = 13015 }
+	}
+	else_if = { limit = { state = 706 }
+		add_to_temp_array = { coastal_provinces = 13017 }
+	}
+	else_if = { limit = { state = 707 }
+		add_to_temp_array = { coastal_provinces = 13018 }
+	}
+	else_if = { limit = { state = 708 }
+		add_to_temp_array = { coastal_provinces = 13072 }
+	}
+	else_if = { limit = { state = 709 }
+		add_to_temp_array = { coastal_provinces = 2188 }
+	}
+	else_if = { limit = { state = 710 }
+		add_to_temp_array = { coastal_provinces = 13019 }
+	}
+	else_if = { limit = { state = 711 }
+		add_to_temp_array = { coastal_provinces = 13005 }
+	}
+	else_if = { limit = { state = 712 }
+		add_to_temp_array = { coastal_provinces = 13002 }
+	}
+	else_if = { limit = { state = 713 }
+		add_to_temp_array = { coastal_provinces = 2165 }
+	}
+	else_if = { limit = { state = 716 }
+		add_to_temp_array = { coastal_provinces = 964 }
+		add_to_temp_array = { coastal_provinces = 6837 }
+		add_to_temp_array = { coastal_provinces = 9835 }
+		add_to_temp_array = { coastal_provinces = 11764 }
+		add_to_temp_array = { coastal_provinces = 11886 }
+	}
+	else_if = { limit = { state = 719 }
+		add_to_temp_array = { coastal_provinces = 1468 }
+		add_to_temp_array = { coastal_provinces = 1833 }
+		add_to_temp_array = { coastal_provinces = 4696 }
+		add_to_temp_array = { coastal_provinces = 7576 }
+		add_to_temp_array = { coastal_provinces = 8178 }
+	}
+	else_if = { limit = { state = 720 }
+		add_to_temp_array = { coastal_provinces = 10995 }
+	}
+	else_if = { limit = { state = 721 }
+		add_to_temp_array = { coastal_provinces = 1326 }
+		add_to_temp_array = { coastal_provinces = 12178 }
+		add_to_temp_array = { coastal_provinces = 12190 }
+		add_to_temp_array = { coastal_provinces = 12206 }
+		add_to_temp_array = { coastal_provinces = 13001 }
+	}
+	else_if = { limit = { state = 723 }
+		add_to_temp_array = { coastal_provinces = 2197 }
+		add_to_temp_array = { coastal_provinces = 2203 }
+		add_to_temp_array = { coastal_provinces = 2211 }
+		add_to_temp_array = { coastal_provinces = 4819 }
+		add_to_temp_array = { coastal_provinces = 5195 }
+		add_to_temp_array = { coastal_provinces = 7839 }
+		add_to_temp_array = { coastal_provinces = 8204 }
+		add_to_temp_array = { coastal_provinces = 8212 }
+		add_to_temp_array = { coastal_provinces = 8241 }
+		add_to_temp_array = { coastal_provinces = 10650 }
+		add_to_temp_array = { coastal_provinces = 12632 }
+		add_to_temp_array = { coastal_provinces = 12966 }
+		add_to_temp_array = { coastal_provinces = 12974 }
+		add_to_temp_array = { coastal_provinces = 12980 }
+		add_to_temp_array = { coastal_provinces = 12988 }
+	}
+	else_if = { limit = { state = 724 }
+		add_to_temp_array = { coastal_provinces = 1279 }
+		add_to_temp_array = { coastal_provinces = 1281 }
+		add_to_temp_array = { coastal_provinces = 1308 }
+		add_to_temp_array = { coastal_provinces = 1337 }
+		add_to_temp_array = { coastal_provinces = 1366 }
+		add_to_temp_array = { coastal_provinces = 4312 }
+		add_to_temp_array = { coastal_provinces = 4371 }
+		add_to_temp_array = { coastal_provinces = 4388 }
+		add_to_temp_array = { coastal_provinces = 7236 }
+		add_to_temp_array = { coastal_provinces = 10156 }
+		add_to_temp_array = { coastal_provinces = 10158 }
+		add_to_temp_array = { coastal_provinces = 12122 }
+		add_to_temp_array = { coastal_provinces = 12131 }
+		add_to_temp_array = { coastal_provinces = 12201 }
+		add_to_temp_array = { coastal_provinces = 12220 }
+		add_to_temp_array = { coastal_provinces = 12230 }
+		add_to_temp_array = { coastal_provinces = 12286 }
+	}
+	else_if = { limit = { state = 725 }
+		add_to_temp_array = { coastal_provinces = 13038 }
+	}
+	else_if = { limit = { state = 726 }
+		add_to_temp_array = { coastal_provinces = 7290 }
+		add_to_temp_array = { coastal_provinces = 13080 }
+	}
+	else_if = { limit = { state = 727 }
+		add_to_temp_array = { coastal_provinces = 13048 }
+		add_to_temp_array = { coastal_provinces = 13049 }
+		add_to_temp_array = { coastal_provinces = 13053 }
+	}
+	else_if = { limit = { state = 728 }
+		add_to_temp_array = { coastal_provinces = 11981 }
+	}
+	else_if = { limit = { state = 729 }
+		add_to_temp_array = { coastal_provinces = 4189 }
+	}
+	else_if = { limit = { state = 730 }
+		add_to_temp_array = { coastal_provinces = 373 }
+	}
+	else_if = { limit = { state = 731 }
+		add_to_temp_array = { coastal_provinces = 895 }
+		add_to_temp_array = { coastal_provinces = 3936 }
+		add_to_temp_array = { coastal_provinces = 10163 }
+		add_to_temp_array = { coastal_provinces = 11818 }
+	}
+	else_if = { limit = { state = 733 }
+		add_to_temp_array = { coastal_provinces = 10321 }
+		add_to_temp_array = { coastal_provinces = 12251 }
+	}
+	else_if = { limit = { state = 734 }
+		add_to_temp_array = { coastal_provinces = 7390 }
+	}
+	else_if = { limit = { state = 735 }
+		add_to_temp_array = { coastal_provinces = 9909 }
+	}
+	else_if = { limit = { state = 736 }
+		add_to_temp_array = { coastal_provinces = 628 }
+		add_to_temp_array = { coastal_provinces = 6626 }
+		add_to_temp_array = { coastal_provinces = 11735 }
+	}
+	else_if = { limit = { state = 737 }
+		add_to_temp_array = { coastal_provinces = 1286 }
+		add_to_temp_array = { coastal_provinces = 1301 }
+		add_to_temp_array = { coastal_provinces = 1329 }
+		add_to_temp_array = { coastal_provinces = 1361 }
+		add_to_temp_array = { coastal_provinces = 4304 }
+		add_to_temp_array = { coastal_provinces = 4332 }
+		add_to_temp_array = { coastal_provinces = 4352 }
+		add_to_temp_array = { coastal_provinces = 4421 }
+		add_to_temp_array = { coastal_provinces = 7251 }
+		add_to_temp_array = { coastal_provinces = 7324 }
+		add_to_temp_array = { coastal_provinces = 7339 }
+		add_to_temp_array = { coastal_provinces = 7352 }
+		add_to_temp_array = { coastal_provinces = 7412 }
+		add_to_temp_array = { coastal_provinces = 10166 }
+		add_to_temp_array = { coastal_provinces = 10206 }
+		add_to_temp_array = { coastal_provinces = 12222 }
+	}
+	else_if = { limit = { state = 738 }
+		add_to_temp_array = { coastal_provinces = 4579 }
+	}
+	else_if = { limit = { state = 739 }
+		add_to_temp_array = { coastal_provinces = 1869 }
+	}
+	else_if = { limit = { state = 740 }
+		add_to_temp_array = { coastal_provinces = 1214 }
+		add_to_temp_array = { coastal_provinces = 1420 }
+		add_to_temp_array = { coastal_provinces = 7259 }
+		add_to_temp_array = { coastal_provinces = 12259 }
+		add_to_temp_array = { coastal_provinces = 12272 }
+	}
+	else_if = { limit = { state = 741 }
+		add_to_temp_array = { coastal_provinces = 1353 }
+		add_to_temp_array = { coastal_provinces = 4359 }
+		add_to_temp_array = { coastal_provinces = 7404 }
+		add_to_temp_array = { coastal_provinces = 7432 }
+		add_to_temp_array = { coastal_provinces = 10317 }
+	}
+	else_if = { limit = { state = 743 }
+		add_to_temp_array = { coastal_provinces = 10000 }
+	}
+	else_if = { limit = { state = 744 }
+		add_to_temp_array = { coastal_provinces = 1315 }
+		add_to_temp_array = { coastal_provinces = 1385 }
+		add_to_temp_array = { coastal_provinces = 1403 }
+		add_to_temp_array = { coastal_provinces = 4275 }
+		add_to_temp_array = { coastal_provinces = 7295 }
+		add_to_temp_array = { coastal_provinces = 10217 }
+		add_to_temp_array = { coastal_provinces = 12125 }
+		add_to_temp_array = { coastal_provinces = 12292 }
+	}
+	else_if = { limit = { state = 745 }
+		add_to_temp_array = { coastal_provinces = 1150 }
+	}
+	else_if = { limit = { state = 750 }
+		add_to_temp_array = { coastal_provinces = 1185 }
+		add_to_temp_array = { coastal_provinces = 1302 }
+		add_to_temp_array = { coastal_provinces = 4379 }
+		add_to_temp_array = { coastal_provinces = 4397 }
+		add_to_temp_array = { coastal_provinces = 7280 }
+		add_to_temp_array = { coastal_provinces = 10016 }
+		add_to_temp_array = { coastal_provinces = 11936 }
+		add_to_temp_array = { coastal_provinces = 12297 }
+	}
+	else_if = { limit = { state = 751 }
+		add_to_temp_array = { coastal_provinces = 1148 }
+		add_to_temp_array = { coastal_provinces = 7021 }
+		add_to_temp_array = { coastal_provinces = 11958 }
+		add_to_temp_array = { coastal_provinces = 12011 }
+	}
+	else_if = { limit = { state = 763 }
+		add_to_temp_array = { coastal_provinces = 7071 }
+		add_to_temp_array = { coastal_provinces = 11986 }
+	}
+	else_if = { limit = { state = 764 }
+		add_to_temp_array = { coastal_provinces = 10010 }
+		add_to_temp_array = { coastal_provinces = 10093 }
+	}
+	else_if = { limit = { state = 776 }
+		add_to_temp_array = { coastal_provinces = 4160 }
+		add_to_temp_array = { coastal_provinces = 7039 }
+		add_to_temp_array = { coastal_provinces = 7135 }
+		add_to_temp_array = { coastal_provinces = 9963 }
+	}
+	else_if = { limit = { state = 777 }
+		add_to_temp_array = { coastal_provinces = 1018 }
+		add_to_temp_array = { coastal_provinces = 4023 }
+		add_to_temp_array = { coastal_provinces = 10004 }
+	}
+	else_if = { limit = { state = 786 }
+		add_to_temp_array = { coastal_provinces = 391 }
+	}
+	else_if = { limit = { state = 788 }
+		add_to_temp_array = { coastal_provinces = 4089 }
+		add_to_temp_array = { coastal_provinces = 12093 }
+	}
+	else_if = { limit = { state = 794 }
+		add_to_temp_array = { coastal_provinces = 4137 }
+		add_to_temp_array = { coastal_provinces = 10068 }
+		add_to_temp_array = { coastal_provinces = 11944 }
+	}
+	else_if = { limit = { state = 811 }
+		add_to_temp_array = { coastal_provinces = 3783 }
+		add_to_temp_array = { coastal_provinces = 6851 }
+		add_to_temp_array = { coastal_provinces = 6918 }
+		add_to_temp_array = { coastal_provinces = 6981 }
+		add_to_temp_array = { coastal_provinces = 9854 }
+	}
+	else_if = { limit = { state = 815 }
+		add_to_temp_array = { coastal_provinces = 848 }
+		add_to_temp_array = { coastal_provinces = 898 }
+		add_to_temp_array = { coastal_provinces = 959 }
+		add_to_temp_array = { coastal_provinces = 3852 }
+		add_to_temp_array = { coastal_provinces = 3981 }
+		add_to_temp_array = { coastal_provinces = 6822 }
+		add_to_temp_array = { coastal_provinces = 6922 }
+		add_to_temp_array = { coastal_provinces = 6928 }
+		add_to_temp_array = { coastal_provinces = 6944 }
+	}
+	else_if = { limit = { state = 816 }
+		add_to_temp_array = { coastal_provinces = 1003 }
+		add_to_temp_array = { coastal_provinces = 4107 }
+		add_to_temp_array = { coastal_provinces = 7155 }
+		add_to_temp_array = { coastal_provinces = 12040 }
+	}
+	else_if = { limit = { state = 818 }
+		add_to_temp_array = { coastal_provinces = 11211 }
+	}
+	else_if = { limit = { state = 819 }
+		add_to_temp_array = { coastal_provinces = 1177 }
+		add_to_temp_array = { coastal_provinces = 4126 }
+		add_to_temp_array = { coastal_provinces = 7175 }
+		add_to_temp_array = { coastal_provinces = 7204 }
+		add_to_temp_array = { coastal_provinces = 10110 }
+		add_to_temp_array = { coastal_provinces = 11948 }
+		add_to_temp_array = { coastal_provinces = 11992 }
+		add_to_temp_array = { coastal_provinces = 12085 }
+	}
+	else_if = { limit = { state = 820 }
+		add_to_temp_array = { coastal_provinces = 1054 }
+		add_to_temp_array = { coastal_provinces = 4056 }
+		add_to_temp_array = { coastal_provinces = 7121 }
+		add_to_temp_array = { coastal_provinces = 11912 }
+		add_to_temp_array = { coastal_provinces = 12060 }
+	}
+	else_if = { limit = { state = 821 }
+		add_to_temp_array = { coastal_provinces = 12029 }
+	}
+	else_if = { limit = { state = 823 }
+		add_to_temp_array = { coastal_provinces = 1029 }
+	}
+	else_if = { limit = { state = 825 }
+		add_to_temp_array = { coastal_provinces = 1089 }
+		add_to_temp_array = { coastal_provinces = 4091 }
+		add_to_temp_array = { coastal_provinces = 10076 }
+		add_to_temp_array = { coastal_provinces = 12052 }
+	}
+	else_if = { limit = { state = 826 }
+		add_to_temp_array = { coastal_provinces = 1096 }
+		add_to_temp_array = { coastal_provinces = 1168 }
+		add_to_temp_array = { coastal_provinces = 7058 }
+		add_to_temp_array = { coastal_provinces = 9974 }
+		add_to_temp_array = { coastal_provinces = 10058 }
+		add_to_temp_array = { coastal_provinces = 11991 }
+	}
+	else_if = { limit = { state = 827 }
+		add_to_temp_array = { coastal_provinces = 1055 }
+		add_to_temp_array = { coastal_provinces = 4013 }
+		add_to_temp_array = { coastal_provinces = 4099 }
+	}
+	else_if = { limit = { state = 832 }
+		add_to_temp_array = { coastal_provinces = 2089 }
+	}
+	else_if = { limit = { state = 834 }
+		add_to_temp_array = { coastal_provinces = 8051 }
+		add_to_temp_array = { coastal_provinces = 13212 }
+	}
+	else_if = { limit = { state = 836 }
+		add_to_temp_array = { coastal_provinces = 13252 }
+	}
+	else_if = { limit = { state = 839 }
+		add_to_temp_array = { coastal_provinces = 3380 }
+		add_to_temp_array = { coastal_provinces = 6402 }
+	}
+	else_if = { limit = { state = 846 }
+		add_to_temp_array = { coastal_provinces = 9904 }
+	}
+	else_if = { limit = { state = 847 }
+		add_to_temp_array = { coastal_provinces = 3957 }
+	}
+	else_if = { limit = { state = 848 }
+		add_to_temp_array = { coastal_provinces = 1182 }
+		add_to_temp_array = { coastal_provinces = 4184 }
+		add_to_temp_array = { coastal_provinces = 4188 }
+		add_to_temp_array = { coastal_provinces = 9998 }
+	}
+	else_if = { limit = { state = 850 }
+		add_to_temp_array = { coastal_provinces = 13267 }
+	}
+	else_if = { limit = { state = 852 }
+		add_to_temp_array = { coastal_provinces = 6125 }
+		add_to_temp_array = { coastal_provinces = 6165 }
+		add_to_temp_array = { coastal_provinces = 9147 }
+	}
+	else_if = { limit = { state = 853 }
+		add_to_temp_array = { coastal_provinces = 1155 }
+		add_to_temp_array = { coastal_provinces = 4073 }
+		add_to_temp_array = { coastal_provinces = 9947 }
+		add_to_temp_array = { coastal_provinces = 12049 }
+	}
+	else_if = { limit = { state = 857 }
+		add_to_temp_array = { coastal_provinces = 3772 }
+		add_to_temp_array = { coastal_provinces = 6788 }
+		add_to_temp_array = { coastal_provinces = 6973 }
+		add_to_temp_array = { coastal_provinces = 11891 }
+	}
+	else_if = { limit = { state = 858 }
+		add_to_temp_array = { coastal_provinces = 883 }
+		add_to_temp_array = { coastal_provinces = 3966 }
+		add_to_temp_array = { coastal_provinces = 6843 }
+		add_to_temp_array = { coastal_provinces = 6939 }
+		add_to_temp_array = { coastal_provinces = 6979 }
+		add_to_temp_array = { coastal_provinces = 6980 }
+		add_to_temp_array = { coastal_provinces = 9784 }
+		add_to_temp_array = { coastal_provinces = 11837 }
+		add_to_temp_array = { coastal_provinces = 11998 }
+	}
+	else_if = { limit = { state = 859 }
+		add_to_temp_array = { coastal_provinces = 4205 }
+	}
+	else_if = { limit = { state = 864 }
+		add_to_temp_array = { coastal_provinces = 5069 }
+	}
+	else_if = { limit = { state = 866 }
+		add_to_temp_array = { coastal_provinces = 6115 }
+	}
+	else_if = { limit = { state = 868 }
+		add_to_temp_array = { coastal_provinces = 9833 }
+		add_to_temp_array = { coastal_provinces = 11829 }
+	}
+	else_if = { limit = { state = 870 }
+		add_to_temp_array = { coastal_provinces = 1376 }
+		add_to_temp_array = { coastal_provinces = 4367 }
+		add_to_temp_array = { coastal_provinces = 4412 }
+		add_to_temp_array = { coastal_provinces = 4424 }
+		add_to_temp_array = { coastal_provinces = 7399 }
+		add_to_temp_array = { coastal_provinces = 7427 }
+		add_to_temp_array = { coastal_provinces = 10297 }
+		add_to_temp_array = { coastal_provinces = 10313 }
+		add_to_temp_array = { coastal_provinces = 12215 }
+		add_to_temp_array = { coastal_provinces = 12271 }
+	}
+	else_if = { limit = { state = 873 }
+		add_to_temp_array = { coastal_provinces = 9140 }
+	}
+	else_if = { limit = { state = 874 }
+		add_to_temp_array = { coastal_provinces = 4109 }
+	}
+	else_if = { limit = { state = 875 }
+		add_to_temp_array = { coastal_provinces = 6287 }
+	}
+	else_if = { limit = { state = 881 }
+		add_to_temp_array = { coastal_provinces = 4199 }
+		add_to_temp_array = { coastal_provinces = 7215 }
+		add_to_temp_array = { coastal_provinces = 10113 }
+		add_to_temp_array = { coastal_provinces = 12087 }
+	}
+	else_if = { limit = { state = 883 }
+		add_to_temp_array = { coastal_provinces = 6749 }
+		add_to_temp_array = { coastal_provinces = 9719 }
+		add_to_temp_array = { coastal_provinces = 11707 }
+	}
+	else_if = { limit = { state = 885 }
+		add_to_temp_array = { coastal_provinces = 2228 }
+		add_to_temp_array = { coastal_provinces = 5220 }
+		add_to_temp_array = { coastal_provinces = 10874 }
+		add_to_temp_array = { coastal_provinces = 12853 }
+		add_to_temp_array = { coastal_provinces = 12933 }
+		add_to_temp_array = { coastal_provinces = 12999 }
+	}
+	else_if = { limit = { state = 886 }
+		add_to_temp_array = { coastal_provinces = 11420 }
+	}
+	else_if = { limit = { state = 888 }
+		add_to_temp_array = { coastal_provinces = 6909 }
+		add_to_temp_array = { coastal_provinces = 9832 }
+		add_to_temp_array = { coastal_provinces = 9847 }
+		add_to_temp_array = { coastal_provinces = 11830 }
+	}
+	else_if = { limit = { state = 889 }
+		add_to_temp_array = { coastal_provinces = 905 }
+		add_to_temp_array = { coastal_provinces = 3906 }
+		add_to_temp_array = { coastal_provinces = 6732 }
+	}
+	else_if = { limit = { state = 891 }
+		add_to_temp_array = { coastal_provinces = 3712 }
+	}
+	else_if = { limit = { state = 894 }
+		add_to_temp_array = { coastal_provinces = 6282 }
+		add_to_temp_array = { coastal_provinces = 6334 }
+		add_to_temp_array = { coastal_provinces = 9334 }
+	}
+	else_if = { limit = { state = 900 }
+		add_to_temp_array = { coastal_provinces = 3924 }
+		add_to_temp_array = { coastal_provinces = 11901 }
+	}
+	else_if = { limit = { state = 911 }
+		add_to_temp_array = { coastal_provinces = 1285 }
+		add_to_temp_array = { coastal_provinces = 10162 }
+		add_to_temp_array = { coastal_provinces = 10232 }
+		add_to_temp_array = { coastal_provinces = 12204 }
+		add_to_temp_array = { coastal_provinces = 12232 }
+	}
+	else_if = { limit = { state = 912 }
+		add_to_temp_array = { coastal_provinces = 1300 }
+		add_to_temp_array = { coastal_provinces = 4255 }
+		add_to_temp_array = { coastal_provinces = 4334 }
+		add_to_temp_array = { coastal_provinces = 4405 }
+		add_to_temp_array = { coastal_provinces = 10137 }
+		add_to_temp_array = { coastal_provinces = 10309 }
+	}
+	else_if = { limit = { state = 915 }
+		add_to_temp_array = { coastal_provinces = 3868 }
+		add_to_temp_array = { coastal_provinces = 6889 }
+		add_to_temp_array = { coastal_provinces = 11816 }
+	}
+	else_if = { limit = { state = 916 }
+		add_to_temp_array = { coastal_provinces = 11564 }
+	}
+	else_if = { limit = { state = 919 }
+		add_to_temp_array = { coastal_provinces = 1014 }
+		add_to_temp_array = { coastal_provinces = 1142 }
+		add_to_temp_array = { coastal_provinces = 3651 }
+		add_to_temp_array = { coastal_provinces = 10182 }
+		add_to_temp_array = { coastal_provinces = 12090 }
+	}
+	else_if = { limit = { state = 922 }
+		add_to_temp_array = { coastal_provinces = 1427 }
+	}
+	else_if = { limit = { state = 925 }
+		add_to_temp_array = { coastal_provinces = 1306 }
+		add_to_temp_array = { coastal_provinces = 4282 }
+		add_to_temp_array = { coastal_provinces = 10143 }
+		add_to_temp_array = { coastal_provinces = 10199 }
+		add_to_temp_array = { coastal_provinces = 10212 }
+		add_to_temp_array = { coastal_provinces = 10240 }
+		add_to_temp_array = { coastal_provinces = 12171 }
+		add_to_temp_array = { coastal_provinces = 12228 }
+	}
+	else_if = { limit = { state = 926 }
+		add_to_temp_array = { coastal_provinces = 7387 }
+	}
+	else_if = { limit = { state = 927 }
+		add_to_temp_array = { coastal_provinces = 1460 }
+		add_to_temp_array = { coastal_provinces = 1648 }
+		add_to_temp_array = { coastal_provinces = 4446 }
+		add_to_temp_array = { coastal_provinces = 4652 }
+		add_to_temp_array = { coastal_provinces = 7463 }
+		add_to_temp_array = { coastal_provinces = 7658 }
+		add_to_temp_array = { coastal_provinces = 7673 }
+		add_to_temp_array = { coastal_provinces = 8360 }
+		add_to_temp_array = { coastal_provinces = 10509 }
+		add_to_temp_array = { coastal_provinces = 10522 }
+		add_to_temp_array = { coastal_provinces = 12302 }
+		add_to_temp_array = { coastal_provinces = 12488 }
+	}
+	else_if = { limit = { state = 930 }
+		add_to_temp_array = { coastal_provinces = 22 }
+		add_to_temp_array = { coastal_provinces = 64 }
+		add_to_temp_array = { coastal_provinces = 2995 }
+		add_to_temp_array = { coastal_provinces = 3016 }
+		add_to_temp_array = { coastal_provinces = 3040 }
+		add_to_temp_array = { coastal_provinces = 3082 }
+		add_to_temp_array = { coastal_provinces = 6015 }
+		add_to_temp_array = { coastal_provinces = 6079 }
+		add_to_temp_array = { coastal_provinces = 6092 }
+		add_to_temp_array = { coastal_provinces = 9042 }
+		add_to_temp_array = { coastal_provinces = 9064 }
+		add_to_temp_array = { coastal_provinces = 9089 }
+		add_to_temp_array = { coastal_provinces = 9116 }
+		add_to_temp_array = { coastal_provinces = 11034 }
+		add_to_temp_array = { coastal_provinces = 11063 }
+		add_to_temp_array = { coastal_provinces = 11077 }
+	}
+	else_if = { limit = { state = 931 }
+		add_to_temp_array = { coastal_provinces = 657 }
+		add_to_temp_array = { coastal_provinces = 687 }
+		add_to_temp_array = { coastal_provinces = 9635 }
+	}
+	else_if = { limit = { state = 934 }
+		add_to_temp_array = { coastal_provinces = 12716 }
+	}
+	else_if = { limit = { state = 936 }
+		add_to_temp_array = { coastal_provinces = 925 }
+		add_to_temp_array = { coastal_provinces = 967 }
+	}
+	else_if = { limit = { state = 939 }
+		add_to_temp_array = { coastal_provinces = 3701 }
+		add_to_temp_array = { coastal_provinces = 6727 }
+	}
+	else_if = { limit = { state = 942 }
+		add_to_temp_array = { coastal_provinces = 914 }
+		add_to_temp_array = { coastal_provinces = 3884 }
+		add_to_temp_array = { coastal_provinces = 11767 }
+	}
+	else_if = { limit = { state = 943 }
+		add_to_temp_array = { coastal_provinces = 4088 }
+	}
+	else_if = { limit = { state = 945 }
+		add_to_temp_array = { coastal_provinces = 98 }
+		add_to_temp_array = { coastal_provinces = 9115 }
+		add_to_temp_array = { coastal_provinces = 9165 }
+		add_to_temp_array = { coastal_provinces = 9217 }
+	}
+	else_if = { limit = { state = 946 }
+		add_to_temp_array = { coastal_provinces = 7079 }
+		add_to_temp_array = { coastal_provinces = 9989 }
+		add_to_temp_array = { coastal_provinces = 11967 }
+	}
+}

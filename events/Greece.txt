@@ -1,0 +1,331 @@
+﻿###########################
+# Greek Events
+###########################
+
+add_namespace = greece
+
+# Soviet Demands
+country_event = {
+	id = greece.1
+	title = greece.1.t
+	desc = greece.1.d
+	picture = GFX_report_event_stalin_02
+	
+	is_triggered_only = yes
+	
+	option = { # Accept demands
+		name = greece.1.a
+		ai_chance = {	
+			modifier = {
+				factor = 0
+				OR = {
+					any_other_country = {
+
+						has_guaranteed = GRE
+					}
+					any_other_country = {
+
+						is_in_faction_with = GRE
+					}
+				}
+			}
+			factor = 100	
+		}
+
+		SOV = { transfer_state = 187 }
+		if = {
+			limit = {
+				BUL = { 
+					OR = { 
+						is_in_faction_with = SOV 
+						is_in_faction = no
+					}
+				}
+			}
+			BUL = { 
+				transfer_state = 184
+				add_opinion_modifier = { target = SOV modifier = SOV_ultimatum_to_greece_thrace }
+			}
+		}
+		hidden_effect = {
+			news_event = { id = news.197 }
+		}
+	}
+	option = { # Refuse
+		name = greece.1.b
+		ai_chance = {	
+			modifier = {
+				factor = 0
+				NOT = {
+					OR = {
+						any_other_country = {
+
+							has_guaranteed = GRE
+						}
+						any_other_country = {
+
+							is_in_faction_with = GRE
+						}
+					}
+				}
+			}
+			factor = 5	
+		}
+		hidden_effect = {
+			news_event = { id = news.198 hours = 6 }
+		}
+	}
+}
+# Greece and Turkish Friendship treaty
+country_event = {
+	id = greece.2
+	title = greece.2.t
+	desc = greece.2.d
+	picture = GFX_report_event_turkish_straits
+	major = yes
+	minor_flavor = yes
+	is_triggered_only = yes
+	
+	option = { 
+		name = greece.2.a
+		trigger = {
+			tag = GRE
+		}
+		add_opinion_modifier = {
+			target = TUR
+			modifier = friendship_treaty
+		}		
+	}
+	option = { 
+		name = greece.2.a
+		trigger = {
+			tag = TUR
+		}
+		add_opinion_modifier = {
+			target = GRE
+			modifier = friendship_treaty
+		}		
+	}
+	option = { 
+		name = greece.2.b
+		trigger = {
+			NOT = {
+				tag = TUR
+				tag = GRE
+			}
+		}	
+	}
+}
+
+# Greece gets wargoal - From Italian focus tree
+country_event = {
+	id = greece.4
+	title = greece.4.t
+	desc = greece.4.d
+	picture = GFX_report_event_fascist_militia
+	
+	is_triggered_only = yes
+	
+	option = { # Accept demands
+		name = greece.4.a
+		ai_chance = {	factor = 100	}
+		create_wargoal = {
+			type = take_state_focus
+			target = TUR
+			generator = { 339 }
+		}
+		
+	}
+}
+
+country_event = {
+	id = greece.5
+	title = greece.5.t
+	desc = greece.5.d
+	picture = GFX_report_event_polish_prisoners_gfxaddon
+
+	fire_only_once = yes
+	
+	trigger = {
+		#tag = GRE 
+		#NOT = { has_completed_focus = GRE_establish_the_cairo_government }
+		#focus_progress = {
+		#	focus = GRE_establish_the_cairo_government
+		#	progress > 0.25
+		#}
+	}
+
+	is_triggered_only = yes
+
+	option = {
+		ai_chance = {
+			factor = 100
+		}
+		name = greece.5.a
+		remove_ideas = GRE_ammunition_sortages
+		remove_ideas = GRE_logistical_troubles
+		remove_ideas = GRE_army_fatigue
+		custom_effect_tooltip = remove_chief_of_army
+		GRE_georgios_tsolakoglou = { kill_character = yes }
+		GRE_alexandros_papagos = { kill_character = yes }
+		GRE_haralambos_katsimitros = { kill_character = yes }
+		GRE_georgios_kosmas = { kill_character = yes }
+		
+		remove_ideas = GRE_greek_general_staff
+		create_corps_commander  = { #this is a german character. rather create a new one for GRE instead of moving the one from GER
+			name = "Paul von Lettow"
+			picture = GFX_portrait_ger_von_lettow_vorbeck
+			traits = { war_hero harsh_leader brilliant_strategist mountain_3 }
+			skill = 3
+			attack_skill = 2
+			defense_skill = 3
+			planning_skill = 3
+			logistics_skill = 2
+		}
+		add_corps_commander_role = {
+			Character = GRE_pafsanias_katsonas
+			traits = { old_guard trait_cautious desert_3 }
+			skill = 2	
+			attack_skill = 2
+			defense_skill = 2
+			planning_skill = 1
+			logistics_skill = 2
+		}
+	}
+}
+
+country_event = {
+	id = greece.6
+	title = greece.6.t
+	desc = greece.6.d
+	picture = GFX_report_event_supply_warehouse_gfxaddon
+	is_triggered_only = yes
+	fire_only_once = yes
+	
+	trigger = {
+		tag = GRE
+		has_war_with = ITA
+		NOT = { 
+			has_completed_focus = GRE_continue_the_struggle_from_crete
+			has_completed_focus = GRE_establish_the_cairo_government
+		}
+	}
+
+
+	option = {
+		ai_chance = {
+			factor = 100
+		}
+		name = greece.6.a
+		add_ideas = GRE_ammunition_sortages
+		if = {
+			limit = {
+				not = { has_country_flag = ammo_done }
+			}
+			hidden_effect = {
+				country_event = { id = greece.7 days = 115 }
+			}
+		}
+		set_country_flag = ammo_done
+	}
+}
+
+country_event = {
+	id = greece.7
+	title = greece.7.t
+	desc = greece.7.d
+	picture = GFX_report_event_stuck_in_mud
+	is_triggered_only = yes
+	fire_only_once = yes
+	
+	trigger = {
+		tag = GRE
+		has_war_with = ITA
+		NOT = { 
+			has_completed_focus = GRE_continue_the_struggle_from_crete
+			has_completed_focus = GRE_establish_the_cairo_government
+		}
+	}
+
+	option = {
+		ai_chance = {
+			factor = 100
+		}
+		name = greece.7.a
+		add_ideas = GRE_logistical_troubles
+		if = {
+			limit = {
+				not = { has_country_flag = log_done }
+			}
+			hidden_effect = {
+				country_event = { id = greece.8 days = 194 }
+			}
+		}
+		set_country_flag = log_done
+	}
+}
+
+country_event = {
+	id = greece.8
+	title = greece.8.t
+	desc = greece.8.d
+	picture = GFX_report_event_struggling_onto_the_beach
+	is_triggered_only = yes
+	fire_only_once = yes
+	
+	trigger = {
+		tag = GRE
+		has_war_with = ITA
+		NOT = { 
+			has_completed_focus = GRE_continue_the_struggle_from_crete
+			has_completed_focus = GRE_establish_the_cairo_government
+		}
+	}
+
+	option = {
+		ai_chance = {
+			factor = 100
+		}
+		name = greece.8.a
+		GRE = {
+			add_ideas = GRE_army_fatigue
+		}
+
+	}
+}
+
+country_event = {
+	id = greece.9
+	title = greece.9.t
+	desc = greece.9.d
+	picture = GFX_report_event_bridge_destroyed_gfxaddon
+	is_triggered_only = yes
+	fire_only_once = yes
+
+	option = {
+		ai_chance = {
+			factor = 100
+		}
+		name = greece.9.a
+		47 = {
+			damage_building = { type = infrastructure damage = 5 }
+		}
+	}
+}
+#death of Metaxis
+country_event = {
+	id = greece.10
+	title = greece.10.t
+	desc = greece.10.d
+	picture = report_event_generic_funeral
+	is_triggered_only = yes
+	fire_only_once = yes
+
+	option = {
+		ai_chance = {
+			factor = 100
+		}
+		name = greece.10.a
+		GRE_ioannis_metaxas = { kill_character = yes }
+	}
+}

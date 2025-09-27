@@ -1,0 +1,1561 @@
+@LOCAL_OPERATION_EFFECT = 0.25
+
+operation_infiltrate_civilian = { ### 1 1/35
+	icon = GFX_operations_infiltrate_civilian_govt
+	map_icon = GFX_operations_infiltrate_civilian_govt_map
+	name = operation_infiltrate_civilian
+	desc = operation_infiltrate_civilian_desc
+	priority = 1
+
+	days = 90
+	network_strength = 35
+	operatives = 2
+	
+	allowed = {
+		has_done_agency_upgrade = upgrade_form_operations
+	}
+
+	visible = {
+		NOT = { has_country_flag = ui_hide_civilian_operations@FROM }
+		network_national_coverage = {
+			target = FROM
+			value > 0
+		}
+	}
+
+	available = {
+		set_temp_variable = { t = modifier@operation_economy_max_asset }
+		add_to_temp_variable = { t = 1 }
+		custom_trigger_tooltip = {
+			tooltip = operation_max_asset_trigger
+			NOT = {
+				check_variable = { intel_civilian_asset_level@FROM = t }
+			}
+		}
+	}
+	
+	equipment = {
+		support_equipment = 25
+		recon_equipment = 50
+	}
+	
+	ai_will_do = {
+		base = 0
+		modifier = {
+			add = 1250
+			
+			OR = {
+				is_in_array = { ai_operations = token:operation_sabotage_fuel }
+				is_in_array = { ai_operations = token:operation_steal_tech_civilian }
+				is_in_array = { ai_operations = token:operation_sabotage_oil }
+			}
+		}
+		modifier = {
+			add = num_asset
+			
+			set_temp_variable = { num_asset = intel_civilian_asset_level@FROM }
+			multiply_temp_variable = { num_asset = -250 }
+		}
+		modifier = {
+			add = asset_chance
+			
+			set_temp_variable = { num_asset = modifier@operation_economy_keep_asset_chance }
+			multiply_temp_variable = { num_asset = -1000 }
+		}
+	}
+
+	awarded_tokens = {
+		token_civilian
+	}
+	risk_chance = 0.1
+	outcome_extra_chance = 0
+	risk_modifiers = { operation_infiltrate_risk operation_risk }
+	outcome_modifiers = { operation_infiltrate_outcome operation_outcome }
+	cost_modifiers = { operation_infiltrate_cost operation_cost }
+	
+	on_start = {
+		every_operative = {
+			add_to_temp_variable = { operative_outcome = leader_modifier@operation_infiltrate_outcome }
+		}
+		ROOT = {
+			set_temp_variable = { CRITICAL_SUCCESS = 25 }
+			set_temp_variable = { factor = modifier@operation_infiltrate_outcome }
+			add_to_temp_variable = { factor = modifier@operation_outcome }
+			add_to_temp_variable = { factor = operative_outcome }
+			subtract_from_temp_variable = { factor = FROM.modifier@enemy_operation_critical_success_chance }
+			add_to_temp_variable = { factor = 1 }
+			multiply_temp_variable = { CRITICAL_SUCCESS = factor }
+			
+			random = {
+				chance = CRITICAL_SUCCESS
+				
+				set_country_flag = operation_infiltrate_civilian_critical@FROM
+			}
+		}
+	}
+	outcome_execute = {
+		ROOT = {
+			
+			custom_effect_tooltip = {
+				localization_key = ADD_INTEL_TOKEN
+				TOKEN = token_civilian
+				MODIFIER = MODIFIER_CIVILIAN_INTEL_FACTOR
+				AMOUNT = 5
+			}
+			
+			operation_add_civilian_asset = yes
+			
+			if = {
+				limit = {
+					has_country_flag = operation_infiltrate_civilian_critical@FROM
+				}
+				custom_effect_tooltip = CRITICAL_SUCCESS
+				add_political_power = 25
+				add_intel = {
+					target = FROM
+					civilian_intel = 10
+				}
+				clr_country_flag = operation_infiltrate_civilian_critical@FROM
+			}
+			add_to_array = { ROOT.operation_completed = token:operation_infiltrate_civilian }
+			add_to_array = { ROOT.operation_completed_state = FROM.FROM }
+			add_to_array = { ROOT.operation_completed_target = FROM }
+			add_to_array = { ROOT.operation_completed_date = global.date }
+		}
+	}
+
+	### THIS IS ONLY! TOOLTIP
+	outcome_potential = { 
+		ROOT = {
+			
+			set_temp_variable = { CRITICAL_SUCCESS = 25 }
+			set_temp_variable = { factor = modifier@operation_infiltrate_outcome }
+			add_to_temp_variable = { factor = modifier@operation_outcome }
+			subtract_from_temp_variable = { factor = FROM.modifier@enemy_operation_critical_success_chance }
+			add_to_temp_variable = { factor = 1 }
+			multiply_temp_variable = { CRITICAL_SUCCESS = factor }
+			
+			custom_effect_tooltip = {
+				localization_key = ADD_INTEL_TOKEN
+				TOKEN = token_civilian
+				MODIFIER = MODIFIER_CIVILIAN_INTEL_FACTOR
+				AMOUNT = 5
+			}
+			
+			custom_effect_tooltip = OPERATION_OUTCOME_CRITICAL_SUCCESS
+			add_political_power = 25
+			add_intel = {
+				target = FROM
+				civilian_intel = 10
+			}
+		}
+	}
+
+	phases = { #infiltration
+		infiltration_border = { base = 25 modifier = { factor = 0.1 ROOT = { is_neighbor_of = FROM } } }
+		infiltration_submarine = { base = 25 modifier = { factor = 0.1 ROOT = { has_navy_size = { size < 1 type = submarine } } } }
+		infiltration_paradrop = { base = 25 modifier = { factor = 0.1 ROOT = { has_equipment = { transport_plane_equipment < 1 } } } }
+		infiltration_diplomatic = {	base = 50 modifier = { factor = 0 FROM = { has_war_with = ROOT } } }
+	}
+	phases = { #infiltrate military
+		infiltrate_military_bribe = { base = 25 }
+		infiltrate_military_seduction = { base = 25 }
+		infiltrate_military_ideological_supporter = {
+			base = 25
+			modifier = {
+				FROM = { has_government = ROOT }
+				factor = 0
+			}
+		}
+	}
+	phases = { #exfiltration
+		exfiltration_air_pickup = { base = 25 modifier = { factor = 0.1 ROOT = { has_equipment = { transport_plane_equipment < 1 } } } }
+		exfiltration_border = { base = 30 modifier = { factor = 0.1 ROOT = { is_neighbor_of = FROM } } }
+		exfiltration_go_to_ground = { base = 30 }
+		exfiltration_submarine_pickup = { base = 25 modifier = { factor = 0.1 ROOT = { has_navy_size = { size < 1 type = submarine } } } }
+	}
+}
+
+@COLLABORATION_BASE = 0.15
+ 
+@COLLABORATION_FROM_RULING_POP = -0.075 #1 ruling pop = -0.15 collab, max at -0.15
+
+operation_collaboration_government = { ### 10 2/55
+	icon = GFX_operations_collaboration_government
+	map_icon = GFX_operations_collaboration_government_map
+	name = operation_collaboration_government
+	desc = operation_collaboration_government_desc
+	priority = 7
+
+	days = 100
+	network_strength = 50
+	operatives = 2
+
+	allowed = {
+		has_rule = can_create_collaboration_government
+		has_done_agency_upgrade = upgrade_form_operations
+	}
+	
+	visible = {
+		NOT = { has_country_flag = ui_hide_civilian_operations@FROM }
+		network_strength = {
+			target = FROM
+			value > 25
+		}
+		
+		has_operation_token = {
+			tag = FROM
+			token = token_civilian
+		}
+	}
+
+	cost_multiplier = 0.20
+
+	equipment = {
+		infantry_equipment = 1000
+		infantry_uniforms = 500
+		support_equipment = 250
+		radio_equipment = 50
+		civilian_factories = {
+			amount = 5
+			days = 45
+		}
+	}
+
+	required_tokens = { token_civilian }
+	
+	available = {
+		custom_trigger_tooltip = {
+			tooltip = REQUIRE_CIVILIAN_ASSET
+			
+			check_variable = { intel_civilian_asset_level@FROM > 0 }
+		}
+		has_collaboration = {
+			target = FROM
+			value < 1.0
+		}
+	}
+	risk_chance = 0.1
+	outcome_extra_chance = 0
+	
+	risk_modifiers = { operation_collaboration_government_risk operation_risk }
+	outcome_modifiers = { operation_collaboration_government_outcome operation_outcome }
+	cost_modifiers = { operation_collaboration_government_cost operation_cost }
+	
+	on_start = {
+		every_operative = {
+			add_to_temp_variable = { operative_asset = leader_modifier@operation_economy_keep_asset_chance }
+		}
+		ROOT = {
+			set_temp_variable = { CRITICAL_SUCCESS = 25 }
+			set_temp_variable = { factor = modifier@operation_outcome }
+			subtract_from_temp_variable = { factor = FROM.modifier@enemy_operation_critical_success_chance }
+			add_to_temp_variable = { factor = 1 }
+			multiply_temp_variable = { CRITICAL_SUCCESS = factor }
+			
+			random = {
+				chance = CRITICAL_SUCCESS
+				
+				set_country_flag = operation_collaboration_government_critical@FROM
+			}
+			
+			
+			set_temp_variable = { USE_ASSET_CHANCE = 1 }
+			subtract_from_temp_variable = { USE_ASSET_CHANCE = operative_asset }
+			subtract_from_temp_variable = { USE_ASSET_CHANCE = modifier@operation_economy_keep_asset_chance }
+			multiply_temp_variable = { USE_ASSET_CHANCE = 100 }
+			random = {
+				chance = USE_ASSET_CHANCE
+				
+				set_country_flag = operation_collaboration_government_use_asset@FROM
+				operation_remove_civilian_asset = yes
+			}
+		}
+	}
+			
+	outcome_execute = { # SCOPE_OPERATION
+		ROOT = {
+			if = {
+				limit = {
+					has_country_flag = operation_collaboration_government_use_asset@FROM
+				}
+				custom_effect_tooltip = SUBTRACT_CIVILIAN_ASSET
+				clr_country_flag = operation_collaboration_government_use_asset@FROM
+			}
+			else = {
+				custom_effect_tooltip = OPERATION_KEEP_ASSET
+			}
+			
+			set_temp_variable = { collab = @COLLABORATION_BASE }
+			 
+			set_temp_variable = { ruling = From.party_popularity@ruling_party }
+			multiply_temp_variable = { ruling = @COLLABORATION_FROM_RULING_POP }
+			add_to_temp_variable = { collab = ruling }
+			
+			set_temp_variable = { scale = has_collaboration@FROM }
+			subtract_from_temp_variable = { scale = 1 }
+			multiply_temp_variable = { scale = -1 }
+			
+			multiply_temp_variable = { collab = scale }
+		
+			add_collaboration = {
+				target = FROM
+				value = collab
+			}
+			
+			if = {
+				limit = {
+					has_country_flag = operation_collaboration_government_critical@FROM
+				}
+				custom_effect_tooltip = CRITICAL_SUCCESS
+				FROM = {
+					add_popularity = {
+						ideology = ROOT
+						popularity = 0.05
+					}
+				}
+				
+				clr_country_flag = operation_collaboration_government_critical@FROM
+			}
+		}
+	}
+	
+	outcome_potential = {
+		custom_effect_tooltip = OPERATION_CHANCE_CIVILIAN_TOKEN
+	
+		set_temp_variable = { CRITICAL_SUCCESS = 25 }
+		set_temp_variable = { factor = modifier@operation_outcome }
+		subtract_from_temp_variable = { factor = FROM.modifier@enemy_operation_critical_success_chance }
+		add_to_temp_variable = { factor = 1 }
+		multiply_temp_variable = { CRITICAL_SUCCESS = factor }
+		
+		set_temp_variable = { collab = @COLLABORATION_BASE }
+		 
+		set_temp_variable = { ruling = From.party_popularity@ruling_party }
+		multiply_temp_variable = { ruling = @COLLABORATION_FROM_RULING_POP }
+		add_to_temp_variable = { collab = ruling }
+		
+		set_temp_variable = { scale = has_collaboration@FROM }
+		subtract_from_temp_variable = { scale = 1 }
+		multiply_temp_variable = { scale = -1 }
+		
+		multiply_temp_variable = { collab = scale }
+		ROOT = {
+			add_collaboration = {
+				target = FROM
+				value = collab
+			}
+		}
+		custom_effect_tooltip = OPERATION_OUTCOME_CRITICAL_SUCCESS
+		FROM = {
+			add_popularity = {
+				ideology = ROOT
+				popularity = 0.05
+			}
+		}
+	}
+
+	phases = { #infiltration
+		infiltration_border = { base = 25 modifier = { factor = 0.1 ROOT = { is_neighbor_of = FROM } } }
+		infiltration_submarine = { base = 25 modifier = { factor = 0.1 ROOT = { has_navy_size = { size < 1 type = submarine } } } }
+		infiltration_paradrop = { base = 25 modifier = { factor = 0.1 ROOT = { has_equipment = { transport_plane_equipment < 1 } } } }
+		infiltration_diplomatic = {	base = 50 modifier = { factor = 0 FROM = { has_war_with = ROOT } } }
+	}
+	phases = {
+		collaboration_government_set_up_planning_committees = { base = 33 }
+		collaboration_government_train_paramilitary_forces = { base = 33 }
+		collaboration_government_contact_military_officers = { base = 33 }
+	}
+	phases = { #exfiltration
+		exfiltration_air_pickup = { base = 25 modifier = { factor = 0.1 ROOT = { has_equipment = { transport_plane_equipment < 1 } } } }
+		exfiltration_border = { base = 30 modifier = { factor = 0.1 ROOT = { is_neighbor_of = FROM } } }
+		exfiltration_go_to_ground = { base = 30 }
+		exfiltration_submarine_pickup = { base = 25 modifier = { factor = 0.1 ROOT = { has_navy_size = { size < 1 type = submarine } } } }
+	}
+}
+
+operation_steal_tech_civilian = { ### 12 3/35
+	icon = GFX_operations_steal_blueprints
+	map_icon = GFX_operations_steal_blueprints_map
+	name = operation_steal_tech_civilian
+	desc = operation_steal_tech_civilian_desc
+	priority = 8
+
+	days = 70
+	network_strength = 40
+	operatives = 2
+
+	allowed = {
+		has_done_agency_upgrade = upgrade_form_operations
+	}
+
+	visible = {
+		NOT = { has_country_flag = ui_hide_civilian_operations@FROM }
+		network_strength = {
+			target = FROM
+			value > 15
+		}
+
+		has_operation_token = {
+			tag = FROM
+			token = token_civilian
+		}
+	}
+	
+	available = {
+		custom_trigger_tooltip = {
+			tooltip = REQUIRE_CIVILIAN_ASSET
+			
+			check_variable = { intel_civilian_asset_level@FROM > 0 }
+		}
+	}
+
+	equipment = {
+		radio_equipment = 50
+		recon_equipment = 75
+	}
+
+	ai_will_do = {
+		base = 0
+		modifier = {
+			add = 1000
+			
+			is_in_array = { ai_operations = token:operation_steal_tech_civilian }
+		}
+		modifier = {
+			add = 150
+			
+			check_variable = { ai_operations^0 = token:operation_steal_tech_civilian }
+		}
+		modifier = {
+			add = 100
+			
+			check_variable = { ai_operations^1 = token:operation_steal_tech_civilian }
+		}
+		modifier = {
+			add = 50
+			
+			check_variable = { ai_operations^2 = token:operation_steal_tech_civilian }
+		}
+	}
+	required_tokens = { token_civilian }
+	
+	risk_chance = 0.2
+	outcome_extra_chance = 0
+	risk_modifiers = { operation_steal_tech_risk operation_risk }
+	outcome_modifiers = { operation_steal_tech_outcome operation_outcome }
+	cost_modifiers = { operation_steal_tech_cost operation_cost }
+
+	outcome_potential = {
+		custom_effect_tooltip = OPERATION_CHANCE_CIVILIAN_TOKEN
+		
+		set_temp_variable = { bonus = 0.25 }
+		set_temp_variable = { factor = modifier@operation_steal_tech_bonus_factor }
+		add_to_temp_variable = { factor = 1 }
+		multiply_temp_variable = { bonus = factor }
+	
+		set_temp_variable = { aot_bonus = 0.25 }
+		set_temp_variable = { factor = modifier@operation_steal_tech_aot_factor }
+		add_to_temp_variable = { factor = 1 }
+		multiply_temp_variable = { aot_bonus = factor }
+		
+		set_temp_variable = { uses = 3 }
+		add_to_temp_variable = { uses = modifier@operation_steal_tech_uses }
+		
+		set_temp_variable = { CRITICAL_SUCCESS = 25 }
+		set_temp_variable = { factor = modifier@operation_outcome }
+		add_to_temp_variable = { factor = modifier@operation_steal_tech_outcome }
+		subtract_from_temp_variable = { factor = FROM.modifier@enemy_operation_critical_success_chance }
+		add_to_temp_variable = { factor = 1 }
+		multiply_temp_variable = { CRITICAL_SUCCESS = factor }
+		
+		custom_effect_tooltip = STEAL_TECH_CIVILIAN_OUTCOME_POTENTIAL_TOOLTIP
+		FROM = {
+			add_timed_idea = {
+				idea = civilian_steal_tech_critical
+				days = 70
+			}
+		}
+	
+	}
+	on_start = {
+		every_operative = {
+			add_to_temp_variable = { operative_outcome = leader_modifier@operation_steal_tech_outcome }
+			add_to_temp_variable = { operative_bonus = leader_modifier@operation_steal_tech_bonus_factor }
+			add_to_temp_variable = { operative_uses = leader_modifier@operation_steal_tech_uses }
+			add_to_temp_variable = { operative_asset = leader_modifier@operation_economy_keep_asset_chance }
+		}
+		ROOT = {
+			set_temp_variable = { CRITICAL_SUCCESS = 25 }
+			set_temp_variable = { factor = modifier@operation_outcome }
+			add_to_temp_variable = { factor = modifier@operation_steal_tech_outcome }
+			add_to_temp_variable = { factor = operative_outcome }
+			subtract_from_temp_variable = { factor = FROM.modifier@enemy_operation_critical_success_chance }
+			add_to_temp_variable = { factor = 1 }
+			multiply_temp_variable = { CRITICAL_SUCCESS = factor }
+			
+			random = {
+				chance = CRITICAL_SUCCESS
+				
+				set_country_flag = operation_steal_tech_civilian_critical@FROM
+			}
+			
+			
+			set_temp_variable = { USE_ASSET_CHANCE = 1 }
+			subtract_from_temp_variable = { USE_ASSET_CHANCE = operative_asset }
+			subtract_from_temp_variable = { USE_ASSET_CHANCE = modifier@operation_economy_keep_asset_chance }
+			multiply_temp_variable = { USE_ASSET_CHANCE = 100 }
+			random = {
+				chance = USE_ASSET_CHANCE
+				
+				set_country_flag = operation_steal_tech_civilian_use_asset@FROM
+				operation_remove_civilian_asset = yes
+			}
+			
+			
+			set_variable = { operation_steal_tech_civilian_bonus@FROM = 0.25 }
+			set_temp_variable = { factor = modifier@operation_steal_tech_bonus_factor }
+			add_to_temp_variable = { factor = mtth:decryption_operation_effect }
+			add_to_temp_variable = { factor = operative_bonus }
+			subtract_from_temp_variable = { factor = FROM.modifier@operation_economy_enemy_effect }
+			add_to_temp_variable = { factor = 1 }
+			multiply_variable = { operation_steal_tech_civilian_bonus@FROM = factor }
+			
+			set_variable = { operation_steal_tech_civilian_ahead_of_time@FROM = 0.25 }
+			set_temp_variable = { factor = modifier@operation_steal_tech_aot_factor }
+			add_to_temp_variable = { factor = mtth:decryption_operation_effect }
+			subtract_from_temp_variable = { factor = FROM.modifier@operation_economy_enemy_effect }
+			add_to_temp_variable = { factor = 1 }
+			multiply_variable = { operation_steal_tech_civilian_ahead_of_time@FROM = factor }
+			
+			set_variable = { operation_steal_tech_civilian_uses@FROM = 3 }
+			add_to_variable = { operation_steal_tech_civilian_uses@FROM = operative_uses }
+			add_to_variable = { operation_steal_tech_civilian_uses@FROM = modifier@operation_steal_tech_uses }
+		}
+	}
+	outcome_execute = {
+		ROOT = {
+			
+			if = {
+				limit = {
+					has_country_flag = operation_steal_tech_civilian_use_asset@FROM
+				}
+				custom_effect_tooltip = SUBTRACT_CIVILIAN_ASSET
+				clr_country_flag = operation_steal_tech_civilian_use_asset@FROM
+			}
+			else = {
+				custom_effect_tooltip = OPERATION_KEEP_ASSET
+			}
+		
+			custom_effect_tooltip = STEAL_TECH_CIVILIAN_TOOLTIP
+			if = {
+				limit = {
+					NOT = { is_in_array = { FROM.research_steal = ROOT } }
+				}
+				add_to_array = { FROM.research_steal_civilian = ROOT }
+			}
+			add_to_variable = { FROM.research_steal_uses_civilian@ROOT = operation_steal_tech_civilian_uses@FROM }
+			set_variable = { FROM.research_steal_bonus_civilian@ROOT = operation_steal_tech_civilian_bonus@FROM }
+			set_variable = { FROM.research_steal_ahead_of_time_civilian@ROOT = operation_steal_tech_civilian_ahead_of_time@FROM }
+			
+			clear_variable = operation_steal_tech_civilian_bonus@FROM
+			clear_variable = operation_steal_tech_civilian_ahead_of_time@FROM
+			clear_variable = operation_steal_tech_civilian_uses@FROM
+			
+			if = {
+				limit = {
+					has_country_flag = operation_steal_tech_civilian_critical@FROM
+				}
+				custom_effect_tooltip = CRITICAL_SUCCESS
+				FROM = {
+					add_timed_idea = {
+						idea = civilian_steal_tech_critical
+						days = 70
+					}
+				}
+				
+				clr_country_flag = operation_steal_tech_civilian_critical@FROM
+			}
+			add_to_array = { ROOT.operation_completed = token:operation_steal_tech_civilian }
+			add_to_array = { ROOT.operation_completed_state = FROM.FROM }
+			add_to_array = { ROOT.operation_completed_target = FROM }
+			add_to_array = { ROOT.operation_completed_date = global.date }
+		}
+	}
+
+	phases = { #infiltration
+		infiltration_border = { base = 25 modifier = { factor = 0.1 ROOT = { is_neighbor_of = FROM } } }
+		infiltration_submarine = { base = 25 modifier = { factor = 0.1 ROOT = { has_navy_size = { size < 1 type = submarine } } } }
+		infiltration_paradrop = { base = 25 modifier = { factor = 0.1 ROOT = { has_equipment = { transport_plane_equipment < 1 } } } }
+		infiltration_diplomatic = {	base = 50 modifier = { factor = 0 FROM = { has_war_with = ROOT } } }
+	}
+	phases = { #blueprint theft
+		steal_blueprints_bribe = { base = 33 }
+		steal_blueprints_seduction = { base = 33 }
+		steal_blueprints_middle_manager = { base = 33 }
+	}
+	phases = { #exfiltration
+		exfiltration_air_pickup = { base = 25 modifier = { factor = 0.1 ROOT = { has_equipment = { transport_plane_equipment < 1 } } } }
+		exfiltration_border = { base = 30 modifier = { factor = 0.1 ROOT = { is_neighbor_of = FROM } } }
+		exfiltration_go_to_ground = { base = 30 }
+		exfiltration_submarine_pickup = { base = 25 modifier = { factor = 0.1 ROOT = { has_navy_size = { size < 1 type = submarine } } } }
+	}
+}
+
+operation_sabotage_fuel = { ### 18 2/35
+
+	icon = GFX_operations_targeted_sabotage
+	map_icon = GFX_operations_targeted_sabotage_map
+	name = operation_sabotage_fuel
+	desc = operation_sabotage_fuel_desc
+
+	priority = 9
+
+	days = 50
+
+	operatives = 2
+	network_strength = 50
+
+	allowed = {
+		has_done_agency_upgrade = upgrade_form_operations
+	}
+
+	visible = {
+		NOT = { has_country_flag = ui_hide_civilian_operations@FROM }
+		FROM = { fuel_silo > 0 }
+		network_strength = {
+			target = FROM
+			value > 25
+		}
+
+		has_operation_token = {
+			tag = FROM
+			token = token_civilian
+		}
+	}	
+	available = {
+		custom_trigger_tooltip = {
+			tooltip = REQUIRE_CIVILIAN_ASSET
+			
+			check_variable = { intel_civilian_asset_level@FROM > 0 }
+		}
+	}
+
+	equipment = {
+		SMG_equipment = 100
+		recon_equipment = 50
+		support_equipment = 50
+	}
+	
+	ai_will_do = {
+		base = 0
+		modifier = {
+			add = 1000
+			
+			is_in_array = { ai_operations = token:operation_sabotage_fuel }
+		}
+		modifier = {
+			add = 150
+			
+			check_variable = { ai_operations^0 = token:operation_sabotage_fuel }
+		}
+		modifier = {
+			add = 100
+			
+			check_variable = { ai_operations^1 = token:operation_sabotage_fuel }
+		}
+		modifier = {
+			add = 50
+			
+			check_variable = { ai_operations^2 = token:operation_sabotage_fuel }
+		}
+	}
+	required_tokens = { token_civilian }
+	risk_chance = 0.2
+	outcome_extra_chance = 0
+	outcome_modifiers = { operation_sabotage_outcome operation_outcome }
+	risk_modifiers = { operation_sabotage_risk operation_risk }
+	cost_modifiers = { operation_sabotage_cost operation_cost }
+	
+	outcome_potential = {
+		custom_effect_tooltip = OPERATION_CHANCE_CIVILIAN_TOKEN
+		
+		set_temp_variable = { damage = 0.5 }
+		set_temp_variable = { factor = modifier@operation_sabotage_damage }
+		add_to_temp_variable = { factor = 1 }
+		multiply_temp_variable = { damage = factor }
+		
+		set_temp_variable = { repair = -0.25 }
+		set_temp_variable = { factor = modifier@operation_sabotage_repair }
+		add_to_temp_variable = { factor = 1 }
+		multiply_temp_variable = { repair = factor }
+		multiply_temp_variable = { repair = 100 }
+		
+		set_temp_variable = { CRITICAL_SUCCESS = 25 }
+		set_temp_variable = { factor = modifier@operation_outcome }
+		add_to_temp_variable = { factor = modifier@operation_sabotage_outcome }
+		subtract_from_temp_variable = { factor = FROM.modifier@enemy_operation_critical_success_chance }
+		add_to_temp_variable = { factor = 1 }
+		multiply_temp_variable = { CRITICAL_SUCCESS = factor }
+		
+		custom_effect_tooltip = {
+			localization_key = SABOTAGE_FUEL_OUTCOME_POTENTIAL_TOOLTIP
+			DAMAGE = [?damage]
+			REPAIR = [?repair]
+		}
+	
+	}
+	on_start = {
+		every_operative = {
+			add_to_temp_variable = { operative_outcome = leader_modifier@operation_sabotage_outcome }
+			add_to_temp_variable = { operative_bonus = leader_modifier@operation_sabotage_damage }
+			add_to_temp_variable = { operative_spread = leader_modifier@operation_sabotage_spread }
+			add_to_temp_variable = { operative_asset = leader_modifier@operation_economy_keep_asset_chance }
+		}
+		ROOT = {
+			set_temp_variable = { CRITICAL_SUCCESS = 25 }
+			set_temp_variable = { factor = modifier@operation_outcome }
+			add_to_temp_variable = { factor = modifier@operation_sabotage_outcome }
+			add_to_temp_variable = { factor = operative_outcome }
+			subtract_from_temp_variable = { factor = FROM.modifier@enemy_operation_critical_success_chance }
+			add_to_temp_variable = { factor = 1 }
+			multiply_temp_variable = { CRITICAL_SUCCESS = factor }
+			
+			random = {
+				chance = CRITICAL_SUCCESS
+				
+				set_country_flag = operation_sabotage_fuel_critical@FROM
+			}
+			
+			
+			set_temp_variable = { USE_ASSET_CHANCE = 1 }
+			subtract_from_temp_variable = { USE_ASSET_CHANCE = operative_asset }
+			subtract_from_temp_variable = { USE_ASSET_CHANCE = modifier@operation_economy_keep_asset_chance }
+			multiply_temp_variable = { USE_ASSET_CHANCE = 100 }
+			random = {
+				chance = USE_ASSET_CHANCE
+				
+				set_country_flag = operation_sabotage_fuel_use_asset@FROM
+				operation_remove_civilian_asset = yes
+			}
+			
+			
+			set_variable = { operation_sabotage_fuel_damage@FROM = 0.5 }
+			set_temp_variable = { factor = modifier@operation_sabotage_damage }
+			add_to_temp_variable = { factor = mtth:decryption_operation_effect }
+			add_to_temp_variable = { factor = operative_bonus }
+			subtract_from_temp_variable = { factor = FROM.modifier@operation_economy_enemy_effect }
+			add_to_temp_variable = { factor = 1 }
+			multiply_variable = { operation_sabotage_fuel_damage@FROM = factor }
+			
+			set_variable = { operation_sabotage_fuel_repair@FROM = -0.25 }
+			add_to_variable = { operation_sabotage_fuel_repair@FROM = modifier@operation_sabotage_repair }
+			
+			set_temp_variable = { factor = modifier@operation_sabotage_spread }
+			add_to_temp_variable = { factor = operative_spread }
+			
+			set_variable = { operation_sabotage_fuel_damage_spread@FROM = operation_sabotage_fuel_damage@FROM }
+			multiply_variable = { operation_sabotage_fuel_damage_spread@FROM = factor }
+			set_variable = { operation_sabotage_fuel_repair_spread@FROM = operation_sabotage_fuel_repair@FROM }
+			multiply_variable = { operation_sabotage_fuel_repair_spread@FROM = factor }
+		}
+	}
+	outcome_execute = {
+		ROOT = {
+			if = {
+				limit = {
+					has_country_flag = operation_sabotage_fuel_use_asset@FROM
+				}
+				custom_effect_tooltip = SUBTRACT_CIVILIAN_ASSET
+				clr_country_flag = operation_sabotage_fuel_use_asset@FROM
+			}
+			else = {
+				custom_effect_tooltip = OPERATION_KEEP_ASSET
+			}
+			
+			FROM = {
+				custom_effect_tooltip = SABOTAGE_FUEL_TOOLTIP
+				hidden_effect = {
+					random_owned_controlled_state = {
+						limit = {
+							check_variable = { non_damaged_building_level@fuel_silo > 0 }
+						}
+						set_temp_variable = { target_state = THIS }
+						meta_effect = {
+							text = {
+								damage_building = {
+									type = fuel_silo
+									damage = [D]
+									repair_speed_modifier = [R]
+								}
+							}
+							D = "[?ROOT.operation_sabotage_fuel_damage@FROM]"
+							R = "[?ROOT.operation_sabotage_fuel_repair@FROM]"
+						}
+						if = {
+							limit = {
+								ROOT = { has_country_flag = operation_sabotage_fuel_critical@FROM }
+							}
+							damage_building = {
+								type = infrastructure
+								damage = 2
+								repair_speed_modifier = -0.2
+							}
+						}
+					
+					}
+				}
+			}
+			
+			if = {
+				limit = {
+					check_variable = { modifier@operation_sabotage_spread > 0 }
+				}
+				FROM = {
+					custom_effect_tooltip = SABOTAGE_FUEL_SPREAD_TOOLTIP
+					random_owned_controlled_state = {
+						limit = {
+							check_variable = { non_damaged_building_level@fuel_silo > 0 }
+						}
+						meta_effect = {
+							text = {
+								damage_building = {
+									type = fuel_silo
+									damage = [D]
+									repair_speed_modifier = [R]
+								}
+							}
+							D = "[?ROOT.operation_sabotage_fuel_damage_spread@FROM]"
+							R = "[?ROOT.operation_sabotage_fuel_repair_spread@FROM]"
+						}
+					}
+				}
+			}
+			#clear_variable = operation_sabotage_fuel_damage@FROM
+			#clear_variable = operation_sabotage_fuel_repair@FROM
+			
+			if = {
+				limit = {
+					has_country_flag = operation_sabotage_fuel_critical@FROM
+				}
+				custom_effect_tooltip = CRITICAL_SUCCESS
+				custom_effect_tooltip = SABOTAGE_FUEL_CRITICAL_TOOLTIP
+				
+				#clr_country_flag = operation_sabotage_fuel_critical@FROM
+			}
+			
+			hidden_effect = {
+				FROM = {
+					set_variable = { operation_target_state = FROM.FROM }
+					country_event = { id = lar_operative_event.100 days = 3 }
+				}
+			}
+			
+			add_to_array = { ROOT.operation_completed = token:operation_sabotage_fuel }
+			add_to_array = { ROOT.operation_completed_state = FROM.FROM }
+			add_to_array = { ROOT.operation_completed_target = FROM }
+			add_to_array = { ROOT.operation_completed_date = global.date }
+		}
+	}
+	phases = { #infiltration
+		infiltration_border = { base = 25 modifier = { factor = 0.1 ROOT = { is_neighbor_of = FROM } } }
+		infiltration_submarine = { base = 25 modifier = { factor = 0.1 ROOT = { has_navy_size = { size < 1 type = submarine } } } }
+		infiltration_paradrop = { base = 25 modifier = { factor = 0.1 ROOT = { has_equipment = { transport_plane_equipment < 1 } } } }
+		infiltration_diplomatic = {	base = 50 modifier = { factor = 0 FROM = { has_war_with = ROOT } } }
+	}
+	phases = { #exfiltration
+		sabotage_fuel_explosives = { base = 50 }
+		sabotage_burn_fuel_storage = { base = 50 }
+	}
+	phases = { #exfiltration
+		exfiltration_air_pickup = { base = 25 modifier = { factor = 0.1 ROOT = { has_equipment = { transport_plane_equipment < 1 } } } }
+		exfiltration_border = { base = 30 modifier = { factor = 0.1 ROOT = { is_neighbor_of = FROM } } }
+		exfiltration_go_to_ground = { base = 30 }
+		exfiltration_submarine_pickup = { base = 25 modifier = { factor = 0.1 ROOT = { has_navy_size = { size < 1 type = submarine } } } }
+	}
+}
+
+operation_sabotage_infra = { ### 18 2/35
+
+	icon = GFX_operations_targeted_sabotage
+	map_icon = GFX_operations_targeted_sabotage_map
+	name = operation_sabotage_infra
+	desc = operation_sabotage_infra_desc
+
+	priority = 10
+
+	days = 50
+
+	operatives = 2
+	network_strength = 50
+
+	allowed = {
+		has_done_agency_upgrade = upgrade_form_operations
+	}
+
+	visible = {
+		NOT = { has_country_flag = ui_hide_civilian_operations@FROM }
+		network_strength = {
+			target = FROM
+			value > 25
+		}
+
+		has_operation_token = {
+			tag = FROM
+			token = token_civilian
+		}
+	}	
+
+	available = {
+		custom_trigger_tooltip = {
+			tooltip = REQUIRE_CIVILIAN_ASSET
+			
+			check_variable = { intel_civilian_asset_level@FROM > 0 }
+		}
+	}
+	
+	equipment = {
+		SMG_equipment = 100
+		recon_equipment = 50
+		support_equipment = 50
+	}
+	
+	selection_target_state = {
+		non_damaged_building_level = {
+			building = infrastructure
+			level > 0
+		}
+	}
+	selection_target = {
+		targets = { FROM }
+	}
+	
+	target_weight = {
+		base = 100
+		
+		modifier = {
+			add = t
+			
+			set_temp_variable = { t = non_damaged_building_level@infrastructure }
+			multiply_temp_variable = { t = 10 }
+		}
+		modifier = {
+			add = r
+			
+			set_temp_variable = { r = resource@oil }
+			add_to_temp_variable = { r = resource@rubber }
+			add_to_temp_variable = { r = resource@tungsten }
+			add_to_temp_variable = { r = resource@chromium }
+			add_to_temp_variable = { r = resource@bauxite }
+			add_to_temp_variable = { r = resource@iron }
+			add_to_temp_variable = { r = resource@coal }
+			add_to_temp_variable = { r = resource@food }
+			
+			multiply_temp_variable = { t = 0.5 }
+		}
+	}
+	
+	required_tokens = { token_civilian }
+	risk_chance = 0.2
+	outcome_extra_chance = 0
+	outcome_modifiers = { operation_sabotage_outcome operation_outcome }
+	risk_modifiers = { operation_sabotage_risk operation_risk }
+	cost_modifiers = { operation_sabotage_cost operation_cost }
+	
+	outcome_potential = {
+		custom_effect_tooltip = OPERATION_CHANCE_CIVILIAN_TOKEN
+		set_temp_variable = { damage = 2 }
+		set_temp_variable = { factor = modifier@operation_sabotage_damage }
+		add_to_temp_variable = { factor = 1 }
+		multiply_temp_variable = { damage = factor }
+		
+		set_temp_variable = { repair = -0.25 }
+		set_temp_variable = { factor = modifier@operation_sabotage_repair }
+		add_to_temp_variable = { factor = 1 }
+		multiply_temp_variable = { repair = factor }
+		multiply_temp_variable = { repair = 100 }
+		
+		set_temp_variable = { CRITICAL_SUCCESS = 25 }
+		set_temp_variable = { factor = modifier@operation_outcome }
+		add_to_temp_variable = { factor = modifier@operation_sabotage_outcome }
+		subtract_from_temp_variable = { factor = FROM.modifier@enemy_operation_critical_success_chance }
+		add_to_temp_variable = { factor = 1 }
+		multiply_temp_variable = { CRITICAL_SUCCESS = factor }
+		
+		custom_effect_tooltip = {
+			localization_key = SABOTAGE_INFRA_OUTCOME_POTENTIAL_TOOLTIP
+			DAMAGE = [?damage]
+			REPAIR = [?repair]
+		}
+	
+	}
+	on_start = {
+		every_operative = {
+			add_to_temp_variable = { operative_outcome = leader_modifier@operation_sabotage_outcome }
+			add_to_temp_variable = { operative_bonus = leader_modifier@operation_sabotage_damage }
+			add_to_temp_variable = { operative_spread = leader_modifier@operation_sabotage_spread }
+			add_to_temp_variable = { operative_asset = leader_modifier@operation_economy_keep_asset_chance }
+		}
+		ROOT = {
+			set_temp_variable = { CRITICAL_SUCCESS = 25 }
+			set_temp_variable = { factor = modifier@operation_outcome }
+			add_to_temp_variable = { factor = modifier@operation_sabotage_outcome }
+			add_to_temp_variable = { factor = operative_outcome }
+			subtract_from_temp_variable = { factor = FROM.modifier@enemy_operation_critical_success_chance }
+			add_to_temp_variable = { factor = 1 }
+			multiply_temp_variable = { CRITICAL_SUCCESS = factor }
+			
+			random = {
+				chance = CRITICAL_SUCCESS
+				
+				set_country_flag = operation_sabotage_infra_critical@FROM
+			}
+			
+			
+			set_temp_variable = { USE_ASSET_CHANCE = 1 }
+			subtract_from_temp_variable = { USE_ASSET_CHANCE = operative_asset }
+			subtract_from_temp_variable = { USE_ASSET_CHANCE = modifier@operation_economy_keep_asset_chance }
+			multiply_temp_variable = { USE_ASSET_CHANCE = 100 }
+			random = {
+				chance = USE_ASSET_CHANCE
+				
+				set_country_flag = operation_sabotage_infra_use_asset@FROM
+				operation_remove_civilian_asset = yes
+			}
+			
+			
+			set_variable = { operation_sabotage_infra_damage@FROM = 2 }
+			set_temp_variable = { factor = modifier@operation_sabotage_damage }
+			add_to_temp_variable = { factor = mtth:decryption_operation_effect }
+			add_to_temp_variable = { factor = operative_bonus }
+			subtract_from_temp_variable = { factor = FROM.modifier@operation_economy_enemy_effect }
+			add_to_temp_variable = { factor = 1 }
+			multiply_variable = { operation_sabotage_infra_damage@FROM = factor }
+			
+			set_variable = { operation_sabotage_infra_repair@FROM = -0.25 }
+			add_to_variable = { operation_sabotage_infra_repair@FROM = modifier@operation_sabotage_repair }
+			
+			set_temp_variable = { factor = modifier@operation_sabotage_spread }
+			add_to_temp_variable = { factor = operative_spread }
+			
+			set_variable = { operation_sabotage_infra_damage_spread@FROM = operation_sabotage_infra_damage@FROM }
+			multiply_variable = { operation_sabotage_infra_damage_spread@FROM = factor }
+			set_variable = { operation_sabotage_infra_repair_spread@FROM = operation_sabotage_infra_repair@FROM }
+			multiply_variable = { operation_sabotage_infra_repair_spread@FROM = factor }
+		}
+	}
+	outcome_execute = {
+		hidden_effect = {
+			FROM.FROM = {
+				ROOT = {
+					set_temp_variable = { local = mtth:network_strength_state }
+					divide_temp_variable = { local = 100 }
+					set_temp_variable = { network_strength_state = local }
+					multiply_temp_variable = { local = @LOCAL_OPERATION_EFFECT }
+					add_to_temp_variable = { local = PREV.modifier@local_operation_effect }
+					set_temp_variable = { local_effect = local }
+					
+					set_temp_variable = { spread_local = local }
+					multiply_temp_variable = { spread_local = 0.5 }
+					
+					add_to_temp_variable = { local = 1 }
+					add_to_temp_variable = { spread_local = 1 }
+					
+					multiply_variable = { operation_sabotage_infra_damage@FROM = local }
+					multiply_variable = { operation_sabotage_infra_repair@FROM = local }
+					
+					multiply_variable = { operation_sabotage_infra_damage_spread@FROM = spread_local }
+					multiply_variable = { operation_sabotage_infra_repair_spread@FROM = spread_local }
+					
+					## use these variables for tooltips & effects
+					set_temp_variable = { effect = operation_sabotage_infra_damage@FROM }
+					multiply_temp_variable = { effect = local }
+					set_temp_variable = { repair = operation_sabotage_infra_repair@FROM }
+					multiply_temp_variable = { repair = local }
+					
+					set_temp_variable = { spread_effect = operation_sabotage_infra_damage_spread@FROM }
+					multiply_temp_variable = { spread_effect = spread_local }
+					set_temp_variable = { spread_repair = operation_sabotage_infra_repair_spread@FROM }
+					multiply_temp_variable = { spread_repair = spread_local }
+					
+				}
+			}
+		}
+		custom_effect_tooltip = LOCAL_OPERATION_EFFECT_TOOLTIP
+		ROOT = {
+			if = {
+				limit = {
+					has_country_flag = operation_sabotage_infra_use_asset@FROM
+				}
+				custom_effect_tooltip = SUBTRACT_CIVILIAN_ASSET
+				clr_country_flag = operation_sabotage_infra_use_asset@FROM
+			}
+			else = {
+				custom_effect_tooltip = OPERATION_KEEP_ASSET
+			}
+		
+			custom_effect_tooltip = SABOTAGE_INFRA_TOOLTIP
+			meta_effect = {
+				text = {
+					FROM.FROM = {
+						damage_building = {
+							type = infrastructure
+							damage = [D]
+							repair_speed_modifier = [R]
+						}
+					}
+				}
+				D = "[?ROOT.operation_sabotage_infra_damage@FROM]"
+				R = "[?ROOT.operation_sabotage_infra_repair@FROM]"
+			}
+		
+			
+			if = {
+				limit = {
+					check_variable = { operation_sabotage_infra_damage_spread@FROM > 0 }
+				}
+				custom_effect_tooltip = SABOTAGE_INFRA_SPREAD_TOOLTIP
+				
+				hidden_effect = {
+					meta_effect = {
+						text = {
+							FROM.FROM = {
+								every_neighbor_state = {
+									limit = {
+										check_variable = { non_damaged_building_level@infrastructure > 0 }
+									}
+									damage_building = {
+										type = infrastructure
+										damage = [D]
+										repair_speed_modifier = [R]
+									}
+								}
+							}
+						}
+						D = "[?ROOT.operation_sabotage_infra_damage_spread@FROM]"
+						R = "[?ROOT.operation_sabotage_infra_repair_spread@FROM]"
+					}
+				}
+				#clear_variable = operation_sabotage_infra_damage_spread@FROM
+				#clear_variable = operation_sabotage_infra_repair_spread@FROM
+			}
+			#clear_variable = operation_sabotage_infra_damage@FROM
+			#clear_variable = operation_sabotage_infra_repair@FROM
+			
+			if = {
+				limit = {
+					has_country_flag = operation_sabotage_infra_critical@FROM
+				}
+				custom_effect_tooltip = CRITICAL_SUCCESS
+				#custom_effect_tooltip = SABOTAGE_INFRA_CRITICAL_TOOLTIP
+				
+				FROM.FROM = {
+					remove_building = {
+						type = infrastructure
+						level = 1
+					}
+				}
+				
+				#clr_country_flag = operation_sabotage_infra_critical@FROM
+			}
+			
+			hidden_effect = {
+				FROM = {
+					set_variable = { operation_target_state = FROM.FROM }
+					country_event = { id = lar_operative_event.102 days = 3 }
+				}
+			}
+			
+		}
+	}
+	phases = { #infiltration
+		infiltration_border = { base = 25 modifier = { factor = 0.1 ROOT = { is_neighbor_of = FROM } } }
+		infiltration_submarine = { base = 25 modifier = { factor = 0.1 ROOT = { has_navy_size = { size < 1 type = submarine } } } }
+		infiltration_paradrop = { base = 25 modifier = { factor = 0.1 ROOT = { has_equipment = { transport_plane_equipment < 1 } } } }
+		infiltration_diplomatic = {	base = 50 modifier = { factor = 0 FROM = { has_war_with = ROOT } } }
+	}
+	phases = { #exfiltration
+		sabotage_destroy_bridge = { base = 25 }
+		sabotage_collapse_tunnel = { base = 25 }
+		sabotage_remove_roadsigns = { base = 25 }
+		sabotage_immobilize_rolling_stock = { base = 25 }
+	}
+	phases = { #exfiltration
+		exfiltration_air_pickup = { base = 25 modifier = { factor = 0.1 ROOT = { has_equipment = { transport_plane_equipment < 1 } } } }
+		exfiltration_border = { base = 30 modifier = { factor = 0.1 ROOT = { is_neighbor_of = FROM } } }
+		exfiltration_go_to_ground = { base = 30 }
+		exfiltration_submarine_pickup = { base = 25 modifier = { factor = 0.1 ROOT = { has_navy_size = { size < 1 type = submarine } } } }
+	}
+}
+
+operation_sabotage_oil = { ### 18 2/35
+
+	icon = GFX_operations_targeted_sabotage
+	map_icon = GFX_operations_targeted_sabotage_map
+	name = operation_sabotage_oil
+	desc = operation_sabotage_oil_desc
+
+	priority = 11
+
+	days = 50
+
+	operatives = 2
+	network_strength = 50
+
+	allowed = {
+		has_done_agency_upgrade = upgrade_form_operations
+	}
+
+	visible = {
+		NOT = { has_country_flag = ui_hide_civilian_operations@FROM }
+		network_strength = {
+			target = FROM
+			value > 25
+		}
+
+		has_operation_token = {
+			tag = FROM
+			token = token_civilian
+		}
+	}
+	
+	available = {
+		custom_trigger_tooltip = {
+			tooltip = REQUIRE_CIVILIAN_ASSET
+			
+			check_variable = { intel_civilian_asset_level@FROM > 0 }
+		}
+		has_resources_in_country  = {
+			resource = oil
+			amount > 9
+			extracted = yes
+		}
+	}
+
+	ai_will_do = {
+		base = 0
+		modifier = {
+			add = 1000
+			
+			is_in_array = { ai_operations = token:operation_sabotage_oil }
+		}
+		modifier = {
+			add = 150
+			
+			check_variable = { ai_operations^0 = token:operation_sabotage_oil }
+		}
+		modifier = {
+			add = 100
+			
+			check_variable = { ai_operations^1 = token:operation_sabotage_oil }
+		}
+		modifier = {
+			add = 50
+			
+			check_variable = { ai_operations^2 = token:operation_sabotage_oil }
+		}
+	}
+	
+	selection_target_state = {
+		has_resources_amount = {
+			resource = oil
+			amount > 0
+		}
+	}
+	selection_target = {
+		targets = { FROM }
+	}
+	
+	target_weight = {
+		base = 100
+		
+		modifier = {
+			add = t
+			
+			set_temp_variable = { t = resource@oil }
+		}
+	}
+	
+	equipment = {
+		SMG_equipment = 100
+		recon_equipment = 50
+		support_equipment = 50
+	}
+	
+	required_tokens = { token_civilian }
+	risk_chance = 0.2
+	outcome_extra_chance = 0
+	outcome_modifiers = { operation_sabotage_outcome operation_outcome }
+	risk_modifiers = { operation_sabotage_risk operation_risk }
+	cost_modifiers = { operation_sabotage_cost operation_cost }
+	
+	outcome_potential = {
+		custom_effect_tooltip = OPERATION_CHANCE_CIVILIAN_TOKEN
+		set_temp_variable = { damage = 0.25 }
+		set_temp_variable = { factor = modifier@operation_sabotage_damage }
+		add_to_temp_variable = { factor = 1 }
+		multiply_temp_variable = { damage = factor }
+		
+		set_temp_variable = { repair = -0.25 }
+		set_temp_variable = { factor = modifier@operation_sabotage_repair }
+		add_to_temp_variable = { factor = 1 }
+		multiply_temp_variable = { repair = factor }
+		multiply_temp_variable = { repair = 100 }
+		
+		set_temp_variable = { CRITICAL_SUCCESS = 25 }
+		set_temp_variable = { factor = modifier@operation_outcome }
+		add_to_temp_variable = { factor = modifier@operation_sabotage_outcome }
+		subtract_from_temp_variable = { factor = FROM.modifier@enemy_operation_critical_success_chance }
+		add_to_temp_variable = { factor = 1 }
+		multiply_temp_variable = { CRITICAL_SUCCESS = factor }
+		
+		custom_effect_tooltip = {
+			localization_key = SABOTAGE_OIL_OUTCOME_POTENTIAL_TOOLTIP
+			DAMAGE = [?damage]
+			REPAIR = [?repair]
+		}
+	
+	}
+	on_start = {
+		every_operative = {
+			add_to_temp_variable = { operative_outcome = leader_modifier@operation_sabotage_outcome }
+			add_to_temp_variable = { operative_bonus = leader_modifier@operation_sabotage_damage }
+			add_to_temp_variable = { operative_spread = leader_modifier@operation_sabotage_spread }
+			add_to_temp_variable = { operative_asset = leader_modifier@operation_economy_keep_asset_chance }
+		}
+		ROOT = {
+			set_temp_variable = { CRITICAL_SUCCESS = 25 }
+			set_temp_variable = { factor = modifier@operation_outcome }
+			add_to_temp_variable = { factor = modifier@operation_sabotage_outcome }
+			add_to_temp_variable = { factor = operative_outcome }
+			subtract_from_temp_variable = { factor = FROM.modifier@enemy_operation_critical_success_chance }
+			add_to_temp_variable = { factor = 1 }
+			multiply_temp_variable = { CRITICAL_SUCCESS = factor }
+			
+			random = {
+				chance = CRITICAL_SUCCESS
+				
+				set_country_flag = operation_sabotage_oil_critical@FROM
+			}
+			
+			
+			set_temp_variable = { USE_ASSET_CHANCE = 1 }
+			subtract_from_temp_variable = { USE_ASSET_CHANCE = operative_asset }
+			subtract_from_temp_variable = { USE_ASSET_CHANCE = modifier@operation_economy_keep_asset_chance }
+			multiply_temp_variable = { USE_ASSET_CHANCE = 100 }
+			random = {
+				chance = USE_ASSET_CHANCE
+				
+				set_country_flag = operation_sabotage_oil_use_asset@FROM
+				operation_remove_civilian_asset = yes
+			}
+			
+			
+			set_variable = { operation_sabotage_oil_damage@FROM = 0.25 }
+			set_temp_variable = { factor = modifier@operation_sabotage_damage }
+			add_to_temp_variable = { factor = mtth:decryption_operation_effect }
+			add_to_temp_variable = { factor = operative_bonus }
+			subtract_from_temp_variable = { factor = FROM.modifier@operation_economy_enemy_effect }
+			add_to_temp_variable = { factor = 1 }
+			multiply_variable = { operation_sabotage_oil_damage@FROM = factor }
+			
+			set_variable = { operation_sabotage_oil_repair@FROM = -0.25 }
+			add_to_variable = { operation_sabotage_oil_repair@FROM = modifier@operation_sabotage_repair }
+			
+			set_temp_variable = { factor = modifier@operation_sabotage_spread }
+			add_to_temp_variable = { factor = operative_spread }
+			
+			set_variable = { operation_sabotage_oil_damage_spread@FROM = operation_sabotage_oil_damage@FROM }
+			multiply_variable = { operation_sabotage_oil_damage_spread@FROM = factor }
+			set_variable = { operation_sabotage_oil_repair_spread@FROM = operation_sabotage_oil_repair@FROM }
+			multiply_variable = { operation_sabotage_oil_repair_spread@FROM = factor }
+		}
+	}
+	outcome_execute = {
+		hidden_effect = {
+			FROM.FROM = {
+				ROOT = {
+					set_temp_variable = { local = mtth:network_strength_state }
+					divide_temp_variable = { local = 100 }
+					set_temp_variable = { network_strength_state = local }
+					multiply_temp_variable = { local = @LOCAL_OPERATION_EFFECT }
+					add_to_temp_variable = { local = PREV.modifier@local_operation_effect }
+					set_temp_variable = { local_effect = local }
+					
+					add_to_temp_variable = { local = 1 }
+					
+					multiply_variable = { operation_sabotage_oil_damage@FROM = local }
+					multiply_variable = { operation_sabotage_oil_repair@FROM = local }
+					
+					## use these variables for tooltips & effects
+					set_temp_variable = { effect = operation_sabotage_oil_damage@FROM }
+					multiply_temp_variable = { effect = local }
+					set_temp_variable = { repair = operation_sabotage_oil_repair@FROM }
+					multiply_temp_variable = { repair = local }
+					
+				}
+			}
+		}
+		custom_effect_tooltip = LOCAL_OPERATION_EFFECT_TOOLTIP
+		
+		ROOT = {
+			if = {
+				limit = {
+					has_country_flag = operation_sabotage_oil_use_asset@FROM
+				}
+				custom_effect_tooltip = SUBTRACT_CIVILIAN_ASSET
+				clr_country_flag = operation_sabotage_oil_use_asset@FROM
+			}
+			else = {
+				custom_effect_tooltip = OPERATION_KEEP_ASSET
+			}
+		
+			custom_effect_tooltip = SABOTAGE_OIL_TOOLTIP
+			hidden_effect = {
+				FROM.FROM = {
+					if = {
+						limit = {
+							check_variable = { building_level@operation_oil_refinery = 0 }
+						}
+						add_building_construction = {
+							type = operation_oil_refinery
+							level = 1
+							instant_build = yes
+						}
+					}
+					add_to_variable = { operation_oil_refinery = -0.25 }
+					clamp_variable = { var = operation_oil_refinery min = -0.9 max = 0 }
+				}
+				meta_effect = {
+					text = {
+						FROM.FROM = {
+							damage_building = {
+								type = operation_oil_refinery
+								damage = [D]
+								repair_speed_modifier = [R]
+							}
+						}
+					}
+					D = "[?ROOT.operation_sabotage_oil_damage@FROM]"
+					R = "[?ROOT.operation_sabotage_oil_repair@FROM]"
+				}
+		
+			}
+			
+			if = {
+				limit = {
+					check_variable = { modifier@operation_sabotage_spread > 0 }
+				}
+				hidden_effect = {
+					FROM = {
+						every_controlled_state = {
+							limit = {
+								check_variable = { resource@oil > 0 }
+								NOT = { state = FROM.FROM }
+							}
+							add_to_temp_array = { oil_states = THIS }
+						}
+					}
+					FROM.FROM = { set_temp_variable = { target_oil = THIS } }
+					random_scope_in_array = {
+						array = oil_states
+						limit = {
+							check_variable = { distance_to@var:target_oil > 0 }
+							NOT = {
+								any_of_scopes = {
+									array = oil_states
+									check_variable = { distance_to@var:target_oil < PREV.distance_to@var:target_oil }
+								}
+							}
+						}
+						add_to_variable = { operation_oil_refinery = -0.25 }
+						clamp_variable = { var = operation_oil_refinery min = -0.9 max = 0  }
+						if = {
+							limit = {
+								check_variable = { building_level@operation_oil_refinery = 0 }
+							}
+							add_building_construction = {
+								type = operation_oil_refinery
+								level = 1
+								instant_build = yes
+							}
+						}
+								
+						ROOT = {
+							hidden_effect = {
+								meta_effect = {
+									text = {
+										PREV = {
+											damage_building = {
+												type = operation_oil_refinery
+												damage = [D]
+												repair_speed_modifier = [R]
+											}
+										}
+									}
+									D = "[?ROOT.operation_sabotage_oil_damage_spread@FROM]"
+									R = "[?ROOT.operation_sabotage_oil_repair_spread@FROM]"
+								}
+							}
+						}
+						
+						set_temp_variable = { spread_target = THIS }
+					}
+				}
+	
+				custom_effect_tooltip = SABOTAGE_OIL_SPREAD_TOOLTIP
+			}
+			
+			#clear_variable = operation_sabotage_oil_damage@FROM
+			#clear_variable = operation_sabotage_oil_repair@FROM
+			#clear_variable = operation_sabotage_oil_damage_spread@FROM
+			#clear_variable = operation_sabotage_oil_repair_spread@FROM
+			
+			if = {
+				limit = {
+					has_country_flag = operation_sabotage_oil_critical@FROM
+				}
+				custom_effect_tooltip = CRITICAL_SUCCESS
+				custom_effect_tooltip = SABOTAGE_OIL_CRITICAL_TOOLTIP
+				
+				hidden_effect = { #TODO this critical effect sux
+					FROM.FROM = {
+						add_to_variable = { operation_oil_refinery = -0.25 }
+						clamp_variable = { var = operation_oil_refinery min = -0.9 max = 0  }
+					}
+				}
+				
+				#clr_country_flag = operation_sabotage_oil_critical@FROM
+			}
+			
+			hidden_effect = {
+				FROM = {
+					set_variable = { operation_target_state = FROM.FROM }
+					set_variable = { operation_spread_target_state = spread_target }
+					country_event = { id = lar_operative_event.101 days = 3 }
+				}
+			}
+			
+			add_to_array = { ROOT.operation_completed = token:operation_sabotage_oil }
+			add_to_array = { ROOT.operation_completed_state = FROM.FROM }
+			add_to_array = { ROOT.operation_completed_target = FROM }
+			add_to_array = { ROOT.operation_completed_date = global.date }
+		}
+	}
+	phases = { #infiltration
+		infiltration_border = { base = 25 modifier = { factor = 0.1 ROOT = { is_neighbor_of = FROM } } }
+		infiltration_submarine = { base = 25 modifier = { factor = 0.1 ROOT = { has_navy_size = { size < 1 type = submarine } } } }
+		infiltration_paradrop = { base = 25 modifier = { factor = 0.1 ROOT = { has_equipment = { transport_plane_equipment < 1 } } } }
+		infiltration_diplomatic = {	base = 50 modifier = { factor = 0 FROM = { has_war_with = ROOT } } }
+	}
+	phases = { #exfiltration
+		sabotage_oil_explosives = { base = 50 }
+		sabotage_burn_oil_refinery = { base = 50 }
+	}
+	phases = { #exfiltration
+		exfiltration_air_pickup = { base = 25 modifier = { factor = 0.1 ROOT = { has_equipment = { transport_plane_equipment < 1 } } } }
+		exfiltration_border = { base = 30 modifier = { factor = 0.1 ROOT = { is_neighbor_of = FROM } } }
+		exfiltration_go_to_ground = { base = 30 }
+		exfiltration_submarine_pickup = { base = 25 modifier = { factor = 0.1 ROOT = { has_navy_size = { size < 1 type = submarine } } } }
+	}
+}

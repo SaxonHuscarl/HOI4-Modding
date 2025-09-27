@@ -1,0 +1,167 @@
+﻿####
+add_namespace = gfyp_events
+### First full year G4YP 1937 ##
+country_event = {
+	id = gfyp_events.1
+	title = gfyp_events.1.t
+	desc = gfyp_events.1.desc
+	picture = GFX_report_event_heavy_industrialization
+	
+	trigger = {
+		tag = GER
+		has_completed_focus = GER_Goering_Plan
+		
+		OR = {
+			#If Plan is active fire every year
+			if = {
+				limit = {
+					has_country_flag = goering_plan
+				}
+				has_country_flag = { flag = goering_plan days > 360 }
+			}
+			#If not then fire it once to set it up
+			else = {
+				NOT = { has_country_flag = goering_initial_setup }
+			}
+		}
+	}
+	
+	immediate = {
+		set_country_flag = goering_initial_setup 
+	}
+	
+	is_triggered_only = yes
+	
+	## First
+	option = {
+		name = gfyp_events.1.a 
+		ai_chance = { factor = 100 }
+		trigger = {
+			has_country_flag = goering_initial_setup
+			NOT = { has_country_flag = goering_plan }
+		}
+		add_ideas = Goering_four_year_plan_begin
+		if = { limit = { NOT = { has_idea = GER_hermann_goering_economic_minister } }
+			if = { limit = { has_idea = GER_hjalmar_schacht_economic_minister }
+				remove_ideas = GER_hjalmar_schacht_economic_minister
+			}
+			else_if = { limit = { has_idea = GER_fritz_todt_economic_minister }
+				remove_ideas = GER_fritz_todt_economic_minister
+			}
+			else_if = { limit = { has_idea = GER_walther_funk_economic_minister }
+				remove_ideas = GER_walther_funk_economic_minister
+			}
+			else_if = { limit = { has_idea = GER_albert_speer_economic_minister }
+				remove_ideas = GER_albert_speer_economic_minister
+			}
+			else_if = { limit = { has_idea = GER_alfried_krupp_economic_minister }
+				remove_ideas = GER_alfried_krupp_economic_minister
+			}
+			else_if = { limit = { has_idea = GER_konstantin_hierl_economic_minister }
+				remove_ideas = GER_konstantin_hierl_economic_minister
+			}
+			add_ideas = GER_hermann_goering_economic_minister
+		}
+		set_country_flag = { flag = goering_plan value = 1 }
+	}
+	## Second
+	option = {
+		name = gfyp_events.1.b 
+		ai_chance = { factor = 100 }
+		trigger = {
+			has_country_flag = goering_initial_setup
+			has_country_flag = { flag = goering_plan value = 1 }
+		}
+		swap_ideas = {
+			remove_idea = Goering_four_year_plan_begin
+			add_idea = Goering_four_year_plan_37
+		}
+		set_country_flag = { flag = goering_plan value = 2 }
+	}
+	## Third
+	option = {
+		name = gfyp_events.1.c 
+		ai_chance = { factor = 100 }
+		trigger = {
+			has_country_flag = goering_initial_setup
+			has_country_flag = { flag = goering_plan value = 2 }
+		}
+		swap_ideas = {
+			remove_idea = Goering_four_year_plan_37
+			add_idea = Goering_four_year_plan_38
+		}
+		set_country_flag = { flag = goering_plan value = 3 }
+	}
+	## Fourth
+	option = {
+		name = gfyp_events.1.d
+		ai_chance = { factor = 100 }
+		trigger = {
+			has_country_flag = goering_initial_setup
+			has_country_flag = { flag = goering_plan value = 3 }
+		}
+		swap_ideas = {
+			remove_idea = Goering_four_year_plan_38
+			add_idea = Goering_four_year_plan_39
+		}
+		set_country_flag = { flag = goering_plan value = 4 }
+	}
+	## Fifth (uhm is that actually correct?)
+	option = {
+		name = gfyp_events.1.x
+		ai_chance = { factor = 100 }
+		trigger = {
+			always = no
+			has_country_flag = goering_initial_setup
+			has_country_flag = { flag = goering_plan value = 4 }
+		}
+		swap_ideas = {
+			remove_idea = Goering_four_year_plan_39
+			add_idea = Goering_four_year_plan_40
+		}
+		set_country_flag = { flag = goering_plan value = 5 }
+	}
+	## Cancel
+	#option = {
+	#	name = gfyp_events.1.f 
+	#	ai_chance = { factor = 0 }
+	#	trigger = {
+	#		has_country_flag = goering_initial_setup
+	#		NOT = { has_country_flag = goering_plan }
+	#	}
+	#	add_political_power = -100
+	#}
+	## Remove 
+	option = {
+		name = gfyp_events.1.e
+		ai_chance = { factor = 100 }
+		trigger = {
+			has_country_flag = goering_plan
+		}
+		clr_country_flag = goering_plan
+		if = {
+			limit = {
+				has_idea = Goering_four_year_plan_begin
+			}
+			remove_ideas = Goering_four_year_plan_begin
+		}
+		if = {
+			limit = {
+				has_idea = Goering_four_year_plan_37
+			}
+			remove_ideas = Goering_four_year_plan_37
+		}
+		if = {
+			limit = {
+				has_idea = Goering_four_year_plan_38
+			}
+			remove_ideas = Goering_four_year_plan_38
+		}
+		if = {
+			limit = {
+				has_idea = Goering_four_year_plan_39
+			}
+			remove_ideas = Goering_four_year_plan_39
+		}
+	}
+}

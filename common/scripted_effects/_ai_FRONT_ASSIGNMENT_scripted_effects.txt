@@ -1,0 +1,444 @@
+
+@AI_MAX_COUNTRIES_TO_DEFEND_COUNTRY = 3 #how many countries can defend 1 country at the same time
+# overlord can always defend its subjects, and does not count for this check
+		
+ai_setup_area_defense = { #add countries in here to not have the dont defend ally borders strategies and script active
+	if = {				#instead, these countries use areas as defense scopes
+		limit = {
+			NOT = { has_country_flag = ai_setup_area_defence }
+			OR = {
+				tag = SAF #SAF defend africa
+				tag = USA #USA can defend everywhere
+				tag = AST #AST and NZL only defend oceania & south east asia
+				tag = NZL
+				tag = CAN #dont defend africa; dont_defend_ally_borders script still active
+				
+				#these ones all just defend middle east
+				tag = BMP
+				tag = JOR
+				tag = LEB
+				tag = SYR
+				tag = PER
+				tag = AFG
+				tag = SAU
+				tag = OMA
+				tag = YEM
+				
+				#these ones all just defend asia
+				tag = PGR
+				tag = SHX
+				tag = PRC
+				tag = SDC
+				tag = CHI
+				tag = ZXL
+				tag = XSM
+				tag = SKC
+				tag = SCC
+				tag = XIA
+				tag = YUN
+				tag = GXC
+				tag = YUT
+				tag = EHA
+				tag = MEN
+				
+				#these ones all just defend south america
+				tag = GUA
+				tag = HON
+				tag = ELS
+				tag = NIC
+				tag = COS
+				tag = PAN
+				tag = ECU
+				tag = PAR
+				tag = URG
+				tag = CUB
+				tag = HAI
+				tag = DOM
+			}
+		}
+		
+		if = {
+			limit = {
+				NOT = { has_country_flag = ai_setup_area_defence }
+			}
+				
+			set_country_flag = ai_use_area_defense #use this flag to disable country front script
+			set_country_flag = ai_setup_area_defence
+		
+			if = {
+				limit = {
+					tag = SAF
+				}
+				
+				# no front
+				
+				set_variable = { ai_no_front@europe = 1 }
+				add_ai_strategy = { type = front_unit_request area = europe value = -100 }
+				
+				set_variable = { ai_no_front@middle_east = 1 }
+				add_ai_strategy = { type = front_unit_request area = middle_east value = -100 }
+				
+				set_variable = { ai_no_front@asia = 1 }
+				add_ai_strategy = { type = front_unit_request area = asia value = -100 }
+				
+				set_variable = { ai_no_front@north_america = 1 }
+				add_ai_strategy = { type = front_unit_request area = north_america value = -100 }
+				
+				set_variable = { ai_no_front@south_america = 1 }
+				add_ai_strategy = { type = front_unit_request area = south_america value = -100 }
+				
+				
+				# force defend
+				
+				set_variable = { ai_force_defend@africa = 1 }
+				add_ai_strategy = { type = force_defend_ally_borders target = africa value = 1 }
+			}
+			else_if = {
+				limit = {
+					tag = CAN
+				}
+				
+				# no front
+				
+				set_variable = { ai_no_front@africa = 1 }
+				add_ai_strategy = { type = front_unit_request area = africa value = -100 }
+				
+				set_variable = { ai_no_front@middle_east = 1 }
+				add_ai_strategy = { type = front_unit_request area = middle_east value = -100 }
+				
+				clr_country_flag = ai_use_area_defense #keep country defense script active
+			}
+			else_if = {
+				limit = {
+					OR = { tag = AST tag = NZL }
+				}
+							
+				# no front
+				
+				set_variable = { ai_no_front@europe = 1 }
+				add_ai_strategy = { type = front_unit_request area = africa value = -100 }
+				
+				set_variable = { ai_no_front@europe = 1 }
+				add_ai_strategy = { type = front_unit_request area = europe value = -100 }
+				
+				set_variable = { ai_no_front@middle_east = 1 }
+				add_ai_strategy = { type = front_unit_request area = middle_east value = -100 }
+				
+				set_variable = { ai_no_front@asia = 1 }
+				add_ai_strategy = { type = front_unit_request area = asia value = -100 }
+				
+				set_variable = { ai_no_front@north_america = 1 }
+				add_ai_strategy = { type = front_unit_request area = north_america value = -100 }
+				
+				set_variable = { ai_no_front@south_america = 1 }
+				add_ai_strategy = { type = front_unit_request area = south_america value = -100 }
+				
+				# force defend
+				
+				set_variable = { ai_force_defend@africa = 1 }
+				add_ai_strategy = { type = force_defend_ally_borders target = asia value = 1 }
+				
+				
+				add_ai_strategy = { type = front_unit_request value = 100 area = south_east_asia }
+				add_ai_strategy = { type = front_unit_request value = 100 area = oceania }
+			}
+			else_if = {
+				limit = {
+					tag = USA
+				}
+						
+				# force defend
+				
+				set_variable = { ai_force_defend@europe = 1 }
+				add_ai_strategy = { type = force_defend_ally_borders target = europe value = 1 }
+				
+				set_variable = { ai_force_defend@asia = 1 }
+				add_ai_strategy = { type = force_defend_ally_borders target = asia value = 1 }
+				
+				set_variable = { ai_force_defend@middle_east = 1 }
+				add_ai_strategy = { type = force_defend_ally_borders target = middle_east value = 1 }
+				
+				set_variable = { ai_force_defend@north_america = 1 }
+				add_ai_strategy = { type = force_defend_ally_borders target = north_america value = 1 }
+				
+				set_variable = { ai_force_defend@south_america = 1 }
+				add_ai_strategy = { type = force_defend_ally_borders target = south_america value = 1 }
+			}
+			else_if = {
+				limit = {
+					OR = {
+						tag = BMP
+						tag = JOR
+						tag = LEB
+						tag = SYR
+						tag = PER
+						tag = AFG
+						tag = SAU
+						tag = OMA
+						tag = YEM
+					}
+				}
+				
+				# force defend 
+				
+				set_variable = { ai_force_defend@middle_east = 1 }
+				add_ai_strategy = { type = force_defend_ally_borders target = middle_east value = 1 }
+				
+				
+				# no front
+				
+				set_variable = { ai_no_front@europe = 1 }
+				add_ai_strategy = { type = front_unit_request area = europe value = -100 }
+				
+				set_variable = { ai_no_front@africa = 1 }
+				add_ai_strategy = { type = front_unit_request area = africa value = -100 }
+				
+				set_variable = { ai_no_front@asia = 1 }
+				add_ai_strategy = { type = front_unit_request area = asia value = -100 }
+				
+				set_variable = { ai_no_front@north_america = 1 }
+				add_ai_strategy = { type = front_unit_request area = north_america value = -100 }
+				
+				set_variable = { ai_no_front@south_america = 1 }
+				add_ai_strategy = { type = front_unit_request area = south_america value = -100 }
+				
+			}
+			else_if = {
+				limit = {
+					OR = {
+						tag = PGR
+						tag = SHX
+						tag = PRC
+						tag = SDC
+						tag = CHI
+						tag = ZXL
+						tag = XSM
+						tag = SKC
+						tag = SCC
+						tag = XIA
+						tag = YUN
+						tag = GXC
+						tag = YUT
+						tag = EHA
+						tag = MEN
+					}
+				}
+				
+				# force defend 
+				
+				set_variable = { ai_force_defend@asia = 1 }
+				add_ai_strategy = { type = force_defend_ally_borders target = asia value = 1 }
+				
+				
+				# no front
+				
+				set_variable = { ai_no_front@europe = 1 }
+				add_ai_strategy = { type = front_unit_request area = europe value = -100 }
+				
+				set_variable = { ai_no_front@africa = 1 }
+				add_ai_strategy = { type = front_unit_request area = africa value = -100 }
+				
+				set_variable = { ai_no_front@middle_east = 1 }
+				add_ai_strategy = { type = front_unit_request area = middle_east value = -100 }
+				
+				set_variable = { ai_no_front@north_america = 1 }
+				add_ai_strategy = { type = front_unit_request area = north_america value = -100 }
+				
+				set_variable = { ai_no_front@south_america = 1 }
+				add_ai_strategy = { type = front_unit_request area = south_america value = -100 }
+			}
+			else_if = {
+				limit = {
+					OR = {
+						tag = GUA
+						tag = HON
+						tag = ELS
+						tag = NIC
+						tag = COS
+						tag = PAN
+						tag = ECU
+						tag = PAR
+						tag = URG
+						tag = CUB
+						tag = HAI
+						tag = DOM
+					}
+				}
+				
+				# force defend 
+				
+				set_variable = { ai_force_defend@south_america = 1 }
+				add_ai_strategy = { type = force_defend_ally_borders target = south_america value = 1 }
+				
+				
+				# no front
+				
+				set_variable = { ai_no_front@europe = 1 }
+				add_ai_strategy = { type = front_unit_request area = europe value = -100 }
+				
+				set_variable = { ai_no_front@africa = 1 }
+				add_ai_strategy = { type = front_unit_request area = africa value = -100 }
+				
+				set_variable = { ai_no_front@middle_east = 1 }
+				add_ai_strategy = { type = front_unit_request area = middle_east value = -100 }
+				
+				set_variable = { ai_no_front@north_america = 1 }
+				add_ai_strategy = { type = front_unit_request area = north_america value = -100 }
+				
+				set_variable = { ai_no_front@asia = 1 }
+				add_ai_strategy = { type = front_unit_request area = asia value = -100 }
+			}
+		}
+		
+	}
+}
+
+d_ai_update_countries_to_defend_us = {
+	ai_setup_area_defense = yes 
+	
+	if = {
+		limit = {
+			NOT = { has_country_flag = ui_ai_lock_defense_THIS }
+		}
+		
+		for_each_loop = { 
+			array = allies 
+			
+			add_to_temp_array = { targets = v }
+		}
+		for_each_loop = { 
+			array = subjects 
+			
+			if = { limit = { NOT = { is_in_array = { targets = v } } } add_to_temp_array = { targets = v } }
+		}
+		
+		
+		for_each_scope_loop = {
+			array = targets 
+			
+			if = {
+				limit = {
+					ai_can_THIS_defend_ROOT = yes
+					NOT = { has_country_flag = { flag = ai_use_area_defense value = 1 } }
+				}
+				add_to_temp_array = { possible_target = THIS.id }
+			}
+			
+		}
+		
+		
+		#sort countries that can defend us
+		
+		clear_array = ai_countries_defend_us_new
+		clear_array = clear_scores
+		
+		get_sorted_scored_countries = { 
+			scorer = ai_GetCountriesToDefendUs
+			array = ai_countries_defend_us_new
+			scores = clear_scores
+		}
+		
+		if = {
+			limit = { check_variable = { ai_countries_defend_us_new^num > @AI_MAX_COUNTRIES_TO_DEFEND_COUNTRY } }
+			
+			resize_array = { ai_countries_defend_us_new = @AI_MAX_COUNTRIES_TO_DEFEND_COUNTRY }
+		}
+		
+		### UPDATE: 
+		
+		# if old countries no longer defend us, remove their ai strategy
+			
+		for_each_loop = {
+			array = ai_countries_defend_us
+			
+			if = {
+				limit = {
+					NOT = { is_in_array = { ai_countries_defend_us_new = v } }
+				}
+				
+				var:v = { ai_THIS_remove_defence_for_PREV = yes }
+			}
+		}
+		
+		clear_array = ai_countries_defend_us
+		
+		# if new country wants to defend us, add ai strategy
+		
+		for_each_loop = {
+			array = ai_countries_defend_us_new
+			
+			var:v = { ai_THIS_add_defence_for_PREV = yes }
+		}
+		
+		clear_array = ai_countries_defend_us_new
+		clear_array = clear_scores
+	}
+}
+
+ai_THIS_add_defence_for_PREV = {
+	if = {
+		limit = {
+			NOT = { is_in_array = { PREV.ai_countries_defend_us = THIS } }
+		}
+		add_to_array = { PREV.ai_countries_defend_us = THIS }
+	}
+	if = {
+		limit = {
+			NOT = { has_country_flag = ai_defend_@PREV }
+			
+			OR = {
+				NOT = { has_country_flag = ui_ai_lock_defense }
+				check_variable = { ui_setting = 1 }
+			}
+	
+		}
+		set_country_flag = ai_defend_@PREV
+			
+		meta_effect = {
+			text = {
+				add_ai_strategy = {
+					type = dont_defend_ally_borders
+					id = [X] 
+					value = -2000 
+				}
+			}
+			X = "[?Prev.GetTag]"
+		}
+	}
+}
+ai_THIS_remove_defence_for_PREV = {
+	if = {
+		limit = {
+			has_country_flag = ai_defend_@PREV
+			
+			OR = {
+				NOT = { has_country_flag = ui_ai_lock_defense }
+				check_variable = { ui_setting = 1 }
+			}
+	
+		}
+		clr_country_flag = ai_defend_@PREV
+		meta_effect = {
+			text = {
+				add_ai_strategy = {
+					type = dont_defend_ally_borders
+					id = [X] 
+					value = 2000 
+				}
+			}
+			X = "[?Prev.GetTag]"
+		}
+	}
+}
+
+
+ai_update_front_aggressiveness = {
+	if = {
+		limit = {
+			is_major = no
+			NOT = { has_idea = ai_front_defense_1 }
+		}
+		add_ideas = ai_front_defense_1
+	}
+}
+

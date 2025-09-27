@@ -1,0 +1,872 @@
+﻿###################################################
+add_namespace = blackiceevents
+
+country_event = {
+	id = blackiceevents.0
+	hidden = yes  #timeout
+    timeout_days = 1
+
+	is_triggered_only = yes
+	
+	immediate = {
+		update_unit_leader_skill_num = yes
+		update_unit_leader_average = yes
+	}
+}
+#Event running every event check 
+country_event = {
+	id = blackiceevents.1
+	title = blackiceevents.1.t
+	desc = blackiceevents.1.desc
+
+	trigger = {
+		is_ai = no 
+		meta_trigger = { 
+			text = {
+				set_temp_variable = { temp = [VERSION] }
+			}
+			VERSION = "[GetVersion]"
+		}
+		NOT = { check_variable = { temp = global.BI_version } }
+	}
+	
+	fire_only_once = yes
+
+	option = {
+		name = Okay
+		
+	}
+}
+
+country_event = { 
+	id = blackiceevents.2
+	title = blackiceevents.2.t
+	desc = blackiceevents.2.d
+	picture = GFX_report_event_horthy_meets_with_representatives_gfxaddon
+	
+	trigger = {
+		NOT = { has_war_with = HUN }
+		is_puppet = no
+		country_exists = HUN
+		HUN = { 
+			is_ai = yes 
+			is_in_faction = no
+		}	
+	}
+	
+	fire_only_once = yes
+	is_triggered_only = yes
+	
+	# add news event for historical mod
+	option = {
+		name = blackiceevents.2.a
+		ai_chance = { factor = 100 }
+		GER = { add_to_faction = HUN}
+	}
+	option = {
+    	name = blackiceevents.2.b
+    	ai_chance = { factor = 0 }
+    }
+}
+country_event = {
+	id = blackiceevents.3
+	picture = GFX_report_event_BICE
+	title = blackiceevents.3.t
+	desc = blackiceevents.3.d	
+	fire_only_once = no
+	is_triggered_only = yes
+	trigger = {
+	}
+	
+	immediate = {
+		hidden_effect = {
+			BI_get_research_centre_slot_scores = yes
+		}
+	}
+	
+	option = { #Industry
+		name = blackiceevents.3.a
+		add_research_slot = 1
+		add_research_centre = yes
+		SLOT:industry_folder = yes		
+	}
+	option = { #Raw Materials
+		name = blackiceevents.3.b
+		add_research_slot = 1
+		add_research_centre = yes
+		SLOT:raw_materials_folder = yes
+	}	
+
+}
+country_event = { 
+	id = blackiceevents.4
+	title = blackiceevents.4.t
+	desc = blackiceevents.4.d
+	picture = GFX_report_event_antonescu
+	
+	trigger = { 
+		tag = GER
+		is_puppet = no
+		NOT = { has_war_with = ROM }
+		country_exists = ROM
+		ROM = { 
+			is_ai = yes 
+			is_in_faction = no
+		}
+	}
+	 # add news event for historical mod
+	 
+	is_triggered_only = yes
+	fire_only_once = yes
+	
+	option = {
+		name = blackiceevents.4.a
+		ai_chance = { factor = 100 }
+		add_to_faction = ROM
+	}
+	option = {
+    	name = blackiceevents.4.b
+    }
+}
+
+#remove overlord state modifiers
+country_event = { 
+	id = blackiceevents.7
+	fire_only_once = yes
+	hidden = yes
+	
+	is_triggered_only = yes
+	
+	immediate = {
+		every_controlled_state = {
+			limit = {
+				OR = {
+					is_core_of = FRA
+					is_core_of = BEL
+					is_core_of = DEN
+				}
+			}
+			add_state_modifier = {
+				modifier = {
+					disable_strategic_redeployment = 0
+				}
+			}
+		}		
+	}
+}
+#bug event
+country_event = { 
+	id = blackiceevents.6
+	title = blackiceevents.6.t
+	desc = blackiceevents.6.d
+	picture = GFX_report_event_polish_tanks_01
+	fire_only_once = yes
+	trigger = { 
+	}
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = blackiceevents.6.a
+		ai_chance = { factor = 1 } 
+		add_offsite_building = { type = arms_factory level = 20 }
+	}
+}
+
+country_event = {
+	id = blackiceevents.9
+	picture = GFX_report_event_001
+	title = blackiceevents.9.t
+	desc = blackiceevents.9.d	
+	fire_only_once = no
+	is_triggered_only = yes
+	trigger = {
+	}
+	
+	option = { #Germany
+		name = blackiceevents.9.a
+		set_global_flag = allied_ai
+		set_global_flag = commie_ai	
+		bice_difficulty_adjustments = yes	
+	}
+	option = { #Japan
+		name = blackiceevents.9.b
+		set_global_flag = allied_ai
+		set_global_flag = chi_ai
+		bice_difficulty_adjustments = yes
+	}	
+	option = { #Soviets
+		name = blackiceevents.9.c
+		set_global_flag = axis_ai
+		bice_difficulty_adjustments = yes
+	}
+	option = { #allies
+		name = blackiceevents.9.e
+		set_global_flag = axis_ai
+		set_global_flag = east_ai
+		bice_difficulty_adjustments = yes
+	}	
+	option = { #China
+		name = blackiceevents.9.f
+		set_global_flag = east_ai
+		bice_difficulty_adjustments = yes
+	}
+	option = { #Not saying
+		name = blackiceevents.9.g
+	}	
+}
+## Allows players to load WTT focus trees without WTT
+country_event = {
+	id = blackiceevents.11
+	title = blackiceevents.11.t
+	desc = blackiceevents.11.d
+	picture = GFX_report_event_bulgarian_flag
+	
+	fire_only_once = yes
+	is_triggered_only = yes
+	
+	option = {
+		name = blackiceevents.11.a
+	}
+	
+	option = {
+		name = blackiceevents.11.b
+		hidden_effect = {
+			every_country = {
+				limit = {
+					is_Arab/FLAG = yes
+				}
+				load_focus_tree = arab_focus
+			}
+			IRQ = {
+				load_focus_tree = Iraq
+			}
+			BMP = {
+				load_focus_tree = BMP_mandatory_palestine_focus
+			}
+			JOR = {
+				load_focus_tree = jor_merfocus
+			}
+		}
+	}
+}
+## Panzeroo Mode
+country_event = {
+	id = blackiceevents.12
+	title = blackiceevents.12.t
+	desc = blackiceevents.12.d
+	picture = GFX_report_event_aussie_prop
+	
+	fire_only_once = yes
+	is_triggered_only = yes
+	immediate = {
+		meta_effect = {
+			text = {
+				add_ai_strategy = {
+					type = antagonize
+					id = [X] 
+					value = 200 
+				}
+				add_ai_strategy = {
+					type = contain
+					id = [X] 
+					value = 200 
+				}	
+				add_ai_strategy = {
+					type = befriend 
+					id = [X] 
+					value = -200 
+				}					
+			}
+			X = "[?Prev.GetTag]"
+		}
+	}
+	option = {
+		name = blackiceevents.12.a
+		hidden_effect = {
+			set_global_flag = marco_panzeroo
+			ROOT = {
+				save_global_event_target_as = panzeroo_target
+			}			
+		}		
+	}
+	
+	option = {
+		name = blackiceevents.12.b
+		hidden_effect = {
+			set_global_flag = danzig_panzeroo
+			ROOT = {
+				save_global_event_target_as = panzeroo_target
+			}
+		}
+	}
+	option = {
+		name = blackiceevents.12.c
+		hidden_effect = {
+			set_global_flag = barb_panzeroo
+			ROOT = {
+				save_global_event_target_as = panzeroo_target
+			}
+		}
+	}
+	option = {
+		name = blackiceevents.12.e
+		hidden_effect = {
+			set_global_flag = pearl_panzeroo
+			ROOT = {
+				save_global_event_target_as = panzeroo_target
+			}
+		}
+	}
+	option = {
+		name = blackiceevents.12.f
+	}
+}
+country_event = {
+	id = blackiceevents.13
+	title = blackiceevents.13.t
+	desc = blackiceevents.13.d
+	picture = GFX_report_event_aussie_prop
+	
+	fire_only_once = yes
+	is_triggered_only = yes
+	immediate = {
+
+	}
+	option = {
+		name = blackiceevents.13.a
+		hidden_effect = {
+			every_other_country = {
+				limit = {
+					NOT = {
+						has_war_with = ROOT
+						is_in_faction_with = ROOT
+					}
+				}
+				add_manpower = 100000
+				add_equipment_to_stockpile = {
+					type = infantry_equipment
+					amount = 5000
+				}
+				add_equipment_to_stockpile = {
+					type = SMG_equipment
+					amount = 5000
+				}
+				add_equipment_to_stockpile = {
+					type = garrison_equipment
+					amount = 5000
+				}
+				add_equipment_to_stockpile = {
+					type = infantry_uniforms
+					amount = 5000
+				}
+				add_equipment_to_stockpile = {
+					type = support_equipment
+					amount = 5000
+				}
+				add_equipment_to_stockpile = {
+					type = artillery_equipment
+					amount = 5000
+				}				
+				declare_war_on = {
+					target = ROOT
+					type = annex_everything
+				}
+			}		 
+		}		
+	}
+}
+country_event = {	# Soviets says yes   historical mod
+	id = blackiceevents.26
+	title = blackiceevents.26.t
+	desc = blackiceevents.26.d
+	picture = GFX_report_event_finnish_soldiers_snow
+	
+	is_triggered_only = yes
+
+	option = {
+		name = blackiceevents.26.a
+		add_ideas = neutrality_idea 
+		set_global_flag = first_finish_war_over
+	}
+}
+country_event = { # historical mod - Finland join GER during GER vs SOV
+	id = blackiceevents.27 
+	title = blackiceevents.27.t
+	desc = blackiceevents.27.d
+	picture = GFX_report_event_finnish_soldiers_snow
+	
+	is_triggered_only = yes
+	
+	fire_only_once = yes
+	
+	option = {
+		name = blackiceevents.27.a
+		ai_chance = { factor = 100 }
+		FIN = { 
+			if = {
+				limit = { NOT = { is_in_faction = yes } }
+				create_faction = "Finland" 
+			}
+			
+			if = {
+				limit = {
+					NOT = { is_in_faction_with = GER }
+				}
+				diplomatic_relation = { country = GER relation = non_aggression_pact } 
+				give_military_access = GER
+				#GER = { diplomatic_relation = { country = FIN relation = send_attache active = yes } }
+				add_timed_idea = {
+					idea = GER_eastern_front_initiative
+					days = 90
+				}				
+			}
+			declare_war_on = {
+				target = SOV
+				type = take_state_focus
+				generator = { 146 147 213 215 216 } 
+			}
+		}
+		hidden_effect = { 
+			FIN = { 
+				#remove_ideas = neutrality_idea 
+				add_opinion_modifier = { target = GER modifier =  improve_relation } 
+				if = {
+					limit = { is_ai = yes }
+					add_ideas = { FIN_con_war }
+				}					
+			} 
+			GER = { 
+				add_opinion_modifier = { target = FIN modifier =  improve_relation } 
+				give_military_access = FIN
+			} 
+		}
+		set_global_flag = now_finland_now
+	}
+	option = {
+    	name = blackiceevents.27.b
+		ai_chance = { factor = 0 }
+    }
+}
+
+
+country_event = {
+	id = blackiceevents.35
+	title = blackiceevents.35.t
+	desc = blackiceevents.35.d
+	
+	picture = GFX_report_event_degaulle_churchill
+
+	trigger = {
+		tag = USA
+		is_ai = yes
+		NOT = {
+			is_in_faction_with = GER 
+			is_in_faction_with = JAP 
+		}
+		OR = {
+			check_variable = { global.days_passed > 2191 } #date > 1942.1.1
+			controls_state = 336
+			controls_state = 430
+			controls_state = 521
+			controls_state = 285 
+			controls_state = 428 
+			controls_state = 423 
+		}
+	}
+
+	fire_only_once = yes
+	is_triggered_only = yes
+	
+    immediate = {
+        hidden_effect = {
+            if = {
+                limit = {
+                    is_ai = yes
+                }
+                ENG = { add_to_faction = USA }
+            }
+        }
+    }
+	option = {
+		name = blackiceevents.35.a
+		ai_chance = { factor = 100 }
+		ENG = { add_to_faction = USA }
+	}
+	option = {
+    	name = blackiceevents.35.b
+    }
+}
+
+country_event = {   # Denmark were event
+	id = blackiceevents.50
+	title = blackiceevents.50.t
+	desc = blackiceevents.50.d
+	
+	picture = GFX_report_event_german_troops
+
+	is_triggered_only = yes
+
+
+	option = { #take it
+		name = blackiceevents.50.a
+		ai_chance = {
+		    factor = 0
+		    modifier = {
+		        factor = 1
+		        DEN = { is_ai = yes }
+		    }
+		}
+			#news_event = { days = 5 id = news.5 } #news event placeholder
+		GER = {
+			transfer_state = 99
+			transfer_state = 37
+		}
+    }
+	
+	option = {
+       	name = blackiceevents.50.b
+       	ai_chance = {
+       	    factor = 0
+       	    modifier = {
+       	        factor = 1
+       	        DEN = { is_ai = no }
+       	    }
+       	}
+	}
+}
+
+country_event = {
+	id = blackiceevents.65
+	title = blackiceevents.65.t
+	desc = blackiceevents.65.d
+	
+	picture = GFX_report_event_finnish_soldier_sniper
+
+	fire_only_once = yes
+	
+	is_triggered_only = yes
+
+	trigger = {
+		tag = FIN
+		is_ai = yes
+		NOT = { is_in_faction_with = SOV }
+		GER = {
+			is_ai = yes
+			has_war_with = SOV
+		}
+		is_in_faction_with = GER
+		
+		has_global_flag = now_finland_now
+		NOT = { has_war_with = GER }
+	}
+
+	immediate = {
+	    hidden_effect = {
+	        FIN = { declare_war_on = { target = SOV type = annex_everything } }
+	    }
+	}
+	option = {
+		name = blackiceevents.65.a
+	}
+}
+	
+################ Generic Armor choice tech ( also axis AI )
+country_event = {
+	id = blackiceevents.88
+	title = blackiceevents.88.t
+	desc = blackiceevents.88.desc
+	
+	picture = GFX_event_ger_ss_panzer_iii
+
+	trigger = {
+		always = no
+	}
+		
+	is_triggered_only = yes 
+	
+	immediate = { set_country_flag = armor_chosen }
+	
+	option = {
+		name = blackiceevents.88.a	# axis generic
+		ai_chance = { 
+			base = 0 
+			modifier = {
+				add = 1
+				OR = {
+					original_tag = CZE
+					original_tag = AUS
+					original_tag = ROM
+					original_tag = BUL
+					original_tag = FIN
+					original_tag = HUN
+					has_government = fascism 
+				}
+				NOT = {
+					original_tag = MAN
+					original_tag = MEN
+				}
+			}
+		}
+		#log = "[Root.GetName] | Axis Armor"
+	}
+	option = {
+		name = blackiceevents.88.b	# allied generic
+		ai_chance = { 
+			base = 1
+			modifier = {
+				add = -1
+				OR = {
+					original_tag = CZE
+					original_tag = AUS
+					original_tag = ROM
+					original_tag = BUL
+					original_tag = FIN
+					original_tag = HUN
+					has_government = fascism 
+					has_government = communism 
+				}
+			}
+		}
+		#log = "[Root.GetName] | Allied Armor"
+	}	
+	option = {
+		name = blackiceevents.88.c	# soviet tree
+		trigger = {
+			OR = {
+				original_tag = SOV
+				original_tag = EST
+				original_tag = LIT
+				original_tag = LAT
+				original_tag = SIK
+				original_tag = MON
+				original_tag = TAN
+				has_government = communism 
+			}
+		}
+		ai_chance = { 
+			base = 0
+			modifier = {
+				add = 1
+				OR = {
+					original_tag = SOV
+					original_tag = EST
+					original_tag = LIT
+					original_tag = LAT
+					original_tag = SIK
+					original_tag = MON
+					original_tag = TAN
+					has_government = communism 
+				}
+			}
+		}
+		#log = "[Root.GetName] | Soviet Armor"
+	}	
+	option = {
+		name = blackiceevents.88.d	# japanese tree
+		trigger = {
+			OR = {
+				original_tag = MAN
+				original_tag = MEN
+			}
+		}
+		ai_chance = { 
+			base = 0
+			modifier = {
+				add = 1
+				OR = {
+					original_tag = MAN
+					original_tag = MEN
+				}
+			}
+		}
+		#log = "[Root.GetName] | Japan Armor"
+	}
+}
+
+################ Generic Armor choice tech for those who start with them
+country_event = {
+	id = blackiceevents.104
+	hidden = yes  #timeout
+    timeout_days = 1
+	
+	is_triggered_only = yes
+	
+	immediate = {
+	}
+	
+	option = { }
+}
+
+country_event = {
+	id = blackiceevents.105
+	title = blackiceevents.105.t
+	desc = blackiceevents.105.desc
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = blackiceevents.105.a
+	}
+}
+
+country_event = {
+	id = blackiceevents.106
+	title = blackiceevents.106.t
+	desc = blackiceevents.106.desc
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = blackiceevents.106.a
+	}
+}
+
+
+#VERSION FLAGS
+#BI_X_X_X
+
+#USED:
+#BI_4_0_0
+
+country_event = {
+	id = blackiceevents.150
+	title = blackiceevents.150.t
+	desc  = blackiceevents.150.desc
+	
+	picture = GFX_report_event_BICE
+	
+	is_triggered_only = yes
+	
+	immediate = {
+		set_global_flag = BI_4_0_0
+	}
+	
+	option = {
+		name = "Next"
+		ai_chance = {
+			factor = 0
+		}
+		#country_event = faq.1
+		country_event = blackiceevents.151
+	}
+	
+	option = {
+		name = "Play"
+		ai_chance = {
+			factor = 100
+		}
+	}
+	option = {
+		name = "Give yourself an Air Research Slots"
+		trigger = {
+			has_global_flag = wip
+			major_country = yes 
+		}
+		add_research_slot = 1
+		add_research_centre = yes 
+		SLOT:air_techs_folder = yes
+	}
+	
+}
+
+country_event = {
+	id = blackiceevents.161
+	hidden = yes  #timeout
+    timeout_days = 1
+	
+	trigger = { 
+		has_country_flag = winter_is_coming
+		has_global_flag = winter_season
+		NOT = { 
+			has_idea = winter_heating
+			has_country_flag = recent_winter
+		}
+	}
+	
+	mean_time_to_happen = {
+		days = 2
+	}
+	
+	immediate = {
+		set_country_flag = { flag = recent_winter days = 180 value = 1 }
+		set_temp_variable = { winter_time = 90 }
+		randomize_temp_variable = {
+			var = winter_time
+			distribution = uniform
+			min = 85
+			max = 100
+		}
+		if = {
+			limit = {
+				date > 1941.11.1
+				date < 1942.3.1
+				not = { original_tag = RAJ }
+			}
+			add_to_temp_variable = { winter_time = 15 }
+		}
+		if = {
+			limit = {
+				original_tag = RAJ
+			}
+			set_temp_variable = { food_percent = food }
+			set_temp_variable = { dry_time = 1 }
+			if = {
+				limit = {
+					check_variable = { food_percent > 0 }
+				}
+				divide_temp_variable = { food_percent = food_max }
+				subtract_from_temp_variable = { dry_time = food_percent }
+				divide_temp_variable = { dry_time = 1.5 }
+			}
+			if = {
+				limit = {
+					NOT = { has_idea = RAJ_risk_of_famine }
+				}
+				add_to_temp_variable = { winter_time = -15 }
+			}
+			add_to_temp_variable = { dry_time = 15 }
+		}
+		if = {
+			limit = {
+				not = {
+					has_completed_focus = SOV_winter_offensives 
+					original_tag = RAJ
+				}
+			}
+			add_timed_idea = { 
+				idea = winter_heating
+				days = winter_time
+			}
+		}
+		else_if = {
+			limit = {
+				original_tag = RAJ
+			}
+			add_timed_idea = { 
+				idea = RAJ_dry_season
+				days = winter_time
+			}	
+		}
+		else = {
+			add_timed_idea = { 
+				idea = soviet_winter
+				days = winter_time
+			}			
+		}
+	}
+}
+
+country_event = {
+	id = blackiceevents.162
+	hidden = yes  #timeout
+    timeout_days = 1
+	
+	is_triggered_only = yes
+	
+	immediate = {
+		BI_update_prospect_for_resources_decisions = yes
+	}
+}
+
+

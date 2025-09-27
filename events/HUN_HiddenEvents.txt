@@ -1,0 +1,124 @@
+﻿#############################################
+# Hidden events of the Hungarian Flavor mod #
+#############################################
+
+add_namespace = hungary_flavor_hidden
+
+# These events are hidden, so they do not need to be localised, they don't need titles, descriptions, or pictures
+
+# Removing "Receiving Supplies from Slovakia", if Slovakia doesn't exist anymore, or isn't a Hungarian subject
+country_event = {
+	id = hungary_flavor_hidden.1
+
+	hidden = yes  #timeout
+    timeout_days = 1
+	is_triggered_only = yes
+	trigger = {
+		tag = HUN
+		has_idea = receiving_supplies_from_slovakia
+		SLO = {
+			OR = {
+				exists = no
+				NOT = { is_subject_of = HUN }
+			}
+		}
+	}
+	
+	option = {
+		name = hungary_flavor_hidden.1.a
+		remove_ideas = receiving_supplies_from_slovakia
+	}
+}
+
+# Removing "Sending Supplies to Hungary" from Slovakia, if Slovakia isn't a Hungarian subject
+country_event = {
+	id = hungary_flavor_hidden.2
+	is_triggered_only = yes
+	hidden = yes  #timeout
+    timeout_days = 1
+	
+	trigger = {
+		tag = SLO
+		has_idea = sending_supplies_to_hungary
+		NOT = { is_subject_of = HUN }
+	}
+
+	
+	option = {
+		name = hungary_flavor_hidden.2.a
+		remove_ideas = sending_supplies_to_hungary
+	}
+}
+
+# Reassigning Trianon backer status, in case the previous one got annexed
+country_event = {
+	id = hungary_flavor_hidden.6
+	is_triggered_only = yes
+	hidden = yes  #timeout
+    timeout_days = 1
+	
+	trigger = {
+
+	}
+	
+	option = {
+		name = hungary_flavor_hidden.6.a
+		if = {
+			limit = {
+				ENG = {
+					exists = yes
+					NOT = { has_country_flag = HUN_backed_out_from_treaty_of_trianon }
+				}
+			}
+			ENG = { country_event = { id = hungary_flavor_gen.34 days = 1 } }
+			else = {
+				if = {
+					limit = {
+						FRA = {
+							exists = yes
+							NOT = { has_country_flag = HUN_backed_out_from_treaty_of_trianon }
+						}
+					}
+					FRA = { country_event = { id = hungary_flavor_gen.34 days = 1 } }
+					else = {
+						if = {
+							limit = {
+								USA = {
+									exists = yes
+									NOT = { has_country_flag = HUN_backed_out_from_treaty_of_trianon }
+								}
+							}
+							USA = { country_event = { id = hungary_flavor_gen.34 days = 1 } }
+							else = {
+								random_country = {
+									limit = {
+										is_major = yes
+										NOT = { has_country_flag = HUN_backed_out_from_treaty_of_trianon }
+										OR = {
+											# These are the rest of the countries who signed the treaty in 1920
+											tag = ITA
+											tag = JAP
+											tag = BEL
+											tag = CHI
+											tag = CUB
+											tag = GRE
+											tag = NIC
+											tag = PAN
+											tag = POL
+											tag = POR
+											tag = ROM
+											tag = YUG
+											tag = SIA
+											tag = CZE
+										}
+									}
+									country_event = { id = hungary_flavor_gen.34 days = 1 }
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+}

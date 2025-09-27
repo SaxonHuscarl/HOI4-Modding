@@ -1,0 +1,323 @@
+﻿##################
+# Panama EVENTS 
+##################
+
+add_namespace = panama
+
+#Hull-Alfaro Treaty
+country_event = {
+	id = panama.1
+	title = panama.1.t
+	desc = panama.1.d
+	picture = GFX_report_event_diplomatic_message
+
+	is_triggered_only = yes
+
+	fire_only_once = yes
+
+	option = { #full payment and road historical
+		name = panama.1.a
+		ai_chance = {
+			factor = 100
+		}		
+		set_country_flag = full_payment
+		USA_house_small_opposition = yes
+		USA_senate_medium_opposition = yes
+		hidden_effect = {
+			country_event = { id = panama.2 days = 1240 }
+		}
+		PAN = {
+			remove_opinion_modifier = {
+				target = USA
+				modifier = unpaid_debts
+			}
+		} 
+	}
+	option = { #full payment no road
+		name = panama.1.b
+		USA_congress_small_opposition = yes	
+		hidden_effect = {
+			country_event = { id = panama.2 days = 1240 }
+		}
+		PAN = {
+			remove_opinion_modifier = {
+				target = USA
+				modifier = unpaid_debts
+			}
+		} 
+	}
+	option = { #refuse
+		name = panama.1.c
+		hidden_effect = {
+			PAN = {
+				division_template = {
+					name = "División de Infanteria"		
+					regiments = {
+						garrison = { x = 0 y = 0 }
+						garrison = { x = 0 y = 1 }
+						garrison = { x = 0 y = 2 }
+						
+						garrison = { x = 1 y = 0 }
+						garrison = { x = 1 y = 1 }
+						garrison = { x = 1 y = 2 }
+					}
+					support = {
+						DIV_HQ = { x = 0 y = 0 }
+						recon_cav = { x = 0 y = 1 }
+					}
+				}
+				division_template = {
+					name = "Divisão de Militia"  
+					regiments = {
+						militia = { x = 0 y = 0 }
+						militia = { x = 0 y = 1 }
+						militia = { x = 0 y = 2 }
+						
+						militia = { x = 1 y = 0 }
+						militia = { x = 1 y = 1 }
+						militia = { x = 1 y = 2 }
+						
+						militia = { x = 2 y = 0 }
+						militia = { x = 2 y = 1 }
+						militia = { x = 2 y = 2 }
+					}
+					 support = {
+						DIV_HQ = { x = 0 y = 0 }
+						recon_cav = { x = 0 y = 1 }
+					}
+				}	
+				304 = {
+					create_unit = {
+						division = "name = \"Divisão de Rebels\" division_template = \"Divisão de Militia\" start_experience_factor = 0.0 start_equipment_factor = 0.35"
+						owner = PAN
+						prioritize_location = 7630
+					}	
+					create_unit = {
+						division = "name = \"Divisão de Rebels\" division_template = \"División de Infanteria\" start_experience_factor = 0.0 start_equipment_factor = 0.3"
+						owner = PAN
+						prioritize_location = 4624
+					}
+				}
+				country_event = { id = panama.3 random_days = 1240 }
+			}
+		}
+		PAN = {
+			add_ideas = nationalism
+			clr_country_flag = monroe_doctrine
+		}
+		every_other_country = {
+			limit = {
+				has_country_flag = monroe_doctrine
+				not = { tag = PAN }
+			}
+			reverse_add_opinion_modifier = {
+				target = USA
+				modifier = KMT_damaged_colonial_interest
+			}		
+		}
+		
+	}
+}
+#Hull-Alfaro Treaty ratified
+country_event = {
+	id = panama.2
+	title = panama.2.t
+	desc = panama.2.d
+	picture = GFX_report_event_diplomatic_message
+
+	is_triggered_only = yes
+
+	fire_only_once = yes
+
+	option = { 
+		name = panama.2.a
+		ai_chance = {
+			factor = 100
+		}		
+		add_ideas = PAN_repayments
+		if = {
+			limit = {
+				has_country_flag = full_payment
+			}
+			304 = {
+				add_building_construction = {
+					type = infrastructure
+					level = 1
+					instant_build = yes
+				}
+			}
+			685 = {
+				add_building_construction = {
+					type = infrastructure
+					level = 1
+					instant_build = yes
+				}
+			}
+		}
+		else = {
+			685 = {
+				add_resistance_target = 10
+			}
+		}
+	}
+
+}
+#sieze the canal
+country_event = {
+	id = panama.3
+	title = panama.3.t
+	desc = panama.3.d
+	picture = GFX_report_event_diplomatic_message
+
+	is_triggered_only = yes
+
+	fire_only_once = yes
+
+	option = { 
+		name = panama.2.a
+		ai_chance = {
+			factor = 100
+		}		
+		start_border_war = {
+			change_state_after_war = yes
+			attacker = {
+				state = 304
+				num_provinces = 2
+				on_win = japan_border_conflict.5
+				on_lose = pan_border_conflict_lost_attacker.1
+				on_cancel = pan_border_conflict_canceled_attacker.1
+				modifier = 0.1
+				dig_in_factor = 0
+				terrain_factor = 0
+			}	
+			defender = {
+				state = 685
+				num_provinces = 1
+				on_win = pan_border_conflict_won_defender.1
+				on_lose = pan_border_conflict_lost_defender.1
+				on_cancel = pan_border_conflict_canceled_defender.1
+			}
+		}		
+	}
+}
+
+add_namespace = pan_border_conflict_won_attacker
+
+country_event = {
+	id = pan_border_conflict_won_attacker.1
+	title = pan_border_conflict_won_attacker.1.t
+	desc = pan_border_conflict_won_attacker.1.desc
+	
+	picture = GFX_report_event_chinese_soldiers_city_ruin
+
+	is_triggered_only = yes
+
+	immediate = {
+	}
+	
+	option = {
+		name = pan_border_conflict_won_attacker.1.a
+		add_political_power = 1
+		
+		
+	}	
+}
+add_namespace = pan_border_conflict_won_defender
+
+country_event = {
+	id = pan_border_conflict_won_defender.1
+	title = pan_border_conflict_won_defender.1.t
+	desc = pan_border_conflict_won_defender.1.desc
+	
+	picture = GFX_report_event_chinese_soldiers_mountain
+
+	is_triggered_only = yes
+
+	
+	#Same effect as attacker. Tooltip for their effects
+	option = {
+		name = pan_border_conflict_won_defender.1.a
+		add_political_power = 1
+		army_experience = 1
+	}	
+}
+
+add_namespace = pan_border_conflict_lost_attacker
+
+country_event = {
+	id = pan_border_conflict_lost_attacker.1
+	title = pan_border_conflict_lost_attacker.1.t
+	desc = pan_border_conflict_lost_attacker.1.desc
+	
+	picture = GFX_report_event_dead_soldiers
+
+	is_triggered_only = yes
+
+	
+	#Same effect as defender. Tooltip for their effects	
+	option = {
+		name = pan_border_conflict_lost_attacker.1.a
+		add_political_power = -1
+		army_experience = 1
+	}	
+}
+
+add_namespace = pan_border_conflict_lost_defender
+
+country_event = {
+	id = pan_border_conflict_lost_defender.1
+	title = pan_border_conflict_lost_defender.1.t
+	desc = pan_border_conflict_lost_defender.1.desc
+	
+	picture = GFX_report_event_dead_soldiers
+
+	is_triggered_only = yes
+
+	immediate = {
+
+	}
+	
+	#Same effect as attacker. Tooltip for their effects
+	option = {
+		name = pan_border_conflict_lost_defender.1.a
+	}	
+}
+
+add_namespace = pan_border_conflict_canceled_attacker
+
+country_event = {
+	id = pan_border_conflict_canceled_attacker.1
+	title = pan_border_conflict_canceled_attacker.1.t
+	desc = pan_border_conflict_canceled_attacker.1.desc
+	
+	picture = GFX_report_event_chinese_soldiers_mountain
+
+	is_triggered_only = yes
+
+	immediate = {
+		save_event_target_as = our_country
+	}
+	
+	option = {
+		name = pan_border_conflict_canceled_attacker.1.a
+	}	
+}
+
+add_namespace = pan_border_conflict_canceled_defender
+
+country_event = {
+	id = pan_border_conflict_canceled_defender.1
+	title = pan_border_conflict_canceled_defender.1.t
+	desc = pan_border_conflict_canceled_defender.1.desc
+	
+	picture = GFX_report_event_chinese_soldiers_mountain
+
+	is_triggered_only = yes
+
+	
+	option = {
+		name = pan_border_conflict_canceled_defender.1.a
+	}	
+}
+
+

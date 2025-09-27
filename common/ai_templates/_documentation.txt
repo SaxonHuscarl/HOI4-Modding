@@ -1,0 +1,379 @@
+#
+# AI ROLES
+#
+# infantry
+# assault_infantry
+# garrison    # this role has lowest priority, ai uses these for garrisoning states. due to a PDX bug the ai is unable to upgrade templates of this role
+# light_infantry
+# heavy_infantry
+# cavalry
+# motorized
+# light_armor
+# light_armor_alt
+# medium_armor
+# medium_armor_alt
+# heavy_armor
+# heavy_armor_alt
+# marines
+# mountaineers
+# militia
+#
+# AI ROLE TEMPLATE NAMES
+#
+# "Infantry Division"
+# "Assault Infantry Division"
+# "Garrison Division"
+# "Light Infantry Division"
+# "Heavy Infantry Division"
+# "Cavalry Division"
+# "Motorized Division"
+# "Light Armor Division"
+# "Light Armor Division (alt)"
+# "Medium Armor Division"
+# "Medium Armor Division (alt)"
+# "Heavy Armor Division"
+# "Heavy Armor Division (alt)"
+# "Marines Division"
+# "Mountaineers Division"
+# "Militia Division"
+#
+##########################################################################################
+#
+# AI TEMPLATES
+#
+# 1. CHANGING STARTING TEMPLATES TO AI TEMPLATES
+#
+#	you can use a scripted effect like this to make the ai change the starting unit templates to ai templates
+#	this is necessary since the ai often starts with a huge deficit, as well as the starting templates often being so incredibly detached from this game, so the ai cant recognize them properly
+#
+#	ai_templates_startup/<TAG> = { #this effect will run when the ai loads ai templates for the first time
+#		country_lock_all_division_template = yes #all templates need to be locked for add_units_to_division_template to work, they get unlocked again after this effect
+#		
+#		add_units_to_division_template = {
+#			template_name = "Infantry Division" #target starting templates and add a unit to mark them
+#			support = { ai_infantry = 1 } #ai_<role> add the unit for the ai role it should belong to. 
+#		}								  #make sure the ai has a template for this role which gets unlocked when the ai templates run for the first time
+#		
+#		add_units_to_division_template = {
+#			template_name = "Territorial Division"
+#			support = { ai_garrison = 1 } #the = 1 refers to the support unit x position, if the 2nd row is full (very unlikely) then ai_<role> = 0 should be used for the first row
+#		}
+#	
+#		ai_templates_change_starting_units = yes #change the marked templates to ai templates
+#		
+#	## clearing templates - you should only do this for testing purposes or if youre 100% sure no other OOB will reference these templates; otoh if other OOBs load units for these templates the ai most likely wont be able to change them so the unit spawn should be adjusted to spawn with an ai template
+#		
+#		delete_unit_template_and_units = { division_template = "Infantry Division" disband = yes }
+#		delete_unit_template_and_units = { division_template = "Territorial Division" disband = yes }
+#
+#	}
+#
+#
+# 2. AI TEMPLATE SCRIPTED EFFECT DEFINITION & ARGUMENTS
+#
+# 	1. add an ai_logic/TAG scripted effect for a country
+#   2. add ai_<role>_templates/TAG scripted effect, containing the following
+#      
+#   ai_<role>_templates/<TAG> = {
+#      	ai_<role>_templates = yes #this effect is important to have at the start AND the end!!
+#      	
+#      	if = {
+#      		limit = {
+#      			NOT = { has_country_flag = ai_<role>_template } #the first template needs to check for the flag NOT to exist
+#      			
+#      			if = { limit = { check_variable = { ai_template_skip = 1 } } template_bypass = yes }
+#      			else = {
+#      				#CONDITIONS # these are the actual triggers which need to be true for the ai to receive this template
+
+#      				always = yes #the first template of a role should always be unlocked right away if you want to make the ai change the starting templates to it via ai_templates_startup/<TAG>
+#      			}
+#      		}
+#      		set_temp_variable = { ai_has_added_template = 1 }
+#      		set_country_flag = ai_<role>_template
+#      		
+#      		division_template = {
+#      			name = "<role title>"
+#      			priority = @<ROLE>_PRIO
+#      			
+#      			regiments = {
+#      				infantry = { x = 0 y = 0 }
+#       			infantry = { x = 0 y = 1 }
+#      				
+#      				infantry = { x = 1 y = 0 }
+#      				infantry = { x = 1 y = 1 }
+#      			}
+#      			support = {
+#      				DIV_HQ = { x = 0 y = 0 }
+#      				engineer = { x = 0 y = 1 }
+#      			}
+#      		}
+#      		
+#      	}
+#
+#		### MAKING AI RESEARCH TECHS TO UNLOCK UNITS NEEDED FOR A TEMPLATE
+#
+#      	else_if = {
+#      		limit = {
+#      			has_country_flag = { flag = ai_<role>_template value = 1 } #every else_if needs to check for the previous value
+#      			
+#      			if = { limit = { check_variable = { ai_template_skip = 1 } } template_bypass = yes }
+#      			else = {
+#      				#CONDITIONS
+#      				
+#      			#these triggers exist for all units. if the ai does not have the tech needed it will actively try to research it
+#      				
+#					ai_has_signal_company = yes #these triggers should almost always be used when the next template has potentially unresearched units
+#      				ai_has_anti_air = yes		#it gives the ai a lot of guidance in its research
+#      				ai_has_anti_tank = yes		
+#
+#				#one thing to note, in this example here, if the ai lacks all 3 units, it will only try to research signal company
+#				#since signal company trigger is false, the game doesnt even check ai_has_anti_air and ai_has_anti_tank
+#				#once it has signals, it will research anti air, once it has that it will research anti tank
+#      				
+#      			}
+#      		}
+#      		set_temp_variable = { ai_has_added_template = 1 }
+#      		modify_country_flag = { flag = ai_<role>_template value = 1 } #increase flag by 1
+#		
+#			
+#      		division_template = {
+#      			name = "<role title>"
+#      			priority = @<ROLE>_PRIO
+#      			
+#      			regiments = {
+#      				infantry = { x = 0 y = 0 }
+#       			infantry = { x = 0 y = 1 }
+#      				
+#      				infantry = { x = 1 y = 0 }
+#      				infantry = { x = 1 y = 1 }
+#      			}
+#      			support = {
+#      				DIV_HQ = { x = 0 y = 0 }
+#      				engineer = { x = 0 y = 1 }
+#      				signal_company = { x = 0 y = 2 }
+#      				anti_air = { x = 0 y = 3 }
+#      				anti_tank = { x = 0 y = 4 }
+#      			}
+#      		}
+#		}
+#
+#		###### MAKING AI ADD UNITS TO A TEMPLATE DYNAMICALLY ONCE RESEARCHED
+#
+#      	else_if = {
+#      		limit = {
+#      			has_country_flag = { flag = ai_<role>_template value = 2 } #every else_if needs to check for the previous value
+#      			
+#      			if = { limit = { check_variable = { ai_template_skip = 1 } } template_bypass = yes }
+#      			else = {
+#      				#CONDITIONS
+#      				
+#      			#for this template a new mechanic is used which adds units to a template once they are unlocked
+#				#this is useful so the ai doesnt have to research several techs before being able to make use of already unlocked units
+#      				
+#					OR = { #since the ai doesnt need to have all units for this template, an OR trigger is used for these triggers here; technically it isnt needed at all, but its good to make the ai a bit more aware of the research needs ahead of time
+#						ai_has_artillery_brigade = yes 
+#      					ai_has_combat_engineer = yes
+#      					ai_has_field_hospital = yes		
+#					}
+#
+#      			}
+#      		}
+#      		set_temp_variable = { ai_has_added_template = 1 }
+#      		modify_country_flag = { flag = ai_<role>_template value = 1 } #increase flag by 1
+#		
+#
+#			# add units to these arrays to make the game add them to the template once they are unlocked
+#			# this also makes the ai try to research the techs to unlock these units (all at the same time), so the ai_has_<unit> triggers are not necessarily needed
+#			# the units in these arrays SHOULD NOT be added to the template listed below!			
+#
+#			add_to_temp_array = { either_support = token:field_hospital } #add support units to either_support. 
+#			add_to_temp_array = { either_support = token:combat_engineer } #make sure the FIRST SUPPORT (x=0) COLUMN always has enough space
+#			
+#			
+#			# for regimental units the x position also needs to be defined. 
+#			# a unit can only be added once to a template through these arrays, it cant add 3 artillery brigades for example
+#			
+#			add_to_temp_array = { either_regiment = token:artillery_brigade }
+#			add_to_temp_array = { either_regiment_x = 2 }
+#
+#
+#      		division_template = {
+#      			name = "<role title>"
+#      			priority = @<ROLE>_PRIO
+#      			
+#      			regiments = {
+#      				infantry = { x = 0 y = 0 }
+#       			infantry = { x = 0 y = 1 }
+#      				
+#      				infantry = { x = 1 y = 0 }
+#      				infantry = { x = 1 y = 1 }
+#
+#      				#artillery_brigade = { x = 2 y = 0 } #added via either_regiment once available
+#      			}
+#      			support = {
+#      				DIV_HQ = { x = 0 y = 0 }
+#      				engineer = { x = 0 y = 1 }
+#      				#field_hospital = { x = 0 y = 2 } #added via either_support
+#      				#combat_engineer = { x = 0 y = 3 } #added via either_support
+#
+#      				signal_company = { x = 1 y = 0 } #moved to 2nd column to make space for either_support units
+#      				anti_air = { x = 1 y = 1 }
+#      				anti_tank = { x = 1 y = 2 }
+#      			}
+#      		}
+#		}
+#
+#		###### CHECKING IF THE PREVIOUS TEMPLATE IS COMPLETE & MAKING AI FORCE UPGRADE UNITS WITH OUTDATED AI TEMPLATES
+#
+#      	else_if = {
+#      		limit = {
+#      			has_country_flag = { flag = ai_<role>_template value = 3 } #every else_if needs to check for the previous value
+#      			
+#      			if = { limit = { check_variable = { ai_template_skip = 1 } } template_bypass = yes }
+#      			else = {
+#      				#CONDITIONS
+#      				
+#      				#the previous template used the either_support / either_regiment mechanic
+#					
+#					template_is_complete = yes #this trigger checks if the previous template is complete
+#      				
+#
+#      			}
+#      		}
+#      		set_temp_variable = { ai_has_added_template = 1 }
+#      		modify_country_flag = { flag = ai_<role>_template value = 1 } #increase flag by 1
+#		
+#
+#			#this effect tags the template of the current role by adding a unit into the 2nd support column
+#			# generally this should only be used early game / at peace, and really only if necessary. its performance intensive 
+#			# this effect can also become unreliable if the ai received a lot of foreign templates and the names are messed up
+#			# for example "Infantry Division 2 3" wont be picked up by this effect, it can only check 10 templates for a role
+#
+#			template_tag_current_role = yes #ONLY use this effect in combination with template_force_upgrade placed AFTER the division_template
+#
+#
+#
+#      		division_template = {
+#      			name = "<role title>"
+#      			priority = @<ROLE>_PRIO
+#      			
+#      			regiments = {
+#      				infantry = { x = 0 y = 0 }
+#       			infantry = { x = 0 y = 1 }
+#       			infantry = { x = 0 y = 2 }
+#      				
+#      				infantry = { x = 1 y = 0 }
+#      				infantry = { x = 1 y = 1 }
+#      				infantry = { x = 1 y = 2 }
+#
+#      				artillery_brigade = { x = 2 y = 0 }
+#      			}
+#      			support = {
+#      				DIV_HQ = { x = 0 y = 0 }
+#      				engineer = { x = 0 y = 1 }
+#      				field_hospital = { x = 0 y = 2 }
+#      				combat_engineer = { x = 0 y = 3 }
+#
+#      				signal_company = { x = 1 y = 0 }
+#      				anti_air = { x = 1 y = 1 }
+#      				anti_tank = { x = 1 y = 2 }
+#      			}
+#      		}
+#
+#			
+#			template_force_upgrade = yes #makes all tagged templates from template_tag_current_role change to the template thats unlocked here
+#	
+#		}
+#
+#   	ai_<role>_templates = yes #this effect is important to have at the start AND the end!!
+#	}
+#
+#
+# 
+# 3. PRINTING THE CODE FOR common/ai_templates/
+#
+#	go ingame to the country you added, and enter "human_ai". press on the cogwheel icon below the deployment tab button
+#	in the ui select a role and use the "Print" button to make the game print the ai_templates code into logs/game.txt
+#   printing requires ai_country_logic for a country, and the scripted effects for the templates inside
+#   if a template is not named correctly, it will not work. the ai_<role>_templates = yes effects at the start and end are also needed for printing
+#
+#	DO NOT DO IT MANUALLY!! its just one more source of human errors, trust me i am speaking from experience XD
+#
+#
+# 
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#

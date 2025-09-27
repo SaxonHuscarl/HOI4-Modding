@@ -1,0 +1,5451 @@
+
+@TRAIN_COAL_USE = 0.2
+
+@IRON_INPUT = 40 #if you change these also change them in BI_resources_scripted_localistion
+set_resource_conversion_properties = {
+	set_steel_recipe = yes
+	set_aluminium_recipe = yes
+	set_rubber_recipe = yes
+	set_fuel_recipe = yes
+} 
+set_steel_recipe = {
+	#---------------------------------------------------------------------------------------#
+	##-- IRON + COAL -> STEEL --------------------------------------------------------------#
+	
+	add_to_temp_array = { conversion_@steel = token:iron }
+	set_temp_variable = { iron_input = constant:recipe.steel.iron }
+	add_to_temp_variable = { iron_input = modifier@conversion_iron_input }
+	add_to_temp_array = { conversion_weight_@steel = iron_input } #how much is required for 1 conversion
+	
+	add_to_temp_array = { conversion_@steel = token:coal }
+	set_temp_variable = { coal_input = constant:recipe.steel.coal }
+	add_to_temp_variable = { coal_input = modifier@conversion_coal_input }
+	add_to_temp_array = { conversion_weight_@steel = coal_input } 
+	
+	set_temp_variable = { steel_output = constant:recipe.steel.output }
+	add_to_temp_variable = { steel_output = modifier@steel_conversion_output }
+	set_temp_variable = { conversion_output_@steel = steel_output } #how much is gained from 1 conversion
+	
+	set_temp_variable = { conversion_energy_@steel = constant:recipe.steel.energy } #how much energy is needed for 1 conversion
+	add_to_temp_variable = { conversion_energy_@steel = modifier@steel_energy_cost }
+	
+} 
+set_aluminium_recipe = {
+	#---------------------------------------------------------------------------------------#
+	##-- BAUXITE -> ALUMINIUM --------------------------------------------------------------#
+	
+	add_to_temp_array = { conversion_@aluminium = token:bauxite }
+	set_temp_variable = { bauxite_input = constant:recipe.aluminium.bauxite }
+	add_to_temp_variable = { bauxite_input = modifier@conversion_bauxite_input }
+	add_to_temp_array = { conversion_weight_@aluminium = bauxite_input } 
+	
+	set_temp_variable = { aluminium_output = constant:recipe.aluminium.output }
+	add_to_temp_variable = { aluminium_output = modifier@aluminium_conversion_output }
+	set_temp_variable = { conversion_output_@aluminium = aluminium_output }
+	
+	set_temp_variable = { conversion_energy_@aluminium = constant:recipe.aluminium.energy }
+	add_to_temp_variable = { conversion_energy_@aluminium = modifier@aluminium_energy_cost }
+	
+} 
+set_rubber_recipe = {
+	#---------------------------------------------------------------------------------------#
+	##-- RUBBER --------------------------------------------------------------#
+	
+	add_to_temp_array = { conversion_@rubber = token:oil }
+	add_to_temp_array = { conversion_weight_@rubber = 0 } 
+	
+	set_temp_variable = { rubber_output = constant:recipe.rubber.output }
+	add_to_temp_variable = { rubber_output = modifier@rubber_conversion_output }
+	set_temp_variable = { conversion_output_@rubber = rubber_output }
+	
+	set_temp_variable = { conversion_energy_@rubber = constant:recipe.rubber.energy }
+	add_to_temp_variable = { conversion_energy_@rubber = modifier@rubber_energy_cost }
+}
+
+set_fuel_recipe = {
+	#---------------------------------------------------------------------------------------#
+	##-- COAL -> FUEL --------------------------------------------------------------#
+	
+	add_to_temp_array = { conversion_@fuel = token:coal }
+	set_temp_variable = { fuel_coal_input = constant:recipe.fuel.coal }
+	add_to_temp_variable = { fuel_coal_input = modifier@conversion_fuel_coal_input }
+	add_to_temp_array = { conversion_weight_@fuel = fuel_coal_input } 
+	
+	set_temp_variable = { fuel_output = constant:recipe.fuel.output }
+	set_temp_variable = { factor = modifier@fuel_gain_factor_from_states }
+	add_to_temp_variable = { factor = 1 }
+	multiply_temp_variable = { fuel_output = factor }
+	set_temp_variable = { conversion_output_@fuel = fuel_output } #fuel output cant be modified with this, its only TT
+	
+	set_temp_variable = { conversion_energy_@fuel = constant:recipe.fuel.energy }
+	add_to_temp_variable = { conversion_energy_@fuel = modifier@fuel_energy_cost }
+}
+set_building_energy_cost = {
+	# Calculate Energy Cost
+	
+	set_variable = { energy_cost@energy_civilian = num_owned_civilian_factories }
+	multiply_variable = { energy_cost@energy_civilian = constant:energy.cost.civilian }
+	set_temp_variable = { factor = modifier@energy_consumption_factor }
+	add_to_temp_variable = { factor = modifier@energy_need_civilian_factor }
+	add_to_temp_variable = { factor = energy_scalar }
+	add_to_temp_variable = { factor = 1 }
+	multiply_variable = { energy_cost@energy_civilian = factor }
+	
+	set_temp_variable = { factor = modifier@energy_consumption_factor }
+	add_to_temp_variable = { factor = energy_scalar }
+	add_to_temp_variable = { factor = 1 }
+	
+	set_variable = { energy_cost@energy_military = num_owned_military_factories }
+	multiply_variable = { energy_cost@energy_military = constant:energy.cost.military }
+	
+	set_variable = { energy_cost@energy_naval = num_of_naval_factories }
+	multiply_variable = { energy_cost@energy_naval = constant:energy.cost.naval }
+	multiply_variable = { energy_cost@energy_naval = factor }
+	
+	# ASSEMBLIES
+	
+	set_temp_variable = { t = num_air_assembly }
+	add_to_temp_variable = { t = num_tank_assembly }
+	add_to_temp_variable = { t = num_engine_assembly }
+	add_to_temp_variable = { t = num_artillery_assembly }
+	add_to_temp_variable = { energy_mult = t }
+	multiply_temp_variable = { t = constant:energy.cost.assembly }
+	multiply_temp_variable = { t = factor }
+	add_to_variable = { energy_cost@energy_military = t }
+	
+	set_temp_variable = { t = num_capital_shipyard }
+	add_to_temp_variable = { t = num_shipyard }
+	add_to_temp_variable = { t = num_subyard }
+	add_to_temp_variable = { energy_mult = t }
+	multiply_temp_variable = { t = constant:energy.cost.assembly }
+	multiply_temp_variable = { t = factor }
+	add_to_variable = { energy_cost@energy_naval = t }
+	
+	add_to_variable = { energy_cost = energy_cost@energy_civilian }
+	add_to_variable = { energy_cost = energy_cost@energy_military }
+	add_to_variable = { energy_cost = energy_cost@energy_naval }
+	add_to_variable = { energy_cost = energy_cost@energy_conversion }
+	
+	add_to_temp_variable = { energy_mult = num_owned_civilian_factories }
+	add_to_temp_variable = { energy_mult = num_owned_military_factories }
+	add_to_temp_variable = { energy_mult = num_of_naval_factories }
+	divide_temp_variable = { energy_mult = constant:energy.cost.scalar }
+	set_variable = { energy_scalar = energy_mult }
+}
+
+ai_set_building_energy_cost = {
+	# Calculate Energy Cost
+	
+	set_temp_variable = { energy_cost@energy_civilian = num_owned_civilian_factories }
+	multiply_temp_variable = { energy_cost@energy_civilian = constant:energy.cost.civilian }
+	set_temp_variable = { factor = modifier@energy_need_civilian_factor }
+	add_to_temp_variable = { factor = 1 }
+	multiply_temp_variable = { energy_cost@energy_civilian = factor }
+	
+	set_temp_variable = { energy_cost@energy_military = num_of_military_factories }
+	multiply_temp_variable = { energy_cost@energy_military = constant:energy.cost.military }
+	
+	set_temp_variable = { energy_cost@energy_naval = num_of_naval_factories }
+	multiply_temp_variable = { energy_cost@energy_naval = constant:energy.cost.naval }
+	
+	# ASSEMBLIES
+	
+	set_temp_variable = { t = num_air_assembly }
+	add_to_temp_variable = { t = num_tank_assembly }
+	add_to_temp_variable = { t = num_engine_assembly }
+	add_to_temp_variable = { t = num_artillery_assembly }
+	add_to_temp_variable = { energy_mult = t }
+	multiply_temp_variable = { t = constant:energy.cost.assembly }
+	add_to_temp_variable = { energy_cost@energy_military = t }
+	
+	set_temp_variable = { t = num_capital_shipyard }
+	add_to_temp_variable = { t = num_shipyard }
+	add_to_temp_variable = { t = num_subyard }
+	add_to_temp_variable = { energy_mult = t }
+	multiply_temp_variable = { t = constant:energy.cost.assembly }
+	add_to_temp_variable = { energy_cost@energy_naval = t }
+	
+	set_variable = { energy_cost = energy_cost@energy_civilian }
+	add_to_variable = { energy_cost = energy_cost@energy_military }
+	add_to_variable = { energy_cost = energy_cost@energy_naval }
+	add_to_variable = { energy_cost = energy_cost@energy_conversion }
+	
+	add_to_temp_variable = { energy_mult = num_owned_civilian_factories }
+	add_to_temp_variable = { energy_mult = num_owned_military_factories }
+	add_to_temp_variable = { energy_mult = num_of_naval_factories }
+	divide_temp_variable = { energy_mult = constant:energy.cost.scalar }
+	set_variable = { energy_scalar = energy_mult }
+	
+	set_temp_variable = { factor = modifier@energy_consumption_factor }
+	add_to_temp_variable = { factor = energy_scalar }
+	add_to_temp_variable = { factor = 1 }
+	multiply_variable = { energy_cost = factor }
+}
+
+ui_refinery_increase_click = {
+	add_to_variable = { num_refinery_assigned@var:res = quant }
+	if = {
+		limit = {
+			check_variable = { num_refinery_assigned@var:res > num_refinery@var:res }
+		}
+			log = "[?num_refinery_assigned@var:res] num_refinery_assigned"
+		set_temp_variable = { change = num_refinery_assigned@var:res }
+		subtract_from_temp_variable = { change = num_refinery@var:res }
+		
+		clamp_variable = { var = num_refinery_assigned@var:res max = num_refinery@var:res }
+		log = "[?num_refinery_target@var:res] num_refinery_target"
+		if = {
+			limit = {
+				check_variable = { num_refinery_target@var:res = 0 }
+			}
+			set_variable = { num_refinery_target@var:res = num_refinery_assigned@var:res }
+			add_to_variable = { num_refinery_target@var:res = change }
+			log = "[?num_refinery_target@var:res] final target"
+		}
+		else = {
+			add_to_variable = { num_refinery_target@var:res = change }
+			log = "[?num_refinery_target@var:res] final target change [?change]"
+		}
+		
+		
+	}
+	else_if = {
+		limit = {
+			check_variable = { num_refinery@var:res = 0 }
+		}
+		add_to_variable = { num_refinery_target@var:res = quant }
+	}
+}
+ui_refinery_decrease_click = {
+	if = {
+		limit = {
+			check_variable = { num_refinery_target@var:res > 0 }
+		}
+		subtract_from_variable = { num_refinery_target@var:res = quant }
+		
+		if = {
+			limit = {
+				check_variable = { num_refinery_assigned@var:res > num_refinery_target@var:res }
+			}
+			
+			set_temp_variable = { change = num_refinery_assigned@var:res }
+			subtract_from_temp_variable = { change = num_refinery_target@var:res }
+			
+			clear_variable = num_refinery_target@var:res
+			
+			subtract_from_variable = { num_refinery_assigned@var:res = change }
+		}
+	}
+	else = {
+		subtract_from_variable = { num_refinery_assigned@var:res = quant }
+	}
+	
+	clamp_variable = { var = num_refinery_assigned@var:res min = 0 }
+	
+	if = {
+		limit = {
+			check_variable = { num_refinery_assigned@var:res > num_refinery_target@var:res }
+		}
+		clear_variable = num_refinery_target@var:res
+	}
+}
+ui_assign_aluminium_refinery_tooltip_delayed = {
+	set_temp_variable = { t_entry = i }
+	multiply_temp_variable = { t_entry = ui_aluminium_x?1 }
+	if = {
+		limit = {
+			check_variable = { ROOT.num_refinery_assigned@aluminium > t_entry }
+			check_variable = { ROOT.num_refinery@aluminium > t_entry }
+			check_variable = { ROOT.num_active_refinery@aluminium > t_entry }
+		}
+		
+		if = {
+			limit = {
+				set_temp_variable = { t = i }
+				add_to_temp_variable = { t = 1 }
+				
+				set_temp_variable = { trig = ROOT.num_active_refinery@aluminium }
+				divide_temp_variable = { trig = ui_aluminium_x?1 }
+				check_variable = { trig < t }
+			}
+			
+			set_temp_variable = { t = num_active_refinery@aluminium }
+			multiply_temp_variable = { t = 100 }
+			round_temp_variable = t
+			
+			set_temp_variable = { t2 = ui_aluminium_x?1 }
+			multiply_temp_variable = { t2 = 100 }
+			modulo_temp_variable = { t = t2 }
+			multiply_temp_variable = { t = 0.01 }
+		
+			set_temp_variable = { eff = t }
+			divide_temp_variable = { eff = ui_aluminium_x?1 }
+			
+			if = {
+				limit = {
+					NOT = { check_variable = { ROOT.num_active_refinery@aluminium = ROOT.num_refinery_assigned@aluminium } }
+				}
+				custom_effect_tooltip = "REFINERY_ENTRY_PARTIALLY_ACTIVE_TOOLTIP_DELAYED"
+			}
+			else = {
+				set_temp_variable = { display_type = ui_aluminium_x?1 }
+				custom_effect_tooltip = "REFINERY_ENTRY_PARTIALLY_ACTIVE_DISPLAY_TOOLTIP_DELAYED"
+			}
+		}
+		else = {
+			custom_effect_tooltip = REFINERY_ENTRY_ACTIVE_TOOLTIP_DELAYED
+		}
+	}
+	else_if = {
+		limit = {
+			check_variable = { ROOT.num_refinery_assigned@aluminium > t_entry }
+			check_variable = { ROOT.num_refinery@aluminium > t_entry }
+			
+			set_temp_variable = { t1 = ROOT.num_refinery@aluminium }
+			subtract_from_temp_variable = { t1 = ROOT.num_refinery_damaged@aluminium }
+			#subtract_from_temp_variable = { t1 = ROOT.num_active_refinery@aluminium }
+			
+			check_variable = { t1 > t_entry }
+		}
+		custom_effect_tooltip = REFINERY_ENTRY_INACTIVE_TOOLTIP_DELAYED
+	}
+	else_if = {
+		limit = {
+			check_variable = { ROOT.num_refinery@aluminium > t_entry }
+			check_variable = { ROOT.num_refinery_assigned@aluminium > t_entry }
+		}
+		custom_effect_tooltip = REFINERY_ENTRY_DAMAGED_TOOLTIP_DELAYED
+	}
+	else_if = {
+		limit = {
+			check_variable = { num_refinery_target@aluminium > t_entry }
+		}
+		custom_effect_tooltip = REFINERY_ENTRY_TARGET_TOOLTIP_DELAYED
+	}
+}
+
+ui_assign_aluminium_refinery_tooltip = {
+	     
+	set_temp_variable = { entry = i }  
+	add_to_temp_variable = { entry = 1 } 
+	multiply_temp_variable = { entry = ui_aluminium_x?1 }
+	
+	#log = "Refinery Index+1: [?entry] "
+	
+	### Get Energy Need
+	set_temp_variable = { energy_need = entry }
+	multiply_temp_variable = { energy_need = conversion_energy_@aluminium }
+			 
+	### Get Bauxite Need + Remain
+	set_temp_variable = { bauxite_need = entry }
+	multiply_temp_variable = { bauxite_need = bauxite_input }
+	
+	set_temp_variable = { bauxite_left = resource_produced@bauxite }
+	add_to_temp_variable = { bauxite_left = export_offset@bauxite }
+	subtract_from_temp_variable = { bauxite_left = resource_exported@bauxite }
+	add_to_temp_variable = { bauxite_left = resource_imported@bauxite }
+	
+	subtract_from_temp_variable = { bauxite_left = bauxite_need }
+	
+	### Get Alu Output
+	set_temp_variable = { aluminium_output = entry }
+	multiply_temp_variable = { aluminium_output = conversion_output_@aluminium }
+	
+	custom_effect_tooltip = ALUMINIUM_REFINERY_ENTRY_TITLE_TOOLTIP
+}
+
+ui_assign_aluminium_refinery = {
+  	if = { #assigned is higher than clicked refinery
+		limit = { #--> set assigned to the clicked refinery, remove excess 
+			OR = {
+				check_variable = { ROOT.num_refinery_assigned@aluminium > entry }
+				check_variable = { ROOT.num_refinery_assigned@aluminium = entry }
+			}
+		} 
+		set_variable = { ROOT.num_refinery_assigned@aluminium = entry }
+		clear_variable = ROOT.num_refinery_target@aluminium
+	}
+
+	if = {
+		limit = { #if we have more refineries than assigned
+			check_variable = { ROOT.num_refinery@aluminium > ROOT.num_refinery_assigned@aluminium }
+		}
+		set_variable = { ROOT.num_refinery_assigned@aluminium = entry }
+		clear_variable = ROOT.num_refinery_target@aluminium
+	}
+	
+	if = { #entry is higher than num refineries
+		limit = { #--> set num_refinery_target to clicked
+			check_variable = { entry > ROOT.num_refinery@aluminium }
+		}
+		set_variable = { ROOT.num_refinery_target@aluminium = entry }
+	}
+	
+	clamp_variable = { var = ROOT.num_refinery_assigned@aluminium max = ROOT.num_refinery@aluminium }
+	
+	#log = "[?ROOT.num_refinery_assigned@aluminium] ROOT.num_refinery_assigned@aluminium"
+	#log = "[?ROOT.num_refinery@aluminium] ROOT.num_refinery@aluminium"
+	 
+}
+
+ui_aluminium_energy_cost_tooltip = {
+	set_temp_variable = { energy_cost_total = energy_cost_@aluminium }
+	
+	set_temp_variable = { energy_paid = energy_cost_@aluminium }
+	set_temp_variable = { energy_factor = 1 }
+	add_to_temp_variable = { energy_factor = lack_of_energy@energy_conversion }
+	multiply_temp_variable = { energy_paid = energy_factor }
+	custom_effect_tooltip = "ALUMINIUM_ENERGY_COST_BASE_TOOLTIP"  
+	   
+	if = {
+		limit = {
+			check_variable = { energy_deficit_@aluminium > 0 }
+		}  
+		set_temp_variable = { deficit_ratio = energy_deficit_@aluminium }
+		divide_temp_variable = { deficit_ratio = energy_cost_total }
+		multiply_temp_variable = { deficit_ratio = -1 }
+		
+		custom_effect_tooltip = "ALUMINIUM_ENERGY_COST_DEFICIT_TOOLTIP"
+		custom_effect_tooltip = "ALUMINIUM_ENERGY_COST_DEFICIT_RATIO_TOOLTIP"
+	}  
+}
+
+
+### STEEL 
+
+ui_assign_steel_refinery_tooltip_delayed = {
+	set_temp_variable = { t_entry = i }
+	multiply_temp_variable = { t_entry = ui_steel_x?1 }
+	if = {
+		limit = {
+			check_variable = { ROOT.num_refinery_assigned@steel > t_entry }
+			check_variable = { ROOT.num_refinery@steel > t_entry }
+			check_variable = { ROOT.num_active_refinery@steel > t_entry }
+		}
+		if = {
+			limit = { #this checks if its a partially active refinery by checking if num_active_refinery has a fraction
+				set_temp_variable = { t = i }
+				add_to_temp_variable = { t = 1 }
+				
+				set_temp_variable = { trig = ROOT.num_active_refinery@steel }
+				divide_temp_variable = { trig = ui_steel_x?1 }
+				check_variable = { trig < t }
+				#log = "[?t] T for giant bio engineered crabs | [?trig] trig"
+			}
+			
+			set_temp_variable = { t = num_active_refinery@steel }
+			multiply_temp_variable = { t = 100 }
+			round_temp_variable = t
+			
+			set_temp_variable = { t2 = ui_steel_x?1 }
+			multiply_temp_variable = { t2 = 100 }
+			modulo_temp_variable = { t = t2 }
+			multiply_temp_variable = { t = 0.01 }
+		
+			set_temp_variable = { eff = t }
+			divide_temp_variable = { eff = ui_steel_x?1 }
+			
+			if = {
+				limit = {
+					NOT = { check_variable = { ROOT.num_active_refinery@steel = ROOT.num_refinery_assigned@steel } }
+				}
+				custom_effect_tooltip = "REFINERY_ENTRY_PARTIALLY_ACTIVE_TOOLTIP_DELAYED"
+			}
+			else = {
+				set_temp_variable = { display_type = ui_steel_x?1 }
+				custom_effect_tooltip = "REFINERY_ENTRY_PARTIALLY_ACTIVE_DISPLAY_TOOLTIP_DELAYED"
+			}
+		}
+		else = {
+			custom_effect_tooltip = REFINERY_ENTRY_ACTIVE_TOOLTIP_DELAYED
+		}
+	}
+	else_if = {
+		limit = {
+			check_variable = { ROOT.num_refinery_assigned@steel > t_entry }
+			check_variable = { ROOT.num_refinery@steel > t_entry }
+			
+			set_temp_variable = { t1 = ROOT.num_refinery@steel }
+			subtract_from_temp_variable = { t1 = ROOT.num_refinery_damaged@steel }
+			#subtract_from_temp_variable = { t1 = ROOT.num_active_refinery@steel }
+			
+			check_variable = { t1 > t_entry }
+		}
+		custom_effect_tooltip = REFINERY_ENTRY_INACTIVE_TOOLTIP_DELAYED
+	}
+	else_if = {
+		limit = {
+			check_variable = { ROOT.num_refinery@steel > t_entry }
+			check_variable = { ROOT.num_refinery_assigned@steel > t_entry }
+		}
+		custom_effect_tooltip = REFINERY_ENTRY_DAMAGED_TOOLTIP_DELAYED
+	}
+	else_if = {
+		limit = {
+			check_variable = { num_refinery_target@steel > t_entry }
+		}
+		custom_effect_tooltip = REFINERY_ENTRY_TARGET_TOOLTIP_DELAYED
+	}
+}
+
+ui_assign_steel_refinery_tooltip = {
+	     
+	set_temp_variable = { entry = i }  
+	add_to_temp_variable = { entry = 1 } 
+	multiply_temp_variable = { entry = ui_steel_x?1 }
+	
+	#log = "Refinery Index+1: [?entry] "
+	
+	### Get Energy Need
+	set_temp_variable = { energy_need = entry }
+	multiply_temp_variable = { energy_need = conversion_energy_@steel }
+			 
+	### Get Iron Need + Remain
+	set_temp_variable = { iron_need = entry }
+	multiply_temp_variable = { iron_need = iron_input }
+	
+	set_temp_variable = { iron_left = resource_produced@iron }
+	add_to_temp_variable = { iron_left = export_offset@iron }
+	subtract_from_temp_variable = { iron_left = resource_exported@iron }
+	add_to_temp_variable = { iron_left = resource_imported@iron }
+	
+	subtract_from_temp_variable = { iron_left = iron_need }
+	
+	### Get Coal Need + Remain
+	set_temp_variable = { coal_need = entry }
+	multiply_temp_variable = { coal_need = coal_input }
+	
+	set_temp_variable = { coal_left = resource_produced@coal }
+	add_to_temp_variable = { coal_left = export_offset@coal }
+	subtract_from_temp_variable = { coal_left = resource_exported@coal }
+	add_to_temp_variable = { coal_left = resource_imported@coal }
+	subtract_from_temp_variable = { coal_left = train_use@coal }
+	
+	subtract_from_temp_variable = { coal_left = coal_need }
+	
+	### Get Alu Output
+	set_temp_variable = { steel_output = entry }
+	multiply_temp_variable = { steel_output = conversion_output_@steel }
+	
+	custom_effect_tooltip = STEEL_REFINERY_ENTRY_TITLE_TOOLTIP
+}
+
+ui_assign_steel_refinery = {
+ 
+	if = { #assigned is higher than clicked refinery
+		limit = { #--> set assigned to the clicked refinery, remove excess 
+			OR = {
+				check_variable = { ROOT.num_refinery_assigned@steel > entry }
+				check_variable = { ROOT.num_refinery_assigned@steel = entry }
+			}
+		} 
+		set_variable = { ROOT.num_refinery_assigned@steel = entry }
+		clear_variable = ROOT.num_refinery_target@steel
+	}
+
+	if = {
+		limit = { #if we have more refineries than assigned
+			check_variable = { ROOT.num_refinery@steel > ROOT.num_refinery_assigned@steel }
+		}
+		set_variable = { ROOT.num_refinery_assigned@steel = entry }
+		clear_variable = ROOT.num_refinery_target@steel
+	}
+	
+	if = { #entry is higher than num refineries
+		limit = { #--> set num_refinery_target to clicked
+			check_variable = { entry > ROOT.num_refinery@steel }
+		}
+		set_variable = { ROOT.num_refinery_target@steel = entry }
+	}
+	
+	clamp_variable = { var = ROOT.num_refinery_assigned@steel max = ROOT.num_refinery@steel }
+	
+	#log = "[?ROOT.num_refinery_assigned@steel] ROOT.num_refinery_assigned@steel"
+	#log = "[?ROOT.num_refinery@steel] ROOT.num_refinery@steel"
+	 
+}
+
+ui_steel_energy_cost_tooltip = {
+	set_temp_variable = { energy_cost_total = energy_cost_@steel }
+	
+	set_temp_variable = { energy_paid = energy_cost_@steel }
+	set_temp_variable = { energy_factor = 1 }
+	add_to_temp_variable = { energy_factor = lack_of_energy@energy_conversion }
+	multiply_temp_variable = { energy_paid = energy_factor }
+	custom_effect_tooltip = "STEEL_ENERGY_COST_BASE_TOOLTIP"  
+	   
+	if = {
+		limit = {
+			check_variable = { energy_deficit_@steel > 0 }
+		}  
+		set_temp_variable = { deficit_ratio = energy_deficit_@steel }
+		divide_temp_variable = { deficit_ratio = energy_cost_total }
+		multiply_temp_variable = { deficit_ratio = -1 }
+		
+		custom_effect_tooltip = "STEEL_ENERGY_COST_DEFICIT_TOOLTIP"
+		custom_effect_tooltip = "STEEL_ENERGY_COST_DEFICIT_RATIO_TOOLTIP"
+	}  
+}
+
+# RUBBER 
+
+ui_assign_rubber_refinery_tooltip_delayed = {
+	set_temp_variable = { t_entry = i }
+	multiply_temp_variable = { t_entry = ui_rubber_x?1 }
+	if = {
+		limit = {
+			check_variable = { ROOT.num_refinery_assigned@rubber > t_entry }
+			check_variable = { ROOT.num_refinery@rubber > t_entry }
+			check_variable = { ROOT.num_active_refinery@rubber > t_entry }
+		}
+		
+		if = {
+			limit = {
+				set_temp_variable = { t = i }
+				add_to_temp_variable = { t = 1 }
+				
+				set_temp_variable = { trig = ROOT.num_active_refinery@rubber }
+				divide_temp_variable = { trig = ui_rubber_x?1 }
+				check_variable = { trig < t }
+			}
+			
+			set_temp_variable = { t = num_active_refinery@rubber }
+			multiply_temp_variable = { t = 100 }
+			round_temp_variable = t
+			
+			set_temp_variable = { t2 = ui_rubber_x?1 }
+			multiply_temp_variable = { t2 = 100 }
+			modulo_temp_variable = { t = t2 }
+			multiply_temp_variable = { t = 0.01 }
+		
+			set_temp_variable = { eff = t }
+			divide_temp_variable = { eff = ui_rubber_x?1 }
+			
+			if = {
+				limit = {
+					NOT = { check_variable = { ROOT.num_active_refinery@rubber = ROOT.num_refinery_assigned@rubber } }
+				}
+				custom_effect_tooltip = "REFINERY_ENTRY_PARTIALLY_ACTIVE_TOOLTIP_DELAYED"
+			}
+			else = {
+				set_temp_variable = { display_type = ui_rubber_x?1 }
+				custom_effect_tooltip = "REFINERY_ENTRY_PARTIALLY_ACTIVE_DISPLAY_TOOLTIP_DELAYED"
+			}
+		}
+		else = {
+			custom_effect_tooltip = REFINERY_ENTRY_ACTIVE_TOOLTIP_DELAYED
+		}
+	}
+	else_if = {
+		limit = {
+			check_variable = { ROOT.num_refinery_assigned@rubber > t_entry }
+			check_variable = { ROOT.num_refinery@rubber > t_entry }
+			
+			set_temp_variable = { t1 = ROOT.num_refinery@rubber }
+			subtract_from_temp_variable = { t1 = ROOT.num_refinery_damaged@rubber }
+			#subtract_from_temp_variable = { t1 = ROOT.num_active_refinery@rubber }
+			
+			check_variable = { t1 > t_entry }
+		}
+		custom_effect_tooltip = REFINERY_ENTRY_INACTIVE_TOOLTIP_DELAYED
+	}
+	else_if = {
+		limit = {
+			check_variable = { ROOT.num_refinery@rubber > t_entry }
+			check_variable = { ROOT.num_refinery_assigned@rubber > t_entry }
+		}
+		custom_effect_tooltip = REFINERY_ENTRY_DAMAGED_TOOLTIP_DELAYED
+	}
+	else_if = {
+		limit = {
+			check_variable = { num_refinery_target@rubber > t_entry }
+		}
+		custom_effect_tooltip = REFINERY_ENTRY_TARGET_TOOLTIP_DELAYED
+	}
+}
+
+ui_assign_rubber_refinery_tooltip = {
+	     
+	set_temp_variable = { entry = i }  
+	add_to_temp_variable = { entry = 1 } 
+	multiply_temp_variable = { entry = ui_rubber_x?1 }
+	
+	#log = "Refinery Index+1: [?entry] "
+	
+	### Get Energy Need
+	set_temp_variable = { energy_need = entry }
+	multiply_temp_variable = { energy_need = conversion_energy_@rubber }
+			 
+	### Get Alu Output
+	set_temp_variable = { rubber_output = entry }
+	multiply_temp_variable = { rubber_output = conversion_output_@rubber }
+	
+	custom_effect_tooltip = RUBBER_REFINERY_ENTRY_TITLE_TOOLTIP
+}
+
+ui_assign_rubber_refinery = {
+  	if = { #assigned is higher than clicked refinery
+		limit = { #--> set assigned to the clicked refinery, remove excess 
+			OR = {
+				check_variable = { ROOT.num_refinery_assigned@rubber > entry }
+				check_variable = { ROOT.num_refinery_assigned@rubber = entry }
+			}
+		} 
+		set_variable = { ROOT.num_refinery_assigned@rubber = entry }
+		clear_variable = ROOT.num_refinery_target@rubber
+	}
+
+	if = {
+		limit = { #if we have more refineries than assigned
+			check_variable = { ROOT.num_refinery@rubber > ROOT.num_refinery_assigned@rubber }
+		}
+		set_variable = { ROOT.num_refinery_assigned@rubber = entry }
+		clear_variable = ROOT.num_refinery_target@rubber
+	}
+	
+	if = { #entry is higher than num refineries
+		limit = { #--> set num_refinery_target to clicked
+			check_variable = { entry > ROOT.num_refinery@rubber }
+		}
+		set_variable = { ROOT.num_refinery_target@rubber = entry }
+	}
+	
+	clamp_variable = { var = ROOT.num_refinery_assigned@rubber max = ROOT.num_refinery@rubber }
+	
+	#log = "[?ROOT.num_refinery_assigned@rubber] ROOT.num_refinery_assigned@rubber"
+	#log = "[?ROOT.num_refinery@rubber] ROOT.num_refinery@rubber"
+	 
+}
+
+ui_rubber_energy_cost_tooltip = {
+	set_temp_variable = { energy_cost_total = energy_cost_@rubber }
+	
+	set_temp_variable = { energy_paid = energy_cost_@rubber }
+	set_temp_variable = { energy_factor = 1 }
+	add_to_temp_variable = { energy_factor = lack_of_energy@energy_conversion }
+	multiply_temp_variable = { energy_paid = energy_factor }
+	custom_effect_tooltip = "RUBBER_ENERGY_COST_BASE_TOOLTIP"  
+	   
+	if = {
+		limit = {
+			check_variable = { energy_deficit_@rubber > 0 }
+		}  
+		set_temp_variable = { deficit_ratio = energy_deficit_@rubber }
+		divide_temp_variable = { deficit_ratio = energy_cost_total }
+		multiply_temp_variable = { deficit_ratio = -1 }
+		
+		custom_effect_tooltip = "RUBBER_ENERGY_COST_DEFICIT_TOOLTIP"
+		custom_effect_tooltip = "RUBBER_ENERGY_COST_DEFICIT_RATIO_TOOLTIP"
+	}  
+}
+
+# FUEL
+
+ui_assign_fuel_refinery_tooltip_delayed = {
+	set_temp_variable = { t_entry = i }
+	multiply_temp_variable = { t_entry = ui_fuel_x?1 }
+	if = {
+		limit = {
+			check_variable = { ROOT.num_refinery_assigned@fuel > t_entry }
+			check_variable = { ROOT.num_refinery@fuel > t_entry }
+			check_variable = { ROOT.num_active_refinery@fuel > t_entry }
+		}
+		custom_effect_tooltip = REFINERY_ENTRY_ACTIVE_TOOLTIP_DELAYED
+	}
+	else_if = {
+		limit = {
+			check_variable = { ROOT.num_refinery_assigned@fuel > t_entry }
+			check_variable = { ROOT.num_refinery@fuel > t_entry }
+			
+			set_temp_variable = { t1 = ROOT.num_refinery@fuel }
+			subtract_from_temp_variable = { t1 = ROOT.num_refinery_damaged@fuel }
+			#subtract_from_temp_variable = { t1 = ROOT.num_active_refinery@fuel }
+			
+			check_variable = { t1 > t_entry }
+		}
+		custom_effect_tooltip = REFINERY_ENTRY_INACTIVE_TOOLTIP_DELAYED
+	}
+	else_if = {
+		limit = {
+			check_variable = { ROOT.num_refinery@fuel > t_entry }
+			check_variable = { ROOT.num_refinery_assigned@fuel > t_entry }
+		}
+		custom_effect_tooltip = REFINERY_ENTRY_DAMAGED_TOOLTIP_DELAYED
+	}
+	else_if = {
+		limit = {
+			check_variable = { num_refinery_target@fuel > t_entry }
+		}
+		custom_effect_tooltip = REFINERY_ENTRY_TARGET_TOOLTIP_DELAYED
+	}
+}
+
+ui_assign_fuel_refinery_tooltip = {
+	     
+	set_temp_variable = { entry = i }  
+	add_to_temp_variable = { entry = 1 } 
+	multiply_temp_variable = { entry = ui_fuel_x?1 }
+	
+	#log = "Refinery Index+1: [?entry] "
+	
+	### Clamp Index with num refinery
+	set_temp_variable = { actual_assign = entry } 
+	clamp_temp_variable = { var = actual_assign max = ROOT.num_refinery@fuel }
+	
+	### Get Energy Need
+	set_temp_variable = { energy_need = entry }
+	multiply_temp_variable = { energy_need = conversion_energy_@fuel }
+			 
+	### Get Bauxite Need + Remain
+	set_temp_variable = { fuel_coal_need = actual_assign }
+	multiply_temp_variable = { fuel_coal_need = fuel_coal_input }
+	
+	
+	set_temp_variable = { fuel_coal_need = entry }
+	multiply_temp_variable = { fuel_coal_need = coal_input }
+	
+	set_temp_variable = { fuel_coal_left = resource_produced@coal }
+	add_to_temp_variable = { fuel_coal_left = export_offset@coal }
+	subtract_from_temp_variable = { fuel_coal_left = resource_exported@coal }
+	add_to_temp_variable = { fuel_coal_left = resource_imported@coal }
+	subtract_from_temp_variable = { fuel_coal_left = conversion_use_@coal }
+	subtract_from_temp_variable = { fuel_coal_left = train_use@coal }
+	
+	subtract_from_temp_variable = { fuel_coal_left = fuel_coal_need }
+	
+	### Get Alu Output
+	set_temp_variable = { fuel_output = actual_assign }
+	multiply_temp_variable = { fuel_output = conversion_output_@fuel }
+	
+	custom_effect_tooltip = FUEL_REFINERY_ENTRY_TITLE_TOOLTIP
+}
+
+ui_assign_fuel_refinery = {
+  	if = { #assigned is higher than clicked refinery
+		limit = { #--> set assigned to the clicked refinery, remove excess 
+			OR = {
+				check_variable = { ROOT.num_refinery_assigned@fuel > entry }
+				check_variable = { ROOT.num_refinery_assigned@fuel = entry }
+			}
+		} 
+		set_variable = { ROOT.num_refinery_assigned@fuel = entry }
+		clear_variable = ROOT.num_refinery_target@fuel
+	}
+
+	if = {
+		limit = { #if we have more refineries than assigned
+			check_variable = { ROOT.num_refinery@fuel > ROOT.num_refinery_assigned@fuel }
+		}
+		set_variable = { ROOT.num_refinery_assigned@fuel = entry }
+		clear_variable = ROOT.num_refinery_target@fuel
+	}
+	
+	if = { #entry is higher than num refineries
+		limit = { #--> set num_refinery_target to clicked
+			check_variable = { entry > ROOT.num_refinery@fuel }
+		}
+		set_variable = { ROOT.num_refinery_target@fuel = entry }
+	}
+	
+	clamp_variable = { var = ROOT.num_refinery_assigned@fuel max = ROOT.num_refinery@fuel }
+	
+	#log = "[?ROOT.num_refinery_assigned@fuel] ROOT.num_refinery_assigned@fuel"
+	#log = "[?ROOT.num_refinery@fuel] ROOT.num_refinery@fuel"
+	 
+}
+
+ui_fuel_energy_cost_tooltip = {
+	set_temp_variable = { energy_cost_total = energy_cost_@fuel }
+	
+	set_temp_variable = { energy_paid = energy_cost_@fuel }
+	set_temp_variable = { energy_factor = 1 }
+	add_to_temp_variable = { energy_factor = lack_of_energy@energy_conversion }
+	multiply_temp_variable = { energy_paid = energy_factor }
+	custom_effect_tooltip = "FUEL_ENERGY_COST_BASE_TOOLTIP"  
+	   
+	if = {
+		limit = {
+			check_variable = { energy_deficit_@fuel > 0 }
+		}  
+		set_temp_variable = { deficit_ratio = energy_deficit_@fuel }
+		divide_temp_variable = { deficit_ratio = energy_cost_total }
+		multiply_temp_variable = { deficit_ratio = -1 }
+		
+		custom_effect_tooltip = "FUEL_ENERGY_COST_DEFICIT_TOOLTIP"
+		custom_effect_tooltip = "FUEL_ENERGY_COST_DEFICIT_RATIO_TOOLTIP"
+	}  
+}
+
+
+
+d_ui_initiate_resource_conversion = {
+	resize_array = { global.aluminium_assigned_refineries = 30 }
+	resize_array = { global.steel_assigned_refineries = 30 }
+	resize_array = { global.fuel_assigned_refineries = 30 }
+	resize_array = { global.rubber_assigned_refineries = 30 }
+	
+	set_variable = { energy_ratio@coal = 1.0 }
+	set_variable = { energy_ratio@fuel = 0.0 }
+
+	clear_array = global.energy_priority
+	add_to_array = { global.energy_priority = token:energy_civilian }
+	add_to_array = { global.energy_priority = token:energy_military }
+	add_to_array = { global.energy_priority = token:energy_naval }
+	add_to_array = { global.energy_priority = token:energy_conversion }
+	
+	set_variable = { energy_civilian = 2 }
+	set_variable = { energy_military = 2 }
+	set_variable = { energy_naval = 2 }
+	set_variable = { energy_conversion = 2 }
+	
+}
+		
+update_state_mechanics = {
+	clear_variable = num_owned_civilian_factories
+	clear_variable = num_owned_military_factories
+	
+	clear_variable = num_shipyard
+	clear_variable = num_subyard
+	clear_variable = num_shipyard_damaged
+	clear_variable = num_subyard_damaged
+	
+	clear_variable = num_air_assembly
+	clear_variable = num_tank_assembly
+	clear_variable = num_artillery_assembly
+	clear_variable = num_engine_assembly
+	clear_variable = num_capital_shipyard
+	clear_variable = num_air_assembly_damaged
+	clear_variable = num_tank_assembly_damaged
+	clear_variable = num_artillery_assembly_damaged
+	clear_variable = num_engine_assembly_damaged
+	
+	clear_variable = num_fuel_silo
+	clear_variable = num_synthetic_refinery
+	
+	clear_variable = num_hydro_power
+	clear_variable = num_power_plant
+	clear_variable = num_hydro_power_damaged
+	clear_variable = num_power_plant_damaged
+	
+	clear_variable = num_refinery_damaged@steel
+	clear_variable = num_refinery_damaged@aluminium
+	clear_variable = num_refinery_damaged@fuel
+	clear_variable = num_refinery_damaged@rubber
+
+	clear_variable = food_need_population
+	clear_variable = food_need_population_occupied
+	
+	clear_variable = civilian_fuel_use 
+	
+	clear_variable = num_controlled_core_states
+	clear_variable = num_owned_core_states
+	clear_variable = core_population_k
+	
+	clear_variable = num_coastal_states
+	
+	for_each_loop = {
+		array = global.storage
+		
+		clear_variable = num_storage@var:v
+	}
+	
+	clear_array = refinery_states@steel
+	clear_array = refinery_states@aluminium
+	clear_array = refinery_states@fuel
+	clear_array = refinery_states@rubber
+	
+	clear_variable = assign_storage
+	clear_array = assign_storage_state
+	
+	if = {
+		limit = {
+			has_damaged_buildings = yes
+		}
+		
+		every_controlled_state = {
+		
+			if = {
+				limit = {
+					check_variable = { modifier@local_factories = 0 }
+				}
+				
+				add_to_variable = { PREV.num_owned_civilian_factories = building_level@industrial_complex }
+				add_to_variable = { PREV.num_owned_military_factories = building_level@arms_factory }
+		
+				## assemblies
+				
+				add_to_variable = { PREV.num_air_assembly = building_level@air_assembly }
+				add_to_variable = { PREV.num_tank_assembly = building_level@tank_assembly }
+				add_to_variable = { PREV.num_artillery_assembly = building_level@artillery_assembly }
+				add_to_variable = { PREV.num_engine_assembly = building_level@engine_assembly }
+				add_to_variable = { PREV.num_capital_shipyard = building_level@shipyard_capital_building }
+				
+				add_to_variable = { PREV.num_air_assembly_damaged = damaged_building_level@air_assembly }
+				add_to_variable = { PREV.num_tank_assembly_damaged = damaged_building_level@tank_assembly }
+				add_to_variable = { PREV.num_artillery_assembly_damaged = damaged_building_level@artillery_assembly }
+				add_to_variable = { PREV.num_engine_assembly_damaged = damaged_building_level@engine_assembly }
+				
+				## refineries
+				
+				if = {
+					limit = {
+						check_variable = { building_level@steel_refinery > 0 }
+					}
+					add_to_temp_array = { refinery_states_new@steel = THIS }
+					add_to_temp_variable = { num_refinery_new@steel = building_level@steel_refinery }
+					add_to_variable = { PREV.num_refinery_damaged@steel = damaged_building_level@steel_refinery }
+				}
+				if = {
+					limit = {
+						check_variable = { building_level@aluminium_refinery > 0 }
+					}
+					add_to_temp_array = { refinery_states_new@aluminium = THIS }
+					add_to_temp_variable = { num_refinery_new@aluminium = building_level@aluminium_refinery }
+					add_to_variable = { PREV.num_refinery_damaged@aluminium = damaged_building_level@aluminium_refinery }
+				}
+				if = {
+					limit = {
+						check_variable = { building_level@synthetic_refinery > 0 }
+					}
+					add_to_temp_array = { refinery_states_new@fuel = THIS }
+					add_to_temp_variable = { num_refinery_new@fuel = building_level@synthetic_refinery }
+					add_to_variable = { PREV.num_refinery_damaged@fuel = damaged_building_level@synthetic_refinery }
+				}
+				if = {
+					limit = {
+						check_variable = { building_level@synthetic_rubber_refinery > 0 }
+					}
+					add_to_temp_array = { refinery_states_new@rubber = THIS }
+					add_to_temp_variable = { num_refinery_new@rubber = building_level@synthetic_rubber_refinery }
+					add_to_variable = { PREV.num_refinery_damaged@rubber = damaged_building_level@synthetic_rubber_refinery }
+				}
+				
+				
+				## energy
+				
+				add_to_variable = { PREV.num_hydro_power = building_level@hydro_power }
+				add_to_variable = { PREV.num_power_plant = building_level@power_plant }
+				add_to_variable = { PREV.num_hydro_power_damaged = damaged_building_level@hydro_power }
+				add_to_variable = { PREV.num_power_plant_damaged = damaged_building_level@power_plant }
+				
+				## food 
+				
+				add_to_temp_variable = { num_farm = non_damaged_building_level@farm }
+				add_to_temp_variable = { num_food_storage = non_damaged_building_level@food_storage }
+				
+				## dock / subyards
+					
+				add_to_variable = { PREV.num_shipyard = building_level@shipyard }	
+				add_to_variable = { PREV.num_subyard = building_level@subyard }
+				add_to_variable = { PREV.num_shipyard_damaged = damaged_building_level@shipyard }	
+				add_to_variable = { PREV.num_subyard_damaged = damaged_building_level@subyard }
+
+				## infra
+
+				add_to_temp_variable = { num_infra = non_damaged_building_level@infrastructure }
+				
+				## food
+							
+				set_temp_variable = { t = state_population_k }
+				if = {
+					limit = {
+						is_coastal = yes
+					}
+					set_temp_variable = { factor = PREV.modifier@food_need_coastal }
+					add_to_temp_variable = { factor = 1 }
+					multiply_temp_variable = { t = factor }
+					add_to_variable = { PREV.num_coastal_states = 1 }
+				}
+				set_temp_variable = { factor = modifier@local_food_use }
+				add_to_temp_variable = { factor = 1 }
+				multiply_temp_variable = { t = factor }
+				add_to_variable = { PREV.food_need_population = t }
+				set_variable = { state_food_need = t }
+				multiply_variable = { state_food_need = PREV.modifier@base_food_need_civilian }
+			}
+			else = {
+			
+				set_temp_variable = { local = modifier@local_factories }
+				add_to_temp_variable = { local = 1 }
+					
+				set_temp_variable = { t = building_level@industrial_complex }
+				multiply_temp_variable = { t = local }
+				add_to_variable = { Root.num_owned_civilian_factories = t }
+				
+				set_temp_variable = { t = building_level@arms_factory }
+				multiply_temp_variable = { t = local }
+				add_to_variable = { Root.num_owned_military_factories = t }
+				
+				## assemblies
+				
+				set_temp_variable = { t = building_level@air_assembly }
+				multiply_temp_variable = { t = local }
+				add_to_variable = { PREV.num_air_assembly = t }
+				
+				set_temp_variable = { t = building_level@tank_assembly }
+				multiply_temp_variable = { t = local }
+				add_to_variable = { PREV.num_tank_assembly = t }
+				
+				set_temp_variable = { t = building_level@artillery_assembly }
+				multiply_temp_variable = { t = local }
+				add_to_variable = { PREV.num_artillery_assembly = t }
+				
+				set_temp_variable = { t = building_level@engine_assembly }
+				multiply_temp_variable = { t = local }
+				add_to_variable = { PREV.num_engine_assembly = t }
+				
+				set_temp_variable = { t = building_level@shipyard_capital_building }
+				multiply_temp_variable = { t = local }
+				add_to_variable = { PREV.num_capital_shipyard = t }
+				
+				
+				set_temp_variable = { t = damaged_building_level@air_assembly }
+				multiply_temp_variable = { t = local }
+				add_to_variable = { PREV.num_air_assembly_damaged = t }
+				
+				set_temp_variable = { t = damaged_building_level@tank_assembly }
+				multiply_temp_variable = { t = local }
+				add_to_variable = { PREV.num_tank_assembly_damaged = t }
+				
+				set_temp_variable = { t = damaged_building_level@artillery_assembly }
+				multiply_temp_variable = { t = local }
+				add_to_variable = { PREV.num_artillery_assembly_damaged = t }
+				
+				set_temp_variable = { t = damaged_building_level@engine_assembly }
+				multiply_temp_variable = { t = local }
+				add_to_variable = { PREV.num_engine_assembly_damaged = t }
+				
+				## refineries
+			
+				if = {
+					limit = {
+						check_variable = { building_level@steel_refinery > 0 }
+					}
+					add_to_temp_array = { refinery_states_new@steel = THIS }
+						
+					set_temp_variable = { t = building_level@steel_refinery }
+					multiply_temp_variable = { t = local }
+					add_to_temp_variable = { num_refinery_new@steel = t }
+						
+					set_temp_variable = { t = damaged_building_level@steel_refinery }
+					multiply_temp_variable = { t = local }
+					add_to_variable = { PREV.num_refinery_damaged@steel = t }
+					
+				}
+				if = {
+					limit = {
+						check_variable = { building_level@aluminium_refinery > 0 }
+					}
+					add_to_temp_array = { refinery_states_new@aluminium = THIS }
+					
+					set_temp_variable = { t = building_level@aluminium_refinery }
+					multiply_temp_variable = { t = local }
+					add_to_temp_variable = { num_refinery_new@aluminium = t }
+					
+					set_temp_variable = { t = damaged_building_level@aluminium_refinery }
+					multiply_temp_variable = { t = local }
+					add_to_variable = { PREV.num_refinery_damaged@aluminium = t }
+				}
+				if = {
+					limit = {
+						check_variable = { building_level@synthetic_refinery > 0 }
+					}
+					add_to_temp_array = { refinery_states_new@fuel = THIS }
+					
+					set_temp_variable = { t = building_level@synthetic_refinery }
+					multiply_temp_variable = { t = local }
+					add_to_temp_variable = { num_refinery_new@fuel = t }
+					
+					set_temp_variable = { t = damaged_building_level@synthetic_refinery }
+					multiply_temp_variable = { t = local }
+					add_to_variable = { PREV.num_refinery_damaged@fuel = t }
+				}
+				if = {
+					limit = {
+						check_variable = { building_level@synthetic_rubber_refinery > 0 }
+					}
+					add_to_temp_array = { refinery_states_new@rubber = THIS }
+					
+					set_temp_variable = { t = building_level@synthetic_rubber_refinery }
+					multiply_temp_variable = { t = local }
+					add_to_temp_variable = { num_refinery_new@rubber = t }
+					
+					set_temp_variable = { t = damaged_building_level@synthetic_rubber_refinery }
+					multiply_temp_variable = { t = local }
+					add_to_variable = { PREV.num_refinery_damaged@rubber = t }
+				}
+				
+				## energy 
+			
+				set_temp_variable = { t = building_level@hydro_power }
+				multiply_temp_variable = { t = local }
+				add_to_variable = { PREV.num_hydro_power = t }
+				
+				set_temp_variable = { t = building_level@power_plant }
+				multiply_temp_variable = { t = local }
+				add_to_variable = { PREV.num_power_plant = t }
+				
+				set_temp_variable = { t = damaged_building_level@hydro_power }
+				multiply_temp_variable = { t = local }
+				add_to_variable = { PREV.num_hydro_power_damaged = t }
+				
+				set_temp_variable = { t = damaged_building_level@power_plant }
+				multiply_temp_variable = { t = local }
+				add_to_variable = { PREV.num_power_plant_damaged = t }
+				
+				## food 
+
+				set_temp_variable = { t = non_damaged_building_level@farm }
+				multiply_temp_variable = { t = local }
+				add_to_temp_variable = { num_farm = t }
+						
+				set_temp_variable = { t = non_damaged_building_level@food_storage }
+				multiply_temp_variable = { t = local }
+				add_to_temp_variable = { num_food_storage = t }
+				
+				## dock / subyards
+					
+				set_temp_variable = { t = building_level@shipyard }
+				multiply_temp_variable = { t = local }
+				add_to_variable = { PREV.num_shipyard = t }
+			
+				set_temp_variable = { t = building_level@subyard }
+				multiply_temp_variable = { t = local }
+				add_to_variable = { PREV.num_subyard = t }
+
+				set_temp_variable = { t = damaged_building_level@shipyard }
+				multiply_temp_variable = { t = local }
+				add_to_variable = { PREV.num_shipyard_damaged = t }
+			
+				set_temp_variable = { t = damaged_building_level@subyard }
+				multiply_temp_variable = { t = local }
+				add_to_variable = { PREV.num_subyard_damaged = t }
+
+				## infra
+
+				set_temp_variable = { t = building_level@infrastructure }
+				multiply_temp_variable = { t = local }
+				add_to_temp_variable = { num_infra = t }
+				
+				## food
+				
+				state_update_food = yes
+			}
+			
+			## MISC 
+			state_count_population = yes
+			state_check_civilian_fuel_use = yes
+			state_count_storage_buildings = yes
+			
+			add_to_variable = { PREV.num_fuel_silo = building_level@fuel_silo }
+			add_to_variable = { PREV.num_synthetic_refinery = building_level@synthetic_refinery }
+			
+			state_update_on_end = yes
+		}
+	}
+	else = {
+		every_controlled_state = {
+		
+			if = {
+				limit = {
+					check_variable = { modifier@local_factories = 0 }
+				}
+				
+				add_to_variable = { PREV.num_owned_civilian_factories = building_level@industrial_complex }
+				add_to_variable = { PREV.num_owned_military_factories = building_level@arms_factory }
+		
+				## assemblies
+				
+				add_to_variable = { PREV.num_air_assembly = building_level@air_assembly }
+				add_to_variable = { PREV.num_tank_assembly = building_level@tank_assembly }
+				add_to_variable = { PREV.num_artillery_assembly = building_level@artillery_assembly }
+				add_to_variable = { PREV.num_engine_assembly = building_level@engine_assembly }
+				add_to_variable = { PREV.num_capital_shipyard = building_level@shipyard_capital_building }
+				
+				## refineries
+				
+				if = {
+					limit = {
+						check_variable = { building_level@steel_refinery > 0 }
+					}
+					add_to_temp_array = { refinery_states_new@steel = THIS }
+					add_to_temp_variable = { num_refinery_new@steel = building_level@steel_refinery }
+				}
+				if = {
+					limit = {
+						check_variable = { building_level@aluminium_refinery > 0 }
+					}
+					add_to_temp_array = { refinery_states_new@aluminium = THIS }
+					add_to_temp_variable = { num_refinery_new@aluminium = building_level@aluminium_refinery }
+				}
+				if = {
+					limit = {
+						check_variable = { building_level@synthetic_refinery > 0 }
+					}
+					add_to_temp_array = { refinery_states_new@fuel = THIS }
+					add_to_temp_variable = { num_refinery_new@fuel = building_level@synthetic_refinery }
+				}
+				if = {
+					limit = {
+						check_variable = { building_level@synthetic_rubber_refinery > 0 }
+					}
+					add_to_temp_array = { refinery_states_new@rubber = THIS }
+					add_to_temp_variable = { num_refinery_new@rubber = building_level@synthetic_rubber_refinery }
+				}
+				
+				
+				## energy
+				
+				add_to_variable = { PREV.num_hydro_power = building_level@hydro_power }
+				add_to_variable = { PREV.num_power_plant = building_level@power_plant }
+				
+				## food 
+				
+				add_to_temp_variable = { num_farm = building_level@farm }
+				add_to_temp_variable = { num_food_storage = building_level@food_storage }
+				
+				## dock / subyards
+					
+				add_to_variable = { PREV.num_shipyard = building_level@shipyard }	
+				add_to_variable = { PREV.num_subyard = building_level@subyard }
+
+				## infra
+
+				add_to_temp_variable = { num_infra = building_level@infrastructure }
+				
+				## food
+				
+				set_temp_variable = { t = state_population_k }
+				if = {
+					limit = {
+						is_coastal = yes
+					}
+					set_temp_variable = { factor = PREV.modifier@food_need_coastal }
+					add_to_temp_variable = { factor = 1 }
+					multiply_temp_variable = { t = factor }
+					add_to_variable = { PREV.num_coastal_states = 1 }
+				}
+				set_temp_variable = { factor = modifier@local_food_use }
+				add_to_temp_variable = { factor = 1 }
+				multiply_temp_variable = { t = factor }
+				
+				set_variable = { state_food_need = t }
+				multiply_variable = { state_food_need = PREV.modifier@base_food_need_civilian }
+				add_to_variable = { PREV.food_need_population = t }
+
+			}
+			else = {	
+				set_temp_variable = { local = modifier@local_factories }
+				add_to_temp_variable = { local = 1 }
+					
+				set_temp_variable = { t = building_level@industrial_complex }
+				multiply_temp_variable = { t = local }
+				add_to_variable = { Root.num_owned_civilian_factories = t }
+				
+				set_temp_variable = { t = building_level@arms_factory }
+				multiply_temp_variable = { t = local }
+				add_to_variable = { Root.num_owned_military_factories = t }
+				
+				## assemblies
+				
+				set_temp_variable = { t = building_level@air_assembly }
+				multiply_temp_variable = { t = local }
+				add_to_variable = { PREV.num_air_assembly = t }
+				
+				set_temp_variable = { t = building_level@tank_assembly }
+				multiply_temp_variable = { t = local }
+				add_to_variable = { PREV.num_tank_assembly = t }
+				
+				set_temp_variable = { t = building_level@artillery_assembly }
+				multiply_temp_variable = { t = local }
+				add_to_variable = { PREV.num_artillery_assembly = t }
+				
+				set_temp_variable = { t = building_level@engine_assembly }
+				multiply_temp_variable = { t = local }
+				add_to_variable = { PREV.num_engine_assembly = t }
+				
+				set_temp_variable = { t = building_level@shipyard_capital_building }
+				multiply_temp_variable = { t = local }
+				add_to_variable = { PREV.num_capital_shipyard = t }
+				
+				## refineries
+			
+				if = {
+					limit = {
+						check_variable = { building_level@steel_refinery > 0 }
+					}
+					add_to_temp_array = { refinery_states_new@steel = THIS }
+						
+					set_temp_variable = { t = building_level@steel_refinery }
+					multiply_temp_variable = { t = local }
+					add_to_temp_variable = { num_refinery_new@steel = t }
+					
+				}
+				if = {
+					limit = {
+						check_variable = { building_level@aluminium_refinery > 0 }
+					}
+					add_to_temp_array = { refinery_states_new@aluminium = THIS }
+					
+					set_temp_variable = { t = building_level@aluminium_refinery }
+					multiply_temp_variable = { t = local }
+					add_to_temp_variable = { num_refinery_new@aluminium = t }
+				}
+				if = {
+					limit = {
+						check_variable = { building_level@synthetic_refinery > 0 }
+					}
+					add_to_temp_array = { refinery_states_new@fuel = THIS }
+					
+					set_temp_variable = { t = building_level@synthetic_refinery }
+					multiply_temp_variable = { t = local }
+					add_to_temp_variable = { num_refinery_new@fuel = t }
+				}
+				if = {
+					limit = {
+						check_variable = { building_level@synthetic_rubber_refinery > 0 }
+					}
+					add_to_temp_array = { refinery_states_new@rubber = THIS }
+					
+					set_temp_variable = { t = building_level@synthetic_rubber_refinery }
+					multiply_temp_variable = { t = local }
+					add_to_temp_variable = { num_refinery_new@rubber = t }
+				}
+				
+				## energy 
+			
+				set_temp_variable = { t = building_level@hydro_power }
+				multiply_temp_variable = { t = local }
+				add_to_variable = { PREV.num_hydro_power = t }
+				
+				set_temp_variable = { t = building_level@power_plant }
+				multiply_temp_variable = { t = local }
+				add_to_variable = { PREV.num_power_plant = t }
+				
+				## food 
+
+				set_temp_variable = { t = building_level@farm }
+				multiply_temp_variable = { t = local }
+				add_to_temp_variable = { num_farm = t }
+						
+				set_temp_variable = { t = building_level@food_storage }
+				multiply_temp_variable = { t = local }
+				add_to_temp_variable = { num_food_storage = t }
+				
+				## dock / subyards
+					
+				set_temp_variable = { t = building_level@shipyard }
+				multiply_temp_variable = { t = local }
+				add_to_variable = { PREV.num_shipyard = t }
+			
+				set_temp_variable = { t = building_level@subyard }
+				multiply_temp_variable = { t = local }
+				add_to_variable = { PREV.num_subyard = t }
+
+				## infra
+
+				set_temp_variable = { t = building_level@infrastructure }
+				multiply_temp_variable = { t = local }
+				add_to_temp_variable = { num_infra = t }
+				
+				## food
+				
+				state_update_food = yes
+			}
+			
+			## MISC 
+			state_count_population = yes
+			state_check_civilian_fuel_use = yes
+			state_count_storage_buildings = yes
+			
+			add_to_variable = { PREV.num_fuel_silo = building_level@fuel_silo }
+			add_to_variable = { PREV.num_synthetic_refinery = building_level@synthetic_refinery }
+			
+			state_update_on_end = yes
+		}
+	}
+	
+	## MAX FOOD STORAGE
+
+	multiply_temp_variable = { num_food_storage = constant:food.storage.building }
+	add_to_temp_variable = { num_food_storage = constant:food.storage.base }
+	set_variable = { food_max = num_food_storage }
+	multiply_temp_variable = {num_farm = constant:food.storage.farm }
+	add_to_variable = { food_max = num_farm }
+	multiply_temp_variable = {num_infra = constant:food.storage.infra }
+	add_to_variable = { food_max = num_infra }
+	set_temp_variable = {food_max_civ = num_of_civilian_factories}
+	multiply_temp_variable = {food_max_civ = constant:food.storage.civ }
+	add_to_variable = { food_max = food_max_civ }
+	set_temp_variable = { factor = modifier@food_capacity_factor }
+	add_to_temp_variable = { factor = 1 }
+	multiply_variable = { food_max = factor }
+	
+	
+	## UPDATE CONVERSION IF A CHANGE HAS OCCURED
+	
+	if = {
+		limit = {
+			NOT = { check_variable = { num_refinery@steel = num_refinery_new@steel } }
+		}
+		set_variable = { num_refinery@steel = num_refinery_new@steel }
+		round_variable = num_refinery@steel
+	}
+	if = {
+		limit = {
+			NOT = { check_variable = { num_refinery@aluminium = num_refinery_new@aluminium } }
+		}
+		set_variable = { num_refinery@aluminium = num_refinery_new@aluminium }
+		round_variable = num_refinery@aluminium
+	}
+	if = {
+		limit = {
+			NOT = { check_variable = { num_refinery@fuel = num_refinery_new@fuel } }
+		}
+		set_variable = { num_refinery@fuel = num_refinery_new@fuel }
+		round_variable = num_refinery@fuel
+	}
+	if = {
+		limit = {
+			NOT = { check_variable = { num_refinery@rubber = num_refinery_new@rubber } }
+		}
+		set_variable = { num_refinery@rubber = num_refinery_new@rubber }
+		round_variable = num_refinery@rubber
+	}
+	score_refinery_states_aluminium = yes
+	score_refinery_states_steel = yes
+	score_refinery_states_fuel = yes
+	score_refinery_states_rubber = yes
+	
+	if = {
+		limit = {
+			is_ai = no
+		}
+		update_resource_assembly = yes
+	}
+	adjust_civilian_fuel_use = yes
+	update_ship_subyard = yes
+	if = {
+		limit = {
+			NOT = { has_country_flag = ai_is_useless_country }
+			NOT = { has_country_flag = ai_very_low_update }
+			NOT = { has_country_flag = ai_low_update }
+		}
+		set_storage_flags = yes
+	}
+	
+	if = { limit = { check_variable = { num_fuel_silo = 0 } } clear_variable = num_fuel_silo }
+	if = { limit = { check_variable = { num_synthetic_refinery = 0 } } clear_variable = num_synthetic_refinery }
+	if = { limit = { check_variable = { num_power_plant = 0 } } clear_variable = num_power_plant }
+	if = { limit = { check_variable = { num_hydro_power = 0 } } clear_variable = num_hydro_power }
+	if = { limit = { check_variable = { num_tank_assembly = 0 } } clear_variable = num_tank_assembly }
+	if = { limit = { check_variable = { num_air_assembly = 0 } } clear_variable = num_air_assembly }
+	if = { limit = { check_variable = { num_artillery_assembly = 0 } } clear_variable = num_artillery_assembly }
+	if = { limit = { check_variable = { num_engine_assembly = 0 } } clear_variable = num_engine_assembly }
+	if = { limit = { check_variable = { num_capital_shipyard = 0 } } clear_variable = num_capital_shipyard }
+}
+
+state_update_food = { #occupied
+	
+	OWNER = { set_temp_variable = { t = modifier@base_food_need_civilian } }
+	CONTROLLER = { add_to_temp_variable = { t = modifier@base_food_need_civilian } }
+	multiply_temp_variable = { t = 0.5 }
+	
+	set_temp_variable = { state_food_use = state_population_k }
+	if = {
+		limit = {
+			is_coastal = yes
+		}
+		set_temp_variable = { factor = PREV.modifier@food_need_coastal }
+		add_to_temp_variable = { factor = 1 }
+		multiply_temp_variable = { state_food_use = factor }
+		
+		add_to_variable = { PREV.num_coastal_states = 1 }
+	}
+	set_temp_variable = { factor = modifier@local_food_use }
+	add_to_temp_variable = { factor = 1 }
+	multiply_temp_variable = { state_food_use = factor }
+	multiply_temp_variable = { state_food_use = t }
+	
+	set_variable = { state_food_need = state_food_use }
+	add_to_variable = { PREV.food_need_population_occupied = state_food_need }
+	
+}
+
+state_update_on_end = { #runs in update_state_mechanics, in state scope, after all other effects have been run
+	
+	if = {
+		limit = {
+			OR = {
+				oil > 0
+				rubber > 0
+				chromium > 0
+				tungsten > 0
+				bauxite > 0
+				iron > 0
+				coal > 0
+				food > 0
+			}
+		}
+		set_state_flag = resources
+	}
+	else_if = {
+		limit = {
+			has_state_flag = resources
+		}
+		clr_state_flag = resources
+	}
+
+}
+
+update_resource_conversion_daily = {
+	if = {
+		limit = {
+			NOT = { has_country_flag = electric_tains }
+		}
+		update_train_coal_use = yes
+	}
+	
+	add_to_temp_array = { conversion_steel = token:steel }
+	add_to_temp_array = { conversion_aluminium = token:aluminium }
+	add_to_temp_array = { conversion_fuel = token:fuel }
+	add_to_temp_array = { conversion_rubber = token:rubber }
+	
+	update_resource_conversion = yes
+	
+	
+	update_resource_production = yes 
+}
+
+ai_update_resource_conversion = {
+	set_variable = { max_num_alloy_refinery = 999 }
+	
+	set_variable = { num_refinery_assigned@steel = num_refinery@steel }
+	set_variable = { num_refinery_assigned@aluminium = num_refinery@aluminium }
+	
+	if = {
+		limit = {
+			check_variable = { num_refinery@fuel > 0 }
+		}
+		set_variable = { num_refinery_assigned@fuel = num_refinery@fuel } #synth is always enabled to the max, steel got priority anyway
+	}
+	else = {
+		clear_variable = num_refinery@fuel
+	}
+	
+	if = {
+		limit = {
+			check_variable = { num_refinery@rubber > 0 }
+		}
+		set_variable = { num_refinery_assigned@rubber = num_refinery@rubber } #rubber is always enabled to the max, no inputs anyway
+	}
+	else = {
+		clear_variable = num_refinery@rubber
+	}
+
+	set_steel_recipe = yes
+	
+	#log = "[This.GetTag] | start ref: [?num_refinery_assigned@steel]"
+	### Steel Production
+
+	set_temp_variable = { ai_max_iron = resource_produced@iron }
+	add_to_temp_variable = { ai_max_iron = export_offset@iron }
+	subtract_from_temp_variable = { ai_max_iron = resource_exported@iron }
+	divide_temp_variable = { ai_max_iron = iron_input }
+
+	#log = "[This.GetTag] | max iron ref: [?ai_max_iron]"
+	
+	set_temp_variable = { ai_max_coal = resource_produced@coal }
+	add_to_temp_variable = { ai_max_coal = export_offset@coal }
+	subtract_from_temp_variable = { ai_max_coal = resource_exported@coal }
+	subtract_from_temp_variable = { ai_max_coal = train_use@coal }
+	divide_temp_variable = { ai_max_coal = coal_input }
+
+	#log = "[This.GetTag] | max coal ref: [?ai_max_coal]"
+	
+	clamp_variable = { var = num_refinery_assigned@steel max = ai_max_iron }
+	clamp_variable = { var = num_refinery_assigned@steel max = ai_max_coal }
+
+	set_temp_variable = { ai_steel_need = resource_consumed@steel }
+	set_temp_variable = {steel_export_ratio = 1}
+	subtract_from_temp_variable = {steel_export_ratio = modifier@min_export}
+	divide_temp_variable = { ai_steel_need = steel_export_ratio}
+	divide_temp_variable = { ai_steel_need = steel_output }
+	add_to_temp_variable = { ai_steel_need = 0.5 } # math so it always rounds up
+	round_temp_variable = ai_steel_need
+
+	clamp_temp_variable = { var = ai_steel_need max = num_refinery@steel }
+	clamp_variable = { var = num_refinery_assigned@steel min = ai_steel_need }
+
+
+	#log = "[This.GetTag] | min needed ref: [?num_refinery_assigned@steel]"	
+
+	ai_max_iron_import = yes
+	ai_max_coal_import = yes
+
+	clamp_variable = { var = num_refinery_assigned@steel max = ai_max_iron }
+	clamp_variable = { var = num_refinery_assigned@steel max = ai_max_coal }
+
+	if = {
+		limit = {
+			check_variable = { num_refinery_assigned@steel > 1 }
+		}
+		subtract_from_variable = { num_refinery_assigned@steel = 0.5 } # math so it always rounds down
+	}
+	round_variable = num_refinery_assigned@steel
+	if = { limit = { check_variable = { num_refinery_assigned@steel = 0 } } clear_variable = num_refinery_assigned@steel }
+	#round_variable = num_refinery_assigned@steel #just to be safe again
+
+	#log = "[This.GetTag] | max allowed ref: [?num_refinery_assigned@steel]"
+
+
+
+	### Aluminium Production
+
+	set_aluminium_recipe = yes
+
+	set_temp_variable = { ai_max_bauxite = resource_produced@bauxite }
+	add_to_temp_variable = { ai_max_bauxite = export_offset@bauxite }
+	subtract_from_temp_variable = { ai_max_bauxite = resource_exported@bauxite }
+	divide_temp_variable = { ai_max_bauxite = bauxite_input }
+	
+	#log = "[This.GetTag] | max alu ref own bauxite: [?ai_max_bauxite]"
+
+	clamp_variable = { var = num_refinery_assigned@aluminium max = ai_max_bauxite }
+
+	set_temp_variable = { ai_alu_need = resource_consumed@aluminium }
+	set_temp_variable = {alu_export_ratio = 1}
+	subtract_from_temp_variable = {alu_export_ratio = modifier@min_export}
+	divide_temp_variable = { ai_alu_need = alu_export_ratio}
+	divide_temp_variable = { ai_alu_need = aluminium_output }
+	add_to_temp_variable = { ai_alu_need = 0.5 } # math so it always rounds up
+	round_temp_variable = ai_alu_need
+
+	clamp_temp_variable = { var = ai_alu_need max = num_refinery@aluminium }
+	clamp_variable = { var = num_refinery_assigned@aluminium min = ai_alu_need }
+
+
+	#log = "[This.GetTag] | min aluminium needed: [?num_refinery_assigned@aluminium]"	
+
+	ai_max_bauxite_import = yes
+
+	#log = "[This.GetTag] | max alu after imports: [?ai_max_bauxite]"	
+
+	clamp_variable = { var = num_refinery_assigned@aluminium max = ai_max_bauxite }
+
+	if = {
+		limit = {
+			check_variable = { num_refinery_assigned@aluminium > 1 }
+		}
+		subtract_from_variable = { num_refinery_assigned@aluminium = 0.5 } # math so it always rounds down
+	}
+	round_variable = num_refinery_assigned@aluminium
+	if = { limit = { check_variable = { num_refinery_assigned@aluminium = 0 } } clear_variable = num_refinery_assigned@aluminium }
+			
+	#########################################
+	# force update imports 
+	
+	if = {
+		limit = {
+			num_of_civilian_factories_available_for_projects < 5
+			has_country_flag = { flag = ai_force_update_import value = 2 }
+		}
+		
+		clr_country_flag = ai_force_update_import
+			
+		if = {
+			limit = {
+				check_variable = { resource_imported@steel > 20 }
+				check_variable = { num_refinery_assigned@steel > num_active_refinery@steel }
+				
+				OR = {
+					check_variable = { conversion_actual_use_@iron > conversion_use_@iron }
+					check_variable = { conversion_actual_use_@coal > conversion_use_@coal }
+				}
+			}
+			#log = "[This.GetTag] | Force update steel imports"
+			add_timed_idea = {
+				idea = ai_force_update_steel_imports
+				days = 2
+			}
+		}
+		
+		if = {
+			limit = {
+				check_variable = { resource_imported@aluminium > 20 }
+				check_variable = { num_refinery_assigned@aluminium > num_active_refinery@aluminium }
+				
+				check_variable = { conversion_actual_use_@bauxite > conversion_use_@bauxite }
+			}
+			#log = "[This.GetTag] | Force update aluminium imports"
+			add_timed_idea = {
+				idea = ai_force_update_aluminium_imports
+				days = 2
+			}
+		}
+	}
+	else_if = {
+		limit = {
+			has_country_flag = ai_force_update_import
+		}
+		modify_country_flag = { flag = ai_force_update_import value = 1 }
+	}
+	else = {
+		set_country_flag = ai_force_update_import
+	}
+	
+	#update conversion in an event to have clear scopes
+	ai_update_resource_conversion_event = yes
+	
+	ai_update_resource_production = yes 
+}
+
+ai_update_resource_conversion_event = {
+	add_to_temp_array = { conversion_steel = token:steel }
+	add_to_temp_array = { conversion_aluminium = token:aluminium }
+	add_to_temp_array = { conversion_fuel = token:fuel }
+	add_to_temp_array = { conversion_rubber = token:rubber }
+	update_resource_conversion = yes
+	
+	ai_update_debug_equipment = yes	
+	
+	add_to_variable = { ui_refinery = 1 }
+}
+		
+update_resource_conversion = {
+	if = {
+		limit = {
+			NOT = { has_country_flag = electric_tains }
+		}
+		update_train_coal_use = yes
+	}
+	
+	update_steel_conversion = yes
+	update_aluminium_conversion = yes
+	update_fuel_conversion = yes
+	update_rubber_conversion = yes
+	
+	add_to_variable = { ui_refinery = 1 }
+}
+	
+update_steel_conversion = {
+	#num_refinery
+	#num_refinery_assigned #how many refinerys are assigned to work
+	#num_refinery_target #total target assignment
+	#num_refinery_damaged
+	#num_active_refinery #how many are actually working at 100%
+	#num_refinery_inactive
+	
+	for_each_loop = {
+		array = conversion_steel
+		value = resource
+		
+		# Calculate Max Possible Output from Refineries
+		set_temp_variable = { damaged = num_refinery_damaged@var:resource }
+		set_temp_variable = { resilience = 1 }
+		subtract_from_temp_variable = { resilience = modifier@refinery_resilience }
+		clamp_temp_variable = { var = resilience min = 0.5 }
+		multiply_temp_variable = { damaged = resilience }
+		set_temp_variable = { max_output = num_refinery@var:resource }
+		subtract_from_temp_variable = { max_output = damaged }
+		
+		if = {
+			limit = {
+				OR = {
+					check_variable = { max_output > 0 } #update when having any capacity
+					check_variable = { resource_output_@var:resource > 0 } #update when having any output
+				}
+			}
+			
+			set_temp_variable = { unused_refinery_output@var:resource = max_output }
+			clamp_temp_variable = { var = max_output max = num_refinery_assigned@var:resource }
+			subtract_from_temp_variable = { unused_refinery_output@var:resource = max_output }
+			
+			set_steel_recipe = yes
+				
+			if = {
+				limit = {
+					check_variable = { num_refinery_target@var:resource > num_refinery_assigned@var:resource }
+				}
+				set_variable = { num_refinery_assigned@var:resource = num_refinery_target@var:resource }
+				clamp_variable = { var = num_refinery_assigned@var:resource max = num_refinery@var:resource }
+			}
+			
+			clear_temp_array = conversion_available_resource
+			clear_variable = energy_cost@energy_conversion
+			
+			# Calculate Max Resources that can be used for Conversion
+			
+			for_each_loop = {
+				array = conversion_@var:resource
+				
+				set_temp_variable = { max_resource_convertable = max_output }
+				multiply_temp_variable = { max_resource_convertable = conversion_weight_@var:resource^i }
+			
+				set_temp_variable = { max_value = resource_produced@var:v }
+				add_to_temp_variable = { max_value = export_offset@var:v } #TODO
+				subtract_from_temp_variable = { max_value = resource_exported@var:v }
+				add_to_temp_variable = { max_value = resource_imported@var:v }
+				subtract_from_temp_variable = { max_value = train_use@var:v }
+				round_temp_variable = max_value
+				
+				if = {
+					limit = {
+						check_variable = { max_resource_convertable > max_value }
+					}
+					set_temp_variable = { max_resource_convertable = max_value }
+				}
+				else = {
+					set_temp_variable = { unused_resource_input@var:v = max_value }
+					subtract_from_temp_variable = { unused_resource_input@var:v = max_resource_convertable }
+					divide_temp_variable = { unused_resource_input@var:v = conversion_weight_@var:resource^i }
+				}
+				
+				divide_temp_variable = { max_resource_convertable = conversion_weight_@var:resource^i }
+				clamp_temp_variable = { var = max_resource_convertable min = 0 }
+				
+				add_to_temp_array = { conversion_available_resource = max_resource_convertable }
+				#log = "======== RESOURCE REQUIRED: [?v.GetTokenKey] [?max_resource_convertable] / [?max_value] max_resource_convertable ========"
+				
+				#log = " "
+				
+			}
+			
+			#log = "[?max_output] | MAX REFINERY OUTPUT"
+			
+			# Set allowed output from amount of available resources
+			
+			find_lowest_in_array = { #if there are multiple resources needed, take the lowest value. this means, without any coal no steel at all can be produced
+				array = conversion_available_resource
+				value = converted_resource_output
+			}
+			#log = "[?converted_resource_output] | LOWEST AMOUNT FOR converted_resource_output"
+			
+			# Calculate Energy Need
+			set_temp_variable = { energy_needed = converted_resource_output }
+			multiply_temp_variable = { energy_needed = conversion_energy_@var:resource }
+			
+			set_temp_variable = { energy_deficit = energy_needed }
+			#log = "[?energy_needed] energy_needed"
+			
+			# Apply Energy Efficiency
+			set_temp_variable = { energy_factor = 1 }
+			add_to_temp_variable = { energy_factor = lack_of_energy@energy_conversion }
+			multiply_temp_variable = { converted_resource_output = energy_factor }
+			
+			multiply_temp_variable = { energy_deficit = energy_factor }
+			
+			#log = "[?energy_factor] energy_factor"
+			set_variable = { energy_cost_@var:resource = energy_needed }
+			add_to_variable = { energy_cost@energy_conversion = energy_cost_@steel }
+			add_to_variable = { energy_cost@energy_conversion = energy_cost_@aluminium }
+			add_to_variable = { energy_cost@energy_conversion = energy_cost_@rubber }
+			add_to_variable = { energy_cost@energy_conversion = energy_cost_@fuel }
+			subtract_from_temp_variable = { energy_needed = energy_deficit }
+			
+			set_variable = { energy_deficit_@var:resource = energy_needed }
+			#log = "[?energy_needed] energy_deficit"
+			
+			#log = "[?converted_resource_output] | MAX RESOURCE OUTPUT BASED ON INPUT AND ASSIGNED REFINERIES"
+			
+			# calculate effective and actual resource useage
+		
+			for_each_loop = {  
+				array = conversion_@var:resource
+				
+				set_variable = { conversion_use_@var:v = converted_resource_output }
+				multiply_variable = { conversion_use_@var:v = conversion_weight_@var:resource^i }
+				round_variable = conversion_use_@var:v
+				
+				set_variable = { conversion_actual_use_@var:v = num_refinery_assigned@var:resource }
+				subtract_from_variable = { conversion_actual_use_@var:v = damaged }
+				multiply_variable = { conversion_actual_use_@var:v = conversion_weight_@var:resource^i }
+				
+				
+				set_temp_variable = { temp = conversion_use_@var:v }
+				#log = "[?temp] conversion_use_=> [?v.GetTokenKey]"
+			}
+			
+			multiply_temp_variable = { converted_resource_output = conversion_output_@var:resource }
+			round_temp_variable = converted_resource_output
+			
+			#log = "Final rounded [?converted_resource_output] converted_resource_output"
+			
+			if = {
+				limit = {
+					#NOT = { check_variable = { resource_output_@var:resource = converted_resource_output } }
+				}
+				set_variable = { resource_output_@var:resource = converted_resource_output }
+				
+				
+				# Add Resource Production to States with Refineries
+				
+				set_temp_variable = { num_active_conversions = 0 }
+				set_temp_variable = { state_rest_output = 0 }
+						
+				set_temp_variable = { num_conversions = converted_resource_output }
+				divide_temp_variable = { num_conversions = conversion_output_@var:resource }
+				
+				set_variable = { num_active_refinery@var:resource = num_conversions }
+				
+				## ALLOYS calculation
+				
+				steel_alloy_output = yes
+				add_to_temp_variable = { converted_resource_output = extra_output_from_alloy }
+					
+				set_variable = { resource_output_@var:resource = converted_resource_output }
+					
+				#log = "[?num_conversions] NUM CONVERSIONS FIRST"
+				#round_variable = num_active_refinery@var:resource 
+				
+				for_each_scope_loop = {
+					array = refinery_states@steel
+					
+					if = {
+						limit = {
+							check_variable = { num_conversions > 0.999 }
+							
+						}
+					
+						set_temp_variable = { t = num_conversions }
+						subtract_from_temp_variable = { t = 0.5 }
+						round_temp_variable = t
+						
+						set_temp_variable = { ct = num_conversions }
+						subtract_from_temp_variable = { ct = t }
+						#log = "[?ct] CT FRACTION"
+						
+						set_temp_variable = { state_num_conversions = building_level@steel_refinery }
+						subtract_from_temp_variable = { num_conversions = ct }
+						clamp_temp_variable = { var = state_num_conversions max = num_conversions }
+						add_to_temp_variable = { num_conversions = ct }
+						
+						set_building_level = { type = steel_max_output level = var:state_num_conversions instant_build = yes }
+						set_building_level = { type = steel_max_output level = var:state_num_conversions instant_build = yes }
+						if = {
+							limit = {
+								check_variable = { building_level@steel_rest_output > 0 }
+							}
+							remove_building  = { type = steel_rest_output level = var:building_level@steel_rest_output }
+						}
+						
+						subtract_from_temp_variable = { num_conversions = state_num_conversions }
+						add_to_temp_variable = { num_active_conversions = state_num_conversions }
+						#log = "[?num_conversions] num_conversions ITERATION -- MAX ([?state_num_conversions]) | [This.GetName]"
+						
+						if = {
+							limit = {
+								check_variable = { num_conversions < 1 }
+								check_variable = { num_conversions > 0 }
+								check_variable = { building_level@steel_refinery > building_level@steel_max_output }
+							}
+							#log = "[?num_conversions] num_conversions ITERATION -- MAXREST ([?num_conversions]) | [This.GetName]"
+						
+							set_building_level = { type = steel_rest_output level = 1 instant_build = yes }
+							
+							set_temp_variable = { state_rest_output = num_conversions }
+							multiply_temp_variable = { state_rest_output = conversion_output_@var:resource }
+							round_temp_variable = state_rest_output
+							
+							#add_to_temp_variable = { num_active_conversions = num_conversions }
+							set_temp_variable = { num_conversions = 0 }
+						}
+					}
+					else_if = {
+						limit = {
+							check_variable = { num_conversions > 0 }
+						}
+						#log = "[?num_conversions] num_conversions ITERATION -- REST ([?num_conversions]) | [This.GetName]"
+						
+						set_building_level = { type = steel_rest_output level = 1 instant_build = yes }
+						if = {
+							limit = {
+								check_variable = { building_level@steel_max_output > 0 }
+							}
+							remove_building  = { type = steel_max_output level = var:building_level@steel_max_output }
+						}
+						
+						set_temp_variable = { state_rest_output = num_conversions }
+						multiply_temp_variable = { state_rest_output = conversion_output_@var:resource }
+						round_temp_variable = state_rest_output
+						
+						#add_to_temp_variable = { num_active_conversions = num_conversions }
+						set_temp_variable = { num_conversions = 0 }
+					}
+					else_if = {
+						limit = {
+							OR = {
+								check_variable = { building_level@steel_rest_output > 0 }
+								check_variable = { building_level@steel_max_output > 0 }
+							}
+						}
+						#log = "CLEARED BUILDINGS IN [This.GetName]"
+						remove_building  = { type = steel_rest_output level = var:building_level@steel_rest_output }
+						remove_building  = { type = steel_max_output level = var:building_level@steel_max_output }
+					}
+				}
+				
+				#log = "[?num_conversions] num_conversions first pass"
+				
+				#Set active refinery counts
+				#set_variable = { num_active_refinery@var:resource = num_active_conversions }
+				
+				#log = "[?num_conversions] num_conversions final"
+			
+			
+				## Update MAX building output
+				
+				set_temp_variable = { new_output = conversion_output_@var:resource }
+				subtract_from_temp_variable = { new_output = state_max_output@var:resource }
+				#log = "[?new_output] new_output MAX"
+				
+				set_temp_variable = { t = state_max_output@var:resource }
+				if = {
+					limit = {
+						NOT = { check_variable = { new_output = 0 } }
+					}
+					set_variable = { state_max_output@var:resource = new_output }
+					add_to_variable = { state_max_output@var:resource = t }
+					meta_effect = {
+						text = {
+							modify_building_resources = {
+								building = steel_max_output
+								resource = steel
+								amount = [X]
+							}
+						}
+						X = "[?new_output]"
+					}
+				}
+
+
+				## Update REST building output
+				
+				set_temp_variable = { new_output = state_rest_output }
+				subtract_from_temp_variable = { new_output = state_rest_output@var:resource }
+				#log = "[?state_rest_output] state_rest_output | [?new_output] new"
+				
+				set_temp_variable = { t = state_rest_output@var:resource }
+				
+				if = {
+					limit = {
+						NOT = { check_variable = { new_output = 0 } }
+					}
+					set_variable = { state_rest_output@var:resource = new_output }
+					add_to_variable = { state_rest_output@var:resource = t }
+					meta_effect = {
+						text = {
+							modify_building_resources = {
+								building = steel_rest_output
+								resource = steel
+								amount = [X]
+							}
+						}
+						X = "[?new_output]"
+					}
+				}
+				
+			}
+		}
+
+		set_variable = { num_refinery_inactive@steel = num_refinery_assigned@steel }
+		subtract_from_variable = { num_refinery_inactive@steel = num_active_refinery@steel }
+		if = { limit = { check_variable = { num_refinery_inactive@steel = 0 } } clear_variable = num_refinery_inactive@steel }
+		
+	}
+	
+	if = {
+		limit = {
+			check_variable = { has_reset_alert = 0 }
+		}
+		clear_variable = ui_refinery_alert
+		set_temp_variable = { has_reset_alert = 1 }
+	}
+	if = {
+		limit = {
+			has_variable = steel_alert
+			check_variable = { unused_resource_input@iron > 0 }
+			check_variable = { unused_resource_input@coal > 0 }
+			
+			#check_variable = { num_refinery@steel > num_refinery_assigned@steel }
+			check_variable = { num_refinery_assigned@steel = num_active_refinery@steel }
+			
+			OR = {
+				check_variable = { resource@steel < 0 }
+				check_variable = { resource_imported@steel > 0 }
+			}
+				
+			#log = "[?unused_resource_input@iron] unused IRON"
+			#log = "[?unused_resource_input@coal] unused COAL"
+			
+		}
+		
+		clamp_temp_variable = { var = unused_resource_input@iron max = unused_resource_input@coal }
+		clamp_temp_variable = { var = unused_resource_input@coal max = unused_resource_input@iron }
+		
+		#calculate how many more refineries we could activate
+		
+		clamp_temp_variable = { var = unused_refinery_output@steel max = unused_resource_input@coal }
+		
+		#log = "[?unused_refinery_output@steel] unused_refinery_output@steel"
+		
+		set_variable = { ui_refinery_potential@steel = unused_refinery_output@steel }
+		
+		set_variable = { ui_refinery_alert = ui_refinery_potential@steel }
+		add_to_variable = { ui_refinery_alert = ui_refinery_potential@aluminium }
+	}
+	else = {
+		clear_variable = ui_refinery_potential@steel
+	}
+	
+}
+	
+update_aluminium_conversion = {
+	
+	for_each_loop = {
+		array = conversion_aluminium
+		value = resource
+		
+		# Calculate Max Possible Output from Refineries
+		set_temp_variable = { damaged = num_refinery_damaged@var:resource }
+		set_temp_variable = { resilience = 1 }
+		subtract_from_temp_variable = { resilience = modifier@refinery_resilience }
+		clamp_temp_variable = { var = resilience min = 0.5 }
+		multiply_temp_variable = { damaged = resilience }
+		set_temp_variable = { max_output = num_refinery@var:resource }
+		subtract_from_temp_variable = { max_output = damaged }
+		
+		if = {
+			limit = {
+				OR = {
+					check_variable = { max_output > 0 } #update when having any capacity
+					check_variable = { resource_output_@var:resource > 0 } #update when having any output
+				}
+			}
+			set_temp_variable = { unused_refinery_output@var:resource = max_output }
+			clamp_temp_variable = { var = max_output max = num_refinery_assigned@var:resource }
+			subtract_from_temp_variable = { unused_refinery_output@var:resource = max_output }
+			
+			set_aluminium_recipe = yes
+				
+			if = {
+				limit = {
+					check_variable = { num_refinery_target@var:resource > num_refinery_assigned@var:resource }
+				}
+				set_variable = { num_refinery_assigned@var:resource = num_refinery_target@var:resource }
+				clamp_variable = { var = num_refinery_assigned@var:resource max = num_refinery@var:resource }
+			}
+			
+			clear_temp_array = conversion_available_resource
+			clear_variable = energy_cost@energy_conversion
+			
+			# Calculate Max Resources that can be used for Conversion
+			
+			for_each_loop = {
+				array = conversion_@var:resource
+				
+				set_temp_variable = { max_resource_convertable = max_output }
+				multiply_temp_variable = { max_resource_convertable = conversion_weight_@var:resource^i }
+			
+				set_temp_variable = { max_value = resource_produced@var:v }
+				add_to_temp_variable = { max_value = export_offset@var:v } #TODO
+				subtract_from_temp_variable = { max_value = resource_exported@var:v }
+				add_to_temp_variable = { max_value = resource_imported@var:v }
+				subtract_from_temp_variable = { max_value = train_use@var:v }
+				round_temp_variable = max_value
+				
+				if = {
+					limit = {
+						check_variable = { max_resource_convertable > max_value }
+					}
+					set_temp_variable = { max_resource_convertable = max_value }
+				}
+				else = {
+					set_temp_variable = { unused_resource_input@var:v = max_value }
+					subtract_from_temp_variable = { unused_resource_input@var:v = max_resource_convertable }
+					divide_temp_variable = { unused_resource_input@var:v = conversion_weight_@var:resource^i }
+				}
+				
+				divide_temp_variable = { max_resource_convertable = conversion_weight_@var:resource^i }
+				clamp_temp_variable = { var = max_resource_convertable min = 0 }
+				
+				add_to_temp_array = { conversion_available_resource = max_resource_convertable }
+				#log = "======== RESOURCE REQUIRED: [?v.GetTokenKey] [?max_resource_convertable] / [?max_value] max_resource_convertable ========"
+				
+				#log = " "
+				
+			}
+			
+			#log = "[?max_output] | MAX REFINERY OUTPUT"
+			
+			# Set allowed output from amount of available resources
+			
+			find_lowest_in_array = { #if there are multiple resources needed, take the lowest value. this means, without any coal no steel at all can be produced
+				array = conversion_available_resource
+				value = converted_resource_output
+			}
+			#log = "[?converted_resource_output] | LOWEST AMOUNT FOR converted_resource_output"
+			
+			# Calculate Energy Need
+			set_temp_variable = { energy_needed = converted_resource_output }
+			multiply_temp_variable = { energy_needed = conversion_energy_@var:resource }
+			
+			set_temp_variable = { energy_deficit = energy_needed }
+			#log = "[?energy_needed] energy_needed"
+			
+			# Apply Energy Efficiency
+			set_temp_variable = { energy_factor = 1 }
+			add_to_temp_variable = { energy_factor = lack_of_energy@energy_conversion }
+			multiply_temp_variable = { converted_resource_output = energy_factor }
+			
+			multiply_temp_variable = { energy_deficit = energy_factor }
+			
+			#log = "[?energy_factor] energy_factor"
+			set_variable = { energy_cost_@var:resource = energy_needed }
+			add_to_variable = { energy_cost@energy_conversion = energy_cost_@steel }
+			add_to_variable = { energy_cost@energy_conversion = energy_cost_@aluminium }
+			add_to_variable = { energy_cost@energy_conversion = energy_cost_@rubber }
+			add_to_variable = { energy_cost@energy_conversion = energy_cost_@fuel }
+			subtract_from_temp_variable = { energy_needed = energy_deficit }
+			
+			set_variable = { energy_deficit_@var:resource = energy_needed }
+			#log = "[?energy_needed] energy_deficit"
+			
+			#log = "[?converted_resource_output] | MAX RESOURCE OUTPUT BASED ON INPUT AND ASSIGNED REFINERIES"
+			
+			# calculate effective and actual resource useage
+			
+			for_each_loop = {  
+				array = conversion_@var:resource
+				
+				set_variable = { conversion_use_@var:v = converted_resource_output }
+				multiply_variable = { conversion_use_@var:v = conversion_weight_@var:resource^i }
+				round_variable = conversion_use_@var:v
+				
+				set_variable = { conversion_actual_use_@var:v = num_refinery_assigned@var:resource }
+				subtract_from_variable = { conversion_actual_use_@var:v = damaged }
+				multiply_variable = { conversion_actual_use_@var:v = conversion_weight_@var:resource^i }
+				
+				
+				set_temp_variable = { temp = conversion_use_@var:v }
+				#log = "[?temp] conversion_use_=> [?v.GetTokenKey]"
+			}
+			
+			multiply_temp_variable = { converted_resource_output = conversion_output_@var:resource }
+			round_temp_variable = converted_resource_output
+			
+			#log = "Final rounded [?converted_resource_output] converted_resource_output"
+			
+			if = {
+				limit = {
+					#NOT = { check_variable = { resource_output_@var:resource = converted_resource_output } }
+				}
+				set_variable = { resource_output_@var:resource = converted_resource_output }
+				
+				
+				# Add Resource Production to States with Refineries
+				
+				set_temp_variable = { num_active_conversions = 0 }
+				set_temp_variable = { state_rest_output = 0 }
+						
+				set_temp_variable = { num_conversions = converted_resource_output }
+				divide_temp_variable = { num_conversions = conversion_output_@var:resource }
+				
+				set_variable = { num_active_refinery@var:resource = num_conversions }
+				
+				#log = "[?num_conversions] NUM CONVERSIONS FIRST"
+				#round_variable = num_active_refinery@var:resource 
+				
+				for_each_scope_loop = {
+					array = refinery_states@aluminium
+					
+					if = {
+						limit = {
+							check_variable = { num_conversions > 0.999 }
+						}
+						set_temp_variable = { t = num_conversions }
+						subtract_from_temp_variable = { t = 0.5 }
+						round_temp_variable = t
+						
+						set_temp_variable = { ct = num_conversions }
+						subtract_from_temp_variable = { ct = t }
+						#log = "[?ct] CT FRACTION"
+						
+						set_temp_variable = { state_num_conversions = building_level@aluminium_refinery }
+						subtract_from_temp_variable = { num_conversions = ct }
+						clamp_temp_variable = { var = state_num_conversions max = num_conversions }
+						add_to_temp_variable = { num_conversions = ct }
+						
+						set_building_level = { type = aluminium_max_output level = var:state_num_conversions instant_build = yes }
+						set_building_level = { type = aluminium_max_output level = var:state_num_conversions instant_build = yes }
+						if = {
+							limit = {
+								check_variable = { building_level@aluminium_rest_output > 0 }
+							}
+							remove_building  = { type = aluminium_rest_output level = var:building_level@aluminium_rest_output }
+						}
+						
+						subtract_from_temp_variable = { num_conversions = state_num_conversions }
+						add_to_temp_variable = { num_active_conversions = state_num_conversions }
+						#log = "[?num_conversions] num_conversions ITERATION -- MAX ([?state_num_conversions]) | [This.GetName]"
+						
+						if = {
+							limit = {
+								check_variable = { num_conversions < 1 }
+								check_variable = { num_conversions > 0 }
+								check_variable = { building_level@aluminium_refinery > building_level@aluminium_max_output }
+							}
+							#log = "[?num_conversions] num_conversions ITERATION -- MAXREST ([?num_conversions]) | [This.GetName]"
+						
+							set_building_level = { type = aluminium_rest_output level = 1 instant_build = yes }
+							
+							set_temp_variable = { state_rest_output = num_conversions }
+							multiply_temp_variable = { state_rest_output = conversion_output_@var:resource }
+							round_temp_variable = state_rest_output
+							
+							#add_to_temp_variable = { num_active_conversions = num_conversions }
+							set_temp_variable = { num_conversions = 0 }
+						}
+					}
+					else_if = {
+						limit = {
+							check_variable = { num_conversions > 0 }
+						}
+						#log = "[?num_conversions] num_conversions ITERATION -- REST"
+						
+						set_building_level = { type = aluminium_rest_output level = 1 instant_build = yes }
+						if = {
+							limit = {
+								check_variable = { building_level@aluminium_max_output > 0 }
+							}
+							remove_building  = { type = aluminium_max_output level = var:building_level@aluminium_max_output }
+						}
+						
+						set_temp_variable = { state_rest_output = num_conversions }
+						multiply_temp_variable = { state_rest_output = conversion_output_@var:resource }
+						round_temp_variable = state_rest_output
+						
+						#add_to_temp_variable = { num_active_conversions = num_conversions }
+						set_temp_variable = { num_conversions = 0 }
+					}
+					else_if = {
+						limit = {
+							OR = {
+								check_variable = { building_level@aluminium_rest_output > 0 }
+								check_variable = { building_level@aluminium_max_output > 0 }
+							}
+						}
+						#log = "CLEARED BUILDINGS IN [This.GetName]"
+						remove_building  = { type = aluminium_rest_output level = var:building_level@aluminium_rest_output }
+						remove_building  = { type = aluminium_max_output level = var:building_level@aluminium_max_output }
+					}
+				}
+				
+				#Set active refinery counts
+				#set_variable = { num_active_refinery@var:resource = num_active_conversions }
+				
+				#log = "[?num_active_conversions] num_active_conversions"
+				
+				
+				## Update MAX building output
+				
+				set_temp_variable = { new_output = conversion_output_@var:resource }
+				subtract_from_temp_variable = { new_output = state_max_output@var:resource }
+				#log = "[?new_output] new_output MAX"
+				
+				set_temp_variable = { t = state_max_output@var:resource }
+				if = {
+					limit = {
+						NOT = { check_variable = { new_output = 0 } }
+					}
+					set_variable = { state_max_output@var:resource = new_output }
+					add_to_variable = { state_max_output@var:resource = t }
+					meta_effect = {
+						text = {
+							modify_building_resources = {
+								building = aluminium_max_output
+								resource = aluminium
+								amount = [X]
+							}
+						}
+						X = "[?new_output]"
+					}
+				}
+
+
+				## Update REST building output
+				
+				set_temp_variable = { new_output = state_rest_output }
+				subtract_from_temp_variable = { new_output = state_rest_output@var:resource }
+				#log = "[?state_rest_output] state_rest_output | [?new_output] new"
+				
+				set_temp_variable = { t = state_rest_output@var:resource }
+				
+				if = {
+					limit = {
+						NOT = { check_variable = { new_output = 0 } }
+					}
+					set_variable = { state_rest_output@var:resource = new_output }
+					add_to_variable = { state_rest_output@var:resource = t }
+					meta_effect = {
+						text = {
+							modify_building_resources = {
+								building = aluminium_rest_output
+								resource = aluminium
+								amount = [X]
+							}
+						}
+						X = "[?new_output]"
+					}
+				}
+				
+			}
+		}
+		
+		set_variable = { num_refinery_inactive@aluminium = num_refinery_assigned@aluminium }
+		subtract_from_variable = { num_refinery_inactive@aluminium = num_active_refinery@aluminium }
+		if = { limit = { check_variable = { num_refinery_inactive@aluminium = 0 } } clear_variable = num_refinery_inactive@aluminium }
+		
+	}
+	
+	if = {
+		limit = {
+			check_variable = { has_reset_alert = 0 }
+		}
+		clear_variable = ui_refinery_alert
+		set_temp_variable = { has_reset_alert = 1 }
+	}
+	if = {
+		limit = {
+			has_variable = aluminium_alert
+			check_variable = { unused_resource_input@bauxite > 0 }
+			
+			check_variable = { num_refinery_assigned@aluminium = num_active_refinery@aluminium }
+			OR = {
+				check_variable = { resource@aluminium < 0 }
+				check_variable = { resource_imported@aluminium > 0 }
+			}
+				
+			#log = "[?unused_resource_input@bauxite] unused BAUXITE"
+			
+		}
+		
+		clamp_temp_variable = { var = unused_refinery_output@aluminium max = unused_resource_input@bauxite }
+		
+		#log = "[?unused_refinery_output@aluminium] unused_refinery_output@aluminium"
+		
+		set_variable = { ui_refinery_potential@aluminium = unused_refinery_output@aluminium }
+		
+		set_variable = { ui_refinery_alert = ui_refinery_potential@steel }
+		add_to_variable = { ui_refinery_alert = ui_refinery_potential@aluminium }
+	}
+	else = {
+		clear_variable = ui_refinery_potential@aluminium
+	}
+	
+}
+		
+update_fuel_conversion = {
+	
+	for_each_loop = {
+		array = conversion_fuel
+		value = resource
+		
+		# Calculate Max Possible Output from Refineries
+		set_temp_variable = { damaged = num_refinery_damaged@var:resource }
+		set_temp_variable = { resilience = 1 }
+		subtract_from_temp_variable = { resilience = modifier@refinery_resilience }
+		clamp_temp_variable = { var = resilience min = 0.5 }
+		multiply_temp_variable = { damaged = resilience }
+		set_temp_variable = { max_output = num_refinery@var:resource }
+		subtract_from_temp_variable = { max_output = damaged }
+		
+		if = {
+			limit = {
+				OR = {
+					check_variable = { max_output > 0 } #update when having any capacity
+					check_variable = { resource_output_@var:resource > 0 } #update when having any output
+				}
+			}
+			clamp_temp_variable = { var = max_output max = num_refinery_assigned@var:resource }
+				
+			set_fuel_recipe = yes
+			
+			if = {
+				limit = {
+					check_variable = { num_refinery_target@var:resource > num_refinery_assigned@var:resource }
+				}
+				set_variable = { num_refinery_assigned@var:resource = num_refinery_target@var:resource }
+				clamp_variable = { var = num_refinery_assigned@var:resource max = num_refinery@var:resource }
+			}
+			
+			clear_temp_array = conversion_available_resource
+			clear_variable = energy_cost@energy_conversion
+			
+			# Calculate Max Resources that can be used for Conversion
+			
+			for_each_loop = {
+				array = conversion_@var:resource
+				
+				set_temp_variable = { max_resource_convertable = max_output }
+				multiply_temp_variable = { max_resource_convertable = conversion_weight_@var:resource^i }
+			
+				set_temp_variable = { max_value = resource_produced@var:v }
+				add_to_temp_variable = { max_value = export_offset@var:v } #TODO
+				subtract_from_temp_variable = { max_value = resource_exported@var:v }
+				add_to_temp_variable = { max_value = resource_imported@var:v }
+				subtract_from_temp_variable = { max_value = train_use@var:v }
+				subtract_from_temp_variable = { max_value = conversion_use_@var:v }
+				round_temp_variable = max_value
+				
+				clamp_temp_variable = { var = max_resource_convertable max = max_value }
+				
+				divide_temp_variable = { max_resource_convertable = conversion_weight_@var:resource^i }
+				clamp_temp_variable = { var = max_resource_convertable min = 0 }
+				
+				add_to_temp_array = { conversion_available_resource = max_resource_convertable }
+				#log = "======== RESOURCE REQUIRED: [?v.GetTokenKey] [?max_resource_convertable] / [?max_value] max_resource_convertable ========"
+				
+				#log = " "
+				
+			}
+			
+			#log = "[?max_output] | MAX REFINERY OUTPUT"
+			
+			# Set allowed output from amount of available resources
+			
+			find_lowest_in_array = { #if there are multiple resources needed, take the lowest value. this means, without any coal no steel at all can be produced
+				array = conversion_available_resource
+				value = converted_resource_output
+			}
+			#log = "[?converted_resource_output] | LOWEST AMOUNT FOR converted_resource_output"
+			
+			# Calculate Energy Need
+			set_temp_variable = { energy_needed = converted_resource_output }
+			multiply_temp_variable = { energy_needed = conversion_energy_@var:resource }
+			
+			set_temp_variable = { energy_deficit = energy_needed }
+			#log = "[?energy_needed] energy_needed"
+			
+			# Apply Energy Efficiency
+			set_temp_variable = { energy_factor = 1 }
+			add_to_temp_variable = { energy_factor = lack_of_energy@energy_conversion }
+			multiply_temp_variable = { converted_resource_output = energy_factor }
+			
+			multiply_temp_variable = { energy_deficit = energy_factor }
+			
+			#log = "[?energy_factor] energy_factor"
+			set_variable = { energy_cost_@var:resource = energy_needed }
+			add_to_variable = { energy_cost@energy_conversion = energy_cost_@steel }
+			add_to_variable = { energy_cost@energy_conversion = energy_cost_@aluminium }
+			add_to_variable = { energy_cost@energy_conversion = energy_cost_@rubber }
+			add_to_variable = { energy_cost@energy_conversion = energy_cost_@fuel }
+			subtract_from_temp_variable = { energy_needed = energy_deficit }
+			
+			set_variable = { energy_deficit_@var:resource = energy_needed }
+			#log = "[?energy_needed] energy_deficit"
+			
+			#log = "[?converted_resource_output] | MAX RESOURCE OUTPUT BASED ON INPUT AND ASSIGNED REFINERIES"
+			
+			# calculate effective and actual resource useage
+			
+			for_each_loop = {  
+				array = conversion_@var:resource
+				
+				set_variable = { conversion_use_fuel@var:v = converted_resource_output }
+				multiply_variable = { conversion_use_fuel@var:v = conversion_weight_@var:resource^i }
+				round_variable = conversion_use_fuel@var:v
+				
+				set_variable = { conversion_actual_use_fuel@var:v = num_refinery_assigned@var:resource }
+				subtract_from_variable = { conversion_actual_use_fuel@var:v = damaged }
+				multiply_variable = { conversion_actual_use_fuel@var:v = conversion_weight_@var:resource^i }
+				
+				
+				set_temp_variable = { temp = conversion_use_fuel@var:v }
+				#log = "[?temp] conversion_use_fuel=> [?v.GetTokenKey]"
+			}
+			
+			multiply_temp_variable = { converted_resource_output = conversion_output_@var:resource }
+			round_temp_variable = converted_resource_output
+			
+			#log = "Final rounded [?converted_resource_output] converted_resource_output"
+			
+			if = {
+				limit = {
+					#NOT = { check_variable = { resource_output_@var:resource = converted_resource_output } }
+				}
+				
+				# Fuel cant have fractions, which is why active refinery get rounded down
+				
+				set_temp_variable = { num_active_conversions = 0 }
+				set_temp_variable = { state_rest_output = 0 }
+						
+				set_temp_variable = { num_conversions = converted_resource_output }
+				divide_temp_variable = { num_conversions = conversion_output_@var:resource }
+				subtract_from_temp_variable = { num_conversions = 0.5 }
+				round_temp_variable = num_conversions #fuel cant have fractions
+				clamp_temp_variable = { var = num_conversions min = 0 }
+				
+				set_variable = { num_active_refinery@var:resource = num_conversions }
+				if = {
+					limit = {
+						check_variable = { num_conversions = 0 }
+					}
+					clear_variable = resource_output_@var:resource
+				}
+				else = {
+					set_variable = { resource_output_@var:resource = num_active_refinery@var:resource }
+					multiply_variable = { resource_output_@var:resource = conversion_output_@var:resource }
+					subtract_from_variable = { resource_output_@var:resource = 0.5 }
+					round_variable = resource_output_@var:resource
+				}
+				for_each_scope_loop = {
+					array = refinery_states@fuel
+					
+					if = {
+						limit = {
+							check_variable = { num_conversions > 0 }
+						}
+						set_temp_variable = { state_num_conversions = building_level@synthetic_refinery }
+						clamp_temp_variable = { var = state_num_conversions max = num_conversions }
+						
+						set_building_level = { type = fuel_max_output level = var:state_num_conversions instant_build = yes }
+						set_building_level = { type = fuel_max_output level = var:state_num_conversions instant_build = yes }
+						
+						subtract_from_temp_variable = { num_conversions = state_num_conversions }
+						add_to_temp_variable = { num_active_conversions = state_num_conversions }
+						#log = "[?num_conversions] num_conversions ITERATION -- MAX ([?state_num_conversions]) | [This.GetName]"
+						
+					}
+					else_if = {
+						limit = {
+							check_variable = { building_level@fuel_max_output > 0 }
+						}
+						#log = "CLEARED BUILDINGS IN [This.GetName]"
+						remove_building  = { type = fuel_max_output level = var:building_level@fuel_max_output }
+					}
+				}
+				
+				#Set active refinery counts
+				#set_variable = { num_active_refinery@var:resource = num_active_conversions }
+				
+				#log = "[?num_active_conversions] num_active_conversions"
+				
+			}
+		}
+		
+		set_variable = { num_refinery_inactive@var:resource = num_refinery_assigned@var:resource }
+		subtract_from_variable = { num_refinery_inactive@var:resource = num_active_refinery@var:resource }
+		if = { limit = { check_variable = { num_refinery_inactive@var:resource = 0 } } clear_variable = num_refinery_inactive@var:resource }
+		
+	}
+	
+}
+
+update_rubber_conversion = {
+	
+	for_each_loop = {
+		array = conversion_rubber
+		value = resource
+		
+		# Calculate Max Possible Output from Refineries
+		set_temp_variable = { damaged = num_refinery_damaged@var:resource }
+		set_temp_variable = { resilience = 1 }
+		subtract_from_temp_variable = { resilience = modifier@refinery_resilience }
+		clamp_temp_variable = { var = resilience min = 0.5 }
+		multiply_temp_variable = { damaged = resilience }
+		set_temp_variable = { max_output = num_refinery@var:resource }
+		subtract_from_temp_variable = { max_output = damaged }
+		
+		if = {
+			limit = {
+				OR = {
+					check_variable = { max_output > 0 } #update when having any capacity
+					check_variable = { resource_output_@var:resource > 0 } #update when having any output
+				}
+			}
+			clamp_temp_variable = { var = max_output max = num_refinery_assigned@var:resource }
+				
+			set_rubber_recipe = yes
+				
+			if = {
+				limit = {
+					check_variable = { num_refinery_target@var:resource > num_refinery_assigned@var:resource }
+				}
+				set_variable = { num_refinery_assigned@var:resource = num_refinery_target@var:resource }
+				clamp_variable = { var = num_refinery_assigned@var:resource max = num_refinery@var:resource }
+			}
+			
+			clear_temp_array = conversion_available_resource
+			clear_variable = energy_cost@energy_conversion
+			
+			# Calculate Max Resources that can be used for Conversion
+			
+			add_to_temp_array = { conversion_available_resource = max_output }
+			
+			#log = "[?max_output] | MAX REFINERY OUTPUT"
+			
+			# Set allowed output from amount of available resources
+			
+			find_lowest_in_array = { #if there are multiple resources needed, take the lowest value. this means, without any coal no steel at all can be produced
+				array = conversion_available_resource
+				value = converted_resource_output
+			}
+			#log = "[?converted_resource_output] | LOWEST AMOUNT FOR converted_resource_output"
+			
+			# Calculate Energy Need
+			set_temp_variable = { energy_needed = converted_resource_output }
+			multiply_temp_variable = { energy_needed = conversion_energy_@var:resource }
+			
+			set_temp_variable = { energy_deficit = energy_needed }
+			#log = "[?energy_needed] energy_needed"
+			
+			# Apply Energy Efficiency
+			set_temp_variable = { energy_factor = 1 }
+			add_to_temp_variable = { energy_factor = lack_of_energy@energy_conversion }
+			multiply_temp_variable = { converted_resource_output = energy_factor }
+			
+			multiply_temp_variable = { energy_deficit = energy_factor }
+			
+			#log = "[?energy_factor] energy_factor"
+			set_variable = { energy_cost_@var:resource = energy_needed }
+			add_to_variable = { energy_cost@energy_conversion = energy_cost_@steel }
+			add_to_variable = { energy_cost@energy_conversion = energy_cost_@aluminium }
+			add_to_variable = { energy_cost@energy_conversion = energy_cost_@rubber }
+			add_to_variable = { energy_cost@energy_conversion = energy_cost_@fuel }
+			subtract_from_temp_variable = { energy_needed = energy_deficit }
+			
+			set_variable = { energy_deficit_@var:resource = energy_needed }
+			#log = "[?energy_needed] energy_deficit"
+			
+			#log = "[?converted_resource_output] | MAX RESOURCE OUTPUT BASED ON INPUT AND ASSIGNED REFINERIES"
+			
+			# calculate effective and actual resource useage
+			
+			multiply_temp_variable = { converted_resource_output = conversion_output_@var:resource }
+			round_temp_variable = converted_resource_output
+			
+			#log = "Final rounded [?converted_resource_output] converted_resource_output"
+			
+			if = {
+				limit = {
+					#NOT = { check_variable = { resource_output_@var:resource = converted_resource_output } }
+				}
+				set_variable = { resource_output_@var:resource = converted_resource_output }
+				
+				
+				# Add Resource Production to States with Refineries
+				
+				set_temp_variable = { num_active_conversions = 0 }
+				set_temp_variable = { state_rest_output = 0 }
+						
+				set_temp_variable = { num_conversions = converted_resource_output }
+				divide_temp_variable = { num_conversions = conversion_output_@var:resource }
+				
+				set_variable = { num_active_refinery@var:resource = num_conversions }
+				
+				#log = "[?num_conversions] NUM CONVERSIONS FIRST"
+				#round_variable = num_active_refinery@var:resource 
+			
+				for_each_scope_loop = {
+					array = refinery_states@rubber
+					
+					if = {
+						limit = {
+							check_variable = { num_conversions > 0.999 }
+						}
+						set_temp_variable = { t = num_conversions }
+						subtract_from_temp_variable = { t = 0.5 }
+						round_temp_variable = t
+						
+						set_temp_variable = { ct = num_conversions }
+						subtract_from_temp_variable = { ct = t }
+						#log = "[?ct] CT FRACTION"
+						
+						set_temp_variable = { state_num_conversions = building_level@synthetic_rubber_refinery }
+						subtract_from_temp_variable = { num_conversions = ct }
+						clamp_temp_variable = { var = state_num_conversions max = num_conversions }
+						add_to_temp_variable = { num_conversions = ct }
+						
+						set_building_level = { type = rubber_max_output level = var:state_num_conversions instant_build = yes }
+						set_building_level = { type = rubber_max_output level = var:state_num_conversions instant_build = yes }
+						if = {
+							limit = {
+								check_variable = { building_level@rubber_rest_output > 0 }
+							}
+							remove_building  = { type = rubber_rest_output level = var:building_level@rubber_rest_output }
+						}
+						
+						subtract_from_temp_variable = { num_conversions = state_num_conversions }
+						add_to_temp_variable = { num_active_conversions = state_num_conversions }
+						#log = "[?num_conversions] num_conversions ITERATION -- MAX ([?state_num_conversions]) | [This.GetName]"
+						
+						if = {
+							limit = {
+								check_variable = { num_conversions < 1 }
+								check_variable = { num_conversions > 0 }
+								check_variable = { building_level@synthetic_rubber_refinery > building_level@rubber_max_output }
+							}
+							#log = "[?num_conversions] num_conversions ITERATION -- MAXREST ([?num_conversions]) | [This.GetName]"
+						
+							set_building_level = { type = rubber_rest_output level = 1 instant_build = yes }
+							
+							set_temp_variable = { state_rest_output = num_conversions }
+							multiply_temp_variable = { state_rest_output = conversion_output_@var:resource }
+							round_temp_variable = state_rest_output
+							
+							#add_to_temp_variable = { num_active_conversions = num_conversions }
+							set_temp_variable = { num_conversions = 0 }
+						}
+					}
+					else_if = {
+						limit = {
+							check_variable = { num_conversions > 0 }
+						}
+						#log = "[?num_conversions] num_conversions ITERATION -- REST"
+						
+						set_building_level = { type = rubber_rest_output level = 1 instant_build = yes }
+						if = {
+							limit = {
+								check_variable = { building_level@rubber_max_output > 0 }
+							}
+							remove_building  = { type = rubber_max_output level = var:building_level@rubber_max_output }
+						}
+						
+						set_temp_variable = { state_rest_output = num_conversions }
+						multiply_temp_variable = { state_rest_output = conversion_output_@var:resource }
+						round_temp_variable = state_rest_output
+						
+						#add_to_temp_variable = { num_active_conversions = num_conversions }
+						set_temp_variable = { num_conversions = 0 }
+					}
+					else_if = {
+						limit = {
+							OR = {
+								check_variable = { building_level@rubber_rest_output > 0 }
+								check_variable = { building_level@rubber_max_output > 0 }
+							}
+						}
+						#log = "CLEARED BUILDINGS IN [This.GetName]"
+						remove_building  = { type = rubber_rest_output level = var:building_level@rubber_rest_output }
+						remove_building  = { type = rubber_max_output level = var:building_level@rubber_max_output }
+					}
+				}
+				
+				#Set active refinery counts
+				#set_variable = { num_active_refinery@var:resource = num_active_conversions }
+				
+				#log = "[?num_active_conversions] num_active_conversions"
+				
+				## Update MAX building output
+				
+				set_temp_variable = { new_output = conversion_output_@var:resource }
+				subtract_from_temp_variable = { new_output = state_max_output@var:resource }
+				#log = "[?new_output] new_output MAX"
+				
+				set_temp_variable = { t = state_max_output@var:resource }
+				if = {
+					limit = {
+						NOT = { check_variable = { new_output = 0 } }
+					}
+					set_variable = { state_max_output@var:resource = new_output }
+					add_to_variable = { state_max_output@var:resource = t }
+					meta_effect = {
+						text = {
+							modify_building_resources = {
+								building = rubber_max_output
+								resource = rubber
+								amount = [X]
+							}
+						}
+						X = "[?new_output]"
+					}
+				}
+
+
+				## Update REST building output
+				
+				set_temp_variable = { new_output = state_rest_output }
+				subtract_from_temp_variable = { new_output = state_rest_output@var:resource }
+				#log = "[?state_rest_output] state_rest_output | [?new_output] new"
+				
+				set_temp_variable = { t = state_rest_output@var:resource }
+				
+				if = {
+					limit = {
+						NOT = { check_variable = { new_output = 0 } }
+					}
+					set_variable = { state_rest_output@var:resource = new_output }
+					add_to_variable = { state_rest_output@var:resource = t }
+					meta_effect = {
+						text = {
+							modify_building_resources = {
+								building = rubber_rest_output
+								resource = rubber
+								amount = [X]
+							}
+						}
+						X = "[?new_output]"
+					}
+				}
+				
+			}
+		}
+		
+		set_variable = { num_refinery_inactive@var:resource = num_refinery_assigned@var:resource }
+		subtract_from_variable = { num_refinery_inactive@var:resource = num_active_refinery@var:resource }
+		if = { limit = { check_variable = { num_refinery_inactive@var:resource = 0 } } clear_variable = num_refinery_inactive@var:resource }
+		
+	}
+	
+}
+steel_alloy_output = {
+	if = {
+		limit = {
+			check_variable = { max_num_alloy_refinery > 0 }
+		}
+
+		set_temp_variable = { alloy_input = constant:recipe.steel.chromium }
+		add_to_temp_variable = { alloy_input = modifier@alloy_steel_input }
+		set_temp_variable = { alloy_extra_output = constant:recipe.steel.chromium_output }
+		add_to_temp_variable = { alloy_extra_output = modifier@alloy_steel_output }
+		
+		#set_variable = { num_refineries_with_alloy = num_refinery_assigned@steel }
+		set_variable = { num_refineries_with_alloy = num_active_refinery@steel }
+		clamp_variable = { var = num_refineries_with_alloy max = max_num_alloy_refinery }
+
+		set_variable = { alloy_input_target = num_refineries_with_alloy }
+		multiply_variable = { alloy_input_target = alloy_input }
+		round_variable = alloy_input_target
+		
+		if = {
+			limit = {
+				check_variable = { resource@chromium > 0 }
+			}
+			set_temp_variable = { t = resource@chromium }
+			divide_temp_variable = { t = alloy_input }
+			clamp_variable = { var = num_refineries_with_alloy max = t }
+			
+			set_variable = { alloy_input_actual = num_refineries_with_alloy }
+			multiply_variable = { alloy_input_actual = alloy_input }
+			round_variable = alloy_input_actual
+			
+			
+			
+			#round_variable = num_refineries_with_alloy
+			
+			
+			
+			set_variable = { extra_output_from_alloy = num_refineries_with_alloy }
+			multiply_variable = { extra_output_from_alloy = alloy_extra_output }
+			round_variable = extra_output_from_alloy
+			#log = "[?num_refineries_with_alloy] num_refineries_with_alloy"
+			#log = "[?extra_output_from_alloy] extra_output_from_alloy"
+			
+			if = {
+				limit = {
+					NOT = { has_dynamic_modifier = { modifier = steel_alloy } }
+				}
+				add_dynamic_modifier = { modifier = steel_alloy }
+			}
+		}
+		else = {
+			set_variable = { num_refineries_with_alloy = 0 }
+			clear_variable = extra_output_from_alloy
+			clear_variable = alloy_input_actual
+			if = {
+				limit = {
+					has_dynamic_modifier = { modifier = steel_alloy }
+				}
+				remove_dynamic_modifier = { modifier = steel_alloy }
+			}
+		}
+	}
+	else = {
+		clear_variable = num_refineries_with_alloy
+		clear_variable = extra_output_from_alloy
+		clear_variable = alloy_input_target
+		clear_variable = alloy_input_actual
+	}
+	
+}
+score_refinery_states_steel = {
+
+	for_each_scope_loop = { array = refinery_states_new@steel
+	
+		set_variable = { refinery_score = 1 }
+		add_to_variable = { refinery_score = modifier@local_resources }
+		if = { limit = { is_core_of = PREV } add_to_variable = { refinery_score = 1 } }
+		if = { limit = { is_owned_by = PREV } add_to_variable = { refinery_score = 1 } }
+		if = { limit = { is_in_home_area = yes } add_to_variable = { refinery_score = 1 } }
+
+		for_each_loop = { array = ROOT.refinery_states@steel
+
+			var:v = {
+				if = { limit = { check_variable = { PREV.refinery_score > refinery_score } }
+
+					add_to_array = { array = ROOT.refinery_states@steel index = i value = PREV.id }
+					set_temp_variable = { break = 1 }
+				}
+			}
+		}
+
+		if = { limit = { check_variable = { break = 0 } }
+			
+			add_to_array = { array = ROOT.refinery_states@steel value = THIS.id }
+		}
+		else = { set_temp_variable = { break = 0 } }
+	}
+}
+score_refinery_states_aluminium = {
+
+	for_each_scope_loop = { array = refinery_states_new@aluminium
+	
+		set_variable = { refinery_score = 1 }
+		add_to_variable = { refinery_score = modifier@local_resources }
+		if = { limit = { is_core_of = PREV } add_to_variable = { refinery_score = 1 } }
+		if = { limit = { is_owned_by = PREV } add_to_variable = { refinery_score = 1 } }
+		if = { limit = { is_in_home_area = yes } add_to_variable = { refinery_score = 1 } }
+
+		for_each_loop = { array = ROOT.refinery_states@aluminium
+
+			var:v = {
+				if = { limit = { check_variable = { PREV.refinery_score > refinery_score } }
+
+					add_to_array = { array = ROOT.refinery_states@aluminium index = i value = PREV.id }
+					set_temp_variable = { break = 1 }
+				}
+			}
+		}
+
+		if = { limit = { check_variable = { break = 0 } }
+			
+			add_to_array = { array = ROOT.refinery_states@aluminium value = THIS.id }
+		}
+		else = { set_temp_variable = { break = 0 } }
+	}
+	
+}
+score_refinery_states_fuel = {
+
+	for_each_scope_loop = { array = refinery_states_new@fuel
+	
+		set_variable = { refinery_score = 1 }
+		add_to_variable = { refinery_score = modifier@local_resources }
+		if = { limit = { is_core_of = PREV } add_to_variable = { refinery_score = 1 } }
+		if = { limit = { is_owned_by = PREV } add_to_variable = { refinery_score = 1 } }
+		if = { limit = { is_in_home_area = yes } add_to_variable = { refinery_score = 1 } }
+
+		for_each_loop = { array = ROOT.refinery_states@fuel
+
+			var:v = {
+				if = { limit = { check_variable = { PREV.refinery_score > refinery_score } }
+
+					add_to_array = { array = ROOT.refinery_states@fuel index = i value = PREV.id }
+					set_temp_variable = { break = 1 }
+				}
+			}
+		}
+
+		if = { limit = { check_variable = { break = 0 } }
+			
+			add_to_array = { array = ROOT.refinery_states@fuel value = THIS.id }
+		}
+		else = { set_temp_variable = { break = 0 } }
+	}
+}
+score_refinery_states_rubber = {
+
+	for_each_scope_loop = { array = refinery_states_new@rubber
+	
+		set_variable = { refinery_score = 1 }
+		add_to_variable = { refinery_score = modifier@local_resources }
+		if = { limit = { is_core_of = PREV } add_to_variable = { refinery_score = 1 } }
+		if = { limit = { is_owned_by = PREV } add_to_variable = { refinery_score = 1 } }
+		if = { limit = { is_in_home_area = yes } add_to_variable = { refinery_score = 1 } }
+
+		for_each_loop = { array = ROOT.refinery_states@rubber
+
+			var:v = {
+				if = { limit = { check_variable = { PREV.refinery_score > refinery_score } }
+
+					add_to_array = { array = ROOT.refinery_states@rubber index = i value = PREV.id }
+					set_temp_variable = { break = 1 }
+				}
+			}
+		}
+
+		if = { limit = { check_variable = { break = 0 } }
+			
+			add_to_array = { array = ROOT.refinery_states@rubber value = THIS.id }
+		}
+		else = { set_temp_variable = { break = 0 } }
+	}
+}
+
+d_max_coal_energy = {
+	
+	set_temp_variable = { max_input = resource_produced@coal }
+	add_to_temp_variable = { max_input = export_offset@coal }
+	add_to_temp_variable = { max_input = energy_input@coal }
+	add_to_temp_variable = { max_input = resource_imported@coal }
+	
+	log = "[?max_input] max"
+}
+d_update_energy_daily = {
+	if = {
+		limit = {
+			check_variable = { energy_ratio@coal = 0 }
+		}
+		set_variable = { energy_ratio@coal = 0.80 }
+		set_variable = { energy_ratio@fuel = 0.20 }
+	}
+	if = {
+		limit = {
+			is_in_array = { alerts = token:alert_energy_lack_resource }
+		}
+		remove_from_array = { alerts = token:alert_energy_lack_resource }
+	}
+	
+	set_variable = { energy_produced = constant:energy.gain.base }#
+	clear_variable = energy_cost
+	
+	# energy_gain - calculated in here
+	# energy_production - calculated in here
+	# energy_cost - calculated in here
+	
+	# energy_ratio@coal
+	# energy_ratio@fuel
+	
+	# energy_input@coal
+	# energy_input@fuel
+	
+	# energy_cost@energy_civilian, military, naval, conversion
+	# energy_production@coal, fuel, hydro
+	
+	set_building_energy_cost = yes
+	clamp_variable = { var = energy_produced max = energy_cost }
+	
+	set_temp_variable = { energy_gain = num_power_plant }
+	
+	# Resilience modifier for damaged power plants
+	set_temp_variable = { damaged = num_power_plant_damaged }
+	set_temp_variable = { resilience = 1 }
+	subtract_from_temp_variable = { resilience = modifier@power_plant_resilience }
+	clamp_temp_variable = { var = resilience min = 0.5 }
+	multiply_temp_variable = { damaged = resilience }
+	subtract_from_temp_variable = { energy_gain = damaged }
+	
+	multiply_temp_variable = { energy_gain = constant:energy.gain.plant }
+	
+	set_temp_variable = { factor = modifier@energy_production_factor }
+	add_to_temp_variable = { factor = 1 }
+	multiply_temp_variable = { energy_gain = factor }
+	
+	
+	# Calculate energy gained from HYDRO
+	
+	set_temp_variable = { energy_from_hydro = constant:energy.gain.hydro }
+	set_temp_variable = { factor = modifier@energy_hydro_factor }
+	add_to_temp_variable = { factor = 1 }
+	multiply_temp_variable = { energy_from_hydro = factor }
+	
+	set_temp_variable = { energy_hydro = num_hydro_power }
+	set_temp_variable = { damaged = num_hydro_power_damaged }
+	set_temp_variable = { resilience = 1 }
+	subtract_from_temp_variable = { resilience = modifier@power_plant_resilience }
+	clamp_temp_variable = { var = resilience min = 0.5 }
+	multiply_temp_variable = { damaged = resilience }
+	subtract_from_temp_variable = { energy_hydro = damaged }
+	multiply_temp_variable = { energy_hydro = energy_from_hydro }
+	
+	set_temp_variable = { energy_cost_after_hydro = energy_cost }
+	subtract_from_temp_variable = { energy_cost_after_hydro = energy_hydro }
+	
+	set_variable = { energy_produced@hydro = energy_hydro }
+	set_temp_variable = { t = energy_cost }
+	subtract_from_temp_variable = { t = constant:energy.gain.base }
+	clamp_temp_variable = { var = t min = 0 }
+	clamp_variable = { var = energy_produced@hydro max = t }
+	
+	subtract_from_temp_variable = { energy_cost_after_hydro = constant:energy.gain.base }
+	
+	# Calculate Energy Production Target for COAL
+	
+	set_temp_variable = { target_production = energy_cost_after_hydro }
+	clamp_temp_variable = { var = target_production min = 0 max = energy_gain }
+	multiply_temp_variable = { target_production = energy_ratio@coal }
+
+	
+	# Calculate target_input (how much coal is needed)
+	
+	set_temp_variable = { energy_from_coal = constant:energy.gain.coal }
+	set_temp_variable = { factor = modifier@energy_coal_factor }
+	add_to_temp_variable = { factor = 1 }
+	multiply_temp_variable = { energy_from_coal = factor }
+	
+	set_temp_variable = { target_input = target_production }
+	divide_temp_variable = { target_input = energy_from_coal }
+	round_temp_variable = target_input
+	
+	#get the number of coal we have available
+	
+	set_temp_variable = { max_input = resource_produced@coal }
+	#add_to_temp_variable = { max_input = export_offset@coal }
+	add_to_temp_variable = { max_input = energy_input@coal }
+	add_to_temp_variable = { max_input = resource_imported@coal }
+	
+	set_variable = { energy_input_real@coal = target_input }
+	set_variable = { energy_input@coal = target_input }
+	clamp_variable = { var = energy_input@coal min = 0 max = max_input }
+	
+	#log = "[?max_input] max_input"
+	
+	#if theres a coal deficit, then reduce energy production
+	
+	if = { 
+		limit = {
+			check_variable = { target_input > max_input }
+		}
+		
+		set_temp_variable = { deficit_ratio = max_input }
+		divide_temp_variable = { deficit_ratio = target_input }
+		
+		#log = "[?deficit_ratio] deficit_ratio"
+		multiply_temp_variable = { target_production = deficit_ratio }
+		
+		if = {
+			limit = {
+				NOT = { is_in_array = { alerts = token:alert_energy_lack_resource } }
+			}
+			add_to_array = { alerts = token:alert_energy_lack_resource }
+		}
+	}
+	
+	set_variable = { energy_produced@coal = target_production }
+	
+	
+	# Calculate Energy Production Target for FUEL
+	
+	set_temp_variable = { target_production = energy_cost_after_hydro }
+	clamp_temp_variable = { var = target_production min = 0 max = energy_gain }
+	multiply_temp_variable = { target_production = energy_ratio@fuel }
+	
+	#log = "[?target_production] target_production"
+	
+	# Calculate target_input (how much fuel is needed)
+	
+	set_temp_variable = { energy_from_fuel = constant:energy.gain.fuel }
+	set_temp_variable = { factor = modifier@energy_fuel_factor }
+	add_to_temp_variable = { factor = 1 }
+	multiply_temp_variable = { energy_from_fuel = factor }
+	
+	set_temp_variable = { target_input = target_production }
+	divide_temp_variable = { target_input = energy_from_fuel }
+	#multiply_temp_variable = { target_input = 1000 }
+	#divide_temp_variable = { target_input = 24 }
+	#round_temp_variable = target_input
+	set_variable = { energy_input@fuel = target_input }
+	
+	set_variable = { fuel_use = civilian_fuel_use }
+	add_to_variable = { fuel_use = target_input }
+	
+	if = {
+		limit = {
+			fuel_ratio > 0.05
+		}
+		set_variable = { energy_produced@fuel = target_production }
+		
+	}
+	else = { 
+		clear_variable = energy_produced@fuel 
+		
+		if = {
+			limit = {
+				check_variable = { energy_ratio@fuel > 0 }
+				NOT = { is_in_array = { alerts = token:alert_energy_lack_resource } }
+			}
+			add_to_array = { alerts = token:alert_energy_lack_resource }
+		}
+	}
+	
+	##############################
+	
+	set_temp_variable = { energy_production = 0 }
+	add_to_temp_variable = { energy_production = energy_produced@coal }
+	add_to_temp_variable = { energy_production = energy_produced@fuel }
+	add_to_temp_variable = { energy_production = energy_produced@hydro }
+	
+	add_to_variable = { energy_produced = energy_production }
+	
+	set_variable = { max_energy_production = energy_gain }
+	add_to_variable = { max_energy_production = energy_hydro }
+	add_to_variable = { max_energy_production = constant:energy.gain.base }
+	
+	if = { # alert
+		limit = {
+			check_variable = { max_energy_production > energy_cost }
+		}
+		
+		if = {
+			limit = {
+				is_in_array = { alerts = token:alert_energy_lack_capacity }
+			}
+			remove_from_array = { alerts = token:alert_energy_lack_capacity }
+		}
+		
+	}
+	else_if = {
+		limit = {
+			NOT = { is_in_array = { alerts = token:alert_energy_lack_capacity } }
+		}
+		add_to_array = { alerts = token:alert_energy_lack_capacity }
+	}
+	
+	
+	## Distribute Energy according to prioritisation if there is a deficit
+	
+	if = {
+		limit = {
+			check_variable = { energy_cost > energy_produced }
+		}
+		
+		if = {
+			limit = {	
+				NOT = { has_dynamic_modifier = { modifier = lack_of_energy } }
+			}
+			add_dynamic_modifier = { modifier = lack_of_energy }
+		}
+		
+		set_temp_variable = { energy_available = energy_produced }
+		
+		#add_to_temp_array = { energy_priority = token:energy_civilian }
+		#add_to_temp_array = { energy_priority = token:energy_military }
+		#add_to_temp_array = { energy_priority = token:energy_naval }
+		#add_to_temp_array = { energy_priority = token:energy_conversion }
+		
+		###
+
+		set_temp_variable = {energy_cost@prio_3 = 0}
+		set_temp_variable = {energy_cost@prio_2 = 0}
+		set_temp_variable = {energy_cost@prio_1 = 0}
+
+		for_each_loop = {
+			array = global.energy_priority
+
+			meta_effect = {
+				text = {
+					set_temp_variable = {key = [X]}
+				}
+				X = "[?v.GetTokenKey]"
+			}
+			meta_effect = {
+				text = {
+					add_to_temp_variable = {energy_cost@prio_[Y] = energy_cost@[X]}
+				}
+				X = "[?v.GetTokenKey]"
+				Y = "[?key]"
+			}
+		}
+
+
+		#Energy Prio 3
+
+		if = {
+			limit = {
+				check_variable = { energy_available > energy_cost@prio_3 }
+			}
+			subtract_from_temp_variable = { energy_available = energy_cost@prio_3 }
+			set_temp_variable = {lack_of_energy_prio_3 = 0}
+		}
+		else_if = {
+			limit = { 
+				check_variable = { energy_available > 0 }
+			}
+
+			set_temp_variable = { lack_of_energy = energy_available }
+			divide_temp_variable = { lack_of_energy = energy_cost@prio_3 }
+			
+			set_temp_variable = { energy_available = 0 }
+			set_temp_variable = { lack_of_energy_prio_3 = -1 }
+			add_to_temp_variable = { lack_of_energy_prio_3= lack_of_energy }
+			#log = "no energy for civilian [?lack_of_energy]"
+		}
+		else = {
+			set_temp_variable = { lack_of_energy_prio_3 = -1 }
+		}
+
+
+		#Energy Prio 2
+
+		if = {
+			limit = {
+				check_variable = { energy_available > energy_cost@prio_2 }
+			}
+			subtract_from_temp_variable = { energy_available = energy_cost@prio_2 }
+			set_temp_variable = {lack_of_energy_prio_2 = 0}
+		}
+		else_if = {
+			limit = { 
+				check_variable = { energy_available > 0 }
+			}
+
+			set_temp_variable = { lack_of_energy = energy_available }
+			divide_temp_variable = { lack_of_energy = energy_cost@prio_2 }
+			
+			set_temp_variable = { energy_available = 0 }
+			set_temp_variable = { lack_of_energy_prio_2 = -1 }
+			add_to_temp_variable = { lack_of_energy_prio_2= lack_of_energy }
+			
+			#log = "no energy for civilian [?lack_of_energy]"
+		}
+		else = {
+			set_temp_variable = { lack_of_energy_prio_2 = -1 }
+		}
+
+
+		#Energy Prio 1
+
+		if = {
+			limit = {
+				check_variable = { energy_available > energy_cost@prio_1 }
+			}
+			subtract_from_temp_variable = { energy_available = energy_cost@prio_1 }
+			set_temp_variable = {lack_of_energy_prio_1 = 0}
+		}
+		else_if = {
+			limit = { 
+				check_variable = { energy_available > 0 }
+			}
+
+			set_temp_variable = { lack_of_energy = energy_available }
+			divide_temp_variable = { lack_of_energy = energy_cost@prio_1 }
+			
+			set_temp_variable = { energy_available = 0 }
+			set_temp_variable = { lack_of_energy_prio_1 = -1 }
+			add_to_temp_variable = { lack_of_energy_prio_1= lack_of_energy }
+			
+			#log = "no energy for civilian [?lack_of_energy]"
+		}
+		else = {
+			set_temp_variable = { lack_of_energy_prio_1 = -1 }
+		}
+
+		#log = "penalty [?lack_of_energy_prio_1]"
+
+		for_each_loop = {
+			array = global.energy_priority
+			
+			meta_effect = {
+				text = {
+					set_temp_variable = {key = [X]}
+				}
+				X = "[?v.GetTokenKey]"
+			}
+			meta_effect = {
+				text = {
+					set_variable = {lack_of_energy@[X] = lack_of_energy_prio_[Y]}
+				}
+				X = "[?v.GetTokenKey]"
+				Y = "[?key]"
+			}
+		}
+		
+		add_to_variable = { ui_energy_pie1 = 1 }
+	}
+	else_if = {
+		limit = {
+			has_dynamic_modifier = { modifier = lack_of_energy }
+		}
+		remove_dynamic_modifier = { modifier = lack_of_energy }
+		clear_variable = lack_of_energy@energy_civilian
+		clear_variable = lack_of_energy@energy_military
+		clear_variable = lack_of_energy@energy_naval
+		clear_variable = lack_of_energy@energy_conversion
+	}
+	
+	
+	if = { 
+		limit = {
+			check_variable = { energy_production > 0 }
+			NOT = {
+				has_dynamic_modifier = {
+					modifier = energy_production
+				}
+			}
+		}
+		add_dynamic_modifier = {
+			modifier = energy_production
+		}
+	}
+	else_if = {
+		limit = {
+			check_variable = { energy_production = 0 }
+			has_dynamic_modifier = {
+				modifier = energy_production
+			}
+		}
+		remove_dynamic_modifier = {
+			modifier = energy_production
+		}
+	}
+}
+
+update_resource_assembly = {
+
+	#Prepare
+	set_temp_variable = {production_share = 1}
+	subtract_from_temp_variable = {production_share = Root.modifier@min_export}
+
+	#Air assembly
+	if = {
+		limit = { check_variable = { num_air_assembly > 0} }
+		set_temp_variable = { t = num_air_assembly }
+			
+		set_temp_variable = { damaged = num_air_assembly_damaged }
+		set_temp_variable = { resilience = 1 }
+		subtract_from_temp_variable = { resilience = modifier@assembly_resilience }
+		clamp_temp_variable = { var = resilience min = 0.5 }
+		multiply_temp_variable = { damaged = resilience }
+		
+		subtract_from_temp_variable = { t = damaged }
+		round_temp_variable = t
+		multiply_temp_variable = { t = Root.modifier@air_production_capacity }
+		divide_temp_variable = { t = production_share }
+		multiply_temp_variable = { t = -1 }
+
+		set_variable = { assembly_production@air_production = t }
+		add_to_temp_variable = { ap = 1 }
+	}
+	else = {
+		clear_variable = assembly_production@air_production
+	}
+	
+
+	#Tank assembly
+	if = {
+		limit = { check_variable = { num_tank_assembly > 0} }
+		set_temp_variable = { t = num_tank_assembly }
+		
+		set_temp_variable = { damaged = num_tank_assembly_damaged }
+		set_temp_variable = { resilience = 1 }
+		subtract_from_temp_variable = { resilience = modifier@assembly_resilience }
+		clamp_temp_variable = { var = resilience min = 0.5 }
+		multiply_temp_variable = { damaged = resilience }
+		
+		subtract_from_temp_variable = { t = damaged }
+		round_temp_variable = t
+		multiply_temp_variable = { t = Root.modifier@tank_production_capacity }
+		divide_temp_variable = { t = production_share }
+		multiply_temp_variable = { t = -1 }
+
+		set_variable = { assembly_production@tank_production = t }
+		add_to_temp_variable = { ap = 1 }
+	}
+	else = {
+		clear_variable = assembly_production@tank_production
+	}
+
+	#Artillery assembly
+	if = {
+		limit = { check_variable = { num_artillery_assembly > 0} }
+		set_temp_variable = { t = num_artillery_assembly }
+		
+		set_temp_variable = { damaged = num_artillery_assembly_damaged }
+		set_temp_variable = { resilience = 1 }
+		subtract_from_temp_variable = { resilience = modifier@assembly_resilience }
+		clamp_temp_variable = { var = resilience min = 0.5 }
+		multiply_temp_variable = { damaged = resilience }
+		
+		subtract_from_temp_variable = { t = damaged }
+		round_temp_variable = t
+		multiply_temp_variable = { t = Root.modifier@artillery_production_capacity }
+		divide_temp_variable = { t = production_share }
+		multiply_temp_variable = { t = -1 }
+
+		set_variable = { assembly_production@artillery_production = t }
+		add_to_temp_variable = { ap = 1 }
+	}
+	else = {
+		clear_variable = assembly_production@artillery_production
+	}
+
+	#Engine assembly
+	if = {
+		limit = { check_variable = { num_engine_assembly > 0} }
+		set_temp_variable = { t = num_engine_assembly }
+		
+		set_temp_variable = { damaged = num_engine_assembly_damaged }
+		set_temp_variable = { resilience = 1 }
+		subtract_from_temp_variable = { resilience = modifier@assembly_resilience }
+		clamp_temp_variable = { var = resilience min = 0.5 }
+		multiply_temp_variable = { damaged = resilience }
+		
+		subtract_from_temp_variable = { t = damaged }
+		round_temp_variable = t
+		multiply_temp_variable = { t = Root.modifier@engine_production_capacity }
+		divide_temp_variable = { t = production_share }
+		multiply_temp_variable = { t = -1 }
+
+		set_variable = { assembly_production@engine_production = t }
+		add_to_temp_variable = { ap = 1 }
+	}
+	else = {
+		clear_variable = assembly_production@engine_production
+	}
+
+	#Capital Shipyard
+	if = {
+		limit = { check_variable = { num_capital_shipyard > 0} }
+		set_temp_variable = { t = num_capital_shipyard }
+		round_temp_variable = t
+		multiply_temp_variable = { t = Root.modifier@shipyard_capital_capacity }
+		divide_temp_variable = { t = production_share }
+		multiply_temp_variable = { t = -1 }
+
+		set_variable = { assembly_production@shipyard_capital = t }
+		add_to_temp_variable = { ap = 1 }
+	}
+	else = {
+		clear_variable = assembly_production@shipyard_capital
+	}
+	
+	if = { 
+		limit = {
+			check_variable = { ap > 0 }
+			NOT = {
+				has_dynamic_modifier = {
+					modifier = assembly_production
+				}
+			}
+		}
+		add_dynamic_modifier = {
+			modifier = assembly_production
+		}
+	}
+	else_if = {
+		limit = {
+			check_variable = { ap = 0 }
+			has_dynamic_modifier = {
+				modifier = assembly_production
+			}
+		}
+		remove_dynamic_modifier = {
+			modifier = assembly_production
+		}
+	}
+	
+}
+
+update_resource_production = {
+	set_temp_variable = { total = 0 }
+	set_temp_variable = { totale = 0 }
+
+	# Coal
+
+	# resource@produced includes the export fix and resource production too; calculate actual resources
+	set_temp_variable = { actual_resources_coal = resource_produced@coal }
+	add_to_temp_variable = { actual_resources_coal = export_offset@coal }
+	subtract_from_temp_variable = { actual_resources_coal = resource_production@coal }
+	clamp_temp_variable = { var = actual_resources_coal min = 0 }
+
+	# set resource production modifier
+	set_temp_variable = { res_prod = modifier@coal_resource_factor }
+	add_to_temp_variable = { res_prod = modifier@resources_factor }
+	multiply_temp_variable = { res_prod = actual_resources_coal }
+	round_temp_variable = res_prod
+
+	# update actual_resources_coal to include production_factor
+	add_to_temp_variable = { actual_resources_coal = res_prod }
+	add_to_temp_variable = { total = res_prod }
+	if = { limit = { check_variable = { res_prod = 0 } } clear_variable = resource_production@coal }
+	else = { set_variable = { resource_production@coal = res_prod } }
+	
+	# Iron
+
+	# resource@produced includes the export fix and resource production too; calculate actual resources
+	set_temp_variable = { actual_resources_iron = resource_produced@iron }
+	add_to_temp_variable = { actual_resources_iron = export_offset@iron }
+	subtract_from_temp_variable = { actual_resources_iron = resource_production@iron }
+
+	# set resource production modifier
+	set_temp_variable = { res_prod = modifier@iron_resource_factor }
+	add_to_temp_variable = { res_prod = modifier@resources_factor }
+	multiply_temp_variable = { res_prod = actual_resources_iron }
+	round_temp_variable = res_prod
+
+	# update actual_resources_iron to include production_factor
+	add_to_temp_variable = { actual_resources_iron = res_prod }
+	add_to_temp_variable = { total = res_prod }
+	if = { limit = { check_variable = { res_prod = 0 } } clear_variable = resource_production@iron }
+	else = { set_variable = { resource_production@iron = res_prod } }
+
+
+	# Bauxite
+
+	# resource@produced includes the export fix and resource production too; calculate actual resources
+	set_temp_variable = { actual_resources_bauxite = resource_produced@bauxite }
+	add_to_temp_variable = { actual_resources_bauxite = export_offset@bauxite }
+	subtract_from_temp_variable = { actual_resources_bauxite = resource_production@bauxite }
+
+	# set resource production modifier
+	set_temp_variable = { res_prod = modifier@bauxite_resource_factor }
+	add_to_temp_variable = { res_prod = modifier@resources_factor }
+	multiply_temp_variable = { res_prod = actual_resources_bauxite }
+	round_temp_variable = res_prod
+
+	# update actual_resources_bauxite to include production_factor
+	add_to_temp_variable = { actual_resources_bauxite = res_prod }
+	add_to_temp_variable = { total = res_prod }
+	if = { limit = { check_variable = { res_prod = 0 } } clear_variable = resource_production@bauxite }
+	else = { set_variable = { resource_production@bauxite = res_prod } }
+
+
+	# Food
+
+	# resource@produced includes the export fix and resource production too; calculate actual resources
+	set_temp_variable = { actual_resources_food = resource_produced@food }
+	add_to_temp_variable = { actual_resources_food = export_offset@food }
+	subtract_from_temp_variable = { actual_resources_food = resource_production@food }
+
+	# set resource production modifier
+	set_temp_variable = { res_prod = modifier@food_resource_factor }
+	multiply_temp_variable = { res_prod = actual_resources_food }
+	round_temp_variable = res_prod
+
+	# update actual_resources_food to include production_factor
+	add_to_temp_variable = { actual_resources_food = res_prod }
+	add_to_temp_variable = { total = res_prod }
+	if = { limit = { check_variable = { res_prod = 0 } } clear_variable = resource_production@food }
+	else = { set_variable = { resource_production@food = res_prod } }
+
+
+	# EXPORT OFFSET for ORES & FOOD
+	if = {
+		limit = {
+			check_variable = { modifier@min_export = 0 } # avoids division by zero if closed market. Dont set only one at 0% export please.
+		}
+		set_variable = { export_offset@coal = 0 } 
+		set_variable = { export_offset@iron = 0 } 
+		set_variable = { export_offset@bauxite = 0 } 
+		set_variable = { export_offset@food = 0 } 
+	}
+	else = {
+	
+		## ORES Export Offset
+		
+		if = {
+			limit = {
+				NOT = { check_variable = { modifier@min_ore_export = modifier@min_export } }
+			}
+			set_temp_variable = { export_off = modifier@min_ore_export }
+			clamp_temp_variable = { var = export_off min = 0.01 }
+			divide_temp_variable = { export_off = modifier@min_export }
+			subtract_from_temp_variable = { export_off = 1 }
+			multiply_temp_variable = { export_off = -1 }
+			
+			multiply_temp_variable = { actual_resources_coal = export_off }
+			multiply_temp_variable = { actual_resources_iron = export_off }
+			multiply_temp_variable = { actual_resources_bauxite = export_off }
+			
+			round_temp_variable = actual_resources_coal
+			round_temp_variable = actual_resources_iron
+			round_temp_variable = actual_resources_bauxite
+			
+			set_variable = { export_offset@coal = actual_resources_coal }
+			set_variable = { export_offset@iron = actual_resources_iron }
+			set_variable = { export_offset@bauxite = actual_resources_bauxite }
+			
+			add_to_temp_variable = { totale = actual_resources_coal }
+			add_to_temp_variable = { totale = actual_resources_iron }
+			add_to_temp_variable = { totale = actual_resources_bauxite }
+		}
+		else = {
+			clear_variable = export_offset@coal
+			clear_variable = export_offset@iron
+			clear_variable = export_offset@bauxite
+		}
+		
+		## FOOD Export Offset
+		
+		set_temp_variable = { export_off = modifier@min_food_export }
+		clamp_temp_variable = { var = export_off min = 0.01 }
+		divide_temp_variable = { export_off = modifier@min_export }
+		subtract_from_temp_variable = { export_off = 1 }
+		multiply_temp_variable = { export_off = -1 }
+		
+		multiply_temp_variable = { actual_resources_food = export_off }
+		
+		round_temp_variable = actual_resources_food
+		
+		set_variable = { export_offset@food = actual_resources_food }
+		
+		add_to_temp_variable = { totale = actual_resources_food }
+	}
+	
+	
+	#tungsten
+	set_temp_variable = { m = modifier@tungsten_resource_factor }
+	add_to_temp_variable = { m = modifier@resources_factor }
+	
+	set_temp_variable = { t = resource_produced@tungsten }
+	subtract_from_temp_variable = { t = resource_production@tungsten }
+	multiply_temp_variable = { t = m }
+	round_temp_variable =  t
+	add_to_temp_variable = { total = t }
+
+	if = { limit = { check_variable = { t = 0 } } clear_variable = resource_production@tungsten }
+	else = { set_variable = { resource_production@tungsten = t } }
+	
+	
+	#chromium
+	set_temp_variable = { m = modifier@chromium_resource_factor }
+	add_to_temp_variable = { m = modifier@resources_factor }
+	
+	set_temp_variable = { t = resource_produced@chromium }
+	subtract_from_temp_variable = { t = resource_production@chromium }
+	multiply_temp_variable = { t = m }
+	round_temp_variable =  t
+	add_to_temp_variable = { total = t }
+
+	if = { limit = { check_variable = { t = 0 } } clear_variable = resource_production@chromium }
+	else = { set_variable = { resource_production@chromium = t } }
+	
+	
+	#rubber
+	set_temp_variable = { m = modifier@rubber_resource_factor }
+	add_to_temp_variable = { m = modifier@resources_factor }
+	
+	set_temp_variable = { t = resource_produced@rubber }
+	subtract_from_temp_variable = { t = resource_production@rubber }
+	multiply_temp_variable = { t = m }
+	round_temp_variable =  t
+	add_to_temp_variable = { total = t }
+
+	if = { limit = { check_variable = { t = 0 } } clear_variable = resource_production@rubber }
+	else = { set_variable = { resource_production@rubber = t } }
+
+
+	#oil
+	set_temp_variable = { m = modifier@oil_resource_factor }
+	add_to_temp_variable = { m = modifier@resources_factor }
+	
+	set_temp_variable = { t = resource_produced@oil }
+	subtract_from_temp_variable = { t = resource_production@oil }
+	multiply_temp_variable = { t = m }
+	round_temp_variable =  t
+	add_to_temp_variable = { total = t }
+
+	if = { limit = { check_variable = { t = 0 } } clear_variable = resource_production@oil }
+	else = { set_variable = { resource_production@oil = t } }
+
+	
+	if = { 
+		limit = {
+			check_variable = { total = 0 }
+			has_dynamic_modifier = {
+				modifier = resource_production
+			}
+		}
+		remove_dynamic_modifier = {
+			modifier = resource_production
+		}
+	}
+	else_if = {
+		limit = {
+			NOT = {
+				check_variable = { total = 0 }
+				has_dynamic_modifier = {
+					modifier = resource_production
+				}
+			}
+		}
+		add_dynamic_modifier = {
+			modifier = resource_production
+		}
+	}
+	
+	if = { 
+		limit = {
+			check_variable = { totale = 0 }
+			has_dynamic_modifier = {
+				modifier = export_offset
+			}
+		}
+		remove_dynamic_modifier = {
+			modifier = export_offset
+		}
+	}
+	else_if = {
+		limit = {
+			NOT = {
+				check_variable = { totale = 0 }
+				has_dynamic_modifier = {
+					modifier = export_offset
+				}
+			}
+		}
+		add_dynamic_modifier = {
+			modifier = export_offset
+		}
+	}
+}
+ai_update_resource_production = {
+	update_resource_production = yes
+}
+
+update_food_consumption = {
+
+	set_temp_variable = { food_rations = constant:food.gain.food }
+	set_temp_variable = { factor = modifier@food_gain_factor }
+	add_to_temp_variable = { factor = 1 }
+	multiply_temp_variable = { food_rations = factor }
+	
+	set_temp_variable = { income = resource_produced@food }
+	add_to_temp_variable = { income = export_offset@food }
+    subtract_from_temp_variable = { income = resource_exported@food }
+    add_to_temp_variable = { income = resource_imported@food }
+    multiply_temp_variable = { income = food_rations }
+    add_to_temp_variable = { income = constant:food.gain.base }
+    divide_temp_variable = { income = 1000 }
+	add_to_temp_variable = { income = modifier@food_received }
+	multiply_temp_variable = { income = update_frequency?1 }
+	add_to_variable = { food = income }
+
+	set_variable = { food_gain = income }
+
+## CONSUMPTION 
+
+	set_temp_variable = { t = modifier@base_food_need_civilian }
+	set_temp_variable = { factor = modifier@food_need_civilian }
+	add_to_temp_variable = { factor = 1 }
+	set_temp_variable = { food_need_pop = food_need_population }
+	multiply_temp_variable = { t = factor }
+	multiply_temp_variable = { food_need_pop = t }
+	
+	set_temp_variable = { food_need_pop_occ = food_need_population_occupied }
+	set_temp_variable = { factor = modifier@food_need_occupied }
+	add_to_temp_variable = { factor = 1 }
+	multiply_temp_variable = { food_need_pop_occ = factor }
+	
+	set_temp_variable = { t = constant:food.need.military }
+	set_temp_variable = { factor = modifier@food_need_military }
+	add_to_temp_variable = { factor = 1 }
+	multiply_temp_variable = { t = factor }
+	set_temp_variable = { food_need_army = max_available_manpower_k }
+	subtract_from_temp_variable = { food_need_army = manpower_k }
+	multiply_temp_variable = { food_need_army = t }
+	
+	set_temp_variable = { t = constant:food.need.garrison }
+	set_temp_variable = { factor = modifier@food_need_military }
+	add_to_temp_variable = { factor = 1 }
+	multiply_temp_variable = { t = factor }
+	set_temp_variable = { food_need_garrison = garrison_manpower_need }
+	multiply_temp_variable = { food_need_garrison = 0.001 }
+	multiply_temp_variable = { food_need_garrison = t }
+	
+	set_temp_variable = { t = constant:food.need.deployment }
+	set_temp_variable = { factor = modifier@food_need_military }
+	add_to_temp_variable = { factor = 1 }
+	multiply_temp_variable = { t = factor }
+	set_temp_variable = { food_need_deployment = amount_manpower_in_deployment_queue }
+	multiply_temp_variable = { food_need_deployment = 0.001 }
+	multiply_temp_variable = { food_need_deployment = t }
+	
+	add_to_temp_variable = { food_need = food_need_pop }
+	add_to_temp_variable = { food_need = food_need_pop_occ }
+	add_to_temp_variable = { food_need = food_need_army }
+	add_to_temp_variable = { food_need = food_need_garrison }
+	add_to_temp_variable = { food_need = food_need_deployment }
+	add_to_temp_variable = { food_need = modifier@food_sent } #stuff we send to others
+	multiply_temp_variable = { food_need = update_frequency?1 }
+	
+	divide_temp_variable = { food_need = 1000 }
+	set_temp_variable = { factor = modifier@food_need_total  }
+	add_to_temp_variable = { factor = 1 }
+	multiply_temp_variable = { food_need = factor }
+	set_temp_variable = {food_usage = food_need} #food used without the decay
+	
+	subtract_from_variable = { food = food_usage }
+	
+	
+	# Decay
+	
+	set_temp_variable = { decay = constant:food.need.decay }
+	set_temp_variable = { factor = modifier@food_decay_factor }
+	add_to_temp_variable = { factor = 1 }
+	multiply_temp_variable = { decay = factor }
+	set_temp_variable = { decay_flat = decay }
+	if = {
+		limit = {check_variable = {food < 0}} 
+		set_temp_variable = {mitigation = 0.025}  #out of food mitigation
+		set_temp_variable = {decay_flat = mitigation }
+	}
+
+	#log = "so [?decay] x [?food]"
+	multiply_temp_variable = { decay_flat = food }
+	#log = " = fucking [?decay_flat] "
+
+	add_to_temp_variable = { food_need = decay_flat }
+	
+	subtract_from_variable = { food = decay_flat }
+	set_variable = { food_needed = food_need }
+	set_variable = { food_decay_flat = decay_flat }
+	
+	if = {
+		limit = {
+			has_variable = food_max
+		}
+		clamp_variable = { var = food max = food_max?1 } #TODO causes error spam
+	}
+
+	# calculate stockpile limit
+	set_temp_variable = {food_limit = income} 
+	subtract_from_temp_variable = {food_limit = food_usage}
+	if = {
+		limit = {check_variable = {food_limit < 0}} 
+		divide_temp_variable = {food_limit = mitigation}
+	}
+	else = {
+		divide_temp_variable = {food_limit = decay}
+	}
+	divide_temp_variable = {food_limit = food_max}
+	clamp_temp_variable = {var = food_limit max = 1 }
+	set_variable = { food_fill_target = food_limit }
+
+
+	# log = "[?income] income | [?food_usage] food_usage | [?decay_flat] decay_flat | [?decay] decay%"
+	# log = "[?food] food | [?food_need] food_need | [?food_limit] stockpile limit"
+	# log = "UI decay: [?decay] | food_usage:  [?food_usage] | income: [?income] | food_limit: [?food_limit]"
+	
+
+	
+	# days - this should be calculated in the UI itself to update every tick
+
+	set_variable = { food_days = food }
+	divide_variable = { food_days = food_max }
+	
+	if = {
+		limit = {
+			check_variable = { income > food_need }
+			check_variable = { food > 0 }
+		}
+		clear_variable = food_decrease 
+	}
+	else_if = { 
+		limit = {
+			check_variable = { income > food_usage } #will tend to equilibrium if income > food usage without decay
+		}
+		set_variable = {food_decrease = 1}
+	}
+	else = { 
+		set_variable = {food_decrease = 2}
+	}
+	
+	##################
+	
+	if = {
+		limit = {
+			is_player = yes
+		}
+			
+		# Out of Food effects
+		
+		set_temp_variable = { days_storage_target = food_usage }
+		multiply_temp_variable = { days_storage_target = -40 } #always has to be - 1/mitigation for the math to work
+		set_variable = {lack_of_food = food}
+		divide_variable = {lack_of_food = days_storage_target}
+		multiply_variable = {lack_of_food = 1.5} # multiplier on max penalties, so 20% lack of food = 30% max penalty 
+		clamp_variable = {var = lack_of_food min = 0 max = 1}
+
+		set_variable = {lack_of_food_max = income}
+		subtract_from_variable = {lack_of_food_max = food_usage }
+		divide_variable = {lack_of_food_max = mitigation}
+		divide_variable = {lack_of_food_max = days_storage_target}
+		multiply_variable = {lack_of_food_max = 1.5}
+		clamp_variable = {var = lack_of_food_max min = 0 max = 1}
+		#log = "[?lack_of_food_max] | [?days_storage_target] "
+
+
+
+
+
+		#clamp_temp_variable = {var = lack_of_food_max min = 0 max = 1 }
+			
+		if = {
+			limit = {
+				check_variable = { lack_of_food > 0 }
+			}
+			
+			if = {
+				limit = {
+					NOT = { is_in_array = { alerts = token:alert_food_deficit } }
+				}
+				add_to_array = { alerts = token:alert_food_deficit }
+			}
+
+			#log = "[?This.GetTag] lack of food penalty [?lack_of_food]"
+			#################################
+			# update modifiers 
+		
+			if = { limit = { NOT = { has_dynamic_modifier = { modifier = lack_of_food } } }
+				add_dynamic_modifier = { modifier = lack_of_food }
+			}
+			
+			if = {
+				limit = {
+					check_variable = { lack_of_food < 0.333 }
+				}
+				
+				set_temp_variable = { scale = lack_of_food }
+				divide_temp_variable = { scale = 0.333 }
+				
+				lack_of_food_1 = yes
+			}
+			else_if = {
+				limit = {
+					check_variable = { lack_of_food > 0.666 }
+				}
+				
+				set_temp_variable = { scale = lack_of_food }
+				subtract_from_temp_variable = { scale = 0.666 }
+				divide_temp_variable = { scale = 0.333 }
+				
+				lack_of_food_3 = yes
+			}
+			else = {
+				set_temp_variable = { scale = lack_of_food }
+				subtract_from_temp_variable = { scale = 0.333 }
+				divide_temp_variable = { scale = 0.333 }
+				
+				lack_of_food_2 = yes
+			}
+				
+			#log = "[?lack_of_food] lack_of_food"
+		}
+		else_if = {
+			limit = {
+				has_dynamic_modifier = { modifier = lack_of_food }
+			}
+			remove_dynamic_modifier = { modifier = lack_of_food }
+			clear_variable = lof_stabf
+			clear_variable = lof_offwarstab
+			clear_variable = lof_drift
+			clear_variable = lof_stab
+			clear_variable = lof_ws
+			clear_variable = lof_wsf
+			clear_variable = lof_crisis
+			clear_variable = lof_morale
+			clear_variable = lof_factoryoutput
+			clear_variable = lof_dockyardoutput
+			
+			remove_from_array = { alerts = token:alert_food_deficit }
+
+		}
+	}
+	
+}
+ui_lack_of_food = {
+	if = { limit = { NOT = { check_variable = { lof_stabf = 0 } } }
+	set_variable = { l = lof_stabf tooltip = LACK_OF_FOOD_STABILITY_FACTOR } }
+	if = { limit = { NOT = { check_variable = { lof_stab = 0 } } }
+	set_variable = { l = lof_stab tooltip = LACK_OF_FOOD_STABILITY } }
+	if = { limit = { NOT = { check_variable = { lof_offwarstab = 0 } } }
+	set_variable = { l = lof_offwarstab tooltip = LACK_OF_FOOD_OFFWARSTAB } }
+	if = { limit = { NOT = { check_variable = { lof_drift = 0 } } }
+	set_variable = { l = lof_drift tooltip = LACK_OF_FOOD_DRIFT } }
+	if = { limit = { NOT = { check_variable = { lof_ws = 0 } } }
+	set_variable = { l = lof_ws tooltip = LACK_OF_FOOD_WAR_SUPPORT } }
+	if = { limit = { NOT = { check_variable = { lof_wsf = 0 } } }
+	set_variable = { l = lof_wsf tooltip = LACK_OF_FOOD_WSF } }
+	if = { limit = { NOT = { check_variable = { lof_crisis = 0 } } }
+	set_variable = { l = lof_crisis tooltip = LACK_OF_FOOD_CRISIS } }
+	if = { limit = { NOT = { check_variable = { lof_morale = 0 } } }
+	set_variable = { l = lof_morale tooltip = LACK_OF_FOOD_MORALE } }
+	if = { limit = { NOT = { check_variable = { lof_factoryoutput = 0 } } }
+	set_variable = { l = lof_factoryoutput tooltip = LACK_OF_FOOD_PROD } }
+	if = { limit = { NOT = { check_variable = { lof_dockyardoutput = 0 } } }
+	set_variable = { l = lof_dockyardoutput tooltip = LACK_OF_FOOD_PROD_N } }
+}
+lack_of_food_1 = {
+	set_variable = { lof_stabf = -0.1 tooltip = LACK_OF_FOOD_STABILITY_FACTOR }
+	multiply_variable = { lof_stabf = scale }
+
+	set_variable = { lof_offwarstab = -0.05 tooltip = LACK_OF_FOOD_OFFWARSTAB }
+	multiply_variable = { lof_offwarstab = scale }
+
+	set_variable = { lof_wsf = -0.1 tooltip = LACK_OF_FOOD_WSF }
+	multiply_variable = { lof_wsf = scale }
+
+	set_variable = { lof_drift = -0.02 tooltip = LACK_OF_FOOD_DRIFT }
+	multiply_variable = { lof_drift = scale }
+
+	set_variable = { lof_pp = -0.05 tooltip = LACK_OF_FOOD_POLITICAL }
+	multiply_variable = { lof_pp = scale }
+
+	clear_variable = lof_stab
+	clear_variable = lof_ws
+	clear_variable = lof_crisis
+	clear_variable = lof_morale
+	clear_variable = lof_factoryoutput
+	clear_variable = lof_dockyardoutput
+
+}
+
+lack_of_food_2 = {
+
+	
+	set_variable = { lof_pp = -0.05}
+
+	set_variable = { lof_stabf = -0.1}
+	
+	set_variable = { lof_wsf = -0.1}
+
+	set_variable = { lof_offwarstab = -0.1  tooltip = LACK_OF_FOOD_OFFWARSTAB }
+	multiply_variable = { lof_offwarstab = scale }
+	add_to_variable = { lof_offwarstab = -0.1}
+
+	set_variable = { lof_stab = -0.003 tooltip = LACK_OF_FOOD_STABILITY }
+	multiply_variable = { lof_stab = scale }
+	
+	set_variable = { lof_drift = -0.02 tooltip = LACK_OF_FOOD_DRIFT }
+	multiply_variable = { lof_drift = scale }
+	add_to_variable = { lof_drift = -0.02 }
+	
+	set_variable = { lof_ws = -0.003 tooltip = LACK_OF_FOOD_WAR_SUPPORT }
+	multiply_variable = { lof_ws = scale }
+	
+	set_variable = { lof_crisis = 0.2 tooltip = LACK_OF_FOOD_CRISIS }
+	multiply_variable = { lof_crisis = scale }
+
+	set_variable = { lof_morale = -0.2 tooltip = LACK_OF_FOOD_MORALE }
+	multiply_variable = { lof_morale = scale }	
+
+	set_variable = { lof_factoryoutput = -0.1 tooltip = LACK_OF_FOOD_PROD }
+	multiply_variable = { lof_factoryoutput = scale }
+	
+	set_variable = { lof_dockyardoutput = -0.1 tooltip = LACK_OF_FOOD_PROD_N }
+	multiply_variable = { lof_dockyardoutput = scale }
+}
+
+lack_of_food_3 = {
+	
+	set_variable = { lof_pp = -0.05}
+
+	set_variable = { lof_stabf = -0.1}
+	
+	set_variable = { lof_wsf = -0.1}
+
+	set_variable = { lof_offwarstab = -0.15}
+
+	set_variable = { lof_stab = -0.003 tooltip = LACK_OF_FOOD_STABILITY }
+	multiply_variable = { lof_stab = scale }
+	add_to_variable = { lof_stab = -0.003 }
+	
+	set_variable = { lof_drift = -0.02 tooltip = LACK_OF_FOOD_DRIFT }
+	multiply_variable = { lof_drift = scale }
+	add_to_variable = { lof_drift = -0.04 }
+	
+	set_variable = { lof_ws = -0.003 tooltip = LACK_OF_FOOD_WAR_SUPPORT }
+	multiply_variable = { lof_ws = scale }
+	add_to_variable = { lof_drift = -0.003 }
+
+	set_variable = { lof_crisis = 0.3 tooltip = LACK_OF_FOOD_CRISIS }
+	multiply_variable = { lof_crisis = scale }
+	add_to_variable = { lof_crisis = 0.2 }
+	
+	set_variable = { lof_morale = -0.2 tooltip = LACK_OF_FOOD_MORALE }
+	multiply_variable = { lof_morale = scale }
+	add_to_variable = { lof_morale = -0.2 }
+
+	set_variable = { lof_factoryoutput = -0.2 tooltip = LACK_OF_FOOD_PROD }
+	multiply_variable = { lof_factoryoutput = scale }
+	add_to_variable = { lof_factoryoutput = -0.1 }
+	
+	set_variable = { lof_dockyardoutput = -0.2 tooltip = LACK_OF_FOOD_PROD_N }
+	multiply_variable = { lof_dockyardoutput = scale }
+	add_to_variable = { lof_dockyardoutput = -0.1 }
+
+}
+
+ui_lack_of_fuel = {
+	if = { limit = { NOT = { check_variable = { lofu_stab = 0 } } }
+	set_variable = { l = lofu_stab tooltip = LACK_OF_FOOD_STABILITY } }
+	if = { limit = { NOT = { check_variable = { lofu_drift = 0 } } }
+	set_variable = { l = lofu_drift tooltip = LACK_OF_FOOD_DRIFT } }
+	if = { limit = { NOT = { check_variable = { lofu_prod = 0 } } }
+	set_variable = { l = lofu_prod tooltip = LACK_OF_FOOD_PROD } }
+	if = { limit = { NOT = { check_variable = { lofu_prodn = 0 } } }
+	set_variable = { l = lofu_prodn tooltip = LACK_OF_FOOD_PROD_N } }
+	if = { limit = { NOT = { check_variable = { lofu_construction = 0 } } }
+	set_variable = { l = lofu_construction tooltip = LACK_OF_FOOD_CONSTRUCTION } }
+}
+lack_of_fuel_1 = {
+	set_variable = { lofu_stab = -0.001 tooltip = LACK_OF_FOOD_STABILITY }
+	multiply_variable = { lofu_stab = scale }
+	
+	set_variable = { lofu_drift = -0.01 tooltip = LACK_OF_FOOD_DRIFT }
+	multiply_variable = { lofu_drift = scale }
+	
+	set_variable = { lofu_prod = -0.05 tooltip = LACK_OF_FOOD_PROD }
+	multiply_variable = { lofu_prod = scale }
+	
+	set_variable = { lofu_prodn = -0.05 tooltip = LACK_OF_FOOD_PROD_N }
+	multiply_variable = { lofu_prodn = scale }
+
+	clear_variable = lofu_construction
+}
+
+lack_of_fuel_2 = {
+	set_variable = { lofu_stab = -0.002 tooltip = LACK_OF_FOOD_STABILITY }
+	multiply_variable = { lofu_stab = scale }
+	add_to_variable = { lofu_stab = -0.001 }
+	
+	set_variable = { lofu_drift = -0.01 tooltip = LACK_OF_FOOD_DRIFT }
+	multiply_variable = { lofu_drift = scale }
+	add_to_variable = { lofu_drift = -0.01 }
+	
+	set_variable = { lofu_prod = -0.1 tooltip = LACK_OF_FOOD_PROD }
+	multiply_variable = { lofu_prod = scale }
+	add_to_variable = { lofu_prod = -0.05 }
+	
+	set_variable = { lofu_prodn = -0.1 tooltip = LACK_OF_FOOD_PROD_N }
+	multiply_variable = { lofu_prodn = scale }
+	add_to_variable = { lofu_prodn = -0.05 }
+
+	set_variable = { lofu_construction = -0.05 tooltip = LACK_OF_FOOD_CONSTRUCTION }
+	multiply_variable = { lofu_construction = scale }
+}
+
+lack_of_fuel_3 = {
+	set_variable = { lofu_stab = -0.002 tooltip = LACK_OF_FOOD_STABILITY }
+	multiply_variable = { lofu_stab = scale }
+	add_to_variable = { lofu_stab = -0.003 }
+	
+	set_variable = { lofu_drift = -0.01 tooltip = LACK_OF_FOOD_DRIFT }
+	multiply_variable = { lofu_drift = scale }
+	add_to_variable = { lofu_drift = -0.02 }
+	
+	set_variable = { lofu_prod = -0.15 tooltip = LACK_OF_FOOD_PROD }
+	multiply_variable = { lofu_prod = scale }
+	add_to_variable = { lofu_prod = -0.15 }
+	
+	set_variable = { lofu_prodn = -0.15 tooltip = LACK_OF_FOOD_PROD_N }
+	multiply_variable = { lofu_prodn = scale }
+	add_to_variable = { lofu_prodn = -0.15 }
+	
+	set_variable = { lofu_construction = -0.1 tooltip = LACK_OF_FOOD_CONSTRUCTION }
+	multiply_variable = { lofu_construction = scale }
+	add_to_variable = { lofu_construction = -0.05 }
+
+}
+ui_update_food_consumption = {
+
+## INCOME
+	
+	set_temp_variable = { base_income = constant:food.gain.base }
+	
+	set_temp_variable = { food_rations = constant:food.gain.food }
+	set_temp_variable = { factor = modifier@food_gain_factor }
+	add_to_temp_variable = { factor = 1 }
+	multiply_temp_variable = { food_rations = factor }
+	
+	set_temp_variable = { income = resource_produced@food }
+	add_to_temp_variable = { income = export_offset@food }
+	subtract_from_temp_variable = { income = resource_exported@food }
+	add_to_temp_variable = { income = resource_imported@food }
+	set_temp_variable = { amount_food = income }
+	multiply_temp_variable = { income = food_rations }
+	set_temp_variable = { food_income = income }
+	add_to_temp_variable = { income = base_income }
+
+
+## CONSUMPTION 
+
+	set_temp_variable = { t = modifier@base_food_need_civilian }
+	set_temp_variable = { factor = modifier@food_need_civilian }
+	add_to_temp_variable = { factor = 1 }
+	set_temp_variable = { food_need_pop = food_need_population }
+	multiply_temp_variable = { t = factor }
+	multiply_temp_variable = { food_need_pop = t }
+	
+	set_temp_variable = { food_need_pop_occ = food_need_population_occupied }
+	set_temp_variable = { factor = modifier@food_need_occupied }
+	add_to_temp_variable = { factor = 1 }
+	multiply_temp_variable = { food_need_pop_occ = factor }
+	
+	set_temp_variable = { t = constant:food.need.military }
+	set_temp_variable = { factor = modifier@food_need_military }
+	add_to_temp_variable = { factor = 1 }
+	multiply_temp_variable = { t = factor }
+	set_temp_variable = { food_need_army = max_available_manpower_k }
+	subtract_from_temp_variable = { food_need_army = manpower_k }
+	multiply_temp_variable = { food_need_army = t }
+	
+	set_temp_variable = { t = constant:food.need.garrison }
+	set_temp_variable = { factor = modifier@food_need_military }
+	add_to_temp_variable = { factor = 1 }
+	multiply_temp_variable = { t = factor }
+	set_temp_variable = { food_need_garrison = garrison_manpower_need }
+	multiply_temp_variable = { food_need_garrison = 0.001 }
+	multiply_temp_variable = { food_need_garrison = t }
+	
+	set_temp_variable = { t = constant:food.need.deployment }
+	set_temp_variable = { factor = modifier@food_need_military }
+	add_to_temp_variable = { factor = 1 }
+	multiply_temp_variable = { t = factor }
+	set_temp_variable = { food_need_deployment = amount_manpower_in_deployment_queue }
+	multiply_temp_variable = { food_need_deployment = 0.001 }
+	multiply_temp_variable = { food_need_deployment = t }
+	
+	add_to_temp_variable = { food_need = food_need_pop }
+	add_to_temp_variable = { food_need = food_need_pop_occ }
+	add_to_temp_variable = { food_need = food_need_army }
+	add_to_temp_variable = { food_need = food_need_garrison }
+	add_to_temp_variable = { food_need = food_need_deployment }
+
+	set_temp_variable = { factor = modifier@food_need_total  }
+	add_to_temp_variable = { factor = 1 }
+	multiply_temp_variable = { food_need = factor }
+
+	set_temp_variable = { food_usage = food_need }
+
+	# Decay
+	if = {
+		limit = {check_variable = {food>0}}
+		set_temp_variable = { decay = constant:food.need.decay }
+		set_temp_variable = { factor = modifier@food_decay_factor }
+		add_to_temp_variable = { factor = 1 }
+		multiply_temp_variable = { decay = factor }
+	}
+	else = {
+		set_temp_variable = {decay = 0.025} # out of food mitigation
+	}
+
+	set_temp_variable = { decay_flat = decay }
+	multiply_temp_variable = { decay_flat = food }
+	multiply_temp_variable = { decay_flat = 1000 }
+	set_temp_variable = {mitigation_flat = decay_flat}
+	multiply_temp_variable = {mitigation_flat = -1}
+
+	add_to_temp_variable = { food_need = decay_flat }
+
+	set_temp_variable = {food_balance = food_need}
+	subtract_from_temp_variable = {food_balance = income}
+	multiply_temp_variable = {food_balance = -1}
+}
+
+d_ai_update_debug_equipment = {
+	ai_update_debug_equipment = yes
+}
+
+
+ai_update_debug_equipment = {
+
+	# BAUXITE
+	
+	set_temp_variable = { deficit = conversion_actual_use_@bauxite }
+	
+	set_temp_variable = { bauxite = resource_produced@bauxite }
+	add_to_temp_variable = { bauxite = export_offset@bauxite }
+	subtract_from_temp_variable = { bauxite = resource_exported@bauxite }
+	#add_to_temp_variable = { bauxite = resource_imported@bauxite }
+	
+	subtract_from_temp_variable = { deficit = bauxite }
+	
+	#log = "[?deficit] bauxite deficit"
+	#log = "[?bauxite] bauxite produced"
+	
+	if = {
+		limit = {
+			check_variable = { deficit > 0 }
+		}
+		
+		set_temp_variable = { bauxite_need = deficit }
+		subtract_from_temp_variable = { bauxite = export_offset@bauxite }
+		add_to_temp_variable = { bauxite_need = bauxite }
+		divide_temp_variable = { bauxite_need = global.resource_cost@bauxite }
+		clamp_temp_variable = { var = bauxite_need min = 1 }
+		round_temp_variable = bauxite_need
+	}
+	
+	
+	# IRON
+	
+	set_temp_variable = { deficit = conversion_actual_use_@iron }
+	
+	set_temp_variable = { iron = resource_produced@iron }
+	add_to_temp_variable = { iron = export_offset@iron }
+	subtract_from_temp_variable = { iron = resource_exported@iron }
+	#add_to_temp_variable = { iron = resource_imported@iron }
+	
+	subtract_from_temp_variable = { deficit = iron }
+	
+	#log = "[?deficit] iron deficit"
+	#log = "[?iron] iron produced"
+	
+	if = {
+		limit = {
+			check_variable = { deficit > 0 }
+		}
+		
+		set_temp_variable = { iron_need = deficit }
+		subtract_from_temp_variable = { iron = export_offset@iron }
+		add_to_temp_variable = { iron_need = iron }
+		divide_temp_variable = { iron_need = global.resource_cost@iron }
+		clamp_temp_variable = { var = iron_need min = 1 }
+		round_temp_variable = iron_need
+	}
+	
+	# COAL
+	
+	set_temp_variable = { deficit = conversion_actual_use_@coal }
+	add_to_temp_variable = { deficit = train_use@coal }
+	add_to_temp_variable = { deficit = conversion_actual_use_fuel@coal }
+	
+	set_temp_variable = { coal = resource_produced@coal }
+	add_to_temp_variable = { coal = export_offset@coal }
+	subtract_from_temp_variable = { coal = resource_exported@coal }
+	#add_to_temp_variable = { coal = resource_imported@coal }
+	
+	subtract_from_temp_variable = { deficit = coal }
+	
+	#log = "[?deficit] coal deficit"
+	#log = "[?coal] coal produced"
+	
+	if = {
+		limit = {
+			check_variable = { deficit > 0 }
+		}
+		
+		set_temp_variable = { coal_need = deficit }
+		subtract_from_temp_variable = { coal = export_offset@coal }
+		add_to_temp_variable = { coal_need = coal }
+		divide_temp_variable = { coal_need = global.resource_cost@coal }
+		clamp_temp_variable = { var = coal_need min = 1 }
+		round_temp_variable = coal_need
+	}
+	
+	# food
+	
+	set_temp_variable = { ai_food_need = resource_produced@food }
+	add_to_temp_variable = { ai_food_need = export_offset@food }
+	subtract_from_temp_variable = { ai_food_need = resource_exported@food }
+	ai_max_food_import = yes
+	if = {
+		limit = {
+			check_variable = { ai_max_food > 0 }
+		}
+		add_to_temp_variable = { ai_food_need = ai_max_food }
+		divide_temp_variable = { ai_food_need = global.resource_cost@food }
+		add_to_temp_variable = { ai_food_need = 0.5 }
+		round_temp_variable = ai_food_need
+	}
+	else = {
+		set_temp_variable = { ai_food_need = 0 }
+	}
+	
+	##############################
+	
+	if = {
+		limit = {
+			OR = {
+				#always = yes
+				NOT = { check_variable = { ai_import_bauxite = bauxite_need } }
+				NOT = { check_variable = { ai_import_iron = iron_need } }
+				NOT = { check_variable = { ai_import_coal = coal_need } }
+				NOT = { check_variable = { ai_import_food = ai_food_need } }
+			}
+		}
+		
+		set_variable = { ai_import_bauxite = bauxite_need }
+		set_variable = { ai_import_iron = iron_need }
+		set_variable = { ai_import_coal = coal_need }
+		set_variable = { ai_import_food = ai_food_need }
+		
+	### IRON
+		
+		#log = "IRON NEED: [?iron_need]"
+		if = { 
+			limit = {
+				check_variable = { iron_need > 99 }
+			}
+			#log = "		- above > 99"
+			set_temp_variable = { iron_x100 = iron_need }
+			divide_temp_variable = { iron_x100 = 100 }
+			subtract_from_temp_variable = { iron_x100 = 0.5 } #round down
+			round_temp_variable = iron_x100
+			#log = "		- iron_x100: [?iron_x100]"
+			
+			set_temp_variable = { remainder = iron_need }
+			modulo_temp_variable = { remainder = 100 }
+			
+			#log = "remainder: [?remainder] | iron_need: [?iron_need]"
+			
+			if = {
+				limit = {
+					check_variable = { remainder > 9 }
+				}
+				set_temp_variable = { iron_x10 = remainder }
+				divide_temp_variable = { iron_x10 = 10 }
+				subtract_from_temp_variable = { iron_x10 = 0.5 } #round down
+				round_temp_variable = iron_x10
+				#log = "		- iron_x10: [?iron_x10]"
+				
+				set_temp_variable = { remainder_temp = iron_x10 }
+				multiply_temp_variable = { remainder_temp = 10 }
+				subtract_from_temp_variable = { remainder = remainder_temp }
+			
+				#log = "remainder: [?remainder]"
+			
+			}
+			if = {
+				limit = {
+					check_variable = { remainder > 4 }
+				}
+				set_temp_variable = { iron_x5 = 1 }
+				subtract_from_temp_variable = { remainder = 5 }
+			}
+			
+			set_temp_variable = { iron_x1 = remainder }
+			
+			add_to_temp_variable = { total_upgrades = iron_x100 }
+			add_to_temp_variable = { total_upgrades = iron_x10 }
+			add_to_temp_variable = { total_upgrades = iron_x5 }
+			add_to_temp_variable = { total_upgrades = iron_x1 }
+		}
+		else_if = { 
+			limit = {
+				check_variable = { iron_need > 9 }
+			}
+			set_temp_variable = { iron_x10 = iron_need }
+			divide_temp_variable = { iron_x10 = 10 }
+			subtract_from_temp_variable = { iron_x10 = 0.5 } #round down
+			round_temp_variable = iron_x10
+			
+			set_temp_variable = { remainder = iron_need }
+			modulo_temp_variable = { remainder = 10 }
+			
+			if = {
+				limit = {
+					check_variable = { remainder > 4 }
+				}
+				set_temp_variable = { iron_x5 = 1 }
+				subtract_from_temp_variable = { remainder = 5 }
+			}
+			
+			set_temp_variable = { iron_x1 = remainder }
+			
+			add_to_temp_variable = { total_upgrades = iron_x10 }
+			add_to_temp_variable = { total_upgrades = iron_x5 }
+			add_to_temp_variable = { total_upgrades = iron_x1 }
+		}
+		else_if = {
+			limit = {
+				check_variable = { iron_need > 4 }
+			}
+			set_temp_variable = { iron_x5 = 1 }
+			
+			set_temp_variable = { iron_x1 = iron_need }
+			subtract_from_temp_variable = { iron_x1 = 5 }
+			
+			add_to_temp_variable = { total_upgrades = iron_x5 }
+			add_to_temp_variable = { total_upgrades = iron_x1 }
+		}
+		else = {
+			set_temp_variable = { iron_x1 = iron_need }
+			
+			add_to_temp_variable = { total_upgrades = iron_x1 }
+		}
+		
+		#log = "==== IRON OVERVIEW ===="
+		#log = "iron_x100: [?iron_x100]"
+		#log = "iron_x10: [?iron_x10]"
+		#log = "iron_x5: [?iron_x5]"
+		#log = "iron_x1: [?iron_x1]"
+	
+	### BAUXITE
+		
+		if = { 
+			limit = {
+				check_variable = { bauxite_need > 99 }
+			}
+			set_temp_variable = { bauxite_x100 = bauxite_need }
+			divide_temp_variable = { bauxite_x100 = 100 }
+			subtract_from_temp_variable = { bauxite_x100 = 0.5 } #round down
+			round_temp_variable = bauxite_x100
+			
+			set_temp_variable = { remainder = bauxite_need }
+			modulo_temp_variable = { remainder = 100 }
+			
+			if = {
+				limit = {
+					check_variable = { remainder > 9 }
+				}
+				set_temp_variable = { bauxite_x10 = remainder }
+				divide_temp_variable = { bauxite_x10 = 10 }
+				subtract_from_temp_variable = { bauxite_x10 = 0.5 } #round down
+				round_temp_variable = bauxite_x10
+				#log = "		- bauxite_x10: [?bauxite_x10]"
+				
+				set_temp_variable = { remainder_temp = bauxite_x10 }
+				multiply_temp_variable = { remainder_temp = 10 }
+				subtract_from_temp_variable = { remainder = remainder_temp }
+			
+				#log = "remainder: [?remainder]"
+			
+			}
+			if = {
+				limit = {
+					check_variable = { remainder > 4 }
+				}
+				set_temp_variable = { bauxite_x5 = 1 }
+				subtract_from_temp_variable = { remainder = 5 }
+			}
+			
+			set_temp_variable = { bauxite_x1 = remainder }
+			
+			add_to_temp_variable = { total_upgrades = bauxite_x100 }
+			add_to_temp_variable = { total_upgrades = bauxite_x10 }
+			add_to_temp_variable = { total_upgrades = bauxite_x5 }
+			add_to_temp_variable = { total_upgrades = bauxite_x1 }
+		}
+		else_if = { 
+			limit = {
+				check_variable = { bauxite_need > 9 }
+			}
+			set_temp_variable = { bauxite_x10 = bauxite_need }
+			divide_temp_variable = { bauxite_x10 = 10 }
+			subtract_from_temp_variable = { bauxite_x10 = 0.5 } #round down
+			round_temp_variable = bauxite_x10
+			
+			set_temp_variable = { remainder = bauxite_need }
+			modulo_temp_variable = { remainder = 10 }
+			
+			if = {
+				limit = {
+					check_variable = { remainder > 4 }
+				}
+				set_temp_variable = { bauxite_x5 = 1 }
+				subtract_from_temp_variable = { remainder = 5 }
+			}
+			
+			set_temp_variable = { bauxite_x1 = remainder }
+			
+			add_to_temp_variable = { total_upgrades = bauxite_x10 }
+			add_to_temp_variable = { total_upgrades = bauxite_x5 }
+			add_to_temp_variable = { total_upgrades = bauxite_x1 }
+		}
+		else_if = {
+			limit = {
+				check_variable = { bauxite_need > 4 }
+			}
+			set_temp_variable = { bauxite_x5 = 1 }
+			
+			set_temp_variable = { bauxite_x1 = bauxite_need }
+			subtract_from_temp_variable = { bauxite_x1 = 5 }
+			
+			add_to_temp_variable = { total_upgrades = bauxite_x5 }
+			add_to_temp_variable = { total_upgrades = bauxite_x1 }
+		}
+		else = {
+			set_temp_variable = { bauxite_x1 = bauxite_need }
+			
+			add_to_temp_variable = { total_upgrades = bauxite_x1 }
+		}
+		
+	### COAL
+		
+		
+		if = { 
+			limit = {
+				check_variable = { coal_need > 99 }
+			}
+			set_temp_variable = { coal_x100 = coal_need }
+			divide_temp_variable = { coal_x100 = 100 }
+			subtract_from_temp_variable = { coal_x100 = 0.5 } #round down
+			round_temp_variable = coal_x100
+			
+			set_temp_variable = { remainder = coal_need }
+			modulo_temp_variable = { remainder = 100 }
+			
+			if = {
+				limit = {
+					check_variable = { remainder > 9 }
+				}
+				set_temp_variable = { coal_x10 = remainder }
+				divide_temp_variable = { coal_x10 = 10 }
+				subtract_from_temp_variable = { coal_x10 = 0.5 } #round down
+				round_temp_variable = coal_x10
+				#log = "		- coal_x10: [?coal_x10]"
+				
+				set_temp_variable = { remainder_temp = coal_x10 }
+				multiply_temp_variable = { remainder_temp = 10 }
+				subtract_from_temp_variable = { remainder = remainder_temp }
+			
+				#log = "remainder: [?remainder]"
+			
+			}
+			if = {
+				limit = {
+					check_variable = { remainder > 4 }
+				}
+				set_temp_variable = { coal_x5 = 1 }
+				subtract_from_temp_variable = { remainder = 5 }
+			}
+			
+			set_temp_variable = { coal_x1 = remainder }
+			
+			add_to_temp_variable = { total_upgrades = coal_x100 }
+			add_to_temp_variable = { total_upgrades = coal_x10 }
+			add_to_temp_variable = { total_upgrades = coal_x5 }
+			add_to_temp_variable = { total_upgrades = coal_x1 }
+		}
+		else_if = { 
+			limit = {
+				check_variable = { coal_need > 9 }
+			}
+			set_temp_variable = { coal_x10 = coal_need }
+			divide_temp_variable = { coal_x10 = 10 }
+			subtract_from_temp_variable = { coal_x10 = 0.5 } #round down
+			round_temp_variable = coal_x10
+			
+			set_temp_variable = { remainder = coal_need }
+			modulo_temp_variable = { remainder = 10 }
+			
+			if = {
+				limit = {
+					check_variable = { remainder > 4 }
+				}
+				set_temp_variable = { coal_x5 = 1 }
+				subtract_from_temp_variable = { remainder = 5 }
+			}
+			
+			set_temp_variable = { coal_x1 = remainder }
+			
+			add_to_temp_variable = { total_upgrades = coal_x10 }
+			add_to_temp_variable = { total_upgrades = coal_x5 }
+			add_to_temp_variable = { total_upgrades = coal_x1 }
+		}
+		else_if = {
+			limit = {
+				check_variable = { coal_need > 4 }
+			}
+			set_temp_variable = { coal_x5 = 1 }
+			
+			set_temp_variable = { coal_x1 = coal_need }
+			subtract_from_temp_variable = { coal_x1 = 5 }
+			
+			add_to_temp_variable = { total_upgrades = coal_x5 }
+			add_to_temp_variable = { total_upgrades = coal_x1 }
+		}
+		else = {
+			set_temp_variable = { coal_x1 = coal_need }
+			
+			add_to_temp_variable = { total_upgrades = coal_x1 }
+		}
+		 
+	### FOOD
+		
+		if = { 
+			limit = {
+				check_variable = { food_need > 99.999 }
+			}
+			set_temp_variable = { food_x100 = food_need }
+			divide_temp_variable = { food_x100 = 100 }
+			subtract_from_temp_variable = { food_x100 = 0.5 } #round down
+			round_temp_variable = food_x100
+			
+			set_temp_variable = { remainder = food_need }
+			modulo_temp_variable = { remainder = 100 }
+			
+			if = {
+				limit = {
+					check_variable = { remainder > 9 }
+				}
+				set_temp_variable = { food_x10 = remainder }
+				divide_temp_variable = { food_x10 = 10 }
+				subtract_from_temp_variable = { food_x10 = 0.5 } #round down
+				round_temp_variable = food_x10
+				#log = "		- food_x10: [?food_x10]"
+				
+				set_temp_variable = { remainder_temp = food_x10 }
+				multiply_temp_variable = { remainder_temp = 10 }
+				subtract_from_temp_variable = { remainder = remainder_temp }
+			
+				#log = "remainder: [?remainder]"
+			
+			}
+			if = {
+				limit = {
+					check_variable = { remainder > 4 }
+				}
+				set_temp_variable = { food_x5 = 1 }
+				subtract_from_temp_variable = { remainder = 5 }
+			}
+			
+			set_temp_variable = { food_x1 = remainder }
+			
+			add_to_temp_variable = { total_upgrades = food_x100 }
+			add_to_temp_variable = { total_upgrades = food_x10 }
+			add_to_temp_variable = { total_upgrades = food_x5 }
+			add_to_temp_variable = { total_upgrades = food_x1 }
+		}
+		else_if = { 
+			limit = {
+				check_variable = { ai_food_need > 9 }
+			}
+			set_temp_variable = { food_x10 = ai_food_need }
+			divide_temp_variable = { food_x10 = 10 }
+			subtract_from_temp_variable = { food_x10 = 0.5 } #round down
+			round_temp_variable = food_x10
+			
+			set_temp_variable = { remainder = ai_food_need }
+			modulo_temp_variable = { remainder = 10 }
+			
+			if = {
+				limit = {
+					check_variable = { remainder > 4 }
+				}
+				set_temp_variable = { food_x5 = 1 }
+				subtract_from_temp_variable = { remainder = 5 }
+			}
+			
+			set_temp_variable = { food_x1 = remainder }
+			
+			add_to_temp_variable = { total_upgrades = food_x10 }
+			add_to_temp_variable = { total_upgrades = food_x5 }
+			add_to_temp_variable = { total_upgrades = food_x1 }
+		}
+		else_if = {
+			limit = {
+				check_variable = { ai_food_need > 4 }
+			}
+			set_temp_variable = { food_x5 = 1 }
+			
+			set_temp_variable = { food_x1 = ai_food_need }
+			subtract_from_temp_variable = { food_x1 = 5 }
+			
+			add_to_temp_variable = { total_upgrades = food_x5 }
+			add_to_temp_variable = { total_upgrades = food_x1 }
+		}
+		else = {
+			set_temp_variable = { food_x1 = ai_food_need }
+			
+			add_to_temp_variable = { total_upgrades = food_x1 }
+		}
+		
+		
+		#log = "[?total_upgrades] total upgradddes"
+		 
+
+	######################################################################
+		 
+		# calculate ai_fix level need to have more upgrades than last
+	
+		add_to_temp_variable = { total_upgrades = ai_fix_level }
+	
+		if = { #last one had more upgrades
+			limit = {
+				check_variable = { ai_last_total_upgrades > total_upgrades }
+			}
+			set_temp_variable = { difference = ai_last_total_upgrades }
+			subtract_from_temp_variable = { difference = total_upgrades }
+			add_to_temp_variable = { difference = 1 }
+			
+			add_to_variable = { ai_fix_level = difference }
+			
+			add_to_temp_variable = { total_upgrades = difference }
+			
+		}
+		else_if = { #new one has more upgrades
+			limit = {
+				check_variable = { ai_last_total_upgrades < total_upgrades }
+			}
+			
+		}
+		else = { #equal upgrades
+			add_to_variable = { ai_fix_level = 1 }
+			add_to_temp_variable = { total_upgrades = 1 }
+			
+		}
+		
+		
+		set_variable = { ai_last_total_upgrades = total_upgrades }
+
+		meta_effect = {
+			text = {
+				create_equipment_variant = {
+					type = ai_debug_equipment_1
+					upgrades = {
+						ai_bauxite_need = [B]
+						ai_bauxite_needx5 = [BV]
+						ai_bauxite_needx10 = [BX]
+						ai_iron_need = [I]
+						ai_iron_needx5 = [IV]
+						ai_iron_needx10 = [IX]
+						ai_coal_need = [C]
+						ai_coal_needx5 = [CV]
+						ai_coal_needx10 = [CX]
+						ai_food_need = [F]
+						ai_food_needx5 = [FV]
+						ai_food_needx10 = [FX]
+						ai_fix = [Z]
+					}
+					mark_older_equipment_obsolete = yes
+				}
+			}
+			B = "[?bauxite_x1]"
+			BV = "[?bauxite_x5]"
+			BX = "[?bauxite_x10]"
+			I = "[?iron_x1]"
+			IV = "[?iron_x5]"
+			IX = "[?iron_x10]"
+			C = "[?coal_x1]"
+			CV = "[?coal_x5]"
+			CX = "[?coal_x10]"
+			F = "[?food_x1]"
+			FV = "[?food_x5]"
+			FX = "[?food_x10]"
+			Z = "[?ai_fix_level]"
+		}
+	}
+}
+
+d_print_no_debug_equipment = {
+	every_country = {
+		limit = {
+			check_variable = { resource@placeholder_1 = 0 }
+		}
+		log = "[This.GetTag] does not produce debug equipment"
+	}
+	every_country = {
+		limit = {
+			check_variable = { resource@placeholder_1 < -100 }
+		}
+		log = "[This.GetTag] produces too much! [?resource@placeholder_1]"
+	}
+}
+
+update_train_coal_use = {
+
+	set_temp_variable = { available = resource_produced@coal }
+	add_to_temp_variable = { available = export_offset@coal }
+	subtract_from_temp_variable = { available = resource_exported@coal }
+	add_to_temp_variable = { available = resource_imported@coal }
+	
+	get_supply_vehicles_temp = { 
+		var = coal_use
+		type = train
+		need = yes
+	} 
+	
+	multiply_temp_variable = { coal_use = @TRAIN_COAL_USE }
+	if = {
+		limit = {
+			tag = SOV
+		}
+		multiply_temp_variable = { coal_use = 0.6 }
+	}
+	round_temp_variable = coal_use
+	
+	if = {
+		limit = {
+			check_variable = { coal_use > available }
+		}
+		set_variable = { train_use@coal = available }
+		set_variable = { train_use_target@coal = coal_use }
+		
+		set_variable = { train_coal_deficit = available }
+		divide_variable = { train_coal_deficit = coal_use }
+	}
+	else = {
+		set_variable = { train_use@coal = coal_use }
+		set_variable = { train_use_target@coal = coal_use }
+	}	
+	
+	if = { limit = { check_variable = { train_use@coal = 0 } } clear_variable = train_use@coal }
+	if = { limit = { check_variable = { train_use_target@coal = 0 } } clear_variable = train_use_target@coal }
+	#log = "[?coal_use] train coal use"
+}
+
+ui_civilian_energy_tooltip = {
+	set_temp_variable = { t = num_owned_civilian_factories }
+	multiply_temp_variable = { t = constant:energy.cost.civilian }
+	set_temp_variable = { factor = modifier@energy_need_civilian_factor }
+	add_to_temp_variable = { factor = 1 }
+	multiply_temp_variable = { t = factor }
+	set_temp_variable = { t2 = num_owned_civilian_factories }	
+	custom_effect_tooltip = "Civ_Energy_TT"
+}
+
+ui_military_energy_tooltip = {
+	set_temp_variable = { t = num_owned_military_factories }
+	multiply_temp_variable = { t = constant:energy.cost.military }
+	
+	set_temp_variable = { t2 = num_air_assembly }
+	set_temp_variable = { t3 = num_tank_assembly }
+	set_temp_variable = { t4 = num_engine_assembly }
+	set_temp_variable = { t5 = num_artillery_assembly }
+	multiply_temp_variable = { t2 = constant:energy.cost.assembly }
+	multiply_temp_variable = { t3 = constant:energy.cost.assembly }
+	multiply_temp_variable = { t4 = constant:energy.cost.assembly }
+	multiply_temp_variable = { t5 = constant:energy.cost.assembly }
+
+	set_temp_variable = { t6 = t2 }
+	add_to_temp_variable = { t6 = t3 }
+	add_to_temp_variable = { t6 = t4 }
+	add_to_temp_variable = { t6 = t5 }
+	add_to_temp_variable = { t6 = t }	
+	
+	set_temp_variable = { t_u = num_owned_military_factories }
+	set_temp_variable = { t2_u = num_air_assembly }
+	set_temp_variable = { t3_u = num_tank_assembly }
+	set_temp_variable = { t4_u = num_engine_assembly }
+	set_temp_variable = { t5_u = num_artillery_assembly }
+
+	
+	custom_effect_tooltip = "Mil_Energy_TT"
+}
+
+ui_naval_energy_tooltip = {
+	set_temp_variable = { t = num_of_naval_factories }
+	multiply_temp_variable = { t = constant:energy.cost.naval }
+	
+	set_temp_variable = { t2 = num_capital_shipyard }
+	set_temp_variable = { t3 = num_shipyard }
+	set_temp_variable = { t4 = num_subyard }	
+	multiply_temp_variable = { t2 = constant:energy.cost.assembly }
+	multiply_temp_variable = { t3 = constant:energy.cost.assembly }
+	multiply_temp_variable = { t4 = constant:energy.cost.assembly }	
+
+	set_temp_variable = { t6 = t2 }
+	add_to_temp_variable = { t6 = t3 }
+	add_to_temp_variable = { t6 = t4 }	
+	add_to_temp_variable = { t6 = t }	
+	
+	set_temp_variable = { t_u = num_of_naval_factories }
+	set_temp_variable = { t2_u = num_capital_shipyard }
+	set_temp_variable = { t3_u = num_shipyard }
+	set_temp_variable = { t4_u = num_subyard }	
+	
+	custom_effect_tooltip = "Naval_Energy_TT"
+}
+
+ui_energy_coal_delayed_tooltip = {
+	set_temp_variable = { energy_from_coal = constant:energy.gain.coal }
+	set_temp_variable = { factor = modifier@energy_coal_factor }
+	add_to_temp_variable = { factor = 1 }
+	multiply_temp_variable = { energy_from_coal = factor }
+	
+	custom_effect_tooltip = ENERGY_FROM_COAL_TOOLTIP
+
+}
+ui_energy_fuel_delayed_tooltip = {
+	set_temp_variable = { energy_from_fuel = constant:energy.gain.fuel }
+	set_temp_variable = { factor = modifier@energy_fuel_factor }
+	add_to_temp_variable = { factor = 1 }
+	multiply_temp_variable = { energy_from_fuel = factor }
+	
+	custom_effect_tooltip = ENERGY_FROM_FUEL_TOOLTIP
+	
+}
+ui_energy_hydro_delayed_tooltip = {
+	
+	set_temp_variable = { energy_from_hydro = constant:energy.gain.hydro }
+	set_temp_variable = { factor = modifier@energy_hydro_factor }
+	add_to_temp_variable = { factor = 1 }
+	multiply_temp_variable = { energy_from_hydro = factor }
+	
+	custom_effect_tooltip = ENERGY_FROM_HYDRO_TOOLTIP
+	
+}
+
+update_resource_storage = {
+	# Materials
+	for_each_loop = {
+		array = global.storage_mat
+		
+		if = {
+			limit = {
+				check_variable = { max_storage@var:v > 0 }
+			}
+		
+			set_temp_variable = { t = resource@var:v }
+			clamp_temp_variable = { var = t min = 0 }
+			subtract_from_temp_variable = { t = storage_output@var:v }
+			multiply_temp_variable = { t = update_frequency?1 }
+			
+			add_to_variable = { storage@var:v = t }
+			add_to_temp_variable = { ui_d = t }
+		
+			if = { #STORAGE IS EMPTY -> clear resource output
+				limit = { 
+					check_variable = { 0 > storage@var:v }
+				}
+				clear_variable = storage@var:v
+				clear_variable = storage_output@var:v
+				
+				if = {
+					limit = {
+						has_dynamic_modifier = { modifier = storage }
+						all_of = {
+							array = global.storage
+							
+							check_variable = { storage_output@var:v = 0 }
+						}
+					}
+					remove_dynamic_modifier = { modifier = storage }
+				}
+			}
+			else = {
+				clamp_variable = { var = storage@var:v max = max_storage@var:v }
+			}
+		}
+		else = {
+			clear_variable = storage@var:v
+			clear_variable = storage_output@var:v
+		}
+	}
+	
+	# Ores
+	for_each_loop = {
+		array = global.storage_ore
+		
+		if = {
+			limit = {
+				check_variable = { max_storage@var:v > 0 }
+			}
+			set_temp_variable = { t = resource_produced@var:v }
+			add_to_temp_variable = { t = export_offset@var:v }
+			subtract_from_temp_variable = { t = resource_exported@var:v }
+			add_to_temp_variable = { t = resource_imported@var:v }
+			subtract_from_temp_variable = { t = conversion_use_@var:v }
+			subtract_from_temp_variable = { t = conversion_use_fuel@var:v }
+			subtract_from_temp_variable = { t = train_use@var:v }
+			clamp_temp_variable = { var = t min = 0 }
+			
+			subtract_from_temp_variable = { t = storage_output@var:v }
+			multiply_temp_variable = { t = update_frequency?1 }
+			round_temp_variable = t
+			
+			add_to_variable = { storage@var:v = t }
+			add_to_temp_variable = { ui_d = t }
+			
+			if = { #STORAGE IS EMPTY -> clear resource output
+				limit = { 
+					check_variable = { 0 > storage@var:v }
+				}
+				clear_variable = storage@var:v
+				clear_variable = storage_output@var:v
+				
+				if = {
+					limit = {
+						has_dynamic_modifier = { modifier = storage }
+						all_of = {
+							array = global.storage
+							
+							check_variable = { storage_output@var:v = 0 }
+						}
+					}
+					remove_dynamic_modifier = { modifier = storage }
+				}
+			}
+			else = {
+				clamp_variable = { var = storage@var:v max = max_storage@var:v }
+			}
+		}
+		else = {
+			clear_variable = storage@var:v
+			clear_variable = storage_output@var:v
+		}
+	}
+
+	# Chromium
+	if = {
+		limit = {
+			check_variable = { max_storage@chromium > 0 }
+		}
+	
+		set_temp_variable = { t = resource@chromium }
+		subtract_from_temp_variable = { t = alloy_input_actual }
+		clamp_temp_variable = { var = t min = 0 }
+		subtract_from_temp_variable = { t = storage_output@chromium }
+		multiply_temp_variable = { t = update_frequency?1 }
+		
+		add_to_variable = { storage@chromium = t }
+		add_to_temp_variable = { ui_d = t }
+		
+		if = { #STORAGE IS EMPTY -> clear resource output
+			limit = { 
+				check_variable = { 0 > storage@chromium }
+			}
+			clear_variable = storage@chromium
+			clear_variable = storage_output@chromium
+			
+			if = {
+				limit = {
+					has_dynamic_modifier = { modifier = storage }
+					all_of = {
+						array = global.storage
+						
+						check_variable = { storage_output@var:v = 0 }
+					}
+				}
+				remove_dynamic_modifier = { modifier = storage }
+			}
+		}
+		else = {
+			clamp_variable = { var = storage@chromium max = max_storage@chromium }
+		}
+	}
+	else = {
+		clear_variable = storage@chromium
+		clear_variable = storage_output@chromium
+	}
+	
+	add_to_variable = { ui_storage = ui_d }
+}
+
+update_storage_output = {
+	hidden_effect = { country_event = { id = BI_techs.10 hours = 1 } }
+}
+
+update_storage_building_output = {
+	for_each_loop = {
+		array = global.storage
+		
+		if = {
+			limit = {
+				has_variable = storage_output@var:v
+			}
+			set_temp_variable = { factor = modifier@storage_output_factor }
+			add_to_temp_variable = { factor = 1 }
+			
+			set_variable = { storage_output@var:v = global.resource_cost@var:v }
+			multiply_variable = { storage_output@var:v = factor }
+			set_temp_variable = { t = storage_output@var:v }
+			multiply_variable = { storage_output@var:v = num_storage@var:v }
+			add_to_variable = { storage_output@var:v = t }
+		}
+	}
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

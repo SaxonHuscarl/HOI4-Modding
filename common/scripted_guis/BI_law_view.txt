@@ -1,0 +1,1007 @@
+
+scripted_gui = {
+	BI_country_laws = {
+		context_type = player_context
+		    
+		window_name = "BI_country_laws"
+		parent_window_name = ideas_overlay  
+		
+		visible = { 
+			
+		}
+		
+		dirty = ui_selected_law
+        
+		properties = {    
+			add_idea_button = {     
+				image = GFX_idea_[?selected.GetTokenKey]
+				x = idea_entry_x
+				y = idea_entry_y
+			}
+			lack_of_food_pointer = {
+				x = lofx
+			}
+			lack_of_fuel_pointer = {
+				x = lofux
+			}
+		}
+		dynamic_lists = {
+			law_list = {  
+				array = global.law_ui
+		 		change_scope = yes
+				entry_container = "law_entry"
+			}
+		}     
+		triggers = {
+			hide2_visible = {
+				is_ai = no
+			}
+			ideology_list_visible = {
+				OR = {
+					NOT = { check_variable = { num_advisor@conservatism = 0 } }
+					NOT = { check_variable = { num_advisor@liberalism = 0 } }
+					NOT = { check_variable = { num_advisor@socialism = 0 } }
+					NOT = { check_variable = { num_advisor@agrarianism = 0 } }
+					NOT = { check_variable = { num_advisor@fascism = 0 } }
+					NOT = { check_variable = { num_advisor@communism = 0 } }
+					NOT = { check_variable = { num_advisor@neutrality = 0 } }
+					NOT = { check_variable = { num_advisor@monarchism = 0 } }
+				}
+			}
+			add_idea_button_click_enabled = {
+			
+				set_temp_variable = { entry = law_level@var:v }
+				
+				set_temp_variable = { selected = global.law@var:v^entry }
+				
+				if = { #this only works atm cause civ_fuel_usage is the last law, otherwise set these vars to 0 for others
+					limit = {
+						check_variable = { v = token:civ_fuel_usage }
+					}
+					set_temp_variable = { idea_entry_x = 6 }
+					set_temp_variable = { idea_entry_y = 100 }
+				}
+				else_if = {
+					limit = {
+						check_variable = { v = token:diet_laws }
+					}
+					set_temp_variable = { idea_entry_x = -70 }
+					set_temp_variable = { idea_entry_y = 21 }
+				}
+				else = {
+					set_temp_variable = { idea_entry_x = 0 }
+					set_temp_variable = { idea_entry_y = 0 }
+				}
+			}
+			law_selected_overlay_visible = {
+				has_variable = law_category
+			}
+			law_selected_overlay2_visible = {
+				has_variable = law_category
+			}
+			
+			lack_of_food_pointer_click_enabled = {
+				set_temp_variable = { lofx = 495 }
+				multiply_temp_variable = { lofx = lack_of_food }
+				add_to_temp_variable = { lofx = 85 }
+			}
+			lack_of_fuel_pointer_click_enabled = {
+				set_temp_variable = { lofux = 495 }
+				multiply_temp_variable = { lofux = lack_of_fuel }
+				add_to_temp_variable = { lofux = 85 }
+			}
+		}  
+		  
+		effects = {   
+			law_selected_overlay_click = {
+				ui_close_selected_laws = yes
+				
+				add_to_variable = { ui_selected_law = 1 }
+			}
+			law_selected_overlay2_click = {
+				ui_close_selected_laws = yes
+				
+				add_to_variable = { ui_selected_law = 1 }
+			}
+			add_idea_button_click = {
+				if = {
+					limit = {
+						check_variable = { law_category = v }
+					}
+					clear_variable = law_category
+				}
+				else = { 
+					set_variable = { law_category = v } 
+					
+					# Open trade laws
+					
+					#calculate cost and sort them according to ui_override_law_order
+					ui_open_selected_laws = yes	
+				}
+				
+				effect_tooltip = {
+					if = { ### TOOLTIP WHEN CHANGING LAW
+						limit = {
+							has_variable = law_change_days@var:v
+						}
+						set_temp_variable = { law_daily = 1 }
+						add_to_temp_variable = { law_daily = modifier@var:global.law_mod@var:v }
+						
+						set_temp_variable = { law_change_target = law_level@var:v }
+						 
+						if = { #leveling up
+							limit = {
+								check_variable = { law_change_num@var:v > 0 }
+							}
+							add_to_temp_variable = { law_change_target = 1 }
+						}
+						else_if = { 
+							limit = {
+								check_variable = { law_change_num@var:v < 0 }
+							}
+							add_to_temp_variable = { law_change_target = -1 }
+						} 
+					  
+						custom_effect_tooltip = LAW_VIEW_TITLE
+						
+						if = {
+							limit = {
+								NOT = {
+									check_variable = { law_change_num@var:v = 1 }
+									check_variable = { law_change_num@var:v = -1 }
+								}
+							} 
+							
+							set_temp_variable = { final_law_target = law_level@var:v }
+							add_to_temp_variable = { final_law_target = law_change_num@var:v }
+							add_to_temp_variable = { final_law_target = law_target_after_change@var:v }
+					
+							custom_effect_tooltip = LAW_VIEW_FURTHER_UPGRADES
+						}
+						custom_effect_tooltip = LAW_VIEW_TEXT
+						 
+						if = {
+							limit = { check_variable = { v = token:economy } }
+							MTT_get_economy_switch_modifiers = yes
+						}
+						else_if = {
+							limit = { check_variable = { v = token:mobilization_laws } }
+							MTT_get_army_mobilisation_modifiers = yes
+						}
+						custom_effect_tooltip = "empty_line"
+						
+						meta_effect = {
+							text = { 
+								custom_effect_tooltip = idea_desc|[X]
+								[X]_data = yes 
+								
+							}
+							X = "[?law_change_idea@var:v.GetTokenKey]"
+						}
+					}
+					
+					else = {
+					
+						if = {
+							limit = {
+								check_variable = { v = token:trade_laws }
+							}
+							meta_effect = {
+								text = { 
+									[X]_data = yes 
+									
+								}
+								X = "[?selected.GetTokenKey]"
+							}
+						}
+						else = {
+							meta_effect = {
+								text = { 
+									custom_effect_tooltip = idea_desc|[X]
+									[X]_data = yes 
+									
+								}
+								X = "[?selected.GetTokenKey]"
+							}
+						}
+						
+					}
+				}
+
+				add_to_variable = { ui_selected_law = 1 }				
+			}
+			
+			lack_of_food_bg_click = {
+				custom_effect_tooltip = LACK_OF_FOOD_TITLE
+				# if = {
+				# 	limit = {
+				# 		check_variable = { lack_of_food > lack_of_food_target }
+				# 	}
+				# 	custom_effect_tooltip = LACK_OF_FOOD_DECREASE
+				# }
+				# else = {
+				# 	custom_effect_tooltip = LACK_OF_FOOD_INCREASE
+				# }
+				custom_effect_tooltip = LACK_OF_FOOD_CURRENT_DEBUFF
+				ui_lack_of_food = yes
+			} 
+			lack_of_food_1_click = { 
+				custom_effect_tooltip = LACK_OF_FOOD_MAX_DEBUFF_TEXT
+				lack_of_food_1 = yes
+			}
+			lack_of_food_2_click = { 
+				custom_effect_tooltip = LACK_OF_FOOD_MAX_DEBUFF_TEXT
+				lack_of_food_2 = yes
+			}
+			lack_of_food_3_click = { 
+				custom_effect_tooltip = LACK_OF_FOOD_MAX_DEBUFF_TEXT
+				lack_of_food_3 = yes
+			}
+			
+			lack_of_fuel_bg_click = {
+				custom_effect_tooltip = LACK_OF_FUEL_TITLE
+				if = {
+					limit = {
+						check_variable = { lack_of_fuel > lack_of_fuel_target }
+					}
+					custom_effect_tooltip = LACK_OF_FUEL_DECREASE
+				}
+				else = {
+					custom_effect_tooltip = LACK_OF_FUEL_INCREASE
+				}
+				custom_effect_tooltip = LACK_OF_FUEL_CURRENT_DEBUFF
+				ui_lack_of_fuel = yes
+			} 
+			lack_of_fuel_1_click = { 
+				custom_effect_tooltip = LACK_OF_FUEL_MAX_DEBUFF_TEXT
+				lack_of_fuel_1 = yes
+			}
+			lack_of_fuel_2_click = { 
+				custom_effect_tooltip = LACK_OF_FUEL_MAX_DEBUFF_TEXT
+				lack_of_fuel_2 = yes
+			}
+			lack_of_fuel_3_click = { 
+				custom_effect_tooltip = LACK_OF_FUEL_MAX_DEBUFF_TEXT
+				lack_of_fuel_3 = yes
+			}
+		} 
+		     
+	}
+	BI_country_laws_selected = {
+		context_type = player_context
+		    
+		window_name = "BI_country_laws_selected"
+		parent_window_token = politics_tab
+		 
+		dirty = ui_selected_law
+        
+		visible = {
+			has_variable = law_category
+			NOT = { check_variable = { law_category = token:trade_laws } }
+		}
+        
+		dynamic_lists = {
+			country_law_list = {  
+				array = selected_laws
+		 		change_scope = yes
+				entry_container = "country_law_entry"
+			}
+		}     
+		      
+		properties = {   
+			law_icon = {     
+				image = GFX_idea_[?v.GetTokenKey]
+			}   
+		    law_icon_change = {      
+				image = "[GetLawChangeGFX]"
+			}
+			idea_traits = {    
+				image = "[GetLawChangeIcon]"
+			}
+			progress = {
+				frame = progress_frame 
+			}
+			select_law = { frame = selected_frame }
+		}    
+		   
+		triggers = {
+			select_law_click_enabled = {
+				law_select_trigger = yes
+				
+				set_temp_variable = { law_change_target = law_level@var:law_category }
+		 		
+				if = { #leveling up
+					limit = {
+						check_variable = { law_change_num@var:law_category > 0 }
+					}
+					add_to_temp_variable = { law_change_target = 1 }
+				}
+				else_if = { 
+					limit = {
+						check_variable = { law_change_num@var:law_category < 0 }
+					}
+					add_to_temp_variable = { law_change_target = -1 }
+				} 
+				    
+				## HIGHLIGHTING
+				if = {  
+					limit = {
+						#has_idea = var:v
+						check_variable = { selected_laws_index^i = law_change_target }
+			 		  	
+					}
+					set_temp_variable = { selected_frame = 2 }
+					
+				}
+				else = {
+					set_temp_variable = { selected_frame = 1 }
+					 
+					if = {
+						limit = {
+							NOT = { has_global_flag = allow_laws }
+						}
+						meta_trigger = {
+					 		text = { can_take_[Y] = yes } 
+							Y = "[?v.GetTokenKey]"
+						} 
+					}
+					set_temp_variable = { trigger_true = 1 }
+					hidden_trigger = {
+						has_political_power > selected_laws_cost^i
+					}
+				}
+			}  
+			law_icon_visible = {
+				OR = {
+					NOT = { check_variable = { selected_laws_index^i = law_change_target } }
+					check_variable = { law_change_days@var:law_category = 0 }
+				}
+			}  
+			law_icon_click_enabled = {
+				OR = {
+					check_variable = { trigger_true = 1 }
+					check_variable = { selected_laws_index^i = law_level@var:law_category }
+				}
+			}
+			law_icon_change_visible = {
+			  	check_variable = { selected_laws_index^i = law_change_target }
+				has_variable = law_change_days@var:law_category
+			}
+			  
+			days_visible = {
+				check_variable = { law_change_system = 1 }      
+				OR = {
+					NOT = { check_variable = { law_level@var:law_category = selected_laws_index^i } }
+					NOT = { check_variable = { law_change_num@var:law_category = 0 } }
+				}
+				
+				if = {
+					limit = {
+						check_variable = { law_category = token:economy }
+					}
+					NOT = {
+				   		has_idea = KMT_corrupted_government
+						has_idea = KMT_corrupted_government_lesser
+						has_idea = KMT_corrupted_government_wartime
+						has_idea = KMT_corrupted_government_wartime_lesser
+						has_idea = PRC_guerrilla_warfare
+					}
+				}
+			}
+			  
+			cost_visible = {      
+			}   
+			 
+			progress_visible = {
+				has_variable = law_change_days@var:law_category
+				
+				check_variable = { selected_laws_index^i = law_change_target }
+				
+				set_temp_variable = { progress_frame = law_change_progress@var:law_category }
+				divide_temp_variable = { progress_frame = law_change_days@var:law_category }
+				multiply_temp_variable = { progress_frame = 100 }
+		
+			}
+		} 
+		
+		effects = { 
+			close_click = {
+				ui_close_selected_laws = yes
+				
+				add_to_variable = { ui_selected_law = 1 }
+			}
+			switch_modifier_display_click = {
+				if = {
+					limit = {
+						has_country_flag = ui_compare_law_modifiers
+					}
+					custom_effect_tooltip = "LAW_SWITCH_TO_MODIFIER"
+					clr_country_flag = ui_compare_law_modifiers
+				}
+				else = {
+					custom_effect_tooltip = "LAW_SWITCH_TO_COMPARE"
+					set_country_flag = ui_compare_law_modifiers
+				}
+				add_to_variable = { ui_selected_law = 1 }
+			}
+					
+			
+			select_law_click = {
+				custom_effect_tooltip = "LAW_TITLE_TEXT"
+
+		 		if = { ### TOOLTIP WHEN CHANGING LAW
+		 			limit = {
+		 	 			has_variable = law_change_days@var:law_category
+						check_variable = { selected_laws_index^i = law_change_target }
+					}
+					set_temp_variable = { law_daily = 1 }
+					add_to_temp_variable = { law_daily = modifier@var:global.law_mod@var:law_category }
+					
+					custom_effect_tooltip = LAW_SWITCH_TITLE
+					
+					if = {
+						limit = {
+							NOT = {
+								check_variable = { law_change_num@var:law_category = 1 }
+			 					check_variable = { law_change_num@var:law_category = -1 }
+					 		}
+						} 
+						
+						set_temp_variable = { final_law_target = law_level@var:law_category }
+						add_to_temp_variable = { final_law_target = law_change_num@var:law_category }
+						add_to_temp_variable = { final_law_target = law_target_after_change@var:law_category }
+		 		
+						custom_effect_tooltip = LAW_SWITCH_FURTHER_UPGRADES
+					}
+					custom_effect_tooltip = LAW_SWITCH_TEXT
+					 
+					if = {
+						limit = { check_variable = { law_category = token:economy } }
+						MTT_get_economy_switch_modifiers = yes
+					}
+					else_if = {
+				 		limit = { check_variable = { law_category = token:mobilization_laws } }
+						MTT_get_army_mobilisation_modifiers = yes
+					}
+					custom_effect_tooltip = "empty_line"
+				
+					meta_effect = {
+						text = { 
+							custom_effect_tooltip = idea_desc|[X]
+							[X]_data = yes 
+							
+						}
+						X = "[?law_change_idea@var:law_category.GetTokenKey]"
+					}
+				}
+				else = {
+				
+					set_temp_variable = { level = selected_laws_index^i }
+				
+					if = {
+						limit = {
+							has_country_flag = ui_compare_law_modifiers
+						}
+						effect_tooltip = {
+							swap_ideas = {
+								remove_idea = var:global.law@var:law_category^law_level@var:law_category
+								add_idea = var:global.law@var:law_category^level
+							}
+						}
+					}
+					else = {
+						effect_tooltip = {
+							meta_effect = { 
+								text = { 
+									custom_effect_tooltip = idea_desc|[X]
+									[X]_data = yes 
+								}
+								X = "[?v.GetTokenKey]"
+							}
+						}
+					}
+				}
+				
+				set_temp_variable = { level = selected_laws_index^i }
+				if = {
+					limit = {
+						NOT = { check_variable = { law_level@var:law_category = level } }
+						NOT = { has_variable = law_change_days@var:law_category }
+					}
+					
+					## timed law change
+					if = {     
+						limit = {			
+							OR = {
+								check_variable = { law_category = token:economy }
+								check_variable = { law_category = token:mobilization_laws }
+								check_variable = { law_category = token:cadet_training_standards }
+								check_variable = { law_category = token:officer_training_standards }
+							}
+							if = {
+								limit = {
+									check_variable = { law_category = token:economy }
+								}
+								NOT = {
+									has_idea = KMT_corrupted_government
+									has_idea = KMT_corrupted_government_lesser
+									has_idea = KMT_corrupted_government_wartime
+									has_idea = KMT_corrupted_government_wartime_lesser
+									has_idea = PRC_guerrilla_warfare
+									check_variable = { v = token:KMT_corrupted_government }
+									check_variable = { v = token:KMT_corrupted_government_lesser }
+									check_variable = { v = token:KMT_corrupted_government_wartime }
+									check_variable = { v = token:KMT_corrupted_government_wartime_lesser }
+									check_variable = { v = token:PRC_guerrilla_warfare }
+								}
+							}
+						}
+						#custom_effect_tooltip = "start law change via ui"
+						
+						set_temp_variable = { cost = selected_laws_cost^i }
+						multiply_temp_variable = { cost = -1 }
+						
+						hidden_effect = {
+							add_political_power = cost
+						
+							start_law_change = yes
+						}
+					} 
+					else = {
+					
+						if = {
+							limit = {
+								check_variable = { law_category = token:economy }
+								OR = {
+									has_idea = KMT_corrupted_government
+									has_idea = KMT_corrupted_government_lesser
+									has_idea = KMT_corrupted_government_wartime
+									has_idea = KMT_corrupted_government_wartime_lesser
+									has_idea = PRC_guerrilla_warfare
+								}
+							} 
+							set_variable = { law_change_complete = 1 }
+						}
+				
+						set_temp_variable = { cost = selected_laws_cost^i }
+						multiply_temp_variable = { cost = -1 }
+						
+						if = {
+							limit = {
+								has_variable = law_cost_discount@var:law_category
+							}
+							clear_variable = law_cost_discount@var:law_category
+						}
+						
+						hidden_effect = { 
+							add_ideas = var:v 
+							
+							add_political_power = cost
+						}
+								
+								
+						#calculate cost and sort them according to ui_override_law_order
+						ui_open_selected_laws = yes
+					}
+				}
+				add_to_variable = { ui_selected_law = 1 }
+			}
+			cost_click = {
+				ui_show_law_cost_breakdown = yes
+			}
+		}
+		
+	}
+	
+	BI_trade_laws_selected = {
+		context_type = player_context
+		    
+		window_name = "BI_country_laws_selected"
+		parent_window_token = politics_tab
+		 
+		visible = {
+			check_variable = { law_category = token:trade_laws }
+		}
+		
+		dirty = ui_selected_law
+        
+		dynamic_lists = {
+			country_law_list = {  
+				array = selected_laws
+		 		change_scope = yes
+				entry_container = "country_law_entry"
+			}
+		}     
+		      
+		properties = {   
+			law_icon = {     
+				image = GFX_idea_[?v.GetTokenKey]
+				x = pos_xl
+				y = pos_yl
+			}   
+		    law_icon_change = {      
+				image = "[GetLawChangeGFX]"
+			}
+			idea_traits = {    
+				image = "[GetLawChangeIcon]"
+			}
+			progress = {
+				frame = progress_frame 
+			}
+			
+			select_law = { 
+				image = "[GetSelectLawGFX]"
+				frame = selected_frame 
+				x = pos_x
+				y = pos_y
+			}
+			name = {
+				x = pos_xt
+				y = pos_yt
+			}
+			stats = {
+				x = pos_xt
+				y = pos_ys
+			}
+			cost = {
+				x = pos_xc
+				y = pos_yt
+			}
+		}    
+		    
+		triggers = {
+			select_law_click_enabled = {
+				if = {
+					limit = {
+						OR = {
+							NOT = { check_variable = { selected_sublaws^i = 0 } }
+							check_variable = { v = token:free_trade }
+							check_variable = { v = token:export_focus }
+							check_variable = { v = token:limited_exports }
+							check_variable = { v = token:closed_economy }
+						}
+					}
+						
+					if = {
+						limit = {
+							OR = {
+								check_variable = { v = token:free_trade }
+								check_variable = { v = token:export_focus }
+								check_variable = { v = token:limited_exports }
+								check_variable = { v = token:closed_economy }
+							}
+						}
+						set_temp_variable = { pos_x = 3 }
+						set_temp_variable = { pos_xc = pos_x }
+						add_to_temp_variable = { pos_xc = 308 }
+								
+						set_temp_variable = { pos_xt = pos_x }
+						add_to_temp_variable = { pos_xt = 84 }
+								
+					}
+					else = {
+						set_temp_variable = { pos_x = 40 }
+						set_temp_variable = { pos_xc = pos_x }
+						add_to_temp_variable = { pos_xc = 268 }
+						set_temp_variable = { pos_xt = pos_x }
+						add_to_temp_variable = { pos_xt = 24 }
+								
+					}
+					
+					set_temp_variable = { pos_y = selected_sublaws^i }
+				}
+				else = {
+					set_temp_variable = { pos_y = 0 }
+				}
+				
+				set_temp_variable = { pos_xl = pos_x }
+				add_to_temp_variable = { pos_xl = 42 }
+				set_temp_variable = { pos_yl = pos_y }
+				add_to_temp_variable = { pos_yl = 38 }
+				
+				set_temp_variable = { pos_yt = pos_y }
+				add_to_temp_variable = { pos_yt = 15 }
+				
+				set_temp_variable = { pos_ys = pos_y }
+				add_to_temp_variable = { pos_ys = 40 }
+				
+				law_select_trigger = yes
+				
+				set_temp_variable = { law_change_target = law_level@var:law_category }
+		 		
+				## HIGHLIGHTING
+				if = {  
+					limit = {
+						OR = {
+							has_idea = var:v
+							AND = {
+								check_variable = { selected_laws_index^i = law_change_target }
+								OR = {
+									check_variable = { v = token:free_trade }
+									check_variable = { v = token:export_focus }
+									check_variable = { v = token:limited_exports }
+									check_variable = { v = token:closed_economy }
+								}
+							}
+						}
+					}
+					set_temp_variable = { selected_frame = 2 }
+					
+				}
+				else = {
+					set_temp_variable = { selected_frame = 1 }
+					 
+					if = {
+						limit = {
+							NOT = { has_global_flag = allow_laws }
+							OR = {
+								check_variable = { v = token:free_trade }
+								check_variable = { v = token:export_focus }
+								check_variable = { v = token:limited_exports }
+								check_variable = { v = token:closed_economy }
+							}
+						}
+						meta_trigger = {
+					 		text = { can_take_[Y] = yes } 
+							Y = "[?v.GetTokenKey]"
+						} 
+					}
+					set_temp_variable = { trigger_true = 1 }
+					hidden_trigger = {
+						has_political_power > selected_laws_cost^i
+					}
+				}
+				   
+			}  
+			law_icon_click_enabled = {
+				OR = {
+					check_variable = { trigger_true = 1 }
+					check_variable = { selected_laws_index^i = law_level@var:law_category }
+				}
+			}
+			law_icon_visible = {
+				OR = {
+					check_variable = { v = token:free_trade }
+					check_variable = { v = token:export_focus }
+					check_variable = { v = token:limited_exports }
+					check_variable = { v = token:closed_economy }
+				}
+			}
+			law_icon_change_visible = {
+			  	always = no
+			}
+			  
+			days_visible = {
+				always = no
+			}
+			
+			cost_visible = {
+				if = {
+					limit = {
+						NOT = {
+							check_variable = { v = token:free_trade }
+							check_variable = { v = token:export_focus }
+							check_variable = { v = token:limited_exports }
+							check_variable = { v = token:closed_economy }
+						}
+					}
+					NOT = { check_variable = { sublaw@trade_laws = v } }
+				}
+			}
+			  
+			progress_visible = {
+				always = no
+			}
+			stats_visible = {
+				OR = {
+					check_variable = { v = token:free_trade }
+					check_variable = { v = token:export_focus }
+					check_variable = { v = token:limited_exports }
+					check_variable = { v = token:closed_economy }
+				}
+			}
+		} 
+		
+		effects = { 
+			close_click = {
+				ui_close_selected_laws = yes
+				add_to_variable = { ui_selected_law = 1 }
+			}
+			switch_modifier_display_click = {
+				if = {
+					limit = {
+						has_country_flag = ui_compare_law_modifiers
+					}
+					custom_effect_tooltip = "LAW_SWITCH_TO_MODIFIER"
+					clr_country_flag = ui_compare_law_modifiers
+				}
+				else = {
+					custom_effect_tooltip = "LAW_SWITCH_TO_COMPARE"
+					set_country_flag = ui_compare_law_modifiers
+				}
+				add_to_variable = { ui_selected_law = 1 }
+			}
+					
+			
+			select_law_click = {
+				custom_effect_tooltip = "LAW_TITLE_TEXT"
+				  
+				set_temp_variable = { level = selected_laws_index^i }
+				#custom_effect_tooltip = "[?level] LEVEL"
+				
+				if = {
+					limit = {
+						OR = {
+							check_variable = { v = token:free_trade }
+							check_variable = { v = token:export_focus }
+							check_variable = { v = token:limited_exports }
+							check_variable = { v = token:closed_economy }
+						}
+					}
+							
+					if = {
+						limit = {
+							has_country_flag = ui_compare_law_modifiers
+						}
+						effect_tooltip = {
+							swap_ideas = {
+								remove_idea = var:global.law@var:law_category^law_level@var:law_category
+								add_idea = var:global.law@var:law_category^level
+							}
+						}
+					}
+					else = {
+						effect_tooltip = {
+							meta_effect = { 
+								text = { 
+									[X]_data = yes 
+								}
+								X = "[?v.GetTokenKey]"
+							}
+						}
+					}
+				}
+				else = {	
+					if = {
+						limit = {
+							has_country_flag = ui_compare_law_modifiers
+						}
+						effect_tooltip = {
+							swap_ideas = {
+								remove_idea = var:sublaw@token:trade_laws
+								add_idea = var:v
+							}
+						}
+					}
+					else = {
+						effect_tooltip = {
+							meta_effect = { 
+								text = { 
+									[X]_data = yes 
+								}
+								X = "[?v.GetTokenKey]"
+							}
+						}
+					}
+				}
+				
+				if = {
+					limit = {
+						NOT = { check_variable = { law_level@var:law_category = level } }
+						NOT = { check_variable = { sublaw@trade_laws = v } }
+					}
+				
+					if = {
+						limit = {
+							OR = {
+								check_variable = { v = token:free_trade }
+								check_variable = { v = token:export_focus }
+								check_variable = { v = token:limited_exports }
+								check_variable = { v = token:closed_economy }
+							}
+						}
+									
+						set_temp_variable = { cost = selected_laws_cost^i }
+						multiply_temp_variable = { cost = -1 }
+						
+						hidden_effect = { 
+							add_ideas = var:v 
+							
+							add_political_power = cost
+						}
+								
+						#calculate cost and sort them according to ui_override_law_order
+						ui_open_selected_laws = yes
+					}
+					else = {
+						set_temp_variable = { cost = selected_laws_cost^i }
+						multiply_temp_variable = { cost = -1 }
+						
+						hidden_effect = { 
+							add_ideas = var:v 
+							
+							add_political_power = cost
+						}
+								
+						#calculate cost and sort them according to ui_override_law_order
+						ui_open_selected_laws = yes
+					}
+				}
+				add_to_variable = { ui_selected_law = 1 }
+			}
+			cost_click = {
+				ui_show_law_cost_breakdown = yes
+			}
+		}
+		
+	}
+	
+	
+	BI_country_laws_intel = {
+		context_type = selected_country_context
+		    
+		window_name = "BI_country_laws_intel_container"
+		parent_window_token = civilian_ledger
+		
+		#dirty = global.num_days
+        
+		properties = {    
+			add_idea_button = {     
+				image = GFX_idea_[?selected.GetTokenKey]
+			}
+		}
+		dynamic_lists = {
+			law_list = {  
+				array = global.law_ui
+		 		change_scope = yes
+				entry_container = "law_entry"
+			} 
+		}     
+		triggers = {
+			add_idea_button_click_enabled = {
+				if = {
+					limit = {
+						has_variable = THIS.law_level@var:v 
+					} 
+					set_temp_variable = { entry = THIS.law_level@var:v }
+					
+					set_temp_variable = { selected = global.law@var:v^entry }
+				}
+			}
+			BI_open_foreign_agency_click_enabled = { 
+				ROOT = { 
+					has_done_agency_upgrade = upgrade_security_department 
+				}
+				OR = {
+					ROOT = { intel_level_over = { target = PREV civilian_intel > 0.8 } }
+					is_in_faction_with = ROOT 
+					is_subject_of = ROOT 
+				}
+			}
+		}  
+		  
+		effects = {  
+			add_idea_button_click = {
+				
+				effect_tooltip = {
+					meta_effect = {
+						text = { 
+							custom_effect_tooltip = idea_desc|[X]
+							[X]_data = yes 
+						}
+						X = "[?selected.GetTokenKey]"
+					} 
+				}
+				
+			}
+			BI_open_foreign_agency_click = {
+				ROOT = { 
+					set_country_flag = ui_show_foreign_agency
+					set_variable = { ledger_target = Prev.id } 
+				}
+			}
+		} 
+		     
+	}
+	
+}

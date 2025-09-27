@@ -1,0 +1,321 @@
+on_actions = {
+	
+	on_become_faction_member = {
+		effect = {
+			set_temp_variable = { joining_country = ROOT }
+			set_temp_variable = { leading_country = FROM }
+			
+			ai_update_on_joining_faction = yes
+			
+			d_ai_update_countries_to_defend_us = yes
+		}
+	}
+	
+	#FROM is former faction leader
+	on_leave_faction = {
+		effect = {
+			set_temp_variable = { leaving_country = ROOT }
+			set_temp_variable = { leading_country = FROM }
+			
+			ai_update_on_leaving_faction = yes
+		}
+	}
+	
+	#FROM is former faction leader
+	on_assume_faction_leadership = {
+		effect = {
+			ai_update_on_assume_faction_leadership = yes
+		}
+	}
+	
+	#holy crap what even works in this game, these 2 certainly dont
+	on_create_faction = {
+		effect = {
+			log = "on_create_faction [FROM.GetTag] FROM | [ROOT.GetTag] ROOT"
+		}
+	}
+	on_faction_formed = {
+		effect = {
+			log = "on_faction_formed [FROM.GetTag] FROM | [ROOT.GetTag] ROOT"
+		}
+	}
+	
+	on_war_relation_added = {
+		effect = {
+			ROOT = { ai_set_difficulty_modifier = yes }
+			FROM = { ai_set_difficulty_modifier = yes }
+		}
+	}
+	
+	on_state_control_changed = {
+		effect = {
+			FROM.FROM = {
+				clear_variable = ai_default_slot_score
+				clear_variable = ai_resource_slot_score
+				clear_variable = ai_radar_slot_score
+				clear_variable = ai_new_radar_slot_score
+				clear_variable = ai_airbase_slot_score
+			}
+			
+			# clear ai construction queue for states which are no longer under our control
+			if = {
+				limit = {
+					is_in_array = { FROM.ai_queue_location = FROM.FROM } 
+					#ROOT = { NOT = { is_ally_of = FROM } }
+				}
+				
+				FROM.FROM = { set_temp_variable = { t = THIS } }
+				
+				for_each_loop = {
+					array = FROM.ai_queue_location
+					break = ai_queue_break
+					
+					if = {
+						limit = {
+							check_variable = { v = t }
+						}
+						
+						clear_variable = ai_queue_num@var:ai_queue^i
+					
+						add_to_temp_array = { array = finished_constructions index = 0 value = i }
+						set_temp_variable = { ai_queue_break = 1 }
+					}
+				}
+
+				for_each_loop = {
+					array = finished_constructions
+					
+					remove_from_array = { array = FROM.ai_queue index = v }
+					remove_from_array = { array = FROM.ai_queue_infra index = v }
+					remove_from_array = { array = FROM.ai_queue_progress index = v }
+					remove_from_array = { array = FROM.ai_queue_location index = v }
+				}
+			}
+			
+		}
+	}
+	
+    # potential things to do:
+	#set purge to min at intervals (surrender progress, timer, winter offensive)
+	#add equipments
+	#add planes from allies
+	# unit spawns
+	
+	on_weekly_SOV = {
+		effect = {
+			
+			if = {
+				limit = {
+					is_ai = yes
+					has_war_with = GER
+									
+					set_temp_variable = { days_at_war = global.date }
+					subtract_from_temp_variable = { days_at_war = global.GER_barbarossa_date }
+					multiply_temp_variable = { days_at_war = 1000 }
+					divide_temp_variable = { days_at_war = 24 }
+					
+					check_variable = { days_at_war > 60 }
+					
+					
+				}
+				
+				random_controlled_state = {
+					limit = {
+						check_variable = { SOV.num_armies_in_state@THIS = 0 }
+					}
+					set_temp_variable = { target_state = THIS }
+				}
+				calculate_local_front_states_nearby = yes
+				
+				set_temp_variable = { min_infantry_from_days = days_at_war }
+				multiply_temp_variable = { min_infantry_from_days = 0.1 }
+				clamp_temp_variable = { var = min_infantry_from_days max = 40 }
+				
+				set_temp_variable = { min_infantry = 140 }
+				add_to_temp_variable = { min_infantry = min_infantry_from_days }
+				
+				if = {
+					limit = {
+						check_variable = { num_armies_with_type@infantry < min_infantry }
+						check_variable = { ai_SOV_infantry < 100 }
+					}
+						
+					set_temp_variable = { num_spawns = min_infantry }
+					subtract_from_temp_variable = { num_spawns = num_armies_with_type@infantry }
+					multiply_temp_variable = { num_spawns = 0.2 }
+					clamp_temp_variable = { var = num_spawns max = 10 }
+					round_temp_variable = num_spawns
+					
+					add_to_variable = { ai_SOV_infantry = num_spawns }
+					
+					set_temp_variable = { start_eq = 1.5 }
+					set_temp_variable = { start_xp = 0.6 }
+					var:target_state = {
+						meta_effect = {
+							text = {
+								create_unit = {
+									division = "division_name = { is_name_ordered = yes name_order = 1 } division_template = \"Infantry Division\" start_experience_factor = [XP] start_equipment_factor = [EQ]"
+									owner = PREV
+									count = [NUM]
+								}
+							}
+							XP = "[?start_xp]"
+							EQ = "[?start_eq]"
+							NUM = "[?num_spawns?1]"
+						}
+					}
+				}
+				if = {
+					limit = {
+						check_variable = { days_at_war > 120 }
+						check_variable = { num_armies_with_type@infantry_assault < 40 }
+						check_variable = { ai_SOV_assault < 40 }
+					}
+						
+					set_temp_variable = { num_spawns = 40 }
+					subtract_from_temp_variable = { num_spawns = num_armies_with_type@infantry_assault }
+					clamp_temp_variable = { var = num_spawns max = 1 }
+					
+					add_to_variable = { ai_SOV_assault = num_spawns }
+					
+					set_temp_variable = { start_eq = 1.5 }
+					set_temp_variable = { start_xp = 0.7 }
+					var:target_state = {
+						meta_effect = {
+							text = {
+								create_unit = {
+									division = "division_name = { is_name_ordered = yes name_order = 1 } division_template = \"Heavy Infantry Division\" start_experience_factor = [XP] start_equipment_factor = [EQ]"
+									owner = PREV
+									count = [NUM]
+								}
+							}
+							XP = "[?start_xp]"
+							EQ = "[?start_eq]"
+							NUM = "[?num_spawns?1]"
+						}
+					}
+				}
+				if = {
+					limit = {
+						check_variable = { days_at_war > 180 }
+						check_variable = { ai_SOV_armor < 40 }
+						check_variable = { num_armies_with_type@trm_medium_armor < 20 }
+					}
+					
+					set_temp_variable = { num_spawns = 20 }
+					subtract_from_temp_variable = { num_spawns = num_armies_with_type@trm_medium_armor }
+					clamp_temp_variable = { var = num_spawns max = 1 }
+					
+					add_to_variable = { ai_SOV_armor = num_spawns }
+					
+					set_temp_variable = { start_eq = 1.5 }
+					set_temp_variable = { start_xp = 0.75 }
+					
+					var:target_state = {
+						meta_effect = {
+							text = {
+								create_unit = {
+									division = "division_name = { is_name_ordered = yes name_order = 1 } division_template = \"Medium Armor Division\" start_experience_factor = [XP] start_equipment_factor = [EQ]"
+									owner = PREV
+									count = [NUM]
+								}
+							}
+							XP = "[?start_xp]"
+							EQ = "[?start_eq]"
+							NUM = "[?num_spawns?1]"
+						}
+					}
+				}
+				
+				
+				var:target_state = {
+					teleport_armies = {
+						limit = {
+							tag = SOV
+						}
+						to_state_array = front_states_nearby
+					}
+				}
+				
+			}
+				
+			if = {
+				limit = {
+					check_variable = { days_at_war > 90 }
+				}
+				
+				ai_SOV_allied_equipment_effect = yes
+				
+			}
+		
+		}
+		
+	}
+	
+	on_weekly_GER = {
+		effect = {
+			if = {
+				limit = {
+					is_ai = yes
+				}
+				ai_GER_update_eastern_front_offensive = yes
+			}
+		}
+	}
+	
+	on_weekly_USA = {
+		effect = {
+			if = {
+				limit = {
+					is_ai = yes
+				}
+				ai_USA_bombing_campaign = yes
+				ai_ENG_USA_convoy_escort = yes
+			}
+			
+		}
+	}
+	
+	on_weekly_ENG = {
+		effect = {
+			if = {
+				limit = {
+					is_ai = yes
+				}
+				ai_ENG_naval_bombing_campaign = yes
+				ai_ENG_USA_convoy_escort = yes
+			}
+		}
+	}
+			
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

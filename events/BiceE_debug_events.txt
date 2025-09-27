@@ -1,0 +1,166 @@
+###############################
+### BlackICE Expanded Debug ###
+###############################
+
+add_namespace = BiceEdebug
+
+# Make X Faction Join Allies 1/2
+country_event = {
+	id = BiceEdebug.1
+	title = BiceEdebug.1.t
+	desc = BiceEdebug.1.d
+	
+	is_triggered_only = yes
+	
+	option = { # Prepare to join Allies
+		set_country_flag = BiceE_debug_join_allies
+		if = {
+			limit = {
+				NOT = {
+					has_war_with = ENG
+					is_in_faction_with = ENG
+				}
+			}
+			country_event = { hours = 10 id = BiceEdebug.2 }
+			every_other_country = {
+				limit = {
+					is_in_faction_with = ROOT
+					NOT = {
+						has_war_with = ENG
+					}
+				}
+				add_political_power = 1 # To force the event to list target nations
+				country_event = { hours = 2 id = BiceEdebug.2 }
+			}
+		}
+	}
+}
+# Make X Faction Join Allies 2/2
+country_event = {
+	id = BiceEdebug.2
+	title = BiceEdebug.2.t
+	desc = BiceEdebug.2.d
+	
+	is_triggered_only = yes
+	
+	option = { # Join Allies
+		ENG = {
+			add_to_faction = ROOT
+		}
+	}
+}
+
+# Make X Faction Join Axis 1/2
+country_event = {
+	id = BiceEdebug.3
+	title = BiceEdebug.3.t
+	desc = BiceEdebug.3.d
+	
+	is_triggered_only = yes
+	
+	option = { # Prepare to join Axis
+		if = {
+			limit = {
+				NOT = {
+					has_war_with = GER
+					is_in_faction_with = GER
+				}
+			}
+			country_event = { hours = 10 id = BiceEdebug.4 }
+			every_other_country = {
+				limit = {
+					is_in_faction_with = ROOT
+					NOT = {
+						has_war_with = GER
+					}
+				}
+				add_political_power = 1 # To force the event to list target nations
+				country_event = { hours = 2 id = BiceEdebug.4 }
+			}
+		}
+	}
+}
+# Make X Faction Join Axis 2/2
+country_event = {
+	id = BiceEdebug.4
+	title = BiceEdebug.4.t
+	desc = BiceEdebug.4.d
+	
+	is_triggered_only = yes
+	
+	option = { # Join Axis
+		GER = {
+			add_to_faction = ROOT
+		}
+	}
+}
+
+# Puppet all nations in your faction 1/2		- Must be faction leader!
+country_event = {
+	id = BiceEdebug.5
+	title = BiceEdebug.5.t
+	desc = BiceEdebug.5.d
+	
+	is_triggered_only = yes
+	
+	option = { # Puppet your faction
+		every_other_country = {
+			limit = {
+				is_in_faction_with = ROOT
+				NOT = {
+					is_subject_of = ROOT
+				}
+			}
+			add_political_power = 1 # To force the event to list target nations
+			country_event = { id = BiceEdebug.6 }
+		}
+	}
+}
+# Puppet all nations in your faction 2/2
+country_event = {
+	id = BiceEdebug.6
+	title = BiceEdebug.6.t
+	desc = BiceEdebug.6.d
+	
+	is_triggered_only = yes
+	
+	option = { # Become a puppet
+		FROM = {
+			puppet = ROOT
+		}
+	}
+}
+
+	### Tech Events ###
+
+# Trigger Event for CV Flight Deck Techs
+#country_event = {
+#	id = BiceEdebug.50
+#	title = BiceEdebug.50.t
+#	desc = BiceEdebug.50.d
+#	
+#	is_triggered_only = yes
+#	
+#	option = {
+#		USA = { country_event = { hours = 2 id = BiceEdebug.60 } }
+#		JAP = { country_event = { hours = 2 id = BiceEdebug.60 } }
+#		ENG = { country_event = { hours = 2 id = BiceEdebug.60 } }
+#	}
+#}
+
+#country_event = {
+#	id = BiceEdebug.60
+#	title = BiceEdebug.60.t
+#	desc = BiceEdebug.60.d
+#	
+#	is_triggered_only = yes
+#	
+#	option = { # Adds CV Flight Deck Techs
+#		if = { limit = { NOT = { has_tech =  } }
+#			set_technology = {  = 1 }
+#		}
+#	}
+#}
+
+### EOF ###
+

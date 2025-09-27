@@ -1,0 +1,513 @@
+
+ai_allow_create_new_radar_state = {
+	has_tech = radio_detection
+	
+	if = {
+		limit = {
+			tag = SOV
+		}
+		
+		OR = {
+			date > 1943.1.1
+			surrender_progress > 0.2
+		}
+	}
+	
+	if = {
+		limit = {
+			tag = GER
+		}
+		OR = {
+			date > 1941.6.1
+			FRA = { has_capitulated = yes }
+			has_war_with = SOV
+		}
+	}
+	
+	if = {
+		limit = {
+			tag = ENG
+		}
+		OR = {
+			date > 1941.1.1
+			num_of_civilian_factories > 240
+		}
+	}
+	
+	if = {
+		limit = {
+			tag = JAP
+		}
+		OR = {
+			has_war_with = ENG
+			has_war_with = USA
+			has_war_with = SOV
+			has_war_with = GER
+			has_war_with = ITA
+			
+			AND = {
+				has_war_with = CHI
+				check_variable = { CHI.num_deployed_planes > 1000 }
+			}
+		}
+	}
+}
+
+ai_can_build_radar_station = {	
+	has_tech = radio_detection
+	
+	has_country_flag = ai_has_air_production
+	
+	num_of_civilian_factories > 80
+}
+
+ai_can_build_air_base = {
+	num_of_civilian_factories > 40
+	num_of_military_factories > 20
+
+	OR = {
+		has_country_flag = ai_has_air_production
+		check_variable = { num_deployed_planes > 250 }
+	}
+
+	if = {
+		limit = {
+			tag = ENG
+		}
+		OR = {
+			has_war = yes
+			num_of_military_factories > 200
+		}
+	}
+	
+	if = {
+		limit = {
+			tag = ITA
+		}
+		date > 1937.1.1
+	}
+	
+	
+}
+
+ai_can_build_fuel_silo = {
+	has_tech = fuel_silos
+	
+	num_of_civilian_factories > 30
+	
+}
+
+ai_can_build_infrastructure = {
+	num_of_civilian_factories > 150
+	
+	if = {
+		limit = {
+			check_variable = { ai_need_resources > 0 }
+		}
+		set_temp_variable = { ai_need_oil = 1 }
+		set_temp_variable = { ai_need_rubber = 1 }
+		set_temp_variable = { ai_need_tungsten = 1 }
+		set_temp_variable = { ai_need_chromium = 1 }
+		set_temp_variable = { ai_need_coal = 1 }
+		set_temp_variable = { ai_need_bauxite = 1 }
+		set_temp_variable = { ai_need_iron = 1 }
+		set_temp_variable = { ai_need_food = 1 }
+	}
+	else = {
+		if = {
+			limit = {
+				check_variable = { resource_produced@oil > 40 }
+				has_war = yes
+				fuel_ratio < 0.5
+			}
+			set_temp_variable = { ai_need_oil = 1 }
+		}
+		if = {
+			limit = {
+				check_variable = { resource_produced@rubber > 40 }
+				OR = {
+					check_variable = { resource@rubber < -4 }
+					check_variable = { resource_imported@rubber > 4 }
+				}
+			}
+			set_temp_variable = { ai_need_rubber = 1 }
+		}
+		if = {
+			limit = {
+				check_variable = { resource_produced@tungsten > 40 }
+				OR = {
+					check_variable = { resource@tungsten < -4 }
+					check_variable = { resource_imported@tungsten > 4 }
+				}
+			}
+			set_temp_variable = { ai_need_tungsten = 1 }
+		}
+		if = {
+			limit = {
+				check_variable = { resource_produced@iron > 120 }
+				OR = {
+					check_variable = { resource@iron < -4 }
+					check_variable = { resource_imported@iron > 16 }
+				}
+			}
+			set_temp_variable = { ai_need_iron = 1 }
+		}
+		if = {
+			limit = {
+				check_variable = { resource_produced@bauxite > 120 }
+				OR = {
+					check_variable = { resource@bauxite < -4 }
+					check_variable = { resource_imported@bauxite > 16 }
+				}
+			}
+			set_temp_variable = { ai_need_bauxite = 1 }
+		}
+		if = {
+			limit = {
+				check_variable = { resource_produced@coal > 120 }
+				OR = {
+					check_variable = { resource@coal < -4 }
+					check_variable = { resource_imported@coal > 20 }
+				}
+			}
+			set_temp_variable = { ai_need_coal = 1 }
+		}
+		if = {
+			limit = {
+				check_variable = { resource_produced@chromium > 40 }
+				OR = {
+					check_variable = { resource@chromium < -4 }
+					check_variable = { resource_imported@chromium > 4 }
+				}
+			}
+			set_temp_variable = { ai_need_chromium = 1 }
+		}
+		if = {
+			limit = {
+				check_variable = { resource_produced@food > 120 }
+				OR = {
+					check_variable = { food_days < 0.25 }
+					check_variable = { resource_imported@food > 25 }
+				}
+			}
+			set_temp_variable = { ai_need_food = 1 }
+		}
+	}
+}
+
+ai_can_build_air_assembly = {
+	has_country_flag = ai_has_air_production
+	
+	has_country_flag = ai_build_air_assembly
+}
+
+ai_can_build_steel_refinery = {
+	num_of_civilian_factories > 40
+	
+	check_variable = { num_refinery@steel = num_active_refinery@steel }
+	
+	check_variable = { resource@steel < 30 }
+}
+
+ai_can_build_aluminium_refinery = {
+	has_country_flag = ai_has_air_production
+	
+	num_of_civilian_factories > 40
+	
+	check_variable = { num_refinery@aluminium = num_active_refinery@aluminium }
+	
+	#check_variable = { alu_plane_cap < mic_plane_cap }
+	
+	OR = {
+		check_variable = { alu_plane_cap < mic_plane_cap }
+		AND = {
+			check_variable = { alu_plane_cap < ap_plane_cap }
+			check_variable = { alu_plane_cap < mic_plane_cap }
+		}
+	}
+}
+
+ai_can_build_synthetic_refinery = {
+	has_tech = synth_oil_experiments
+	
+	OR = {
+		num_of_civilian_factories > 240
+		check_variable = { building_target@synthetic_refinery > 0 }
+	}
+}
+
+ai_can_build_synthetic_rubber_refinery = {
+	has_tech = improved_oil_plant
+	
+	OR = {
+		num_of_civilian_factories > 250
+		check_variable = { building_target@synthetic_rubber_refinery > 0 }
+	}
+	
+	if = {
+		limit = {
+			tag = USA
+		}
+		num_of_military_factories > 300
+	}
+}
+
+ai_can_build_shipyard = {
+	has_country_flag = coastal_state 
+	
+	num_of_naval_factories > 19
+	
+	set_temp_variable = { num_active_and_queued = num_shipyard }
+	add_to_temp_variable = { num_active_and_queued = ai_queued@shipyard }
+	
+	check_variable = { num_active_and_queued < 20 }
+	
+	set_temp_variable = { num_surface_ships = num_ships }
+	subtract_from_temp_variable = { num_surface_ships = num_ships_with_type@nrm_ship_hull_submarine }
+	check_variable = { num_surface_ships > 50 }
+
+	set_temp_variable = { limit = modifier@max_shipyard }
+	add_to_temp_variable = { limit = 5 }	
+	check_variable = { limit > num_shipyard }
+
+}
+
+ai_can_build_subyard = {
+	has_country_flag = coastal_state 
+	
+	num_of_naval_factories > 9
+	
+	set_temp_variable = { num_active_and_queued = num_subyard }
+	add_to_temp_variable = { num_active_and_queued = ai_queued@subyard }
+	
+	check_variable = { num_active_and_queued < 20 }
+	
+	check_variable = { num_ships > 0 }
+	set_temp_variable = { sub_ratio = num_ships_with_type@submarine }	# apparently counts all sub types together
+	divide_temp_variable = { sub_ratio = num_ships }
+	OR = {
+		check_variable = { sub_ratio > 0.4 }
+		check_variable = { num_ships_with_type@submarine > 20 }
+	}
+	
+	set_temp_variable = { limit = modifier@max_subyard }
+	add_to_temp_variable = { limit = 5 }
+	check_variable = { limit > num_subyard }
+		
+}
+
+ai_can_build_storage = {
+	always = no
+}
+
+ai_can_build_power_plant = {
+
+	set_temp_variable = { t = num_power_plant }
+	multiply_temp_variable = { t = 120 }
+	
+	set_temp_variable = { factor = modifier@energy_production_factor }
+	add_to_temp_variable = { factor = 1 }
+	multiply_temp_variable = { t = factor }
+	
+	set_temp_variable = { x = 160 }
+	set_temp_variable = { factor = modifier@energy_hydro_factor }
+	add_to_temp_variable = { factor = 1 }
+	multiply_temp_variable = { x = factor }
+	
+	set_temp_variable = { h = num_hydro_power }
+	multiply_temp_variable = { h = x }
+	add_to_temp_variable = { t = h }
+	
+	add_to_temp_variable = { t = 200 } #ENERGY_BASE
+
+	check_variable = { energy_cost > t }
+}
+
+ai_can_build_food_storage = {
+	always = no
+}
+
+ai_can_build_land_facility = {
+	land_facility < 1
+
+	industrial_complex > 80
+	arms_factory > 70
+	
+}
+ai_can_build_electronics_facility = {
+	electronics_facility < 1
+	
+	industrial_complex > 70
+	arms_factory > 60
+	
+	if = {
+		limit = {
+			tag = FRA
+		}
+		date > 1941.1.1
+	}
+}
+ai_can_build_naval_facility = {
+	naval_facility < 1
+	
+	industrial_complex > 70
+	num_of_naval_factories > 10
+	
+	NOT = { 
+		tag = ENG #1936 focus
+		tag = SOV
+	}
+	
+	if = {
+		limit = {
+			tag = FRA
+		}
+		date > 1941.1.1
+	}
+}
+ai_can_build_air_facility = {
+	air_facility < 1
+	
+	industrial_complex > 70
+	check_variable = { num_air_assembly > 6 }
+	
+	if = {
+		limit = {
+			tag = FRA
+		}
+		date > 1941.1.1
+	}
+}
+ai_can_build_nuclear_facility = {
+	nuclear_facility < 1
+	
+	has_tech = nuclear_fission
+	industrial_complex > 150
+}
+
+
+ai_radar_location = {
+	OR = {
+		state = 848 # tokyo
+		state = 645 # iwo jima
+		state = 629 # hawaii
+		state = 336 # singapore
+
+		state = 327 # manila
+		#state = 422 # ceylon
+
+		state = 845 # moscow
+		state = 217 # stalingrad
+		state = 137 # sevastopol
+		state = 195 # leningrad
+
+		state = 850 # pantelleria
+		state = 116 # malta
+		state = 118 # gibraltar
+		state = 126 # London
+		state = 446 # cairo
+
+		state = 847 # washington
+		state = 378 # san francisco
+		state = 386 # seattle
+		state = 366 # florida
+
+		state = 685 # panama
+
+		#state = 60 # thuringen
+		state = 51 #rhineland
+		state = 5 # ostpreussen
+
+		state = 846 # rome
+
+		state = 876	# madrid
+
+		state = 844	# paris
+
+		state = 868 # istanbul
+	}
+}
+
+ai_priority_radar_location = {
+	OR = {
+		state = 629 # hawaii
+		state = 336 # singapore
+
+		state = 850 # pantelleria
+		state = 116 # malta
+
+		state = 685 # panama
+
+		state = 327 # manila
+		
+		state = 118 # gibraltar
+	}
+}
+ai_controls_railway = {
+	var:global.province_controllers^origin = {
+		is_ally_with = ROOT
+	}
+	var:global.province_controllers^end = {
+		is_ally_with = ROOT
+	}
+}
+
+ai_infra_region_priority = { #for infra only, for default score its in ai_construction_logic/TAG
+	
+	if = {
+		limit = {
+			ROOT = { tag = SOV }
+		}
+		ai_central_russia = yes
+	}
+	else_if = {
+		limit = {
+			ROOT = { tag = CHI }
+		}
+		ai_western_china = yes
+	}
+	else = {
+		OR = {
+			is_core_of = ROOT
+			is_in_home_area = yes
+		}
+	}
+	
+}
+
+ai_central_russia = {
+	OR = {
+		region = 149
+		region = 147
+		region = 14
+		region = 151
+		region = 136
+		region = 138
+		region = 150
+		region = 40
+		region = 137
+	}
+	NOT = {
+		state = 240
+		state = 223
+		state = 222
+		state = 220
+		state = 240
+		state = 260
+		state = 258
+		state = 245
+		state = 218
+		state = 231
+		state = 230
+	}
+}
+
+ai_western_china = {
+	OR = { 
+		region = 144 
+		region = 145 
+		region = 200 
+		region = 146 
+	}
+}
+

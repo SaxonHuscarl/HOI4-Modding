@@ -1,0 +1,1292 @@
+﻿###########################
+# Japanese Events
+###########################
+add_namespace = japan
+###########################
+# Chinese Refuse Concessions
+country_event = {
+	id = japan.1
+	title = china.1.t
+	desc = japan.1.d
+	picture = GFX_report_event_february_26_incident_gfxaddon
+
+	is_triggered_only = yes
+	
+	option = {
+		name = japan.1.a
+		add_war_support = 0.15
+		#create_wargoal = {
+  		#	type = annex_everything
+  		#	target = FROM
+  		#}
+  		#create_wargoal = {
+  		#	type = annex_everything
+  		#	target = SHX
+  		#}
+  		#create_wargoal = {
+  		#	type = annex_everything
+  		#	target = PGR
+  		#}
+		hidden_effect = {
+			country_event = { days = 5 id = news.1 }
+			CHI = {
+				country_event = { days = 83 id = china.6 }
+				country_event = { days = 246 id = kmt.18 }
+			}
+			if = {
+				limit = {
+					is_ai = no
+				}
+				every_country = { 
+					limit = { 
+						is_chinese_warlord = yes 
+						NOT = {
+							is_in_faction_with = JAP
+						}
+						NOT = {
+							is_puppet_of = JAP
+						}
+					}
+					country_event = { days = 1 id = kmt.82 }
+				}
+			}
+		}
+		declare_war_on = {
+			target = CHI
+			type = annex_everything
+		}
+		if = {
+			limit = {
+				SHX = {
+					is_in_faction_with = CHI
+				}
+			}
+			declare_war_on = {
+				target = SHX
+				type = annex_everything
+			}
+		}
+		if = {
+			limit = {
+				PGR = {
+					is_in_faction_with = CHI
+				}
+			}		
+			declare_war_on = {
+				target = PGR
+				type = annex_everything
+			}
+		}
+		PGR = {
+			add_timed_idea = {
+				idea = JAP_strike
+				days = 45
+			}
+		}	
+
+		hidden_effect = {
+			794 = { add_claim_by = JAP }
+			608 = { add_claim_by = JAP }
+			757 = { add_claim_by = JAP }
+			810 = { add_claim_by = JAP }
+			621 = { add_claim_by = JAP }
+		}
+	}
+}
+
+# Chinese Concessions
+country_event = {
+	id = japan.2
+	title = china.1.t
+	desc = japan.2.d
+	picture = GFX_report_event_generic_read_write
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = japan.2.a
+		effect_tooltip = {
+			set_truce = { target = FROM days = 180 }
+		}
+		hidden_effect = {
+			country_event = { days = 5 id = news.2 }
+		}
+		if = {
+			limit = {
+				608 = {
+					OR = {
+						is_controlled_by = FROM
+						CONTROLLER = {
+							is_in_faction_with = FROM
+						}
+					}
+				}
+			}
+			JAP = {
+				transfer_state = 608
+			}
+		}
+		if = {
+			limit = {
+				597 = {
+					OR = {
+						is_controlled_by = FROM
+						CONTROLLER = {
+							is_in_faction_with = FROM
+						}
+					}
+				}
+			}
+			JAP = {
+				transfer_state = 597
+			}
+		}
+		if = {
+			limit = {
+				757 = {
+					OR = {
+						is_controlled_by = FROM
+						CONTROLLER = {
+							is_in_faction_with = FROM
+						}
+					}
+				}
+			}
+			JAP = {
+				transfer_state = 757
+			}
+		}
+		if = {
+			limit = {
+				743 = {
+					OR = {
+						is_controlled_by = FROM
+						CONTROLLER = {
+							is_in_faction_with = FROM
+						}
+					}
+				}
+			}
+			JAP = {
+				transfer_state = 743
+			}
+		}
+		if = {
+			limit = {
+				859 = {
+					OR = {
+						is_controlled_by = FROM
+						CONTROLLER = {
+							is_in_faction_with = FROM
+						}
+					}
+				}
+			}
+			JAP = {
+				transfer_state = 859
+			}
+		}
+		add_state_claim = 613
+		if = {
+			limit = {
+				613 = {
+					is_demilitarized_zone = no
+				}
+			}
+			613 = { set_demilitarized_zone = yes }
+		}
+		
+		add_ai_strategy = {
+			type = antagonize
+			id = "CHI"
+			value = 500
+		}
+	}
+}
+# Soviet Union Cedes Land (Soviet)
+country_event = {
+	id = japan.3
+	title = japan.3.t
+	desc = japan.3.d
+	picture = GFX_report_event_soviet_bikes
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = japan.3.a
+		transfer_state = 537
+		537 = {
+			add_claim_by = SOV
+		}
+		if = {
+			limit = {
+				655 = {
+					is_owned_by = JAP
+					}
+				}
+			transfer_state = 655
+		}	
+		diplomatic_relation = {
+			country = JAP
+			relation = non_aggression_pact
+			active = yes
+		}		
+	}
+}
+# French Accept Demands
+country_event = {
+	id = japan.6
+	title = japan.6.t
+	desc = japan.6.d
+	picture = GFX_report_event_japanese_soldiers_marching
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = japan.6.a
+		ai_chance = {
+			factor = 100
+		}
+		
+		hidden_effect = {
+			news_event = { days = 5 id = news.5 }
+		}
+		if = {
+			limit = {
+				VIC = { exists = yes }
+			}
+			FRI = {
+				transfer_units_fraction = {
+					target = VIC
+					size = 1
+					army_ratio = 1
+					navy_ratio = 1
+					air_ratio = 1
+				}
+			}
+		}
+		JAP = {
+			puppet = {
+				target = FRI
+				end_wars = yes
+			}		
+			add_named_threat = { threat = 1 name = france.1.t }
+			if = {
+				limit = {
+					671 = { is_fully_controlled_by = JAP }
+				}
+				FRI = {
+					transfer_state = 671
+				}
+			}
+			if = {
+				limit = {
+					JAP = { is_ai = yes }
+					JAP = { has_war_with = CHI }
+					OR = { CHI = { is_ai = no } ENG = { is_ai = no } RAJ = { is_ai = no } }
+				}
+				744 = {
+					create_unit = {
+						division = "name = \"Japanese Indochina\" division_template = \"Hohei Shidan\" start_experience_factor = 0.3 start_equipment_factor = 0.75" 
+						owner = FROM
+					}
+					create_unit = {
+						division = "name = \"Japanese Indochina\" division_template = \"Hohei Shidan\" start_experience_factor = 0.3 start_equipment_factor = 0.75" 
+						owner = FROM
+					}
+					create_unit = {
+						division = "name = \"Japanese Indochina\" division_template = \"Hohei Shidan\" start_experience_factor = 0.3 start_equipment_factor = 0.75" 
+						owner = FROM
+					}
+					create_unit = {
+						division = "name = \"Japanese Indochina\" division_template = \"Hohei Shidan\" start_experience_factor = 0.3 start_equipment_factor = 0.75" 
+						owner = FROM
+					}
+					create_unit = {
+						division = "name = \"Japanese Indochina\" division_template = \"Hohei Shidan\" start_experience_factor = 0.3 start_equipment_factor = 0.75" 
+						owner = FROM
+					}
+					create_unit = {
+						division = "name = \"Japanese Indochina\" division_template = \"Hohei Shidan\" start_experience_factor = 0.3 start_equipment_factor = 0.75" 
+						owner = FROM
+					}
+					create_unit = {
+						division = "name = \"Japanese Indochina\" division_template = \"Hohei Shidan\" start_experience_factor = 0.3 start_equipment_factor = 0.75" 
+						owner = FROM
+					}
+				}
+			}
+			if = {
+				limit = {
+					is_ai = yes
+				}
+				country_event = { id = japan.112 random_days = 15 }
+			}
+		}
+	}
+}
+
+# French Reject Demands
+country_event = {
+	id = japan.7
+	title = japan.7.t
+	desc = japan.7.d
+	picture = GFX_report_event_japan_soldiers_03
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = japan.7.a
+		hidden_effect = {
+			country_event = { days = 5 id = news.6 }
+		}
+	}
+}
+
+# Germany Agrees to Withdraw Falkenhausen
+country_event = {
+	id = japan.8
+	title = japan.8.t
+	desc = japan.8.d
+	picture = GFX_report_event_falkenhausen
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = japan.8.a
+	}
+}
+
+# Germany Refuses to Withdraw Falkenhausen
+country_event = {
+	id = japan.9
+	title = japan.9.t
+	desc = japan.9.d
+	picture = GFX_report_event_falkenhausen
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = japan.9.a
+	}
+	#option = { # Withdraw from the Anti-Comintern Pact
+	#	name = japan.9.b
+	#}
+}
+# Pressure Siam to become a puppet
+country_event = {
+	id = japan.11
+	title = japan.11.t
+	desc = japan.11.d
+	picture = GFX_report_event_japanese_envoy
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = japan.11.a
+		SIA = { 
+			country_event = { id = japan.12 }
+		}
+	}
+
+	option = {
+		name = japan.11.b
+		ai_chance = { factor = 0 }
+		JAP = {
+			country_event = { id = japan.13 }
+		}
+	}
+}
+# Siam event from Japan: Become puppet or not
+country_event = {
+	id = japan.12
+	title = japan.12.t
+	desc = japan.12.d
+	picture = GFX_report_event_japanese_envoy
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = japan.12.a
+		ai_chance = {
+			factor = 90
+			modifier = {
+				#If they have a fighting chance, they should stand their ground
+				factor = 0
+				strength_ratio = {
+					tag = JAP
+					ratio > 0.75
+				}
+			}
+		}
+		JAP = { 
+			country_event = { id = japan.13 }
+			effect_tooltip = { puppet = SIA }
+		}
+	}
+
+	option = {
+		name = japan.12.b
+		ai_chance = { 
+			factor = 0
+			modifier = { 
+				factor = 0 
+				is_historical_focus_on = yes 
+			}
+		}
+		JAP = { 
+			country_event = { id = japan.14 }
+			effect_tooltip = {
+				declare_war_on = {
+					target = SIA
+					type = puppet_wargoal_focus
+				}
+			}
+		}
+	}
+	option = {
+		name = japan.12.c
+		ai_chance = {
+			factor = 0
+		}
+		JAP = { 
+			country_event = { id = japan.111 }
+		}
+	}
+}
+
+# Siam accepts and is puppeted
+country_event = {
+	id = japan.13
+	title = japan.13.t
+	desc = japan.13.d
+	picture = GFX_report_event_japanese_chinese_surrender
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = japan.13.a
+		puppet = SIA
+		SIA = {
+			add_ideas = SIA_free_thai
+		}
+		if = {
+			limit = {
+				JAP = { is_ai = yes }
+			}
+			
+			724 = {
+				add_building_construction = {
+					type = supply_node
+					level = 1
+					instant_build = yes
+					province = 4371
+				}
+			}
+			670 = {
+				add_building_construction = {
+					type = supply_node
+					level = 1
+					instant_build = yes
+					province = 1464
+				}
+				add_building_construction = {
+					type = supply_node
+					level = 1
+					instant_build = yes
+					province = 10453
+				}
+			}
+		}
+	}
+}
+
+# Siam refuses, nations go to war 
+country_event = {
+	id = japan.14
+	title = japan.14.t
+	desc = japan.14.d
+	picture = GFX_report_event_japanese_soldiers_city_assault
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = japan.14.a
+		declare_war_on = {
+			target = SIA
+			type = puppet_wargoal_focus
+		}
+	}
+}
+######################################
+country_event = {
+	id = japan.111
+	title = japan.111.t
+	desc = japan.111.d
+	picture = GFX_report_event_japanese_officers
+
+	is_triggered_only = yes
+
+	option = {
+		name = japan.111.a
+		ai_chance = { factor = 100 }
+		JAP = { 
+			annex_country = {
+				target = SIA
+				transfer_troops = yes
+			}				
+		}
+		
+		724 = {
+			if = {
+				limit = { is_owned_by = SIA }
+				add_core_of = JAP
+			}
+		}
+		289 = {
+			if = {
+				limit = { is_owned_by = SIA }
+				add_core_of = JAP
+			}
+		}
+	}
+	
+	option = {
+		name = japan.111.b
+		ai_chance = { factor = 0 }
+	}
+}
+country_event = {
+	id = japan.112
+	title = japan.112.t
+	desc = japan.112.d
+	picture = GFX_report_event_tojo_flag
+
+	trigger = {	
+		NOT = { has_completed_focus = siamese_puppet_focus }
+		is_puppet = no
+		country_exists = SIA
+		is_ai = yes
+	}
+	
+	fire_only_once = yes
+	is_triggered_only = yes
+	
+	option = {
+		name = japan.112.a
+		ai_chance = { factor = 100 }
+		unlock_national_focus = siamese_puppet_focus
+		JAP = { country_event = {id = japan.11} }
+	}
+}
+################################################
+# Indian national army 
+country_event = {
+	id = japan.15
+	title = japan.15.t
+	desc = japan.15.d
+	picture = GFX_report_event_indian_soldiers
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = japan.15.a
+		set_temp_variable = { boot = RAJ.india_conscription_factor }
+		add_to_temp_variable = { boot = RAJ.india_stability_factor }
+		add_to_temp_variable = { boot = RAJ.india_stability_weekly }
+		add_to_temp_variable = { boot = RAJ.india_conscription }
+		add_to_temp_variable = { boot = RAJ.india_army_org_factor }
+		subtract_from_temp_variable = { boot = RAJ.india_consumer_goods_expected_value }
+		add_to_temp_variable = { boot = RAJ.india_food_resource_factor }
+		multiply_temp_variable = { boot = -10 }
+		set_temp_variable = { colony = 1 }
+		subtract_from_temp_variable = { colony = RAJ.autonomy_ratio }
+		multiply_temp_variable = { boot = colony }
+		round_temp_variable = boot
+		custom_effect_tooltip = JAP_Indian_National_Army_arrives
+		RAJ_Shah_Nawaz_Khan = {
+			add_corps_commander_role = {
+				traits={ jungle_rat guerilla_fighter }
+				skill = 3
+				attack_skill = 4
+				defense_skill = 2
+				planning_skill = 1
+				logistics_skill = 3
+			}
+		}
+		hidden_effect = {
+			division_template = {
+				name = "Azad Hind Infantry Corps"
+				template_counter = 147
+				
+				regiments = {
+					infantry = { x = 0 y = 0 }
+					infantry = { x = 0 y = 1 }
+					militia = { x = 0 y = 2 }
+					
+					infantry = { x = 1 y = 0 }
+					infantry = { x = 1 y = 1 }
+					militia = { x = 1 y = 2 }
+								
+					mountain_artillery_brigade = { x = 2 y = 0 }
+					mountain_artillery_brigade = { x = 2 y = 1 }
+				}
+				support = {
+					DIV_HQ = { x = 0 y = 0 }
+					recon_cav = { x = 0 y = 1 }
+					engineer = { x = 0 y = 2 }
+				}
+			}
+			336 = {
+				create_unit = {
+					division = "name = \"Azad Hind Fauj\" division_template = \"Azad Hind Infantry Corps\" start_experience_factor = 0.5"
+					owner = JAP count = boot
+				}
+			}
+		}
+		add_manpower = 10000
+		set_global_flag = indian_national_army_setup
+		RAJ = {
+			add_stability = -0.2
+			add_ideas = RAJ_azad_hind
+			if = {
+				limit = { has_dlc = "Together for Victory" }
+				add_popularity = {
+					ideology = fascism
+					popularity = 0.1
+				}
+				add_popularity = {
+					ideology = liberalism
+					popularity = -0.05
+				}
+				add_popularity = {
+					ideology = conservatism
+					popularity = -0.05
+				}
+				add_popularity = {
+					ideology = socialism
+					popularity = -0.05
+				}
+			}
+			else = {
+				ENG = {
+					country_event = { id = britain.19 }
+				}
+			}			
+		}
+	}
+}
+
+country_event = {
+	id = japan.21
+	title = japan.21.t
+	desc = japan.21.d
+	picture = GFX_report_event_jap_gozen_kaigi_imperial_conference_gfxaddon
+	
+	fire_only_once = yes
+	
+	is_triggered_only = yes
+	
+	immediate = {
+		set_country_flag = Five_Ministers_Conference
+	}
+	
+	option = {
+		name = japan.21.a
+		custom_effect_tooltip = japan.21.c1
+		
+		trigger = {
+		}
+		
+		set_country_flag = Five_Ministers_South
+		
+		add_power_balance_value = {
+			id = jap_balance
+			value = 0.25
+			tooltip_side = JAP_navy_side
+		}
+		navy_experience = 25
+		
+		ai_chance = {
+			factor = 100
+			modifier = {
+				factor = 0
+				OR = {
+					has_game_rule = {
+						rule = JAP_ai_behavior
+						option = NORTHERN
+					}
+					has_game_rule = {
+						rule = JAP_ai_behavior
+						option = NORTHERN_ALTERNATE
+					}
+				}
+			}
+		}
+	}
+	
+	option = {
+		name = japan.21.b
+		custom_effect_tooltip = japan.21.c2
+
+		trigger = {
+		}	
+		set_country_flag = Five_Ministers_North
+
+		add_power_balance_value = {
+			id = jap_balance
+			value = -0.25
+			tooltip_side = JAP_army_side
+		}
+		army_experience = 25
+		
+		ai_chance = {
+			factor = 100
+			modifier = {
+				factor = 0
+				OR = {
+					has_game_rule = {
+						rule = JAP_ai_behavior
+						option = SOUTHERN
+					}
+					has_game_rule = {
+						rule = JAP_ai_behavior
+						option = SOUTHERN_ALTERNATE
+					}
+				}
+			}
+		}
+	}
+}	
+country_event = {
+	id = japan.27
+	title = japan.27.t
+	desc = japan.27.d
+	picture = GFX_report_event_pearl_harbor_gfxaddon
+	is_triggered_only = yes
+	fire_only_once = yes
+
+	trigger = {
+		tag = JAP
+	}
+	
+	option = {
+		name = japan.27.a
+			USA = {
+				add_equipment_to_stockpile = {
+					type = fighter_equipment
+					amount = -77
+					producer = USA
+				}
+				add_equipment_to_stockpile = {
+					type = tac_bomber_equipment
+					amount = -24
+					producer = USA
+				}
+				add_equipment_to_stockpile = {
+					type = nav_bomber_equipment
+					amount = -15
+					producer = USA
+				}
+				add_equipment_to_stockpile = {
+					type = quad_engine_bomber_equipment
+					amount = -8
+					producer = USA
+				}
+				destroy_ships = {
+					type = nrm_ship_hull_cruiser
+					count = 1
+				}
+				destroy_ships = {
+					type = nrm_ship_hull_submarine
+					count = 1
+				}						
+			}
+			every_enemy_country = {
+				limit = {
+					tag = PHI
+				}
+				add_equipment_to_stockpile = {
+					type = fighter_equipment
+					amount = -6
+					producer = PHI
+				}
+				if = {
+					limit = {
+						JAP = {
+							OR = {
+								has_country_flag = pearl_wipeout
+								has_country_flag = pearl_poor
+								has_country_flag = pearl_historical
+							}
+						}
+					}
+					add_timed_idea = {
+						idea = PHI_ambushed
+						days = 90
+					}
+				}
+				else = {
+					add_timed_idea = {
+						idea = PHI_ambushed
+						days = 150
+					}
+				}								
+			}
+			327 = {
+				damage_building = {
+					type = infrastructure
+					damage = 2
+				}
+				damage_building = {
+					type = radar_station
+					damage = 2
+				}
+				damage_building = {
+					type = air_base
+					damage = 4
+				}
+				damage_building = {
+					type = naval_base
+					province = 10265
+					damage = 5
+				}
+			}
+		hidden_effect = {
+			country_event = { id = japan.43 hours = 17 }
+			if = {
+				limit = {
+					JAP = {
+						is_ai = yes 
+					}
+				}
+				JAP = {
+					set_province_controller = 10280
+					set_province_controller = 12118
+					set_province_controller = 4241
+					set_province_controller = 10236
+					set_province_controller = 12253
+					set_province_controller = 12153
+					set_province_controller = 7284
+					set_province_controller = 1288				
+					load_oob = "JAP_invade_philipines"
+					set_fuel_ratio = 1.0
+				}
+				
+				if = {
+					limit = { has_country_flag = jap_china_occupation_setup }
+					#activate_decision = JAP_reorginized_china_instatement3
+				}
+				else = {
+					activate_decision = JAP_reorginized_china_instatement2
+					#activate_decision = JAP_reorginized_china_instatement3
+					
+				#disable Taiwan/Korea transfer for now
+				}			
+			}
+		}
+	}
+}
+country_event = {
+	id = japan.28
+	title = japan.28.t
+	desc = japan.28.d
+	picture = GFX_report_event_japanese_soldiers_on_hill
+	
+	fire_only_once = yes
+	is_triggered_only = yes
+
+	trigger = {
+		tag = JAP
+		is_ai = yes 
+		has_war_with = HOL
+				
+	}
+	
+	option = {
+		name = japan.28.a
+		hidden_effect = {
+
+		set_province_controller = 10325
+		set_province_controller = 12268
+		set_province_controller = 10279
+		set_province_controller = 7231
+		set_province_controller = 4364
+		set_province_controller = 12249
+		set_province_controller = 1345
+		set_province_controller = 1404
+		
+		load_oob = "JAP_invade_eastindies"
+		
+		}
+
+	}
+}
+country_event = {
+	id = japan.29
+	title = japan.29.t
+	desc = japan.29.d
+	picture = GFX_report_event_japanese_soldiers_on_hill
+	
+	fire_only_once = yes
+	is_triggered_only = yes
+
+	trigger = {
+		tag = JAP
+
+		is_ai = yes 
+		has_war_with = ENG
+				
+	}
+	
+	option = {
+		name = japan.29.a
+		hidden_effect = {
+
+		set_province_controller = 7387
+		set_province_controller = 7371
+		set_province_controller = 12171
+		
+		load_oob = "JAP_invade_borneo"
+		
+		}
+	}
+}
+country_event = {
+	id = japan.30
+	title = japan.30.t
+	desc = japan.30.d
+	picture = GFX_report_event_japanese_soldiers_on_hill
+	
+	fire_only_once = yes
+	is_triggered_only = yes
+
+	trigger = {
+		tag = JAP
+		is_ai = yes 
+		has_war_with = AST
+				
+	}
+
+	option = {
+		name = japan.30.a
+		hidden_effect = {
+
+		set_province_controller = 12240
+		set_province_controller = 1389
+		set_province_controller = 10166
+		set_province_controller = 7251
+		set_province_controller = 12154
+		set_province_controller = 12193
+		set_province_controller = 7333
+		set_province_controller = 4378
+		set_province_controller = 10231
+		set_province_controller = 4292
+		
+		load_oob = "JAP_invade_newguinea"
+		
+		}
+	}
+}
+country_event = {
+	id = japan.32
+	title = japan.32.t
+	desc = japan.32.d
+	picture = GFX_report_event_japanese_soldiers_on_hill
+	is_triggered_only = yes
+	
+	option = {
+		name = japan.31.a
+		ai_chance = { factor = 100 }
+		CHI = {
+			every_owned_state = {
+				limit  = {
+					is_coastal = yes
+				}
+				JAP = {
+					transfer_state = PREV
+				}
+			}
+		}
+		set_country_flag = chinese_coast_II
+	}
+	option = {
+		name = japan.31.b			#refuse
+		ai_chance = { factor = 0 }
+		set_country_flag = east_indies_II
+	}
+}
+country_event = {
+	id = japan.33
+	title = japan.33.t
+	desc = japan.33.d
+	picture = GFX_report_event_cbc_gfxaddon
+	is_triggered_only = yes
+	
+	option = {
+		name = japan.33.a
+		ai_chance = { factor = 100 }
+		add_stability = -0.03
+		531 = {
+			damage_building = {
+				type = infrastructure
+				damage = 3
+			}
+			damage_building = {
+				type = industrial_complex
+				damage = 2
+			}
+		}
+		hidden_effect = {
+			country_event = { id = japan.34 days = 175 }
+		}
+	}
+}
+country_event = {
+	id = japan.34
+	title = japan.34.t
+	desc = japan.34.d
+	picture = GFX_report_event_cbc_gfxaddon
+	is_triggered_only = yes
+	
+	option = {
+		name = japan.34.a
+		ai_chance = { factor = 100 }
+		add_stability = -0.02
+		534 = {
+			damage_building = {
+				type = infrastructure
+				damage = 1
+			}
+			damage_building = {
+				type = industrial_complex
+				damage = 2
+			}
+			damage_building = {
+				type = arms_factory
+				damage = 1
+			}
+		}
+		hidden_effect = {
+			country_event = { id = jap.2 days = 655 }
+		}
+	}
+}
+country_event = {
+	id = japan.35
+	title = japan.35.t
+	desc = japan.35.d
+	picture = GFX_report_event_japanese_soldiers_on_hill
+	is_triggered_only = yes
+	
+	option = {
+		name = japan.35.a
+		ai_chance = { 
+			factor = 100 
+			modifier = {
+				is_in_faction = yes
+				factor = 0.5
+			}
+		}
+		if = {
+			limit = {
+				is_in_faction = yes
+			}
+			leave_faction = yes
+		}
+		JAP = {
+			country_event = japan.36
+			if = {
+				limit = {
+					has_dlc = "Together for Victory"
+					NOT = { has_dlc = "Waking the Tiger" }
+				}
+				set_autonomy = {
+					target = ROOT
+					autonomous_state = autonomy_integrated_puppet
+					freedom_level = 0.24
+					end_wars = no
+				}
+			}	
+			if = {
+				limit = { 
+					NOT = {
+						has_dlc = "Waking the Tiger"
+						has_dlc = "Together for Victory"
+					}
+				}
+				set_autonomy = {
+					target = ROOT
+					autonomous_state = autonomy_puppet
+					end_wars = no
+				}
+			}
+
+			if = {
+				limit = { 
+					has_dlc = "Waking the Tiger"
+				}
+				set_autonomy = {
+					target = ROOT
+					autonomous_state = autonomy_wtt_imperial_protectorate
+					freedom_level = 0.1
+					end_wars = no
+				}
+			}
+		}		
+	}
+	option = {
+		name = japan.35.b
+		ai_chance = { 
+			factor = 0 
+			modifier = {
+				is_in_faction = yes
+				add = 50
+			}
+		}
+		JAP = { country_event = japan.37 }
+		effect_tooltip = {
+			if = {
+				limit = {
+					is_in_faction = yes
+				}
+				JAP = {
+					create_wargoal = {
+						type = puppet_wargoal_focus
+						target = ROOT
+					}
+				}
+			}
+			else = {
+				JAP = {
+					declare_war_on = {
+						target = ROOT
+						type = puppet_wargoal_focus
+					}
+				}
+			}
+		}
+	}
+}
+country_event = {
+	id = japan.36
+	title = japan.36.t
+	desc = japan.36.d
+	picture = GFX_report_event_japanese_soldiers_marching
+
+	fire_only_once = yes
+	is_triggered_only = yes
+
+	option = {
+		name = japan.36.a
+		effect_tooltip = {
+			if = {
+				limit = {
+					has_dlc = "Together for Victory"
+					NOT = { has_dlc = "Waking the Tiger" }
+				}
+				set_autonomy = {
+					target = FROM
+					autonomous_state = autonomy_integrated_puppet
+					freedom_level = 0.24
+					end_wars = no
+				}
+			}	
+			if = {
+				limit = { 
+					NOT = {
+						has_dlc = "Waking the Tiger"
+						has_dlc = "Together for Victory"
+					}
+				}
+				set_autonomy = {
+					target = FROM
+					autonomous_state = autonomy_puppet
+					end_wars = no
+				}
+			}
+			if = {
+				limit = { 
+					has_dlc = "Waking the Tiger"
+				}
+				set_autonomy = {
+					target = FROM
+					autonomous_state = autonomy_wtt_imperial_protectorate
+					freedom_level = 0.1
+					end_wars = no
+				}
+			}
+		}		
+	}	
+}
+country_event = {
+	id = japan.37
+	title = japan.37.t
+	desc = japan.37.d
+	picture = GFX_report_event_japanese_soldiers_marching
+
+	fire_only_once = yes
+	is_triggered_only = yes
+
+	option = {
+		trigger = {
+			FROM = { is_in_faction = yes }
+		}
+		name = japan.37.a
+		create_wargoal = {
+			type = puppet_wargoal_focus
+			target = FROM
+		}		
+	}
+	option = {
+		trigger = {
+			FROM = { is_in_faction = no }
+		}
+		name = japan.37.b
+		declare_war_on = {
+			target = FROM
+			type = puppet_wargoal_focus
+		}		
+	}	
+}
+#Guam
+country_event = {
+	id = japan.43
+	title = japan.43.t
+	desc = japan.43.d
+	picture = GFX_report_event_japanese_soldiers_marching
+
+	is_triggered_only = yes
+
+	option = {
+		name = japan.43.a
+			
+		638 = {
+			damage_building = {
+				type = infrastructure
+				damage = 3
+			}
+			damage_building = {
+				type = naval_base
+				province = 12140
+				damage = 1
+			}
+		
+			if = {
+				limit = {
+					JAP = {
+						is_ai = yes 
+					}
+				}
+				JAP = { set_province_controller = 12140	}
+				create_unit = {
+					division = "name = \"13 Tokubetsu Rikensentai\" division_template = \"Marines Division\" start_experience_factor = 0.5"
+					owner = JAP
+				}
+			}
+		}
+		
+	}
+	
+}
+### EOF ###

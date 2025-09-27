@@ -1,0 +1,4857 @@
+
+@AI_ASSIGNED_ADVISOR_SCORE = 2 #adds this to the score if advisor is already assigned
+@AI_ECONOMIC_FOCUS_SCORE = 3 #for economic ministers, the score they get if their construction focus (civ / mil) is active
+
+@AI_MIN_ADVISOR_SLOT_SCORE = 0 #if slot score is higher than this the advisors get evaluated
+@AI_MIN_ADVISOR_SCORE = 0 #if advisor score is higher than OR equal to this, it can get assigned
+
+d_ai_advisor_template = {
+	
+	set_country_flag = ai_assign_advisor
+	set_country_flag = ai_custom_advisor_ai
+	ai_update_advisor_logic = yes
+}
+
+d_ai_print_dynamic_advisor_picks = {
+	for_each_loop = {
+		array = global.idea_slots
+		
+		if = {
+			limit = {
+				check_variable = { ai_character_new@var:v^num > 0 }
+			}
+			log = "[?v.GetTokenKey]"
+			for_each_loop = {
+				array = ai_character_new@var:v 
+				
+				log = "---->Name: [?v.GetName] [?v]"
+			}
+		}
+	}
+}
+d_ai_display_advisor_picks = { #use this to make the game show which advisors ai will pick by assigning a trait. only works when ai has an advisor template
+	meta_effect = {
+		text = {
+			d_ai_advisor_template/[X] = yes
+		}
+		X = "[This.GetTag]"
+	}
+	
+	for_each_loop = {
+		array = ai_character@head_of_state
+		
+		var:v = { 
+			if = {
+				limit = {
+					is_character_slot = head_of_state
+				}
+				add_trait = { trait = ai_advisor slot = head_of_state }
+			}
+			else = {
+				#log = "[THIS.GetTag] | [?v.GetTokenKey] IS NOT head_of_state BUT ASSIGNED TO IT"
+			}
+		}
+	}
+	for_each_loop = {
+		array = ai_character@foreign_minister
+		
+		var:v = { 
+			if = {
+				limit = {
+					is_character_slot = foreign_minister
+				}
+				add_trait = { trait = ai_advisor slot = foreign_minister }
+			}
+			else = {
+				#log = "[THIS.GetTag] | [?v.GetTokenKey] IS NOT foreign_minister BUT ASSIGNED TO IT"
+			}
+		}
+	}
+	for_each_loop = {
+		array = ai_character@interior_minister
+		
+		var:v = { 
+			if = {
+				limit = {
+					is_character_slot = interior_minister
+				}
+				add_trait = { trait = ai_advisor slot = interior_minister }
+			}
+			else = {
+				#log = "[THIS.GetTag] | [?v.GetTokenKey] IS NOT interior_minister BUT ASSIGNED TO IT"
+			}
+		}
+	}
+	for_each_loop = {
+		array = ai_character@intel_minister
+		
+		var:v = { 
+			if = {
+				limit = {
+					is_character_slot = intel_minister
+				}
+				add_trait = { trait = ai_advisor slot = intel_minister }
+			}
+			else = {
+				#log = "[THIS.GetTag] | [?v.GetTokenKey] IS NOT intel_minister BUT ASSIGNED TO IT"
+			}
+		}
+	}
+	for_each_loop = {
+		array = ai_character@economic_minister
+		
+		var:v = { 
+			if = {
+				limit = {
+					is_character_slot = economic_minister
+				}
+				add_trait = { trait = ai_advisor slot = economic_minister }
+			}
+			else = {
+				#log = "[THIS.GetTag] | [?v.GetTokenKey] IS NOT economic_minister BUT ASSIGNED TO IT"
+			}
+		}
+	}
+	for_each_loop = {
+		array = ai_character@domestic_minister
+		
+		var:v = { 
+			if = {
+				limit = {
+					is_character_slot = domestic_minister
+				}
+				add_trait = { trait = ai_advisor slot = domestic_minister }
+			}
+			else = {
+				#log = "[THIS.GetTag] | [?v.GetTokenKey] IS NOT domestic_minister BUT ASSIGNED TO IT"
+			}
+		}
+	}
+	for_each_loop = {
+		array = ai_character@political_advisor
+		
+		var:v = { 
+			if = {
+				limit = {
+					is_character_slot = political_advisor
+				}
+				add_trait = { trait = ai_advisor slot = political_advisor }
+			}
+			else = {
+				#log = "[THIS.GetTag] | [?v.GetTokenKey] IS NOT political_advisor BUT ASSIGNED TO IT"
+			}
+		}
+	}
+	for_each_loop = {
+		array = ai_character@influence_minister
+		
+		var:v = { 
+			if = {
+				limit = {
+					is_character_slot = influence_minister
+				}
+				add_trait = { trait = ai_advisor slot = influence_minister }
+			}
+			else = {
+				#log = "[THIS.GetTag] | [?v.GetTokenKey] IS NOT influence_minister BUT ASSIGNED TO IT"
+			}
+		}
+	}
+	for_each_loop = {
+		array = ai_character@supreme_commander
+		
+		var:v = { 
+			if = {
+				limit = {
+					is_character_slot = supreme_commander
+				}
+				add_trait = { trait = ai_advisor slot = supreme_commander }
+			}
+			else = {
+				#log = "[THIS.GetTag] | [?v.GetTokenKey] IS NOT supreme_commander BUT ASSIGNED TO IT"
+			}
+		}
+	}
+	for_each_loop = {
+		array = ai_character@army_chief
+		
+		var:v = { 
+			if = {
+				limit = {
+					is_character_slot = army_chief
+				}
+				add_trait = { trait = ai_advisor slot = army_chief }
+			}
+			else = {
+				#log = "[THIS.GetTag] | [?v.GetTokenKey] IS NOT army_chief BUT ASSIGNED TO IT"
+			}
+		}
+	}
+	for_each_loop = {
+		array = ai_character@air_chief
+		
+		var:v = { 
+			if = {
+				limit = {
+					is_character_slot = air_chief
+				}
+				add_trait = { trait = ai_advisor slot = air_chief }
+			}
+			else = {
+				#log = "[THIS.GetTag] | [?v.GetTokenKey] IS NOT air_chief BUT ASSIGNED TO IT"
+			}
+		}
+	}
+	for_each_loop = {
+		array = ai_character@navy_chief
+		
+		var:v = { 
+			if = {
+				limit = {
+					is_character_slot = navy_chief
+				}
+				add_trait = { trait = ai_advisor slot = navy_chief }
+			}
+			else = {
+				#log = "[THIS.GetTag] | [?v.GetTokenKey] IS NOT navy_chief BUT ASSIGNED TO IT"
+			}
+		}
+	}
+	for_each_loop = {
+		array = ai_character@high_command
+		
+		var:v = { 
+			if = {
+				limit = {
+					is_character_slot = high_command
+				}
+				add_trait = { trait = ai_advisor slot = high_command }
+			}
+			else = {
+				#log = "[THIS.GetTag] | [?v.GetTokenKey] IS NOT high_command BUT ASSIGNED TO IT"
+			}
+		}
+	}
+	for_each_loop = {
+		array = ai_character@theorist
+		
+		var:v = { 
+			if = {
+				limit = {
+					is_character_slot = theorist
+				}
+				add_trait = { trait = ai_advisor slot = theorist }
+			}
+			else = {
+				#log = "[THIS.GetTag] | [?v.GetTokenKey] IS NOT theorist BUT ASSIGNED TO IT"
+			}
+		}
+	}
+}
+				
+ai_update_advisor_logic = {
+
+	if = {
+		limit = {
+			NOT = { has_country_flag = ai_advisor_start_check }
+		}
+		set_country_flag = ai_advisor_start_check
+		clear_array = ai_starting_advisor
+		
+		every_character = {
+			limit = {
+				is_advisor = yes
+			}
+			
+			if = {
+				limit = {
+					is_character_slot = economic_minister
+					is_hired = yes
+				}
+				add_to_array = { PREV.ai_starting_advisor@economic_minister = key }
+				add_to_array = { PREV.ai_starting_advisor_scope@economic_minister = THIS }
+			}
+		}
+		
+	}
+	
+	if = {
+		limit = {
+			has_country_flag = ai_assign_advisor
+		}
+		clr_country_flag = ai_assign_advisor
+		
+		if = {
+			limit = {
+				NOT = { has_country_flag = ai_military_build_switch }
+			}
+			set_temp_variable = { ai_build_civilian = @AI_ECONOMIC_FOCUS_SCORE }
+		}
+		else = {
+			set_temp_variable = { ai_build_military = @AI_ECONOMIC_FOCUS_SCORE }
+		}
+	
+		if = {
+			limit = {
+				has_country_flag = ai_custom_advisor_ai
+			}
+			
+			meta_effect = {
+				text = {
+					d_ai_advisor_template/[X] = yes
+				}
+				X = "[This.GetTag]"
+			}
+		}
+		else = {
+			d_ai_advisor_template/generic = yes
+		}
+			
+		for_each_loop = {
+			array = ai_starting_advisor@economic_minister
+			
+			if = {
+				limit = {
+					meta_trigger = {
+						text = {
+							has_idea = [X]_economic_minister
+						}
+						X = "[?v.GetTokenKey]"
+					}
+					NOT = { is_in_array = { ai_character@economic_minister = v } }
+				}
+				add_to_temp_array = { ai_character@economic_minister = v }
+				meta_effect = {
+					text = {			
+						set_temp_variable = { [X]_economic_minister = -100 }
+					}
+					X = "[?v.GetTokenKey]"
+				}
+				#log = "set score to -100 for [?v.GetTokenKey]"
+			}
+			else = {
+				add_to_temp_array = { remove_starting = v }
+				#log = "[?v.GetTokenKey] REMOVE THIS GUY AS HE IS NO LONGER ASSIGNED!"
+			}
+		}
+		for_each_loop = { array = remove_starting remove_from_array = { ai_starting_advisor@economic_minister = v } }
+		
+		ai_select_next_advisor_slot_target = yes
+		
+		remove_ideas = {
+			ai_advisor_1
+			ai_advisor_2
+			ai_advisor_3
+		}
+		
+		if = {
+			limit = {
+				check_variable = { advisor_picked = 0 }
+			}
+			add_political_power = 150
+			country_event = { id = ai_MISC.3 days = 30 } #delayed removal
+		}
+		else = {
+			remove_ideas = ai_advisor
+		}
+	}
+}
+
+ai_select_next_advisor_slot_target = {
+	
+	for_each_loop = {
+		array = global.idea_slots
+		value = slot
+		break = none
+		index = entry
+		
+		if = { #WORKAROUND FOR TOKEN: ISSUE
+			limit = {
+				OR = {
+					check_variable = { slot = token:tank_manufacturer }
+					check_variable = { slot = token:naval_manufacturer }
+					check_variable = { slot = token:aircraft_manufacturer }
+					check_variable = { slot = token:materiel_manufacturer }
+					check_variable = { slot = token:industrial_concern }
+					check_variable = { slot = token:electrical_concern }
+				}
+			}
+		}
+		else = {
+			for_each_loop = {
+				array = ai_character@var:slot
+				
+				add_to_temp_array = { ai_character_temp@var:slot = v }
+			}
+			clear_temp_array = ai_character@var:slot
+			for_each_loop = {
+				array = ai_character_temp@var:slot
+				
+				meta_effect = {
+					text = {
+						set_temp_variable = { t = [X] }
+					}
+					X = "[?v.GetTokenKey]"
+				}
+				add_to_temp_array = { ai_character@var:slot = t }
+			}
+		}
+		
+		if = {
+			limit = {
+				OR = {
+					check_variable = { ai_character@var:slot^num = 0 }
+					check_variable = { ai_character@var:slot^num > 1 } #if theres more than the max then evaluate them, no matter if slot is filled or not
+					AND = {
+						check_variable = { ai_character@var:slot^num = 1 } #if theres only one available guy, no need to run any code if hes already assigned
+						if = {
+							limit = {
+								OR = {
+									check_variable = { slot = token:tank_manufacturer }
+									check_variable = { slot = token:materiel_manufacturer }
+									check_variable = { slot = token:naval_manufacturer }
+									check_variable = { slot = token:aircraft_manufacturer }
+									check_variable = { slot = token:industrial_concern }
+									check_variable = { slot = token:electrical_concern }
+								}
+							}
+							NOT = {
+								has_idea = var:ai_character@var:slot^0
+							}
+						}
+						else_if = {
+							limit = {
+								set_temp_variable = { t = ai_character@var:slot^0 }
+								
+								set_temp_variable = { no_character_available = 1 }
+								has_character = var:t
+								set_temp_variable = { no_character_available = 0 }
+								
+								var:t = {
+									set_temp_variable = { token_key = key }
+								}
+							}
+							NOT = {
+								meta_trigger = {
+									text = { has_idea = [X]_[Y] }
+									X = "[?token_key.GetTokenKey]"
+									Y = "[?slot.GetTokenKey]"
+								}
+							}
+						}
+					}
+				}
+			}
+			if = {
+				limit = {
+					check_variable = { no_character_available = 1 }
+				}
+				clear_temp_array = ai_character@var:slot
+			}
+			
+			set_temp_variable = { ai_score = ai_score_base@var:slot }
+			
+			#-------------------------------------------------------------------------
+			multiply_temp_variable = { ai_score = ai_score_mult@var:slot?1 }
+			add_to_temp_variable = { ai_score = ai_score_add@var:slot }
+			
+			randomize_temp_variable = { var = random_score distribution = uniform min = 0 max = ai_advisor_slot_max_random_score }
+			add_to_temp_variable = { ai_score = random_score }
+
+			add_to_temp_array = { ai_advisor_slot_token = slot }
+			add_to_temp_array = { ai_advisor_slot_max = global.idea_slots_num^entry }
+			add_to_temp_array = { ai_advisor_slot_score = ai_score }
+		}
+	}
+	
+	ai_sort_advisor_slot_scores = yes
+}
+
+ai_sort_advisor_slot_scores = { 
+
+	#ADVISOR_log = "=========================================="
+	#ADVISOR_log = "=================[This.GetTag]==================="
+	### FIND HIGHEST SCORED SLOT 
+	
+	for_each_loop = { 
+		array = ai_advisor_slot_score
+		break = large_break
+		
+		set_temp_variable = { link = ai_advisor_slot_token^i }
+		set_temp_variable = { max = ai_advisor_slot_max^i }
+		
+		for_each_loop = { array = ai_advisor_slot_score_sorted
+			value = not_v
+
+			if = { limit = { check_variable = { v > not_v } }
+
+				add_to_temp_array = { array = ai_advisor_slot_token_sorted index = i value = link }
+				add_to_temp_array = { array = ai_advisor_slot_max_sorted index = i value = max }
+				add_to_temp_array = { array = ai_advisor_slot_score_sorted index = i value = v }
+				set_temp_variable = { break = 1 }
+			}
+		}
+
+		if = { limit = { check_variable = { break = 0 } }
+			
+			add_to_temp_array = { array = ai_advisor_slot_token_sorted value = link }
+			add_to_temp_array = { array = ai_advisor_slot_max_sorted value = max }
+			add_to_temp_array = { array = ai_advisor_slot_score_sorted value = v }
+		}
+		else = { set_temp_variable = { break = 0 } }
+	}
+	
+	
+	### FIND HIGHEST SCORED ADVISOR OF HIGHEST SCORED SLOT, AND THEN CHECK IF ITS AVAILABLE TRIGGER IS TRUE
+	
+	#log = "---> ALL SLOT SCORES <---"
+
+	if = {
+		limit = {
+			has_global_flag = ai_track_advisors
+		}
+		clear_array = ai_advisor_slot_debug
+		clear_array = ai_advisor_slot_score_debug
+		for_each_loop = {
+			array = ai_advisor_slot_token_sorted
+			
+			#log = "SLOT: [?v.GetTokenKey] | SCORE: [?ai_advisor_slot_score_sorted^i]"
+			add_to_array = { ai_advisor_slot_debug = v }
+			add_to_array = { ai_advisor_slot_score_debug = ai_advisor_slot_score_sorted^i }
+		}
+	}
+	#log = " "
+	#log = " "
+	
+	for_each_loop = {
+		array = ai_advisor_slot_token_sorted
+		value = slot
+		
+		if = {
+			limit = {
+				check_variable = { ai_advisor_slot_score_sorted^i > @AI_MIN_ADVISOR_SLOT_SCORE }
+			}
+			
+			set_temp_variable = { max_slot = ai_advisor_slot_max_sorted^i }
+			set_temp_variable = { slot_num_filled = 0 }
+			
+			for_each_loop = { #ADD NEWLY PICKED ADVISORS TO THE TEMP ARRAY
+				array = ai_character_new@var:slot
+				
+				add_to_temp_array = { ai_character@var:slot = v }
+			}
+			
+			#ADVISOR_log = " "
+			#ADVISOR_log = "SLOT: [?slot.GetTokenKey] MAX: [?max_slot] | SCORE: [?ai_advisor_slot_score_sorted^i] | EVAL: [?ai_character@var:slot^num]"
+			
+			if = {
+				limit = {
+					NOT = {
+						check_variable = { slot = token:industrial_concern }
+						check_variable = { slot = token:electrical_concern }
+						check_variable = { slot = token:materiel_manufacturer }
+						check_variable = { slot = token:aircraft_manufacturer }
+						check_variable = { slot = token:naval_manufacturer }
+						check_variable = { slot = token:tank_manufacturer }
+					}
+				}
+				set_temp_variable = { is_character = 1 }
+			}
+			else = { set_temp_variable = { is_character = 0 } }
+			
+			clear_temp_array = ai_advisor_token
+			clear_temp_array = ai_advisor_score
+			clear_temp_array = ai_advisor_assigned
+			
+			clear_temp_array = ai_advisor_token_sorted
+			clear_temp_array = ai_advisor_score_sorted
+			clear_temp_array = ai_advisor_assigned_sorted
+			
+			clear_temp_array = remove_invalid_advisor
+			
+			### GET ADVISOR SCORES
+			
+			if = { #CHARACTER
+				limit = {
+					check_variable = { is_character = 1 }
+				}
+				for_each_loop = {
+					array = ai_character@var:slot 
+					if = {
+						limit = { #check if the character exists and has the correct character slot
+							has_character = var:v
+							var:v = {
+								meta_trigger = {
+									text = {
+										is_character_slot = [Y]
+									}
+									Y = "[?slot.GetTokenKey]"
+								}
+							}
+						}
+						var:v = { set_temp_variable = { token_key = key } }
+						
+						meta_effect = { #add the manual score 
+							text = {
+								set_temp_variable = { score = [Y]_[X] }
+							}
+							X = "[?slot.GetTokenKey]"
+							Y = "[?token_key.GetTokenKey]"
+						}
+						
+						
+						if = {
+							limit = { #if advisor is assigned, score is increased
+								meta_trigger = {
+									text = {
+										has_idea = [X]_[Y]
+									}
+									X = "[?token_key.GetTokenKey]"
+									Y = "[?slot.GetTokenKey]"
+								}
+							}
+							add_to_temp_variable = { score = @AI_ASSIGNED_ADVISOR_SCORE }
+							set_temp_variable = { assigned_status = 1 }
+							
+							add_to_temp_array = { assigned_advisor_token@var:slot = token_key }
+							add_to_temp_array = { assigned_advisor_value@var:slot = v }
+						}
+						else = { set_temp_variable = { assigned_status = 0 } }
+						
+						add_to_temp_array = { ai_advisor_token = v }
+						add_to_temp_array = { ai_advisor_score = score }
+						add_to_temp_array = { ai_advisor_assigned = assigned_status }
+					}
+					else = { #if character is not valid anymore add it to temp array for removal
+					
+						add_to_temp_array = { remove_invalid_advisor = v }
+					}
+				}
+						
+			### IF NOT ENOUGH ADVISOR IS PRESENT -> FIND NEW ONE
+			
+				ai_get_new_advisor_for_slot = yes
+				
+			}
+			
+			else = { #NON CHARACTER
+			
+				for_each_loop = {
+					array = ai_character@var:slot
+					
+					meta_effect = { #add the manual score 
+						text = {
+							set_temp_variable = { score = [Y]_[X] }
+						}
+						X = "[?slot.GetTokenKey]"
+						Y = "[?v.GetTokenKey]"
+					}
+					
+					if = {
+						limit = { #if designer is assigned, score is increased
+							has_idea = var:v
+						}
+						add_to_temp_variable = { score = @AI_ASSIGNED_ADVISOR_SCORE }
+						set_temp_variable = { assigned_status = 1 }
+					}
+					else = { set_temp_variable = { assigned_status = 0 } }
+						
+					add_to_temp_array = { ai_advisor_token = v }
+					add_to_temp_array = { ai_advisor_score = score }
+					add_to_temp_array = { ai_advisor_assigned = assigned_status }
+				}
+			}
+			
+			if = { #remove invalid characters from the list
+				limit = {
+					check_variable = { remove_invalid_advisor^num > 0 }
+				}
+				
+				for_each_loop = {
+					array = remove_invalid_advisor
+					value = remove_value
+					
+					remove_from_temp_array = { ai_character@var:slot = remove_value }
+					if = {
+						limit = {
+							is_in_array = { ROOT.ai_character_new@var:slot = remove_value }
+						}
+						remove_from_array = { ROOT.ai_character_new@var:slot = remove_value }
+					}
+				}
+			}
+				
+		### FIND AND SORT HIGHEST SCORED ADVISOR 
+			
+			if = {
+				limit = {
+					check_variable = { ai_advisor_token^num > 0 }
+				}
+					
+				for_each_loop = { 
+					array = ai_advisor_score
+					break = large_break
+					
+					set_temp_variable = { link = ai_advisor_token^i }
+					set_temp_variable = { link2 = ai_advisor_assigned^i }
+					
+					for_each_loop = { array = ai_advisor_score_sorted
+						value = not_v
+
+						if = { limit = { check_variable = { v > not_v } }
+
+							add_to_temp_array = { array = ai_advisor_token_sorted index = i value = link }
+							add_to_temp_array = { array = ai_advisor_score_sorted index = i value = v }
+							add_to_temp_array = { array = ai_advisor_assigned_sorted index = i value = link2 }
+							set_temp_variable = { break = 1 }
+						}
+					}
+
+					if = { limit = { check_variable = { break = 0 } }
+						
+						add_to_temp_array = { array = ai_advisor_token_sorted value = link }
+						add_to_temp_array = { array = ai_advisor_score_sorted value = v }
+						add_to_temp_array = { array = ai_advisor_assigned_sorted value = link2 }
+					}
+					else = { set_temp_variable = { break = 0 } }
+				}
+			}
+			
+			
+		### CHECK HIGHEST SCORED ADVISOR IF THEY ARE AVAILABLE
+			
+			if = {
+				limit = {
+					OR = {
+						check_variable = { slot = token:economic_minister }
+						check_variable = { slot = token:domestic_minister }
+					}
+				}
+				for_each_loop = {
+					array = ai_advisor_token_sorted
+					
+					#log = "[?v.GetName] [?ai_advisor_score_sorted^i] "
+					if = {
+						limit = {
+							is_in_array = { assigned_advisor_value@var:slot = v }
+						}
+						var:v = { set_temp_variable = { lowest_advisor = key } }
+					}
+					
+				}
+			}
+			else = { set_temp_variable = { lowest_advisor = 0 } }
+			
+			for_each_loop = {
+				array = ai_advisor_token_sorted
+				
+				ai_select_next_advisor = yes
+				
+			}
+		}
+	}
+	
+}
+ai_get_new_advisor_for_slot = {
+
+	set_temp_variable = { best_weight = 0 }
+	set_temp_variable = { best_weight_token = 0 }
+
+	if = {
+		limit = {
+			OR = {
+				check_variable = { ai_character@var:slot^num = 0 }
+				check_variable = { ai_character@var:slot^num < max_slot }
+			}
+		}
+		
+		if = {
+			limit = {
+				check_variable = { slot = token:high_command }
+			}
+			
+			for_each_loop = {
+				array = ai_character@high_command
+				value = exists
+				
+				var:exists = {
+					if = {
+						limit = {
+							has_army_ledger = yes
+						}
+						add_to_temp_variable = { potential_high_command_army = 1 }
+					}
+					else_if = {
+						limit = {
+							has_air_ledger = yes
+						}
+						add_to_temp_variable = { potential_high_command_air = 1 }
+					}
+					else_if = {
+						limit = {
+							has_navy_ledger = yes
+						}
+						add_to_temp_variable = { potential_high_command_navy = 1 }
+					}
+				}
+			}
+			
+			every_character = {
+				limit = {
+					#is_advisor = yes
+					is_character_slot = high_command
+					has_variable = key
+					
+					if = {
+						limit = {
+							has_army_ledger = yes
+						}
+						check_variable = { potential_high_command_army < 2 }
+					}
+					else_if = {
+						limit = {
+							has_air_ledger = yes
+						}
+						check_variable = { potential_high_command_air < 2 }
+					}
+					else_if = {
+						limit = {
+							has_navy_ledger = yes
+						}
+						check_variable = { potential_high_command_navy < 2 }
+					}
+					NOT = { 
+						is_in_array = { ai_character@var:slot = THIS } 
+					}
+				}
+				
+				set_temp_variable = { weight = mtth:new_advisor_ai_will_do }
+				
+				if = { limit = { check_variable = { weight > best_weight } }
+					set_temp_variable = { best_weight = weight }
+					set_temp_variable = { best_weight_token = THIS }
+				}
+				
+			}
+		}
+		else_if = {
+			limit = {
+				check_variable = { slot = token:theorist }
+			}
+			
+			for_each_loop = {
+				array = ai_character@theorist
+				value = exists
+				
+				var:exists = {
+					if = {
+						limit = {
+							has_army_ledger = yes
+						}
+						add_to_temp_variable = { potential_theorist_army = 1 }
+					}
+					else_if = {
+						limit = {
+							has_air_ledger = yes
+						}
+						add_to_temp_variable = { potential_theorist_air = 1 }
+					}
+					else_if = {
+						limit = {
+							has_navy_ledger = yes
+						}
+						add_to_temp_variable = { potential_theorist_navy = 1 }
+					}
+				}
+			}
+			
+			every_character = {
+				limit = {
+					#is_advisor = yes
+					is_character_slot = theorist
+					has_variable = key
+				
+					if = {
+						limit = {
+							has_army_ledger = yes
+						}
+						check_variable = { potential_theorist_army < 2 }
+					}
+					else_if = {
+						limit = {
+							has_air_ledger = yes
+						}
+						check_variable = { potential_theorist_air < 2 }
+					}
+					else_if = {
+						limit = {
+							has_navy_ledger = yes
+						}
+						check_variable = { potential_theorist_navy < 2 }
+					}
+					NOT = { 
+						is_in_array = { ai_character@var:slot = THIS } 
+					}
+				}
+				
+				set_temp_variable = { weight = mtth:new_advisor_ai_will_do }
+				
+				if = { limit = { check_variable = { weight > best_weight } }
+					set_temp_variable = { best_weight = weight }
+					set_temp_variable = { best_weight_token = THIS }
+				}
+				
+			}
+		}
+		else = {
+			every_character = {
+				limit = {
+					is_advisor = yes 
+					
+					meta_trigger = { 
+						text = {
+							is_character_slot = [X]
+						}
+						X = "[?slot.GetTokenKey]"
+					}
+					
+					has_variable = key
+					NOT = { is_in_array = { ai_character@var:slot = THIS } }
+				}
+				
+				set_temp_variable = { weight = mtth:new_advisor_ai_will_do }
+					
+				if = { limit = { check_variable = { weight > best_weight } }
+					set_temp_variable = { best_weight = weight }
+					set_temp_variable = { best_weight_token = THIS }
+				}
+			}
+		}
+		
+		### ADD NEW BEST SCORED ADVISOR TO ARRAY
+		if = { 
+			limit = { 
+				check_variable = { best_weight > 0 } 
+				#check_variable = { best_weight_token > 0 } 
+			}
+			#ADVISOR_log = "NEW CHARACTER [?best_weight_token.GetName] [?best_weight_token] FOR [?slot.GetTokenKey] FOR [ROOT.GetTag]"
+				
+			add_to_array = { ROOT.ai_character_new@var:slot = best_weight_token }
+			
+			add_to_temp_array = { ai_advisor_token = best_weight_token }
+			add_to_temp_array = { ai_advisor_score = best_weight }
+			add_to_temp_array = { ai_advisor_assigned = 0 }
+		}
+			
+	}
+}
+ai_select_next_advisor = {
+	
+	if = {
+		limit = {
+			check_variable = { is_character = 1 }
+		}
+		#ADVISOR_log = "    ADVISOR: [?v.GetName] | SCORE: [?ai_advisor_score_sorted^i]"
+	}
+	else = {
+		#ADVISOR_log = "    IDEA: [?v.GetTokenKey] | SCORE: [?ai_advisor_score_sorted^i]"
+	}
+	if = {
+		limit = {
+			check_variable = { slot_num_filled < max_slot }
+				
+			NOT = { check_variable = { ai_advisor_score_sorted^i < @AI_MIN_ADVISOR_SCORE } }
+		}
+		
+		## CHARACTER
+		if = {
+			limit = {
+				check_variable = { is_character = 1 }
+				
+				if = {
+					limit = {
+						check_variable = { ai_advisor_assigned_sorted^i = 1 }
+					}
+					add_to_temp_variable = { slot_num_filled = 1 }
+					#ADVISOR_log = "        -already assigned"
+					always = no
+					
+				}
+				
+				if = {
+					limit = {
+						check_variable = { slot = token:high_command }
+					}
+					if = {
+						limit = {
+							var:v = { has_army_ledger = yes }
+							ai_can_pick_high_command_army = no
+						}
+						#ADVISOR_log = "        -ai_can_pick_high_command_ARMY false"
+						always = no
+					}
+					if = {
+						limit = {
+							var:v = { has_air_ledger = yes }
+							ai_can_pick_high_command_air = no
+						}
+						#ADVISOR_log = "        -ai_can_pick_high_command_AIR false"
+						always = no
+					}
+					if = {
+						limit = {
+							var:v = { has_navy_ledger = yes }
+							ai_can_pick_high_command_navy = no
+						}
+						#ADVISOR_log = "        -ai_can_pick_high_command_NAVY false"
+						always = no
+					}
+				}
+				if = {
+					limit = {
+						check_variable = { slot = token:theorist }
+					}
+					if = {
+						limit = {
+							var:v = { has_army_ledger = yes }
+							ai_can_pick_theorist_army = no
+						}
+						#ADVISOR_log = "        -ai_can_pick_theorist_ARMY false"
+						always = no
+					}
+					if = {
+						limit = {
+							var:v = { has_air_ledger = yes }
+							ai_can_pick_theorist_air = no
+						}
+						#ADVISOR_log = "        -ai_can_pick_theorist_AIR false"
+						always = no
+					}
+					if = {
+						limit = {
+							var:v = { has_navy_ledger = yes }
+							ai_can_pick_theorist_navy = no
+						}
+						#ADVISOR_log = "        -ai_can_pick_theorist_NAVY false"
+						always = no
+					}
+				}
+				
+			}
+			
+			var:v = {
+				meta_effect = {
+					text = {
+						add_trait = {
+							trait = ai_trait
+							slot = [X]
+						}
+					}
+					X = "[?slot.GetTokenKey]"
+				}
+			}
+			
+			if = { ### CHECK IF ADVISOR IS AVAILABLE
+				limit = {
+					has_available_idea_with_traits = { idea = ai_trait limit = 1 characters = yes }
+				}
+				#ADVISOR_log = " "
+				#ADVISOR_log = "----> FINAL AI PICK: [?v.GetName] | [?slot.GetTokenKey] | IS CHARACTER"
+					
+				if = {
+					limit = {
+						has_global_flag = ai_track_advisors
+					}
+					
+					if = {
+						limit = {
+							is_in_array = { ROOT.ai_advisor_history = v }
+						}
+						log = "[Root.GetTag] ADDED AGAIN [?v.GetTokenKey] [?v.GetName]"
+					}
+					add_to_array = { ROOT.ai_advisor_history = v }
+					add_to_array = { ROOT.ai_advisor_history_slot = slot }
+					add_to_array = { ROOT.ai_advisor_history_date = global.date }
+				}
+				
+				if = { 
+					limit = {
+						check_variable = { lowest_advisor > 0 }
+						OR = {
+							AND = {
+								check_variable = { slot = token:economic_minister }
+								has_country_flag = { flag = has_economic_minister value = 2 }
+							}
+							AND = {
+								check_variable = { slot = token:domestic_minister }
+								has_country_flag = { flag = has_domestic_minister value = 2 }
+							}
+						}
+					}
+					
+					log = "[Root.GetTag] | Remove to make room [?slot.GetTokenKey] [?lowest_advisor.GetTokenKey] [?slot.GetTokenKey]"
+					
+					meta_effect = {
+						text = {
+							remove_ideas = [Y]_[X]
+						}
+						X = "[?slot.GetTokenKey]"
+						Y = "[?lowest_advisor.GetTokenKey]"
+					}
+				}
+					
+				var:v = {
+					meta_effect = {
+						text = {
+							remove_trait = {
+								trait = ai_trait
+								slot = [X]
+							}
+							ROOT = { add_ideas = [Y]_[X] }
+						}
+						X = "[?slot.GetTokenKey]"
+						Y = "[?key.GetTokenKey]"
+					}
+				}
+				
+				set_temp_variable = { advisor_picked = 1 }
+				
+				set_temp_variable = { break = 1 }
+			}
+			else = {
+				var:v = {
+					meta_effect = {
+						text = {
+							remove_trait = {
+								trait = ai_trait
+								slot = [X]
+							}
+						}
+						X = "[?slot.GetTokenKey]"
+					}
+					#ADVISOR_log = "        -unavailable TRIGGER"
+				}
+			}
+				
+		}
+		
+		## NON CHARACTER
+		else_if = { ### CHECK IF NON CHARACTER IDEA IS AVAILABLE
+			limit = {
+				NOT = { check_variable = { is_character = 1 } }
+				
+				if = {
+					limit = {
+						check_variable = { ai_advisor_assigned_sorted^i = 1 }
+					}
+					add_to_temp_variable = { slot_num_filled = 1 }
+					#ADVISOR_log = "        -already assigned"
+					always = no
+				}
+				meta_trigger = {
+					text = {
+						has_available_idea_with_traits = { idea = [X]_trait limit = 1 characters = no }
+					}
+					X = "[?slot.GetTokenKey]"
+				}
+			}
+		
+			#ADVISOR_log = "----> FINAL AI PICK: [?v.GetTokenKey] | [?slot.GetTokenKey] | IS IDEA"
+			
+			if = {
+				limit = {
+					has_global_flag = ai_track_advisors
+				}
+				if = {
+					limit = {
+						is_in_array = { ROOT.ai_advisor_history = v }
+					}
+					log = "[Root.GetTag] ADDED AGAIN [?v.GetTokenKey] [?slot.GetTokenKey]"
+				}
+				add_to_array = { ROOT.ai_advisor_history = v }
+				add_to_array = { ROOT.ai_advisor_history_slot = slot }
+				add_to_array = { ROOT.ai_advisor_history_date = global.date }
+			}
+			
+			add_ideas = var:v #this doesnt work for advisors
+			
+			set_temp_variable = { advisor_picked = 1 }
+			
+			set_temp_variable = { break = 1 }
+		}
+	}
+	
+}
+
+#############################################################################################################################
+#############################################################################################################################
+
+ai_use_default_idea_slot_base_score = {
+	set_temp_variable = { ai_score_base@head_of_state = 5 }
+	set_temp_variable = { ai_score_base@foreign_minister = 4 }
+	set_temp_variable = { ai_score_base@interior_minister = 5 }
+	set_temp_variable = { ai_score_base@intel_minister = 4 }
+	set_temp_variable = { ai_score_base@economic_minister = 8 }
+	set_temp_variable = { ai_score_base@domestic_minister = 6 }
+	set_temp_variable = { ai_score_base@political_advisor = 7 }
+	set_temp_variable = { ai_score_base@influence_minister = 5 }
+	
+	set_temp_variable = { ai_score_base@materiel_manufacturer = 1 }
+	set_temp_variable = { ai_score_base@naval_manufacturer = 1 }
+	set_temp_variable = { ai_score_base@aircraft_manufacturer = 1 }
+	set_temp_variable = { ai_score_base@materiel_manufacturer = 2 }
+	set_temp_variable = { ai_score_base@industrial_concern = 1 }
+	set_temp_variable = { ai_score_base@electrical_concern = 1 }
+	
+	set_temp_variable = { ai_score_base@supreme_commander = 2 }
+	set_temp_variable = { ai_score_base@army_chief = 2 }
+	set_temp_variable = { ai_score_base@air_chief = 1 }
+	set_temp_variable = { ai_score_base@navy_chief = 1 }
+	set_temp_variable = { ai_score_base@high_command = 1.5 }
+	set_temp_variable = { ai_score_base@theorist = 1.45 }
+}
+
+ai_use_default_idea_slot_weights = { #ai_score_base@<slot> temp variables for score
+	if = { ### tank_manufacturer 
+		limit = {
+			num_of_military_factories > 40 
+			OR = {
+				check_variable = { num_armor > 4 }
+				major_country = yes
+			}
+		}
+		set_temp_variable = { ai_score_add@tank_manufacturer = 0 }
+		
+		set_temp_variable = { ai_armor = num_armor }
+		multiply_temp_variable = { ai_armor = 0.4 }
+		clamp_temp_variable = { var = ai_armor max = 10 }
+		add_to_temp_variable = { ai_score_add@tank_manufacturer = ai_armor }
+		
+		set_temp_variable = { ai_production = resource_consumed@tank_production }
+		multiply_temp_variable = { ai_production = 0.075 }
+		clamp_temp_variable = { var = ai_production max = 10 }
+		add_to_temp_variable = { ai_score_add@tank_manufacturer = ai_production }
+	}
+	
+	if = { ### naval_manufacturer 
+		limit = {
+			has_country_flag = coastal_state
+			num_of_naval_factories > 4 
+			check_variable = { num_ships > 9 }
+		}
+		set_temp_variable = { ai_score_add@naval_manufacturer = 0 }
+		
+		set_temp_variable = { ai_ships = naval_strength }
+		multiply_temp_variable = { ai_ships = 0.05 }
+		clamp_temp_variable = { var = ai_ships max = 10 }
+		add_to_temp_variable = { ai_score_add@naval_manufacturer = ai_ships }
+		
+		set_temp_variable = { ai_production = resource_consumed@shipyard_capital }
+		multiply_temp_variable = { ai_production = 0.20 }
+		clamp_temp_variable = { var = ai_production max = 10 }
+		add_to_temp_variable = { ai_score_add@naval_manufacturer = ai_production }
+	}
+	
+	if = { ### aircraft_manufacturer 
+		limit = {
+			num_of_military_factories > 60 
+			#has_country_flag = ai_has_air_production
+			OR = {
+				check_variable = { num_deployed_planes > 500 }
+				
+				has_country_flag = ai_production/fighter_equipment
+				has_country_flag = ai_production/mr_fighter_equipment
+				has_country_flag = ai_production/interceptor_equipment
+			}
+		}
+		set_temp_variable = { ai_score_add@aircraft_manufacturer = 0 }
+		
+		set_temp_variable = { ai_air = air_strength }
+		multiply_temp_variable = { ai_air = 0.002 }
+		clamp_temp_variable = { var = ai_air max = 10 }
+		add_to_temp_variable = { ai_score_add@aircraft_manufacturer = ai_air }
+		
+		set_temp_variable = { ai_production = resource_consumed@air_production }
+		multiply_temp_variable = { ai_production = 0.04 }
+		clamp_temp_variable = { var = ai_production max = 10 }
+		add_to_temp_variable = { ai_score_add@aircraft_manufacturer = ai_production }
+	}
+	
+	if = { ### INDUSTRIAL_CONCERN 
+		limit = {
+			num_of_factories > 9
+		}
+		set_temp_variable = { ai_score_add@industrial_concern = 0 }
+		
+		set_temp_variable = { ai_research = amount_research_slots }
+		subtract_from_temp_variable = { ai_research = 2 }
+		multiply_temp_variable = { ai_research = 0.5 }
+			
+		set_temp_variable = { ai_factories = num_of_factories }
+		multiply_temp_variable = { ai_factories = 0.05 }
+		clamp_temp_variable = { var = ai_factories max = 5 }
+			
+		add_to_temp_variable = { ai_score_add@industrial_concern = ai_factories }
+		add_to_temp_variable = { ai_score_add@industrial_concern = ai_research }
+	}
+	
+	if = { ### ELECTRICAL_CONCERN 
+		limit = {
+			num_of_factories > 9
+		}
+		set_temp_variable = { ai_score_add@electrical_concern = 0 }
+		
+		set_temp_variable = { ai_research = amount_research_slots }
+		subtract_from_temp_variable = { ai_research = 2 }
+		multiply_temp_variable = { ai_research = 0.75 }
+			
+		add_to_temp_variable = { ai_score_add@electrical_concern = ai_research }
+	}
+	
+	set_temp_variable = { military_staff_add = global.threat }
+	multiply_temp_variable = { military_staff_add = 5 }
+	
+	if = { limit = { EAI_is_threatened = yes } add_to_temp_variable = { military_staff_add = 0.5 } }
+	
+	if = { limit = { any_claim = yes } add_to_temp_variable = { military_staff_add = 2 } }
+	
+	if = { limit = { has_war = yes } add_to_temp_variable = { military_staff_add = 6 } }
+	
+	if = { ### SUPREME_COMMANDER 
+		limit = {
+			num_divisions > 0
+		}
+		set_temp_variable = { ai_score_add@supreme_commander = 0 }
+		
+		set_temp_variable = { strength = army_strength }
+		multiply_temp_variable = { strength = 0.01 }
+		clamp_temp_variable = { var = strength max = 10 }
+		add_to_temp_variable = { tot_strength = strength }
+		
+		set_temp_variable = { strength = air_strength }
+		multiply_temp_variable = { strength = 0.001 }
+		clamp_temp_variable = { var = strength max = 10 }
+		add_to_temp_variable = { tot_strength = strength }
+		
+		set_temp_variable = { strength = navy_strength }
+		multiply_temp_variable = { strength = 0.015 }
+		clamp_temp_variable = { var = strength max = 10 }
+		add_to_temp_variable = { tot_strength = strength }
+		divide_temp_variable = { tot_strength = 3 }
+		
+		add_to_temp_variable = { ai_score_add@supreme_commander = tot_strength }
+		add_to_temp_variable = { ai_score_add@supreme_commander = military_staff_add }
+	}
+	
+	if = { ### ARMY_CHIEF 
+		limit = {
+			num_divisions > 0
+		}
+		set_temp_variable = { ai_score_add@army_chief = 0 }
+		
+		set_temp_variable = { strength = army_strength }
+		multiply_temp_variable = { strength = 0.005 }
+		clamp_temp_variable = { var = strength max = 10 }
+		
+		add_to_temp_variable = { ai_score_add@army_chief = strength }
+		add_to_temp_variable = { ai_score_add@army_chief = military_staff_add }
+	}
+	
+	if = { ### AIR_CHIEF 
+		limit = {
+			check_variable = { num_deployed_planes > 0 }
+		}
+		set_temp_variable = { ai_score_add@air_chief = 0 }
+		
+		set_temp_variable = { strength = air_strength }
+		multiply_temp_variable = { strength = 0.001 }
+		clamp_temp_variable = { var = strength max = 10 }
+		
+		add_to_temp_variable = { ai_score_add@air_chief = strength }
+		add_to_temp_variable = { ai_score_add@air_chief = military_staff_add }
+	}
+	
+	if = { ### NAVY_CHIEF 
+		limit = {
+			has_country_flag = coastal_state
+			num_of_naval_factories > 4 
+			has_navy_size = { size > 0 }
+		}
+		set_temp_variable = { ai_score_add@navy_chief = 0 }
+		
+		set_temp_variable = { strength = navy_strength }
+		multiply_temp_variable = { strength = 0.015 }
+		clamp_temp_variable = { var = strength max = 10 }
+		
+		add_to_temp_variable = { ai_score_add@navy_chief = strength }
+		add_to_temp_variable = { ai_score_add@navy_chief = military_staff_add }
+	}
+	
+	if = { ### HIGH_COMMAND / THEORIST
+		limit = {
+		
+		}
+		set_temp_variable = { ai_score_add@high_command = 0 }
+		set_temp_variable = { ai_score_add@theorist = 0 }
+		
+		add_to_temp_variable = { ai_score_add@high_command = military_staff_add }
+		add_to_temp_variable = { ai_score_add@theorist = military_staff_add }
+	}
+}
+
+#############################################################################################################################
+#############################################################################################################################
+
+d_ai_advisor_template/GER = {
+ 
+	set_temp_variable = { ai_advisor_slot_max_random_score = 0.1 }
+	
+#======================================================================================================
+#---- AI CHARACTERS / ADVISOR DEFINITION
+	
+	add_to_temp_array = { ai_character@head_of_state = token:GER_adolf_hitler }
+	
+	add_to_temp_array = { ai_character@foreign_minister = token:GER_joachim_von_ribbentrop }
+	
+	add_to_temp_array = { ai_character@interior_minister = token:GER_heinrich_himmler }
+	
+	add_to_temp_array = { ai_character@intel_minister = token:GER_wilhelm_canaris }
+	
+	add_to_temp_array = { ai_character@economic_minister = token:GER_hjalmar_schacht }
+	add_to_temp_array = { ai_character@economic_minister = token:GER_alfried_krupp }
+	add_to_temp_array = { ai_character@economic_minister = token:GER_hermann_goering }
+	add_to_temp_array = { ai_character@economic_minister = token:GER_walther_funk }
+	
+	add_to_temp_array = { ai_character@political_advisor = token:GER_hermann_goering }
+	
+	add_to_temp_array = { ai_character@domestic_minister = token:GER_rudolf_hess }
+	add_to_temp_array = { ai_character@domestic_minister = token:GER_franz_schlegelberger }
+	add_to_temp_array = { ai_character@domestic_minister = token:GER_wilhelm_ohnesorge }
+	
+	add_to_temp_array = { ai_character@influence_minister = token:GER_joseph_goebbels }
+	
+	add_to_temp_array = { ai_character@supreme_commander = token:GER_walther_von_brauchitsch }
+	
+	add_to_temp_array = { ai_character@army_chief = token:GER_franz_halder }
+	add_to_temp_array = { ai_character@army_chief = token:GER_heinz_guderian }
+	
+	add_to_temp_array = { ai_character@air_chief = token:GER_hermann_goering }
+	
+	add_to_temp_array = { ai_character@navy_chief = token:GER_karl_donitz }
+	
+	add_to_temp_array = { ai_character@high_command = token:GER_erwin_rommel } #army
+	add_to_temp_array = { ai_character@high_command = token:GER_hugo_sperrle } #air
+	add_to_temp_array = { ai_character@high_command = token:GER_erhard_milch } #air
+	add_to_temp_array = { ai_character@high_command = token:GER_hans_georg_von_friedeburg } #navy
+	
+	add_to_temp_array = { ai_character@theorist = token:GER_erich_von_manstein } #army
+	add_to_temp_array = { ai_character@theorist = token:GER_walter_model } #army
+	add_to_temp_array = { ai_character@theorist = token:GER_ernst_udet } #air
+	add_to_temp_array = { ai_character@theorist = token:GER_alfred_saalwachter } #navy
+	add_to_temp_array = { ai_character@theorist = token:GER_gotthard_heinrici } #army
+
+
+	add_to_temp_array = { ai_character@tank_manufacturer = token:Alkett }
+	add_to_temp_array = { ai_character@tank_manufacturer = token:nibelungenwerke }
+	add_to_temp_array = { ai_character@naval_manufacturer = token:germaniawerft }
+	add_to_temp_array = { ai_character@aircraft_manufacturer = token:messerschmitt }
+	add_to_temp_array = { ai_character@industrial_concern = token:krupp }
+	add_to_temp_array = { ai_character@electrical_concern = token:siemens }
+	add_to_temp_array = { ai_character@materiel_manufacturer = token:mauser }
+#------------------------------------------------------------------------------------------------------
+#---- SLOT AI SCORES 
+	
+	#-- SLOT SCORES ----------------------------
+		#ai_score_base@<slot> # base * mult + add
+		#ai_score_mult@<slot> #if mult is not set, it defaults to 1
+		#ai_score_add@<slot>
+	
+		
+		set_temp_variable = { ai_score_base@head_of_state = 10 }
+		set_temp_variable = { ai_score_base@foreign_minister = 5 }
+		set_temp_variable = { ai_score_base@interior_minister = 1 }
+		set_temp_variable = { ai_score_base@intel_minister = 1 }
+		set_temp_variable = { ai_score_base@economic_minister = 7 }
+		set_temp_variable = { ai_score_base@domestic_minister = 5 }
+		set_temp_variable = { ai_score_base@political_advisor = 6 }
+		set_temp_variable = { ai_score_base@influence_minister = 4 }
+		
+		set_temp_variable = { ai_score_base@tank_manufacturer = 1 }
+		set_temp_variable = { ai_score_base@naval_manufacturer = 1 }
+		set_temp_variable = { ai_score_base@aircraft_manufacturer = 1 }
+		set_temp_variable = { ai_score_base@materiel_manufacturer = 1 }
+		set_temp_variable = { ai_score_base@industrial_concern = 1 }
+		set_temp_variable = { ai_score_base@electrical_concern = 1 }
+		
+		set_temp_variable = { ai_score_base@supreme_commander = 1 }
+		set_temp_variable = { ai_score_base@army_chief = 1 }
+		set_temp_variable = { ai_score_base@air_chief = 1 }
+		set_temp_variable = { ai_score_base@navy_chief = 1 }
+		set_temp_variable = { ai_score_base@high_command = 1 }
+		set_temp_variable = { ai_score_base@theorist = 1 }
+		
+		
+	#-- DYNAMIC AI WEIGHTS ----------------------------
+		ai_use_default_idea_slot_weights = yes
+		
+#------------------------------------------------------------------------------------------------------
+#---- ADVISOR AI SCORES #if no scores are defined, they will all be set to 1 and ai will pick advisors in the order in which they are in the array. to have ai not pick an advisor, use -1
+		
+	#-- economic_minister ----------------------------
+	
+	set_temp_variable = { GER_hjalmar_schacht_economic_minister = ai_build_civilian }
+	set_temp_variable = { GER_alfried_krupp_economic_minister = ai_build_civilian }
+	
+	set_temp_variable = { GER_hermann_goering_economic_minister = ai_build_military }
+	set_temp_variable = { GER_walther_funk_economic_minister = ai_build_military}
+	
+	#-- theorist ----------------------------
+		
+	if = { limit = { has_country_flag = offensive_doctrine_done } #replace offensive / defensive theorist if its all researched
+		set_temp_variable = { GER_erich_von_manstein_theorist = -1 }
+	}
+	
+	if = { limit = { has_country_flag = defensive_doctrine_done }
+		set_temp_variable = { GER_walter_model_theorist = -1 }
+	}
+	
+	#-- tank_manufacturer ----------------------------
+	
+	if = {
+		limit = {
+			has_completed_focus = GER_nibelungen_works
+		}
+		set_temp_variable = { Alkett_tank_manufacturer = -1 }
+	}
+	
+	
+}
+
+d_ai_advisor_template/SOV = {
+ 
+	set_temp_variable = { ai_advisor_slot_max_random_score = 0.1 }
+	
+#======================================================================================================
+#---- AI CHARACTERS / ADVISOR DEFINITION
+	
+	#head_of_state
+		add_to_temp_array = { ai_character@head_of_state = token:SOV_mikhail_kalinin }
+		add_to_temp_array = { ai_character@head_of_state = token:SOV_nikita_khrushchyov }
+
+		#foreign_minister
+		add_to_temp_array = { ai_character@foreign_minister = token:SOV_vyacheslav_molotov }
+
+	#interior_minister
+		add_to_temp_array = { ai_character@interior_minister = token:SOV_lavrentiy_beria }
+		add_to_temp_array = { ai_character@interior_minister = token:SOV_nikolai_yezhov }
+		add_to_temp_array = { ai_character@interior_minister = token:SOV_nikolai_krylenko }
+		add_to_temp_array = { ai_character@interior_minister = token:SOV_genrikh_yagoda }
+
+	#intel_minister
+		add_to_temp_array = { ai_character@intel_minister = token:SOV_viktor_abakumov }
+		add_to_temp_array = { ai_character@intel_minister = token:SOV_mikhail_trilisser }
+		add_to_temp_array = { ai_character@intel_minister = token:SOV_ivan_proskurov }
+		add_to_temp_array = { ai_character@intel_minister = token:SOV_osip_piatnitsky }
+		add_to_temp_array = { ai_character@intel_minister = token:SOV_alexander_abramov_mirov }
+		add_to_temp_array = { ai_character@intel_minister = token:SOV_filipp_golikov }
+		add_to_temp_array = { ai_character@intel_minister = token:SOV_vsevolod_merkulov }
+
+	#economic_minister
+		add_to_temp_array = { ai_character@economic_minister = token:SOV_nikolai_voznesensky }
+		add_to_temp_array = { ai_character@economic_minister = token:SOV_sergo_ordzhonikidze }
+		#add_to_temp_array = { ai_character@economic_minister = token:SOV_valery_mezhlauk }
+		add_to_temp_array = { ai_character@economic_minister = token:SOV_karl_bauman }
+		add_to_temp_array = { ai_character@economic_minister = token:SOV_andrey_andreyev }
+
+	#political_advisor
+		add_to_temp_array = { ai_character@political_advisor = token:SOV_vasiliy_ulrikh }
+		add_to_temp_array = { ai_character@political_advisor = token:SOV_ivan_lychev }
+		add_to_temp_array = { ai_character@political_advisor = token:SOV_aleksei_stetskii }
+		add_to_temp_array = { ai_character@political_advisor = token:SOV_alexander_poskrebyshev }
+
+	#domestic_minister
+		add_to_temp_array = { ai_character@domestic_minister = token:SOV_joseph_vissarionovich_stalin }
+		add_to_temp_array = { ai_character@domestic_minister = token:SOV_andrei_bubnov }
+
+	#influence_minister
+		add_to_temp_array = { ai_character@influence_minister = token:SOV_nikita_khrushchyov }
+		add_to_temp_array = { ai_character@influence_minister = token:SOV_dmitri_shostakovich }
+		add_to_temp_array = { ai_character@influence_minister = token:SOV_klavdiya_nikolayeva }
+
+	#supreme_commander
+		add_to_temp_array = { ai_character@supreme_commander = token:SOV_joseph_vissarionovich_stalin }
+		add_to_temp_array = { ai_character@supreme_commander = token:SOV_voroshilov_kliment }
+		add_to_temp_array = { ai_character@supreme_commander = token:SOV_georgy_zhukov }
+
+	#army_chief
+		add_to_temp_array = { ai_character@army_chief = token:SOV_aleksandr_vasilevsky }
+
+	#air_chief
+		add_to_temp_array = { ai_character@air_chief = token:SOV_konstantin_vershinin }
+		add_to_temp_array = { ai_character@air_chief = token:SOV_yakov_smushkevich }
+		add_to_temp_array = { ai_character@air_chief = token:SOV_aleksandr_loktionov }
+		add_to_temp_array = { ai_character@air_chief = token:SOV_pavel_rychagov }
+		add_to_temp_array = { ai_character@air_chief = token:SOV_mikhail_gromov }
+
+	#navy_chief
+		add_to_temp_array = { ai_character@navy_chief = token:SOV_pyotr_smirnov }
+		add_to_temp_array = { ai_character@navy_chief = token:SOV_mikhail_frinovsky }
+		add_to_temp_array = { ai_character@navy_chief = token:SOV_nikolay_kuznetsov }
+
+	#high_command
+		add_to_temp_array = { ai_character@high_command = token:SOV_rokossovsky_konstantin }
+		add_to_temp_array = { ai_character@high_command = token:SOV_ivan_konev }
+		add_to_temp_array = { ai_character@high_command = token:SOV_aleksandr_vasilevsky }
+		add_to_temp_array = { ai_character@high_command = token:SOV_nikolay_kuznetsov }
+		add_to_temp_array = { ai_character@high_command = token:SOV_sergey_khudyakov }
+
+	#theorist
+		add_to_temp_array = { ai_character@theorist = token:SOV_tukhachevsky_mikhail }
+		add_to_temp_array = { ai_character@theorist = token:SOV_berzarin }
+		add_to_temp_array = { ai_character@theorist = token:SOV_ivan_konev }
+		add_to_temp_array = { ai_character@theorist = token:SOV_georgy_zhukov }
+		add_to_temp_array = { ai_character@theorist = token:SOV_aleksandr_golovanov }
+
+	#ideas
+		add_to_temp_array = { ai_character@tank_manufacturer = token:astrov_design_bureau }
+		add_to_temp_array = { ai_character@aircraft_manufacturer = token:LaGG_design_bureau }
+		add_to_temp_array = { ai_character@naval_manufacturer = token:marti_shipyard }
+		add_to_temp_array = { ai_character@materiel_manufacturer = token:gaz }
+		add_to_temp_array = { ai_character@industrial_concern = token:SOV_amtorg }
+		add_to_temp_array = { ai_character@electrical_concern = token:leningrad_polytechnical_institute }
+
+#------------------------------------------------------------------------------------------------------
+#---- SLOT AI SCORES 
+	
+	#-- SLOT SCORES ----------------------------
+		#ai_score_base@<slot> # base * mult + add
+		#ai_score_mult@<slot> #if mult is not set, it defaults to 1
+		#ai_score_add@<slot>
+	
+		ai_use_default_idea_slot_base_score = yes
+		
+		
+	#-- DYNAMIC AI WEIGHTS ----------------------------
+		ai_use_default_idea_slot_weights = yes
+		
+#------------------------------------------------------------------------------------------------------
+#---- ADVISOR AI SCORES 
+		
+	#-- economic_minister ----------------------------
+	
+	set_temp_variable = { SOV_nikolai_voznesensky_economic_minister = 1 }
+	set_temp_variable = { SOV_sergo_ordzhonikidze_economic_minister = 1 }
+	#set_temp_variable = { SOV_valery_mezhlauk_economic_minister = 1 }
+	set_temp_variable = { SOV_karl_bauman_economic_minister = 1 }
+	set_temp_variable = { SOV_andrey_andreyev_economic_minister = 1 }
+	
+	
+	
+}
+
+d_ai_advisor_template/USA = {
+ 
+	set_temp_variable = { ai_advisor_slot_max_random_score = 0.1 }
+	
+#======================================================================================================
+#---- AI CHARACTERS / ADVISOR DEFINITION
+		
+	#head_of_state
+		add_to_temp_array = { ai_character@head_of_state = token:USA_franklin_delano_roosevelt }
+		add_to_temp_array = { ai_character@head_of_state = token:USA_wendell_willkie }
+	 
+	#foreign_minister
+		add_to_temp_array = { ai_character@foreign_minister = token:USA_cordell_hull }
+	 
+	#interior_minister
+		add_to_temp_array = { ai_character@interior_minister = token:USA_j_edgar_hoover }
+	 
+	#intel_minister
+		add_to_temp_array = { ai_character@intel_minister = token:USA_frank_rowlett }
+	 
+	#economic_minister
+		add_to_temp_array = { ai_character@economic_minister = token:USA_henry_stimson }
+		add_to_temp_array = { ai_character@economic_minister = token:USA_donald_nelson }
+		add_to_temp_array = { ai_character@economic_minister = token:USA_harold_ickes }
+	 
+	#political_advisor
+		add_to_temp_array = { ai_character@political_advisor = token:USA_robert_taft }
+	 
+	#domestic_minister
+		add_to_temp_array = { ai_character@domestic_minister = token:USA_james_mead }
+		add_to_temp_array = { ai_character@domestic_minister = token:USA_charles_plumley }
+	 
+	#influence_minister
+	 
+	#supreme_commander
+	 
+	#army_chief
+		add_to_temp_array = { ai_character@army_chief = token:USA_dwight_eisenhower }
+	 
+	#air_chief
+		add_to_temp_array = { ai_character@air_chief = token:USA_carl_spaatz }
+	 
+	#navy_chief
+		add_to_temp_array = { ai_character@navy_chief = token:USA_chester_nimitz }
+	 
+	#high_command
+		add_to_temp_array = { ai_character@high_command = token:USA_mark_clark }
+		add_to_temp_array = { ai_character@high_command = token:USA_marc_mitscher }
+		add_to_temp_array = { ai_character@high_command = token:USA_jimmy_doolittle }
+		add_to_temp_array = { ai_character@high_command = token:USA_claire_lee_chennault }
+	 
+	#theorist
+		add_to_temp_array = { ai_character@theorist = token:USA_curtis_lemay }
+		add_to_temp_array = { ai_character@theorist = token:USA_dewitt_clinton_ramsey }
+		add_to_temp_array = { ai_character@theorist = token:USA_omar_bradley }
+
+	#ideas
+		add_to_temp_array = { ai_character@tank_manufacturer = token:chrysler }
+		add_to_temp_array = { ai_character@naval_manufacturer = token:new_york_shipbuilding_coorperation }
+		add_to_temp_array = { ai_character@aircraft_manufacturer = token:north_american_aviation }
+		add_to_temp_array = { ai_character@materiel_manufacturer = token:rock_island_arsenal }
+		add_to_temp_array = { ai_character@industrial_concern = token:brown_sharpe }
+		add_to_temp_array = { ai_character@electrical_concern = token:general_electric }
+
+#------------------------------------------------------------------------------------------------------
+#---- SLOT AI SCORES 
+	
+	#-- SLOT SCORES ----------------------------
+		#ai_score_base@<slot> # base * mult + add
+		#ai_score_mult@<slot> #if mult is not set, it defaults to 1
+		#ai_score_add@<slot>
+		
+		ai_use_default_idea_slot_base_score = yes
+		
+		
+	#-- DYNAMIC AI WEIGHTS ----------------------------
+		ai_use_default_idea_slot_weights = yes
+		
+#------------------------------------------------------------------------------------------------------
+#---- ADVISOR AI SCORES 
+		
+	#-- economic_minister ----------------------------
+	
+	set_temp_variable = { USA_donald_nelson_economic_minister = 1 }
+	set_temp_variable = { USA_harold_ickes_economic_minister = ai_build_civilian }
+	set_temp_variable = { USA_henry_stimson_economic_minister = ai_build_military }
+	
+	
+	
+}
+
+d_ai_advisor_template/ENG = {
+ 
+	set_temp_variable = { ai_advisor_slot_max_random_score = 0.1 }
+	
+#======================================================================================================
+#---- AI CHARACTERS / ADVISOR DEFINITION
+			
+	#head_of_state
+		add_to_temp_array = { ai_character@head_of_state = token:ENG_george_v }
+		add_to_temp_array = { ai_character@head_of_state = token:ENG_george_vi }
+	 
+	#foreign_minister
+	 
+	#interior_minister
+		add_to_temp_array = { ai_character@interior_minister = token:ENG_sir_john_anderson }
+	 
+	#intel_minister
+		add_to_temp_array = { ai_character@intel_minister = token:ENG_stewart_menzies }
+	 
+	#economic_minister
+		add_to_temp_array = { ai_character@economic_minister = token:ENG_neville_chamberlain }
+		add_to_temp_array = { ai_character@economic_minister = token:ENG_maxwell_aitken }
+		add_to_temp_array = { ai_character@economic_minister = token:ENG_leslie_hore_belisha }
+		add_to_temp_array = { ai_character@economic_minister = token:ENG_sir_john_anderson }
+	 
+	#political_advisor
+		add_to_temp_array = { ai_character@political_advisor = token:ENG_george_orwell }
+	 
+	#domestic_minister
+		add_to_temp_array = { ai_character@domestic_minister = token:ENG_george_tryon }
+		add_to_temp_array = { ai_character@domestic_minister = token:ENG_stephen_furness }
+	 
+	#influence_minister
+	 
+	#supreme_commander
+		add_to_temp_array = { ai_character@supreme_commander = token:ENG_alexander_harold }
+		add_to_temp_array = { ai_character@supreme_commander = token:ENG_brooke_alan }
+	 
+	#army_chief
+		add_to_temp_array = { ai_character@army_chief = token:ENG_cyril_deverell }
+		add_to_temp_array = { ai_character@army_chief = token:ENG_edmund_ironside }
+		add_to_temp_array = { ai_character@army_chief = token:ENG_john_dill }
+		add_to_temp_array = { ai_character@army_chief = token:ENG_brooke_alan }
+		add_to_temp_array = { ai_character@army_chief = token:ENG_lord_gort_john_vereker }
+	 
+	#air_chief
+		add_to_temp_array = { ai_character@air_chief = token:ENG_charles_portal }
+	 
+	#navy_chief
+		add_to_temp_array = { ai_character@navy_chief = token:ENG_ernle_chatfield }
+		add_to_temp_array = { ai_character@navy_chief = token:ENG_dudley_pound }
+		add_to_temp_array = { ai_character@navy_chief = token:ENG_andrew_cunningham }
+	 
+	#high_command
+		add_to_temp_array = { ai_character@high_command = token:ENG_kenneth_anderson }
+		add_to_temp_array = { ai_character@high_command = token:ENG_sholto_douglas }
+		add_to_temp_array = { ai_character@high_command = token:ENG_somerville_james_fownes }
+		add_to_temp_array = { ai_character@high_command = token:ENG_harwood_henry }
+		add_to_temp_array = { ai_character@high_command = token:ENG_fraser_bruce }
+	 
+	#theorist
+		add_to_temp_array = { ai_character@theorist = token:ENG_alexander_harold }
+		add_to_temp_array = { ai_character@theorist = token:ENG_somerville_james_fownes }
+		add_to_temp_array = { ai_character@theorist = token:ENG_hugh_dowding }
+		add_to_temp_array = { ai_character@theorist = token:ENG_tom_phillips }
+	
+	#ideas		
+		if = {
+			limit = {
+				date > 1939.1.1
+			}
+			add_to_temp_array = { ai_character@naval_manufacturer = token:yarrow_shipbuilders }
+		}
+		add_to_temp_array = { ai_character@aircraft_manufacturer = token:supermarine }
+		add_to_temp_array = { ai_character@materiel_manufacturer = token:rsaf_enfield }
+		add_to_temp_array = { ai_character@industrial_concern = token:aioc }
+		add_to_temp_array = { ai_character@electrical_concern = token:english_electric }
+
+
+#------------------------------------------------------------------------------------------------------
+#---- SLOT AI SCORES 
+	
+	#-- SLOT SCORES ----------------------------
+		#ai_score_base@<slot> # base * mult + add
+		#ai_score_mult@<slot> #if mult is not set, it defaults to 1
+		#ai_score_add@<slot>
+		
+		set_temp_variable = { ai_score_base@head_of_state = 5 }
+		set_temp_variable = { ai_score_base@foreign_minister = 4 }
+		set_temp_variable = { ai_score_base@interior_minister = 5 }
+		set_temp_variable = { ai_score_base@intel_minister = 4 }
+		set_temp_variable = { ai_score_base@economic_minister = 12 }
+		set_temp_variable = { ai_score_base@domestic_minister = 6 }
+		set_temp_variable = { ai_score_base@political_advisor = 7 }
+		set_temp_variable = { ai_score_base@influence_minister = 5 }
+		
+		set_temp_variable = { ai_score_base@tank_manufacturer = 1 }
+		set_temp_variable = { ai_score_base@naval_manufacturer = 1 }
+		set_temp_variable = { ai_score_base@aircraft_manufacturer = 1 }
+		set_temp_variable = { ai_score_base@materiel_manufacturer = 1 }
+		set_temp_variable = { ai_score_base@industrial_concern = 1 }
+		set_temp_variable = { ai_score_base@electrical_concern = 1 }
+		
+		set_temp_variable = { ai_score_base@supreme_commander = 2 }
+		set_temp_variable = { ai_score_base@army_chief = 2 }
+		set_temp_variable = { ai_score_base@air_chief = 1 }
+		set_temp_variable = { ai_score_base@navy_chief = 1 }
+		set_temp_variable = { ai_score_base@high_command = 1.5 }
+		set_temp_variable = { ai_score_base@theorist = 1.45 }
+			
+		
+	#-- DYNAMIC AI WEIGHTS ----------------------------
+		ai_use_default_idea_slot_weights = yes
+		
+#------------------------------------------------------------------------------------------------------
+#---- ADVISOR AI SCORES 
+		
+	#-- economic_minister ----------------------------
+
+	set_temp_variable = { ENG_neville_chamberlain_economic_minister = ai_build_civilian }
+	set_temp_variable = { ENG_sir_john_anderson_economic_minister = ai_build_civilian }
+	
+	set_temp_variable = { ENG_maxwell_aitken_economic_minister = ai_build_military }
+	set_temp_variable = { ENG_leslie_hore_belisha_economic_minister = ai_build_military }
+	
+	
+}
+
+d_ai_advisor_template/FRA = {
+ 
+	set_temp_variable = { ai_advisor_slot_max_random_score = 0.1 }
+	
+#======================================================================================================
+#---- AI CHARACTERS / ADVISOR DEFINITION
+			
+	#head_of_state
+		add_to_temp_array = { ai_character@head_of_state = token:FRA_charles_maurras }
+		add_to_temp_array = { ai_character@head_of_state = token:FRA_jacques_duclos }
+		add_to_temp_array = { ai_character@head_of_state = token:FRA_albert_lebrun }
+		add_to_temp_array = { ai_character@head_of_state = token:FRA_marcel_bucard }
+	 
+	#foreign_minister
+		add_to_temp_array = { ai_character@foreign_minister = token:FRA_paul_baudouin }
+		add_to_temp_array = { ai_character@foreign_minister = token:FRA_georges_bonnet }
+		add_to_temp_array = { ai_character@foreign_minister = token:FRA_henri_queuille }
+		add_to_temp_array = { ai_character@foreign_minister = token:FRA_yvon_delbos }
+		add_to_temp_array = { ai_character@foreign_minister = token:FRA_pierre_etienne_flandin }
+	 
+	#interior_minister
+		add_to_temp_array = { ai_character@interior_minister = token:FRA_marx_dormoy }
+		add_to_temp_array = { ai_character@interior_minister = token:FRA_jacques_duclos }
+		add_to_temp_array = { ai_character@interior_minister = token:FRA_marcel_bucard }
+		add_to_temp_array = { ai_character@interior_minister = token:FRA_albert_sarraut }
+	 
+	#intel_minister
+		add_to_temp_array = { ai_character@intel_minister = token:FRA_maurice_henri_gauche }
+		add_to_temp_array = { ai_character@intel_minister = token:FRA_zivony_peshkov }
+	 
+	#economic_minister
+		add_to_temp_array = { ai_character@economic_minister = token:FRA_jules_moch }
+		add_to_temp_array = { ai_character@economic_minister = token:FRA_vincent_auriol }
+		add_to_temp_array = { ai_character@economic_minister = token:FRA_paul_faure }
+		add_to_temp_array = { ai_character@economic_minister = token:FRA_paul_reynaud }
+		add_to_temp_array = { ai_character@economic_minister = token:FRA_rene_pleven }
+		add_to_temp_array = { ai_character@economic_minister = token:FRA_felix_gouin }
+		add_to_temp_array = { ai_character@economic_minister = token:FRA_marcel_deat }
+		add_to_temp_array = { ai_character@economic_minister = token:FRA_raoul_dautry }
+		add_to_temp_array = { ai_character@economic_minister = token:FRA_zivony_peshkov }
+		add_to_temp_array = { ai_character@economic_minister = token:FRA_andre_le_troquer }
+	 
+	#political_advisor
+		add_to_temp_array = { ai_character@political_advisor = token:FRA_gaston_henry_haye }
+	 
+	#domestic_minister
+		add_to_temp_array = { ai_character@domestic_minister = token:FRA_henri_sellier }
+		add_to_temp_array = { ai_character@domestic_minister = token:FRA_lucien_lamoureux }
+		add_to_temp_array = { ai_character@domestic_minister = token:FRA_robert_jardillier }
+		add_to_temp_array = { ai_character@domestic_minister = token:FRA_pierre_etienne_flandin }
+		add_to_temp_array = { ai_character@domestic_minister = token:FRA_albert_rivaud }
+	 
+	#influence_minister
+		#add_to_temp_array = { ai_character@influence_minister = token:FRA_marcel_bucard }
+	 
+	#supreme_commander
+		add_to_temp_array = { ai_character@supreme_commander = token:FRA_charles_de_gaulle }
+		add_to_temp_array = { ai_character@supreme_commander = token:FRA_gamelin_maurice }
+	 
+	#army_chief
+		add_to_temp_array = { ai_character@army_chief = token:FRA_weygand_maxime }
+		add_to_temp_array = { ai_character@army_chief = token:FRA_gamelin_maurice }
+	 
+	#air_chief
+		add_to_temp_array = { ai_character@air_chief = token:FRA_robert_odic }
+	 
+	#navy_chief
+		add_to_temp_array = { ai_character@navy_chief = token:FRA_francois_darlan }
+	 
+	#high_command
+		add_to_temp_array = { ai_character@high_command = token:FRA_jeanmarie_charles_abrial } #navy
+		add_to_temp_array = { ai_character@high_command = token:FRA_jean_francois_jannekeyn } #air
+		add_to_temp_array = { ai_character@high_command = token:FRA_gensoul_marcel } #navy
+		add_to_temp_array = { ai_character@high_command = token:FRA_charles_huntziger } #army
+		add_to_temp_array = { ai_character@high_command = token:FRA_rene_prioux } #army
+		add_to_temp_array = { ai_character@high_command = token:FRA_martial_valin } #air
+	 
+	#theorist
+		add_to_temp_array = { ai_character@theorist = token:FRA_philippe_petain } #army
+		add_to_temp_array = { ai_character@theorist = token:FRA_charles_huntziger } #army
+		add_to_temp_array = { ai_character@theorist = token:FRA_decoux_jean } #navy
+		add_to_temp_array = { ai_character@theorist = token:FRA_de_boissieu_alain } #army
+		add_to_temp_array = { ai_character@theorist = token:FRA_giraud_henri } #army
+		add_to_temp_array = { ai_character@theorist = token:FRA_louis_kahn } #navy
+		add_to_temp_array = { ai_character@theorist = token:FRA_charles_de_gaulle } #army
+
+	#ideas
+		add_to_temp_array = { ai_character@tank_manufacturer = token:citroen }
+		#add_to_temp_array = { ai_character@naval_manufacturer = token:arsenal_de_brest }
+		add_to_temp_array = { ai_character@aircraft_manufacturer = token:mureaux }
+		add_to_temp_array = { ai_character@materiel_manufacturer = token:darne }
+		add_to_temp_array = { ai_character@industrial_concern = token:famh }
+		add_to_temp_array = { ai_character@electrical_concern = token:radiola }
+
+
+#------------------------------------------------------------------------------------------------------
+#---- SLOT AI SCORES 
+	
+	#-- SLOT SCORES ----------------------------
+		#ai_score_base@<slot> # base * mult + add
+		#ai_score_mult@<slot> #if mult is not set, it defaults to 1
+		#ai_score_add@<slot>
+		
+		ai_use_default_idea_slot_base_score = yes
+		
+		
+	#-- DYNAMIC AI WEIGHTS ----------------------------
+		ai_use_default_idea_slot_weights = yes
+		
+#------------------------------------------------------------------------------------------------------
+#---- ADVISOR AI SCORES 
+		
+	#-- economic_minister ----------------------------
+
+	#set_temp_variable = { ENG_neville_chamberlain_economic_minister = ai_build_civilian }
+	#set_temp_variable = { ENG_sir_john_anderson_economic_minister = ai_build_civilian }
+	
+	#set_temp_variable = { ENG_maxwell_aitken_economic_minister = ai_build_military }
+	#set_temp_variable = { ENG_leslie_hore_belisha_economic_minister = ai_build_military }
+	
+	if = {
+		limit = {
+			14 = { dockyard > 4 }
+		}
+		add_to_temp_array = { ai_character@naval_manufacturer = token:arsenal_de_brest }
+	}
+	
+}
+d_ai_advisor_template/HUN = {
+ 
+	set_temp_variable = { ai_advisor_slot_max_random_score = 0.1 }
+	
+#======================================================================================================
+#---- AI CHARACTERS / ADVISOR DEFINITION
+		
+	#head_of_state
+		add_to_temp_array = { ai_character@head_of_state = token:HUN_regent_miklos_horthy }
+		add_to_temp_array = { ai_character@head_of_state = token:HUN_edmund_veesenmayer }
+	 
+	#foreign_minister
+		add_to_temp_array = { ai_character@foreign_minister = token:HUN_kalman_kanya }
+	 
+	#interior_minister
+		add_to_temp_array = { ai_character@interior_minister = token:HUN_kalman_daranyi }
+	 
+	#intel_minister
+		add_to_temp_array = { ai_character@intel_minister = token:HUN_gyula_kadar }
+	 
+	#economic_minister
+		add_to_temp_array = { ai_character@economic_minister = token:HUN_vilmos_roder }
+		add_to_temp_array = { ai_character@economic_minister = token:HUN_lajos_remenyi_schneller }
+		add_to_temp_array = { ai_character@economic_minister = token:HUN_bela_imredy }
+	 
+	#political_advisor
+		add_to_temp_array = { ai_character@political_advisor = token:HUN_zoltan_tildy }
+		add_to_temp_array = { ai_character@political_advisor = token:HUN_gyula_gombos_de_jakfa }
+	 
+	#domestic_minister
+		add_to_temp_array = { ai_character@domestic_minister = token:HUN_miklos_jr }
+		add_to_temp_array = { ai_character@domestic_minister = token:HUN_beni_varga }
+	 
+	#influence_minister
+		add_to_temp_array = { ai_character@influence_minister = token:HUN_gyula_gombos_de_jakfa }
+		add_to_temp_array = { ai_character@influence_minister = token:generic_steady_peace }
+	 
+	#supreme_commander
+		add_to_temp_array = { ai_character@supreme_commander = token:HUN_jeno_ratz }
+	 
+	#army_chief
+		add_to_temp_array = { ai_character@army_chief = token:HUN_ferenc_szombathelyi }
+	 
+	#air_chief
+		add_to_temp_array = { ai_character@air_chief = token:HUN_bela_rakosi }
+	 
+	#navy_chief
+		add_to_temp_array = { ai_character@navy_chief = token:HUN_regent_miklos_horthy }
+	 
+	#high_command
+		add_to_temp_array = { ai_character@high_command = token:HUN_gottfried_von_banfield }
+		add_to_temp_array = { ai_character@high_command = token:HUN_jozsef_somkuthy }
+		add_to_temp_array = { ai_character@high_command = token:HUN_dezso_laszlo }
+	 
+	#theorist
+		add_to_temp_array = { ai_character@theorist = token:HUN_istvan_shvoy }
+		add_to_temp_array = { ai_character@theorist = token:HUN_teofil_harosy }
+		add_to_temp_array = { ai_character@theorist = token:HUN_edgar_keksz }
+
+	#ideas
+		add_to_temp_array = { ai_character@aircraft_manufacturer = token:mw_aircraft }
+		add_to_temp_array = { ai_character@materiel_manufacturer = token:HUN_femaru_fegyver_es_gepgyar }
+		add_to_temp_array = { ai_character@industrial_concern = token:HUN_mavag }
+		add_to_temp_array = { ai_character@electrical_concern = token:HUN_transelektro }
+
+
+#------------------------------------------------------------------------------------------------------
+#---- SLOT AI SCORES 
+	
+	#-- SLOT SCORES ----------------------------
+		#ai_score_base@<slot> # base * mult + add
+		#ai_score_mult@<slot> #if mult is not set, it defaults to 1
+		#ai_score_add@<slot>
+		
+		ai_use_default_idea_slot_base_score = yes
+		
+		
+	#-- DYNAMIC AI WEIGHTS ----------------------------
+		ai_use_default_idea_slot_weights = yes
+		
+#------------------------------------------------------------------------------------------------------
+#---- ADVISOR AI SCORES 
+		
+	#-- economic_minister ----------------------------
+
+	set_temp_variable = { HUN_bela_imredy_economic_minister = 1 }
+	
+	set_temp_variable = { HUN_lajos_remenyi_schneller_economic_minister = ai_build_civilian }
+	
+	set_temp_variable = { HUN_vilmos_roder_economic_minister = ai_build_military }
+	
+}
+d_ai_advisor_template/ITA = {
+ 
+	set_temp_variable = { ai_advisor_slot_max_random_score = 0.1 }
+	
+#======================================================================================================
+#---- AI CHARACTERS / ADVISOR DEFINITION
+				
+	#head_of_state
+		add_to_temp_array = { ai_character@head_of_state = token:ITA_victor_emmanuel }
+	 
+	#interior_minister
+		add_to_temp_array = { ai_character@interior_minister = token:ITA_benito_mussolini }
+		add_to_temp_array = { ai_character@interior_minister = token:ITA_guido_buffarini_guidi }
+	 
+	#foreign_minister
+		add_to_temp_array = { ai_character@foreign_minister = token:ITA_gian_galeazzo_ciano }
+		add_to_temp_array = { ai_character@foreign_minister = token:ITA_dino_grandi }
+	
+	#economic_minister
+		add_to_temp_array = { ai_character@economic_minister = token:ITA_paolo_thaon_di_revel }
+		add_to_temp_array = { ai_character@economic_minister = token:ITA_felice_guarnieri }
+		add_to_temp_array = { ai_character@economic_minister = token:ITA_raffaello_riccardi }
+		add_to_temp_array = { ai_character@economic_minister = token:ITA_ardito_desio }
+		add_to_temp_array = { ai_character@economic_minister = token:ITA_crollalanza }
+	 	add_to_temp_array = { ai_character@economic_minister = token:ITA_giuseppe_cobolli_gigli }
+	 
+	#domestic_minister
+		add_to_temp_array = { ai_character@domestic_minister = token:ITA_arrigo_solmi }
+		add_to_temp_array = { ai_character@domestic_minister = token:ITA_ferruccio_lantini }
+	 	add_to_temp_array = { ai_character@domestic_minister = token:ITA_edmondo_rossoni }
+		add_to_temp_array = { ai_character@domestic_minister = token:ITA_alessandro_lessona }
+		add_to_temp_array = { ai_character@domestic_minister = token:ITA_attilio_teruzzi }
+		add_to_temp_array = { ai_character@domestic_minister = token:ITA_cesare_vecchi }
+		add_to_temp_array = { ai_character@domestic_minister = token:ITA_giuseppe_bottai }
+	 
+	#influence_minister 
+		add_to_temp_array = { ai_character@influence_minister = token:ITA_antonio_benni }
+		add_to_temp_array = { ai_character@influence_minister = token:ITA_giovanni_host_venturi }
+	 	add_to_temp_array = { ai_character@influence_minister = token:ITA_giovanni_marinelli }
+		add_to_temp_array = { ai_character@influence_minister = token:ITA_roberto_farinacci }
+		add_to_temp_array = { ai_character@influence_minister = token:ITA_dino_alfieri }
+		add_to_temp_array = { ai_character@influence_minister = token:ITA_alessandro_pavolini }
+	 
+	#political_advisor
+		add_to_temp_array = { ai_character@political_advisor = token:ITA_giovanni_gentile }
+		add_to_temp_array = { ai_character@political_advisor = token:ITA_gabriele_annunzio }
+		add_to_temp_array = { ai_character@political_advisor = token:ITA_filippo_tommaso_marinetti }
+		#add_to_temp_array = { ai_character@political_advisor = token:ITA_ezra_pound }
+		add_to_temp_array = { ai_character@political_advisor = token:ITA_achille_starace }
+		add_to_temp_array = { ai_character@political_advisor = token:ITA_carlo_scorza }
+		add_to_temp_array = { ai_character@political_advisor = token:ITA_umberto_II }
+	
+	#intel_minister
+		add_to_temp_array = { ai_character@intel_minister = token:ITA_roatta_mario }
+		add_to_temp_array = { ai_character@intel_minister = token:ITA_cesare_ame }
+		add_to_temp_array = { ai_character@intel_minister = token:ITA_giacomo_carboni }
+		add_to_temp_array = { ai_character@intel_minister = token:ITA_alberto_lais }
+	
+	#supreme_commander
+		add_to_temp_array = { ai_character@supreme_commander = token:ITA_benito_mussolini }
+		add_to_temp_array = { ai_character@supreme_commander = token:ITA_badoglio_pietro }
+		add_to_temp_array = { ai_character@supreme_commander = token:ITA_emilio_de_bono }
+		add_to_temp_array = { ai_character@supreme_commander = token:ITA_ugo_cavallero }
+		add_to_temp_array = { ai_character@supreme_commander = token:ITA_vittorio_ambrosio }
+	 
+	#army_chief
+		add_to_temp_array = { ai_character@army_chief = token:ITA_federico_baistrocchi }
+		add_to_temp_array = { ai_character@army_chief = token:ITA_alberto_pariani }
+		add_to_temp_array = { ai_character@army_chief = token:ITA_rodolfo_graziani }
+		add_to_temp_array = { ai_character@army_chief = token:ITA_roatta_mario }
+		add_to_temp_array = { ai_character@army_chief = token:ITA_vittorio_ambrosio }
+	 
+	#air_chief
+		add_to_temp_array = { ai_character@air_chief = token:ITA_balbo_italo }
+		add_to_temp_array = { ai_character@air_chief = token:ITA_giuseppe_valle }
+		add_to_temp_array = { ai_character@air_chief = token:ITA_francesco_pricolo }
+		add_to_temp_array = { ai_character@air_chief = token:ITA_rino_corso_fougier }	
+		
+	#navy_chief
+		add_to_temp_array = { ai_character@navy_chief = token:ITA_domenico_cavagnari }
+		add_to_temp_array = { ai_character@navy_chief = token:ITA_arturo_riccardi }
+		add_to_temp_array = { ai_character@navy_chief = token:ITA_inigo_campioni }
+		add_to_temp_array = { ai_character@navy_chief = token:ITA_raffaele_de_courten }
+	 
+	#high_command
+		add_to_temp_array = { ai_character@high_command = token:ITA_vittorio_ambrosio }
+		add_to_temp_array = { ai_character@high_command = token:ITA_roatta_mario }
+		add_to_temp_array = { ai_character@high_command = token:ITA_alfredo_guzzoni }
+		add_to_temp_array = { ai_character@high_command = token:ITA_mario_berti }
+		add_to_temp_array = { ai_character@high_command = token:ITA_giovanni_messe }
+		add_to_temp_array = { ai_character@high_command = token:ITA_carlo_bergamini }
+		add_to_temp_array = { ai_character@high_command = token:ITA_alberto_da_zara }
+		add_to_temp_array = { ai_character@high_command = token:ITA_vittorio_tur }  
+		add_to_temp_array = { ai_character@high_command = token:ITA_inigo_campioni } 
+		add_to_temp_array = { ai_character@high_command = token:ITA_mario_falangola } 
+		add_to_temp_array = { ai_character@high_command = token:ITA_angelo_iachino } 
+		add_to_temp_array = { ai_character@high_command = token:ITA_ettore_muti } 
+		add_to_temp_array = { ai_character@high_command = token:ITA_marziale_cerutti } 
+		add_to_temp_array = { ai_character@high_command = token:ITA_silvio_scaroni } 
+		
+	#theorist
+		add_to_temp_array = { ai_character@theorist = token:ITA_giovanni_messe }
+		add_to_temp_array = { ai_character@theorist = token:ITA_rodolfo_graziani }
+		add_to_temp_array = { ai_character@theorist = token:ITA_angelo_iachino } 
+		add_to_temp_array = { ai_character@theorist = token:ITA_romeo_oliva } 
+		add_to_temp_array = { ai_character@theorist = token:ITA_giuseppe_fioravanzo }
+		add_to_temp_array = { ai_character@theorist = token:ITA_renato_sandalli } 
+		add_to_temp_array = { ai_character@theorist = token:ITA_giuseppe_cenni }
+		add_to_temp_array = { ai_character@theorist = token:ITA_amedeo_mecozzi }
+	#ideas
+		add_to_temp_array = { ai_character@tank_manufacturer = token:fiat }
+		add_to_temp_array = { ai_character@tank_manufacturer = token:ansaldo_tank }
+		add_to_temp_array = { ai_character@materiel_manufacturer = token:beretta }
+		add_to_temp_array = { ai_character@aircraft_manufacturer = token:macchi }
+		add_to_temp_array = { ai_character@naval_manufacturer = token:crda }
+		#add_to_temp_array = { ai_character@naval_manufacturer = token:gio_ansaldo_genova }
+		add_to_temp_array = { ai_character@industrial_concern = token:ITA_italcementi }
+		if = {
+			limit = {
+				has_completed_focus = ITA_radio_military
+			}
+			add_to_temp_array = { ai_character@electrical_concern = token:ITA_radiofonica }
+		}
+
+#------------------------------------------------------------------------------------------------------
+#---- SLOT AI SCORES 
+	
+	#-- SLOT SCORES ----------------------------
+		#ai_score_base@<slot> # base * mult + add
+		#ai_score_mult@<slot> #if mult is not set, it defaults to 1
+		#ai_score_add@<slot>
+		
+		ai_use_default_idea_slot_base_score = yes
+		
+		
+	#-- DYNAMIC AI WEIGHTS ----------------------------
+		ai_use_default_idea_slot_weights = yes
+		
+#------------------------------------------------------------------------------------------------------
+#---- ADVISOR AI SCORES 
+		
+	#-- economic_minister ----------------------------
+
+	#set_temp_variable = { ITA_giuseppe_sirianni_economic_minister = -1 } #TODO_AI: ai_build_naval
+	#set_temp_variable = { ITA_crollalanza_economic_minister = ai_build_civilian }
+	#set_temp_variable = { ITA_luigi_einaudi_economic_minister = ai_build_civilian }
+	
+	#set_temp_variable = { ITA_giacomo_acerbo_economic_minister = ai_build_military }
+	#set_temp_variable = { ITA_antonio_sorice_economic_minister = ai_build_military }
+	
+	
+}
+
+d_ai_advisor_template/JAP = {
+ 
+	set_temp_variable = { ai_advisor_slot_max_random_score = 0.1 }
+	
+#======================================================================================================
+#---- AI CHARACTERS / ADVISOR DEFINITION
+					
+	#head_of_state
+		add_to_temp_array = { ai_character@head_of_state = token:JAP_hirohito }
+	 
+	#foreign_minister
+		add_to_temp_array = { ai_character@foreign_minister = token:JAP_hachiro_arita }
+	 
+	#interior_minister
+		add_to_temp_array = { ai_character@interior_minister = token:JAP_hiroshi_oshima }
+	 
+	#intel_minister
+		add_to_temp_array = { ai_character@intel_minister = token:JAP_kanyei_chuyo }
+	 
+	#economic_minister
+		add_to_temp_array = { ai_character@economic_minister = token:JAP_okinori_kaya }
+		add_to_temp_array = { ai_character@economic_minister = token:JAP_ryoichi_sasakawa }
+	 
+	#political_advisor
+		add_to_temp_array = { ai_character@political_advisor = token:JAP_kesago_nakajima }
+	 
+	#domestic_minister
+		add_to_temp_array = { ai_character@domestic_minister = token:JAP_yoshida_hatta }
+		add_to_temp_array = { ai_character@domestic_minister = token:JAP_rice_maeda }
+	 
+	#influence_minister
+		add_to_temp_array = { ai_character@influence_minister = token:JAP_sadao_araki }
+	 
+	#supreme_commander
+		add_to_temp_array = { ai_character@supreme_commander = token:JAP_yamamoto_isoroku }
+	 
+	#army_chief
+		add_to_temp_array = { ai_character@army_chief = token:JAP_hideki_tojo }
+	 
+	#air_chief
+		add_to_temp_array = { ai_character@air_chief = token:JAP_koiso_kuniaki }
+	 
+	#navy_chief
+		add_to_temp_array = { ai_character@navy_chief = token:JAP_nagano_osami }
+		add_to_temp_array = { ai_character@navy_chief = token:JAP_fushimi_hiroyasu }
+	 
+	#high_command
+		add_to_temp_array = { ai_character@high_command = token:JAP_okamura_yasuji }
+		add_to_temp_array = { ai_character@high_command = token:JAP_yamamoto_isoroku }
+		add_to_temp_array = { ai_character@high_command = token:JAP_kondo_nobutake }
+		add_to_temp_array = { ai_character@high_command = token:JAP_ozawa_jisaburo }
+	 
+	#theorist
+		add_to_temp_array = { ai_character@theorist = token:JAP_nishio_toshizo }
+		add_to_temp_array = { ai_character@theorist = token:JAP_yamamoto_isoroku }
+		add_to_temp_array = { ai_character@theorist = token:JAP_yoshitoshi_tokugawa }
+		add_to_temp_array = { ai_character@theorist = token:JAP_minoru_genda }
+		add_to_temp_array = { ai_character@theorist = token:JAP_kanin_kotohito }
+	 
+	 #ideas
+		if = {
+			limit = {
+				has_completed_focus = JAP_Kawasaki_Docks 
+			}
+			add_to_temp_array = { ai_character@naval_manufacturer = token:kawasaki_heavy_industries }
+		}
+		
+		if = {
+			limit = {
+				has_completed_focus = army_air_innovations_focus 
+			}
+			add_to_temp_array = { ai_character@aircraft_manufacturer = token:kawasakiair }
+		}
+		else = {
+			add_to_temp_array = { ai_character@aircraft_manufacturer = token:nakajima }
+		}
+		
+		if = {
+			limit = {
+				has_completed_focus = JAP_industrial_research_focus
+			}
+			add_to_temp_array = { ai_character@industrial_concern = token:kawasaki }
+		}
+		
+		add_to_temp_array = { ai_character@electrical_concern = token:sumitomo }
+		add_to_temp_array = { ai_character@materiel_manufacturer = token:tokyo_arsenal }
+		add_to_temp_array = { ai_character@tank_manufacturer = token:JAP_tank_manu }
+
+
+#------------------------------------------------------------------------------------------------------
+#---- SLOT AI SCORES 
+	
+	#-- SLOT SCORES ----------------------------
+		#ai_score_base@<slot> # base * mult + add
+		#ai_score_mult@<slot> #if mult is not set, it defaults to 1
+		#ai_score_add@<slot>
+	
+		ai_use_default_idea_slot_base_score = yes
+		
+		
+	#-- DYNAMIC AI WEIGHTS ----------------------------
+		ai_use_default_idea_slot_weights = yes
+		
+#------------------------------------------------------------------------------------------------------
+#---- ADVISOR AI SCORES 
+	
+	
+}
+
+
+d_ai_advisor_template/CAN = {
+ 
+	set_temp_variable = { ai_advisor_slot_max_random_score = 0.1 }
+	
+#======================================================================================================
+#---- AI CHARACTERS / ADVISOR DEFINITION
+						
+	#head_of_state
+		add_to_temp_array = { ai_character@head_of_state = token:CAN_john_buchan }
+	 
+	#foreign_minister
+		add_to_temp_array = { ai_character@foreign_minister = token:CAN_newton_wesley_rowell }
+	 
+	#interior_minister
+		add_to_temp_array = { ai_character@interior_minister = token:CAN_ralph_maybank }
+	 
+	#intel_minister
+		add_to_temp_array = { ai_character@intel_minister = token:CAN_william_stephenson }
+	 
+	#economic_minister
+		add_to_temp_array = { ai_character@economic_minister = token:CAN_c_d_howe }
+		add_to_temp_array = { ai_character@economic_minister = token:CAN_charles_macneil }
+		add_to_temp_array = { ai_character@economic_minister = token:CAN_grote_stirling }
+	 
+	#political_advisor
+		add_to_temp_array = { ai_character@political_advisor = token:CAN_r_b_bennett }
+	 
+	#domestic_minister
+		add_to_temp_array = { ai_character@domestic_minister = token:CAN_abraham_heaps }
+		add_to_temp_array = { ai_character@domestic_minister = token:CAN_james_mackinnon }
+	 
+	#influence_minister
+		add_to_temp_array = { ai_character@influence_minister = token:generic_angry_warrior }
+	 
+	#supreme_commander
+		add_to_temp_array = { ai_character@supreme_commander = token:generic_supreme_commander }
+	 
+	#army_chief
+		add_to_temp_array = { ai_character@army_chief = token:CAN_andrew_mcnaughton }
+	 
+	#air_chief
+		add_to_temp_array = { ai_character@air_chief = token:CAN_lloyd_samuel_breadner }
+	 
+	#navy_chief
+		add_to_temp_array = { ai_character@navy_chief = token:CAN_lloyd_samuel_breadner }
+		add_to_temp_array = { ai_character@navy_chief = token:CAN_george_jones }
+		add_to_temp_array = { ai_character@navy_chief = token:CAN_harry_g_dewolf }
+	 
+	#high_command
+		add_to_temp_array = { ai_character@high_command = token:CAN_guy_simonds }
+		add_to_temp_array = { ai_character@high_command = token:CAN_wilfred_curtis }
+		add_to_temp_array = { ai_character@high_command = token:CAN_john_murchie }
+	 
+	#theorist
+		add_to_temp_array = { ai_character@theorist = token:CAN_norman_rogers }
+		add_to_temp_array = { ai_character@theorist = token:CAN_tasker_cook }
+		add_to_temp_array = { ai_character@theorist = token:CAN_sydney_radley_walters }
+	 
+	#ideas
+		add_to_temp_array = { ai_character@tank_manufacturer = token:montreal_locomotive_works }
+		add_to_temp_array = { ai_character@naval_manufacturer = token:halifax_shipyard_limited }
+		add_to_temp_array = { ai_character@aircraft_manufacturer = token:canadian_car_foundry }
+		add_to_temp_array = { ai_character@materiel_manufacturer = token:small_arms_limited }
+		#add_to_temp_array = { ai_character@industrial_concern = token:CNR } #is added via trigger below
+		add_to_temp_array = { ai_character@electrical_concern = token:montreal_lab }
+
+
+#------------------------------------------------------------------------------------------------------
+#---- SLOT AI SCORES 
+	
+	#-- SLOT SCORES ----------------------------
+		#ai_score_base@<slot> # base * mult + add
+		#ai_score_mult@<slot> #if mult is not set, it defaults to 1
+		#ai_score_add@<slot>
+		
+		ai_use_default_idea_slot_base_score = yes
+		
+		
+	#-- DYNAMIC AI WEIGHTS ----------------------------
+		ai_use_default_idea_slot_weights = yes
+		
+#------------------------------------------------------------------------------------------------------
+#---- ADVISOR AI SCORES 
+		
+	#-- economic_minister ----------------------------
+
+	set_temp_variable = { CAN_charles_macneil_economic_minister = 1 }
+	set_temp_variable = { CAN_c_d_howe_economic_minister = ai_build_civilian }
+	set_temp_variable = { CAN_grote_stirling_economic_minister = ai_build_military }
+	
+	if = {
+		limit = {
+			has_completed_focus = CAN_infrastructure
+		}
+		add_to_temp_array = { ai_character@industrial_concern = token:CNR }
+	}
+	
+}
+
+
+d_ai_advisor_template/SAF = {
+ 
+	set_temp_variable = { ai_advisor_slot_max_random_score = 0.1 }
+	
+#======================================================================================================
+#---- AI CHARACTERS / ADVISOR DEFINITION
+						 
+	#head_of_state
+		add_to_temp_array = { ai_character@head_of_state = token:SAF_george_villiers }
+	 
+	#foreign_minister
+		add_to_temp_array = { ai_character@foreign_minister = token:SAF_h_bodenstein }
+	 
+	#interior_minister
+		add_to_temp_array = { ai_character@interior_minister = token:SAF_p_grobler }
+	 
+	#intel_minister
+		add_to_temp_array = { ai_character@intel_minister = token:SAF_george_villiers }
+	 
+	#economic_minister
+		add_to_temp_array = { ai_character@economic_minister = token:SAF_nicolaas_havenga }
+		add_to_temp_array = { ai_character@economic_minister = token:SAF_frederic_creswell }
+	 
+	#political_advisor
+		add_to_temp_array = { ai_character@political_advisor = token:SAF_arthur_hall }
+	 
+	#domestic_minister
+		add_to_temp_array = { ai_character@domestic_minister = token:SAF_walter_madeley }
+		add_to_temp_array = { ai_character@domestic_minister = token:SAF_e_g_jansen }
+	 
+	#influence_minister
+		add_to_temp_array = { ai_character@influence_minister = token:generic_angry_warrior }
+	 
+	#supreme_commander
+		add_to_temp_array = { ai_character@supreme_commander = token:generic_supreme_commander_3 }
+	 
+	#army_chief
+		add_to_temp_array = { ai_character@army_chief = token:SAF_leonard_beyers }
+	 
+	#air_chief
+		add_to_temp_array = { ai_character@air_chief = token:SAF_adolf_malan }
+	 
+	#navy_chief
+		add_to_temp_array = { ai_character@navy_chief = token:SAF_pierre_oliver_knoll }
+		add_to_temp_array = { ai_character@navy_chief = token:SAF_cornelis_van_zuigenbrogge }
+	 
+	#high_command
+		add_to_temp_array = { ai_character@high_command = token:SAF_marinus_van_osterkamp }
+		add_to_temp_array = { ai_character@high_command = token:SAF_jeannot_de_la_tourier }
+		add_to_temp_array = { ai_character@high_command = token:SAF_robert_palmer }
+	 
+	#theorist
+		add_to_temp_array = { ai_character@theorist = token:SAF_s_p_le_roux }
+	 
+#------------------------------------------------------------------------------------------------------
+#---- SLOT AI SCORES 
+	
+	#-- SLOT SCORES ----------------------------
+		#ai_score_base@<slot> # base * mult + add
+		#ai_score_mult@<slot> #if mult is not set, it defaults to 1
+		#ai_score_add@<slot>
+		
+		ai_use_default_idea_slot_base_score = yes
+		
+		
+	#-- DYNAMIC AI WEIGHTS ----------------------------
+		ai_use_default_idea_slot_weights = yes
+		
+#------------------------------------------------------------------------------------------------------
+#---- ADVISOR AI SCORES 
+	
+	
+}
+
+
+d_ai_advisor_template/AST = {
+ 
+	set_temp_variable = { ai_advisor_slot_max_random_score = 0.1 }
+	
+#======================================================================================================
+#---- AI CHARACTERS / ADVISOR DEFINITION
+					
+	#head_of_state
+		add_to_temp_array = { ai_character@head_of_state = token:AST_isaac_isaacs }
+	 
+	#foreign_minister
+		add_to_temp_array = { ai_character@foreign_minister = token:AST_robert_menzies }
+	 
+	#interior_minister
+		add_to_temp_array = { ai_character@interior_minister = token:AST_thomas_white }
+	 
+	#intel_minister
+		add_to_temp_array = { ai_character@intel_minister = token:AST_adair_blain }
+	 
+	#economic_minister
+		add_to_temp_array = { ai_character@economic_minister = token:AST_ben_chiffley }
+		add_to_temp_array = { ai_character@economic_minister = token:AST_jack_holloway }
+		add_to_temp_array = { ai_character@economic_minister = token:AST_bert_lazzarini }
+		add_to_temp_array = { ai_character@economic_minister = token:AST_maurice_blackburn }
+	 
+	#political_advisor
+		add_to_temp_array = { ai_character@political_advisor = token:AST_herbert_v_evatt }
+	 
+	#domestic_minister
+		add_to_temp_array = { ai_character@domestic_minister = token:AST_lawrence_anthony }
+		add_to_temp_array = { ai_character@domestic_minister = token:AST_baron_casey }
+	 
+	#influence_minister
+		add_to_temp_array = { ai_character@influence_minister = token:AST_albert_green }
+	 
+	#supreme_commander
+		add_to_temp_array = { ai_character@supreme_commander = token:generic_supreme_commander_3 }
+	 
+	#army_chief
+		add_to_temp_array = { ai_character@army_chief = token:AST_sydney_rowell }
+	 
+	#air_chief
+		add_to_temp_array = { ai_character@air_chief = token:AST_richard_williams }
+	 
+	#navy_chief
+		add_to_temp_array = { ai_character@navy_chief = token:AST_ragnar_colvin }
+		add_to_temp_array = { ai_character@navy_chief = token:AST_george_hyde }
+	 
+	#high_command
+		add_to_temp_array = { ai_character@high_command = token:AST_arthur_allen }
+		add_to_temp_array = { ai_character@high_command = token:AST_clive_caldwell }
+		add_to_temp_array = { ai_character@high_command = token:AST_edmund_herring }
+	 
+	#theorist
+		add_to_temp_array = { ai_character@theorist = token:AST_norman_makin }
+		add_to_temp_array = { ai_character@theorist = token:AST_james_fairbairn }
+		add_to_temp_array = { ai_character@theorist = token:generic_theorist_5 }
+		
+	#ideas
+		if = {
+			limit = {
+				has_dlc = "Together for Victory"
+			}
+			add_to_temp_array = { ai_character@tank_manufacturer = token:new_south_wales_rc }
+		}
+		else = {
+			add_to_temp_array = { ai_character@tank_manufacturer = token:nsw_rail_tank_manufacturer }
+		}
+		
+		add_to_temp_array = { ai_character@naval_manufacturer = token:Cockatoo_doe }
+		add_to_temp_array = { ai_character@aircraft_manufacturer = token:cac_aircraft_manufacturer }		
+		add_to_temp_array = { ai_character@materiel_manufacturer = token:lithgow_saf }
+		add_to_temp_array = { ai_character@industrial_concern = token:AST_broken_hill }
+		add_to_temp_array = { ai_character@electrical_concern = token:AST_jack_piddington }
+
+#------------------------------------------------------------------------------------------------------
+#---- SLOT AI SCORES 
+	
+	#-- SLOT SCORES ----------------------------
+		#ai_score_base@<slot> # base * mult + add
+		#ai_score_mult@<slot> #if mult is not set, it defaults to 1
+		#ai_score_add@<slot>
+		
+		set_temp_variable = { ai_score_base@head_of_state = 10 }
+		set_temp_variable = { ai_score_base@foreign_minister = 5 }
+		set_temp_variable = { ai_score_base@interior_minister = 1 }
+		set_temp_variable = { ai_score_base@intel_minister = 3 }
+		set_temp_variable = { ai_score_base@economic_minister = 7 }
+		set_temp_variable = { ai_score_base@domestic_minister = 5 }
+		set_temp_variable = { ai_score_base@political_advisor = 6 }
+		set_temp_variable = { ai_score_base@influence_minister = 2 }
+		
+		set_temp_variable = { ai_score_base@tank_manufacturer = 1 }
+		set_temp_variable = { ai_score_base@naval_manufacturer = 3 }
+		set_temp_variable = { ai_score_base@aircraft_manufacturer = 1 }
+		set_temp_variable = { ai_score_base@materiel_manufacturer = 3 }
+		set_temp_variable = { ai_score_base@industrial_concern = 4 }
+		set_temp_variable = { ai_score_base@electrical_concern = 2 }
+		
+		set_temp_variable = { ai_score_base@supreme_commander = 1 }
+		set_temp_variable = { ai_score_base@army_chief = 1 }
+		set_temp_variable = { ai_score_base@air_chief = 1 }
+		set_temp_variable = { ai_score_base@navy_chief = 1 }
+		set_temp_variable = { ai_score_base@high_command = 1 }
+		set_temp_variable = { ai_score_base@theorist = 1 }
+		
+		
+	#-- DYNAMIC AI WEIGHTS ----------------------------
+		ai_use_default_idea_slot_weights = yes
+		
+#------------------------------------------------------------------------------------------------------
+#---- ADVISOR AI SCORES 
+		
+	#-- economic_minister ----------------------------
+
+	set_temp_variable = { AST_ben_chiffley_economic_minister = ai_build_civilian }
+	set_temp_variable = { AST_maurice_blackburn_economic_minister = ai_build_civilian }
+	set_temp_variable = { AST_jack_holloway_economic_minister = ai_build_military }
+	set_temp_variable = { AST_bert_lazzarini_economic_minister = ai_build_military }
+	
+	
+}
+
+
+d_ai_advisor_template/RAJ = {
+ 
+	set_temp_variable = { ai_advisor_slot_max_random_score = 0.1 }
+	
+#======================================================================================================
+#---- AI CHARACTERS / ADVISOR DEFINITION
+						
+	#head_of_state
+		add_to_temp_array = { ai_character@head_of_state = token:RAJ_chakravarti_rajagopalachari }
+	 
+	#foreign_minister
+		add_to_temp_array = { ai_character@foreign_minister = token:RAJ_mahatma_mohandas_gandhi }
+	 
+	#interior_minister
+		add_to_temp_array = { ai_character@interior_minister = token:RAJ_moturi_satyanarayana }
+	 
+	#intel_minister
+		add_to_temp_array = { ai_character@intel_minister = token:RAJ_david_petrie }
+	 
+	#economic_minister
+		add_to_temp_array = { ai_character@economic_minister = token:RAJ_anugrah_sinha }
+		add_to_temp_array = { ai_character@economic_minister = token:RAJ_agha_khan_iii }
+	 
+	#political_advisor
+		add_to_temp_array = { ai_character@political_advisor = token:RAJ_benegal_narsing }
+	 
+	#domestic_minister
+		add_to_temp_array = { ai_character@domestic_minister = token:RAJ_john_mathai }
+		add_to_temp_array = { ai_character@domestic_minister = token:RAJ_tara_singh }
+	 
+	#influence_minister
+		add_to_temp_array = { ai_character@influence_minister = token:generic_unyeilding_defender }
+	 
+	#supreme_commander
+		add_to_temp_array = { ai_character@supreme_commander = token:generic_supreme_commander_1 }
+	 
+	#army_chief
+		add_to_temp_array = { ai_character@army_chief = token:RAJ_arthur_a_barrett }
+	 
+	#air_chief
+		add_to_temp_array = { ai_character@air_chief = token:RAJ_subroto_mukherjee }
+	 
+	#navy_chief
+		add_to_temp_array = { ai_character@navy_chief = token:RAJ_louis_mountbatten }
+	 
+	#high_command
+		add_to_temp_array = { ai_character@high_command = token:RAJ_mehar_singh }
+		add_to_temp_array = { ai_character@high_command = token:RAJ_arjan_singh_vibhusan }
+		add_to_temp_array = { ai_character@high_command = token:RAJ_ram_singh_thakur }
+	 
+	#theorist
+		add_to_temp_array = { ai_character@theorist = token:RAJ_rajendra_prasad }
+		add_to_temp_array = { ai_character@theorist = token:RAJ_bahadur_jayla_of_khoch_bahur }
+		add_to_temp_array = { ai_character@theorist = token:RAJ_anyang_bhula }
+	 
+	 #ideas
+		add_to_temp_array = { ai_character@naval_manufacturer = token:mazagon_dock_limited }
+		add_to_temp_array = { ai_character@aircraft_manufacturer = token:hindustan_aircraft }
+		add_to_temp_array = { ai_character@materiel_manufacturer = token:ishapore_rifle_factory }
+		if = {
+			limit = {
+				has_completed_focus = RAJ_tata_steel
+			}
+			add_to_temp_array = { ai_character@industrial_concern = token:RAJ_tisco }
+		}
+		add_to_temp_array = { ai_character@electrical_concern = token:RAJ_engineer }
+
+#------------------------------------------------------------------------------------------------------
+#---- SLOT AI SCORES 
+	
+	#-- SLOT SCORES ----------------------------
+		#ai_score_base@<slot> # base * mult + add
+		#ai_score_mult@<slot> #if mult is not set, it defaults to 1
+		#ai_score_add@<slot>
+		
+		set_temp_variable = { ai_score_base@head_of_state = 15 }
+		set_temp_variable = { ai_score_base@foreign_minister = 1 }
+		set_temp_variable = { ai_score_base@interior_minister = 2 }
+		set_temp_variable = { ai_score_base@intel_minister = 1 }
+		set_temp_variable = { ai_score_base@economic_minister = 8 }
+		set_temp_variable = { ai_score_base@domestic_minister = 5 }
+		set_temp_variable = { ai_score_base@political_advisor = 7 }
+		set_temp_variable = { ai_score_base@influence_minister = 4 }
+		
+		set_temp_variable = { ai_score_base@tank_manufacturer = 1 }
+		set_temp_variable = { ai_score_base@naval_manufacturer = 1 }
+		set_temp_variable = { ai_score_base@aircraft_manufacturer = 1 }
+		set_temp_variable = { ai_score_base@materiel_manufacturer = 1 }
+		set_temp_variable = { ai_score_base@industrial_concern = 1 }
+		set_temp_variable = { ai_score_base@electrical_concern = 1 }
+		
+		set_temp_variable = { ai_score_base@supreme_commander = 2 }
+		set_temp_variable = { ai_score_base@army_chief = 3 }
+		set_temp_variable = { ai_score_base@air_chief = 0 }
+		set_temp_variable = { ai_score_base@navy_chief = 0 }
+		set_temp_variable = { ai_score_base@high_command = 3 }
+		set_temp_variable = { ai_score_base@theorist = 4 }
+		
+		
+	#-- DYNAMIC AI WEIGHTS ----------------------------
+		ai_use_default_idea_slot_weights = yes
+		
+#------------------------------------------------------------------------------------------------------
+#---- ADVISOR AI SCORES 
+		
+	
+}
+
+
+d_ai_advisor_template/NZL = {
+ 
+	set_temp_variable = { ai_advisor_slot_max_random_score = 0.1 }
+	
+#======================================================================================================
+#---- AI CHARACTERS / ADVISOR DEFINITION
+		 
+	#head_of_state
+		add_to_temp_array = { ai_character@head_of_state = token:NZL_george_monckton }
+	 
+	#foreign_minister
+		add_to_temp_array = { ai_character@foreign_minister = token:NZL_frederick_schramm }
+	 
+	#interior_minister
+		add_to_temp_array = { ai_character@interior_minister = token:NZL_bill_barnard }
+	 
+	#intel_minister
+		add_to_temp_array = { ai_character@intel_minister = token:NZL_james_brien }
+	 
+	#economic_minister
+		add_to_temp_array = { ai_character@economic_minister = token:NZL_bob_semple }
+		add_to_temp_array = { ai_character@economic_minister = token:NZL_fred_jones }
+		add_to_temp_array = { ai_character@economic_minister = token:NZL_clifford_reid_dodd }
+	 
+	#political_advisor
+		add_to_temp_array = { ai_character@political_advisor = token:NZL_alexander_aitken }
+	 
+	#domestic_minister
+		add_to_temp_array = { ai_character@domestic_minister = token:NZL_eruera_tirikatene }
+		add_to_temp_array = { ai_character@domestic_minister = token:NZL_clyde_carr }
+	 
+	#influence_minister
+		add_to_temp_array = { ai_character@influence_minister = token:generic_angry_warrior }
+	 
+	#supreme_commander
+		add_to_temp_array = { ai_character@supreme_commander = token:generic_supreme_commander_1 }
+	 
+	#army_chief
+		add_to_temp_array = { ai_character@army_chief = token:NZL_william_sinclair_burgess }
+	 
+	#air_chief
+		add_to_temp_array = { ai_character@air_chief = token:NZL_l_p_peterson }
+	 
+	#navy_chief
+		add_to_temp_array = { ai_character@navy_chief = token:NZL_h_e_horan }
+	 
+	#high_command
+		add_to_temp_array = { ai_character@high_command = token:NZL_norris_stephen_falla }
+		add_to_temp_array = { ai_character@high_command = token:NZL_trevor_handley }
+		add_to_temp_array = { ai_character@high_command = token:NZL_h_d_mcgregor }
+		add_to_temp_array = { ai_character@high_command = token:generic_high_command_8 }
+	 
+	#theorist
+		add_to_temp_array = { ai_character@theorist = token:NZL_r_a_cochrane }
+		add_to_temp_array = { ai_character@theorist = token:NZL_keith_j_holyoake }
+		add_to_temp_array = { ai_character@theorist = token:NZL_arthur_dawes }
+	 
+#------------------------------------------------------------------------------------------------------
+#---- SLOT AI SCORES 
+	
+	#-- SLOT SCORES ----------------------------
+		#ai_score_base@<slot> # base * mult + add
+		#ai_score_mult@<slot> #if mult is not set, it defaults to 1
+		#ai_score_add@<slot>
+		
+		set_temp_variable = { ai_score_base@head_of_state = 1 }
+		set_temp_variable = { ai_score_base@foreign_minister = 5 }
+		set_temp_variable = { ai_score_base@interior_minister = 1 }
+		set_temp_variable = { ai_score_base@intel_minister = 3 }
+		set_temp_variable = { ai_score_base@economic_minister = 7 }
+		set_temp_variable = { ai_score_base@domestic_minister = 4 }
+		set_temp_variable = { ai_score_base@political_advisor = 2 }
+		set_temp_variable = { ai_score_base@influence_minister = 1 }
+		
+		set_temp_variable = { ai_score_base@tank_manufacturer = 1 }
+		set_temp_variable = { ai_score_base@naval_manufacturer = 1 }
+		set_temp_variable = { ai_score_base@aircraft_manufacturer = 1 }
+		set_temp_variable = { ai_score_base@materiel_manufacturer = 2 }
+		set_temp_variable = { ai_score_base@industrial_concern = 3 }
+		set_temp_variable = { ai_score_base@electrical_concern = 1 }
+		
+		set_temp_variable = { ai_score_base@supreme_commander = 1 }
+		set_temp_variable = { ai_score_base@army_chief = 1 }
+		set_temp_variable = { ai_score_base@air_chief = 1 }
+		set_temp_variable = { ai_score_base@navy_chief = 1 }
+		set_temp_variable = { ai_score_base@high_command = 1 }
+		set_temp_variable = { ai_score_base@theorist = 1 }
+		
+		
+	#-- DYNAMIC AI WEIGHTS ----------------------------
+		ai_use_default_idea_slot_weights = yes
+			
+			
+	#------------------------------------------------------------------------------------------------------
+	#---- ADVISOR AI SCORES 
+	#-- economic_minister ----------------------------
+	set_temp_variable = { NZL_bob_semple_economic_minister = ai_build_civilian }
+	
+	set_temp_variable = { NZL_fred_jones_economic_minister = ai_build_military }
+	set_temp_variable = { NZL_clifford_reid_dodd_economic_minister = ai_build_military}
+
+	
+	
+}
+d_ai_advisor_template/ARG = {
+ 
+	set_temp_variable = { ai_advisor_slot_max_random_score = 0.1 }
+	
+#======================================================================================================
+#---- AI CHARACTERS / ADVISOR DEFINITION
+		 
+	#head_of_state
+		add_to_temp_array = { ai_character@head_of_state = token:ARG_agustin_pedro_justo }
+	 
+	#foreign_minister
+		add_to_temp_array = { ai_character@foreign_minister = token:ARG_luis_podesta_costa }
+	 
+	#interior_minister
+		add_to_temp_array = { ai_character@interior_minister = token:ARG_manuel_maria_de_iriondo }
+	 
+	#intel_minister		
+	 
+	#economic_minister
+		add_to_temp_array = { ai_character@economic_minister = token:ARG_ramon_castillo }
+	 
+	#political_advisor
+		add_to_temp_array = { ai_character@political_advisor = token:ARG_roberto_noble }
+	 
+	#domestic_minister
+	 
+	#influence_minister
+	 
+	#supreme_commander
+	 
+	#army_chief
+		add_to_temp_array = { ai_character@army_chief = token:ARG_pedro_pablo_ramirez }
+	 
+	#air_chief
+		add_to_temp_array = { ai_character@air_chief = token:ARG_jose_tamborni }
+	 
+	#navy_chief
+		add_to_temp_array = { ai_character@navy_chief = token:ARG_pedro_s_casal }
+	 
+	#high_command
+		add_to_temp_array = { ai_character@high_command = token:ARG_francisco_m_velez }
+		add_to_temp_array = { ai_character@high_command = token:ARG_thomas_martinez }
+		add_to_temp_array = { ai_character@high_command = token:ARG_eleazar_videla }
+		add_to_temp_array = { ai_character@high_command = token:ARG_uribaldi_diaz_brittenberg }
+	 
+	#theorist
+		add_to_temp_array = { ai_character@theorist = token:ARG_hortensio_quijano }
+		add_to_temp_array = { ai_character@theorist = token:ARG_agustin_pedro_justo }
+		add_to_temp_array = { ai_character@theorist = token:ARG_edelmiro_farrell }
+	 
+#------------------------------------------------------------------------------------------------------
+#---- SLOT AI SCORES 
+	
+	#-- SLOT SCORES ----------------------------
+		#ai_score_base@<slot> # base * mult + add
+		#ai_score_mult@<slot> #if mult is not set, it defaults to 1
+		#ai_score_add@<slot>
+		
+		set_temp_variable = { ai_score_base@head_of_state = 7 }
+		set_temp_variable = { ai_score_base@foreign_minister = 4 }
+		set_temp_variable = { ai_score_base@interior_minister = 1 }
+		set_temp_variable = { ai_score_base@intel_minister = 1 }
+		set_temp_variable = { ai_score_base@economic_minister = 5 }
+		set_temp_variable = { ai_score_base@domestic_minister = 1 }
+		set_temp_variable = { ai_score_base@political_advisor = 4 }
+		set_temp_variable = { ai_score_base@influence_minister = 1 }
+		
+		set_temp_variable = { ai_score_base@tank_manufacturer = 1 }
+		set_temp_variable = { ai_score_base@naval_manufacturer = 3 }
+		set_temp_variable = { ai_score_base@aircraft_manufacturer = 1 }
+		set_temp_variable = { ai_score_base@materiel_manufacturer = 2 }
+		set_temp_variable = { ai_score_base@industrial_concern = 2 }
+		set_temp_variable = { ai_score_base@electrical_concern = 1 }
+		
+		set_temp_variable = { ai_score_base@supreme_commander = 1 }
+		set_temp_variable = { ai_score_base@army_chief = 1 }
+		set_temp_variable = { ai_score_base@air_chief = 1 }
+		set_temp_variable = { ai_score_base@navy_chief = 3 }
+		set_temp_variable = { ai_score_base@high_command = 1 }
+		set_temp_variable = { ai_score_base@theorist = 1 }
+		
+		
+	#-- DYNAMIC AI WEIGHTS ----------------------------
+		ai_use_default_idea_slot_weights = yes	
+
+		
+#------------------------------------------------------------------------------------------------------
+#---- ADVISOR AI SCORES 
+	#-- economic_minister ----------------------------
+	if = { limit = { has_country_flag = luna_funded  }
+		set_temp_variable = { ARG_roberto_noble_theorist = 60 }
+	}
+
+	
+	
+}
+d_ai_advisor_template/ROM = {
+ 
+	set_temp_variable = { ai_advisor_slot_max_random_score = 0.1 }
+	
+#======================================================================================================
+#---- AI CHARACTERS / ADVISOR DEFINITION
+	#head_of_state
+		add_to_temp_array = { ai_character@head_of_state = token:ROM_michael_i }
+	 
+	#foreign_minister
+		add_to_temp_array = { ai_character@foreign_minister = token:ROM_gheorghe_tatarescu }
+		add_to_temp_array = { ai_character@foreign_minister = token:ROM_nicolae_titulescu }
+		add_to_temp_array = { ai_character@foreign_minister = token:ROM_victor_antonescu }
+		add_to_temp_array = { ai_character@foreign_minister = token:ROM_nicolae_petrescucomnen }
+		add_to_temp_array = { ai_character@foreign_minister = token:ROM_grigore_gafencu }
+		add_to_temp_array = { ai_character@foreign_minister = token:ROM_constantin_antoniade }
+		add_to_temp_array = { ai_character@foreign_minister = token:ROM_mihail_manoilescu }
+	 
+	#interior_minister
+		add_to_temp_array = { ai_character@interior_minister = token:ROM_armand_calinescu }
+		add_to_temp_array = { ai_character@interior_minister = token:ROM_gheorghe_tatarescu }
+	 
+	#intel_minister
+		add_to_temp_array = { ai_character@intel_minister = token:ROM_alexandru_ghica }
+	 
+	#economic_minister
+		add_to_temp_array = { ai_character@economic_minister = token:ROM_victor_antonescu }
+		add_to_temp_array = { ai_character@economic_minister = token:ROM_nicolae_malaxa }
+		add_to_temp_array = { ai_character@economic_minister = token:ROM_constantin_papanace }
+		add_to_temp_array = { ai_character@economic_minister = token:ROM_richard_franasovici }
+		add_to_temp_array = { ai_character@economic_minister = token:ROM_iosif_iacobici }
+		add_to_temp_array = { ai_character@economic_minister = token:ROM_gheorghe_potopeanu }
+	 
+	#political_advisor
+		add_to_temp_array = { ai_character@political_advisor = token:ROM_ioan_flueras }
+	 
+	#domestic_minister
+		add_to_temp_array = { ai_character@domestic_minister = token:ROM_gheorghe_leon }
+		add_to_temp_array = { ai_character@domestic_minister = token:ROM_petre_bejan }
+	 
+	#influence_minister
+	 
+	#supreme_commander
+		add_to_temp_array = { ai_character@supreme_commander = token:ROM_constantin_rascanu }
+	 
+	#army_chief
+		add_to_temp_array = { ai_character@army_chief = token:ROM_sanatescu_constantin }
+	 
+	#air_chief
+		add_to_temp_array = { ai_character@air_chief = token:ROM_ermil_gheorghiu }
+	 
+	#navy_chief
+		add_to_temp_array = { ai_character@navy_chief = token:ROM_nicolae_sova }
+	 
+	#high_command
+		add_to_temp_array = { ai_character@high_command = token:ROM_gheorghe_mihail }
+		add_to_temp_array = { ai_character@high_command = token:ROM_paul_teodorescu }
+		add_to_temp_array = { ai_character@high_command = token:ROM_avramescu_gheorghe }
+	 
+	#theorist
+		add_to_temp_array = { ai_character@theorist = token:ROM_gheorghe_potopeanu }
+		add_to_temp_array = { ai_character@theorist = token:ROM_nicolae_stoenescu }
+		add_to_temp_array = { ai_character@theorist = token:ROM_florea_tenescu }
+		add_to_temp_array = { ai_character@theorist = token:ROM_emanoil_ionescu }
+	 
+#------------------------------------------------------------------------------------------------------
+#---- SLOT AI SCORES 
+	
+	#-- SLOT SCORES ----------------------------
+		#ai_score_base@<slot> # base * mult + add
+		#ai_score_mult@<slot> #if mult is not set, it defaults to 1
+		#ai_score_add@<slot>
+		
+		ai_use_default_idea_slot_base_score = yes
+		
+		
+	#-- DYNAMIC AI WEIGHTS ----------------------------
+		ai_use_default_idea_slot_weights = yes
+		
+#------------------------------------------------------------------------------------------------------
+#---- ADVISOR AI SCORES 
+		
+	
+
+}
+
+
+d_ai_advisor_template/BUL = {
+ 
+	set_temp_variable = { ai_advisor_slot_max_random_score = 0.1 }
+	
+#======================================================================================================
+#---- AI CHARACTERS / ADVISOR DEFINITION
+
+	#head_of_state
+		add_to_temp_array = { ai_character@head_of_state = token:BUL_hristo_lukov }
+		add_to_temp_array = { ai_character@head_of_state = token:BUL_georgi_kyoseivanov }
+		add_to_temp_array = { ai_character@head_of_state = token:BUL_boris_iii }
+	 
+	#foreign_minister
+	 
+	#interior_minister
+		add_to_temp_array = { ai_character@interior_minister = token:BUL_angel_karagyozov }
+	 
+	#intel_minister
+		add_to_temp_array = { ai_character@intel_minister = token:BUL_petar_gabrovski }
+	 
+	#economic_minister
+		add_to_temp_array = { ai_character@economic_minister = token:BUL_nikola_petkov }
+		add_to_temp_array = { ai_character@economic_minister = token:BUL_dobri_bozhilov }
+		add_to_temp_array = { ai_character@economic_minister = token:BUL_spas_ganev }
+	 
+	#political_advisor
+		add_to_temp_array = { ai_character@political_advisor = token:generic_political }
+	 
+	#domestic_minister
+		add_to_temp_array = { ai_character@domestic_minister = token:BUL_ivan_krasnovski }
+		add_to_temp_array = { ai_character@domestic_minister = token:BUL_todor_kozhuharov }
+	 
+	#influence_minister
+		add_to_temp_array = { ai_character@influence_minister = token:generic_angry_warrior }
+	 
+	#supreme_commander
+		add_to_temp_array = { ai_character@supreme_commander = token:BUL_theodosi_daskalov }
+	 
+	#army_chief
+		add_to_temp_array = { ai_character@army_chief = token:BUL_konstantin_lukash }
+	 
+	#air_chief
+		add_to_temp_array = { ai_character@air_chief = token:BUL_vasil_tenev_boydev }
+	 
+	#navy_chief
+		add_to_temp_array = { ai_character@navy_chief = token:BUL_nikola_totev_markov }
+	 
+	#high_command
+		add_to_temp_array = { ai_character@high_command = token:BUL_stoyan_stoyanov }
+		add_to_temp_array = { ai_character@high_command = token:BUL_kiril_dimitrov_yanchulev }
+		add_to_temp_array = { ai_character@high_command = token:BUL_atanas_zhilkov }
+	 
+	#theorist
+		add_to_temp_array = { ai_character@theorist = token:BUL_kiril_stanchev }
+		add_to_temp_array = { ai_character@theorist = token:BUL_ivan_gaidimitriv }
+		add_to_temp_array = { ai_character@theorist = token:generic_theorist_8 }
+	 
+#------------------------------------------------------------------------------------------------------
+#---- SLOT AI SCORES 
+	
+	#-- SLOT SCORES ----------------------------
+		
+		ai_use_default_idea_slot_base_score = yes
+		
+		
+	#-- DYNAMIC AI WEIGHTS ----------------------------
+		ai_use_default_idea_slot_weights = yes
+		
+#------------------------------------------------------------------------------------------------------
+#---- ADVISOR AI SCORES 
+		
+	#-- economic_minister ----------------------------
+
+	set_temp_variable = { BUL_dobri_bozhilov_economic_minister = 1 }
+	set_temp_variable = { BUL_nikola_petkov_economic_minister = ai_build_civilian }
+	set_temp_variable = { BUL_spas_ganev_economic_minister = ai_build_military }
+	
+	
+}
+
+
+d_ai_advisor_template/MAN = {
+ 
+	set_temp_variable = { ai_advisor_slot_max_random_score = 0.1 }
+	
+#======================================================================================================
+#---- AI CHARACTERS / ADVISOR DEFINITION
+
+	#head_of_state
+		add_to_temp_array = { ai_character@head_of_state = token:MAN_emperor_puyi }
+	 
+	#foreign_minister
+		add_to_temp_array = { ai_character@foreign_minister = token:MAN_zang_shiyi }
+	 
+	#interior_minister
+		add_to_temp_array = { ai_character@interior_minister = token:MAN_daisaku_komoto }
+	 
+	#intel_minister
+		add_to_temp_array = { ai_character@intel_minister = token:MAN_sun_qichang }
+	 
+	#economic_minister
+		add_to_temp_array = { ai_character@economic_minister = token:MAN_lu_ronghuan }
+		add_to_temp_array = { ai_character@economic_minister = token:MAN_yoshisuke_aikawa }
+	 
+	#political_advisor
+		add_to_temp_array = { ai_character@political_advisor = token:MAN_zheng_xiaoxu }
+	 
+	#domestic_minister
+		add_to_temp_array = { ai_character@domestic_minister = token:MAN_zang_shiyi }
+		add_to_temp_array = { ai_character@domestic_minister = token:MAN_yuan_jinkai }
+	 
+	#influence_minister
+		add_to_temp_array = { ai_character@influence_minister = token:MAN_lu_yiwen }
+	 
+	#supreme_commander
+		add_to_temp_array = { ai_character@supreme_commander = token:generic_supreme_commander_1 }
+	 
+	#army_chief
+		add_to_temp_array = { ai_character@army_chief = token:MAN_guan_xingde }
+	 
+	#air_chief
+		add_to_temp_array = { ai_character@air_chief = token:MAN_emperor_puyi }
+	 
+	#navy_chief
+		add_to_temp_array = { ai_character@navy_chief = token:generic_navy_chief_1 }
+	 
+	#high_command
+		add_to_temp_array = { ai_character@high_command = token:MAN_yonimitsu_kasahara }
+		add_to_temp_array = { ai_character@high_command = token:MAN_kyoiji_tomonaga }
+		add_to_temp_array = { ai_character@high_command = token:generic_high_command_9 }
+	 
+	#theorist
+		add_to_temp_array = { ai_character@theorist = token:MCK_itagaki_seishiro }
+		add_to_temp_array = { ai_character@theorist = token:MAN_deng_linge }
+		add_to_temp_array = { ai_character@theorist = token:generic_theorist_8 }
+	 
+#------------------------------------------------------------------------------------------------------
+#---- SLOT AI SCORES 
+	
+	#-- SLOT SCORES ----------------------------
+		
+		ai_use_default_idea_slot_base_score = yes
+		
+		
+	#-- DYNAMIC AI WEIGHTS ----------------------------
+		ai_use_default_idea_slot_weights = yes
+		
+#------------------------------------------------------------------------------------------------------
+#---- ADVISOR AI SCORES 
+		
+	
+}
+
+
+d_ai_advisor_template/SPR = {
+ 
+	set_temp_variable = { ai_advisor_slot_max_random_score = 0.1 }
+	
+#======================================================================================================
+#---- AI CHARACTERS / ADVISOR DEFINITION
+
+	#head_of_state
+		add_to_temp_array = { ai_character@head_of_state = token:SPR_manuel_azana }
+		add_to_temp_array = { ai_character@head_of_state = token:SPR_francisco_franco }
+		add_to_temp_array = { ai_character@head_of_state = token:SPR_zamora }
+	 
+	#foreign_minister
+	 
+	#interior_minister
+		add_to_temp_array = { ai_character@interior_minister = token:SPR_wenceslao_carrillo_alonso_forjador }
+		add_to_temp_array = { ai_character@interior_minister = token:SPR_casares }
+		add_to_temp_array = { ai_character@interior_minister = token:SPR_severiano }
+	 
+	#intel_minister
+		add_to_temp_array = { ai_character@intel_minister = token:SPR_salvador_madariaga_y_rojo }
+		add_to_temp_array = { ai_character@intel_minister = token:SPR_ramon_serrano_suner }
+	 
+	#economic_minister
+		add_to_temp_array = { ai_character@economic_minister = token:SPR_joaquin_chapaprieta_torregrosa }
+		add_to_temp_array = { ai_character@economic_minister = token:SPR_jose_antonio_giron }
+		add_to_temp_array = { ai_character@economic_minister = token:SPR_enrique_ramos }
+	 
+	#political_advisor
+	 
+	#domestic_minister
+		add_to_temp_array = { ai_character@domestic_minister = token:SPR_enrique_ramos }
+		add_to_temp_array = { ai_character@domestic_minister = token:SPR_giron }
+	 
+	#influence_minister
+	 
+	#supreme_commander
+		add_to_temp_array = { ai_character@supreme_commander = token:SPR_juan_batista_sanchez }
+	 
+	#army_chief
+		add_to_temp_array = { ai_character@army_chief = token:SPR_francisco_franco }
+		add_to_temp_array = { ai_character@army_chief = token:SPR_carlos_masquelet_lacaci }
+	 
+	#air_chief
+	 
+	#navy_chief
+		add_to_temp_array = { ai_character@navy_chief = token:SPR_indalecio_prieto_tuero }
+	 
+	#high_command
+		add_to_temp_array = { ai_character@high_command = token:SPR_diego_hidalgo_duran }
+	 
+	#theorist
+		add_to_temp_array = { ai_character@theorist = token:SPR_andres_saborit_colomer }
+	 
+#------------------------------------------------------------------------------------------------------
+#---- SLOT AI SCORES 
+	
+	#-- SLOT SCORES ----------------------------
+		
+		ai_use_default_idea_slot_base_score = yes
+		
+		
+	#-- DYNAMIC AI WEIGHTS ----------------------------
+		ai_use_default_idea_slot_weights = yes
+		
+#------------------------------------------------------------------------------------------------------
+#---- ADVISOR AI SCORES 
+		
+	#-- economic_minister ----------------------------
+
+	set_temp_variable = { SPR_joaquin_chapaprieta_torregrosa_economic_minister = 1 }
+	set_temp_variable = { SPR_enrique_ramos_economic_minister = ai_build_military }
+	set_temp_variable = { SPR_jose_antonio_giron_economic_minister = ai_build_military }
+	
+	
+}
+
+d_ai_advisor_template/SWE = {
+ 
+	set_temp_variable = { ai_advisor_slot_max_random_score = 0.1 }
+	
+#======================================================================================================
+#---- AI CHARACTERS / ADVISOR DEFINITION
+
+	#head_of_state
+		add_to_temp_array = { ai_character@head_of_state = token:SWE_gustaf_v }
+	 
+	#foreign_minister
+		add_to_temp_array = { ai_character@foreign_minister = token:SWE_christian_gunther }
+	 
+	#interior_minister
+		add_to_temp_array = { ai_character@interior_minister = token:SWE_thorwald_bergquist }
+	 
+	#intel_minister
+		add_to_temp_array = { ai_character@intel_minister = token:SWE_knut_ewerlof }
+	 
+	#economic_minister
+		add_to_temp_array = { ai_character@economic_minister = token:SWE_fritiof_domo }
+		add_to_temp_array = { ai_character@economic_minister = token:SWE_tage_erlander }
+		add_to_temp_array = { ai_character@economic_minister = token:SWE_bertil_ohlin }
+	 
+	#political_advisor
+		add_to_temp_array = { ai_character@political_advisor = token:SWE_osten_unden }
+	 
+	#domestic_minister
+		add_to_temp_array = { ai_character@domestic_minister = token:SWE_gustav_moller }
+		add_to_temp_array = { ai_character@domestic_minister = token:SWE_nils_quensel }
+	 
+	#influence_minister
+		add_to_temp_array = { ai_character@influence_minister = token:generic_angry_warrior }
+	 
+	#supreme_commander
+		add_to_temp_array = { ai_character@supreme_commander = token:generic_supreme_commander }
+	 
+	#army_chief
+		add_to_temp_array = { ai_character@army_chief = token:SWE_ivar_holmquist }
+	 
+	#air_chief
+		add_to_temp_array = { ai_character@air_chief = token:SWE_bengt_nordenskiold }
+	 
+	#navy_chief
+		add_to_temp_array = { ai_character@navy_chief = token:SWE_charles_de_champs }
+	 
+	#high_command
+		add_to_temp_array = { ai_character@high_command = token:SWE_stig_ericson }
+		add_to_temp_array = { ai_character@high_command = token:SWE_axel_rappe }
+		add_to_temp_array = { ai_character@high_command = token:SWE_axel_ljungdahl }
+		add_to_temp_array = { ai_character@high_command = token:SWE_archibald_douglas }
+	 
+	#theorist
+		add_to_temp_array = { ai_character@theorist = token:SWE_erik_palmstierna }
+		add_to_temp_array = { ai_character@theorist = token:SWE_helge_jung }
+		add_to_temp_array = { ai_character@theorist = token:SWE_William_Yngve_Anderson }
+
+#------------------------------------------------------------------------------------------------------
+#---- SLOT AI SCORES 
+	
+	#-- SLOT SCORES ----------------------------
+		
+		ai_use_default_idea_slot_base_score = yes
+		
+		
+	#-- DYNAMIC AI WEIGHTS ----------------------------
+		ai_use_default_idea_slot_weights = yes
+		
+#------------------------------------------------------------------------------------------------------
+#---- ADVISOR AI SCORES 
+		
+	#-- economic_minister ----------------------------
+
+	set_temp_variable = { SWE_tage_erlander_economic_minister = ai_build_civilian }
+	set_temp_variable = { SWE_fritiof_domo_economic_minister = ai_build_military }
+	set_temp_variable = { SWE_bertil_ohlin_economic_minister = ai_build_military }
+	
+	
+}
+
+
+d_ai_advisor_template/BEL = {
+ 
+	set_temp_variable = { ai_advisor_slot_max_random_score = 0.1 }
+	
+#======================================================================================================
+#---- AI CHARACTERS / ADVISOR DEFINITION
+
+	#head_of_state
+		add_to_temp_array = { ai_character@head_of_state = token:BEL_king_leopold_iii }
+	 
+	#foreign_minister
+		add_to_temp_array = { ai_character@foreign_minister = token:BEL_charles_bus }
+	 
+	#interior_minister
+		add_to_temp_array = { ai_character@interior_minister = token:BEL_gaston_eyskens }
+	 
+	#intel_minister
+		add_to_temp_array = { ai_character@intel_minister = token:BEL_raoul_overstraeten }
+	 
+	#economic_minister
+		add_to_temp_array = { ai_character@economic_minister = token:BEL_henri_denis }
+		add_to_temp_array = { ai_character@economic_minister = token:BEL_henri_man }
+	 
+	#political_advisor
+		add_to_temp_array = { ai_character@political_advisor = token:BEL_paul_van_zeeland }
+	 
+	#domestic_minister
+		add_to_temp_array = { ai_character@domestic_minister = token:BEL_edmond_rubbens }
+		add_to_temp_array = { ai_character@domestic_minister = token:BEL_marcel_jaspar }
+	 
+	#influence_minister
+		add_to_temp_array = { ai_character@influence_minister = token:generic_angry_warrior }
+	 
+	#supreme_commander
+		add_to_temp_array = { ai_character@supreme_commander = token:generic_supreme_commander_3 }
+	 
+	#army_chief
+		add_to_temp_array = { ai_character@army_chief = token:BEL_victor_strydonck_burkel }
+	 
+	#air_chief
+		add_to_temp_array = { ai_character@air_chief = token:BEL_jules_iserentant }
+	 
+	#navy_chief
+		add_to_temp_array = { ai_character@navy_chief = token:BEL_henri_decarpentrie }
+	 
+	#high_command
+		add_to_temp_array = { ai_character@high_command = token:BEL_victor_strydonck_burkel }
+		add_to_temp_array = { ai_character@high_command = token:BEL_oscar_michiels }
+		add_to_temp_array = { ai_character@high_command = token:BEL_rene_lagrou }
+	 
+	#theorist
+		add_to_temp_array = { ai_character@theorist = token:BEL_raoul_overstraeten }
+		add_to_temp_array = { ai_character@theorist = token:BEL_jules_pire }
+		add_to_temp_array = { ai_character@theorist = token:BEL_robert_desmet }
+	 
+	#non characters
+		add_to_temp_array = { ai_character@industrial_concern = token:cockerill_industry }
+		add_to_temp_array = { ai_character@electrical_concern = token:srb_bel }
+		add_to_temp_array = { ai_character@materiel_manufacturer = token:frc_bel }
+	 
+#------------------------------------------------------------------------------------------------------
+#---- SLOT AI SCORES 
+	
+	#-- SLOT SCORES ----------------------------
+		
+		ai_use_default_idea_slot_base_score = yes
+		
+		
+	#-- DYNAMIC AI WEIGHTS ----------------------------
+		ai_use_default_idea_slot_weights = yes
+		
+#------------------------------------------------------------------------------------------------------
+#---- ADVISOR AI SCORES 
+		
+	
+}
+
+d_ai_advisor_template/HOL = {
+ 
+	set_temp_variable = { ai_advisor_slot_max_random_score = 0.1 }
+	
+#======================================================================================================
+#---- AI CHARACTERS / ADVISOR DEFINITION
+
+	#head_of_state
+		add_to_temp_array = { ai_character@head_of_state = token:HOL_queen_wilhelmina }
+	 
+	#foreign_minister
+		add_to_temp_array = { ai_character@foreign_minister = token:HOL_louis_beel }
+	 
+	#interior_minister
+		add_to_temp_array = { ai_character@interior_minister = token:HOL_hendrik_boeijen }
+	 
+	#intel_minister
+		add_to_temp_array = { ai_character@intel_minister = token:HOL_max_steenberghe }
+	 
+	#economic_minister
+		add_to_temp_array = { ai_character@economic_minister = token:HOL_anton_mussert }
+		add_to_temp_array = { ai_character@economic_minister = token:HOL_adriaan_dijxhoorn }
+		add_to_temp_array = { ai_character@economic_minister = token:HOL_walraven_van_hall }
+	 
+	#political_advisor
+		add_to_temp_array = { ai_character@political_advisor = token:HOL_prince_bernhard }
+	 
+	#domestic_minister
+		add_to_temp_array = { ai_character@domestic_minister = token:HOL_hendrikus_colijn }
+		add_to_temp_array = { ai_character@domestic_minister = token:HOL_jan_rudolph }
+	 
+	#influence_minister
+		add_to_temp_array = { ai_character@influence_minister = token:HOL_jacob_adriaan_de_wilde }
+	 
+	#supreme_commander
+		add_to_temp_array = { ai_character@supreme_commander = token:HOL_henri_winkelman }
+	 
+	#army_chief
+		add_to_temp_array = { ai_character@army_chief = token:HOL_ter_poorten }
+	 
+	#air_chief
+		add_to_temp_array = { ai_character@air_chief = token:HOL_petrus_wilhelmus_best }
+	 
+	#navy_chief
+		add_to_temp_array = { ai_character@navy_chief = token:HOL_karel_doorman }
+		add_to_temp_array = { ai_character@navy_chief = token:HOL_conrad_helfrich }
+	 
+	#high_command
+		add_to_temp_array = { ai_character@high_command = token:HOL_bernhard_coltof }
+		add_to_temp_array = { ai_character@high_command = token:HOL_adrianus_rudolphus_van_den_bent }
+		add_to_temp_array = { ai_character@high_command = token:HOL_claes_douw_van_der_krap }
+	 
+	#theorist
+		add_to_temp_array = { ai_character@theorist = token:HOL_godfried_van_voorst_tot_voorst }
+		add_to_temp_array = { ai_character@theorist = token:HOL_johannes_theodorus_furstner }
+		add_to_temp_array = { ai_character@theorist = token:HOL_marius_raaijmakers }
+		add_to_temp_array = { ai_character@theorist = token:generic_theorist_8 }
+	 
+#------------------------------------------------------------------------------------------------------
+#---- SLOT AI SCORES 
+	
+	#-- SLOT SCORES ----------------------------
+		
+		ai_use_default_idea_slot_base_score = yes
+		
+		
+	#-- DYNAMIC AI WEIGHTS ----------------------------
+		ai_use_default_idea_slot_weights = yes
+		
+#------------------------------------------------------------------------------------------------------
+#---- ADVISOR AI SCORES 
+		
+	
+}
+
+d_ai_advisor_template/CZE = {
+ 
+	set_temp_variable = { ai_advisor_slot_max_random_score = 0.1 }
+	
+#======================================================================================================
+#---- AI CHARACTERS / ADVISOR DEFINITION
+
+	#head_of_state
+		add_to_temp_array = { ai_character@head_of_state = token:CZE_milan_hodza }
+	 
+	#foreign_minister
+		add_to_temp_array = { ai_character@foreign_minister = token:CZE_kamil_krofta }
+	 
+	#interior_minister
+		add_to_temp_array = { ai_character@interior_minister = token:CZE_vojtech_tuka }
+	 
+	#intel_minister
+		add_to_temp_array = { ai_character@intel_minister = token:CZE_ladislav_feierabend }
+	 
+	#economic_minister
+		add_to_temp_array = { ai_character@economic_minister = token:CZE_ferdinand_catlos }
+		add_to_temp_array = { ai_character@economic_minister = token:CZE_jan_syrovy }
+		add_to_temp_array = { ai_character@economic_minister = token:CZE_alois_elias }
+	 
+	#political_advisor
+		add_to_temp_array = { ai_character@political_advisor = token:generic_political }
+	 
+	#domestic_minister
+		add_to_temp_array = { ai_character@domestic_minister = token:CZE_jaroslav_krejci }
+		add_to_temp_array = { ai_character@domestic_minister = token:CZE_emanuel_moravec }
+	 
+	#influence_minister
+		add_to_temp_array = { ai_character@influence_minister = token:generic_steady_peace }
+	 
+	#supreme_commander
+		add_to_temp_array = { ai_character@supreme_commander = token:generic_supreme_commander_3 }
+	 
+	#army_chief
+		add_to_temp_array = { ai_character@army_chief = token:CZE_rudolf_viest }
+	 
+	#air_chief
+		add_to_temp_array = { ai_character@air_chief = token:CZE_jaroslav_fajfr }
+	 
+	#navy_chief
+	 
+	#high_command
+		add_to_temp_array = { ai_character@high_command = token:CZE_jan_golian }
+		add_to_temp_array = { ai_character@high_command = token:CZE_josef_frantisek }
+		add_to_temp_array = { ai_character@high_command = token:CZE_frantisek_havel }
+	 
+	#theorist
+		add_to_temp_array = { ai_character@theorist = token:CZE_karel_vaclav_petrik }
+		add_to_temp_array = { ai_character@theorist = token:CZE_alois_vicherek }
+		add_to_temp_array = { ai_character@theorist = token:generic_theorist_8 }
+	 
+#------------------------------------------------------------------------------------------------------
+#---- SLOT AI SCORES 
+	
+	#-- SLOT SCORES ----------------------------
+		
+		ai_use_default_idea_slot_base_score = yes
+		
+		
+	#-- DYNAMIC AI WEIGHTS ----------------------------
+		ai_use_default_idea_slot_weights = yes
+		
+#------------------------------------------------------------------------------------------------------
+#---- ADVISOR AI SCORES 
+		
+	#-- economic_minister ----------------------------
+
+	set_temp_variable = { CZE_alois_elias_economic_minister = 1 }
+	set_temp_variable = { CZE_ferdinand_catlos_economic_minister = ai_build_civilian }
+	set_temp_variable = { CZE_jan_syrovy_economic_minister = ai_build_military }
+	
+	
+}
+
+d_ai_advisor_template/POL = {
+ 
+	set_temp_variable = { ai_advisor_slot_max_random_score = 0.1 }
+	
+#======================================================================================================
+#---- AI CHARACTERS / ADVISOR DEFINITION
+
+	#head_of_state
+		add_to_temp_array = { ai_character@head_of_state = token:POL_ignacy_moscicki }
+	 
+	#foreign_minister
+		add_to_temp_array = { ai_character@foreign_minister = token:POL_jozef_beck }
+	 
+	#interior_minister
+		add_to_temp_array = { ai_character@interior_minister = token:POL_Wladyslaw_raczkiewicz }
+	 
+	#intel_minister
+		add_to_temp_array = { ai_character@intel_minister = token:POL_maksymilian_ciezki }
+	 
+	#economic_minister
+		add_to_temp_array = { ai_character@economic_minister = token:POL_roman_dmowski }
+		add_to_temp_array = { ai_character@economic_minister = token:POL_eugeniusz_kwiatkowiski }
+	 
+	#political_advisor
+		add_to_temp_array = { ai_character@political_advisor = token:generic_journalist }
+	 
+	#domestic_minister
+		add_to_temp_array = { ai_character@domestic_minister = token:POL_jozef_haller }
+		add_to_temp_array = { ai_character@domestic_minister = token:POL_emil_kalinski }
+	 
+	#influence_minister
+		add_to_temp_array = { ai_character@influence_minister = token:generic_angry_warrior }
+	 
+	#supreme_commander
+		add_to_temp_array = { ai_character@supreme_commander = token:generic_supreme_commander_3 }
+	 
+	#army_chief
+		add_to_temp_array = { ai_character@army_chief = token:POL_kazimierz_sosnkowski }
+	 
+	#air_chief
+		add_to_temp_array = { ai_character@air_chief = token:POL_ludomil_rayski }
+	 
+	#navy_chief
+		add_to_temp_array = { ai_character@navy_chief = token:POL_jozef_unrug }
+	 
+	#high_command
+		add_to_temp_array = { ai_character@high_command = token:POL_wladyslaw_anders } #army
+		add_to_temp_array = { ai_character@high_command = token:POL_zygmunt_buhusz_szysko } #army
+		add_to_temp_array = { ai_character@high_command = token:POL_stanislaw_pawluc } #air
+	 
+	#theorist
+		add_to_temp_array = { ai_character@theorist = token:generic_theorist_8 } #army
+		add_to_temp_array = { ai_character@theorist = token:POL_tomislaw_lupaszko } #army
+		add_to_temp_array = { ai_character@theorist = token:POL_wladyslaw_kalkus } #air
+		
+	#non character
+		add_to_temp_array = { ai_character@industrial_concern = token:POL_pkp }
+	 
+#------------------------------------------------------------------------------------------------------
+#---- SLOT AI SCORES 
+	
+	#-- SLOT SCORES ----------------------------
+		
+		set_temp_variable = { ai_score_base@head_of_state = 3 }
+		set_temp_variable = { ai_score_base@foreign_minister = 2 }
+		set_temp_variable = { ai_score_base@interior_minister = 2 }
+		set_temp_variable = { ai_score_base@intel_minister = 1 }
+		set_temp_variable = { ai_score_base@economic_minister = 8 }
+		set_temp_variable = { ai_score_base@domestic_minister = 6 }
+		set_temp_variable = { ai_score_base@political_advisor = 7 }
+		set_temp_variable = { ai_score_base@influence_minister = 5 }
+		
+		set_temp_variable = { ai_score_base@tank_manufacturer = 1 }
+		set_temp_variable = { ai_score_base@naval_manufacturer = 1 }
+		set_temp_variable = { ai_score_base@aircraft_manufacturer = 1 }
+		set_temp_variable = { ai_score_base@materiel_manufacturer = 1 }
+		set_temp_variable = { ai_score_base@industrial_concern = 5 }
+		set_temp_variable = { ai_score_base@electrical_concern = 1 }
+		
+		set_temp_variable = { ai_score_base@supreme_commander = 2 }
+		set_temp_variable = { ai_score_base@army_chief = 7 }
+		set_temp_variable = { ai_score_base@air_chief = 1 }
+		set_temp_variable = { ai_score_base@navy_chief = 1 }
+		set_temp_variable = { ai_score_base@high_command = 4 }
+		set_temp_variable = { ai_score_base@theorist = 9 }
+		
+		if = {
+			limit = {
+				date < 1940.1.1
+			}
+			set_temp_variable = { ai_dont_pick_high_command_navy = 1 }
+			
+			set_temp_variable = { ai_dont_pick_theorist_air = 1 }
+			set_temp_variable = { ai_dont_pick_theorist_navy = 1 }
+		}
+		
+	#-- DYNAMIC AI WEIGHTS ----------------------------
+		ai_use_default_idea_slot_weights = yes
+		
+#------------------------------------------------------------------------------------------------------
+#---- ADVISOR AI SCORES 
+		
+		set_temp_variable = { POL_roman_dmowski_economic_minister = ai_build_military }
+	
+}
+
+
+d_ai_advisor_template/YUG = {
+ 
+	set_temp_variable = { ai_advisor_slot_max_random_score = 0.1 }
+	
+#======================================================================================================
+#---- AI CHARACTERS / ADVISOR DEFINITION
+
+	#head_of_state
+		add_to_temp_array = { ai_character@head_of_state = token:YUG_regent_prince_paul }
+	 
+	#foreign_minister
+		add_to_temp_array = { ai_character@foreign_minister = token:YUG_dzafer_kulenovic }
+	 
+	#interior_minister
+		add_to_temp_array = { ai_character@interior_minister = token:YUG_petar_zivkovic }
+	 
+	#intel_minister
+		add_to_temp_array = { ai_character@intel_minister = token:YUG_aleksandar_markovic }
+	 
+	#economic_minister
+		add_to_temp_array = { ai_character@economic_minister = token:YUG_milan_stojadinovic }
+		add_to_temp_array = { ai_character@economic_minister = token:YUG_ivan_ribar }
+		add_to_temp_array = { ai_character@economic_minister = token:YUG_dusan_letica }
+		add_to_temp_array = { ai_character@economic_minister = token:YUG_marko_kozulj }
+	 
+	#political_advisor
+		add_to_temp_array = { ai_character@political_advisor = token:generic_journalist }
+	 
+	#domestic_minister
+		add_to_temp_array = { ai_character@domestic_minister = token:YUG_branko_kaludercic }
+		add_to_temp_array = { ai_character@domestic_minister = token:YUG_dragisa_cvetkovic }
+	 
+	#influence_minister
+		add_to_temp_array = { ai_character@influence_minister = token:generic_angry_warrior }
+	 
+	#supreme_commander
+		add_to_temp_array = { ai_character@supreme_commander = token:generic_supreme_commander_3 }
+	 
+	#army_chief
+		add_to_temp_array = { ai_character@army_chief = token:YUG_draza_mihailovic }
+	 
+	#air_chief
+		add_to_temp_array = { ai_character@air_chief = token:YUG_nikola_obuljen }
+	 
+	#navy_chief
+		add_to_temp_array = { ai_character@navy_chief = token:YUG_petra_dumev }
+	 
+	#high_command
+		add_to_temp_array = { ai_character@high_command = token:YUG_arsa_jovanovic }
+		add_to_temp_array = { ai_character@high_command = token:YUG_ademaga_mesic }
+	 
+	#theorist
+		add_to_temp_array = { ai_character@theorist = token:YUG_anton_kozarev }
+		add_to_temp_array = { ai_character@theorist = token:YUG_petar_vukcevic }
+	 
+#------------------------------------------------------------------------------------------------------
+#---- SLOT AI SCORES 
+	
+	#-- SLOT SCORES ----------------------------
+		
+		ai_use_default_idea_slot_base_score = yes
+		
+		
+	#-- DYNAMIC AI WEIGHTS ----------------------------
+		ai_use_default_idea_slot_weights = yes
+		
+#------------------------------------------------------------------------------------------------------
+#---- ADVISOR AI SCORES 
+		
+	#-- economic_minister ----------------------------
+
+	set_temp_variable = { YUG_milan_stojadinovic_economic_minister = ai_build_civilian }
+	set_temp_variable = { YUG_ivan_ribar_economic_minister = ai_build_civilian }
+	set_temp_variable = { YUG_dusan_letica_economic_minister = ai_build_military }
+	set_temp_variable = { YUG_marko_kozulj_economic_minister = ai_build_military }
+	
+	
+}
+
+
+d_ai_advisor_template/TUR = {
+ 
+	set_temp_variable = { ai_advisor_slot_max_random_score = 0.1 }
+	
+#======================================================================================================
+#---- AI CHARACTERS / ADVISOR DEFINITION
+
+	#head_of_state
+		add_to_temp_array = { ai_character@head_of_state = token:TUR_mustafa_kemal_ataturk }
+		add_to_temp_array = { ai_character@head_of_state = token:TUR_abdulmejid_ii }
+	 
+	#foreign_minister
+		add_to_temp_array = { ai_character@foreign_minister = token:TUR_hassan_saka }
+	 
+	#interior_minister
+		add_to_temp_array = { ai_character@interior_minister = token:TUR_refik_saydam }
+	 
+	#intel_minister
+		add_to_temp_array = { ai_character@intel_minister = token:TUR_faik_kurdoglu }
+	 
+	#economic_minister
+		add_to_temp_array = { ai_character@economic_minister = token:TUR_mumtaz_okmen }
+		add_to_temp_array = { ai_character@economic_minister = token:TUR_kazim_ozalp }
+		add_to_temp_array = { ai_character@economic_minister = token:TUR_fuat_agrali }
+	 
+	#political_advisor
+		add_to_temp_array = { ai_character@political_advisor = token:generic_journalist }
+	 
+	#domestic_minister
+		add_to_temp_array = { ai_character@domestic_minister = token:TUR_saffet_arikan }
+		add_to_temp_array = { ai_character@domestic_minister = token:TUR_ali_tarhan }
+	 
+	#influence_minister
+		add_to_temp_array = { ai_character@influence_minister = token:generic_unyeilding_defender }
+	 
+	#supreme_commander
+		add_to_temp_array = { ai_character@supreme_commander = token:generic_supreme_commander_3 }
+	 
+	#army_chief
+		add_to_temp_array = { ai_character@army_chief = token:TUR_kazim_orbay }
+	 
+	#air_chief
+		add_to_temp_array = { ai_character@air_chief = token:TUR_ali_orlungat }
+	 
+	#navy_chief
+		add_to_temp_array = { ai_character@navy_chief = token:TUR_mehmet_ali_ungen }
+	 
+	#high_command
+		add_to_temp_array = { ai_character@high_command = token:TUR_ali_fuat_cebesoy }
+		add_to_temp_array = { ai_character@high_command = token:TUR_sabiha_gokcen }
+		add_to_temp_array = { ai_character@high_command = token:TUR_abdurrahman_gurman }
+	 
+	#theorist
+		add_to_temp_array = { ai_character@theorist = token:TUR_mehmet_gunaltay }
+		add_to_temp_array = { ai_character@theorist = token:generic_theorist_2 }
+		add_to_temp_array = { ai_character@theorist = token:generic_theorist_10 }
+	 
+#------------------------------------------------------------------------------------------------------
+#---- SLOT AI SCORES 
+	
+	#-- SLOT SCORES ----------------------------
+		
+		ai_use_default_idea_slot_base_score = yes
+		
+		
+	#-- DYNAMIC AI WEIGHTS ----------------------------
+		ai_use_default_idea_slot_weights = yes
+		
+#------------------------------------------------------------------------------------------------------
+#---- ADVISOR AI SCORES 
+		
+	#-- economic_minister ----------------------------
+
+	set_temp_variable = { TUR_fuat_agrali_economic_minister = 1 }
+	set_temp_variable = { TUR_mumtaz_okmen_economic_minister = ai_build_civilian }
+	set_temp_variable = { TUR_kazim_ozalp_economic_minister = ai_build_military }
+	
+	
+}
+
+
+d_ai_advisor_template/GRE = {
+ 
+	set_temp_variable = { ai_advisor_slot_max_random_score = 0.1 }
+	
+#======================================================================================================
+#---- AI CHARACTERS / ADVISOR DEFINITION
+
+	#head_of_state
+		add_to_temp_array = { ai_character@head_of_state = token:GRE_george_ii }
+	 
+	#foreign_minister
+		add_to_temp_array = { ai_character@foreign_minister = token:GRE_damaskinos }
+	 
+	#interior_minister
+		add_to_temp_array = { ai_character@interior_minister = token:GRE_konstantinos_maniadakis }
+	 
+	#intel_minister
+		add_to_temp_array = { ai_character@intel_minister = token:GRE_sofoklis_venizelos }
+	 
+	#economic_minister
+		add_to_temp_array = { ai_character@economic_minister = token:GRE_panagiotis_kanellopoulos }
+		add_to_temp_array = { ai_character@economic_minister = token:GRE_george_melas }
+	 
+	#political_advisor
+		add_to_temp_array = { ai_character@political_advisor = token:GRE_georgios_papandreou }
+	 
+	#domestic_minister
+		add_to_temp_array = { ai_character@domestic_minister = token:GRE_manolis_triantafyllidis }
+		add_to_temp_array = { ai_character@domestic_minister = token:generic_domestic_7 }
+	 
+	#influence_minister
+		add_to_temp_array = { ai_character@influence_minister = token:generic_steady_peace }
+	 
+	#supreme_commander
+		add_to_temp_array = { ai_character@supreme_commander = token:GRE_ioannis_metaxas }
+	 
+	#army_chief
+		add_to_temp_array = { ai_character@army_chief = token:GRE_konstantinos_ventiris }
+	 
+	#air_chief
+		add_to_temp_array = { ai_character@air_chief = token:GRE_vasilios_tsarpalis }
+	 
+	#navy_chief
+		add_to_temp_array = { ai_character@navy_chief = token:GRE_alexandros_sakellariou }
+	 
+	#high_command
+		add_to_temp_array = { ai_character@high_command = token:GRE_aris_velouchiotis }
+		add_to_temp_array = { ai_character@high_command = token:GRE_napoleon_zervas }
+		add_to_temp_array = { ai_character@high_command = token:GRE_aristeidis_moraitinis }
+	 
+	#theorist
+		add_to_temp_array = { ai_character@theorist = token:GRE_nikolaos_plastiras }
+		add_to_temp_array = { ai_character@theorist = token:GRE_eleftherios_venizelos }
+		add_to_temp_array = { ai_character@theorist = token:generic_theorist_8 }
+	 
+#------------------------------------------------------------------------------------------------------
+#---- SLOT AI SCORES 
+	
+	#-- SLOT SCORES ----------------------------
+		
+		ai_use_default_idea_slot_base_score = yes
+		
+		
+	#-- DYNAMIC AI WEIGHTS ----------------------------
+		ai_use_default_idea_slot_weights = yes
+		
+#------------------------------------------------------------------------------------------------------
+#---- ADVISOR AI SCORES 
+		
+	
+}
+
+
+d_ai_advisor_template/PRC = {
+ 
+	set_temp_variable = { ai_advisor_slot_max_random_score = 0.1 }
+	
+#======================================================================================================
+#---- AI CHARACTERS / ADVISOR DEFINITION
+
+	#head_of_state
+		add_to_temp_array = { ai_character@head_of_state = token:PRC_mao_zedong }
+	 
+	#foreign_minister
+		add_to_temp_array = { ai_character@foreign_minister = token:generic_foreign_minister }
+	 
+	#interior_minister
+		add_to_temp_array = { ai_character@interior_minister = token:PRC_kang_sheng }
+	 
+	#intel_minister
+		add_to_temp_array = { ai_character@intel_minister = token:PRC_li_kenong }
+	 
+	#economic_minister
+		add_to_temp_array = { ai_character@economic_minister = token:PRC_he_yuandang }
+		add_to_temp_array = { ai_character@economic_minister = token:CHI_miao_peicheng }
+	 
+	#political_advisor
+		add_to_temp_array = { ai_character@political_advisor = token:PRC_liu_shaoqi }
+	 
+	#domestic_minister
+		add_to_temp_array = { ai_character@domestic_minister = token:CHI_zhou_qigang }
+		add_to_temp_array = { ai_character@domestic_minister = token:CHI_fang_zhi }
+	 
+	#influence_minister
+		add_to_temp_array = { ai_character@influence_minister = token:generic_angry_warrior }
+	 
+	#supreme_commander
+		add_to_temp_array = { ai_character@supreme_commander = token:PRC_mao_zedong }
+	 
+	#army_chief
+	 
+	#air_chief
+		add_to_temp_array = { ai_character@air_chief = token:PRC_fang_zeyi }
+	 
+	#navy_chief
+	 
+	#high_command
+		add_to_temp_array = { ai_character@high_command = token:PRC_chen_geng }
+		add_to_temp_array = { ai_character@high_command = token:PRC_liang_shen }
+		add_to_temp_array = { ai_character@high_command = token:PRC_wang_tehan }
+	 
+	#theorist
+		add_to_temp_array = { ai_character@theorist = token:PRC_kwong_sun_ma }
+		add_to_temp_array = { ai_character@theorist = token:PRC_hsia_tian }
+		add_to_temp_array = { ai_character@theorist = token:generic_theorist_8 }
+	 
+#------------------------------------------------------------------------------------------------------
+#---- SLOT AI SCORES 
+	
+	#-- CATEGORY SCORE ----------------------------
+	
+		set_temp_variable = { ai_score_mult@politicians = 1 }
+		set_temp_variable = { ai_score_mult@research_production = 1 }
+		set_temp_variable = { ai_score_mult@military_staff = 2 }
+		
+	
+	
+	#-- SLOT SCORES ----------------------------
+	
+		#ai_score_base@<slot> # base * mult + add
+		#ai_score_mult@<slot> #if mult is not set, it defaults to 1
+		#ai_score_add@<slot>
+	
+		
+		set_temp_variable = { ai_score_base@head_of_state = 2 }
+		set_temp_variable = { ai_score_base@foreign_minister = 1 }
+		set_temp_variable = { ai_score_base@interior_minister = 2 }
+		set_temp_variable = { ai_score_base@intel_minister = 2 }
+		set_temp_variable = { ai_score_base@economic_minister = 5 }
+		set_temp_variable = { ai_score_base@domestic_minister = 2 }
+		set_temp_variable = { ai_score_base@political_advisor = 3 }
+		set_temp_variable = { ai_score_base@influence_minister = 1 }
+		
+		set_temp_variable = { ai_score_base@tank_manufacturer = 1 }
+		set_temp_variable = { ai_score_base@naval_manufacturer = 1 }
+		set_temp_variable = { ai_score_base@aircraft_manufacturer = 1 }
+		set_temp_variable = { ai_score_base@materiel_manufacturer = 2 }
+		set_temp_variable = { ai_score_base@industrial_concern = 2 }
+		set_temp_variable = { ai_score_base@electrical_concern = 1 }
+		
+		set_temp_variable = { ai_score_base@supreme_commander = 5 }
+		set_temp_variable = { ai_score_base@army_chief = 4 }
+		set_temp_variable = { ai_score_base@air_chief = 1 }
+		set_temp_variable = { ai_score_base@navy_chief = 1 }
+		set_temp_variable = { ai_score_base@high_command = 3 }
+		set_temp_variable = { ai_score_base@theorist = 3 }
+		
+		
+	#-- DYNAMIC AI WEIGHTS ----------------------------
+		ai_use_default_idea_slot_weights = yes
+		
+#------------------------------------------------------------------------------------------------------
+#---- ADVISOR AI SCORES 
+		
+	
+}
+
+d_ai_advisor_template/CHI = {
+ 
+	set_temp_variable = { ai_advisor_slot_max_random_score = 0.1 }
+	
+#======================================================================================================
+#---- AI CHARACTERS / ADVISOR DEFINITION
+
+	#head_of_state
+		add_to_temp_array = { ai_character@head_of_state = token:CHI_lin_sen }
+	 
+	#foreign_minister
+		add_to_temp_array = { ai_character@foreign_minister = token:CHI_gu_zhenggang }
+	 
+	#interior_minister
+		add_to_temp_array = { ai_character@interior_minister = token:CHI_liu_luyin }
+	 
+	#intel_minister
+	 
+	#economic_minister
+		add_to_temp_array = { ai_character@economic_minister = token:CHI_h_h_kung }
+		add_to_temp_array = { ai_character@economic_minister = token:CHI_deng_xiaoping }
+		add_to_temp_array = { ai_character@economic_minister = token:CHI_yu_dawei }
+	 
+	#political_advisor
+		add_to_temp_array = { ai_character@political_advisor = token:CHI_xie_juezai }
+		add_to_temp_array = { ai_character@political_advisor = token:CHI_chiang_ching_kuo }
+		add_to_temp_array = { ai_character@political_advisor = token:CHI_soong_mei_ling }
+	 
+	#domestic_minister
+		add_to_temp_array = { ai_character@domestic_minister = token:CHI_lu_zuofu }
+		add_to_temp_array = { ai_character@domestic_minister = token:CHI_qian_changzhao }
+	 
+	#influence_minister
+		add_to_temp_array = { ai_character@influence_minister = token:generic_steady_peace }
+	 
+	#supreme_commander
+		add_to_temp_array = { ai_character@supreme_commander = token:CHI_chiang_kaishek }
+	 
+	#army_chief
+		add_to_temp_array = { ai_character@army_chief = token:CHI_du_yuming }
+		
+	#air_chief
+		add_to_temp_array = { ai_character@air_chief = token:CHI_wang_shuming }
+	 
+	#navy_chief
+		add_to_temp_array = { ai_character@navy_chief = token:CHI_chen_shaokuan }
+		add_to_temp_array = { ai_character@navy_chief = token:CHI_gui_yongqing }
+	 
+	#high_command
+		add_to_temp_array = { ai_character@high_command = token:CHI_gao_zhihang }
+		add_to_temp_array = { ai_character@high_command = token:CHI_sun_li_jen }
+		add_to_temp_array = { ai_character@high_command = token:CHI_xiao_yisu }
+	 
+	#theorist
+		add_to_temp_array = { ai_character@theorist = token:CHI_bo_yibo } #guerilla +0.1 xp
+		add_to_temp_array = { ai_character@theorist = token:CHI_fang_zeyi } #air
+		add_to_temp_array = { ai_character@theorist = token:CHI_hsueh_yueh } #army
+		add_to_temp_array = { ai_character@theorist = token:CHI_falkenhausen }
+	 
+#------------------------------------------------------------------------------------------------------
+#---- SLOT AI SCORES 
+	
+	#-- CATEGORY SCORE ----------------------------
+	
+		set_temp_variable = { ai_score_mult@politicians = 1 }
+		set_temp_variable = { ai_score_mult@research_production = 1 }
+		set_temp_variable = { ai_score_mult@military_staff = 2 }
+		
+	
+	
+	#-- SLOT SCORES ----------------------------
+	
+		#ai_score_base@<slot> # base * mult + add
+		#ai_score_mult@<slot> #if mult is not set, it defaults to 1
+		#ai_score_add@<slot>
+	
+		
+		set_temp_variable = { ai_score_base@head_of_state = 6 }
+		set_temp_variable = { ai_score_base@foreign_minister = 1 }
+		set_temp_variable = { ai_score_base@interior_minister = 2 }
+		set_temp_variable = { ai_score_base@intel_minister = 1 }
+		set_temp_variable = { ai_score_base@economic_minister = 5 }
+		set_temp_variable = { ai_score_base@domestic_minister = 2 }
+		set_temp_variable = { ai_score_base@political_advisor = 6 }
+		set_temp_variable = { ai_score_base@influence_minister = 3 }
+		
+		set_temp_variable = { ai_score_base@tank_manufacturer = 1 }
+		set_temp_variable = { ai_score_base@naval_manufacturer = 1 }
+		set_temp_variable = { ai_score_base@aircraft_manufacturer = 1 }
+		set_temp_variable = { ai_score_base@materiel_manufacturer = 2 }
+		set_temp_variable = { ai_score_base@industrial_concern = 2 }
+		set_temp_variable = { ai_score_base@electrical_concern = 1 }
+		
+		set_temp_variable = { ai_score_base@supreme_commander = 2 }
+		set_temp_variable = { ai_score_base@army_chief = 3 }
+		set_temp_variable = { ai_score_base@air_chief = 1 }
+		set_temp_variable = { ai_score_base@navy_chief = 1 }
+		set_temp_variable = { ai_score_base@high_command = 3 }
+		set_temp_variable = { ai_score_base@theorist = 3 }
+		
+		
+	#-- DYNAMIC AI WEIGHTS ----------------------------
+		ai_use_default_idea_slot_weights = yes
+		
+#------------------------------------------------------------------------------------------------------
+#---- ADVISOR AI SCORES 
+		
+	
+}
+d_ai_advisor_template/POR = {
+ 
+	set_temp_variable = { ai_advisor_slot_max_random_score = 0.1 }
+	
+#======================================================================================================
+#---- AI CHARACTERS / ADVISOR DEFINITION
+
+	#head_of_state
+		add_to_temp_array = { ai_character@head_of_state = token:POR_oscar_carmona }
+	 
+	#foreign_minister
+		add_to_temp_array = { ai_character@foreign_minister = token:POR_antonio_de_oliveira_salazar }
+	 
+	#interior_minister
+		add_to_temp_array = { ai_character@interior_minister = token:POR_mario_sousa }
+	 
+	#intel_minister
+		add_to_temp_array = { ai_character@intel_minister = token:POR_manuel_araujo }
+	 
+	#economic_minister
+		add_to_temp_array = { ai_character@economic_minister = token:POR_jaime_cortesao }
+		add_to_temp_array = { ai_character@economic_minister = token:POR_duarte_pacheco }
+		add_to_temp_array = { ai_character@economic_minister = token:POR_fernando_costa }
+		add_to_temp_array = { ai_character@economic_minister = token:POR_jose_freitas }
+	 
+	#political_advisor
+		add_to_temp_array = { ai_character@political_advisor = token:generic_journalist }
+	 
+	#domestic_minister
+		add_to_temp_array = { ai_character@domestic_minister = token:POR_pedro_pereira }
+		add_to_temp_array = { ai_character@domestic_minister = token:generic_domestic_7 }
+	 
+	#influence_minister
+		add_to_temp_array = { ai_character@influence_minister = token:generic_angry_warrior }
+	 
+	#supreme_commander
+		add_to_temp_array = { ai_character@supreme_commander = token:POR_joaquim_abranches }
+	 
+	#army_chief
+		add_to_temp_array = { ai_character@army_chief = token:POR_lobato_guerra }
+	 
+	#air_chief
+		add_to_temp_array = { ai_character@air_chief = token:POR_humberto_delgado }
+	 
+	#navy_chief
+		add_to_temp_array = { ai_character@navy_chief = token:POR_americo_tomas }
+	 
+	#high_command
+		add_to_temp_array = { ai_character@high_command = token:POR_manuel_quintao_meireles }
+		add_to_temp_array = { ai_character@high_command = token:POR_jose_adriano_rebelo_pequito }
+		add_to_temp_array = { ai_character@high_command = token:POR_jose_filipe_rodrigues_de_barros }
+	 
+	#theorist
+		add_to_temp_array = { ai_character@theorist = token:POR_jose_norton_de_matos }
+		add_to_temp_array = { ai_character@theorist = token:POR_jose_manuel_sarmento_de_beires }
+		add_to_temp_array = { ai_character@theorist = token:POR_ortins_manuel_bettencourt }
+		add_to_temp_array = { ai_character@theorist = token:generic_theorist_8 }
+	 
+#------------------------------------------------------------------------------------------------------
+#---- SLOT AI SCORES 
+	
+	#-- SLOT SCORES ----------------------------
+		
+		ai_use_default_idea_slot_base_score = yes
+		
+		
+	#-- DYNAMIC AI WEIGHTS ----------------------------
+		ai_use_default_idea_slot_weights = yes
+		
+#------------------------------------------------------------------------------------------------------
+#---- ADVISOR AI SCORES 
+		
+	#-- economic_minister ----------------------------
+
+	set_temp_variable = { POR_jaime_cortesao_economic_minister = ai_build_civilian }
+	set_temp_variable = { POR_duarte_pacheco_economic_minister = ai_build_civilian }
+	set_temp_variable = { POR_fernando_costa_economic_minister = ai_build_military }
+	set_temp_variable = { POR_jose_freitas_economic_minister = ai_build_military }
+	
+	
+}
+
+
+d_ai_advisor_template/FIN = {
+ 
+	set_temp_variable = { ai_advisor_slot_max_random_score = 0.1 }
+	
+#======================================================================================================
+#---- AI CHARACTERS / ADVISOR DEFINITION
+
+	#head_of_state
+		add_to_temp_array = { ai_character@head_of_state = token:FIN_kyosti_kallio }
+	 
+	#foreign_minister
+		add_to_temp_array = { ai_character@foreign_minister = token:FIN_rudolf_holsti }
+	 
+	#interior_minister
+		add_to_temp_array = { ai_character@interior_minister = token:FIN_bruno_salmiala }
+	 
+	#intel_minister
+		add_to_temp_array = { ai_character@intel_minister = token:FIN_ernst_born }
+	 
+	#economic_minister
+		add_to_temp_array = { ai_character@economic_minister = token:FIN_vilho_annala }
+		add_to_temp_array = { ai_character@economic_minister = token:FIN_rainer_fieandt }
+		add_to_temp_array = { ai_character@economic_minister = token:FIN_jaakko_keto }
+	 
+	#political_advisor
+		add_to_temp_array = { ai_character@political_advisor = token:FIN_antti_hackzell }
+	 
+	#domestic_minister
+		add_to_temp_array = { ai_character@domestic_minister = token:FIN_pekka_heikkinen }
+		add_to_temp_array = { ai_character@domestic_minister = token:FIN_pietari_salmenoja }
+	 
+	#influence_minister
+		add_to_temp_array = { ai_character@influence_minister = token:generic_steady_peace }
+	 
+	#supreme_commander
+		add_to_temp_array = { ai_character@supreme_commander = token:FIN_carl_gustaf_mannerheim }
+	 
+	#army_chief
+		add_to_temp_array = { ai_character@army_chief = token:FIN_carl_gustaf_mannerheim }
+	 
+	#air_chief
+		add_to_temp_array = { ai_character@air_chief = token:FIN_jarl_lundqvist }
+	 
+	#navy_chief
+		add_to_temp_array = { ai_character@navy_chief = token:FIN_eero_rahola }
+	 
+	#high_command
+		add_to_temp_array = { ai_character@high_command = token:FIN_karl_oesch }
+		add_to_temp_array = { ai_character@high_command = token:FIN_lauri_tiainen }
+		add_to_temp_array = { ai_character@high_command = token:FIN_valio_porvari }
+	 
+	#theorist
+		add_to_temp_array = { ai_character@theorist = token:FIN_akseli_anttila }
+		add_to_temp_array = { ai_character@theorist = token:FIN_vaino_valve }
+		add_to_temp_array = { ai_character@theorist = token:generic_theorist_8 }
+	 
+#------------------------------------------------------------------------------------------------------
+#---- SLOT AI SCORES 
+	
+	#-- SLOT SCORES ----------------------------
+		
+		ai_use_default_idea_slot_base_score = yes
+		
+		
+	#-- DYNAMIC AI WEIGHTS ----------------------------
+		ai_use_default_idea_slot_weights = yes
+		
+#------------------------------------------------------------------------------------------------------
+#---- ADVISOR AI SCORES 
+		
+	#-- economic_minister ----------------------------
+
+	set_temp_variable = { FIN_rainer_fieandt_economic_minister = 1 }
+	set_temp_variable = { FIN_vilho_annala_economic_minister = ai_build_civilian }
+	set_temp_variable = { FIN_jaakko_keto_economic_minister = ai_build_military }
+	
+	
+}
+
+
+d_ai_advisor_template/IRE = {
+ 
+	set_temp_variable = { ai_advisor_slot_max_random_score = 0.1 }
+	
+#======================================================================================================
+#---- AI CHARACTERS / ADVISOR DEFINITION
+
+	#head_of_state
+		add_to_temp_array = { ai_character@head_of_state = token:IRE_douglas_hyde }
+	 
+	#foreign_minister
+		add_to_temp_array = { ai_character@foreign_minister = token:IRE_sean_ceallaigh }
+	 
+	#interior_minister
+		add_to_temp_array = { ai_character@interior_minister = token:IRE_william_cosgrave }
+	 
+	#intel_minister
+		add_to_temp_array = { ai_character@intel_minister = token:IRE_william_norton }
+	 
+	#economic_minister
+		add_to_temp_array = { ai_character@economic_minister = token:IRE_sean_lemass }
+		add_to_temp_array = { ai_character@economic_minister = token:IRE_ruairi_brugha }
+		add_to_temp_array = { ai_character@economic_minister = token:IRE_james_everett }
+	 
+	#political_advisor
+	 
+	#domestic_minister
+		add_to_temp_array = { ai_character@domestic_minister = token:IRE_james_ryan }
+		add_to_temp_array = { ai_character@domestic_minister = token:IRE_thomas_derrig }
+	 
+	#influence_minister
+		add_to_temp_array = { ai_character@influence_minister = token:generic_steady_peace }
+	 
+	#supreme_commander
+		add_to_temp_array = { ai_character@supreme_commander = token:generic_supreme_commander }
+	 
+	#army_chief
+		add_to_temp_array = { ai_character@army_chief = token:IRE_richard_james_mulcahy }
+	 
+	#air_chief
+		add_to_temp_array = { ai_character@air_chief = token:IRE_p_a_mulcahy }
+	 
+	#navy_chief
+		add_to_temp_array = { ai_character@navy_chief = token:IRE_s_muiris }
+	 
+	#high_command
+		add_to_temp_array = { ai_character@high_command = token:IRE_dan_mckenna }
+		add_to_temp_array = { ai_character@high_command = token:IRE_frank_fahy }
+		add_to_temp_array = { ai_character@high_command = token:IRE_michael_brennan }
+	 
+	#theorist
+		add_to_temp_array = { ai_character@theorist = token:IRE_oscar_traynor }
+		add_to_temp_array = { ai_character@theorist = token:IRE_michael_joe_costello }
+		add_to_temp_array = { ai_character@theorist = token:generic_theorist_8 }
+	 
+#------------------------------------------------------------------------------------------------------
+#---- SLOT AI SCORES 
+	
+	#-- SLOT SCORES ----------------------------
+		
+		ai_use_default_idea_slot_base_score = yes
+		
+		
+	#-- DYNAMIC AI WEIGHTS ----------------------------
+		ai_use_default_idea_slot_weights = yes
+		
+#------------------------------------------------------------------------------------------------------
+#---- ADVISOR AI SCORES 
+		
+	#-- economic_minister ----------------------------
+
+	set_temp_variable = { IRE_sean_lemass_economic_minister = ai_build_civilian }
+	set_temp_variable = { IRE_ruairi_brugha_economic_minister = ai_build_military }
+	set_temp_variable = { IRE_james_everett_economic_minister = ai_build_civilian }
+	
+	
+}
+
+
+d_ai_advisor_template/BRA = {
+ 
+	set_temp_variable = { ai_advisor_slot_max_random_score = 0.1 }
+	
+#======================================================================================================
+#---- AI CHARACTERS / ADVISOR DEFINITION
+
+	#head_of_state
+		add_to_temp_array = { ai_character@head_of_state = token:generic_head_of_state }
+	 
+	#foreign_minister
+		add_to_temp_array = { ai_character@foreign_minister = token:BRA_artur_de_sousa_costa }
+	 
+	#interior_minister
+		add_to_temp_array = { ai_character@interior_minister = token:generic_interior_minister_2 }
+	 
+	#intel_minister
+		add_to_temp_array = { ai_character@intel_minister = token:generic_intel_minister }
+	 
+	#economic_minister
+		add_to_temp_array = { ai_character@economic_minister = token:BRA_osvaldo_aranha }
+		add_to_temp_array = { ai_character@economic_minister = token:BRA_afranio_de_mello_franco }
+	 
+	#political_advisor
+		add_to_temp_array = { ai_character@political_advisor = token:BRA_washington_luis_pereira }
+	 
+	#domestic_minister
+		add_to_temp_array = { ai_character@domestic_minister = token:generic_domestic_2 }
+		add_to_temp_array = { ai_character@domestic_minister = token:generic_domestic_4 }
+	 
+	#influence_minister
+		add_to_temp_array = { ai_character@influence_minister = token:generic_angry_warrior }
+	 
+	#supreme_commander
+		add_to_temp_array = { ai_character@supreme_commander = token:BRA_eurico_gaspar_dutra }
+	 
+	#army_chief
+		add_to_temp_array = { ai_character@army_chief = token:BRA_joao_neves_da_fontoura }
+	 
+	#air_chief
+		add_to_temp_array = { ai_character@air_chief = token:BRA_salgado_filho }
+	 
+	#navy_chief
+		add_to_temp_array = { ai_character@navy_chief = token:BRA_floriano_peixoto }
+	 
+	#high_command
+		add_to_temp_array = { ai_character@high_command = token:BRA_agliberto_vieira }
+		add_to_temp_array = { ai_character@high_command = token:BRA_artur_da_costa_e_silva }
+		add_to_temp_array = { ai_character@high_command = token:BRA_moreira_lima }
+	 
+	#theorist
+		add_to_temp_array = { ai_character@theorist = token:BRA_newton_cavalcanti }
+		add_to_temp_array = { ai_character@theorist = token:BRA_eduardo_gomes }
+		add_to_temp_array = { ai_character@theorist = token:BRA_jose_fernandes_leite_de_castro }
+	 
+#------------------------------------------------------------------------------------------------------
+#---- SLOT AI SCORES 
+	
+	#-- SLOT SCORES ----------------------------
+		
+		ai_use_default_idea_slot_base_score = yes
+		
+		
+	#-- DYNAMIC AI WEIGHTS ----------------------------
+		ai_use_default_idea_slot_weights = yes
+		
+#------------------------------------------------------------------------------------------------------
+#---- ADVISOR AI SCORES 
+		
+	
+}
+
+
+d_ai_advisor_template/NOR = {
+ 
+	set_temp_variable = { ai_advisor_slot_max_random_score = 0.1 }
+	
+#======================================================================================================
+#---- AI CHARACTERS / ADVISOR DEFINITION
+
+	#head_of_state
+		add_to_temp_array = { ai_character@head_of_state = token:NOR_haakon_vii }
+	 
+	#foreign_minister
+		add_to_temp_array = { ai_character@foreign_minister = token:NOR_halvdan_koht }
+	 
+	#interior_minister
+		add_to_temp_array = { ai_character@interior_minister = token:generic_interior_minister_2 }
+	 
+	#intel_minister
+		add_to_temp_array = { ai_character@intel_minister = token:generic_intel_minister_4 }
+	 
+	#economic_minister
+		add_to_temp_array = { ai_character@economic_minister = token:NOR_adolf_indrebo }
+		add_to_temp_array = { ai_character@economic_minister = token:generic_economic_2 }
+	 
+	#political_advisor
+		add_to_temp_array = { ai_character@political_advisor = token:generic_political }
+	 
+	#domestic_minister
+		add_to_temp_array = { ai_character@domestic_minister = token:generic_domestic_1 }
+		add_to_temp_array = { ai_character@domestic_minister = token:generic_domestic_7 }
+	 
+	#influence_minister
+		add_to_temp_array = { ai_character@influence_minister = token:generic_angry_warrior }
+	 
+	#supreme_commander
+		add_to_temp_array = { ai_character@supreme_commander = token:generic_supreme_commander_1 }
+	 
+	#army_chief
+		add_to_temp_array = { ai_character@army_chief = token:NOR_kristian_laake }
+	 
+	#air_chief
+		add_to_temp_array = { ai_character@air_chief = token:NOR_hjalmar_riiserlarsen }
+	 
+	#navy_chief
+		add_to_temp_array = { ai_character@navy_chief = token:NOR_henry_diesen }
+	 
+	#high_command
+		add_to_temp_array = { ai_character@high_command = token:NOR_wilhelm_von_tangen-hansteen }
+		add_to_temp_array = { ai_character@high_command = token:NOR_alfred_roscher-lund }
+		add_to_temp_array = { ai_character@high_command = token:NOR_jacob_von_der_lippe }
+	 
+	#theorist
+		add_to_temp_array = { ai_character@theorist = token:NOR_skule_storheil }
+		add_to_temp_array = { ai_character@theorist = token:NOR_konrad_sundlo }
+		add_to_temp_array = { ai_character@theorist = token:generic_theorist_8 }
+	 
+#------------------------------------------------------------------------------------------------------
+#---- SLOT AI SCORES 
+	
+	#-- SLOT SCORES ----------------------------
+		
+		ai_use_default_idea_slot_base_score = yes
+		
+		
+	#-- DYNAMIC AI WEIGHTS ----------------------------
+		ai_use_default_idea_slot_weights = yes
+		
+#------------------------------------------------------------------------------------------------------
+#---- ADVISOR AI SCORES 
+		
+	
+}
+
+
+d_ai_advisor_template/MEX = {
+ 
+	set_temp_variable = { ai_advisor_slot_max_random_score = 0.1 }
+	
+#======================================================================================================
+#---- AI CHARACTERS / ADVISOR DEFINITION
+
+	#head_of_state
+		add_to_temp_array = { ai_character@head_of_state = token:MEX_eduardo_hay }
+	 
+	#foreign_minister
+		add_to_temp_array = { ai_character@foreign_minister = token:generic_foreign_minister_3 }
+	 
+	#interior_minister
+		add_to_temp_array = { ai_character@interior_minister = token:MEX_plutarco_calles }
+	 
+	#intel_minister
+		add_to_temp_array = { ai_character@intel_minister = token:generic_intel_minister_4 }
+	 
+	#economic_minister
+		add_to_temp_array = { ai_character@economic_minister = token:MEX_manuel_avila_camacho }
+		add_to_temp_array = { ai_character@economic_minister = token:generic_economic_2 }
+	 
+	#political_advisor
+		add_to_temp_array = { ai_character@political_advisor = token:MEX_bartolome_garcia_correa }
+	 
+	#domestic_minister
+		add_to_temp_array = { ai_character@domestic_minister = token:generic_domestic_1 }
+		add_to_temp_array = { ai_character@domestic_minister = token:generic_domestic_4 }
+	 
+	#influence_minister
+		add_to_temp_array = { ai_character@influence_minister = token:generic_steady_peace }
+	 
+	#supreme_commander
+		add_to_temp_array = { ai_character@supreme_commander = token:generic_supreme_commander_1 }
+	 
+	#army_chief
+		add_to_temp_array = { ai_character@army_chief = token:MEX_matias_santos_ramos }
+	 
+	#air_chief
+		add_to_temp_array = { ai_character@air_chief = token:MEX_efrain_rodriguez_berrios }
+	 
+	#navy_chief
+		add_to_temp_array = { ai_character@navy_chief = token:MEX_othon_p._blanco_nunez_de_caceres }
+	 
+	#high_command
+		add_to_temp_array = { ai_character@high_command = token:MEX_abelardo_l._rodriguez }
+		add_to_temp_array = { ai_character@high_command = token:MEX_pablo_m_valenzuela }
+		add_to_temp_array = { ai_character@high_command = token:MEX_hector_meixueiro }
+	 
+	#theorist
+		add_to_temp_array = { ai_character@theorist = token:MEX_agustin_olachea }
+		add_to_temp_array = { ai_character@theorist = token:MEX_enrique_estrada }
+		add_to_temp_array = { ai_character@theorist = token:generic_theorist_8 }
+	 
+#------------------------------------------------------------------------------------------------------
+#---- SLOT AI SCORES 
+	
+	#-- SLOT SCORES ----------------------------
+		
+		ai_use_default_idea_slot_base_score = yes
+		
+		
+	#-- DYNAMIC AI WEIGHTS ----------------------------
+		ai_use_default_idea_slot_weights = yes
+		
+#------------------------------------------------------------------------------------------------------
+#---- ADVISOR AI SCORES 
+		
+	
+}
+
+
+d_ai_advisor_template/DEN = {
+ 
+	set_temp_variable = { ai_advisor_slot_max_random_score = 0.1 }
+	
+#======================================================================================================
+#---- AI CHARACTERS / ADVISOR DEFINITION
+
+	#head_of_state
+		add_to_temp_array = { ai_character@head_of_state = token:DEN_Christian_X }
+	 
+	#foreign_minister
+		add_to_temp_array = { ai_character@foreign_minister = token:DEN_peter_munch }
+	 
+	#interior_minister
+		add_to_temp_array = { ai_character@interior_minister = token:DEN_karl_steincke }
+	 
+	#intel_minister
+		add_to_temp_array = { ai_character@intel_minister = token:generic_intel_minister_4 }
+	 
+	#economic_minister
+		add_to_temp_array = { ai_character@economic_minister = token:DEN_ejnar_warum }
+		add_to_temp_array = { ai_character@economic_minister = token:DEN_alsing_andersen }
+	 
+	#political_advisor
+		add_to_temp_array = { ai_character@political_advisor = token:DEN_hans_hansen }
+	 
+	#domestic_minister
+		add_to_temp_array = { ai_character@domestic_minister = token:generic_domestic_1 }
+		add_to_temp_array = { ai_character@domestic_minister = token:generic_domestic_6 }
+	 
+	#influence_minister
+		add_to_temp_array = { ai_character@influence_minister = token:generic_steady_peace }
+	 
+	#supreme_commander
+		add_to_temp_array = { ai_character@supreme_commander = token:generic_supreme_commander_3 }
+	 
+	#army_chief
+		add_to_temp_array = { ai_character@army_chief = token:DEN_william_wain_prior }
+	 
+	#air_chief
+		add_to_temp_array = { ai_character@air_chief = token:DEN_paul_sommer }
+	 
+	#navy_chief
+		add_to_temp_array = { ai_character@navy_chief = token:DEN_carl_hammerich }
+	 
+	#high_command
+		add_to_temp_array = { ai_character@high_command = token:DEN_hans_a_rolsted }
+		add_to_temp_array = { ai_character@high_command = token:DEN_hjalmar_rechnitzer }
+		add_to_temp_array = { ai_character@high_command = token:DEN_christian_frederik_von_schalburg }
+	 
+	#theorist
+		add_to_temp_array = { ai_character@theorist = token:DEN_hans_lunding }
+		add_to_temp_array = { ai_character@theorist = token:DEN_william_wain_prior }
+		add_to_temp_array = { ai_character@theorist = token:generic_theorist_8 }
+	 
+#------------------------------------------------------------------------------------------------------
+#---- SLOT AI SCORES 
+	
+	#-- SLOT SCORES ----------------------------
+		
+		ai_use_default_idea_slot_base_score = yes
+		
+		
+	#-- DYNAMIC AI WEIGHTS ----------------------------
+		ai_use_default_idea_slot_weights = yes
+		
+#------------------------------------------------------------------------------------------------------
+#---- ADVISOR AI SCORES 
+		
+	
+}
+
+
+d_ai_advisor_template/PER = {
+ 
+	set_temp_variable = { ai_advisor_slot_max_random_score = 0.1 }
+	
+#======================================================================================================
+#---- AI CHARACTERS / ADVISOR DEFINITION
+
+	#head_of_state
+		add_to_temp_array = { ai_character@head_of_state = token:PER_mohammad_reza_pahlavi }
+	 
+	#foreign_minister
+		add_to_temp_array = { ai_character@foreign_minister = token:PER_mesharshmalmolk }
+	 
+	#interior_minister
+		add_to_temp_array = { ai_character@interior_minister = token:PER_imad }
+	 
+	#intel_minister
+		add_to_temp_array = { ai_character@intel_minister = token:PER_abdullah }
+	 
+	#economic_minister
+		add_to_temp_array = { ai_character@economic_minister = token:PER_ali_zohayli }
+		add_to_temp_array = { ai_character@economic_minister = token:PER_ali }
+	 
+	#political_advisor
+		add_to_temp_array = { ai_character@political_advisor = token:PER_mahmud_jam }
+		add_to_temp_array = { ai_character@political_advisor = token:PER_sajjadi }
+	 
+	#domestic_minister
+		add_to_temp_array = { ai_character@domestic_minister = token:PER_anvar }
+		add_to_temp_array = { ai_character@domestic_minister = token:PER_yusuf }
+	 
+	#influence_minister
+		add_to_temp_array = { ai_character@influence_minister = token:generic_angry_warrior }
+	 
+	#supreme_commander
+		add_to_temp_array = { ai_character@supreme_commander = token:PER_azizullah }
+	 
+	#army_chief
+		add_to_temp_array = { ai_character@army_chief = token:PER_abdolreza_afkhami }
+	 
+	#air_chief
+		add_to_temp_array = { ai_character@air_chief = token:PER_ahmad_khan_nakhjavan }
+	 
+	#navy_chief
+		add_to_temp_array = { ai_character@navy_chief = token:PER_reza_mizani }
+	 
+	#high_command
+		add_to_temp_array = { ai_character@high_command = token:PER_mir_afkhami }
+		add_to_temp_array = { ai_character@high_command = token:PER_fazlollah_zahedi }
+		add_to_temp_array = { ai_character@high_command = token:PER_ahmad_mira_khosravani }
+	 
+	#theorist
+		add_to_temp_array = { ai_character@theorist = token:PER_mohammad_reza_pahlavi }
+		add_to_temp_array = { ai_character@theorist = token:PER_hossein_afkhami }
+		add_to_temp_array = { ai_character@theorist = token:PER_ali_akbar_deiva }
+	 
+#------------------------------------------------------------------------------------------------------
+#---- SLOT AI SCORES 
+	
+	#-- SLOT SCORES ----------------------------
+		
+		ai_use_default_idea_slot_base_score = yes
+		
+		
+	#-- DYNAMIC AI WEIGHTS ----------------------------
+		ai_use_default_idea_slot_weights = yes
+		
+#------------------------------------------------------------------------------------------------------
+#---- ADVISOR AI SCORES 
+		
+	
+}
+
+
+d_ai_advisor_template/SIA = {
+ 
+	set_temp_variable = { ai_advisor_slot_max_random_score = 0.1 }
+	
+#======================================================================================================
+#---- AI CHARACTERS / ADVISOR DEFINITION
+
+	#head_of_state
+		add_to_temp_array = { ai_character@head_of_state = token:generic_head_of_state }
+	 
+	#foreign_minister
+		add_to_temp_array = { ai_character@foreign_minister = token:generic_foreign_minister }
+	 
+	#interior_minister
+		add_to_temp_array = { ai_character@interior_minister = token:SIA_phot_bhahalyodin }
+	 
+	#intel_minister
+		add_to_temp_array = { ai_character@intel_minister = token:generic_intel_minister }
+	 
+	#economic_minister
+		add_to_temp_array = { ai_character@economic_minister = token:SIA_thawee_punyaketu }
+		add_to_temp_array = { ai_character@economic_minister = token:generic_economic_2 }
+	 
+	#political_advisor
+		add_to_temp_array = { ai_character@political_advisor = token:SIA_kuang_abhayavongsa }
+	 
+	#domestic_minister
+		add_to_temp_array = { ai_character@domestic_minister = token:generic_domestic_1 }
+		add_to_temp_array = { ai_character@domestic_minister = token:generic_domestic_7 }
+	 
+	#influence_minister
+		add_to_temp_array = { ai_character@influence_minister = token:generic_unyeilding_defender }
+	 
+	#supreme_commander
+		add_to_temp_array = { ai_character@supreme_commander = token:generic_supreme_commander_1 }
+	 
+	#army_chief
+		add_to_temp_array = { ai_character@army_chief = token:SIA_phraya_chitnasongkhla }
+	 
+	#air_chief
+		add_to_temp_array = { ai_character@air_chief = token:SIA_phra_vechayanrangsarit }
+	 
+	#navy_chief
+		#add_to_temp_array = { ai_character@navy_chief = token:SIA_thawon_thamrongnawasawat }
+	 
+	#high_command
+		add_to_temp_array = { ai_character@high_command = token:SIA_sindhu_kamalanavin }
+		add_to_temp_array = { ai_character@high_command = token:SIA_phraya_thayarnpikart }
+		add_to_temp_array = { ai_character@high_command = token:SIA_pridi_phanomyong }
+		add_to_temp_array = { ai_character@high_command = token:SIA_phraya_preechacholayudha }
+	 
+	#theorist
+		add_to_temp_array = { ai_character@theorist = token:SIA_manphya_khanphialong }
+		add_to_temp_array = { ai_character@theorist = token:SIA_sawat_phutianands }
+		add_to_temp_array = { ai_character@theorist = token:SIA_phra_silpasakrakorn }
+	 
+#------------------------------------------------------------------------------------------------------
+#---- SLOT AI SCORES 
+	
+	#-- SLOT SCORES ----------------------------
+		
+		ai_use_default_idea_slot_base_score = yes
+		
+		
+	#-- DYNAMIC AI WEIGHTS ----------------------------
+		ai_use_default_idea_slot_weights = yes
+		
+#------------------------------------------------------------------------------------------------------
+#---- ADVISOR AI SCORES 
+		
+	
+}
+
+
+d_ai_advisor_template/generic = {
+ 
+	set_temp_variable = { ai_advisor_slot_max_random_score = 0.1 }
+	
+#======================================================================================================
+#---- AI CHARACTERS / ADVISOR DEFINITION
+	
+	
+#------------------------------------------------------------------------------------------------------
+#---- SLOT AI SCORES 
+	
+	#-- SLOT SCORES ----------------------------
+		ai_use_default_idea_slot_base_score = yes
+		
+	#-- DYNAMIC AI WEIGHTS ----------------------------
+		ai_use_default_idea_slot_weights = yes
+		
+		if = {
+			limit = {
+				has_war = no
+			}
+			set_temp_variable = { ai_score_base@high_command = 0 }
+			set_temp_variable = { ai_score_base@theorist = 0 }
+		}
+			
+#------------------------------------------------------------------------------------------------------
+#---- ADVISOR AI SCORES #if no scores are defined, they will all be set to 1 and ai will pick advisors in the order in which they are in the array. to have ai not pick an advisor, use -1
+	
+}
+
+

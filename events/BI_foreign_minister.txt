@@ -1,0 +1,867 @@
+﻿#Black I.C.E. Politics by Aquillo
+###################################################
+
+add_namespace = foreign_minister
+
+#foreign minister adventures
+country_event = {
+	id = foreign_minister.1
+	title = foreign_minister.1.t
+	hidden = yes  #timeout
+    timeout_days = 1
+	is_triggered_only = yes
+	
+	trigger = {
+
+	}
+	
+	immediate = { clr_country_flag = foreign_in_progress }
+	option = {}
+	
+}
+
+#trade mission
+country_event = {
+	id = foreign_minister.2
+	title = foreign_minister.2.t
+	desc  = foreign_minister.2.desc
+	is_triggered_only = yes
+	picture = GFX_report_event_generic_negotiations
+	
+	immediate = {
+	}
+	option = {
+		name = foreign_minister.2.a
+
+		random_other_country = {
+			limit = {
+				not = { 
+					has_war_with = ROOT 
+					is_subject_of = ROOT
+				}
+				
+			}
+			add_opinion_modifier = {
+				target = ROOT
+				modifier = trade_mission
+			}
+		}
+		country_event = { id = foreign_minister.1 days = 5 random_days = 10 }
+	}
+}
+#Equipment Purchase or Sale?
+country_event = {
+	id = foreign_minister.3
+	title = foreign_minister.3.t
+	desc  = foreign_minister.3.desc
+	is_triggered_only = yes
+	picture = GFX_event_arms_producer
+	
+
+	option = {
+		ai_chance = {
+			factor = 50
+		}
+		name = foreign_minister.3.a #buy weapons
+		country_event = { id = foreign_minister.4 days = 5 random_days = 10 }
+		if = {
+			limit = {
+				OR = {
+					check_variable = { global.event_random < 60 }
+					AND = {
+						OR = {
+							has_idea_with_trait = tough_negotiator
+							has_idea_with_trait = smooth_talking_charmer
+							has_idea_with_trait = tough_guy
+						}										
+						check_variable = { global.event_random < 25 }
+					}
+				}				
+			}
+			custom_effect_tooltip = foreign_minister_buy_normal
+		}
+		else = {
+			custom_effect_tooltip = foreign_minister_buy_good
+			set_country_flag = good_deal
+		}		
+	}
+	option = {
+		ai_chance = {
+			factor = 50
+		}
+		name = foreign_minister.3.b #sell weapons
+		country_event = { id = foreign_minister.5 days = 5 random_days = 10 }
+		if = {
+			limit = {
+				OR = {
+					check_variable = { global.event_random < 60 }
+					AND = {
+						OR = {
+							has_idea_with_trait = tough_negotiator
+							has_idea_with_trait = smooth_talking_charmer
+						}										
+						check_variable = { global.event_random < 25 }
+					}
+				}				
+			}
+			custom_effect_tooltip = foreign_minister_sell_normal
+		}
+		else = {
+			custom_effect_tooltip = foreign_minister_sell_good
+			set_country_flag = good_deal
+		}
+	}
+}
+#Equipment buy stuff
+country_event = {
+	id = foreign_minister.4
+	title = foreign_minister.4.t
+	desc  = foreign_minister.4.desc
+	is_triggered_only = yes
+	picture = GFX_event_arms_producer
+	
+
+	option = {
+		name = foreign_minister.4.a #buy weapons
+		random_other_country = {
+			limit = {
+				not = { 
+					has_war_with = ROOT 
+				}
+				is_in_faction = no
+				has_opinion = {
+					target = ROOT
+					value > 0
+				}
+				has_equipment = {
+					infantry_equipment > 99
+				}
+			}
+			if = {
+				limit = {
+					ROOT = {
+						has_country_flag = good_deal
+					}
+				}
+				send_equipment = {
+					equipment = infantry_equipment
+					amount = 75
+					target = ROOT
+				}
+			}
+			else = {
+				send_equipment = {
+					equipment = infantry_equipment
+					amount = 50
+					target = ROOT
+				}
+			}
+			add_political_power = 10
+		}
+		country_event = { id = foreign_minister.1 days = 5 random_days = 10 }
+		
+	}
+	option = {
+		name = foreign_minister.4.b #say no
+		country_event = { id = foreign_minister.1 days = 5 random_days = 10 }
+	}
+}
+#Equipment sell stuff
+country_event = {
+	id = foreign_minister.5
+	title = foreign_minister.5.t
+	desc  = foreign_minister.5.desc
+	is_triggered_only = yes
+	picture = GFX_event_arms_producer
+	
+
+	option = {
+		name = foreign_minister.5.a #sell weapons
+		if = {
+			limit = {
+				has_country_flag = good_deal
+			}
+			add_political_power = 25
+		}
+		else = {
+			add_political_power = 15
+		}
+		random_other_country = {
+			limit = {
+				not = { 
+					has_war_with = ROOT 
+				}
+				is_in_faction = no
+				has_opinion = {
+					target = ROOT
+					value > 0
+				}
+			}
+			ROOT = {
+				send_equipment = {
+					equipment = infantry_equipment
+					amount = 100
+					target = PREV
+				}
+			}
+		}
+		country_event = { id = foreign_minister.1 days = 5 random_days = 10 }		
+	}
+	option = {
+		name = foreign_minister.5.b #say no
+		country_event = { id = foreign_minister.1 days = 5 random_days = 10 }
+	}
+}
+#Small Treaty
+country_event = {
+	id = foreign_minister.6
+	title = foreign_minister.6.t
+	desc  = foreign_minister.6.desc
+	is_triggered_only = yes
+	picture = GFX_report_event_diplomats
+	
+	immediate = {
+		hidden_effect = {
+			if = {
+				limit = {
+					has_idea = SOV_maksim_litvinov_foreign_minister
+				}
+				random_other_country = {
+					limit = {
+						not = { 
+							has_government = fascism
+							is_subject_of = ROOT							
+						}
+					}
+					save_event_target_as = treaty_target
+				}
+			}
+			else = {
+				random_other_country = {
+					limit = {
+						not = { 
+							has_war_with = ROOT 
+							is_subject_of = ROOT
+						}
+					}		
+					save_event_target_as = treaty_target
+				}
+			}
+		}
+	}
+	option = {
+		name = foreign_minister.6.a
+		event_target:treaty_target = {
+			add_opinion_modifier = {
+				target = ROOT
+				modifier = tiny_increase
+			}
+		}
+		country_event = { id = foreign_minister.1 days = 5 random_days = 10 }
+	}
+}
+#Mini Ultimatum
+country_event = {
+	id = foreign_minister.7
+	title = foreign_minister.7.t
+	desc  = foreign_minister.7.desc
+	is_triggered_only = yes
+	picture = GFX_report_event_ultimatum
+	
+	immediate = {
+		hidden_effect = {
+			random_other_country = {
+				limit = {
+					not = { has_war_with = ROOT }
+					is_in_faction = no
+					strength_ratio = {
+						tag = ROOT
+						ratio < 1
+					}
+					is_subject = no
+				}
+				save_event_target_as = ulti_target
+			}
+		}
+	}
+	option = {
+		name = foreign_minister.7.a
+		add_political_power = 10
+		event_target:ulti_target = { #lets update this line
+			add_opinion_modifier = {
+				target = ROOT
+				modifier = kinda_angry
+			}
+			add_political_power = -5				
+		}
+		country_event = { id = foreign_minister.1 days = 5 random_days = 10 }
+	}
+	option = {
+		name = foreign_minister.7.b
+		country_event = { id = foreign_minister.1 days = 5 random_days = 10 }
+	}
+}
+#Ask to Join a mini embargo
+country_event = {
+	id = foreign_minister.8
+	title = foreign_minister.8.t
+	desc  = foreign_minister.8.desc
+	is_triggered_only = yes
+	picture = GFX_report_event_merchant_ship_gfxaddon
+	
+	immediate = {
+		hidden_effect = {
+			if = {
+				limit = {
+					has_idea = SOV_maksim_litvinov_foreign_minister
+				}
+				GER = {
+					save_event_target_as = embargo_target
+				}
+			}
+			else = {
+				random_other_country = {
+					limit = {
+						has_opinion = {
+							target = ROOT
+							value < -20
+						}
+					}
+					save_event_target_as = embargo_target
+				}
+			}
+		}
+	}
+	option = {
+		name = foreign_minister.8.a
+		random_other_country = {
+			limit = {
+				has_opinion = {
+					target = ROOT
+					value > 0
+				}
+			}
+			add_opinion_modifier = {
+				target = event_target:embargo_target
+				modifier = minor_embargo
+			}
+			reverse_add_opinion_modifier = {
+				target = ROOT
+				modifier = tiny_increase
+			}
+		}			
+
+		country_event = { id = foreign_minister.1 days = 5 random_days = 10 }
+	}
+	option = {
+		name = foreign_minister.8.b
+		country_event = { id = foreign_minister.1 days = 5 random_days = 10 }
+	}
+}
+#Industry Developement
+country_event = {
+	id = foreign_minister.9
+	title = foreign_minister.9.t
+	desc  = foreign_minister.9.desc
+	is_triggered_only = yes
+	picture = GFX_event_truck_maintainence
+	
+	immediate = {
+		hidden_effect = {
+			random_other_country = {
+				limit = {
+					not = { has_war_with = ROOT }
+					is_subject = no
+				}	
+				save_event_target_as = industry_target
+			}
+		}
+	}
+	option = {
+		name = foreign_minister.9.a
+		add_political_power = 10
+		event_target:industry_target = {
+			add_political_power = 5
+			add_intel = {
+				target = ROOT
+				civilian_intel = 2
+			}
+		}
+		add_intel = {
+			target = event_target:industry_target
+			civilian_intel = 2
+		}
+		country_event = { id = foreign_minister.1 days = 5 random_days = 10 }
+	}
+}
+#Autonomy boost
+country_event = {
+	id = foreign_minister.10
+	title = foreign_minister.10.t
+	desc  = foreign_minister.10.desc
+	is_triggered_only = yes
+	picture = GFX_report_event_generic_read_write
+	
+	immediate = {
+	}
+	option = {
+		name = foreign_minister.10.a
+		add_autonomy_ratio = {
+			value = 0.02
+			localization = diplomatic_effort_autonomy
+		}
+		country_event = { id = foreign_minister.1 days = 5 random_days = 10 }
+	}
+}
+#Autonomy decrease
+country_event = {
+	id = foreign_minister.11
+	title = foreign_minister.11.t
+	desc  = foreign_minister.11.desc
+	is_triggered_only = yes
+	picture = GFX_report_event_generic_read_write
+	
+	immediate = {
+		hidden_effect = {
+			random_other_country = {
+				limit = {
+					is_subject_of = ROOT
+				}	
+				save_event_target_as = subject_target
+			}
+		}
+	}
+	option = {
+		name = foreign_minister.11.a
+		add_political_power = 5
+		event_target:subject_target = {
+			add_autonomy_ratio = {
+				value = -0.01
+				localization = diplomatic_effort_autonomy
+			}
+		}
+		country_event = { id = foreign_minister.1 days = 5 random_days = 10 }
+	}
+}
+#Joint Army Training
+country_event = {
+	id = foreign_minister.12
+	title = foreign_minister.12.t
+	desc  = foreign_minister.12.desc
+	is_triggered_only = yes
+	picture = GFX_report_event_little_entente_joint_training
+	
+	immediate = {
+		hidden_effect = {
+			random_other_country = {
+				limit = {
+					not = { has_war_with = ROOT }
+					is_in_faction = no
+					num_divisions > 0
+					has_opinion = {
+						target = ROOT
+						value > 0
+					}
+				}
+				save_event_target_as = army_target
+			}
+		}
+	}
+	option = {
+		name = foreign_minister.12.a
+		army_experience = 7
+		IF = {
+			limit = {
+				has_deployed_air_force_size = {
+					size > 0
+				}
+			}
+			air_experience = 3
+		}
+		event_target:army_target = {
+			army_experience = 5
+			IF = {
+				limit = {
+					has_deployed_air_force_size = {
+						size > 0
+					}
+				}
+				air_experience = 2
+			}
+		}
+		add_intel = {
+			target = event_target:army_target
+			army_intel = 2
+			airforce_intel = 1
+		}		
+		country_event = { id = foreign_minister.1 days = 5 random_days = 10 }
+	}
+	option = {
+		name = foreign_minister.12.b
+		country_event = { id = foreign_minister.1 days = 5 random_days = 10 }
+	}
+}
+#Foreign Volunteers
+country_event = {
+	id = foreign_minister.13
+	title = foreign_minister.13.t
+	desc  = foreign_minister.13.d
+	is_triggered_only = yes
+	picture = GFX_report_event_little_entente_joint_training
+	
+	immediate = {
+		hidden_effect = {
+			random_other_country = {
+				limit = {
+					not = { has_war_with = ROOT }
+				}	
+				save_event_target_as = vol_target
+			}
+		}
+	}
+	option = {
+		name = foreign_minister.13.a
+		add_manpower = 50		
+		country_event = { id = foreign_minister.1 days = 5 random_days = 10 }
+	}
+
+}
+#Foreign politics
+country_event = {
+	id = foreign_minister.14
+	title = foreign_minister.14.t
+	desc  = foreign_minister.14.d
+	is_triggered_only = yes
+	picture = GFX_report_event_diplomats
+	
+	immediate = {
+		hidden_effect = {
+			random_other_country = {
+				limit = {
+					has_elections = yes 
+					same_ideology = no
+				}	
+				save_event_target_as = politic_target
+			}
+		}
+	}
+	option = {
+		name = foreign_minister.14.a
+		if = {
+			limit = {
+				has_government = conservatism
+			}
+			event_target:politic_target = {
+				add_timed_idea = {
+					idea = organised_conservatism
+					days = 100
+				}
+			}
+		}
+		else_if = {
+			limit = {
+				has_government = liberalism
+			}
+			event_target:politic_target = {
+				add_timed_idea = {
+					idea = organised_liberalism
+					days = 100
+				}
+			}
+		}
+		else_if = {
+			limit = {
+				has_government = socialism
+			}
+			event_target:politic_target = {
+				add_timed_idea = {
+					idea = organised_socialism
+					days = 100
+				}
+			}
+		}
+		else_if = {
+			limit = {
+				has_government = agrarianism
+			}
+			event_target:politic_target = {
+				add_timed_idea = {
+					idea = organised_agrarianism
+					days = 100
+				}
+			}
+		}
+		else_if = {
+			limit = {
+				has_government = communism
+			}
+			event_target:politic_target = {
+				add_timed_idea = {
+					idea = organised_communism
+					days = 100
+				}
+			}
+		}
+		else_if = {
+			limit = {
+				has_government = fascism
+			}
+			event_target:politic_target = {
+				add_timed_idea = {
+					idea = organised_fascism
+					days = 100
+				}
+			}
+		}
+		else_if = {
+			limit = {
+				has_government = neutrality
+			}
+			event_target:politic_target = {
+				add_timed_idea = {
+					idea = organised_neutrality
+					days = 100
+				}
+			}
+		}
+		country_event = { id = foreign_minister.1 days = 5 random_days = 10 }
+	}
+
+}
+#Foreign peace
+country_event = {
+	id = foreign_minister.15
+	title = foreign_minister.15.t
+	desc  = foreign_minister.15.d
+	is_triggered_only = yes
+	picture = GFX_report_event_handshake_gfxaddon
+	
+	immediate = {
+		hidden_effect = {
+			random_other_country = {
+				limit = {
+					not = { has_war_with = ROOT }
+					has_opinion = {
+						target = ROOT
+						value < 0
+					}
+				}	
+				save_event_target_as = peace_target
+			}
+		}
+	}
+	option = {
+		name = foreign_minister.15.a
+		event_target:peace_target = {
+			add_war_support = -0.02
+			country_event = { id = foreign_minister.16 }
+		}
+		country_event = { id = foreign_minister.1 days = 5 random_days = 10 }
+	}
+	option = {
+		name = foreign_minister.15.b
+	}
+
+}
+#Foreign peace notified
+country_event = {
+	id = foreign_minister.16
+	title = foreign_minister.16.t
+	desc  = foreign_minister.16.d
+	is_triggered_only = yes
+	picture = GFX_report_event_peace_announcement_gfxaddon
+	
+	immediate = {
+	}
+	option = {
+		name = foreign_minister.16.a
+		effect_tooltip = {
+			add_war_support = -0.02
+		}
+	}
+
+}
+#Private Import
+country_event = {
+	id = foreign_minister.17
+	title = foreign_minister.17.t
+	desc  = foreign_minister.17.d
+	is_triggered_only = yes
+	picture = GFX_report_event_generic_city
+	
+	immediate = {
+		hidden_effect = {
+			country_event = { id = foreign_minister.1 days = 5 random_days = 10 }
+		}
+	}
+	option = {
+		name = foreign_minister.11.a
+		trigger = {
+			has_country_flag = steel_minster_import
+		}
+		add_timed_idea = {
+			idea = steel_imports
+			days = 60
+		}
+		clr_country_flag = steel_minster_import
+	}
+	option = {
+		name = foreign_minister.11.a
+		trigger = {
+			has_country_flag = oil_minster_import
+		}
+		add_timed_idea = {
+			idea = oil_imports
+			days = 60
+		}
+		clr_country_flag = oil_minster_import
+	}
+	option = {
+		name = foreign_minister.11.a
+		trigger = {
+			has_country_flag = alu_minster_import
+		}
+		add_timed_idea = {
+			idea = aluminium_imports
+			days = 60
+		}
+		clr_country_flag = alu_minster_import
+	}
+	option = {
+		name = foreign_minister.11.a
+		trigger = {
+			has_country_flag = rubber_minster_import
+		}
+		add_timed_idea = {
+			idea = rubber_imports
+			days = 60
+		}
+		clr_country_flag = rubber_minster_import
+	}
+	option = {
+		name = foreign_minister.11.a
+		trigger = {
+			has_country_flag = tun_minster_import
+		}
+		add_timed_idea = {
+			idea = tungsten_imports
+			days = 60
+		}	
+		clr_country_flag = tun_minster_import
+	}
+	option = {
+		name = foreign_minister.11.a
+		trigger = {
+			has_country_flag = cro_minster_import
+		}
+		add_timed_idea = {
+			idea = chromium_imports
+			days = 60
+		}
+		clr_country_flag = cro_minster_import
+	}	
+}
+#Expats coming home
+country_event = {
+	id = foreign_minister.18
+	title = foreign_minister.18.t
+	desc  = foreign_minister.13.d
+	is_triggered_only = yes
+	picture = GFX_report_event_little_entente_joint_training
+	
+	immediate = {
+	}
+	option = {
+		name = foreign_minister.13.a
+		add_timed_idea = {
+			idea = returning_countrymen
+			days = 75
+		}
+		country_event = { id = foreign_minister.1 days = 5 random_days = 10 }
+	}
+
+}
+#Speech to the LON
+country_event = {
+	id = foreign_minister.19
+	title = foreign_minister.19.t
+	desc  = foreign_minister.19.d
+	is_triggered_only = yes
+	picture = GFX_news_event_league_of_nations
+	
+	immediate = {
+	}
+	option = {
+		name = foreign_minister.19.a
+		custom_effect_tooltip = lon_war_support
+		hidden_effect = {
+			every_country = {
+				limit = {
+					has_country_flag = league_member
+				}
+				add_war_support = 0.02
+			}
+		}
+		country_event = { id = foreign_minister.1 days = 5 random_days = 10 }
+	}
+	option = {
+		name = foreign_minister.19.b
+		custom_effect_tooltip = lon_stability
+		hidden_effect = {
+			every_country = {
+				limit = {
+					has_country_flag = league_member
+				}
+				add_stability = 0.02
+			}
+		}
+		country_event = { id = foreign_minister.1 days = 5 random_days = 10 }
+	}
+	option = {
+		name = foreign_minister.19.c
+		add_political_power = -15
+		add_named_threat = {
+			threat = 0.25
+			name = foreign_minister.19.c
+		}
+		country_event = { id = foreign_minister.1 days = 5 random_days = 10 }
+	}
+}
+#Food Sale
+country_event = {
+	id = foreign_minister.20
+	title = foreign_minister.20.t
+	desc  = foreign_minister.20.d
+	is_triggered_only = yes
+	picture = GFX_report_event_handshake_gfxaddon
+	
+	immediate = {
+		hidden_effect = {
+			random_other_country = {
+				limit = {
+					not = { has_war_with = ROOT }
+				}	
+				save_event_target_as = food_target
+			}
+		}
+	}
+	option = {
+		name = foreign_minister.20.a
+		subtract_from_variable = { food = 100 tooltip = food_sold_tt}
+		event_target:food_target = {
+			add_to_variable = { food = 100 tooltip = food_given_tt }
+			add_opinion_modifier = {
+				target = ROOT
+				modifier = tiny_increase
+			}			
+		}
+		add_political_power = 25
+		country_event = { id = foreign_minister.1 days = 5 random_days = 10 }
+	}
+	option = {
+		name = foreign_minister.20.b
+		country_event = { id = foreign_minister.1 days = 5 random_days = 10 }
+	}
+
+}
+### EOF ###

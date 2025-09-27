@@ -1,0 +1,4891 @@
+political_actions = {
+	
+}
+ROM_change_sides = {
+	
+	# Allies
+
+	ROM_change_sides_to_allies = {
+
+		icon = decision_generic_nationalism
+
+		allowed = {
+			original_tag = ROM
+		}
+
+		available = {
+			is_faction_leader = no
+			has_capitulated = no
+			OR = {
+				has_country_leader = {
+					character = ROM_michael_i
+					ruling_only = yes
+				}
+				has_government = neutrality
+				has_government = monarchism
+				has_government = liberalism
+				has_government = socialism
+				has_government = conservatism
+			}
+			
+			any_enemy_country = {
+				is_faction_leader = yes
+				OR = {
+					has_government = liberalism
+					has_government = socialism
+					has_government = conservatism
+					original_tag = ENG
+					original_tag = USA
+				}
+			}
+			NOT = {
+				FACTION_LEADER  = {
+					OR = { 
+						has_government = liberalism
+						has_government = socialism
+						has_government = conservatism
+					}
+				}
+			}
+		}
+		
+		visible = {
+			has_country_flag = can_change_sides_dem
+			is_faction_leader = no # you shouldn't be able to betray your own faction
+			NOT = { has_country_flag = romania_has_flipped_sides }
+		}
+
+		cost = 0
+		
+		fire_only_once = yes
+		
+		remove_effect = {
+			hidden_effect = { clr_country_flag = can_change_sides_dem }
+		}
+
+		complete_effect = {
+			
+			#save current faction leader for use in the event
+			hidden_effect = {
+				random_country = {
+					limit = {
+						is_in_faction_with = ROOT
+						is_faction_leader = yes
+					}
+					save_global_event_target_as = romania_former_ally_target
+				}
+			}
+			#top priority is joining the Allies if they still exist
+			if = {
+				limit = {
+					any_country = {
+						is_faction_leader = yes
+						has_war_with = ROM
+						OR = {
+							has_government = socialism
+							has_government = liberalism
+							has_government = conservatism
+						}
+						OR = {
+							original_tag = ENG
+							is_in_faction_with = ENG
+						}
+					}
+				}
+				random_enemy_country = {
+					limit = {
+						is_faction_leader = yes
+						has_war_with = ROM
+						OR = {
+							has_government = socialism
+							has_government = liberalism
+							has_government = conservatism
+						}
+						OR = {
+							original_tag = ENG
+							is_in_faction_with = ENG
+						}
+					}
+					save_event_target_as = romania_new_ally_target
+				}
+			}
+			#then attempts to join the USA's faction
+			else_if = {
+				limit = {
+					any_country = {
+						is_faction_leader = yes
+						has_war_with = ROM
+						OR = {
+							has_government = socialism
+							has_government = liberalism
+							has_government = conservatism
+						}
+						OR = {
+							original_tag = USA
+							is_in_faction_with = USA
+						}
+					}
+				}
+				random_enemy_country = {
+					limit = {
+						is_faction_leader = yes
+						has_war_with = ROM
+						OR = {
+							has_government = socialism
+							has_government = liberalism
+							has_government = conservatism
+						}
+						OR = {
+							original_tag = USA
+							is_in_faction_with = USA
+						}
+					}
+					save_event_target_as = romania_new_ally_target
+				}
+			}
+			#then attempts to join any democratic faction
+			else = {
+				random_enemy_country = {
+					limit = {
+						is_faction_leader = yes
+						has_war_with = ROM
+						OR = {
+							has_government = socialism
+							has_government = liberalism
+							has_government = conservatism
+						}
+					}
+					save_event_target_as = romania_new_ally_target
+				}
+			}
+			event_target:romania_new_ally_target = {
+				country_event = { id = DOD_romania.16 }
+			}
+			hidden_effect = {
+				set_country_flag = romania_has_flipped_sides
+			}
+		}
+
+		ai_will_do = {
+			factor = 100
+			modifier = {
+				is_historical_focus_on = no
+				factor = 0
+			}
+			modifier = {
+				is_historical_focus_on = yes
+				#NOT = { date > 1944.08.08 }
+				factor = 0
+			}
+		}
+
+	}
+	# Commintern
+	ROM_change_sides_to_commintern = {
+
+		icon = decision_generic_nationalism
+
+		allowed = {
+			original_tag = ROM
+		}
+
+		available = {
+			is_faction_leader = no
+			has_capitulated = no
+			any_enemy_country = {
+				is_faction_leader = yes
+				OR = {
+					has_government = communism
+					has_government = socialism
+					original_tag = SOV
+				}
+			}
+			OR = {
+				has_country_leader = {
+					character = ROM_michael_i
+					ruling_only = yes
+				}
+				OR = {
+					has_government = communism
+					has_government = socialism
+				}
+			}
+			NOT = {
+				FACTION_LEADER  = {
+					OR = {
+						has_government = communism
+						has_government = socialism
+					}
+				}
+			}
+		}
+		
+		visible = {
+			has_country_flag = can_change_sides_com
+			is_faction_leader = no # you shouldn't be able to betray your own faction
+			NOT = { has_country_flag = romania_has_flipped_sides }
+		}
+
+		cost = 0
+		
+		fire_only_once = yes
+		
+		remove_effect = {
+			hidden_effect = { clr_country_flag = can_change_sides_com }
+		}
+
+		complete_effect = {
+			#save current faction leader for use in the event
+			hidden_effect = {
+				random_country = {
+					limit = {
+						is_in_faction_with = ROOT
+						is_faction_leader = yes
+					}
+					save_global_event_target_as = romania_former_ally_target
+				}
+			}
+			#top priority is joining the Commintern if they still exist
+			if = {
+				limit = {
+					any_country = {
+						is_faction_leader = yes
+						has_war_with = ROM
+						OR = {
+							has_government = communism
+							has_government = socialism
+						}
+						OR = {
+							original_tag = SOV
+							is_in_faction_with = SOV
+						}
+					}
+				}
+				random_enemy_country = {
+					limit = {
+						is_faction_leader = yes
+						has_war_with = ROM
+						OR = {
+							has_government = communism
+							has_government = socialism
+						}
+						OR = {
+							original_tag = SOV
+							is_in_faction_with = SOV
+						}
+					}
+					save_event_target_as = romania_new_ally_target
+				}
+			}
+			#then attempts to join any communist faction
+			else = {
+				random_enemy_country = {
+					limit = {
+						is_faction_leader = yes
+						has_war_with = ROM
+						OR = {
+							has_government = communism
+							has_government = socialism
+						}
+					}
+					save_event_target_as = romania_new_ally_target
+				}
+			}
+			event_target:romania_new_ally_target = {
+				country_event = { id = DOD_romania.16 }
+			}
+			hidden_effect = {
+				set_country_flag = romania_has_flipped_sides
+			}
+		}
+
+		ai_will_do = {
+			factor = 0
+		}
+
+	}
+	# Axis
+	ROM_change_sides_to_axis = {
+
+		icon = decision_generic_nationalism
+
+		allowed = {
+			original_tag = ROM
+		}
+
+		available = {
+			is_faction_leader = no
+			has_capitulated = no
+			any_enemy_country = {
+				is_faction_leader = yes
+				OR = {
+					has_government = fascism
+					original_tag = GER
+					original_tag = ITA
+				}
+			}
+			OR = {
+				has_country_leader = {
+					character = ROM_michael_i
+					ruling_only = yes
+				}
+				has_government = fascism
+			}
+			NOT = {
+				FACTION_LEADER  = {
+					has_government = fascism
+				}
+			}
+		}
+		
+		visible = {
+			has_country_flag = can_change_sides_fas
+			is_faction_leader = no # you shouldn't be able to betray your own faction
+			NOT = { has_country_flag = romania_has_flipped_sides }
+		}
+
+		cost = 0
+		
+		fire_only_once = yes
+		
+		remove_effect = {
+			hidden_effect = { clr_country_flag = can_change_sides_fas }
+		}
+
+		complete_effect = {
+			#save current faction leader for use in the event
+			hidden_effect = {
+				random_country = {
+					limit = {
+						is_in_faction_with = ROOT
+						is_faction_leader = yes
+					}
+					save_global_event_target_as = romania_former_ally_target
+				}
+			}
+			#top priority is joining the Axis if they still exist
+			if = {
+				limit = {
+					any_country = {
+						is_faction_leader = yes
+						has_war_with = ROM
+						has_government = fascism
+						OR = {
+							original_tag = GER
+							is_in_faction_with = GER
+						}
+					}
+				}
+				random_enemy_country = {
+					limit = {
+						is_faction_leader = yes
+						has_war_with = ROM
+						has_government = fascism
+						OR = {
+							original_tag = GER
+							is_in_faction_with = GER
+						}
+					}
+					save_event_target_as = romania_new_ally_target
+				}
+			}
+			#then attempts to join Italy's faction
+			else_if = {
+				limit = {
+					any_country = {
+						is_faction_leader = yes
+						has_war_with = ROM
+						has_government = fascism
+						OR = {
+							original_tag = ITA
+							is_in_faction_with = ITA
+						}
+					}
+				}
+				random_enemy_country = {
+					limit = {
+						is_faction_leader = yes
+						has_war_with = ROM
+						has_government = fascism
+						OR = {
+							original_tag = ITA
+							is_in_faction_with = ITA
+						}
+					}
+					save_event_target_as = romania_new_ally_target
+				}
+			}
+			#then attempts to join any fascist faction
+			else = {
+				random_enemy_country = {
+					limit = {
+						is_faction_leader = yes
+						has_war_with = ROM
+						has_government = fascism
+					}
+					save_event_target_as = romania_new_ally_target
+				}
+			}
+			event_target:romania_new_ally_target = {
+				country_event = { id = DOD_romania.16 }
+			}
+			hidden_effect = {
+				set_country_flag = romania_has_flipped_sides
+			}
+		}
+
+		ai_will_do = {
+			factor = 0
+		}
+	}
+}
+
+fascism_on_the_rise_ROM = {
+	
+	ROM_TEST_SET_VARIABLES = {
+		icon = generic_political_discourse
+		priority = 1000
+		
+		allowed = { tag = ROM }
+
+		cancel_trigger = {
+
+		}		 
+		available = {
+			
+		}
+		ai_will_do = {
+			factor = 0
+		}		
+		fixed_random_seed = no
+		visible = {
+			is_debug = yes
+		}
+		complete_effect = {	
+			ROM_set_faction_values = yes
+		}
+	}	
+	imprison_iron_guard_leaders = {
+
+		priority = 44
+
+		icon = GFX_decision_generic_arrest
+
+		ai_will_do = {
+			base = 50
+			modifier = {
+				factor = 1000
+				has_country_flag = impending_iron_guard_coup_flag
+			}
+		}
+
+		allowed = { 
+			tag = ROM
+		}
+
+		available = {
+			NOT = { has_country_flag = political_affairs_ongoing_flag }
+			fascism < 0.35
+		}
+
+		days_remove = ROM_faction_days_remove_medium
+
+		fire_only_once = yes
+
+		cancel_trigger = {
+			hidden_trigger = {
+				OR = {
+					has_country_flag = iron_guard_destroyed_flag
+					has_country_flag = iron_guard_coup_flag
+				}
+			}
+		}
+
+		cancel_effect = {
+			clr_country_flag = political_affairs_ongoing_flag
+		}
+
+		visible = {
+			has_country_flag = ROM_factions_unlocked_flag
+			#has_country_flag = ROM_disposed_of_iron_guard_generals_flag
+			fascism < 0.40
+			if = {
+				limit = {
+					tag = ROM
+				}
+				OR = {
+					has_idea = ROM_armand_calinescu_interior_minister
+					has_country_leader = {
+						character = ROM_armand_calinescu
+						ruling_only = yes
+					}
+				}
+				has_country_flag = ROM_armand_calinescu_plan_flag
+			}
+			NOT = { has_country_flag = iron_guard_destroyed_flag }
+			NOT = { has_country_flag = lock_out_iron_guard_oppression }
+		}
+
+		cost = ROM_faction_interaction_cost_standard
+
+		complete_effect = {
+			set_country_flag = political_affairs_ongoing_flag
+		}
+
+		fixed_random_seed = no
+
+		remove_effect = {
+			set_country_flag = ROM_iron_guard_leaders_imprisoned_flag
+			if = {
+				limit = { NOT = { has_country_flag = lock_out_iron_guard_cooperation } }
+				custom_effect_tooltip = prevents_faction_cooperation_tt
+				set_country_flag = lock_out_iron_guard_cooperation
+			}
+			hidden_effect = {
+				random_list = {
+					60 = {
+						country_event = { id = BICE_romania_factions.03 hours = 4 random_hours = 2 }
+					}
+					30 = {
+						country_event = { id = BICE_romania_factions.04 hours = 4 random_hours = 2 }
+					}
+					10 = {
+						country_event = { id = BICE_romania_factions.05 hours = 4 random_hours = 2 }
+					}
+				}
+			}
+			effect_tooltip = {
+				country_event = BICE_romania_factions.03
+			}
+			unlock_decision_tooltip = raid_iron_guard_supporters
+			clr_country_flag = political_affairs_ongoing_flag
+		}
+	}
+	ROM_execute_iron_guard_leaders = {
+		priority = 1
+
+		icon = pistol
+
+		ai_will_do = {
+			base = 1000
+		}
+
+		allowed = { 
+			tag = ROM
+		}
+
+		available = {
+			NOT = { has_country_flag = political_affairs_ongoing_flag }
+		}
+
+		days_remove = 5
+		cost = 20
+
+		fire_only_once = yes
+		visible = {
+			OR = {
+				has_idea = ROM_armand_calinescu_interior_minister
+				has_country_leader = {
+					character = ROM_armand_calinescu
+					ruling_only = yes
+				}
+			}
+			has_country_flag = ROM_iron_guard_leaders_imprisoned_flag
+			NOT = { has_government = fascism }
+		}
+		remove_effect = {
+			set_country_flag = iron_guard_leaders_executed_flag
+			clr_country_flag = political_affairs_ongoing_flag
+			country_event = BICE_romania.51
+		}
+	}
+	legalize_iron_guard = {
+
+		icon = generic_civil_support
+		
+		allowed = { tag = ROM }
+		
+		#fire_only_once = yes 
+
+		ai_will_do = {
+			base = 0
+			modifier = {
+				add = 1000
+				has_government = fascism
+			}
+		}
+
+		available = {
+			NOT = { has_country_flag = political_affairs_ongoing_flag }
+		}
+
+		visible = {
+			has_country_flag = party_banned@fascism
+			NOT = { has_country_flag = iron_guard_destroyed_flag }
+			fascism > 0.01
+			NOT = { has_country_flag = iron_guard_integrated_flag }
+		}
+
+		remove_trigger = {
+			hidden_trigger = {
+				has_government = fascism
+			}
+		}
+	
+		modifier = {
+			fascism_drift = 0.05
+		}
+	
+		days_remove = ROM_faction_days_remove_high?60
+		cost = 100
+		
+		complete_effect = {
+			clr_country_flag = party_banned@fascism
+			hidden_effect = {
+				set_temp_variable = {
+					var = legalize_ideology_var
+					value = party_popularity@fascism
+				}
+				add_popularity = {
+					ideology = fascism
+					popularity = legalize_ideology_var
+				}
+				multiply_temp_variable = {
+					var = legalize_ideology_var
+					value = 0.50
+				}				
+			}
+			add_stability = legalize_ideology_var
+			if = {
+				limit = {
+					tag = ROM
+				}
+				ROM_iron_guard_medium_loyalty_increase = yes
+				set_country_flag = iron_guard_legalized_flag
+				custom_effect_tooltip = prevents_faction_oppression_tt
+			}
+		}
+
+		ai_will_do = {
+			factor = 0
+		}
+	}
+	goga_new_election = {
+		icon = generic_political_discourse
+		priority = 1000
+		
+		allowed = { tag = ROM }
+
+		days_mission_timeout = 60
+		is_good = no
+		fire_only_once = no
+
+		cancel_trigger = {
+			has_completed_focus = ROM_institute_royal_dictatorship
+		}		 
+		available = {
+			always = no
+		}
+		activation = {
+			has_country_flag = ROM_goga_gov
+			NOT = { has_country_flag = goga_election_success_flag }
+		}
+		ai_will_do = {
+			factor = 1000
+		}		
+		fixed_random_seed = no
+		visible = {
+			
+		}
+
+		timeout_effect = {
+			hold_election = ROOT
+			set_country_flag = goga_election_success_flag
+		}
+	}
+	impending_iron_guard_coup = { #The Iron Guard are preparing a coup
+
+		priority = 100
+
+		icon = GFX_decision_generic_civil_support
+
+		allowed = { 
+			tag = ROM
+		}
+
+		available = {
+			OR = {
+				has_country_flag = iron_guard_destroyed_flag
+				has_country_flag = iron_guard_integrated_flag
+				NOT = { has_country_flag = impending_iron_guard_coup_flag }
+			}
+		}
+
+		activation = {
+			has_country_flag = impending_iron_guard_coup_flag
+			if = {
+				limit = {
+					is_historical_focus_on = yes
+				}
+				is_ai = no
+			}
+		}
+
+		days_mission_timeout = 100
+
+		fire_only_once = yes
+
+		visible = {
+			
+		}
+
+		cancel_if_not_visible = yes
+
+		is_good = no
+
+		complete_effect = {
+		}
+
+		timeout_effect = {
+			set_country_flag = iron_guard_coup_flag
+			clr_country_flag = ROM_factions_unlocked_flag
+			
+			set_variable = { iron_guard_coup_size = 0.25 }
+			#CIVIL WAR
+			if = {
+				limit = {
+					fascism > 0.80
+				}
+				add_to_variable = { iron_guard_coup_size = 0.5 }
+			}
+			else_if = {
+				limit = {
+					fascism > 0.60
+				}
+				add_to_variable = { iron_guard_coup_size = 0.4 }
+			}
+			else_if = {
+				limit = {
+					fascism > 0.40
+				}
+				add_to_variable = { iron_guard_coup_size = 0.3 }
+			}
+			else_if = {
+				limit = {
+					fascism > 0.20
+				}
+				add_to_variable = { iron_guard_coup_size = 0.2 }
+			}
+			else_if = {
+				limit = {
+					fascism > 0.10
+				}
+				add_to_variable = { iron_guard_coup_size = 0.1 }
+			}
+
+			hidden_effect = {
+				#Event announcing the rebellion
+				if = { #Rebellion during the National Legionary State
+					limit = {
+						has_country_flag = national_legionary_state_flag
+					}
+					country_event = { id = BICE_romania_factions.17 }
+				}
+				else_if = { #Rebellion at other times, like during the abdication crisis
+					limit = {
+						has_idea = ROM_carol_ii_head_of_state
+					}
+					country_event = { id = BICE_romania_factions.20 }
+				}
+				
+
+				#FREEZE ALL THESE CIVIL WAR EFFECTS
+			# 	#Store ideology support values to fix the mess after the split
+			# 	set_variable = { communist_support_before_iron_guard_coup = party_popularity_100@communism }
+			# 	set_variable = { liberalism_support_before_iron_guard_coup = party_popularity_100@liberalism }
+			# 	set_variable = { conservatism_support_before_iron_guard_coup = party_popularity_100@conservatism }
+			# 	set_variable = { socialism_support_before_iron_guard_coup = party_popularity_100@socialism }
+			# 	set_variable = { fascist_support_before_iron_guard_coup = party_popularity_100@fascism }
+			# 	set_variable = { neutrality_support_before_iron_guard_coup = party_popularity_100@neutrality }
+			# 	set_variable = { monarchism_support_before_iron_guard_coup = party_popularity_100@monarchism }
+			# 	set_variable = { agrarianism_support_before_iron_guard_coup = party_popularity_100@agrarianism }
+
+			# 	#START ROMANIAN CIVIL WAR
+			# 	if = {
+			# 		limit = { tag = ROM }
+			# 		start_civil_war = {
+			# 			ideology = fascism
+			# 			size = iron_guard_coup_size
+			# 			capital = 79
+			# 			states = { 84 }
+			# 			keep_political_leader = yes
+			# 			keep_unit_leaders_trigger = {
+			# 				always = yes
+			# 			}
+						
+			# 			## Effects here which fire for the new country
+			# 			set_cosmetic_tag = ROM_fascism
+			# 			set_country_flag = ROM_national_legionary_state_flag
+			# 			if = {
+			# 				limit = {
+			# 					NOT = { has_government = fascism }
+			# 				}
+			# 				set_politics = { ruling_party = fascism }
+			# 			}
+			# 			every_other_country = {
+			# 				limit = {
+			# 					PREV = { #LEGIONARIES
+			# 						has_volunteers_amount_from = {
+			# 							tag = PREV
+			# 							count > 0
+			# 						}
+			# 					}
+			# 				}
+			# 				recall_volunteers_from = PREV
+			# 			}
+			# 			if = {
+			# 				limit = {
+			# 					has_idea = ROM_the_sentinel_of_the_motherland_1
+			# 				}
+			# 				remove_ideas = ROM_the_sentinel_of_the_motherland_1
+			# 			}
+			# 			else_if = {
+			# 				limit = {
+			# 					has_idea = ROM_the_sentinel_of_the_motherland_2
+			# 				}
+			# 				remove_ideas = ROM_the_sentinel_of_the_motherland_2
+			# 			}
+			# 			else_if = {
+			# 				limit = {
+			# 					has_idea = ROM_the_sentinel_of_the_motherland_3
+			# 				}
+			# 				remove_ideas = ROM_the_sentinel_of_the_motherland_3
+			# 			}
+
+			# 			set_popularities = {
+			# 				liberalism = 3
+			# 				conservatism = 3
+			# 				socialism = 4
+			# 				fascism = 55
+			# 				communism = 5
+			# 				neutrality = 30
+			# 			}
+			# 			if = {
+			# 				limit = {
+			# 					original_tag = ROM
+			# 				}
+			# 				set_party_name = {
+			# 					ideology = neutrality
+			# 					long_name = ROM_fascism_party_revealed_long
+			# 					name = ROM_fascism_party_revealed
+			# 				}
+			# 				if = {
+			# 					limit = {
+			# 						ROM = {
+			# 							OR = {
+			# 								has_country_leader = {
+			# 									name = "Corneliu Zelea Codreanu"
+			# 									ruling_only = yes
+			# 								}
+			# 								has_country_leader = {
+			# 									name = "Horia Sima"
+			# 									ruling_only = yes
+			# 								}
+			# 								has_idea = ROM_corneliu_codreanu
+			# 								has_idea = ROM_horia_sima_influence_minister
+			# 							}
+			# 						}
+			# 					}
+			# 					retire_ideology_leader = fascism #Retire whoever is the non-aligned country leader and replace by a generic guy
+			# 				}
+			# 			}
+			# 			else = {
+			# 				retire_ideology_leader = fascism #Retire whoever is the fascist country leader and replace by either Sima or Codreanu
+			# 				if = { 
+			# 					limit = { has_country_flag = iron_guard_leaders_executed_flag } #Codreanu is dead
+			# 					add_country_leader_role = {
+			# 						character =  ROM_horia_sima
+			# 						promote_leader = yes
+			# 						Country_leader = {
+			# 							ideology = legionnairism
+			# 							expire = "1965.1.1.1"
+			# 							traits = {
+			# 								fascist
+			# 							}		
+			# 						}
+			# 					}
+			# 				}
+			# 				else = {
+			# 					add_country_leader_role = {
+			# 						character =  ROM_corneliu_codreanu
+			# 						promote_leader = yes
+			# 						Country_leader = {
+			# 							ideology = legionnairism
+			# 							expire = "1965.1.1.1"
+			# 							traits = {
+			# 								fascist_demagogue popular_figurehead charismatic
+			# 							}		
+			# 						}
+			# 					}
+			# 				}
+			# 			}
+						
+			# 			every_unit_leader = {
+			# 				limit = {
+			# 					NOT = { has_trait = trait_fascist_sympathizer }
+			# 				}
+			# 				set_nationality = ROOT
+			# 			}
+								
+			# 			#Operatives in original TAG
+			# 			if = {
+			# 				limit = {
+			# 					has_dlc = "La Resistance"
+			# 				}
+			# 				every_operative = {
+			# 					limit = {
+			# 						OR = {
+			# 							has_trait = hidden_sympathies
+			# 							has_trait = trait_fascist_sympathizer
+			# 						}
+			# 					}
+			# 					set_nationality = ROOT
+			# 				}
+			# 			}
+
+			# 			every_unit_leader = {
+			# 				limit = {
+			# 					OR = {
+			# 						has_trait = hidden_sympathies
+			# 						has_trait = trait_fascist_sympathizer
+			# 					}
+			# 				}
+			# 				set_nationality = ROOT
+			# 			}	
+			# 		}
+			# 	}
+			}
+
+			custom_effect_tooltip = fascism_impenging_coup_size_tt
+
+			clr_country_flag = ROM_factions_unlocked_flag #No factions stuff during CW
+
+			hidden_effect = {
+				#Reset ideology support
+				set_popularities = {
+					communism = communist_support_before_iron_guard_coup
+					liberalism = liberalism_support_before_iron_guard_coup
+					fascism = fascist_support_before_iron_guard_coup
+					neutrality = neutrality_support_before_iron_guard_coup
+					agrarianism = agrarianism_support_before_iron_guard_coup
+					socialism = socialism_support_before_iron_guard_coup
+					monarchism = monarchism_support_before_iron_guard_coup
+					conservatism = conservatism_support_before_iron_guard_coup
+				}
+				#ROMANIAN LEGIONARY REBEL SETUP
+				
+			}
+		}
+	}
+	discredit_fascist_leaders  = { # Discredit Iron Guard Leaders
+
+		priority = 40
+
+		icon = GFX_decision_megaphone_bad
+
+		ai_will_do = {
+			base = 5
+			modifier = {
+				factor = 1000
+				has_country_flag = impending_iron_guard_coup_flag
+			}
+		}
+
+		allowed = {
+			tag = ROM
+		}
+
+		available = {
+			NOT = { has_country_flag = political_affairs_ongoing_flag }
+		}
+		visible = {
+			has_country_flag = ROM_factions_unlocked_flag
+			NOT = { has_country_flag = iron_guard_integrated_flag }
+			NOT = { 
+				has_country_flag = iron_guard_destroyed_flag 
+				has_country_flag = speech_fascism_flag 
+				has_country_flag = iron_guard_joint_act_flag 
+				has_country_flag = fund_iron_guard_flag 
+				has_country_flag = ROM_disposed_of_iron_guard_generals_flag
+				has_country_flag = lock_out_iron_guard_oppression
+			}
+			NOT = { has_government = fascism }
+			fascism > 0.05
+		}
+
+		days_remove = ROM_faction_days_remove_very_low
+
+		days_re_enable = ROM_faction_days_reenable_low
+
+		cancel_trigger = {
+			hidden_trigger = {
+				OR = {
+					has_country_flag = iron_guard_destroyed_flag
+					has_country_flag = iron_guard_coup_flag
+					has_country_flag = iron_guard_joint_act_flag
+				}
+			}
+		}
+
+		cancel_effect = {
+			clr_country_flag = political_affairs_ongoing_flag
+		}
+
+		
+
+		cost = ROM_faction_interaction_cost_standard
+
+		complete_effect = {
+			set_country_flag = political_affairs_ongoing_flag
+			if = { 
+				limit = {
+					has_country_flag = speech_fascism_flag
+				}
+				clr_country_flag = speech_fascism_flag
+			}
+			if = { 
+				limit = {
+					has_country_flag = iron_guard_joint_act_flag
+				}
+				clr_country_flag = iron_guard_joint_act_flag
+			}
+		}
+
+		remove_effect = {
+			if = {
+				limit = {
+					tag = ROM
+				}
+				ROM_iron_guard_medium_loyalty_decrease = yes
+			}
+			add_popularity = { ideology = fascism popularity = -0.05 }
+			set_country_flag = discredited_fascism_flag
+			clr_country_flag = political_affairs_ongoing_flag
+		}
+	}
+	dispose_of_fascist_generals  = {
+
+		priority = 41
+
+		icon = GFX_decision_generic_police_action
+
+		ai_will_do = {
+			base = 20
+			modifier = {
+				factor = 1000
+				has_country_flag = impending_iron_guard_coup_flag
+			}
+		}
+
+		allowed = { 
+			original_tag = ROM
+		}
+
+		available = {
+			fascism < 0.25
+			NOT = { has_country_flag = political_affairs_ongoing_flag }
+		}
+
+		days_remove = ROM_faction_days_remove_low
+
+		fire_only_once = yes
+
+		cancel_trigger = {
+			hidden_trigger = {
+				OR = {
+					has_country_flag = iron_guard_destroyed_flag
+					has_country_flag = iron_guard_coup_flag
+				}
+			}
+		}
+
+		cancel_effect = {
+			clr_country_flag = political_affairs_ongoing_flag
+		}
+
+		visible = {
+			has_country_flag = ROM_factions_unlocked_flag
+			NOT = { has_country_flag = iron_guard_destroyed_flag }
+			NOT = { has_country_flag = ROM_disposed_of_iron_guard_generals_flag }
+			NOT = { has_country_flag = lock_out_iron_guard_oppression }
+			NOT = { has_government = fascism }
+			any_unit_leader = { #is a fascist sympathizer and is not Ion Antonescu
+				has_trait = trait_fascist_sympathizer
+				NOT = { has_trait = antonescu_red_dog }
+			}
+		}
+
+		cost = ROM_faction_interaction_cost_standard
+
+		complete_effect = {
+			set_country_flag = political_affairs_ongoing_flag
+			custom_effect_tooltip = prevents_faction_cooperation_tt
+		}
+
+		remove_effect = {
+			if = {
+				limit = { NOT = { has_country_flag = lock_out_iron_guard_cooperation } }
+				custom_effect_tooltip = prevents_faction_cooperation_tt
+				set_country_flag = lock_out_iron_guard_cooperation
+			}
+			if = {
+				limit = {
+					tag = ROM
+				}
+				ROM_iron_guard_medium_loyalty_decrease = yes
+			}
+			every_unit_leader = {
+				limit = {
+					has_trait = trait_fascist_sympathizer
+					NOT = { has_trait = antonescu_red_dog }
+				}
+				retire = yes
+			}
+			set_country_flag = ROM_disposed_of_iron_guard_generals_flag
+			clr_country_flag = political_affairs_ongoing_flag
+
+			#Add days to Fascist Coup timer if active
+			if = {
+				limit = {
+					has_active_mission = impending_iron_guard_coup
+				}
+				add_days_mission_timeout = {
+					mission = impending_iron_guard_coup
+					days = ROM_iron_guard_coup_timer_delay_medium
+				}
+			}
+		}
+	}
+	ROM_ban_iron_guard_media  = { #IRON GUARD Ban Media
+
+		priority = 31
+
+		icon = GFX_decision_rom_ban_media_iron_guard
+
+		ai_will_do = {
+			base = 0.5
+			modifier = {
+				add = 2
+				OR = {
+					NOT = { has_country_flag = iron_guard_integrated_flag }
+				}
+			}
+		}
+
+		allowed = { 
+			original_tag = ROM
+		}
+
+		available = {
+			NOT = { has_country_flag = political_affairs_ongoing_flag }
+			NOT = { has_idea = press_free }
+			fascism < 0.35
+		}
+
+		days_remove = ROM_faction_days_remove_low
+
+		cancel_trigger = {
+			
+		}
+
+		cancel_effect = {
+			clr_country_flag = political_affairs_ongoing_flag
+		}
+
+		visible = {
+			NOT = { has_government = fascism }
+			fascism < 0.40
+			has_country_flag = ROM_factions_unlocked_flag
+			NOT = { has_country_flag = ROM_iron_guard_legalized_flag }
+			NOT = { has_country_flag = iron_guard_destroyed_flag }
+			NOT = { has_country_flag = ROM_iron_guard_media_banned_flag }
+		}
+
+		cost = ROM_faction_interaction_cost_standard
+
+		complete_effect = {
+			set_country_flag = political_affairs_ongoing_flag
+		}
+
+		remove_effect = {
+			ROM_iron_guard_low_loyalty_decrease = yes
+			add_popularity = { ideology = fascism popularity = -0.05 }
+			set_country_flag = ROM_iron_guard_media_banned_flag
+			clr_country_flag = political_affairs_ongoing_flag
+			if = {
+				limit = { NOT = { has_country_flag = lock_out_iron_guard_cooperation } }
+				custom_effect_tooltip = prevents_faction_cooperation_tt
+				set_country_flag = lock_out_iron_guard_cooperation
+			}
+		}
+	}
+	anti_iron_guard_speech  = { #Iron Guard Speech against organization
+
+		priority = 43
+
+		icon = GFX_decision_megaphone_bad
+
+		ai_will_do = {
+			base = 5
+			modifier = {
+				factor = 1000
+				has_country_flag = impending_iron_guard_coup_flag
+			}
+		}
+
+		allowed = { 
+			tag = ROM
+		}
+
+		available = {
+			NOT = { has_country_flag = political_affairs_ongoing_flag }
+		}
+
+		days_remove = ROM_faction_days_remove_low
+
+		days_re_enable = ROM_faction_days_reenable_medium
+
+		cancel_trigger = {
+			hidden_trigger = {
+				OR = {
+					has_country_flag = iron_guard_destroyed_flag
+					has_country_flag = iron_guard_coup_flag
+				}
+			}
+		}
+
+		cancel_effect = {
+			clr_country_flag = political_affairs_ongoing_flag
+		}
+
+		visible = {
+			has_country_flag = ROM_factions_unlocked_flag
+			NOT = { has_country_flag = iron_guard_integrated_flag }
+			#has_country_flag = ROM_disposed_of_iron_guard_generals_flag
+			NOT = { has_country_flag = iron_guard_destroyed_flag }
+			NOT = { has_country_flag = lock_out_iron_guard_oppression }
+			NOT = { has_government = fascism }
+			fascism > 0.05
+		}
+
+		cost = ROM_faction_interaction_cost_standard
+
+		complete_effect = {
+			set_country_flag = political_affairs_ongoing_flag
+		}
+
+		remove_effect = {
+			if = {
+				limit = {
+					tag = ROM
+				}
+				ROM_iron_guard_medium_loyalty_decrease = yes
+			}
+			add_popularity = { ideology = fascism popularity = -0.04 }
+			set_country_flag = anti_iron_guard_speech_held_flag
+			clr_country_flag = political_affairs_ongoing_flag
+
+			#Add days to Fascist Coup timer if active
+			if = {
+				limit = {
+					has_active_mission = impending_iron_guard_coup
+				}
+				add_days_mission_timeout = {
+					mission = impending_iron_guard_coup
+					days = ROM_iron_guard_coup_timer_delay_low
+				}
+			}
+		}
+	}
+	raid_iron_guard_supporters = { # Raid Iron Guard Supporters
+
+		ai_will_do = {
+			base = 30
+			modifier = {
+				factor = 1000
+				has_country_flag = impending_iron_guard_coup_flag
+			}
+		}
+
+		priority = 45
+
+		icon = GFX_decision_generic_arrest
+
+		allowed = { 
+			tag = ROM
+		}
+
+		available = {
+			custom_trigger_tooltip = {
+				tooltip = raid_faction_supporters_tt
+				fascism < 0.25
+			}
+			NOT = { has_country_flag = political_affairs_ongoing_flag }
+		}
+
+		days_remove = ROM_faction_days_remove_high
+
+		days_re_enable = ROM_faction_days_reenable_very_high
+		
+		cost = ROM_faction_interaction_cost_standard
+
+		cancel_trigger = {
+			hidden_trigger = {
+				OR = {
+					has_country_flag = iron_guard_destroyed_flag
+					has_country_flag = iron_guard_coup_flag
+				}
+			}
+		}
+
+		cancel_effect = {
+			clr_country_flag = political_affairs_ongoing_flag
+		}
+
+		visible = {
+			if = { 
+				limit = { 
+					ROM_in_iron_guard_chaos_period = no
+				} 
+				has_country_flag = ROM_factions_unlocked_flag
+				OR = {
+					has_country_flag = fascist_leaders_imprisoned_flag
+					has_country_flag = impending_iron_guard_coup_flag
+				}
+				NOT = { has_country_flag = iron_guard_destroyed_flag }
+				NOT = { has_country_flag = iron_guard_integrated_flag }
+				NOT = { has_country_flag = lock_out_iron_guard_oppression }
+			}
+			else = {
+				has_country_flag = national_legionary_state_flag
+				NOT = { has_country_flag = iron_guard_integrated_flag }
+				NOT = { has_country_flag = iron_guard_destroyed_flag }
+			}
+		}
+
+		complete_effect = {
+			set_country_flag = political_affairs_ongoing_flag
+		}
+
+		remove_effect = {
+			if = { 
+				limit = { 
+					ROM_in_iron_guard_chaos_period = no
+				} 
+				unlock_decision_tooltip = destroy_iron_guard
+				set_country_flag = ROM_raided_iron_guard_supporters_flag
+				if = {
+					limit = { NOT = { has_country_flag = lock_out_iron_guard_cooperation } }
+					custom_effect_tooltip = prevents_faction_cooperation_tt
+					set_country_flag = lock_out_iron_guard_cooperation
+				}
+				if = {
+					limit = {
+						tag = ROM
+					}
+					ROM_iron_guard_medium_loyalty_decrease = yes
+				}
+				add_popularity = { ideology = fascism popularity = -0.15 }
+				clr_country_flag = political_affairs_ongoing_flag
+			
+				#Add days to Fascist Coup timer if active
+				
+			}
+			else_if = {
+				limit = {
+					has_country_flag = national_legionary_state_flag
+					NOT = { has_country_flag = iron_guard_integrated_flag }
+					NOT = { has_country_flag = iron_guard_destroyed_flag }
+				}
+				if = {
+					limit = {
+						has_active_mission = impending_iron_guard_coup
+					}
+					add_days_mission_timeout = {
+						mission = impending_iron_guard_coup
+						days = ROM_iron_guard_coup_timer_delay_high
+					}
+				}
+				ROM_iron_guard_medium_loyalty_decrease = yes
+				ROM_decrease_iron_guard_excesses = yes
+				unlock_decision_tooltip = destroy_iron_guard
+			}
+		}
+	}
+	iron_guard_speech  = { #Iron Guard Allow/Support faction speech
+
+		priority = 42
+
+		icon = GFX_decision_speech_fascism
+
+		ai_will_do = {
+			base = 4
+			modifier = {
+				factor = 0.1
+				OR = {
+					has_country_flag = iron_guard_joint_act_flag
+					AND = {
+						is_historical_focus_on = yes
+						NOT = { has_government = fascism }
+					}
+				}
+			}
+		}
+
+		allowed = { 
+			tag = ROM
+		}
+
+		available = {
+			NOT = { has_country_flag = political_affairs_ongoing_flag }
+			
+			OR = {
+				NOT = {	has_country_flag = iron_guard_legalized_flag }
+				has_country_flag = party_banned@fascism
+			}
+		}
+
+		days_remove = ROM_faction_days_remove_very_low
+
+		days_re_enable = ROM_faction_days_reenable_low
+
+		cancel_trigger = {
+			hidden_trigger = {
+				OR = {
+					has_country_flag = iron_guard_destroyed_flag
+					has_country_flag = iron_guard_coup_flag
+				}
+			}
+		}
+
+		cancel_effect = {
+			clr_country_flag = political_affairs_ongoing_flag
+		}
+
+		visible = {
+			has_country_flag = ROM_factions_unlocked_flag
+			NOT = { has_country_flag = ROM_disposed_of_iron_guard_generals_flag }
+			NOT = { has_country_flag = iron_guard_integrated_flag }
+			NOT = { has_country_flag = iron_guard_destroyed_flag }
+			NOT = { has_country_flag = lock_out_iron_guard_cooperation }
+		}
+
+		cost = ROM_faction_interaction_cost_standard
+
+		complete_effect = {
+			set_country_flag = political_affairs_ongoing_flag
+			if = {
+				limit = {
+					has_country_flag = discredited_fascism_flag
+				}
+				clr_country_flag = discredited_fascism_flag
+			}
+		}
+
+		remove_effect = {
+			unlock_decision_tooltip = iron_guard_joint_act
+			if = {
+				limit = {
+					tag = ROM
+				}
+				ROM_iron_guard_low_loyalty_increase = yes
+			}
+			
+			add_popularity = { ideology = fascism popularity = 0.05 }
+			set_country_flag = speech_fascism_flag
+			clr_country_flag = political_affairs_ongoing_flag
+		}
+	}
+	repress_iron_guard  = { #Repress Iron Guard Organization
+
+		priority = 42
+
+		icon = GFX_decision_category_saf_anti_colonialist_crusade
+
+		ai_will_do = {
+			base = 100
+			modifier = {
+				factor = 100
+				has_country_flag = impending_iron_guard_coup_flag
+			}
+		}
+
+		allowed = { 
+			tag = ROM
+		}
+
+		available = {
+			NOT = { has_country_flag = political_affairs_ongoing_flag }
+		}
+
+		days_remove = ROM_faction_days_remove_very_low
+		
+		cost = ROM_faction_interaction_cost_standard
+
+		cancel_trigger = {
+			hidden_trigger = {
+				OR = {
+					has_country_flag = iron_guard_destroyed_flag
+					has_country_flag = iron_guard_coup_flag
+					has_country_flag = iron_guard_integrated_flag
+				}
+			}
+		}
+
+		cancel_effect = {
+			clr_country_flag = political_affairs_ongoing_flag
+		}
+
+		visible = {
+			if = { 
+				limit = { 
+					ROM_in_iron_guard_chaos_period = no
+				} 
+				has_country_flag = ROM_factions_unlocked_flag
+				has_country_flag = iron_guard_dissident_event_flag #This faction has triggered a dissident event
+				has_country_flag = iron_guard_dissident_event_not_addressed_flag
+				NOT = { has_country_flag = iron_guard_integrated_flag }
+				NOT = { has_country_flag = iron_guard_destroyed_flag }
+				NOT = { has_country_flag = lock_out_iron_guard_oppression }
+			}
+			else = {
+				has_country_flag = national_legionary_state_flag
+				NOT = { has_country_flag = iron_guard_integrated_flag }
+				NOT = { has_country_flag = iron_guard_destroyed_flag }
+			}
+		}
+
+		complete_effect = {
+			set_country_flag = political_affairs_ongoing_flag
+			set_country_flag = ROM_iron_guard_repressed_flag
+		}
+
+		fixed_random_seed = no
+
+		remove_effect = {
+			if = { 
+				limit = { 
+					ROM_in_iron_guard_chaos_period = no
+				} 
+				if = {
+					limit = { NOT = { has_country_flag = lock_out_iron_guard_cooperation } }
+					custom_effect_tooltip = prevents_faction_cooperation_tt
+					set_country_flag = lock_out_iron_guard_cooperation
+				}
+				hidden_effect = {
+					random_list = {
+						70 = {#Success
+							country_event = { id = BICE_romania_factions.08 hours = 4 random_hours = 2 }
+						}
+						20 = {#Extra success
+							country_event = { id = BICE_romania_factions.09 hours = 4 random_hours = 2 }
+						}
+						10 = {#Failure
+							country_event = { id = BICE_romania_factions.10 hours = 4 random_hours = 2 }
+						}
+					}
+				}
+				effect_tooltip = {
+					country_event = BICE_romania_factions.09
+				}
+				custom_effect_tooltip = repress_faction_tt
+				clr_country_flag = political_affairs_ongoing_flag
+				clr_country_flag = iron_guard_dissident_event_not_addressed_flag
+			}
+			else_if = {
+				limit = {
+					has_country_flag = national_legionary_state_flag
+					NOT = { has_country_flag = iron_guard_integrated_flag }
+					NOT = { has_country_flag = iron_guard_destroyed_flag }
+				}
+				hidden_effect = {
+					random_list = {
+						70 = {#Success
+							country_event = { id = BICE_romania_factions.08 hours = 4 random_hours = 2 }
+						}
+						20 = {#Extra success
+							country_event = { id = BICE_romania_factions.09 hours = 4 random_hours = 2 }
+						}
+						10 = {#Failure
+							country_event = { id = BICE_romania_factions.10 hours = 4 random_hours = 2 }
+						}
+					}
+				}
+				custom_effect_tooltip = repress_faction_tt
+				clr_country_flag = political_affairs_ongoing_flag
+				clr_country_flag = iron_guard_dissident_event_not_addressed_flag
+			}
+		}
+	}	
+	destroy_iron_guard  = { # Destroy Iron Guard
+
+		priority = 46
+
+		icon = GFX_decision_boot_crush
+
+		ai_will_do = {
+			base = 100
+			modifier = {
+				factor = 1000
+				has_country_flag = impending_iron_guard_coup_flag
+			}
+		}
+
+		allowed = { 
+			tag = ROM
+		}
+
+		available = {
+			fascism < 0.05
+			NOT = { has_country_flag = political_affairs_ongoing_flag }
+		}
+
+		days_remove = ROM_faction_days_remove_high
+
+		fire_only_once = yes
+
+		cancel_trigger = {
+			hidden_trigger = {
+				OR = {
+					has_country_flag = iron_guard_destroyed_flag
+					has_country_flag = iron_guard_coup_flag
+				}
+			}
+		}
+
+		cancel_effect = {
+			clr_country_flag = political_affairs_ongoing_flag
+		}
+
+		visible = {
+			has_country_flag = ROM_factions_unlocked_flag
+			has_country_flag = ROM_raided_iron_guard_supporters_flag
+			NOT = { has_country_flag = iron_guard_destroyed_flag }
+			NOT = { has_country_flag = iron_guard_integrated_flag }
+			NOT = { has_country_flag = lock_out_iron_guard_oppression }
+		}
+
+		cost = ROM_faction_interaction_cost_standard
+
+		complete_effect = {
+			set_country_flag = political_affairs_ongoing_flag
+		}
+
+		remove_effect = {
+			country_event = BICE_romania_factions.11
+			clr_country_flag = political_affairs_ongoing_flag
+			set_country_flag = iron_guard_destroyed_flag
+			if = { #Any generals that might have received the Fascist Trait after disposing of Fascist Generals are removed
+				limit = {
+					any_unit_leader = {
+						has_trait = trait_fascist_sympathizer
+					}
+				}
+				every_unit_leader = {
+					limit = {
+						has_trait = trait_fascist_sympathizer
+					}
+					retire = yes
+				}
+			}
+			set_cosmetic_tag = ROM_neutrality
+			#clear_variable = ROM_iron_guard_loyalty
+			#clear_variable = ROM_crown_council_loyalty
+			clear_variable = ROM_faction_interaction_cost_standard
+			clear_variable = ROM_faction_days_remove_very_low
+			clear_variable = ROM_faction_days_remove_low
+			clear_variable = ROM_faction_days_remove_medium
+			clear_variable = ROM_faction_days_remove_high
+			clear_variable = ROM_faction_days_remove_very_high
+			clear_variable = ROM_faction_days_reenable_low
+			clear_variable = ROM_faction_days_reenable_medium
+			clear_variable = ROM_faction_days_reenable_high
+			clear_variable = ROM_faction_days_reenable_very_high
+			clear_variable = ROM_faction_low_increase
+			clear_variable = ROM_faction_medium_increase
+			clear_variable = ROM_faction_high_increase
+			clear_variable = ROM_faction_huge_increase
+			clear_variable = ROM_faction_massive_increase
+			clear_variable = ROM_faction_low_decrease
+			clear_variable = ROM_faction_low_decrease
+			clear_variable = ROM_faction_medium_decrease
+			clear_variable = ROM_faction_high_decrease
+			clear_variable = ROM_iron_guard_coup_timer_delay_low
+			clear_variable = ROM_iron_guard_coup_timer_delay_medium
+			clear_variable = ROM_iron_guard_coup_timer_delay_high
+		}
+	}
+	iron_guard_joint_act  = { #Iron Guard Joint Act
+
+		priority = 43
+
+		icon = GFX_decision_generic_agreement
+
+		ai_will_do = {
+			base = 4.5
+			modifier = {
+				factor = 0.5
+				has_country_flag = iron_guard_legalized_flag
+				check_variable = { ROM_iron_guard_loyalty = 55 compare = less_than_or_equals }
+			}
+		}
+
+		allowed = { 
+			tag = ROM
+		}
+
+		available = {
+			custom_trigger_tooltip = {
+				tooltip = faction_joint_act_tt
+				check_variable = { ROM_iron_guard_loyalty = 25 compare = greater_than_or_equals }
+			}
+			NOT = { has_country_flag = political_affairs_ongoing_flag }
+			OR = {
+				has_country_flag = speech_fascism_flag
+				has_country_flag = iron_guard_legalized_flag
+			}	
+		}
+
+		days_remove = ROM_faction_days_remove_low
+
+		days_re_enable = ROM_faction_days_reenable_medium
+
+		cancel_trigger = {
+			hidden_trigger = {
+				OR = {
+					has_country_flag = iron_guard_destroyed_flag
+					has_country_flag = iron_guard_coup_flag
+				}
+			}
+		}
+
+		cancel_effect = {
+			clr_country_flag = political_affairs_ongoing_flag
+		}
+
+		visible = {
+			has_country_flag = ROM_factions_unlocked_flag
+			OR = {
+				has_country_flag = speech_fascism_flag
+				has_country_flag = iron_guard_legalized_flag
+			}			
+			NOT = { has_country_flag = iron_guard_integrated_flag }
+			NOT = { has_country_flag = ROM_disposed_of_iron_guard_generals_flag }
+			NOT = { has_country_flag = iron_guard_destroyed_flag }
+			NOT = { has_country_flag = lock_out_iron_guard_cooperation }
+		}
+
+		cost = ROM_faction_interaction_cost_standard
+
+		complete_effect = {
+			set_country_flag = political_affairs_ongoing_flag
+		}
+
+		remove_effect = {
+			if = {
+				limit = {
+					tag = ROM
+				}
+				ROM_iron_guard_medium_loyalty_increase = yes
+			}
+			add_popularity = { ideology = fascism popularity = 0.05 }
+			set_country_flag = iron_guard_joint_act_flag
+			clr_country_flag = political_affairs_ongoing_flag
+			if = {
+				limit = { NOT = { has_country_flag = lock_out_iron_guard_oppression } }
+				custom_effect_tooltip = prevents_faction_oppression_tt
+				set_country_flag = lock_out_iron_guard_oppression
+			}
+			ROM_decrease_iron_guard_excesses = yes
+		}
+	}
+	fund_iron_guard = { # Fund Iron Guard
+
+		priority = 46
+
+		icon = GFX_decision_category_generic_economy
+
+		ai_will_do = {
+			base = 5
+			modifier = {
+				factor = 0.1
+				is_historical_focus_on = yes
+				NOT = { has_government = fascism }
+			}
+		}
+
+		allowed = { 
+			tag = ROM
+		}
+
+		available = {
+			NOT = { has_country_flag = political_affairs_ongoing_flag }
+		}
+
+		days_remove = ROM_faction_days_remove_high
+
+		days_re_enable = ROM_faction_days_reenable_high
+
+		cancel_trigger = {
+			hidden_trigger = {
+				OR = {
+					has_country_flag = iron_guard_destroyed_flag
+					has_country_flag = iron_guard_coup_flag
+				}
+			}
+		}
+
+		cancel_effect = {
+			clr_country_flag = political_affairs_ongoing_flag
+		}
+
+		visible = {
+			has_country_flag = ROM_factions_unlocked_flag
+			NOT = { has_country_flag = iron_guard_integrated_flag }		
+			NOT = { has_country_flag = ROM_disposed_of_iron_guard_generals_flag }
+			NOT = { has_country_flag = iron_guard_destroyed_flag }
+			NOT = { has_country_flag = lock_out_iron_guard_cooperation }
+		}
+
+		cost = ROM_faction_interaction_cost_standard
+
+		complete_effect = {
+			set_country_flag = political_affairs_ongoing_flag
+		}
+
+		remove_effect = {
+			set_country_flag = fund_iron_guard_flag
+			if = {
+				limit = { NOT = { has_country_flag = lock_out_iron_guard_oppression } }
+				custom_effect_tooltip = prevents_faction_oppression_tt
+				set_country_flag = lock_out_iron_guard_oppression
+			}
+			if = {
+				limit = {
+					tag = ROM
+				}
+				ROM_iron_guard_high_loyalty_increase = yes
+			}
+			add_popularity = { ideology = fascism popularity = 0.03 }
+			clr_country_flag = political_affairs_ongoing_flag
+
+			#Add days to Fascist Coup timer if active
+			if = {
+				limit = {
+					has_active_mission = impending_iron_guard_coup
+				}
+				add_days_mission_timeout = {
+					mission = impending_iron_guard_coup
+					days = ROM_iron_guard_coup_timer_delay_low
+				}
+			}
+		}
+	}
+	give_speech_of_cooperation = {
+		priority = 34
+
+		icon = faction_rom_iron_guard
+
+		ai_will_do = {
+			base = 10
+		}
+
+		allowed = { 
+			tag = ROM
+		}
+
+		available = {
+			NOT = { has_country_flag = political_affairs_ongoing_flag }
+		}
+
+		days_remove = 10
+		cost = ROM_faction_interaction_cost_standard
+		days_re_enable = 80
+
+		fire_only_once = yes
+		visible = {
+			has_country_flag = carol_legion_power_struggle_flag
+		}
+		complete_effect = {
+			set_country_flag = political_affairs_ongoing_flag
+		}
+		remove_effect = {
+			clr_country_flag = political_affairs_ongoing_flag
+			ROM_iron_guard_medium_loyalty_increase = yes
+			ROM_crown_council_medium_loyalty_increase = yes
+		}
+	}
+	appoint_legionaries_as_guards = {
+		priority = 34
+
+		icon = faction_rom_iron_guard
+
+		ai_will_do = {
+			base = 10
+		}
+
+		allowed = { 
+			tag = ROM
+		}
+
+		available = {
+			NOT = { has_country_flag = political_affairs_ongoing_flag }
+		}
+
+		days_remove = 10
+		cost = ROM_faction_interaction_cost_standard
+
+		fire_only_once = yes
+		visible = {
+			NOT = { has_country_flag = ROM_legionary_guards }
+			has_country_flag = ROM_abdication_crisis
+			OR = {
+				has_completed_focus = ROM_align_the_king_with_the_national_destiny
+				has_completed_focus = ROM_cement_their_office
+			}
+		}
+		complete_effect = {
+			set_country_flag = political_affairs_ongoing_flag
+		}
+		remove_effect = {
+			clr_country_flag = political_affairs_ongoing_flag
+			set_country_flag = ROM_legionary_guards
+			
+			ROM_crown_council_medium_loyalty_increase = yes
+			ROM_iron_guard_medium_loyalty_increase = yes
+		}
+	}
+	seize_broadcasting_centers = {
+		priority = 34
+
+		icon = faction_rom_iron_guard
+
+		ai_will_do = {
+			base = 100
+		}
+
+		allowed = { 
+			tag = ROM
+		}
+
+		available = {
+			NOT = { has_country_flag = political_affairs_ongoing_flag }
+		}
+
+		days_remove = 10
+		cost = ROM_faction_interaction_cost_standard
+
+		fire_only_once = yes
+		visible = {
+			NOT = { has_country_flag = ROM_sieze_broadcasting }
+			has_country_flag = ROM_abdication_crisis
+		}
+		complete_effect = {
+			set_country_flag = political_affairs_ongoing_flag
+		}
+		remove_effect = {
+			clr_country_flag = political_affairs_ongoing_flag
+			set_country_flag = ROM_sieze_broadcasting
+			add_popularity = {
+				ideology = monarchism
+				popularity = -0.08
+			}
+			add_popularity = {
+				ideology = fascism
+				popularity = 0.05
+			}
+		}
+	}
+	arm_legionaries = {
+		priority = 34
+
+		icon = faction_rom_iron_guard
+
+		ai_will_do = {
+			base = 100
+		}
+
+		allowed = { 
+			tag = ROM
+		}
+
+		available = {
+			NOT = { has_country_flag = political_affairs_ongoing_flag }
+		}
+
+		days_remove = 10
+		cost = ROM_faction_interaction_cost_standard
+		days_re_enable = 80
+
+		fire_only_once = yes
+		visible = {
+			NOT = { has_country_flag = ROM_arm_legionaries }
+			has_country_flag = ROM_abdication_crisis
+		}
+		complete_effect = {
+			set_country_flag = political_affairs_ongoing_flag
+			set_country_flag = ROM_abdication_crisis
+		}
+		remove_effect = {
+			clr_country_flag = political_affairs_ongoing_flag
+			set_country_flag = ROM_arm_legionaries
+
+			ROM_crown_council_medium_loyalty_increase = yes
+			ROM_iron_guard_medium_loyalty_increase = yes
+		}
+	}
+	ROM_integrate_the_iron_guard = {
+		priority = 100
+
+		icon = generic_agreement
+
+		ai_will_do = {
+			base = 10
+		}
+
+		allowed = { 
+			tag = ROM
+		}
+
+		available = {
+			custom_trigger_tooltip = { 
+				tooltip = faction_loyalty_must_be_loyal_tt
+				check_variable = { ROM_iron_guard_loyalty = 80 compare = greater_than_or_equals }
+			}
+		}
+
+		days_remove = ROM_faction_days_remove_very_high
+		cost = ROM_faction_interaction_cost_standard
+
+		fire_only_once = yes
+		visible = {
+			OR = {
+				has_country_flag = carol_legion_power_struggle_flag
+				has_completed_focus = ROM_court_the_banned_parties
+				has_country_flag = national_legionary_state_flag
+			}
+			NOT = {
+				has_country_flag = iron_guard_coup_flag
+				has_country_flag = iron_guard_destroyed_flag
+				has_country_flag = iron_guard_integrated_flag
+			}
+		}
+		complete_effect = {
+			set_country_flag = iron_guard_integrated_flag
+			clr_country_flag = Imminent_conflict_flag
+		}
+		remove_effect = {
+			custom_effect_tooltip = prevent_iron_guard_coup_tt
+			clr_country_flag = impending_iron_guard_coup_flag
+			if = {
+				limit = {
+					has_idea = ROM_iron_guard_pack_government
+				} 
+				remove_ideas = ROM_iron_guard_pack_government
+			}
+			clr_country_flag = ROM_packed_government_pending
+			if = {
+				limit = {
+					has_idea = ROM_iron_guard_loot_shops
+				}
+				remove_ideas = ROM_iron_guard_loot_shops
+			}
+			clr_country_flag = ROM_shop_looting_pending
+			if = {
+				limit = {
+					has_idea = ROM_iron_guard_hunt_opponents
+				}
+				remove_ideas = ROM_iron_guard_hunt_opponents
+			}
+			clr_country_flag = ROM_opposition_hunt_pending
+			#clear_variable = ROM_iron_guard_loyalty
+			#clear_variable = ROM_crown_council_loyalty
+			clear_variable = ROM_faction_interaction_cost_standard
+			clear_variable = ROM_faction_days_remove_very_low
+			clear_variable = ROM_faction_days_remove_low
+			clear_variable = ROM_faction_days_remove_medium
+			clear_variable = ROM_faction_days_remove_high
+			clear_variable = ROM_faction_days_remove_very_high
+			clear_variable = ROM_faction_days_reenable_low
+			clear_variable = ROM_faction_days_reenable_medium
+			clear_variable = ROM_faction_days_reenable_high
+			clear_variable = ROM_faction_days_reenable_very_high
+			clear_variable = ROM_faction_low_increase
+			clear_variable = ROM_faction_medium_increase
+			clear_variable = ROM_faction_high_increase
+			clear_variable = ROM_faction_huge_increase
+			clear_variable = ROM_faction_massive_increase
+			clear_variable = ROM_faction_low_decrease
+			clear_variable = ROM_faction_low_decrease
+			clear_variable = ROM_faction_medium_decrease
+			clear_variable = ROM_faction_high_decrease
+			clear_variable = ROM_iron_guard_coup_timer_delay_low
+			clear_variable = ROM_iron_guard_coup_timer_delay_medium
+			clear_variable = ROM_iron_guard_coup_timer_delay_high
+		}
+	}
+	ROM_send_security_to_supress_assaults = {
+		priority = 34
+
+		icon = generic_police_action
+
+		allowed = { 
+			tag = ROM
+		}
+
+		available = {
+			custom_trigger_tooltip = { 
+				tooltip = party_loyalty_below_90_tt 
+				check_variable = { ROM_iron_guard_loyalty < 90 }
+			}
+		}
+
+		days_remove = 5
+		cost = 10
+
+		visible = {
+			has_country_flag = national_legionary_state_flag
+			has_country_flag = ROM_shop_looting_pending
+			NOT = {
+				has_country_flag = Legionnaires_Rebellion
+				has_country_flag = iron_guard_destroyed_flag
+				has_country_flag = iron_guard_integrated_flag
+			}
+		}
+		complete_effect = {
+			ROM_iron_guard_low_loyalty_decrease = yes
+			if = {
+				limit = {
+					has_idea = ROM_iron_guard_loot_shops
+				}
+				remove_ideas = ROM_iron_guard_loot_shops
+			}
+			clr_country_flag = ROM_shop_looting_pending
+			add_days_mission_timeout = {
+				mission = impending_iron_guard_coup
+				days = ROM_iron_guard_coup_timer_delay_low
+			}
+		}
+		remove_effect = {
+
+		}
+		
+	}
+	ROM_dismiss_packed_assemblies = {
+		priority = 34
+
+		icon = generic_police_action
+
+		ai_will_do = {
+			base = 10
+		}
+
+		allowed = { 
+			tag = ROM
+		}
+
+		available = {
+			custom_trigger_tooltip = { 
+				tooltip = party_loyalty_below_90_tt 
+				check_variable = { ROM_iron_guard_loyalty < 90 }
+			}
+		}
+
+		days_remove = 5
+		cost = 10
+
+		fire_only_once = yes
+		visible = {
+			has_country_flag = national_legionary_state_flag
+			has_country_flag = ROM_packed_government_pending
+			NOT = {
+				has_country_flag = Legionnaires_Rebellion
+				has_country_flag = iron_guard_destroyed_flag
+				has_country_flag = iron_guard_integrated_flag
+			}
+		}
+		complete_effect = {
+			ROM_iron_guard_low_loyalty_decrease = yes
+			if = {
+				limit = {
+					has_idea = ROM_iron_guard_pack_government
+				} 
+				remove_ideas = ROM_iron_guard_pack_government
+			}
+			clr_country_flag = ROM_packed_government_pending
+			add_days_mission_timeout = {
+				mission = impending_iron_guard_coup
+				days = ROM_iron_guard_coup_timer_delay_low
+			}
+		}
+		remove_effect = {
+
+		}
+	}
+	ROM_military_protection_of_political_prisoners = {
+		priority = 34
+
+		icon = generic_police_action
+
+		ai_will_do = {
+			base = 10
+		}
+
+		allowed = { 
+			tag = ROM
+		}
+
+		available = {
+			custom_trigger_tooltip = { 
+				tooltip = party_loyalty_below_90_tt 
+				check_variable = { ROM_iron_guard_loyalty < 90 }
+			}
+		}
+
+		days_remove = 5
+		cost = 10
+
+		fire_only_once = yes
+		visible = {
+			has_country_flag = national_legionary_state_flag
+			has_idea = ROM_iron_guard_hunt_opponents
+			NOT = {
+				has_country_flag = Legionnaires_Rebellion
+				has_country_flag = iron_guard_destroyed_flag
+				has_country_flag = iron_guard_integrated_flag
+			}
+		}
+		complete_effect = {
+			ROM_iron_guard_low_loyalty_decrease = yes
+			if = {
+				limit = {
+					has_idea = ROM_iron_guard_hunt_opponents
+				}
+				remove_ideas = ROM_iron_guard_hunt_opponents
+			}
+			add_days_mission_timeout = {
+				mission = impending_iron_guard_coup
+				days = ROM_iron_guard_coup_timer_delay_low
+			}
+		}
+		remove_effect = {
+			ROM_decrease_iron_guard_excesses = yes
+		}
+		
+	}
+	ROM_remind_them_of_codreanus_policy = {
+		priority = 34
+
+		icon = faction_rom_iron_guard
+
+		ai_will_do = {
+			base = 10
+		}
+
+		allowed = { 
+			tag = ROM
+		}
+
+		available = {
+			custom_trigger_tooltip = { 
+				tooltip = party_loyalty_below_90_tt 
+				check_variable = { ROM_iron_guard_loyalty < 90 }
+			}
+		}
+
+		days_remove = 5
+		cost = 10
+
+		fire_only_once = yes
+		visible = {
+			has_country_flag = national_legionary_state_flag
+			has_country_flag = impending_iron_guard_coup_flag
+			NOT = {
+				has_country_flag = Legionnaires_Rebellion
+				has_country_flag = iron_guard_destroyed_flag
+				has_country_flag = iron_guard_integrated_flag
+			}
+		}
+		complete_effect = {
+			ROM_iron_guard_medium_loyalty_increase = yes
+		}
+		remove_effect = {
+			ROM_decrease_iron_guard_excesses = yes
+		}
+	}
+	ROM_negotiate_with_sima = {
+		priority = 34
+
+		icon = faction_rom_iron_guard
+
+		ai_will_do = {
+			base = 10
+		}
+
+		allowed = { 
+			tag = ROM
+		}
+
+		available = {
+			custom_trigger_tooltip = { 
+				tooltip = party_loyalty_below_90_tt 
+				check_variable = { ROM_iron_guard_loyalty < 90 }
+			}
+		}
+
+		days_remove = 1
+		days_re_enable = 10
+		cost = 10
+
+		fire_only_once = no
+		visible = {
+			has_country_flag = iron_guard_leaders_executed_flag #Sima is leader of the Iron Guard
+			has_country_flag = national_legionary_state_flag
+			has_country_flag = impending_iron_guard_coup_flag
+			NOT = {
+				has_country_flag = Legionnaires_Rebellion
+				has_country_flag = iron_guard_destroyed_flag
+				has_country_flag = iron_guard_integrated_flag
+			}
+		}
+		complete_effect = {
+			random_list = {
+				seed = global.event_random
+				#Minor Breakthrough
+				33 = {
+					ROM_iron_guard_low_loyalty_increase = yes
+					add_days_mission_timeout = {
+						mission = impending_iron_guard_coup
+						days = 5
+					}
+				}
+				#Medium Breakthrough
+				33 = {
+					ROM_iron_guard_medium_loyalty_increase = yes
+					add_days_mission_timeout = {
+						mission = impending_iron_guard_coup
+						days = ROM_iron_guard_coup_timer_delay_low
+					}
+				}
+				#Major Breakthrough
+				34 = {
+					ROM_iron_guard_high_loyalty_increase = yes
+					add_days_mission_timeout = {
+						mission = impending_iron_guard_coup
+						days = ROM_iron_guard_coup_timer_delay_medium
+					}
+				}
+			}
+		}
+		remove_effect = {
+			ROM_decrease_iron_guard_excesses = yes
+		}
+	}
+	ROM_legionary_rebellion = {
+		icon = generic_political_discourse
+		
+		allowed = { tag = ROM }
+
+		days_mission_timeout = 60
+		is_good = no
+		fire_only_once = yes
+
+		cancel_trigger = {
+		}		 
+		available = {
+			OR = {
+				has_country_flag = iron_guard_integrated_flag
+				has_country_flag = iron_guard_destroyed_flag
+			}
+		}
+		activation = {
+			has_country_flag = Imminent_conflict_flag
+		}	
+		fixed_random_seed = no
+		visible = {
+			
+		}
+
+		timeout_effect = {
+			country_event = BICE_romania.42
+			clr_country_flag = Imminent_conflict_flag
+		}
+	}
+	redistribute_carols_lands = {
+		priority = 34
+
+		icon = faction_rom_iron_guard
+
+		ai_will_do = {
+			base = 100
+		}
+
+		allowed = { 
+			tag = ROM
+		}
+
+		available = {
+			NOT = { has_country_flag = political_affairs_ongoing_flag }
+		}
+
+		days_remove = 10
+		cost = ROM_faction_interaction_cost_standard
+
+		fire_only_once = yes
+		visible = {
+			has_country_flag = carol_legion_power_struggle_flag
+			NOT = { has_country_flag = ROM_carols_land_redistributed_flag }
+			OR = {
+				has_completed_focus = ROM_align_the_king_with_the_national_destiny
+				has_completed_focus = ROM_cement_their_office
+			}
+		}
+		complete_effect = {
+			set_country_flag = political_affairs_ongoing_flag
+		}
+		remove_effect = {
+			set_country_flag = ROM_carols_land_redistributed_flag
+			clr_country_flag = political_affairs_ongoing_flag
+			ROM_iron_guard_medium_loyalty_increase = yes
+		}
+	}
+	tighten_carols_budget = {
+		priority = 34
+
+		icon = faction_crown
+
+		ai_will_do = {
+			base = 100
+		}
+
+		allowed = { 
+			tag = ROM
+		}
+
+		available = {
+			NOT = { has_country_flag = political_affairs_ongoing_flag }
+		}
+
+		days_remove = 10
+		cost = ROM_faction_interaction_cost_standard
+		days_re_enable = 80
+
+		fire_only_once = yes
+		visible = {
+			#has_country_flag = carol_legion_power_struggle_flag
+			# OR = {
+			# 	has_completed_focus = ROM_align_the_king_with_the_national_destiny
+			# 	has_completed_focus = ROM_cement_their_office
+			# }
+			NOT = { has_country_flag = tighten_the_kings_budget_flag }
+		}
+		complete_effect = {
+			set_country_flag = political_affairs_ongoing_flag
+		}
+		remove_effect = {
+			add_to_variable = { ROM_crown_council_loyalty = 10 }
+			set_country_flag = tighten_the_kings_budget_flag
+			clr_country_flag = political_affairs_ongoing_flag
+			ROM_crown_council_medium_loyalty_increase = yes
+		}
+	}
+	pressure_lupescu_to_leave = {
+		priority = 34
+
+		icon = faction_rom_iron_guard
+
+		ai_will_do = {
+			base = 100
+		}
+
+		allowed = { 
+			tag = ROM
+		}
+
+		available = {
+			NOT = { has_country_flag = political_affairs_ongoing_flag }
+		}
+
+		days_remove = 10
+		cost = ROM_faction_interaction_cost_standard
+
+		fire_only_once = yes
+		visible = {
+			has_country_flag = carol_legion_power_struggle_flag
+			NOT = { has_country_flag = ROM_lupescu_forced_away }
+			OR = {
+				has_completed_focus = ROM_align_the_king_with_the_national_destiny
+				has_completed_focus = ROM_cement_their_office
+			}
+		}
+		complete_effect = {
+			set_country_flag = political_affairs_ongoing_flag
+		}
+		remove_effect = {
+			set_country_flag = ROM_lupescu_forced_away
+			clr_country_flag = political_affairs_ongoing_flag
+			hidden_effect = { country_event = { id = BICE_romania.79 days = 1 random_days = 5 }}
+			ROM_iron_guard_low_loyalty_increase = yes
+		}
+	}
+	clamp_down_on_camarilla_favoratism = {
+		priority = 34
+
+		icon = faction_rom_iron_guard
+
+		ai_will_do = {
+			base = 100
+		}
+
+		allowed = { 
+			tag = ROM
+		}
+
+		available = {
+			NOT = { has_country_flag = political_affairs_ongoing_flag }
+		}
+
+		days_remove = 10
+		cost = ROM_faction_interaction_cost_standard
+		days_re_enable = 80
+
+		fire_only_once = yes
+		visible = {
+			has_country_flag = carol_legion_power_struggle_flag
+			OR = {
+				has_completed_focus = ROM_align_the_king_with_the_national_destiny
+				has_completed_focus = ROM_cement_their_office
+			}
+		}
+		complete_effect = {
+			set_country_flag = political_affairs_ongoing_flag
+		}
+		remove_effect = {
+			set_country_flag = clamp_down_on_camarilla_favoratism_flag
+			clr_country_flag = political_affairs_ongoing_flag
+			ROM_iron_guard_medium_loyalty_increase = yes
+		}
+	}
+	affirm_carols_diplomatic_powers = {
+		priority = 34
+
+		icon = faction_crown
+
+		ai_will_do = {
+			base = 2
+		}
+
+		allowed = { 
+			tag = ROM
+		}
+
+		available = {
+			NOT = { has_country_flag = political_affairs_ongoing_flag }
+			custom_trigger_tooltip = { 
+				tooltip = faction_loyalty_must_be_neutral_tt 
+				check_variable = { ROM_crown_council_loyalty = 40 compare = greater_than_or_equals }
+			}
+		}
+
+		days_remove = 10
+		cost = ROM_faction_interaction_cost_standard
+
+		fire_only_once = yes
+		visible = {
+			NOT = { 
+				has_country_flag = ROM_affirm_carol_diplomacy
+				has_completed_focus = ROM_force_abdication
+				has_country_flag = iron_guard_destroyed_flag
+			}
+		}
+		complete_effect = {
+			set_country_flag = political_affairs_ongoing_flag
+		}
+		remove_effect = {
+			clr_country_flag = political_affairs_ongoing_flag
+			set_country_flag = ROM_affirm_carol_diplomacy
+			ROM_crown_council_low_loyalty_increase = yes
+		}
+	}
+}
+########  ##     ## ##    ##    ########  #######  ##     ## #### ########  ##     ## ######## ##    ## ######## 
+##     ## ##     ##  ##  ##     ##       ##     ## ##     ##  ##  ##     ## ###   ### ##       ###   ##    ##    
+##     ## ##     ##   ####      ##       ##     ## ##     ##  ##  ##     ## #### #### ##       ####  ##    ##    
+########  ##     ##    ##       ######   ##     ## ##     ##  ##  ########  ## ### ## ######   ## ## ##    ##    
+##     ## ##     ##    ##       ##       ##  ## ## ##     ##  ##  ##        ##     ## ##       ##  ####    ##    
+##     ## ##     ##    ##       ##       ##    ##  ##     ##  ##  ##        ##     ## ##       ##   ###    ##    
+########   #######     ##       ########  ##### ##  #######  #### ##        ##     ## ######## ##    ##    ##    
+
+
+ROM_purchase_equipment = {
+	ROM_purchase_infantry_equipment = {
+
+		priority = 10
+
+		icon = generic_industry
+
+		allowed = { always = no } #Activated from effect
+
+		available = {
+			FROM = {
+				has_opinion = {
+					target = ROOT
+					value > 0
+				}
+				ROM_is_valid_subject = yes
+			}
+			FROM = { has_tech = infantry_weapons }
+			NOT = { has_country_flag = ROM_purchasing_infantry_equipment_flag }
+
+			
+			NOT = { has_war_with = FROM }
+			NOT = { is_justifying_wargoal_against = FROM }
+			if = {
+				limit = {
+					FROM = { tag = GER }
+				}
+				OR = {
+					is_in_faction_with = GER
+					AND = {
+						ROM_foreign_agreements_in_faction_with_cze = yes
+						ROM_foreign_agreements_in_faction_with_ita = yes
+						ROM_foreign_agreements_in_faction_with_fra = yes
+					}
+				}
+			}
+			else_if = {
+				limit = {
+					FROM = { tag = ITA }
+				}
+				OR = {
+					is_in_faction_with = ITA
+					AND = {
+						ROM_foreign_agreements_in_faction_with_ger = yes
+						ROM_foreign_agreements_in_faction_with_cze = yes
+						ROM_foreign_agreements_in_faction_with_fra = yes
+					}
+				}
+			}
+			else_if = {
+				limit = {
+					FROM = { tag = CZE }
+				}
+				OR = {
+					is_in_faction_with = CZE
+					AND = {
+						ROM_foreign_agreements_in_faction_with_ger = yes
+						ROM_foreign_agreements_in_faction_with_fra = yes
+						ROM_foreign_agreements_in_faction_with_ita = yes
+					}
+				}
+			}
+			else_if = {
+				limit = {
+					FROM = { tag = FRA }
+				}
+				OR = {
+					is_in_faction_with = FRA
+					AND = {
+						ROM_foreign_agreements_in_faction_with_ger = yes
+						ROM_foreign_agreements_in_faction_with_cze = yes
+						ROM_foreign_agreements_in_faction_with_ita = yes
+					}
+				}
+			}
+		}
+
+		visible = {
+			country_exists = FROM
+			NOT = { has_war_with = FROM }
+			FROM = { ROM_is_valid_subject = yes }
+		}
+
+		cost = ROM_purchase_equipment_cost
+		days_remove = 150
+		days_re_enable = 30
+		fire_only_once = no
+
+		ai_will_do = {
+			factor = 0.1
+			modifier = {
+				factor = 2
+				is_in_faction_with = FROM
+			}
+			modifier = {
+				factor = 0
+				OR = {
+					num_of_civilian_factories < 10
+					stockpile_ratio = { 
+		  				archetype = infantry_equipment
+		  				ratio > 0.75
+		  			}
+				}
+			}
+			modifier = {
+				factor = 0
+				NOT = { is_in_faction_with = FROM }
+			}
+		}
+		modifier = {
+			civilian_factory_use = 1
+		}
+		
+		complete_effect = {
+			set_country_flag = ROM_purchasing_infantry_equipment_flag
+			hidden_effect = {
+				set_variable = { ROM_infantry_seller = FROM }
+				country_event = romania_equipment_purchases.11
+			}
+			FROM = {
+				add_offsite_building = {
+					type = industrial_complex
+					level = 1
+				}
+				add_opinion_modifier = {
+					target = ROM
+					modifier = ROM_bought_guns
+				}
+
+			}
+			add_opinion_modifier = {
+				target = FROM
+				modifier = ROM_sold_guns
+			}
+			add_opinion_modifier = {
+				target = FROM
+				modifier = ROM_arms_trade
+			}
+		}
+		remove_effect = {
+			add_equipment_to_stockpile = {
+				type = var:ROM_infantry_type
+				amount = ROM_quantity_purchased@var:ROM_infantry_type
+				producer = FROM
+			}
+			clear_variable = ROM_infantry_type
+			
+			clear_variable = ROM_infantry_seller
+			FROM = {
+				add_offsite_building = {
+					type = industrial_complex
+					level = -1
+				}
+			}
+			clr_country_flag = ROM_purchasing_infantry_equipment_flag
+		}
+	}
+
+	ROM_purchase_supporting_equipment = {
+
+		priority = 10
+
+		icon = generic_industry
+
+		allowed = { always = no } #Activated from effect
+
+		available = {
+			FROM = {
+				has_opinion = {
+					target = ROOT
+					value > 0
+				}
+				ROM_is_valid_subject = yes
+			}
+			FROM = { has_tech = infantry_weapons }
+			NOT = { has_country_flag = ROM_purchasing_supporting_equipment_flag }
+
+			
+			NOT = { has_war_with = FROM }
+			NOT = { is_justifying_wargoal_against = FROM }
+			if = {
+				limit = {
+					FROM = { tag = GER }
+				}
+				OR = {
+					is_in_faction_with = GER
+					AND = {
+						ROM_foreign_agreements_in_faction_with_cze = yes
+						ROM_foreign_agreements_in_faction_with_ita = yes
+						ROM_foreign_agreements_in_faction_with_fra = yes
+					}
+				}
+			}
+			else_if = {
+				limit = {
+					FROM = { tag = ITA }
+				}
+				OR = {
+					is_in_faction_with = ITA
+					AND = {
+						ROM_foreign_agreements_in_faction_with_ger = yes
+						ROM_foreign_agreements_in_faction_with_cze = yes
+						ROM_foreign_agreements_in_faction_with_fra = yes
+					}
+				}
+			}
+			else_if = {
+				limit = {
+					FROM = { tag = CZE }
+				}
+				OR = {
+					is_in_faction_with = CZE
+					AND = {
+						ROM_foreign_agreements_in_faction_with_ger = yes
+						ROM_foreign_agreements_in_faction_with_fra = yes
+						ROM_foreign_agreements_in_faction_with_ita = yes
+					}
+				}
+			}
+			else_if = {
+				limit = {
+					FROM = { tag = FRA }
+				}
+				OR = {
+					is_in_faction_with = FRA
+					AND = {
+						ROM_foreign_agreements_in_faction_with_ger = yes
+						ROM_foreign_agreements_in_faction_with_cze = yes
+						ROM_foreign_agreements_in_faction_with_ita = yes
+					}
+				}
+			}
+		}
+
+		visible = {
+			country_exists = FROM
+			NOT = { has_war_with = FROM }
+			FROM = { ROM_is_valid_subject = yes }
+		}
+
+		cost = ROM_purchase_equipment_cost
+		days_remove = 150
+		days_re_enable = 30
+		fire_only_once = no
+
+		ai_will_do = {
+			factor = 0.1
+			modifier = {
+				factor = 2
+				is_in_faction_with = FROM
+			}
+			modifier = {
+				factor = 0
+				OR = {
+					num_of_civilian_factories < 10
+					stockpile_ratio = { 
+		  				archetype = infantry_equipment
+		  				ratio > 0.75
+		  			}
+				}
+			}
+			modifier = {
+				factor = 0
+				NOT = { is_in_faction_with = FROM }
+			}
+		}
+		modifier = {
+			civilian_factory_use = 1
+		}
+		
+		complete_effect = {
+			set_country_flag = ROM_purchasing_supporting_equipment_flag
+			hidden_effect = {
+				set_variable = { ROM_support_seller = FROM }
+				country_event = romania_equipment_purchases.12
+			}
+			FROM = {
+				add_offsite_building = {
+					type = industrial_complex
+					level = 1
+				}
+				add_opinion_modifier = {
+					target = ROM
+					modifier = ROM_bought_guns
+				}
+
+			}
+			add_opinion_modifier = {
+				target = FROM
+				modifier = ROM_sold_guns
+			}
+			add_opinion_modifier = {
+				target = FROM
+				modifier = ROM_arms_trade
+			}
+		}
+		remove_effect = {
+			add_equipment_to_stockpile = {
+				type = var:ROM_support_type
+				amount = ROM_quantity_purchased@var:ROM_support_type
+				producer = FROM
+			}
+			clear_variable = ROM_support_type
+			
+			clear_variable = ROM_support_seller
+			FROM = {
+				add_offsite_building = {
+					type = industrial_complex
+					level = -1
+				}
+			}
+			clr_country_flag = ROM_purchasing_supporting_equipment_flag
+		}
+	}
+
+	ROM_purchase_artillery = {
+
+		priority = 9
+
+		icon = ger_military_buildup
+
+		allowed = { always = no } #Activated from effect
+
+		available = {
+			FROM = {
+				has_opinion = {
+					target = ROOT
+					value > 0
+				}
+				ROM_is_valid_subject = yes
+			}
+			FROM = { has_tech = gw_artillery }
+			NOT = { has_country_flag = ROM_purchasing_artillery_flag }
+
+			NOT = { has_war_with = FROM }
+			NOT = { is_justifying_wargoal_against = FROM }
+			if = {
+				limit = {
+					FROM = { tag = GER }
+				}
+				OR = {
+					is_in_faction_with = GER
+					AND = {
+						ROM_foreign_agreements_in_faction_with_cze = yes
+						ROM_foreign_agreements_in_faction_with_sov = yes
+						ROM_foreign_agreements_in_faction_with_fra = yes
+					}
+				}
+			}
+			else_if = {
+				limit = {
+					FROM = { tag = ITA }
+				}
+				OR = {
+					is_in_faction_with = ITA
+					AND = {
+						ROM_foreign_agreements_in_faction_with_ger = yes
+						ROM_foreign_agreements_in_faction_with_cze = yes
+						ROM_foreign_agreements_in_faction_with_sov = yes
+					}
+				}
+			}
+			else_if = {
+				limit = {
+					FROM = { tag = ENG }
+				}
+				OR = {
+					is_in_faction_with = ENG
+					AND = {
+						ROM_foreign_agreements_in_faction_with_ger = yes
+						ROM_foreign_agreements_in_faction_with_sov = yes
+						ROM_foreign_agreements_in_faction_with_fra = yes
+					}
+				}
+			}
+			else_if = {
+				limit = {
+					FROM = { tag = SOV }
+				}
+				OR = {
+					is_in_faction_with = SOV
+					AND = {
+						ROM_foreign_agreements_in_faction_with_ger = yes
+						ROM_foreign_agreements_in_faction_with_cze = yes
+						ROM_foreign_agreements_in_faction_with_fra = yes
+					}
+				}
+			}
+		}
+
+		visible = {
+			country_exists = FROM
+			NOT = { has_war_with = FROM }
+			FROM = { ROM_is_valid_subject = yes }
+		}		
+
+		cost = ROM_purchase_equipment_cost
+		days_remove = 150
+		days_re_enable = 30
+		fire_only_once = no
+
+		ai_will_do = {
+			factor = 0.1
+			modifier = {
+				factor = 2
+				is_in_faction_with = FROM
+			}
+			modifier = {
+				factor = 0
+				OR = {
+					num_of_civilian_factories < 10
+					AND = {
+						stockpile_ratio = { 
+			  				archetype = artillery_equipment
+			  				ratio > 0.75
+			  			}
+						stockpile_ratio = { 
+			  				archetype = medartillery_equipment
+			  				ratio > 0.75
+			  			}
+						stockpile_ratio = { 
+			  				archetype = Hvartillery_equipment
+			  				ratio > 0.75
+			  			}
+			  			stockpile_ratio = { 
+			  				archetype = anti_air_equipment
+			  				ratio > 0.75
+			  			}
+			  			stockpile_ratio = { 
+			  				archetype = HVanti_air_equipment
+			  				ratio > 0.75
+			  			}
+			  			stockpile_ratio = { 
+			  				archetype = anti_tank_equipment
+			  				ratio > 0.75
+			  			}
+			  			stockpile_ratio = { 
+			  				archetype = HVanti_tank_equipment
+			  				ratio > 0.75
+			  			}
+					}
+				}
+			}
+			modifier = {
+				factor = 0
+				NOT = { is_in_faction_with = FROM }
+			}
+		}
+
+		modifier = {
+			civilian_factory_use = 1
+		}
+		
+		complete_effect = {
+			set_country_flag = ROM_purchasing_artillery_flag
+			hidden_effect = {
+				set_variable = { ROM_artillery_seller = FROM }
+				country_event = romania_equipment_purchases.1
+			}
+
+			FROM = {
+				add_offsite_building = {
+					type = industrial_complex
+					level = 1
+				}
+				add_opinion_modifier = {
+					target = ROM
+					modifier = ROM_bought_guns
+				}
+
+			}
+			add_opinion_modifier = {
+				target = FROM
+				modifier = ROM_sold_guns
+			}
+			add_opinion_modifier = {
+				target = FROM
+				modifier = ROM_arms_trade
+			}
+			custom_effect_tooltip = ROM_purchase_artillery_tt
+		}
+		remove_effect = {
+			add_equipment_to_stockpile = {
+				type = var:ROM_artillery_type
+				amount = ROM_quantity_purchased@var:ROM_artillery_type
+				producer = FROM
+			}
+			clear_variable = ROM_artillery_type
+			
+			clear_variable = ROM_artillery_seller
+			FROM = {
+				add_offsite_building = {
+					type = industrial_complex
+					level = -1
+				}
+			}
+			clr_country_flag = ROM_purchasing_artillery_flag
+		}
+	}
+
+	ROM_purchase_military_vehicles = {
+
+		priority = 8
+
+		icon = generic_decision
+
+		allowed = { always = no } #Activated from effect
+
+		available = {
+			FROM = {
+				has_opinion = {
+					target = ROOT
+					value > 0
+				}
+				ROM_is_valid_subject = yes
+			}
+			FROM = { has_tech = motorised_infantry }
+			NOT = { has_country_flag = ROM_purchasing_military_vehicles_flag }
+
+			NOT = { has_war_with = FROM }
+			NOT = { is_justifying_wargoal_against = FROM }
+			if = {
+				limit = {
+					FROM = { tag = GER }
+				}
+				OR = {
+					is_in_faction_with = GER
+					AND = {
+						ROM_foreign_agreements_in_faction_with_cze = yes
+						ROM_foreign_agreements_in_faction_with_sov = yes
+						ROM_foreign_agreements_in_faction_with_fra = yes
+					}
+				}
+			}
+			else_if = {
+				limit = {
+					FROM = { tag = FRA }
+				}
+				OR = {
+					is_in_faction_with = FRA
+					AND = {
+						ROM_foreign_agreements_in_faction_with_ger = yes
+						ROM_foreign_agreements_in_faction_with_cze = yes
+						ROM_foreign_agreements_in_faction_with_sov = yes
+					}
+				}
+			}
+			else_if = {
+				limit = {
+					FROM = { tag = CZE }
+				}
+				OR = {
+					is_in_faction_with = CZE
+					AND = {
+						ROM_foreign_agreements_in_faction_with_ger = yes
+						ROM_foreign_agreements_in_faction_with_sov = yes
+						ROM_foreign_agreements_in_faction_with_fra = yes
+					}
+				}
+			}
+			else_if = {
+				limit = {
+					FROM = { tag = SOV }
+				}
+				OR = {
+					is_in_faction_with = SOV
+					AND = {
+						ROM_foreign_agreements_in_faction_with_ger = yes
+						ROM_foreign_agreements_in_faction_with_cze = yes
+						ROM_foreign_agreements_in_faction_with_fra = yes
+					}
+				}
+			}
+		}
+
+		visible = {
+			country_exists = FROM
+			NOT = { has_war_with = FROM }
+			FROM = { ROM_is_valid_subject = yes }
+		}
+
+		cost = ROM_purchase_equipment_cost
+		days_remove = 150
+		days_re_enable = 30
+		fire_only_once = no
+
+		ai_will_do = {
+			factor = 0.1
+			modifier = {
+				factor = 2
+				is_in_faction_with = FROM
+			}
+			modifier = {
+				factor = 0
+				OR = {
+					num_of_civilian_factories < 10
+					AND = {
+						stockpile_ratio = { 
+			  				archetype = motorized_equipment
+			  				ratio > 0.75
+			  			}
+			  			stockpile_ratio = { 
+			  				archetype = mechanized_equipment
+			  				ratio > 0.75
+			  			}
+			  			stockpile_ratio = { 
+			  				archetype = motorized_AC_equipment
+			  				ratio > 0.75
+			  			}
+					}
+				}
+			}
+		}
+
+		modifier = {
+			civilian_factory_use = 1
+		}
+		
+		complete_effect = {
+			set_country_flag = ROM_purchasing_military_vehicles_flag
+			hidden_effect = {
+				set_variable = { ROM_military_vehicles_seller = FROM }
+				country_event = romania_equipment_purchases.2
+			}
+			FROM = {
+				add_offsite_building = {
+					type = industrial_complex
+					level = 1
+				}
+				add_opinion_modifier = {
+					target = ROM
+					modifier = ROM_bought_guns
+				}
+
+			}
+			add_opinion_modifier = {
+				target = FROM
+				modifier = ROM_sold_guns
+			}
+			add_opinion_modifier = {
+				target = FROM
+				modifier = ROM_arms_trade
+			}
+			custom_effect_tooltip = ROM_purchase_vehicles_tt
+		}
+		remove_effect = {
+			add_equipment_to_stockpile = {
+				type = var:ROM_vehicle_type
+				amount = ROM_quantity_purchased@var:ROM_vehicle_type
+				producer = FROM
+			}
+			clear_variable = ROM_vehicle_type
+			
+			clear_variable = ROM_military_vehicles_seller
+			FROM = {
+				add_offsite_building = {
+					type = industrial_complex
+					level = -1
+				}
+			}
+			clr_country_flag = ROM_purchasing_military_vehicles_flag
+		}
+	}
+
+#	ROM_purchase_armor = {
+#
+#		priority = 7
+#
+#		icon = generic_tank
+#
+#		allowed = { always = no } #Activated from effect
+#
+#		available = {
+#			FROM = {
+#				has_opinion = {
+#					target = ROOT
+#					value > 0
+#				}
+#				ROM_is_valid_subject = yes
+#			}
+#			FROM = { 
+#			}
+#			NOT = { has_country_flag = ROM_purchasing_armor_flag }
+#
+#			NOT = { has_war_with = FROM }
+#			NOT = { is_justifying_wargoal_against = FROM }
+#			if = {
+#				limit = {
+#					FROM = { tag = GER }
+#				}
+#				OR = {
+#					is_in_faction_with = GER
+#					AND = {
+#						ROM_foreign_agreements_in_faction_with_cze = yes
+#						ROM_foreign_agreements_in_faction_with_fra = yes
+#					}
+#				}
+#			}
+#			else_if = {
+#				limit = {
+#					FROM = { tag = CZE }
+#				}
+#				OR = {
+#					is_in_faction_with = CZE
+#					AND = {
+#						ROM_foreign_agreements_in_faction_with_ger = yes
+#						ROM_foreign_agreements_in_faction_with_fra = yes
+#					}
+#				}
+#			}
+#			else_if = {
+#				limit = {
+#					FROM = { tag = FRA }
+#				}
+#				OR = {
+#					is_in_faction_with = FRA
+#					AND = {
+#						ROM_foreign_agreements_in_faction_with_ger = yes
+#						ROM_foreign_agreements_in_faction_with_cze = yes
+#					}
+#				}
+#			}
+#		}
+#
+#		visible = {
+#			country_exists = FROM
+#			NOT = { has_war_with = FROM }
+#			FROM = { 
+#				ROM_is_valid_subject = yes
+#				OR = {
+#					has_tech = tech_french_infantry_tank_equipment_2
+#					has_tech = subtech_panzer_iii_td_equipment_1
+#					has_tech = tech_panzer_iii_equipment_1
+#					has_tech = tech_panzer_iv_equipment_1
+#					has_tech = tech_cav_tanks_axis
+#				} 
+#			}
+#		}
+#
+#		cost = ROM_purchase_equipment_cost
+#		days_remove = 150
+#		days_re_enable = 30
+#		fire_only_once = no
+#
+#		ai_will_do = {
+#			factor = 0.1
+#			modifier = {
+#				factor = 0
+#				OR = {
+#					NOT = { is_in_faction_with = FROM }
+#					num_of_civilian_factories < 10
+#					AND = {
+#						stockpile_ratio = { 
+#			  				archetype = light_tank_equipment
+#			  				ratio > 0.75
+#			  			}
+#			  			stockpile_ratio = { 
+#			  				archetype = medium_tank_equipment
+#			  				ratio > 0.75
+#			  			}
+#			  			stockpile_ratio = { 
+#			  				archetype = heavy_tank_equipment
+#			  				ratio > 0.75
+#			  			}
+#					}
+#				}
+#			}
+#		}
+#
+#		modifier = {
+#			civilian_factory_use = 1
+#		}
+#		
+#		complete_effect = {
+#			set_country_flag = ROM_purchasing_armor_flag
+#			hidden_effect = {
+#				set_variable = { ROM_armor_seller = FROM }
+#				country_event = romania_equipment_purchases.3
+#			}
+#			FROM = {
+#				add_offsite_building = {
+#					type = industrial_complex
+#					level = 1
+#				}
+#				add_opinion_modifier = {
+#					target = ROM
+#					modifier = ROM_bought_guns
+#				}
+#
+#			}
+#			add_opinion_modifier = {
+#				target = FROM
+#				modifier = ROM_sold_guns
+#			}
+#			add_opinion_modifier = {
+#				target = FROM
+#				modifier = ROM_arms_trade
+#			}
+#			custom_effect_tooltip = ROM_purchase_armor_tt
+#		}
+#		remove_effect = {
+#			if = {
+#				limit = {
+#					FROM = { has_country_flag = ROM_producing_stug3_for_romania_flag }
+#				}
+#				add_equipment_to_stockpile = {
+#					type = var:ROM_armor_type
+#					amount = ROM_quantity_purchased_medium_armor
+#					producer = FROM
+#				}
+#				FROM = { clr_country_flag = ROM_producing_stug3_for_romania_flag }
+#			}
+#			else_if = {
+#				limit = {
+#					FROM = { has_country_flag = ROM_producing_panzer3_for_romania_flag }
+#				}
+#				add_equipment_to_stockpile = {
+#					type = var:ROM_armor_type
+#					amount = ROM_quantity_purchased_medium_armor
+#					producer = FROM
+#				}
+#				FROM = { clr_country_flag = ROM_producing_panzer3_for_romania_flag }
+#			}
+#			else_if = {
+#				limit = {
+#					FROM = { has_country_flag = ROM_producing_r35_for_romania_flag }
+#				}
+#				add_equipment_to_stockpile = {
+#					type = var:ROM_armor_type
+#					amount = ROM_quantity_purchased_light_armor
+#					producer = FROM
+#				}
+#				FROM = { clr_country_flag = ROM_producing_r35_for_romania_flag }
+#			}
+#			else_if = {
+#				limit = {
+#					FROM = { has_country_flag = ROM_producing_vz35_38_for_romania_flag }
+#				}
+#				add_equipment_to_stockpile = {
+#					type = var:ROM_armor_type
+#					amount = ROM_quantity_purchased_light_armor
+#					producer = FROM
+#				}
+#				FROM = { clr_country_flag = ROM_producing_vz35_38_for_romania_flag }
+#			}
+#			else = {
+#				add_equipment_to_stockpile = {
+#					type = var:ROM_armor_type
+#					amount = ROM_quantity_purchased_medium_armor
+#					producer = FROM
+#				}
+#				FROM = { clr_country_flag = ROM_producing_panzer4_for_romania_flag }
+#			}
+#			FROM = {
+#				add_offsite_building = {
+#					type = industrial_complex
+#					level = -1
+#				}
+#			}
+#			clear_variable = ROM_vehicle_type
+#			clr_country_flag = ROM_purchasing_armor_flag
+#		}
+#	}
+#
+	ROM_purchase_aircraft = {
+
+		priority = 6
+
+		icon = generic_air
+
+		allowed = { always = no } #Activated from effect
+
+		available = {
+			FROM = {
+				has_opinion = {
+					target = ROOT
+					value > 0
+				}
+				ROM_is_valid_subject = yes
+			}
+			NOT = { has_country_flag = ROM_purchasing_aircraft_flag }
+
+			NOT = { has_war_with = FROM }
+			NOT = { is_justifying_wargoal_against = FROM }
+			if = {
+				limit = {
+					FROM = { tag = GER }
+				}
+				OR = {
+					is_in_faction_with = GER
+					AND = {
+						ROM_foreign_agreements_in_faction_with_fra = yes
+						ROM_foreign_agreements_in_faction_with_ita = yes
+					}
+				}
+			}
+			else_if = {
+				limit = {
+					FROM = { tag = ITA }
+				}
+				OR = {
+					is_in_faction_with = ITA
+					AND = {
+						ROM_foreign_agreements_in_faction_with_ger = yes
+						ROM_foreign_agreements_in_faction_with_fra = yes
+					}
+				}
+			}
+			else_if = {
+				limit = {
+					FROM = { tag = FRA }
+				}
+				OR = {
+					is_in_faction_with = FRA
+					AND = {
+						ROM_foreign_agreements_in_faction_with_ger = yes
+						ROM_foreign_agreements_in_faction_with_ita = yes
+					}
+				}
+			}
+		}
+
+		visible = {
+			country_exists = FROM
+			NOT = { has_war_with = FROM }
+			FROM = { 
+				ROM_is_valid_subject = yes 
+				OR = {
+					has_tech = tech_me_109_fighter_equipment_1
+					has_tech = tech_fw_190_fighter_equipment_1
+					has_tech = tech_ju_87_equipment_1
+					has_tech = tech_bf_110_fighter_equipment_1
+					has_tech = tech_me_210_fighter_equipment_1
+					has_tech = tech_he_111_bomber_equipment_1
+					has_tech = tech_sm79_light_bomber_equipment_1
+					has_tech = tech_z1007_bomber_equipment_1
+					has_tech = tech_bloch_210_bomber_equipment_1
+					has_tech = tech_ju_88_bomber_equipment_1
+			 	}
+			}
+		}
+
+		cost = ROM_purchase_equipment_cost
+		days_remove = 150
+		days_re_enable = 30
+		fire_only_once = no
+
+		ai_will_do = {
+			factor = 0.1
+			modifier = {
+				factor = 2
+				is_in_faction_with = FROM
+			}
+			modifier = {
+				factor = 0
+				OR = {
+					num_of_civilian_factories < 10
+					AND = {
+						stockpile_ratio = { 
+			  				archetype = fighter_equipment
+			  				ratio > 0.75
+			  			}
+			  			stockpile_ratio = { 
+			  				archetype = nav_bomber_equipment
+			  				ratio > 0.75
+			  			}
+			  			stockpile_ratio = { 
+			  				archetype = tac_bomber_equipment
+			  				ratio > 0.75
+			  			}
+					}
+				}
+			}
+		}
+
+		modifier = {
+			civilian_factory_use = 1
+		}
+		
+		complete_effect = {
+			set_country_flag = ROM_purchasing_aircraft_flag
+			hidden_effect = {
+				set_variable = { ROM_aircraft_seller = FROM }
+				country_event = romania_equipment_purchases.4
+			}
+			FROM = {
+				add_offsite_building = {
+					type = industrial_complex
+					level = 1
+				}
+				add_opinion_modifier = {
+					target = ROM
+					modifier = ROM_bought_guns
+				}
+
+			}
+			add_opinion_modifier = {
+				target = FROM
+				modifier = ROM_sold_guns
+			}
+			add_opinion_modifier = {
+				target = FROM
+				modifier = ROM_arms_trade
+			}
+			custom_effect_tooltip = ROM_purchase_aircraft_tt
+		}
+		remove_effect = {
+			if = {
+				limit = {
+					FROM = { has_country_flag = ROM_producing_fighters_for_romania_flag }
+				}
+				add_equipment_to_stockpile = {
+					type = var:ROM_aircraft_type
+					amount = ROM_quantity_purchased_fighter
+					producer = FROM
+				}
+				FROM = { clr_country_flag = ROM_producing_fighters_for_romania_flag }
+			}
+			else_if = {
+				limit = {
+					FROM = { has_country_flag = ROM_producing_multirole_fighters_for_romania_flag }
+				}
+				add_equipment_to_stockpile = {
+					type = var:ROM_aircraft_type
+					amount = ROM_quantity_purchased_fighter
+					producer = FROM
+				}
+				FROM = { clr_country_flag = ROM_producing_multirole_fighters_for_romania_flag }
+			}
+			else_if = {
+				limit = {
+					FROM = { has_country_flag = ROM_producing_cas_for_romania_flag }
+				}
+				add_equipment_to_stockpile = {
+					type = var:ROM_aircraft_type
+					amount = ROM_quantity_purchased_cas
+					producer = FROM
+				}
+				FROM = { clr_country_flag = ROM_producing_cas_for_romania_flag }
+			}
+			else_if = {
+				limit = {
+					FROM = { has_country_flag = ROM_producing_heavy_fighters_for_romania_flag }
+				}
+				add_equipment_to_stockpile = {
+					type = var:ROM_aircraft_type
+					amount = ROM_quantity_purchased_heavy_fighter
+					producer = FROM
+				}
+				FROM = { clr_country_flag = ROM_producing_heavy_fighters_for_romania_flag }
+			}
+			else = {
+				add_equipment_to_stockpile = {
+					type = var:ROM_aircraft_type
+					amount = ROM_quantity_purchased_tactical_bomber
+					producer = FROM
+				}
+				FROM = { clr_country_flag = ROM_producing_tactical_bombers_for_romania_flag }
+			}
+			FROM = {
+				add_offsite_building = {
+					type = industrial_complex
+					level = -1
+				}
+			}
+			clear_variable = ROM_vehicle_type
+			clr_country_flag = ROM_purchasing_aircraft_flag
+		}
+	}
+
+	ROM_purchase_ships = {
+
+		priority = 1
+
+		icon = GFX_decision_generic_naval
+
+		allowed = { always = no } #Activated from effect
+
+		available = {
+			FROM = {
+				has_opinion = {
+					target = ROOT
+					value > 0
+				}
+				ROM_is_valid_subject = yes
+				if = {
+					limit = {
+						has_dlc = "Man the Guns"
+					}
+					OR = {
+						has_tech = early_ship_hull_submarine
+						has_tech = early_ship_hull_light
+						has_tech = early_ship_hull_cruiser
+					}
+				}
+				else = {
+					has_tech = early_submarine
+					has_tech = early_destroyer
+					has_tech = early_light_cruiser
+				}
+				NOT = { has_country_flag = ROM_producing_romanian_ships_flag }
+				NOT = { has_country_flag = ROM_ships_purchase_rejected_flag }
+			}
+
+			NOT = { has_war_with = FROM }
+			NOT = { is_justifying_wargoal_against = FROM }
+			if = {
+				limit = {
+					FROM = { tag = ITA }
+				}
+				OR = {
+					is_in_faction_with = ITA
+					AND = {
+						ROM_foreign_agreements_in_faction_with_cze = yes
+						ROM_foreign_agreements_in_faction_with_sov = yes
+					}
+				}
+			}
+			else_if = {
+				limit = {
+					FROM = { tag = ENG }
+				}
+				OR = {
+					is_in_faction_with = ENG
+					AND = {
+						ROM_foreign_agreements_in_faction_with_sov = yes
+						ROM_foreign_agreements_in_faction_with_fra = yes
+					}
+				}
+			}
+			else_if = {
+				limit = {
+					FROM = { tag = SOV }
+				}
+				OR = {
+					is_in_faction_with = SOV
+					AND = {
+						ROM_foreign_agreements_in_faction_with_cze = yes
+						ROM_foreign_agreements_in_faction_with_fra = yes
+					}
+				}
+			}
+		}
+
+		visible = {
+			country_exists = FROM
+			NOT = { has_war_with = FROM }
+			hidden_trigger = {
+				NOT = { has_country_flag = ROM_ships_purchase_rejected_flag }
+			}
+			FROM = { ROM_is_valid_subject = yes }
+		}
+
+		cancel_if_not_visible = yes
+
+		cancel_effect = {
+			FROM = {
+				add_offsite_building = {
+					type = industrial_complex
+					level = -1
+				}
+				clr_country_flag = ROM_producing_romanian_ships_flag
+			}
+		}
+
+		cost = ROM_purchase_equipment_cost
+		days_remove = 450
+		days_re_enable = 1
+		fire_only_once = no
+
+		ai_will_do = {
+			factor = 0.1
+			modifier = {
+				OR = {
+					num_of_civilian_factories < 5
+					num_of_naval_factories < 2 
+				}
+				factor = 0
+			}
+			modifier = {
+				has_war = yes
+				factor = 2
+			}
+		}
+		modifier = {
+			civilian_factory_use = 2
+		}
+		
+		complete_effect = {
+			FROM = {
+				set_country_flag = ROM_producing_romanian_ships_flag
+				add_offsite_building = {
+					type = industrial_complex
+					level = 2
+				}
+				country_event = { id = romania_equipment_purchases.5 hours = 1 }
+			}
+		}
+
+		remove_effect = {
+			add_opinion_modifier = {
+				target = FROM
+				modifier = ROM_built_ships
+			}
+			add_opinion_modifier = {
+				target = FROM
+				modifier = ROM_arms_trade
+			}
+			FROM = {
+				add_offsite_building = {
+					type = industrial_complex
+					level = -2
+				}
+				clr_country_flag = ROM_producing_romanian_ships_flag
+			}
+			if = {
+				limit = {
+					FROM = { has_country_flag = ROM_building_submarines_flag }
+				}
+				hidden_effect = {
+					country_event = romania_equipment_purchases.8
+				}
+				custom_effect_tooltip = ROM_purchase_ships_submarines_tt
+				FROM = { clr_country_flag = ROM_building_submarines_flag }
+			}
+			else_if = {
+				limit = {
+					FROM = { has_country_flag = ROM_building_destroyers_flag }
+				}
+				hidden_effect = {
+					country_event = romania_equipment_purchases.9
+				}
+				custom_effect_tooltip = ROM_purchase_ships_destroyers_tt
+				FROM = { clr_country_flag = ROM_building_destroyers_flag }
+			}
+			else_if = {
+				limit = {
+					FROM = { has_country_flag = ROM_building_light_cruiser_flag }
+				}
+				hidden_effect = {
+					country_event = romania_equipment_purchases.10
+				}
+				custom_effect_tooltip = ROM_purchase_ships_light_cruiser_tt
+				FROM = { clr_country_flag = ROM_building_light_cruiser_flag }
+			}
+			else = {
+				custom_effect_tooltip = ROM_purchase_ships_undetermined_tt
+			}
+		}
+	}
+}
+#### ##    ## ########  ##     ##  ######  ######## ########  ####    ###    ##       
+ ##  ###   ## ##     ## ##     ## ##    ##    ##    ##     ##  ##    ## ##   ##       
+ ##  ####  ## ##     ## ##     ## ##          ##    ##     ##  ##   ##   ##  ##       
+ ##  ## ## ## ##     ## ##     ##  ######     ##    ########   ##  ##     ## ##       
+ ##  ##  #### ##     ## ##     ##       ##    ##    ##   ##    ##  ######### ##       
+ ##  ##   ### ##     ## ##     ## ##    ##    ##    ##    ##   ##  ##     ## ##       
+#### ##    ## ########   #######   ######     ##    ##     ## #### ##     ## ######## 
+
+
+ROM_foreign_agreements = {
+
+	ROM_french_industrial_agreements = {
+
+		priority = 58
+
+		icon = generic_factory
+
+		allowed = { always = no } #Activated from effect
+
+		ai_will_do = {
+			base = 10
+		}
+
+		available = {
+			FRA = {
+				has_opinion = {
+					target = ROOT
+					value > 14
+				}
+				ROM_is_valid_subject = yes
+			}
+			#Manage Cap
+			if = { # Being in faction grants 10 civs cap
+				limit = {
+					is_in_faction_with = FRA
+					has_completed_focus = ROM_foreign_built_army
+				}
+				custom_trigger_tooltip = {
+					tooltip = ROM_french_industrial_agreements_cap_faction_tt
+					check_variable = { ROM_french_industrial_investments < ROM_industrial_investments_max_cap }
+				}
+			}
+			else_if = { # Approaching country grants 5 civs cap
+				limit = {
+					has_completed_focus = ROM_foreign_built_army
+				}
+				custom_trigger_tooltip = {
+					tooltip = ROM_french_industrial_agreements_cap_approach_tt
+					check_variable = { ROM_french_industrial_investments < ROM_industrial_investments_medium_cap }
+				}
+			}
+			else = { #Basic Cap
+				custom_trigger_tooltip = {
+					tooltip = ROM_french_industrial_agreements_cap_basic_tt
+					check_variable = { ROM_french_industrial_investments < ROM_industrial_investments_basic_cap }
+				}
+			}
+			NOT = { has_war_with = FRA }
+			NOT = { is_justifying_wargoal_against = FRA }
+			OR = {
+				is_in_faction_with = FRA
+				AND = {
+					ROM_foreign_agreements_in_faction_with_ger = yes
+					ROM_foreign_agreements_in_faction_with_eng = yes
+					ROM_foreign_agreements_in_faction_with_usa = yes
+					ROM_foreign_agreements_in_faction_with_ita = yes
+				}
+			}
+			if = {
+				limit = {
+					has_country_flag = ROM_german_military_agreements_flag
+				}
+				NOT = { GER = { has_war_with = FRA } }
+			}
+			if = {
+				limit = {
+					has_country_flag = ROM_eng_military_agreements_flag
+				}
+				NOT = { ENG = { has_war_with = FRA } }
+			}
+		}
+
+		visible = {
+			country_exists = FRA
+			check_variable = { ROM_french_industrial_investments < ROM_industrial_investments_max_cap }
+		}
+
+		cancel_trigger = {
+
+		}
+
+		cost = ROM_french_civ_industries_cost
+		days_remove = 70
+		days_re_enable = 1
+		
+		modifier = {
+			civilian_factory_use = 2
+		}
+		
+		complete_effect = {
+			ROM_iron_guard_low_loyalty_decrease = yes
+			FRA = {
+				add_opinion_modifier = {
+					target = ROM
+					modifier = ROM_industrial_investments_in_romania
+				}
+				add_political_power = 10
+			}
+			add_opinion_modifier = {
+				target = FRA
+				modifier = ROM_industrial_investments_in_romania
+			}
+		}
+		
+		remove_effect = {
+			if = {
+				limit = { 
+					NOT = { FRA = { has_country_flag = ROM_industrial_investments_in_romania_flag } }
+				}
+				FRA = { set_country_flag = ROM_industrial_investments_in_romania_flag }
+			}
+			
+			add_to_variable = { ROM_french_industrial_investments = 1 }
+
+			random_owned_controlled_state = {
+				limit = {
+					ROOT = { has_full_control_of_state = PREV }
+					free_building_slots = {
+						building = industrial_complex
+						size > 1
+						include_locked = yes
+					}
+					NOT = {
+						state = 78
+						state = 77
+						state = 76
+						state = 939
+						state = 80
+					}
+				}
+				add_extra_state_shared_building_slots = 2
+				add_building_construction = {
+					type = industrial_complex
+					level = 2
+					instant_build = yes
+				}
+			}
+			add_to_variable = { ROM_foreign_industry_consumer_goods_modifier = 0.005 }
+			custom_effect_tooltip = ROM_increase_foreign_industry_ns_tt
+		}
+	}
+
+	ROM_british_industrial_agreements = {
+
+		priority = 57
+
+		icon = generic_factory
+
+		ai_will_do = {
+			base = 10
+		}
+
+		allowed = { always = no } #Activated from effect
+
+		available = {
+			ENG = {
+				has_opinion = {
+					target = ROOT
+					value > 14
+				}
+				ROM_is_valid_subject = yes
+			}
+			#Manage Cap
+			if = { # Being in faction grants 10 civs cap
+				limit = {
+					is_in_faction_with = ENG
+					has_completed_focus = ROM_foreign_built_army
+				}
+				custom_trigger_tooltip = {
+					tooltip = ROM_british_industrial_agreements_cap_faction_tt
+					check_variable = { ROM_british_industrial_investments < ROM_industrial_investments_max_cap }
+				}
+			}
+			else_if = { # Approaching country grants 5 civs cap
+				limit = {
+					has_completed_focus = ROM_foreign_built_army
+				}
+				custom_trigger_tooltip = {
+					tooltip = ROM_british_industrial_agreements_cap_approach_tt
+					check_variable = { ROM_british_industrial_investments < ROM_industrial_investments_medium_cap }
+				}
+			}
+			else = { #Basic Cap
+				custom_trigger_tooltip = {
+					tooltip = ROM_british_industrial_agreements_cap_basic_tt
+					check_variable = { ROM_british_industrial_investments < ROM_industrial_investments_basic_cap }
+				}
+			}
+			NOT = { has_war_with = ENG }
+			NOT = { is_justifying_wargoal_against = ENG }
+			OR = {
+				is_in_faction_with = ENG
+				AND = {
+					ROM_foreign_agreements_in_faction_with_ger = yes
+					ROM_foreign_agreements_in_faction_with_fra = yes
+					ROM_foreign_agreements_in_faction_with_usa = yes
+					ROM_foreign_agreements_in_faction_with_ita = yes
+				}
+			}
+			if = {
+				limit = {
+					has_country_flag = ROM_british_military_agreements_flag
+				}
+				NOT = { ENG = { has_war_with = ENG } }
+			}
+			if = {
+				limit = {
+					has_country_flag = ROM_german_military_agreements_flag
+				}
+				NOT = { GER = { has_war_with = ENG } }
+			}
+		}
+
+		visible = {
+			country_exists = ENG
+			check_variable = { ROM_british_industrial_investments < ROM_industrial_investments_max_cap }
+		}
+
+		cancel_trigger = {
+			
+		}
+
+		cost = ROM_british_civ_industries_cost
+		days_remove = 70
+		days_re_enable = 1
+		
+		modifier = {
+			civilian_factory_use = 2
+		}
+		
+		complete_effect = {
+			ROM_iron_guard_low_loyalty_decrease = yes
+			ENG = {
+				add_opinion_modifier = {
+					target = ROM
+					modifier = ROM_industrial_investments_in_romania
+				}
+				add_political_power = 10
+			}
+			add_opinion_modifier = {
+				target = ENG
+				modifier = ROM_industrial_investments_in_romania
+			}
+		}
+		
+		remove_effect = {
+			if = {
+				limit = { 
+					NOT = { ENG = { has_country_flag = ROM_industrial_investments_in_romania_flag } }
+				}
+				ENG = { set_country_flag = ROM_industrial_investments_in_romania_flag }
+			}
+			
+			add_to_variable = { ROM_british_industrial_investments = 1 }
+
+			random_owned_controlled_state = {
+				limit = {
+					ROOT = { has_full_control_of_state = PREV }
+					free_building_slots = {
+						building = industrial_complex
+						size > 1
+						include_locked = yes
+					}
+					NOT = {
+						state = 78
+						state = 77
+						state = 76
+						state = 939
+						state = 80
+					}
+				}
+				add_extra_state_shared_building_slots = 2
+				add_building_construction = {
+					type = industrial_complex
+					level = 2
+					instant_build = yes
+				}
+			}
+			add_to_variable = { ROM_foreign_industry_consumer_goods_modifier = 0.005 }
+			custom_effect_tooltip = ROM_increase_foreign_industry_ns_tt
+		}
+	}
+
+	ROM_american_industrial_agreements = {
+
+		priority = 57
+
+		icon = generic_factory
+
+		ai_will_do = {
+			base = 10
+		}
+
+		allowed = { always = no } #Activated from effect
+
+		available = {
+			USA = {
+				has_opinion = {
+					target = ROOT
+					value > 14
+				}
+				ROM_is_valid_subject = yes
+			}
+			#Manage Cap
+			if = { # Being in faction grants 4 civs cap
+				limit = {
+					is_in_faction_with = USA
+					has_completed_focus = ROM_invite_foreign_capital
+				}
+				custom_trigger_tooltip = {
+					tooltip = ROM_american_industrial_agreements_cap_faction_tt
+					check_variable = { ROM_american_industrial_investments < ROM_industrial_investments_max_cap }
+				}
+			}			
+			else_if = { # Approaching country grants 3 civs cap
+				limit = {
+					has_completed_focus = ROM_invite_foreign_capital
+				}
+				custom_trigger_tooltip = {
+					tooltip = ROM_american_industrial_agreements_cap_approach_tt
+					check_variable = { ROM_american_industrial_investments < ROM_industrial_investments_medium_cap }
+				}
+			}
+			else = { #Basic Cap
+				custom_trigger_tooltip = {
+					tooltip = ROM_american_industrial_agreements_cap_basic_tt
+					check_variable = { ROM_american_industrial_investments < ROM_industrial_investments_basic_cap }
+				}
+			}
+			NOT = { has_war_with = USA }
+			NOT = { is_justifying_wargoal_against = USA }
+			OR = {
+				is_in_faction_with = USA
+				AND = {
+					ROM_foreign_agreements_in_faction_with_ger = yes
+					ROM_foreign_agreements_in_faction_with_fra = yes
+					ROM_foreign_agreements_in_faction_with_ita = yes
+					ROM_foreign_agreements_in_faction_with_eng = yes
+				}
+			}
+			if = {
+				limit = {
+					has_country_flag = ROM_american_military_agreements_flag
+				}
+				NOT = { USA = { has_war_with = USA } }
+			}
+			if = {
+				limit = {
+					has_country_flag = ROM_german_military_agreements_flag
+				}
+				NOT = { GER = { has_war_with = USA } }
+			}
+		}
+
+		visible = {
+			country_exists = USA
+			check_variable = { ROM_american_industrial_investments < ROM_industrial_investments_max_cap }
+		}
+
+		cancel_trigger = {
+			
+		}
+
+		cost = ROM_american_civ_industries_cost
+		days_remove = 70
+		days_re_enable = 1
+		
+		modifier = {
+			civilian_factory_use = 2
+		}
+		
+		complete_effect = {
+			ROM_iron_guard_low_loyalty_decrease = yes
+			USA = {
+				add_opinion_modifier = {
+					target = ROM
+					modifier = ROM_industrial_investments_in_romania
+				}
+				add_political_power = 10
+			}
+			add_opinion_modifier = {
+				target = USA
+				modifier = ROM_industrial_investments_in_romania
+			}
+		}
+		
+		remove_effect = {
+			if = {
+				limit = { 
+					NOT = { USA = { has_country_flag = ROM_industrial_investments_in_romania_flag } }
+				}
+				USA = { set_country_flag = ROM_industrial_investments_in_romania_flag }
+			}
+			
+			add_to_variable = { ROM_american_industrial_investments = 1 }
+
+			random_owned_controlled_state = {
+				limit = {
+					ROOT = { has_full_control_of_state = PREV }
+					free_building_slots = {
+						building = industrial_complex
+						size > 1
+						include_locked = yes
+					}
+					NOT = {
+						state = 78
+						state = 77
+						state = 76
+						state = 939
+						state = 80
+					}
+				}
+				add_extra_state_shared_building_slots = 2
+				add_building_construction = {
+					type = industrial_complex
+					level = 2
+					instant_build = yes
+				}
+			}
+			add_to_variable = { ROM_foreign_industry_consumer_goods_modifier = 0.005 }
+			custom_effect_tooltip = ROM_increase_foreign_industry_ns_tt
+		}
+	}
+
+	ROM_italian_industrial_agreements = {
+
+		priority = 57
+
+		icon = generic_factory
+
+		ai_will_do = {
+			base = 10
+		}
+
+		allowed = { always = no } #Activated from effect
+
+		available = {
+			ITA = {
+				has_opinion = {
+					target = ROOT
+					value > 14
+				}
+				ROM_is_valid_subject = yes
+			}
+			#Manage Cap
+			if = { # Being in faction grants 4 civs cap
+				limit = {
+					is_in_faction_with = ITA
+					has_completed_focus = ROM_invite_foreign_capital
+				}
+				custom_trigger_tooltip = {
+					tooltip = ROM_italian_industrial_agreements_cap_faction_tt
+					check_variable = { ROM_italian_industrial_investments < ROM_industrial_investments_max_cap }
+				}
+			}
+			else_if = { # Approaching country grants 3 civs cap
+				limit = {
+					has_completed_focus = ROM_invite_foreign_capital
+				}
+				custom_trigger_tooltip = {
+					tooltip = ROM_italian_industrial_agreements_cap_approach_tt
+					check_variable = { ROM_italian_industrial_investments < ROM_industrial_investments_medium_cap }
+				}
+			}
+			else = { #Basic Cap
+				custom_trigger_tooltip = {
+					tooltip = ROM_italian_industrial_agreements_cap_basic_tt
+					check_variable = { ROM_italian_industrial_investments < ROM_industrial_investments_basic_cap }
+				}
+			}
+			NOT = { has_war_with = ITA }
+			NOT = { is_justifying_wargoal_against = ITA }
+			OR = {
+				is_in_faction_with = ITA
+				AND = {
+					ROM_foreign_agreements_in_faction_with_ger = yes
+					ROM_foreign_agreements_in_faction_with_fra = yes
+					ROM_foreign_agreements_in_faction_with_usa = yes
+					ROM_foreign_agreements_in_faction_with_eng = yes
+				}
+			}
+			if = {
+				limit = {
+					has_country_flag = ROM_italian_military_agreements_flag
+				}
+				NOT = { ITA = { has_war_with = ITA } }
+			}
+			if = {
+				limit = {
+					has_country_flag = ROM_german_military_agreements_flag
+				}
+				NOT = { GER = { has_war_with = ITA } }
+			}
+		}
+
+		visible = {
+			country_exists = ITA
+			check_variable = { ROM_italian_industrial_investments < ROM_industrial_investments_max_cap }
+		}
+
+		cancel_trigger = {
+			
+		}
+
+		cost = ROM_italian_civ_industries_cost
+		days_remove = 70
+		days_re_enable = 1
+		
+		modifier = {
+			civilian_factory_use = 2
+		}
+		
+		complete_effect = {
+			ITA = {
+				add_opinion_modifier = {
+					target = ROM
+					modifier = ROM_industrial_investments_in_romania
+				}
+				add_political_power = 5
+			}
+			add_opinion_modifier = {
+				target = ITA
+				modifier = ROM_industrial_investments_in_romania
+			}
+		}
+		
+		remove_effect = {
+			if = {
+				limit = { 
+					NOT = { ITA = { has_country_flag = ROM_industrial_investments_in_romania_flag } }
+				}
+				ITA = { set_country_flag = ROM_industrial_investments_in_romania_flag }
+			}
+			
+			add_to_variable = { ROM_italian_industrial_investments = 1 }
+
+			random_owned_controlled_state = {
+				limit = {
+					ROOT = { has_full_control_of_state = PREV }
+					free_building_slots = {
+						building = industrial_complex
+						size > 1
+						include_locked = yes
+					}
+					NOT = {
+						state = 78
+						state = 77
+						state = 76
+						state = 939
+						state = 80
+					}
+				}
+				add_extra_state_shared_building_slots = 2
+				add_building_construction = {
+					type = industrial_complex
+					level = 2
+					instant_build = yes
+				}
+			}
+			add_to_variable = { ROM_foreign_industry_consumer_goods_modifier = 0.005 }
+			custom_effect_tooltip = ROM_increase_foreign_industry_ns_tt
+		}
+	}
+
+	ROM_german_industrial_agreements = {
+
+		priority = 59
+
+		icon = generic_factory
+
+		ai_will_do = {
+			base = 10
+		}
+
+		allowed = { always = no } #Activated from effect
+
+		available = {
+			GER = {
+				has_opinion = {
+					target = ROOT
+					value > 14
+				}
+				ROM_is_valid_subject = yes
+			}
+			#Manage Cap
+			if = { # Being in faction grants 10 civs cap
+				limit = {
+					is_in_faction_with = GER
+					has_completed_focus = ROM_trade_treaty_with_germany
+				}
+				custom_trigger_tooltip = {
+					tooltip = ROM_german_industrial_agreements_cap_faction_tt
+					check_variable = { ROM_german_industrial_investments < ROM_industrial_investments_max_cap }
+				}
+			}
+			else_if = { # Approaching country grants 5 civs cap
+				limit = {
+					has_completed_focus = ROM_trade_treaty_with_germany
+				}
+				custom_trigger_tooltip = {
+					tooltip = ROM_german_industrial_agreements_cap_approach_tt
+					check_variable = { ROM_german_industrial_investments < ROM_industrial_investments_medium_cap }
+				}
+			}
+			else = { #Basic Cap
+				custom_trigger_tooltip = {
+					tooltip = ROM_german_industrial_agreements_cap_basic_tt
+					check_variable = { ROM_german_industrial_investments < ROM_industrial_investments_basic_cap }
+				}
+			}
+			NOT = { has_war_with = GER }
+			NOT = { is_justifying_wargoal_against = GER }
+			OR = {
+				is_in_faction_with = GER
+				AND = {
+					ROM_foreign_agreements_in_faction_with_fra = yes
+					ROM_foreign_agreements_in_faction_with_eng = yes
+					ROM_foreign_agreements_in_faction_with_usa = yes
+					ROM_foreign_agreements_in_faction_with_ita = yes
+				}
+			}
+			if = {
+				limit = {
+					has_country_flag = ROM_british_military_agreements_flag
+				}
+				NOT = { ENG = { has_war_with = GER } }
+			}
+			if = {
+				limit = {
+					has_country_flag = ROM_french_military_agreements_flag
+				}
+				NOT = { FRA = { has_war_with = GER } }
+			}
+		}
+
+		visible = {
+			country_exists = GER
+			check_variable = { ROM_german_industrial_investments < ROM_industrial_investments_max_cap }
+		}
+
+		cancel_trigger = {
+
+		}
+
+		cost = ROM_german_civ_industries_cost
+		days_remove = 70
+		days_re_enable = 1
+		
+		modifier = {
+			civilian_factory_use = 2
+		}
+		
+		complete_effect = {
+			GER = {
+				add_opinion_modifier = {
+					target = ROM
+					modifier = ROM_industrial_investments_in_romania
+				}
+				add_political_power = 5
+			}
+			add_opinion_modifier = {
+				target = GER
+				modifier = ROM_industrial_investments_in_romania
+			}
+		}
+		
+		remove_effect = {
+			if = {
+				limit = { 
+					NOT = { GER = { has_country_flag = ROM_industrial_investments_in_romania_flag } }
+				}
+				GER = { set_country_flag = ROM_industrial_investments_in_romania_flag }
+			}
+			
+			add_to_variable = { ROM_german_industrial_investments = 1 }
+
+			random_owned_controlled_state = {
+				limit = {
+					ROOT = { has_full_control_of_state = PREV }
+					free_building_slots = {
+						building = industrial_complex
+						size > 1
+						include_locked = yes
+					}
+					NOT = {
+						state = 78
+						state = 77
+						state = 76
+						state = 939
+						state = 80
+					}
+				}
+				add_extra_state_shared_building_slots = 2
+				add_building_construction = {
+					type = industrial_complex
+					level = 2
+					instant_build = yes
+				}
+			}
+			add_to_variable = { ROM_foreign_industry_consumer_goods_modifier = 0.005 }
+			custom_effect_tooltip = ROM_increase_foreign_industry_ns_tt
+		}
+	}
+	
+	ROM_military_agreements = {
+
+		priority = 40
+
+		icon = generic_tank
+
+		allowed = { always = no } #Activated from effect
+
+		ai_will_do = {
+			base = 10
+		}
+
+		available = {
+			FROM = {
+				has_opinion = {
+					target = ROOT
+					value > 49
+				}
+				ROM_is_valid_subject = yes
+			}
+			NOT = { has_country_flag = ROM_military_agreements_ongoing_flag }
+			NOT = { has_war_with = FROM }
+			NOT = { is_justifying_wargoal_against = FROM }
+			if = {
+				limit = {
+					FROM = { tag = GER }
+				}
+				OR = {
+					is_in_faction_with = GER
+					AND = {
+						ROM_foreign_agreements_in_faction_with_fra = yes
+						ROM_foreign_agreements_in_faction_with_eng = yes
+						ROM_foreign_agreements_in_faction_with_cze = yes
+						ROM_foreign_agreements_in_faction_with_ita = yes
+						ROM_foreign_agreements_in_faction_with_usa = yes
+					}
+				}
+			}
+			else_if = {
+				limit = {
+					FROM = { tag = ITA }
+				}
+				OR = {
+					is_in_faction_with = ITA
+					AND = {
+						ROM_foreign_agreements_in_faction_with_ger = yes
+						ROM_foreign_agreements_in_faction_with_fra = yes
+						ROM_foreign_agreements_in_faction_with_eng = yes
+						ROM_foreign_agreements_in_faction_with_usa = yes
+						ROM_foreign_agreements_in_faction_with_cze = yes
+					}
+				}
+			}
+			else_if = {
+				limit = {
+					FROM = { tag = FRA }
+				}
+				OR = {
+					is_in_faction_with = FRA
+					AND = {
+						ROM_foreign_agreements_in_faction_with_ger = yes
+						ROM_foreign_agreements_in_faction_with_eng = yes
+						ROM_foreign_agreements_in_faction_with_cze = yes
+						ROM_foreign_agreements_in_faction_with_ita = yes
+						ROM_foreign_agreements_in_faction_with_usa = yes
+					}
+				}
+			}
+			else_if = {
+				limit = {
+					FROM = { tag = ENG }
+				}
+				OR = {
+					is_in_faction_with = ENG
+					AND = {
+						ROM_foreign_agreements_in_faction_with_ger = yes
+						ROM_foreign_agreements_in_faction_with_fra = yes
+						ROM_foreign_agreements_in_faction_with_ita = yes
+						ROM_foreign_agreements_in_faction_with_cze = yes
+						ROM_foreign_agreements_in_faction_with_usa = yes
+					}
+				}
+			}
+			else_if = {
+				limit = {
+					FROM = { tag = USA }
+				}
+				OR = {
+					is_in_faction_with = USA
+					AND = {
+						ROM_foreign_agreements_in_faction_with_ger = yes
+						ROM_foreign_agreements_in_faction_with_fra = yes
+						ROM_foreign_agreements_in_faction_with_eng = yes
+						ROM_foreign_agreements_in_faction_with_cze = yes
+						ROM_foreign_agreements_in_faction_with_ita = yes
+					}
+				}
+			}
+		}
+
+		visible = {
+			country_exists = FROM
+			NOT = { has_war_with = FROM }
+		}
+
+		cost = ROM_foreign_military_agreements_cost
+		days_remove = 30
+		fire_only_once = yes
+		
+		modifier = {
+			political_power_factor = -0.15
+			consumer_goods_expected_value = 0.25
+		}
+		
+		complete_effect = {
+			set_country_flag = ROM_military_agreements_ongoing_flag
+			FROM = {
+				add_opinion_modifier = {
+					target = ROM
+					modifier = ROM_industrial_investments_in_romania
+				}
+			}
+			add_opinion_modifier = {
+				target = FROM
+				modifier = ROM_industrial_investments_in_romania
+			}
+		}
+
+		remove_effect = {
+			if = { 
+				limit = {
+					FROM = { original_tag = GER }
+				}
+				set_country_flag = ROM_german_military_agreements_flag
+				custom_effect_tooltip = available_designer
+				show_ideas_tooltip = ROM_german_materiel_designer
+				show_ideas_tooltip = ROM_german_tank_designer
+				show_ideas_tooltip = ROM_german_artillery_designer
+			}
+			if = { 
+				limit = {
+					FROM = { original_tag = ENG }
+				}
+				set_country_flag = ROM_british_military_agreements_flag
+				custom_effect_tooltip = available_designer
+				show_ideas_tooltip = ROM_british_materiel_designer
+				show_ideas_tooltip = ROM_british_tank_designer
+			}
+			if = { 
+				limit = {
+					FROM = { original_tag = FRA }
+				}
+				set_country_flag = ROM_french_military_agreements_flag
+				custom_effect_tooltip = available_designer
+				show_ideas_tooltip = ROM_french_materiel_designer
+				show_ideas_tooltip = ROM_french_tank_designer
+			}
+			if = { 
+				limit = {
+					FROM = { original_tag = ITA }
+				}
+				set_country_flag = ROM_italian_military_agreements_flag
+				custom_effect_tooltip = available_designer
+				show_ideas_tooltip = ROM_italian_materiel_designer
+			}
+			if = { 
+				limit = {
+					FROM = { original_tag = USA }
+				}
+				set_country_flag = ROM_american_military_agreements_flag
+				custom_effect_tooltip = available_designer
+				show_ideas_tooltip = ROM_american_materiel_designer
+			}
+			clr_country_flag = ROM_military_agreements_ongoing_flag
+		}
+	}
+
+	ROM_aircraft_agreements = {
+
+		priority = 30
+
+		icon = generic_air
+
+		ai_will_do = {
+			base = 10
+		}
+
+		allowed = { always = no } #Activated from effect
+
+		available = {
+			FROM = {
+				has_opinion = {
+					target = ROOT
+					value > 49
+				}
+				ROM_is_valid_subject = yes
+			}
+			NOT = { has_country_flag = ROM_aircraft_agreements_ongoing_flag }
+			NOT = { has_war_with = FROM }
+			NOT = { is_justifying_wargoal_against = FROM }
+			if = {
+				limit = {
+					FROM = { tag = GER }
+				}
+				OR = {
+					is_in_faction_with = GER
+					AND = {
+						ROM_foreign_agreements_in_faction_with_fra = yes
+						ROM_foreign_agreements_in_faction_with_ita = yes
+					}
+				}
+			}
+			else_if = {
+				limit = {
+					FROM = { tag = FRA }
+				}
+				OR = {
+					is_in_faction_with = FRA
+					AND = {
+						ROM_foreign_agreements_in_faction_with_ger = yes
+						ROM_foreign_agreements_in_faction_with_ita = yes
+					}
+				}
+			}
+			else_if = {
+				limit = {
+					FROM = { tag = ITA }
+				}
+				OR = {
+					is_in_faction_with = ITA
+					AND = {
+						ROM_foreign_agreements_in_faction_with_ger = yes
+						ROM_foreign_agreements_in_faction_with_fra = yes
+					}
+				}
+			}
+		}
+
+		visible = {
+			country_exists = FROM
+			NOT = { has_war_with = FROM }
+		}
+
+		cost = ROM_foreign_military_agreements_cost
+		days_remove = 30
+		fire_only_once = yes
+		
+		modifier = {
+			political_power_factor = -0.15
+			consumer_goods_expected_value = 0.25
+		}
+		
+		complete_effect = {
+			set_country_flag = ROM_aircraft_agreements_ongoing_flag
+			FROM = {
+				add_opinion_modifier = {
+					target = ROM
+					modifier = ROM_industrial_investments_in_romania
+				}
+			}
+			add_opinion_modifier = {
+				target = FROM
+				modifier = ROM_industrial_investments_in_romania
+			}
+		}
+		
+		remove_effect = {
+			if = { 
+				limit = {
+					FROM = { original_tag = GER }
+				}
+				set_country_flag = ROM_german_aeronautical_agreements_flag
+				custom_effect_tooltip = available_designer
+				show_ideas_tooltip = ROM_german_bomber_aircraft_designer
+				show_ideas_tooltip = ROM_german_fighter_aircraft_designer
+				show_ideas_tooltip = ROM_german_cas_aircraft_designer
+			}
+			if = { 
+				limit = {
+					FROM = { original_tag = FRA }
+				}
+				set_country_flag = ROM_french_aeronautical_agreements_flag
+				custom_effect_tooltip = available_designer
+				show_ideas_tooltip = ROM_french_aircraft_designer
+			}
+			if = { 
+				limit = {
+					FROM = { original_tag = ITA }
+				}
+				set_country_flag = ROM_french_aeronautical_agreements_flag
+				custom_effect_tooltip = available_designer
+				show_ideas_tooltip = ROM_italian_aircraft_designer
+			}
+			clr_country_flag = ROM_aircraft_agreements_ongoing_flag
+		}
+	}
+}

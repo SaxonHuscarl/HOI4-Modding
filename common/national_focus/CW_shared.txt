@@ -1,0 +1,4908 @@
+####################
+#### Tube Alloy ####
+####################
+shared_focus = {
+	id = CW_fisson_focus
+	icon = GFX_goal_generic_nuke5
+
+	x = 20
+	y = 8
+	offset = {
+		x = 9
+		y = -4
+		trigger = {
+			tag = NZL
+		}
+	}
+	offset = {
+		x = 1
+		y = -1
+		trigger = {
+			tag = AST
+		}
+	}
+	offset = {
+		x = 12
+		y = 0
+		trigger = {
+			tag = CAN
+		}
+	}
+	offset = {
+		x = 7
+		y = -2
+		trigger = {
+			tag = RAJ
+		}
+	}
+	offset = {
+		x = 12
+		y = -8
+		trigger = {
+			tag = SAF
+		}
+	}
+	cost = 40
+	search_filters = {FOCUS_FILTER_FOREIGN_DIPLOMACY}
+	search_filters = {FOCUS_FILTER_RESEARCH}
+	Available = {
+		OR = {
+			has_war_with = GER
+			threat > 0.03
+		}
+	}		
+	available_if_capitulated = yes
+		
+	completion_reward = {
+		add_tech_bonus = {
+			name = maud_focus
+			bonus = 0.15
+			uses = 2
+			category = nuclear
+		}
+		hidden_effect = {
+			every_country = {
+				limit = {
+					OR = {
+						tag = CAN
+						tag = AST
+						tag = NZL
+						tag = SAF
+						tag = RAJ
+						tag = ENG
+					}
+				}
+				unlock_national_focus = CW_fisson_focus
+			}
+		}
+	}
+}
+joint_focus = {
+	id = CW_CSSAW
+	icon = GFX_goal_generic_nuke4
+	prerequisite = { focus = CW_fisson_focus }
+	relative_position_id = CW_fisson_focus
+	x = 2
+	y = 1
+	offset = {
+		x = 0
+		y = 2
+		trigger = {
+			tag = NZL
+		}
+	}
+	cost = 29
+	search_filters = {FOCUS_FILTER_FOREIGN_DIPLOMACY}
+	search_filters = {FOCUS_FILTER_RESEARCH}
+	Available = {
+		tag = ENG
+		OR = {
+			has_war_with = GER
+			threat > 0.06
+		}
+	}		
+	available_if_capitulated = yes
+		
+
+	completion_reward_joint_member = {
+		add_tech_bonus = {
+			name = CW_CSSAW
+			bonus = 0.05
+			uses = 1
+			category = radar_tech
+		}
+	}
+	completion_reward_joint_originator = {
+		add_tech_bonus = {
+			name = CW_CSSAW
+			bonus = 0.15
+			uses = 1
+			category = nuclear
+			category = radar_tech
+		}
+	}
+}
+joint_focus = {
+	id = CW_university_experiments
+	icon = GFX_goal_generic_nuke6
+	prerequisite = { focus = CW_CSSAW }
+	relative_position_id = CW_CSSAW
+	x = 1
+	y = 1
+	cost = 45
+	search_filters = {FOCUS_FILTER_FOREIGN_DIPLOMACY}
+	search_filters = {FOCUS_FILTER_RESEARCH}
+	Available = {
+		threat > 0.07
+		has_completed_focus = CW_maud_focus
+	}		
+	available_if_capitulated = yes
+	
+	completion_reward_joint_originator = {
+		add_political_power = 10
+		ENG = {
+			maud_add2 = yes
+		}
+	}
+}
+joint_focus = {
+	id = CW_frisch_peieris
+	icon = GFX_goal_fra_nuclear_research
+	prerequisite = { focus = CW_CSSAW }
+	prerequisite = { focus = CW_maud_policy }
+	relative_position_id = CW_CSSAW
+	x = 0
+	y = 2
+	cost = 27
+	search_filters = {FOCUS_FILTER_FOREIGN_DIPLOMACY}
+	search_filters = {FOCUS_FILTER_RESEARCH}
+	Available = {
+		tag = ENG
+		OR = {
+			has_war_with = GER
+			threat > 0.7
+		}
+	}		
+	available_if_capitulated = yes
+		
+	completion_reward_joint_originator = {
+		ENG = {
+			maud_add3 = yes
+		}		
+	}
+}
+joint_focus = {
+	id = CW_maud_focus
+	text = maud_focus
+	icon = GFX_goal_british_atom
+	prerequisite = { focus = CW_fisson_focus }
+	relative_position_id = CW_fisson_focus
+	x = 0
+	y = 1
+	cost = 50
+	search_filters = {FOCUS_FILTER_FOREIGN_DIPLOMACY}
+	search_filters = {FOCUS_FILTER_RESEARCH}
+	Available = {
+		tag = ENG
+		OR = {
+			has_war_with = GER
+			threat > 0.1
+		}
+	}		
+	available_if_capitulated = yes
+		
+	completion_reward_joint_originator = {
+		ENG = {
+			add_research_slot = 1
+			add_research_centre = yes
+			SLOT:nuclear_folder = yes
+			set_variable = { maud_focus_slot = amount_research_slots }
+			add_ideas = ENG_maud_research50
+			
+			set_variable = { ENG_maud_research = token:ENG_maud_research50 }
+			
+			hidden_effect = {
+				every_country = {
+					limit = {
+						OR = {
+							tag = CAN
+							tag = AST
+							tag = NZL
+							tag = SAF
+							tag = RAJ
+							tag = ENG
+						}
+					}
+					unlock_national_focus = CW_maud_focus
+				}
+			}
+		}
+	}
+}
+joint_focus = {
+	id = CAN_uranium_mining
+	icon = GFX_focus_generic_uranium_extraction
+	prerequisite = { focus = CW_maud_focus }
+	x = -1
+	y = 1
+	relative_position_id = CW_maud_focus
+	search_filters = {FOCUS_FILTER_RESEARCH}
+	
+	cost = 30 
+
+
+	available = {
+		OR = {
+			tag = CAN
+			tag = AST
+		}
+		OR = {
+			has_war_with = GER
+			threat > 0.17
+		}			
+	}
+	
+	bypass = {
+
+	}
+
+	cancel_if_invalid = yes
+	continue_if_invalid = no
+	available_if_capitulated = yes
+
+	
+
+	completion_reward_joint_originator = {
+		add_tech_bonus = {
+			name = CAN_uranium_mining
+			bonus = 0.15
+			uses = 1
+			category = nuclear
+		}
+		ENG = {
+			maud_add3 = yes
+		}
+
+		
+	}
+}
+joint_focus = {
+	id = CW_maud_tech
+	icon = GFX_goal_industrial_research_projects
+	prerequisite = { focus = CW_maud_focus }
+	relative_position_id = CW_maud_focus
+	x = -3
+	y = 1
+	cost = 25
+	search_filters = {FOCUS_FILTER_FOREIGN_DIPLOMACY}
+	search_filters = {FOCUS_FILTER_RESEARCH}
+	Available = {
+		tag = ENG
+		OR = {
+			has_war_with = GER
+			threat > 0.11
+		}
+	}		
+	available_if_capitulated = yes
+		
+	completion_reward_joint_originator = {
+		ENG = {
+			maud_add5 = yes
+		}
+	}
+}
+joint_focus = {
+	id = CW_maud_liverpool
+	icon = GFX_focus_generic_university_2
+	prerequisite = { focus = CW_maud_tech }
+	relative_position_id = CW_maud_tech
+	x = -1
+	y = 1
+	cost = 30
+	search_filters = {FOCUS_FILTER_FOREIGN_DIPLOMACY}
+	search_filters = {FOCUS_FILTER_RESEARCH}
+	Available = {
+		OR = {
+			has_war_with = GER
+			threat > 0.15
+		}
+		NOT = { has_idea = CW_sent_away }
+	}		
+		
+	completion_reward_joint_originator = {
+		ENG = {
+			maud_add4 = yes
+		}
+		if = {
+			limit = {
+				NOT = { tag = ENG }
+			}
+			add_ideas = CW_sent_away
+		}
+	}
+}
+joint_focus = {
+	id = CW_maud_oxford
+	icon = GFX_focus_generic_university_1
+	prerequisite = { focus = CW_maud_tech }
+	relative_position_id = CW_maud_tech
+	x = -2
+	y = 2
+	cost = 30
+	search_filters = {FOCUS_FILTER_FOREIGN_DIPLOMACY}
+	search_filters = {FOCUS_FILTER_RESEARCH}
+	Available = {
+		OR = {
+			has_war_with = GER
+			threat > 0.15
+		}
+		NOT = { has_idea = CW_sent_away }
+	}		
+		
+	completion_reward_joint_originator = {
+		ENG = {
+			maud_add4 = yes
+		}
+		if = {
+			limit = {
+				NOT = { tag = ENG }
+			}
+			add_ideas = CW_sent_away
+		}
+	}
+}
+joint_focus = {
+	id = CW_maud_cambridge
+	icon = GFX_goal_books
+	prerequisite = { focus = CW_maud_tech }
+	relative_position_id = CW_maud_tech
+	x = 0
+	y = 2
+	cost = 30
+	search_filters = {FOCUS_FILTER_FOREIGN_DIPLOMACY}
+	search_filters = {FOCUS_FILTER_RESEARCH}
+	Available = {
+		OR = {
+			has_war_with = GER
+			threat > 0.15
+		}
+		NOT = { has_idea = CW_sent_away }
+	}		
+		
+	completion_reward_joint_originator = {
+		ENG = {
+			maud_add4 = yes
+		}
+		if = {
+			limit = {
+				NOT = { tag = ENG }
+			}
+			add_ideas = CW_sent_away
+		}
+	}
+}
+joint_focus = {
+	id = CW_maud_birmingham
+	icon = GFX_focus_generic_university_3
+	prerequisite = { focus = CW_maud_tech }
+	relative_position_id = CW_maud_tech
+	x = 1
+	y = 1
+	cost = 30
+	search_filters = {FOCUS_FILTER_FOREIGN_DIPLOMACY}
+	search_filters = {FOCUS_FILTER_RESEARCH}
+	Available = {
+		OR = {
+			has_war_with = GER
+			threat > 0.15
+		}
+		NOT = { has_idea = CW_sent_away }
+	}		
+		
+	completion_reward_joint_originator = {
+		ENG = {
+			maud_add4 = yes
+		}
+		if = {
+			limit = {
+				NOT = { tag = ENG }
+			}
+			add_ideas = CW_sent_away
+		}
+	}
+}
+joint_focus = {
+	id = CW_maud_policy
+	icon = GFX_goal_generic_nuke7
+	prerequisite = { focus = CW_maud_focus }
+	relative_position_id = CW_maud_focus
+	x = 1
+	y = 1
+	cost = 23
+	search_filters = {FOCUS_FILTER_FOREIGN_DIPLOMACY}
+	search_filters = {FOCUS_FILTER_RESEARCH}
+	Available = {
+		tag = ENG
+		OR = {
+			has_war_with = GER
+			threat > 0.11
+		}
+	}		
+	available_if_capitulated = yes
+		
+	completion_reward_joint_originator = {
+		ENG = {
+			maud_add5 = yes
+		}
+	}
+}
+joint_focus = {
+	id = CW_tube_alloys
+	text = ENG_tube_alloy
+	icon = GFX_goal_generic_nuke2
+	prerequisite = { focus = CW_maud_focus }
+	relative_position_id = CW_maud_focus
+	x = 0
+	y = 2
+	cost = 50
+	search_filters = {FOCUS_FILTER_RESEARCH}
+		
+	available = {
+		OR = {
+			has_war_with = GER
+			threat > 0.25
+		}
+	}
+		
+	available_if_capitulated = yes	
+	completion_reward_joint_originator = {
+		ENG = {
+			maud_add5 = yes
+		}
+	}
+}
+joint_focus = {
+	id = CW_montreal
+	icon = GFX_goal_generic_nuke
+	prerequisite = { focus = CW_tube_alloys }
+	relative_position_id = CW_tube_alloys
+	x = -1
+	y = 1
+	offset = {
+		x = 2
+		y = 0
+		trigger = {
+			tag = NZL
+		}
+	}
+	cost = 40
+	search_filters = {FOCUS_FILTER_RESEARCH}
+		
+	available = {
+		tag = CAN
+		has_global_flag = fall_of_france
+	}
+		
+	available_if_capitulated = yes	
+	completion_reward_joint_originator = {
+		468 = {
+			add_building_construction = {
+				type = industrial_complex
+				level = 1
+				instant_build = yes
+			}
+		}
+		add_tech_bonus = {
+			name = atomic_focus
+			bonus = 0.10
+			uses = 1
+			category = nuclear
+		}
+		ENG = {
+			maud_add6 = yes
+		}
+	}
+}
+joint_focus = {
+	id = CW_pure_uranium
+	icon = GFX_goal_generic_nuke3
+	prerequisite = { focus = CW_tube_alloys }
+	relative_position_id = CW_tube_alloys
+	x = 1
+	y = 1
+	cost = 38
+	search_filters = {FOCUS_FILTER_RESEARCH}
+	offset = {
+		x = -2
+		y = 0
+		trigger = {
+			tag = NZL
+		}
+	}		
+	available = {
+		OR = {
+			has_war_with = GER
+			threat > 0.3
+		}
+	}
+		
+	available_if_capitulated = yes	
+	completion_reward_joint_originator = {
+		ENG = {
+			maud_add3 = yes
+		}
+	}
+}
+joint_focus = {
+	id = CW_plutonium
+	icon = GFX_focus_generic_nuclear_development
+	prerequisite = { focus = CW_pure_uranium }
+	relative_position_id = CW_pure_uranium
+	x = 1
+	y = 1
+	offset = {
+		x = -1
+		y = 1
+		trigger = {
+			tag = NZL
+		}
+	}
+	cost = 38
+	search_filters = {FOCUS_FILTER_RESEARCH}
+		
+	available = {
+		OR = {
+			has_war_with = GER
+			threat > 0.3
+		}
+	}
+		
+	available_if_capitulated = yes	
+	completion_reward_joint_originator = {
+		ENG = {
+			maud_add4 = yes
+		}
+	}
+}
+
+joint_focus = {
+		id = CW_tizard_mission_focus
+		text = tizard_mission_focus
+		icon = GFX_goal_generic_scientific_exchange
+		prerequisite = { focus = CW_tube_alloys }
+		relative_position_id = CW_tube_alloys
+		x = 0
+		y = 2
+		cost = 55
+		search_filters = {FOCUS_FILTER_RESEARCH}
+		search_filters = {FOCUS_FILTER_FOREIGN_DIPLOMACY}
+		
+		available = {
+			has_war_together_with = USA
+		}
+		
+		completion_reward_joint_originator = {
+			USA = {
+				country_event = britain.1
+				custom_effect_tooltip = tizard_mission_tt
+			}
+			set_temp_variable = { target_slot = maud_focus_slot }
+		}
+}
+
+####################
+#### D-DAY TREE ####
+####################
+
+shared_focus = {
+	id = CW_vichy_colonies
+	icon = GFX_goal_fra_freedom_flag
+	x = 56
+	y = 10
+	cost = 19
+	search_filters = {FOCUS_FILTER_RESEARCH}
+	search_filters = {FOCUS_FILTER_FOREIGN_DIPLOMACY}
+	allow_branch = {
+		OR = {
+			has_country_flag = testing
+			has_global_flag = fall_of_france
+		}
+	}
+	offset = {
+		x = -34
+		y = -2
+		trigger = {
+			tag = CAN
+		}
+	}	
+	offset = {
+		x = -14
+		y = -9
+		trigger = {
+			tag = NZL
+		}
+	}	
+	offset = {
+		x = -20
+		y = -4
+		trigger = {
+			tag = AST
+		}
+	}	
+	offset = {
+		x = -41
+		y = -4
+		trigger = {
+			tag = RAJ
+		}
+	}
+	offset = {
+		x = -57
+		y = -5
+		trigger = {
+			tag = FRA
+		}
+	}
+	offset = {
+		x = -35
+		y = -4
+		trigger = {
+			tag = SAF
+		}
+	}
+	offset = {
+		x = -8
+		y = -3
+		trigger = {
+			tag = USA
+		}
+	}
+	offset = {
+		x = -42
+		y = 0
+		trigger = {
+			tag = IRE
+		}
+	}
+	available = {
+		is_in_faction_with = ENG
+		
+		if = {
+			limit = {
+				is_ai = yes
+			}
+			NOT = { has_global_flag = ai_no_dday_tree }
+		}
+	}
+	available_if_capitulated = yes	
+	completion_reward = {
+		navy_experience = 10
+		random_navy_leader = {
+			gain_xp = 35
+		}
+		hidden_effect = {
+			every_country = {
+				limit = {
+					OR = {
+						is_in_faction_with = ENG
+						tag = USA
+					}
+				}
+				unlock_national_focus = CW_vichy_colonies
+			}				
+		}				
+	}
+}
+joint_focus = {
+	id = CW_pierre
+	icon = GFX_focus_generic_coastal_fort
+	prerequisite = { focus = CW_vichy_colonies }
+	relative_position_id = CW_vichy_colonies
+	x = -2
+	y = 1	
+	cost = 20
+	search_filters = {FOCUS_FILTER_RESEARCH}
+	search_filters = {FOCUS_FILTER_FOREIGN_DIPLOMACY}
+	bypass = {
+		NOT = {
+			VIC = {
+				controls_state = 730
+			}
+		}
+	}
+	available = {
+		NOT = {
+			or = {
+				tag = CAN
+				tag = USA
+			}
+			has_global_flag = vichy_war
+		}
+		NOT = { has_war_with = VIX }
+		is_in_faction_with = ENG
+		
+		if = {
+			limit = {
+				is_ai = yes
+			}
+			NOT = { has_global_flag = ai_no_dday_tree }
+		}
+	}
+	continue_if_invalid = yes	
+	available_if_capitulated = yes
+	completion_reward_joint_originator = {
+		FRA = {
+			transfer_state = 730
+			add_named_threat = {
+				threat = 0.25
+				name = CW_pierre
+			}
+			random_navy_leader = {
+				gain_xp = 45
+			}
+			every_country = {
+				limit = {
+					OR = {
+						has_country_flag = monroe_doctrine
+						tag = USA
+					}
+				}
+				add_opinion_modifier = {
+					target = FRA
+					modifier = condemn_aggression
+				}
+			}	
+		}
+	}
+}
+joint_focus = {
+	id = CW_caledonia
+	icon = GFX_focus_generic_coastal_fort
+	prerequisite = { focus = CW_pierre }
+	relative_position_id = CW_pierre
+	x = 0
+	y = 2
+	offset = {
+		x = 1
+		y = -1
+		trigger = {
+			tag = AST
+		}
+	}	
+	cost = 20
+	search_filters = {FOCUS_FILTER_RESEARCH}
+	search_filters = {FOCUS_FILTER_FOREIGN_DIPLOMACY}
+	bypass = {
+		NOT = {
+			VIC = {
+				controls_state = 635
+			}
+		}
+	}
+	available = {
+		NOT = {
+			has_global_flag = vichy_war
+		}
+		NOT = { has_war_with = VIX }
+		is_in_faction_with = ENG
+		
+		if = {
+			limit = {
+				is_ai = yes
+			}
+			NOT = { has_global_flag = ai_no_dday_tree }
+		}
+	}
+	available_if_capitulated = yes
+	continue_if_invalid = yes	
+	completion_reward_joint_originator = {
+		custom_effect_tooltip = limited_vichy_war_tt
+		custom_effect_tooltip = caledonia_tt
+		hidden_effect = {
+			VIX = {
+				transfer_state = 635
+				add_state_core = 635
+				add_to_war = {
+					targeted_alliance = GER
+					enemy = ENG
+				}
+				inherit_technology = VIC
+				set_country_flag = FRA_armor
+				set_country_flag = FRA_air
+				set_temp_variable = { slots = VIC.amount_research_slots }
+				if = {
+					limit = { check_variable = { slots > 2 } }
+					subtract_from_temp_variable = { slots = 2 }
+					multiply_temp_variable = { slots = -1 }
+					meta_effect = {
+						text = {
+							VIX = { add_research_slot = [NUM] }
+						}
+						NUM = "[?slots]"
+					}
+				}	
+				division_template = {
+					name = "Brigade Coloniale"			
+
+					regiments = {
+						infantry = { x = 0 y = 0 }
+						militia = { x = 0 y = 1 }
+						militia = { x = 0 y = 2 }
+					}
+					support = {
+						DIV_HQ = { x = 0 y = 0 }
+						recon_cav = { x = 0 y = 1 }
+					}
+					
+					priority = 0
+				}	
+			}
+			635 = {
+				remove_core_of = VIC
+				create_unit = {
+					division = "name = \"Brigade Coloniale\" division_template = \"Brigade Coloniale\" start_experience_factor = 0.25"
+					owner = VIX
+				}
+			}
+			VIC = {
+				set_nationality = {
+					target_country = VIX
+					character = VIC_nogues_charles
+				}
+			}
+			if = {
+				limit = {
+					NOT = {
+						any_of_scopes = {
+							array = global.players
+							
+							is_in_faction_with = ENG
+						}
+					}
+				}
+				VIX = { 
+					country_event = { id = vichy.1 hours = 1 }
+				}
+			}
+		}
+	}
+}
+joint_focus = {
+	id = CW_caribbeans
+	icon = GFX_goal_coffee
+	prerequisite = { focus = CW_vichy_colonies }
+	relative_position_id = CW_vichy_colonies
+	x = 0
+	y = 1
+	cost = 25
+	search_filters = {FOCUS_FILTER_RESEARCH}
+	search_filters = {FOCUS_FILTER_FOREIGN_DIPLOMACY}
+	available_if_capitulated = yes	
+	available = {
+		NOT = {
+			has_global_flag = vichy_war
+		}
+		NOT = { has_war_with = VIX }
+		is_in_faction_with = ENG
+		
+		if = {
+			limit = {
+				is_ai = yes
+			}
+			NOT = { has_global_flag = ai_no_dday_tree }
+		}
+	}
+	bypass = {
+		NOT = {
+			VIC = {
+				controls_state = 694
+			}
+		}
+	}
+	continue_if_invalid = yes
+	select_effect = { 
+		set_global_flag = { flag = vichy_war value = 1 days = 25 }
+	}
+	completion_reward_joint_originator = {
+		custom_effect_tooltip = limited_vichy_war_tt
+		custom_effect_tooltip = caribbeans_tt
+		hidden_effect = {
+			VIX = {
+				transfer_state = 694
+				add_state_core = 694
+				add_to_war = {
+					targeted_alliance = GER
+					enemy = ENG
+				}
+				inherit_technology = VIC
+				set_country_flag = FRA_armor
+				set_country_flag = FRA_air
+				set_temp_variable = { slots = VIC.amount_research_slots }
+				if = {
+					limit = { check_variable = { slots > 2 } }
+					subtract_from_temp_variable = { slots = 2 }
+					multiply_temp_variable = { slots = -1 }
+					meta_effect = {
+						text = {
+							VIX = { add_research_slot = [NUM] }
+						}
+						NUM = "[?slots]"
+					}
+				}	
+				division_template = {
+					name = "Brigade Coloniale"			
+
+					regiments = {
+						infantry = { x = 0 y = 0 }
+						militia = { x = 0 y = 1 }
+						militia = { x = 0 y = 2 }
+					}
+					support = {
+						DIV_HQ = { x = 0 y = 0 }
+						recon_cav = { x = 0 y = 1 }
+					}
+					
+					priority = 0
+				}	
+			}
+			694 = {
+				remove_core_of = VIC
+				create_unit = {
+					division = "name = \"Brigade Coloniale\" division_template = \"Brigade Coloniale\" start_experience_factor = 0.25"
+					owner = VIX
+				}
+			}
+			VIC = {
+				set_nationality = {
+					target_country = VIX
+					character = VIC_nogues_charles
+				}
+			}
+			if = {
+				limit = {
+					NOT = {
+						any_of_scopes = {
+							array = global.players
+							
+							is_in_faction_with = ENG
+						}
+					}
+				}
+				VIX = { 
+					country_event = { id = vichy.1 hours = 1 }
+				}
+			}
+		}
+	}
+}
+joint_focus = {
+	id = CW_meanace
+	icon = GFX_focus_generic_africa_naval
+	prerequisite = { focus = CW_vichy_colonies }
+	relative_position_id = CW_vichy_colonies
+	x = -4
+	y = 1
+	offset = {
+		x = 1
+		y = 1
+		trigger = {
+			or = {
+				tag = SAF
+				tag = ENG
+			}
+		}
+	}
+	bypass = {
+		VIC = {
+			exists = no
+		}
+	}
+	continue_if_invalid = yes
+	cost = 25
+	search_filters = {FOCUS_FILTER_RESEARCH}
+	search_filters = {FOCUS_FILTER_FOREIGN_DIPLOMACY}
+		
+	available = {
+		NOT = {
+			has_global_flag = vichy_war
+		}
+		NOT = { has_war_with = VIX }
+		if = {
+			limit = {
+				is_ai = no
+			}
+			AND = {
+				ships_in_area = {
+					type = capital_ship
+					area = 61
+					size > 1
+				}
+				ships_in_area = {
+					type = carrier
+					area = 61
+					size > 0
+				}
+				ships_in_area = {
+					area = 61
+					size > 18
+				}
+			}
+		}
+		is_in_faction_with = ENG
+	}
+		
+	completion_reward_joint_originator = {
+		navy_experience = 25
+		air_experience = 5
+		random_navy_leader = {
+			gain_xp = 100
+		}		
+		FRA = {
+			add_political_power = -25
+		}
+	}
+}
+joint_focus = {
+	id = CW_guiana
+	icon = GFX_focus_generic_coffee
+	prerequisite = { focus = CW_meanace }
+	relative_position_id = CW_meanace
+	x = 0
+	y = 2
+	offset = {
+		x = -1
+		y = -1
+		trigger = {
+			or = {
+				tag = SAF
+				tag = ENG
+			}
+		}
+	}
+	available_if_capitulated = yes
+	continue_if_invalid = yes
+	cost = 25
+	search_filters = {FOCUS_FILTER_RESEARCH}
+	search_filters = {FOCUS_FILTER_FOREIGN_DIPLOMACY}
+		
+	available = {
+		NOT = {
+			has_global_flag = vichy_war
+		}
+		NOT = { has_war_with = VIX }
+		is_in_faction_with = ENG
+		
+		if = {
+			limit = {
+				is_ai = yes
+			}
+			NOT = { has_global_flag = ai_no_dday_tree }
+		}
+	}
+	bypass = {
+		NOT = {
+			VIC = {
+				controls_state = 310
+			}
+		}
+	}
+	select_effect = { 
+		set_global_flag = { flag = vichy_war value = 1 days = 25 }
+	}
+	completion_reward_joint_originator = {
+		custom_effect_tooltip = limited_vichy_war_tt
+		custom_effect_tooltip = guiana_tt
+		hidden_effect = {
+			VIX = {
+				transfer_state = 310
+				add_state_core = 310
+				add_to_war = {
+					targeted_alliance = GER
+					enemy = ENG
+				}
+				inherit_technology = VIC
+				set_country_flag = FRA_armor
+				set_country_flag = FRA_air
+				set_temp_variable = { slots = VIC.amount_research_slots }
+				if = {
+					limit = { check_variable = { slots > 2 } }
+					subtract_from_temp_variable = { slots = 2 }
+					multiply_temp_variable = { slots = -1 }
+					meta_effect = {
+						text = {
+							VIX = { add_research_slot = [NUM] }
+						}
+						NUM = "[?slots]"
+					}
+				}	
+				division_template = {
+					name = "Brigade Coloniale"			
+
+					regiments = {
+						infantry = { x = 0 y = 0 }
+						militia = { x = 0 y = 1 }
+						militia = { x = 0 y = 2 }
+					}
+					support = {
+						DIV_HQ = { x = 0 y = 0 }
+						recon_cav = { x = 0 y = 1 }
+					}
+					
+					priority = 0
+				}	
+			}
+			310 = {
+				remove_core_of = VIC
+				create_unit = {
+					division = "name = \"Brigade Coloniale\" division_template = \"Brigade Coloniale\" start_experience_factor = 0.25"
+					owner = VIX
+				}
+			}
+			VIC = {
+				set_nationality = {
+					target_country = VIX
+					character = VIC_nogues_charles
+				}
+			}
+			if = {
+				limit = {
+					NOT = {
+						any_of_scopes = {
+							array = global.players
+							
+							is_in_faction_with = ENG
+						}
+					}
+				}
+				VIX = { 
+					country_event = { id = vichy.1 hours = 1 }
+				}
+			}
+		}
+	}
+}
+joint_focus = {
+	id = CW_operation_exporter
+	text = ENG_operation_exporter
+	icon = GFX_focus_BMP_crush_pan_arab_revolt
+	prerequisite = { focus = CW_meanace }
+	relative_position_id = CW_meanace
+	x = -1
+	y = 1
+	offset = {
+		x = -2
+		y = 0
+		trigger = {
+			or = {
+				tag = SAF
+				tag = ENG
+			}
+		}
+	}
+	available_if_capitulated = yes
+	continue_if_invalid = yes
+	offset = {
+		y = 2
+		trigger = {
+			tag = CAN
+		}
+	}
+	cost = 25
+	search_filters = {FOCUS_FILTER_RESEARCH}
+	search_filters = {FOCUS_FILTER_FOREIGN_DIPLOMACY}
+	offset = {
+		x = 0
+		y = 2
+		trigger = {
+			OR = {
+				tag = AST
+				tag = NZL
+			}
+		}
+	}		
+	available = {
+		NOT = {
+			has_global_flag = vichy_war
+		}
+		NOT = { has_war_with = VIX }
+		IRQ = { 
+			or = {
+				has_capitulated = yes
+				is_in_faction_with = ENG
+			}
+		}	
+		is_in_faction_with = ENG
+		
+		if = {
+			limit = {
+				is_ai = yes
+			}
+			NOT = { has_global_flag = ai_no_dday_tree }
+		}
+	}
+	bypass = {
+		SYR = {
+			is_in_faction_with = ENG
+		}
+		LEB = {
+			is_in_faction_with = ENG
+		}
+	}
+	select_effect = { 
+		set_global_flag = { flag = vichy_war value = 1 days = 25 }
+	}
+		
+	completion_reward_joint_originator = {
+		hidden_effect = {
+			set_country_flag = operation_exporter
+			set_autonomy = {
+				target = SYR
+				autonomy_state = autonomy_free
+			}
+			set_autonomy = {
+				target = LEB
+				autonomy_state = autonomy_free
+			}
+			GER = {
+				add_to_faction = LEB
+				add_to_faction = SYR
+			}
+		}
+		FRA = {
+			declare_war_on = { target = LEB type = puppet_wargoal_focus }
+			declare_war_on = { target = SYR type = puppet_wargoal_focus }
+		}
+	}
+}
+joint_focus = {
+	id = CW_gabon
+	icon = GFX_focus_generic_africa_liberation
+	prerequisite = { focus = CW_vichy_colonies }
+	relative_position_id = CW_vichy_colonies
+	x = -1
+	y = 2
+	offset = {
+		x = -2
+		y = 0
+		trigger = {
+			tag = AST
+		}
+	}	
+	cost = 25
+	search_filters = {FOCUS_FILTER_RESEARCH}
+	search_filters = {FOCUS_FILTER_FOREIGN_DIPLOMACY}
+	continue_if_invalid = yes
+	available_if_capitulated = yes	
+	available = {
+		NOT = {
+			has_global_flag = vichy_war
+		}
+		NOT = { has_war_with = VIX }
+		is_in_faction_with = ENG
+		
+		if = {
+			limit = {
+				is_ai = yes
+			}
+			NOT = { has_global_flag = ai_no_dday_tree }
+		}
+	}
+	bypass = {
+		NOT = {
+			VIC = {
+				controls_state = 539
+				controls_state = 660
+				controls_state = 884
+			}
+		}
+	}
+	select_effect = { 
+		set_global_flag = { flag = vichy_war value = 1 days = 25 }
+	}
+	completion_reward_joint_originator = {
+		custom_effect_tooltip = limited_vichy_war_tt
+		custom_effect_tooltip = gabon_tt
+		hidden_effect = {
+			VIX = {
+				transfer_state = 539
+				add_state_core = 539
+				transfer_state = 660
+				add_state_core = 660
+				transfer_state = 884
+				add_state_core = 884
+				add_to_war = {
+					targeted_alliance = GER
+					enemy = ENG
+				}
+				inherit_technology = VIC
+				set_country_flag = FRA_armor
+				set_country_flag = FRA_air
+				set_temp_variable = { slots = VIC.amount_research_slots }
+				if = {
+					limit = { check_variable = { slots > 2 } }
+					subtract_from_temp_variable = { slots = 2 }
+					multiply_temp_variable = { slots = -1 }
+					meta_effect = {
+						text = {
+							VIX = { add_research_slot = [NUM] }
+						}
+						NUM = "[?slots]"
+					}
+				}	
+				division_template = {
+					name = "Brigade Coloniale"			
+
+					regiments = {
+						infantry = { x = 0 y = 0 }
+						militia = { x = 0 y = 1 }
+						militia = { x = 0 y = 2 }
+					}
+					support = {
+						DIV_HQ = { x = 0 y = 0 }
+						recon_cav = { x = 0 y = 1 }
+					}
+					
+					priority = 0
+				}	
+				division_template = {
+					name = "Division d'Infanterie Coloniale"		
+					
+					regiments = {
+						light_infantry = { x = 0 y = 0 }
+						light_infantry = { x = 0 y = 1 }
+						
+						cavalry = { x = 1 y = 0 }
+					}
+					support = {
+						DIV_HQ = { x = 0 y = 0 }
+						recon_cav = { x = 0 y = 1 }
+					}
+				}
+			}
+			660 = {
+				remove_core_of = VIC
+				create_unit = {
+					division = "name = \"Brigade Coloniale\" division_template = \"Brigade Coloniale\" start_experience_factor = 0.25"
+					owner = VIX
+				}
+			}
+			539 = {
+				remove_core_of = VIC
+				create_unit = {
+					division = "name = \"Brigade Coloniale\" division_template = \"Brigade Coloniale\" start_experience_factor = 0.25"
+					owner = VIX
+				}
+			}
+			884 = {
+				remove_core_of = VIC
+				create_unit = {
+					division = "name = \"Division d'Infanterie Coloniale\" division_template = \"Division d'Infanterie Coloniale\" start_experience_factor = 0.25"
+					owner = VIX
+				}
+			}
+			VIC = {
+				set_nationality = {
+					target_country = VIX
+					character = VIC_nogues_charles
+				}
+			}
+			if = {
+				limit = {
+					NOT = {
+						any_of_scopes = {
+							array = global.players
+							
+							is_in_faction_with = ENG
+						}
+					}
+				}
+				VIX = { 
+					country_event = { id = vichy.1 hours = 1 }
+				}
+			}
+		}
+	}
+}
+joint_focus = {
+	id = CW_somaliland
+	icon = GFX_focus_ETH_protector_of_the_somalis
+	prerequisite = { focus = CW_vichy_colonies }
+	relative_position_id = CW_vichy_colonies
+	x = 3
+	y = 2
+	cost = 25
+	available_if_capitulated = yes
+	search_filters = {FOCUS_FILTER_RESEARCH}
+	search_filters = {FOCUS_FILTER_FOREIGN_DIPLOMACY}
+		
+	available = {
+		NOT = {
+			has_global_flag = vichy_war
+		}
+		NOT = { has_war_with = VIX }
+		is_in_faction_with = ENG
+		
+		if = {
+			limit = {
+				is_ai = yes
+			}
+			NOT = { has_global_flag = ai_no_dday_tree }
+		}
+	}
+	select_effect = { 
+		set_global_flag = { flag = vichy_war value = 1 days = 25 }
+	}
+	continue_if_invalid = yes
+	bypass = {
+		NOT = {
+			VIC = {
+				controls_state = 268
+			}
+		}
+	}
+	completion_reward_joint_originator = {
+		custom_effect_tooltip = limited_vichy_war_tt
+		custom_effect_tooltip = somaliland_tt
+		hidden_effect = {
+			VIX = {
+				transfer_state = 268
+				add_state_core = 268
+				add_to_war = {
+					targeted_alliance = GER
+					enemy = ENG
+				}
+				inherit_technology = VIC
+				set_country_flag = FRA_armor
+				set_country_flag = FRA_air
+				set_temp_variable = { slots = VIC.amount_research_slots }
+				if = {
+					limit = { check_variable = { slots > 2 } }
+					subtract_from_temp_variable = { slots = 2 }
+					multiply_temp_variable = { slots = -1 }
+					meta_effect = {
+						text = {
+							VIX = { add_research_slot = [NUM] }
+						}
+						NUM = "[?slots]"
+					}
+				}	
+				division_template = {
+					name = "Brigade Coloniale"			
+
+					regiments = {
+						infantry = { x = 0 y = 0 }
+						militia = { x = 0 y = 1 }
+						militia = { x = 0 y = 2 }
+					}
+					support = {
+						DIV_HQ = { x = 0 y = 0 }
+						recon_cav = { x = 0 y = 1 }
+					}
+					
+					priority = 0
+				}	
+				division_template = {
+					name = "Division d'Infanterie Coloniale"		
+					
+					regiments = {
+						light_infantry = { x = 0 y = 0 }
+						light_infantry = { x = 0 y = 1 }
+						
+						cavalry = { x = 1 y = 0 }
+					}
+					support = {
+						DIV_HQ = { x = 0 y = 0 }
+						recon_cav = { x = 0 y = 1 }
+					}
+				}
+			}
+			268 = {
+				remove_core_of = VIC
+				create_unit = {
+					division = "name = \"Brigade Coloniale\" division_template = \"Brigade Coloniale\" start_experience_factor = 0.25"
+					owner = VIX
+				}
+			}
+			VIC = {
+				set_nationality = {
+					target_country = VIX
+					character = VIC_nogues_charles
+				}
+			}
+			if = {
+				limit = {
+					NOT = {
+						any_of_scopes = {
+							array = global.players
+							
+							is_in_faction_with = ENG
+						}
+					}
+				}
+				VIX = { 
+					country_event = { id = vichy.1 hours = 1 }
+				}
+			}
+		}
+	}
+}
+joint_focus = {
+	id = CW_corsica
+	icon = GFX_focus_spa_save_the_alcazar
+	prerequisite = { focus = CW_somaliland }
+	relative_position_id = CW_somaliland
+	x = -1
+	y = 1
+	cost = 25
+	search_filters = {FOCUS_FILTER_RESEARCH}
+	search_filters = {FOCUS_FILTER_FOREIGN_DIPLOMACY}
+	available_if_capitulated = yes
+		
+	available = {
+		NOT = {
+			has_global_flag = vichy_war
+		}
+		NOT = { has_war_with = VIX }
+		is_in_faction_with = ENG
+		
+		if = {
+			limit = {
+				is_ai = yes
+			}
+			NOT = { has_global_flag = ai_no_dday_tree }
+		}
+	}
+	continue_if_invalid = yes
+	bypass = {
+		NOT = {
+			VIC = {
+				controls_state = 1
+			}
+		}
+	}
+	select_effect = { 
+		set_global_flag = { flag = vichy_war value = 1 days = 25 }
+	}
+	completion_reward_joint_originator = {
+		custom_effect_tooltip = limited_vichy_war_tt
+		custom_effect_tooltip = corsica_tt
+		hidden_effect = {
+			VIX = {
+				transfer_state = 1
+				add_state_core = 1
+				add_to_war = {
+					targeted_alliance = GER
+					enemy = ENG
+				}
+				inherit_technology = VIC
+				set_country_flag = FRA_armor
+				set_country_flag = FRA_air
+				set_temp_variable = { slots = VIC.amount_research_slots }
+				if = {
+					limit = { check_variable = { slots > 2 } }
+					subtract_from_temp_variable = { slots = 2 }
+					multiply_temp_variable = { slots = -1 }
+					meta_effect = {
+						text = {
+							VIX = { add_research_slot = [NUM] }
+						}
+						NUM = "[?slots]"
+					}
+				}	
+				division_template = {
+					name = "Brigade Coloniale"			
+
+					regiments = {
+						infantry = { x = 0 y = 0 }
+						militia = { x = 0 y = 1 }
+						militia = { x = 0 y = 2 }
+					}
+					support = {
+						DIV_HQ = { x = 0 y = 0 }
+						recon_cav = { x = 0 y = 1 }
+					}
+					
+					priority = 0
+				}	
+			}
+			1 = {
+				remove_core_of = VIC
+				create_unit = {
+					division = "name = \"Brigade Coloniale\" division_template = \"Brigade Coloniale\" start_experience_factor = 0.25"
+					owner = VIX
+				}
+			}
+			VIC = {
+				set_nationality = {
+					target_country = VIX
+					character = VIC_nogues_charles
+				}
+			}
+			if = {
+				limit = {
+					NOT = {
+						any_of_scopes = {
+							array = global.players
+							
+							is_in_faction_with = ENG
+						}
+					}
+				}
+				VIX = { 
+					country_event = { id = vichy.1 hours = 1 }
+				}
+			}
+		}
+	}
+}
+joint_focus = {
+	id = CW_ironclad
+	icon = GFX_goal_tfv_saf_secure_interests_in_africa
+	prerequisite = { focus = CW_vichy_colonies }
+	relative_position_id = CW_vichy_colonies
+	available_if_capitulated = yes
+	x = 2
+	y = 1
+	cost = 25
+	search_filters = {FOCUS_FILTER_RESEARCH}
+	search_filters = {FOCUS_FILTER_FOREIGN_DIPLOMACY}
+		
+	available = {
+		has_war_with = JAP
+		NOT = {
+			has_global_flag = vichy_war
+		}
+		NOT = { has_war_with = VIX }
+		is_in_faction_with = ENG
+		
+		if = {
+			limit = {
+				is_ai = yes
+			}
+			NOT = { has_global_flag = ai_no_dday_tree }
+		}
+	}
+	bypass = {
+		NOT = {
+			VIC = {
+				controls_state = 543
+				controls_state = 708
+			}
+		}
+	}
+	continue_if_invalid = yes
+	select_effect = { 
+		set_global_flag = { flag = vichy_war value = 1 days = 25 }
+	}
+	completion_reward_joint_originator = {
+		custom_effect_tooltip = limited_vichy_war_tt
+		custom_effect_tooltip = ironclad_tt
+		hidden_effect = {
+			VIX = {
+				transfer_state = 543
+				add_state_core = 543
+				transfer_state = 708
+				add_state_core = 708
+				add_to_war = {
+					targeted_alliance = GER
+					enemy = ENG
+				}
+				inherit_technology = VIC
+				set_country_flag = FRA_armor
+				set_country_flag = FRA_air
+				set_temp_variable = { slots = VIC.amount_research_slots }
+				if = {
+					limit = { check_variable = { slots > 2 } }
+					subtract_from_temp_variable = { slots = 2 }
+					multiply_temp_variable = { slots = -1 }
+					meta_effect = {
+						text = {
+							VIX = { add_research_slot = [NUM] }
+						}
+						NUM = "[?slots]"
+					}
+				}	
+				division_template = {
+					name = "Brigade Coloniale"			
+
+					regiments = {
+						infantry = { x = 0 y = 0 }
+						militia = { x = 0 y = 1 }
+						militia = { x = 0 y = 2 }
+					}
+					support = {
+						DIV_HQ = { x = 0 y = 0 }
+						recon_cav = { x = 0 y = 1 }
+					}
+					
+					priority = 0
+				}	
+			}
+			543 = {
+				remove_core_of = VIC
+				create_unit = {
+					division = "name = \"Brigade Coloniale\" division_template = \"Brigade Coloniale\" start_experience_factor = 0.25"
+					owner = VIX
+				}
+			}
+			708 = {
+				remove_core_of = VIC
+				create_unit = {
+					division = "name = \"Brigade Coloniale\" division_template = \"Brigade Coloniale\" start_experience_factor = 0.25 start_equipment_factor = 0.5"
+					owner = VIX
+				}
+			}
+			VIC = {
+				set_nationality = {
+					target_country = VIX
+					character = VIC_nogues_charles
+				}
+			}
+			if = {
+				limit = {
+					NOT = {
+						any_of_scopes = {
+							array = global.players
+							
+							is_in_faction_with = ENG
+						}
+					}
+				}
+				VIX = { 
+					country_event = { id = vichy.1 hours = 1 }
+				}
+			}
+		}
+	}
+}
+joint_focus = {
+	id = CW_reunion
+	icon = GFX_goal_sugar
+	prerequisite = { focus = CW_vichy_colonies }
+	relative_position_id = CW_vichy_colonies
+	available_if_capitulated = yes
+	x = 1
+	y = 2
+	cost = 25
+	search_filters = {FOCUS_FILTER_RESEARCH}
+	search_filters = {FOCUS_FILTER_FOREIGN_DIPLOMACY}
+		
+	available = {
+		NOT = {
+			has_global_flag = vichy_war
+		}
+		NOT = { has_war_with = VIX }
+		is_in_faction_with = ENG
+		
+		if = {
+			limit = {
+				is_ai = yes
+			}
+			NOT = { has_global_flag = ai_no_dday_tree }
+		}
+	}
+	continue_if_invalid = yes
+	bypass = {
+		NOT = {
+			VIC = {
+				controls_state = 706
+				controls_state = 713
+			}
+		}
+	}
+	select_effect = { 
+		set_global_flag = { flag = vichy_war value = 1 days = 25 }
+	}
+	completion_reward_joint_originator = {
+		custom_effect_tooltip = limited_vichy_war_tt
+		custom_effect_tooltip = reunion_tt
+		hidden_effect = {
+			VIX = {
+				transfer_state = 706
+				add_state_core = 706
+				transfer_state = 713
+				add_state_core = 713
+				add_to_war = {
+					targeted_alliance = GER
+					enemy = ENG
+				}
+				inherit_technology = VIC
+				set_country_flag = FRA_armor
+				set_country_flag = FRA_air
+				set_temp_variable = { slots = VIC.amount_research_slots }
+				if = {
+					limit = { check_variable = { slots > 2 } }
+					subtract_from_temp_variable = { slots = 2 }
+					multiply_temp_variable = { slots = -1 }
+					meta_effect = {
+						text = {
+							VIX = { add_research_slot = [NUM] }
+						}
+						NUM = "[?slots]"
+					}
+				}	
+				division_template = {
+					name = "Brigade Coloniale"			
+
+					regiments = {
+						infantry = { x = 0 y = 0 }
+						militia = { x = 0 y = 1 }
+						militia = { x = 0 y = 2 }
+					}
+					support = {
+						DIV_HQ = { x = 0 y = 0 }
+						recon_cav = { x = 0 y = 1 }
+					}
+					
+					priority = 0
+				}	
+			}
+			706 = {
+				remove_core_of = VIC
+				create_unit = {
+					division = "name = \"Brigade Coloniale\" division_template = \"Brigade Coloniale\" start_experience_factor = 0.25"
+					owner = VIX
+				}
+			}
+			VIC = {
+				remove_state_core = 713
+				set_nationality = {
+					target_country = VIX
+					character = VIC_nogues_charles
+				}
+			}
+			if = {
+				limit = {
+					NOT = {
+						any_of_scopes = {
+							array = global.players
+							
+							is_in_faction_with = ENG
+						}
+					}
+				}
+				VIX = { 
+					country_event = { id = vichy.1 hours = 1 }
+				}
+			}
+		}
+	}
+}
+joint_focus = {# Operation Torch
+	id = USA_torch
+	icon = GFX_france_first
+	prerequisite = { focus = CW_2nd_front focus = CW_operation_exporter }
+	continue_if_invalid = yes
+	available = {
+		VIC = { exists = yes }
+		#NOT = {
+		#	has_global_flag = vichy_war
+		#}
+		NOT = { has_war_with = VIX }
+		is_in_faction_with = ENG
+		if = {
+			limit = {
+				is_ai = no
+			}
+			118 = { is_controlled_by_ROOT_or_ally = yes }
+			AND = {
+				ships_in_area = {
+					type = capital_ship
+					area = 48
+					size > 1
+				}
+				ships_in_area = {
+					type = carrier
+					area = 48
+					size > 1
+				}
+				ships_in_area = {
+					area = 48
+					size > 29
+				}
+			}
+			AND = {
+				ships_in_area = {
+					type = capital_ship
+					area = 68
+					size > 1
+				}
+				ships_in_area = {
+					type = carrier
+					area = 68
+					size > 1
+				}
+				ships_in_area = {
+					area = 68
+					size > 29
+				}
+			}	
+		}
+		else = {
+			VIC = {
+				is_in_faction = no
+				OR = {
+					gives_military_access_to = GER
+					gives_military_access_to = ITA
+				}
+			}
+			118 = { is_controlled_by_ROOT_or_ally = yes }
+		}
+		
+		if = {
+			limit = {
+				is_ai = yes
+			}
+			NOT = { has_global_flag = ai_no_dday_tree }
+		}
+	}
+	relative_position_id =  CW_operation_exporter
+	x = 0
+	y = 3
+	offset = {
+		x = 0
+		y = -2
+		trigger = {
+			OR = {
+				tag = AST
+				tag = NZL
+				tag = CAN
+			}
+		}
+	}
+	offset = {
+		x = 1
+		y = -1
+		trigger = {
+			or = {
+				tag = SAF
+				tag = ENG
+			}
+		}
+	}
+	cost = 28 # Previously was: 75.04 
+	search_filters = {FOCUS_FILTER_FOREIGN_DIPLOMACY}
+	select_effect = { 
+		set_global_flag = { flag = vichy_war value = 1 days = 28 }
+	}
+	completion_reward_joint_originator = {
+		custom_effect_tooltip = limited_vichy_war_tt
+		custom_effect_tooltip = torch_tt
+		hidden_effect = {
+			country_event = { id = news.3135 days = 2 }
+			if = {
+				limit = { VIC = { owns_state = 462 } }
+				VIX = {
+					transfer_state = 462
+					add_state_core = 462
+				}
+				VIC = {
+					remove_state_core = 462
+					add_to_temp_array = { vichy_states = 462 }
+				}
+			}
+			if = {
+				limit = { VIC = { owns_state = 461 } }
+				VIX = {
+					transfer_state = 461
+					add_state_core = 461
+				}
+				VIC = {
+					remove_state_core = 461
+					add_to_temp_array = { vichy_states = 461 }
+				}
+			}
+			if = {
+				limit = { VIC = { owns_state = 459 } }
+				VIX = {
+					transfer_state = 459
+					add_state_core = 459
+				}
+				VIC = {
+					remove_state_core = 459
+					add_to_temp_array = { vichy_states = 459 }
+				}
+			}
+			if = {
+				limit = { VIC = { owns_state = 513 } }
+				VIX = {
+					transfer_state = 513
+					add_state_core = 513
+				}
+				VIC = {
+					remove_state_core = 513
+					add_to_temp_array = { vichy_states = 513 }
+				}
+			}
+			if = {
+				limit = { VIC = { owns_state = 460 } }
+				VIX = {
+					transfer_state = 460
+					add_state_core = 460
+				}
+				VIC = {
+					remove_state_core = 460
+					add_to_temp_array = { vichy_states = 460 }
+				}
+			}
+			if = {
+				limit = { VIC = { owns_state = 458 } }
+				VIX = {
+					transfer_state = 458
+					add_state_core = 458
+				}
+				VIC = {
+					remove_state_core = 458
+					add_to_temp_array = { vichy_states = 458 }
+				}
+			}
+			if = {
+				limit = { VIC = { owns_state = 665 } }
+				VIX = {
+					transfer_state = 665
+					add_state_core = 665
+				}
+				VIC = {
+					remove_state_core = 665
+					add_to_temp_array = { vichy_states = 665 }
+				}
+			}
+			VIX = {
+				add_ideas = no_surrender
+				add_to_war = {
+					targeted_alliance = GER
+					enemy = ENG
+				}
+				inherit_technology = VIC
+				set_country_flag = FRA_armor
+				set_country_flag = FRA_air
+				set_temp_variable = { slots = VIC.amount_research_slots }
+				if = {
+					limit = { check_variable = { slots > 2 } }
+					subtract_from_temp_variable = { slots = 2 }
+					multiply_temp_variable = { slots = -1 }
+					meta_effect = {
+						text = {
+							VIX = { add_research_slot = [NUM] }
+						}
+						NUM = "[?slots]"
+					}
+				}	
+				division_template = {
+					name = "Brigade Coloniale"			
+
+					regiments = {
+						infantry = { x = 0 y = 0 }
+						militia = { x = 0 y = 1 }
+						militia = { x = 0 y = 2 }
+					}
+					support = {
+						DIV_HQ = { x = 0 y = 0 }
+						recon_cav = { x = 0 y = 1 }
+					}
+					
+					priority = 0
+				}	
+			}
+			665 = {
+				create_unit = {
+					division = "name = \"Brigade Coloniale\" division_template = \"Brigade Coloniale\" start_experience_factor = 0.25"
+					owner = VIX
+				}
+			}
+			VIC = {
+				set_nationality = {
+					target_country = VIX
+					character = VIC_nogues_charles
+				}
+				transfer_units_fraction= {
+					target = VIX
+					stockpile_ratio = 0.5
+					army_ratio = 0.5
+					navy_ratio = 0
+					air_ratio = 0.5
+				}
+
+				every_owned_state = {
+					limit = { 
+						impassable = no 
+						NOT = {
+							state = 461
+							state = 462
+							state = 513
+							state = 459
+							state = 460
+							state = 458
+							state = 665
+						}
+					}
+					teleport_armies = {
+						limit = { tag = VIX }
+						to_state_array = vichy_states
+					}
+				}
+				transfer_ship = {
+					prefer_name = "Jean Bart"
+					type = battleship
+					target = VIX
+				}
+				transfer_ship = {
+					prefer_name = "Primauguet"
+					type = light_cruiser
+					target = VIX
+				}
+				transfer_ship = {
+					prefer_name = "Amazone"
+					type = coastal_submarine
+					target = VIX
+				}
+				transfer_ship = {
+					prefer_name = "Antiope"
+					type = coastal_submarine
+					target = VIX
+				}
+				transfer_ship = {
+					prefer_name = "Méduse"
+					type = coastal_submarine
+					target = VIX
+				}
+				transfer_ship = {
+					prefer_name = "Orphée"
+					type = coastal_submarine
+					target = VIX
+				}
+				transfer_ship = {
+					prefer_name = "La Sybille"
+					type = coastal_submarine
+					target = VIX
+				}
+				transfer_ship = {
+					prefer_name = "Amphitrite"
+					type = coastal_submarine
+					target = VIX
+				}
+				transfer_ship = {
+					prefer_name = "Oréade"
+					type = coastal_submarine
+					target = VIX
+				}
+				transfer_ship = {
+					prefer_name = "La Psyché"
+					type = coastal_submarine
+					target = VIX
+				}
+				transfer_ship = {
+					prefer_name = "Milan"
+					type = destroyer
+					target = VIX
+				}
+				transfer_ship = {
+					prefer_name = "Fougueux"
+					type = destroyer
+					target = VIX
+				}
+				transfer_ship = {
+					prefer_name = "Boulonnais"
+					type = destroyer
+					target = VIX
+				}
+				transfer_ship = {
+					prefer_name = "Albatros"
+					type = destroyer
+					target = VIX
+				}
+				transfer_ship = {
+					prefer_name = "Brestois"
+					type = destroyer
+					target = VIX
+				}
+				transfer_ship = {
+					prefer_name = "Frondeur"
+					type = destroyer
+					target = VIX
+				}
+				transfer_ship = {
+					prefer_name = "Simoun"
+					type = destroyer
+					target = VIX
+				}
+				transfer_ship = {
+					prefer_name = "Tempête"
+					type = destroyer
+					target = VIX
+				}
+				transfer_ship = {
+					prefer_name = "L'Alcyon"
+					type = destroyer
+					target = VIX
+				}
+				transfer_ship = {
+					prefer_name = "Sidi Ferruch" #note not built until 1939
+					type = patrol_submarine
+					target = VIX
+				}
+				transfer_ship = {
+					prefer_name = "Le Conquérant" #note not built until 1936
+					type = patrol_submarine
+					target = VIX
+				}
+				transfer_ship = {
+					prefer_name = "Le Tonnant" #note not built until 1937
+					type = patrol_submarine
+					target = VIX
+				}
+				transfer_ship = {
+					prefer_name = "Commandant Delage" #note not built until 1936
+					type = escort
+					target = VIX
+				}
+				transfer_ship = {
+					prefer_name = "La Gracieuse" #note not built until 1938
+					type = escort
+					target = VIX
+				}
+				transfer_ship = {
+					type = escort
+					target = VIX
+				}				
+				transfer_ship = {
+					type = escort
+					target = VIX
+				}
+				transfer_ship = {
+					type = escort
+					target = VIX
+				}
+				transfer_ship = {
+					type = escort
+					target = VIX
+				}
+				transfer_ship = {
+					type = escort
+					target = VIX
+				}
+				transfer_ship = {
+					type = escort
+					target = VIX
+				}
+				transfer_ship = {
+					type = escort
+					target = VIX
+				}
+				transfer_ship = {
+					type = escort
+					target = VIX
+				}
+				transfer_ship = {
+					type = escort
+					target = VIX
+				}
+			}
+			if = {
+				limit = {
+					USA = { is_ai = yes }
+				}
+				USA = {
+					set_province_controller = 7069
+					set_province_controller = 10070
+					set_province_controller = 11943
+					set_province_controller = 7132
+					set_province_controller = 4116
+					set_province_controller = 11923
+					set_province_controller = 7166
+					set_province_controller = 1013
+					set_province_controller = 11939
+					set_province_controller = 9964
+					load_oob = "USA_Torch_historical"
+				}
+			}
+			GER = {
+				set_country_flag = case_anton
+			}
+		}
+	}
+}
+joint_focus = {
+	id = CW_a_free_france
+	icon = GFX_focus_focus_fra_revolution_utmost
+	prerequisite = { focus = USA_torch }
+	continue_if_invalid = yes
+	available = {
+		VIC = { 
+			exists = yes
+			has_war = no
+		}
+		NOT = {
+			has_global_flag = vichy_war
+		}
+		NOT = { has_war_with = VIX }
+		is_in_faction_with = ENG
+		
+		if = {
+			limit = {
+				is_ai = yes
+			}
+			NOT = { has_global_flag = ai_no_dday_tree }
+		}
+	}
+	relative_position_id = USA_torch
+	x = 0
+	y = 1
+	cost = 28 # Previously was: 75.04 
+	search_filters = {FOCUS_FILTER_FOREIGN_DIPLOMACY}
+
+	completion_reward_joint_originator = {
+		VIC = {
+			add_to_war = {
+				targeted_alliance = GER
+				enemy = ENG
+			}
+			transfer_units_fraction= {
+				target = FRA
+				stockpile_ratio = 0.5
+				army_ratio = 0.5
+				navy_ratio = 0.25
+				air_ratio = 0.5
+			}
+		}
+	}
+}
+joint_focus = {
+	id = CW_2nd_front
+	icon = GFX_focus_hol_gateway_to_europe
+	prerequisite = { focus = CW_reunion }
+	prerequisite = { focus = CW_corsica }
+	prerequisite = { focus = CW_gabon }
+	prerequisite = { focus = CW_caledonia }
+	prerequisite = { focus = CW_caribbeans }
+	prerequisite = { focus = CW_guiana }
+	relative_position_id = CW_vichy_colonies
+	x = 0
+	y = 4
+	cost = 50
+	search_filters = {FOCUS_FILTER_RESEARCH}
+	search_filters = {FOCUS_FILTER_FOREIGN_DIPLOMACY}
+		
+	available = {
+		is_in_faction_with = ENG
+	}
+		
+	completion_reward_joint_originator = {
+		add_tech_bonus = {
+			name = CW_2nd_front
+			bonus = 0.25
+			uses = 1
+			category = tp_tech
+		}
+		random_unit_leader = {
+			add_logistics = 1
+		}
+	}
+	completion_reward_joint_member = {
+		add_tech_bonus = {
+			name = CW_2nd_front
+			bonus = 0.15
+			uses = 1
+			category = tp_tech
+		}
+	}
+}
+joint_focus = {
+	id = CW_pinch_raids
+	icon = GFX_focus_generic_annex_country
+	prerequisite = { focus = CW_2nd_front }
+	relative_position_id = CW_2nd_front
+	x = -2
+	y = 1
+	cost = 50
+	search_filters = {FOCUS_FILTER_RESEARCH}
+	search_filters = {FOCUS_FILTER_FOREIGN_DIPLOMACY}
+		
+	available = {
+		is_in_faction_with = ENG
+	}
+		
+	completion_reward_joint_originator = {
+		add_war_support = -0.05
+		random_unit_leader = {
+			add_unit_leader_trait = naval_invader
+		}
+		add_intel = {
+			target = GER
+			civilian_intel = 5
+			army_intel = 3
+			navy_intel = 2
+			airforce_intel = 1
+		}	
+		add_to_variable = { ENG.overlord_landing = -0.06 tooltip = overlord_improves_landing_TT }
+	}
+	completion_reward_joint_member = {
+		add_intel = {
+			target = GER
+			civilian_intel = 5
+			army_intel = 3
+			navy_intel = 2
+			airforce_intel = 1
+		}
+	}
+}
+joint_focus = {
+	id = CW_aerial_photos 
+	icon = GFX_focus_generic_copy_plane_designs
+	prerequisite = { focus = CW_2nd_front }
+	relative_position_id = CW_2nd_front
+	x = 0
+	y = 1
+	cost = 50
+	search_filters = {FOCUS_FILTER_RESEARCH}
+	search_filters = {FOCUS_FILTER_FOREIGN_DIPLOMACY}
+	available = {
+		is_in_faction_with = ENG
+	}		
+
+		
+	completion_reward_joint_originator = {
+		add_intel = {
+			target = GER
+			civilian_intel = 5
+			army_intel = 2
+			navy_intel = 0
+			airforce_intel = 3
+		}
+
+		add_to_variable = { ENG.overlord_landing = -0.06 tooltip = overlord_improves_landing_TT }
+	}
+	completion_reward_joint_member = {
+		add_intel = {
+			target = GER
+			civilian_intel = 5
+			army_intel = 2
+			navy_intel = 0
+			airforce_intel = 3
+		}
+	}
+}
+joint_focus = {
+	id = CW_deception
+	icon = GFX_focus_generic_infiltration
+	prerequisite = { focus = CW_2nd_front }
+	relative_position_id = CW_2nd_front
+	x = 2
+	y = 1
+	cost = 50
+	search_filters = {FOCUS_FILTER_RESEARCH}
+	search_filters = {FOCUS_FILTER_FOREIGN_DIPLOMACY}
+		
+	available = {
+		intel_level_over = { 
+			target = GER 
+			civilian_intel > 0.5
+			army_intel > 0.5
+			navy_intel > 0.5
+		}
+		is_in_faction_with = ENG
+	
+	}
+		
+	completion_reward = {
+		custom_effect_tooltip = overlord_no_strat_TT
+	}
+}
+joint_focus = {
+	id = CW_bagration
+	icon = GFX_focus_SOV_builder_of_the_red_army
+	prerequisite = { focus = CW_2nd_front }
+	relative_position_id = CW_2nd_front
+	x = -3
+	y = 2
+	cost = 50
+	search_filters = {FOCUS_FILTER_RESEARCH}
+	search_filters = {FOCUS_FILTER_FOREIGN_DIPLOMACY}
+	available = {
+		is_in_faction_with = ENG
+	}		
+
+		
+	completion_reward = {
+		custom_effect_tooltip = overlord_soviet_bonus_TT
+		hidden_effect = {
+			SOV = {
+				set_country_flag = bagration
+			}
+		}
+	}
+}
+shared_focus = {
+	id = CW_hearts
+	icon = GFX_focus_generic_national_security
+	prerequisite = { focus = CW_2nd_front }
+	relative_position_id = CW_2nd_front
+	x = 3
+	y = 2
+	cost = 50
+	search_filters = {FOCUS_FILTER_RESEARCH}
+	search_filters = {FOCUS_FILTER_FOREIGN_DIPLOMACY}		
+	available = {
+		OR = {
+			has_idea = press_free
+			has_idea = press_regulated
+		}
+	}
+	completion_reward = {
+		add_ideas = CW_hearts_minds
+	}
+}
+joint_focus = {
+	id = CW_ready_french
+	icon = GFX_focus_focus_fra_national_resistance_council
+	prerequisite = { focus = CW_aerial_photos focus = CW_deception focus = CW_pinch_raids}
+	relative_position_id = CW_aerial_photos
+	x = 0
+	y = 1
+	cost = 50
+	search_filters = {FOCUS_FILTER_RESEARCH}
+	search_filters = {FOCUS_FILTER_FOREIGN_DIPLOMACY}
+		
+	available = {
+		if = {
+			limit = {
+				is_ai = no
+			}
+				
+			has_equipment = {
+				infantry_equipment > 100
+			}
+			has_equipment = {
+				SMG_equipment > 50
+			}
+			has_equipment = {
+				support_equipment > 250
+			}
+			has_equipment = {
+				recon_equipment > 150
+			}
+			has_equipment = {
+				radio_equipment > 100
+			}
+		}
+		is_in_faction_with = ENG
+	
+	}
+		
+	completion_reward_joint_originator = {
+		add_equipment_to_stockpile = {
+			type = infantry_equipment
+			amount = -100
+		}	
+		add_equipment_to_stockpile = {
+			type = SMG_equipment
+			amount = -50
+		}
+		add_equipment_to_stockpile = {
+			type = support_equipment
+			amount = -250
+		}
+		add_equipment_to_stockpile = {
+			type = recon_equipment
+			amount = -150
+		}
+		add_equipment_to_stockpile = {
+			type = radio_equipment
+			amount = -100
+		}
+		country_event = france.6
+	}
+}
+joint_focus = {
+	id = CW_frogmen
+	icon = GFX_focus_generic_midget_submarines
+	prerequisite = { focus = CW_ready_french }
+	relative_position_id = CW_ready_french
+	x = -2
+	y = 1
+	cost = 50
+	search_filters = {FOCUS_FILTER_RESEARCH}
+	search_filters = {FOCUS_FILTER_FOREIGN_DIPLOMACY}
+		
+	available = {
+		has_navy_size = {
+			size > 0
+			type = submarine
+		}
+		is_in_faction_with = ENG
+	}
+		
+	completion_reward_joint_originator = {
+		add_to_variable = { ENG.overlord_landing = -0.06 tooltip = overlord_improves_landing_TT }
+	}
+}
+joint_focus = {
+	id = CW_soil_samples
+	icon = GFX_focus_ETH_boots_on_the_shore
+	prerequisite = { focus = CW_frogmen }
+	relative_position_id = CW_frogmen
+	x = 0
+	y = 1
+	cost = 50
+	search_filters = {FOCUS_FILTER_RESEARCH}
+	search_filters = {FOCUS_FILTER_FOREIGN_DIPLOMACY}
+		
+	available = {
+		has_navy_size = {
+			size > 0
+			type = submarine
+		}
+		is_in_faction_with = ENG
+	}
+		
+	completion_reward_joint_originator = {
+		add_to_variable = { ENG.overlord_landing = -0.06 tooltip = overlord_improves_landing_TT }
+	}
+}
+joint_focus = {
+	id = CW_weather_patterns
+	icon = GFX_goal_indyclone_arctic_weather_base
+	prerequisite = { focus = CW_ready_french }
+	relative_position_id = CW_ready_french
+	x = 0
+	y = 2
+	cost = 50
+	search_filters = {FOCUS_FILTER_RESEARCH}
+	search_filters = {FOCUS_FILTER_FOREIGN_DIPLOMACY}
+	available = {
+		is_in_faction_with = ENG
+	}		
+
+		
+	completion_reward_joint_originator = {
+		add_to_variable = { ENG.overlord_landing = -0.06 tooltip = overlord_improves_landing_TT }
+	}
+}
+joint_focus = {
+	id = CW_dropsites
+	icon = GFX_goal_saint_ladislaus_paratrooper_division
+	prerequisite = { focus = CW_ready_french }
+	relative_position_id = CW_ready_french
+	x = 2
+	y = 1
+	cost = 50
+	search_filters = {FOCUS_FILTER_RESEARCH}
+	search_filters = {FOCUS_FILTER_FOREIGN_DIPLOMACY}
+		
+	available = {
+		has_tech = para_supply_tech
+		is_in_faction_with = ENG
+	}
+		
+	completion_reward_joint_originator = {
+		custom_effect_tooltip = overlord_free_parratroopers_TT
+		#country_event = choice of landing event?
+	}
+}
+joint_focus = {
+	id = CW_gliders
+	icon = GFX_focus_usa_escort_fighters
+	prerequisite = { focus = CW_dropsites }
+	relative_position_id = CW_dropsites
+	x = 0
+	y = 1
+	cost = 50
+	search_filters = {FOCUS_FILTER_RESEARCH}
+	search_filters = {FOCUS_FILTER_FOREIGN_DIPLOMACY}
+			
+	available = {
+		has_tech = avionics_improvements
+		is_in_faction_with = ENG
+	}
+		
+	completion_reward_joint_originator = {
+		add_timed_idea = {
+			idea = glider_construction
+			days = 180
+		}
+		custom_effect_tooltip = overlord_better_parratroopers_TT
+	}
+}
+joint_focus = {
+	id = CW_training
+	icon = GFX_goal_continuous_reduce_training_time
+	prerequisite = { focus = CW_weather_patterns focus = CW_gliders focus = CW_soil_samples }
+	relative_position_id = CW_weather_patterns
+	x = 0
+	y = 1
+	cost = 50
+	search_filters = {FOCUS_FILTER_RESEARCH}
+	search_filters = {FOCUS_FILTER_FOREIGN_DIPLOMACY}
+	
+	available = {
+		tag = ENG
+	}
+
+		
+	completion_reward_joint_originator = {
+		add_timed_idea = {
+			idea = extensive_training
+			days = 180
+		}
+	}
+}
+joint_focus = {
+	id = CW_sea_barrage
+	icon = GFX_goal_case_anton
+	prerequisite = { focus = CW_weather_patterns focus = CW_gliders focus = CW_soil_samples }
+	relative_position_id = CW_weather_patterns
+	x = -2
+	y = 1
+	cost = 50
+	search_filters = {FOCUS_FILTER_RESEARCH}
+	search_filters = {FOCUS_FILTER_FOREIGN_DIPLOMACY}
+		
+	available = {
+		enemies_naval_strength_ratio < 0.5
+		is_in_faction_with = ENG
+	}
+		
+	completion_reward_joint_originator = {
+		custom_effect_tooltip = overlord_better_shore_bomb_TT
+	}
+}
+joint_focus = {
+	id = CW_aerial_domination
+	icon = GFX_Bombs_Away
+	prerequisite = { focus = CW_weather_patterns focus = CW_gliders focus = CW_soil_samples }
+	relative_position_id = CW_weather_patterns
+	x = 2
+	y = 1
+	cost = 50
+	search_filters = {FOCUS_FILTER_RESEARCH}
+	search_filters = {FOCUS_FILTER_FOREIGN_DIPLOMACY}
+		
+
+		
+	completion_reward_joint_originator = {
+		custom_effect_tooltip = overlord_better_air_sup_TT
+		hidden_effect = {
+			add_to_variable = { ENG.overlord_air = 0.1 }
+		}
+	}
+}
+shared_focus = {
+	id = CW_commandoes
+	icon = GFX_focus_eng_special_air_service
+	relative_position_id = CW_training
+	prerequisite = { focus = CW_training }
+	x = -2
+	y = 1
+	cost = 50
+	search_filters = {FOCUS_FILTER_RESEARCH}
+	search_filters = {FOCUS_FILTER_FOREIGN_DIPLOMACY}
+		
+	available = {
+		has_tech = commando_team
+		is_in_faction_with = ENG
+	}
+		
+	completion_reward = {
+		add_ideas = {
+			bonus_commandos
+		}
+	}
+}
+shared_focus = {
+	id = CW_war_reporters
+	icon = GFX_goal_news
+	relative_position_id = CW_training
+	prerequisite = { focus = CW_training }
+	prerequisite = { focus = CW_hearts }
+	x = 3
+	y = 1
+	cost = 50
+	search_filters = {FOCUS_FILTER_RESEARCH}
+	search_filters = {FOCUS_FILTER_FOREIGN_DIPLOMACY}
+		
+
+		
+	completion_reward = {
+		swap_ideas = {
+			remove_idea = CW_hearts_minds
+			add_idea = CW_hearts_minds_2
+		}
+	}
+}
+joint_focus = {
+	id = CW_overlord
+	icon = GFX_goal_naval_tactical_advancements
+	relative_position_id = CW_training
+	prerequisite = { focus = CW_training }
+	x = 0
+	y = 1
+	cost = 50
+	search_filters = {FOCUS_FILTER_RESEARCH}
+	search_filters = {FOCUS_FILTER_FOREIGN_DIPLOMACY}
+	
+	available = {
+		NOT = {
+			has_idea = glider_construction
+			ENG = {
+				has_idea = extensive_training
+			}
+			any_allied_country = {
+				has_idea = glider_construction
+			}
+		}
+	}
+
+	completion_reward_joint_originator = {
+		USA = {
+			unlock_decision_tooltip = operation_overlord
+			set_country_flag = overlord_a_go
+		}
+		ENG = {
+			unlock_decision_tooltip = operation_overlord
+			set_country_flag = overlord_a_go
+		}
+	}
+}
+####################
+#### The Plan ####
+####################
+shared_focus = {
+	id = CW_riverdale
+	text = CAN_riverdale
+	icon = GFX_goal_eng_air_rearm_plane
+	x = 45
+	y = 9
+	offset = {
+		x = -19
+		y = -7
+		trigger = {
+			tag = CAN
+		}
+	}
+	offset = {
+		x = 9
+		y = -3
+		trigger = {
+			tag = AST
+		}
+	}
+	offset = {
+		x = -42
+		y = -4
+		trigger = {
+			tag = NZL
+		}
+	}
+	cost = 36
+	available = {
+		has_war = yes
+	}
+
+		
+	completion_reward = {
+		set_variable = { ENG.training_bases = 100 }
+		set_variable = { ENG.pilots_available = 221 }
+		set_variable = { ENG.trainers_available = 35 }
+		
+		CAN = {
+			unlock_national_focus = CW_riverdale
+			country_event = commonwealth.1
+		}
+		AST = {
+			unlock_national_focus = CW_riverdale
+			country_event = commonwealth.1
+		}
+		NZL = {
+			unlock_national_focus = CW_riverdale
+			country_event = commonwealth.1
+		}
+		ENG = {
+			unlock_national_focus = CW_riverdale
+			country_event = commonwealth.1
+		}
+	}
+}
+shared_focus = {
+	id = CW_air_bases
+	icon = GFX_goal_hungarian_lloyd_aircraft_factory
+	x = -1
+	y = 1
+	cost = 20
+	relative_position_id = CW_riverdale
+	prerequisite = { focus = CW_riverdale }		
+
+		
+	completion_reward = {
+		air_experience = 10
+		add_to_variable = { ENG.training_bases = 100 tooltip = training_bases_TT }
+		if = {
+			limit = {
+				tag = ENG
+			}
+			696 = {
+				add_building_construction = {
+					type = air_base
+					level = 1
+					instant_build = yes
+				}
+			}
+			545 = {
+				add_building_construction = {
+					type = air_base
+					level = 1
+					instant_build = yes
+				}
+			}
+		}
+		if = {
+			limit = {
+				tag = CAN
+			}
+			682 = {
+				add_building_construction = {
+					type = air_base
+					level = 1
+					instant_build = yes
+				}
+			}	
+			469 = {
+				add_building_construction = {
+					type = air_base
+					level = 1
+					instant_build = yes
+				}
+			}
+		}
+		if = {
+			limit = {
+				tag = AST
+			}
+			285 = {
+				add_building_construction = {
+					type = air_base
+					level = 1
+					instant_build = yes
+				}
+			}	
+			521 = {
+				add_building_construction = {
+					type = air_base
+					level = 1
+					instant_build = yes
+				}
+			}
+		}		
+		if = {
+			limit = {
+				tag = NZL
+			}
+			723 = {
+				add_building_construction = {
+					type = air_base
+					level = 1
+					instant_build = yes
+				}
+			}
+		}
+	}
+}
+shared_focus = {
+	id = CW_moth
+	text = CAN_moth
+	icon = GFX_
+	x = 1
+	y = 1
+	offset = {
+		x = 0
+		y = 1
+		trigger = {
+			tag = CAN
+		}
+	}
+	cost = 15
+	relative_position_id = CW_riverdale
+	prerequisite = { focus = CW_riverdale }		
+	search_filters = {FOCUS_FILTER_AIRFORCE}
+
+
+
+	available = {
+
+	}
+		
+	bypass = {
+
+	}
+
+	cancel_if_invalid = yes
+	continue_if_invalid = no
+	available_if_capitulated = yes
+
+		
+
+	completion_reward = {
+		custom_effect_tooltip = increase_trainer_production_25_TT
+	}
+
+}
+shared_focus = {
+	id = CW_USA_AIR
+	icon = GFX_goal_USAAF_pilots
+	x = -3
+	y = 1
+	offset = {
+		x = 5
+		y = 1
+		trigger = {
+			tag = NZL
+		}
+	}
+	offset = {
+		x = 0
+		y = 1
+		trigger = {
+			tag = CAN
+		}
+	}
+	relative_position_id = CW_riverdale
+	prerequisite = { focus = CW_riverdale }	
+	search_filters = {FOCUS_FILTER_AIRFORCE}
+
+		cost = 30 
+
+
+		available = {
+
+		}
+		
+		bypass = {
+
+		}
+
+		cancel_if_invalid = yes
+		continue_if_invalid = no
+		available_if_capitulated = yes
+
+		
+
+	completion_reward = {
+		USA = {
+			country_event = usa.24
+		}
+
+		every_country = {
+			limit = {
+				OR = {
+					tag = CAN
+					tag = AST
+					tag = NZL
+					tag = ENG
+				}
+			}
+			unlock_national_focus = CW_USA_AIR
+		}
+	}
+}
+shared_focus = {
+	id = CW_others
+	icon = GFX_goal_western_europe_red
+	x = -2
+	y = 3
+	offset = {
+		x = 5
+		y = -2
+		trigger = {
+			tag = NZL
+		}
+	}
+	relative_position_id = CW_riverdale
+	prerequisite = { focus = CW_riverdale }	
+	search_filters = {FOCUS_FILTER_AIRFORCE}
+
+	cost = 30 
+
+
+	available = {
+		has_global_flag = fall_of_france
+	}
+	
+	bypass = {
+
+	}
+
+	cancel_if_invalid = yes
+	continue_if_invalid = no
+	available_if_capitulated = yes
+
+	
+
+	completion_reward = {
+		custom_effect_tooltip = CW_others_TT
+		every_country = {
+			limit = {
+				OR = {
+					tag = CAN
+					tag = AST
+					tag = NZL
+					tag = ENG
+				}
+			}
+			unlock_national_focus = CW_others
+		}
+	}
+}
+shared_focus = {
+	id = CW_train_trainers
+	text = CAN_training
+	icon = GFX_goal_italian_pilot_training
+	prerequisite = { focus = CW_air_bases }
+	x = 0
+	y = 1
+	relative_position_id = CW_air_bases
+	search_filters = {FOCUS_FILTER_AIRFORCE}
+
+	cost = 40 
+
+
+	available = {
+
+	}
+		
+	bypass = {
+
+	}
+
+	cancel_if_invalid = yes
+	continue_if_invalid = no
+	available_if_capitulated = yes
+
+		
+
+	completion_reward = {
+		custom_effect_tooltip = less_trainer_attrition_TT
+		every_country = {
+			limit = {
+				OR = {
+					tag = CAN
+					tag = AST
+					tag = NZL
+					tag = ENG
+				}
+			}
+			unlock_national_focus = CW_train_trainers
+		}
+		hidden_effect = {
+			ENG = {
+				add_to_variable = { PLAN_accident_rate = -0.01 }
+			}
+		}
+	}
+}
+shared_focus = {
+		id = CW_lack_of_trainers
+		text = CAN_trainers
+		icon = GFX_goal_expand_the_danube_aircraft_factory
+		prerequisite = { focus = CW_air_bases focus = CW_moth}
+		x = 1
+		y = 1
+		relative_position_id = CW_train_trainers
+		search_filters = {FOCUS_FILTER_AIRFORCE}
+
+		cost = 30 
+
+
+		available = {
+
+		}
+		
+		bypass = {
+
+		}
+
+		cancel_if_invalid = yes
+		continue_if_invalid = no
+		available_if_capitulated = yes
+
+		
+
+		completion_reward = {
+			unlock_decision_tooltip = increase_trainer_production
+		}
+}
+shared_focus = {
+	id = CW_brits
+	text = CAN_brits
+	icon = GFX_goal_RAF_pilots
+	prerequisite = { focus = CW_lack_of_trainers }
+	x = -3
+	y = 1
+	offset = {
+		x = 0
+		y = 1
+		trigger = {
+			tag = NZL
+		}
+	}
+		relative_position_id = CW_lack_of_trainers
+		search_filters = {FOCUS_FILTER_AIRFORCE}
+
+		cost = 30 
+
+
+		available = {
+
+		}
+		
+		bypass = {
+
+		}
+
+		cancel_if_invalid = yes
+		continue_if_invalid = no
+		available_if_capitulated = yes
+
+		
+
+		completion_reward = {
+		ENG = {
+			air_experience = 5
+			unlock_decision_tooltip = send_fresh_pilots
+			set_country_flag = more_pilots
+			unlock_national_focus = CW_brits
+		}
+		every_country = {
+			limit = {
+				OR = {
+					tag = CAN
+					tag = AST
+					tag = NZL
+				}
+			}
+			unlock_national_focus = CW_brits
+		}
+	}
+}
+shared_focus = {
+	id = CW_SAF
+	icon = GFX_goal_generic_africa_air
+	prerequisite = { focus = CW_lack_of_trainers }
+	x = -4
+	y = 2
+	offset = {
+		x = 4
+		y = -1
+		trigger = {
+			tag = NZL
+		}
+	}
+	offset = {
+		x = -1
+		y = -1
+		trigger = {
+			tag = CAN
+		}
+	}
+	relative_position_id = CW_lack_of_trainers
+	search_filters = {FOCUS_FILTER_AIRFORCE}
+
+	cost = 30 
+
+
+	available = {
+
+	}
+		
+	bypass = {
+
+	}
+
+	cancel_if_invalid = yes
+	continue_if_invalid = no
+	available_if_capitulated = yes
+
+		
+
+	completion_reward = {
+		SAF = {
+			country_event = commonwealth.3
+		}
+		every_country = {
+			limit = {
+				OR = {
+					tag = CAN
+					tag = AST
+					tag = NZL
+					tag = ENG
+				}
+			}
+			unlock_national_focus = CW_SAF
+		}
+	}
+}
+shared_focus = {
+	id = CW_rho
+	icon = GFX_goal_eng_air_rearm
+	prerequisite = { focus = CW_lack_of_trainers }
+	x = 4
+	y = 2
+	offset = {
+		x = -2
+		y = -1
+		trigger = {
+			tag = NZL
+		}
+	}
+		relative_position_id = CW_lack_of_trainers
+		search_filters = {FOCUS_FILTER_AIRFORCE}
+
+		cost = 30 
+
+
+		available = {
+
+		}
+		
+		bypass = {
+
+		}
+
+		cancel_if_invalid = yes
+		continue_if_invalid = no
+		available_if_capitulated = yes
+
+		
+
+	completion_reward = {
+		custom_effect_tooltip = better_training_rates_TT
+		every_country = {
+			limit = {
+				OR = {
+					tag = CAN
+					tag = AST
+					tag = NZL
+					tag = ENG
+				}
+			}
+			unlock_national_focus = CW_rho
+		}
+	}
+}
+shared_focus = {
+	id = CW_raj
+	icon = GFX_goal_air_india
+	prerequisite = { focus = CW_lack_of_trainers }
+	x = -5
+	y = 1
+	offset = {
+		x = 3
+		y = 0
+		trigger = {
+			tag = NZL
+		}
+	}
+	offset = {
+		x = -1
+		y = 1
+		trigger = {
+			tag = CAN
+		}
+	}
+	relative_position_id = CW_lack_of_trainers
+	search_filters = {FOCUS_FILTER_AIRFORCE}
+
+	cost = 30 
+
+
+	available = {
+
+	}
+		
+	bypass = {
+
+	}
+
+	cancel_if_invalid = yes
+	continue_if_invalid = no
+	available_if_capitulated = yes
+
+		
+
+	completion_reward = {
+		RAJ = {
+			country_event = commonwealth.2
+		}
+		every_country = {
+			limit = {
+				OR = {
+					tag = CAN
+					tag = AST
+					tag = NZL
+					tag = ENG
+				}
+			}
+			unlock_national_focus = CW_raj
+		}
+	}
+}
+shared_focus = {
+	id = CW_canada
+	icon = GFX_goal_RCAF_pilots
+	prerequisite = { focus = CW_lack_of_trainers }
+	x = -1
+	y = 1
+	offset = {
+		x = 0
+		y = 1
+		trigger = {
+			tag = NZL
+		}
+	}
+		relative_position_id = CW_lack_of_trainers
+		search_filters = {FOCUS_FILTER_AIRFORCE}
+
+		cost = 30 
+
+
+		available = {
+
+		}
+		
+		bypass = {
+
+		}
+
+		cancel_if_invalid = yes
+		continue_if_invalid = no
+		available_if_capitulated = yes
+
+		
+
+	completion_reward = {
+		CAN = {
+			air_experience = 5
+			unlock_decision_tooltip = send_fresh_pilots
+			set_country_flag = more_pilots
+			unlock_national_focus = CW_canada
+		}
+		every_country = {
+			limit = {
+				OR = {
+					tag = AST
+					tag = NZL
+					tag = ENG
+				}
+			}
+			unlock_national_focus = CW_canada
+		}
+	}
+}
+shared_focus = {
+	id = CW_ast
+	icon = GFX_goal_RAAF_pilot
+	prerequisite = { focus = CW_lack_of_trainers }
+	x = 1
+	y = 1
+	offset = {
+		x = 0
+		y = 1
+		trigger = {
+			tag = NZL
+		}
+	}
+		relative_position_id = CW_lack_of_trainers
+		search_filters = {FOCUS_FILTER_AIRFORCE}
+
+		cost = 30 
+
+
+		available = {
+
+		}
+		
+		bypass = {
+
+		}
+
+		cancel_if_invalid = yes
+		continue_if_invalid = no
+		available_if_capitulated = yes
+
+		
+
+	completion_reward = {
+			AST = {
+				air_experience = 5
+				unlock_decision_tooltip = send_fresh_pilots
+				set_country_flag = more_pilots
+				unlock_national_focus = CW_ast
+			}
+		every_country = {
+			limit = {
+				OR = {
+					tag = CAN
+					tag = NZL
+					tag = ENG
+				}
+			}
+			unlock_national_focus = CW_ast
+		}
+			
+	}
+}
+shared_focus = {
+	id = CW_nzl
+	icon = GFX_
+	prerequisite = { focus = CW_lack_of_trainers }
+	x = 3
+	y = 1
+	offset = {
+		x = 0
+		y = 1
+		trigger = {
+			tag = NZL
+		}
+	}
+		relative_position_id = CW_lack_of_trainers
+		search_filters = {FOCUS_FILTER_AIRFORCE}
+
+		cost = 30 
+
+
+		available = {
+
+		}
+		
+		bypass = {
+
+		}
+
+		cancel_if_invalid = yes
+		continue_if_invalid = no
+		available_if_capitulated = yes
+
+		
+
+	completion_reward = {
+			NZL = {
+				air_experience = 5
+				unlock_decision_tooltip = send_fresh_pilots
+				set_country_flag = more_pilots
+				unlock_national_focus = CW_nzl
+			}
+		every_country = {
+			limit = {
+				OR = {
+					tag = CAN
+					tag = AST
+					tag = ENG
+				}
+			}
+			unlock_national_focus = CW_nzl
+		}
+	}
+}
+shared_focus = {
+	id = CW_commonwealth_air_training_plan
+	text = CAN_commonwealth_air_training_plan
+	icon = GFX_goal_commonweath_air_training_plan
+	prerequisite = { focus = CW_canada }
+	prerequisite = { focus = CW_brits }
+	prerequisite = { focus = CW_ast }
+	prerequisite = { focus = CW_nzl }
+	x = 1
+	y = 1
+	relative_position_id = CW_canada
+	search_filters = {FOCUS_FILTER_AIRFORCE}
+
+	cost = 5 
+
+
+	available = {
+		custom_trigger_tooltip = {
+			tooltip = pilots_trained_tt
+			check_variable = { ENG.pilots_trained > PLAN_level_1 }
+		}		
+	}
+		
+	bypass = {
+
+	}
+
+	cancel_if_invalid = yes
+	continue_if_invalid = no
+	available_if_capitulated = yes
+
+	complete_tooltip = {
+
+		
+	}
+
+	completion_reward = {
+		air_experience = 5
+		every_country = {
+			limit = {
+				OR = {
+					tag = CAN
+					tag = AST
+					tag = ENG
+					tag = NZL
+					tag = SAF
+				}
+				has_country_flag = CW_THE_PLAN
+			}
+			add_ideas = CW_british_commonwealth_air_training_plan
+		}
+	}
+}
+
+######### Allied Anger ###########
+shared_focus = {
+	id = CW_allied_anger
+	icon = GFX_stop_peace
+	x = -12
+	y = 7
+	text_icon = NORDIC_focus_style
+	offset = {
+		x = 3
+		y = -7
+		trigger = {
+			tag = CAN
+		}
+	}
+	offset = {
+		x = 56
+		y = -1
+		trigger = {
+			tag = FRA
+		}
+	}
+	offset = {
+		x = 36
+		y = 1
+		trigger = {
+			has_focus_tree = generic_focus
+		}
+	}
+	offset = {
+		x = 40
+		y = 1
+		trigger = {
+			has_focus_tree = arab_focus	
+		}
+	}
+	offset = {
+		x = 57
+		y = 1
+		trigger = {
+			tag = AST
+		}
+	}
+	offset = {
+		x = 16
+		y = -1
+		trigger = {
+			tag = BHU	
+		}
+	}
+	offset = {
+		x = 49
+		y = -1
+		trigger = {
+			tag = RAJ
+		}
+	}
+	offset = {
+		x = 40
+		y = -7
+		trigger = {
+			tag = IRE
+		}
+	}
+	offset = {
+		x = 32
+		y = -1
+		trigger = {
+			tag = JOR
+		}
+	}
+	offset = {
+		x = 25
+		y = -1
+		trigger = {
+			tag = BMP
+		}
+	}
+	offset = {
+		x = 48
+		y = 1
+		trigger = {
+			tag = NZL
+		}
+	}
+	offset = {
+		x = 42
+		y = -2
+		trigger = {
+			tag = SAF
+		}
+	}
+	allow_branch = {
+		OR = {
+			is_in_faction_with = ENG
+			is_ally_with = FRA
+		}
+	}
+	search_filters = {FOCUS_FILTER_ANGER}
+
+	cost = 0 
+
+
+	available = {
+		set_temp_variable = { anger = 14 }
+		custom_trigger_tooltip = {
+			tooltip = anger_needed_tt
+			check_variable = { ROOT.allied_anger > anger }
+		}		
+	}
+		
+	bypass = {
+
+	}
+
+	cancel_if_invalid = yes
+	continue_if_invalid = no
+	available_if_capitulated = yes
+
+	complete_tooltip = {
+
+		
+	}
+
+	completion_reward = {
+		subtract_from_variable = { ROOT.allied_anger = 15 tooltip = anger_spent_TT }
+		add_war_support = 0.05
+	}
+}
+shared_focus = {
+	id = CW_aa_army
+	icon = GFX_focus_AUS_frontmiliz_focus
+	x = -3
+	y = 1
+	relative_position_id = CW_allied_anger
+	prerequisite = { focus = CW_allied_anger }
+	search_filters = {FOCUS_FILTER_ANGER}
+	text_icon = NORDIC_focus_style
+
+	cost = 0 
+
+
+	available = {
+		set_temp_variable = { anger = 34 }
+		custom_trigger_tooltip = {
+			tooltip = anger_needed_tt
+			check_variable = { ROOT.allied_anger > anger }
+		}		
+	}
+		
+	bypass = {
+
+	}
+
+	cancel_if_invalid = yes
+	continue_if_invalid = no
+	available_if_capitulated = yes
+
+	complete_tooltip = {
+
+		
+	}
+
+	completion_reward = {
+		subtract_from_variable = { ROOT.allied_anger = 35 tooltip = anger_spent_TT }
+		set_temp_variable = { aa_xp = army_strength }
+		divide_temp_variable = { aa_xp = 40 }
+		clamp_temp_variable = {
+			var = aa_xp
+			min = 10
+		}		
+		army_experience = aa_xp
+	}
+}
+shared_focus = {
+	id = CW_aa_army_sci
+	icon = GFX_focus_NORDIC_dem_army
+	x = 0
+	y = 1
+	relative_position_id = CW_aa_army
+	prerequisite = { focus = CW_aa_army }
+	search_filters = {FOCUS_FILTER_ANGER}
+	text_icon = NORDIC_focus_style
+
+	cost = 0 
+
+
+	available = {
+		set_temp_variable = { anger = 39 }
+		custom_trigger_tooltip = {
+			tooltip = anger_needed_tt
+			check_variable = { ROOT.allied_anger > anger }
+		}		
+	}
+		
+	bypass = {
+
+	}
+
+	cancel_if_invalid = yes
+	continue_if_invalid = no
+	available_if_capitulated = yes
+
+	complete_tooltip = {
+
+		
+	}
+
+	completion_reward = {
+		subtract_from_variable = { ROOT.allied_anger = 40 tooltip = anger_spent_TT }	
+		set_temp_variable = { aa_xp = army_strength }
+		divide_temp_variable = { aa_xp = 80 }
+		clamp_temp_variable = {
+			var = aa_xp
+			min = 5
+		}		
+		army_experience = aa_xp
+		add_tech_bonus = {
+			name = CW_aa
+			bonus = 0.10
+			uses = 2
+			category = artillery
+			category = infantry_weapons
+			category = support_tech
+			category = armor_tech
+		}
+			
+	}
+}
+shared_focus = {
+	id = CW_aa_air
+	icon = GFX_ENG_raf_plane
+	x = -2
+	y = 1
+	relative_position_id = CW_aa_army
+	prerequisite = { focus = CW_aa_army }
+	search_filters = {FOCUS_FILTER_ANGER}
+	text_icon = NORDIC_focus_style
+
+	cost = 0 
+
+
+	available = {
+		set_temp_variable = { anger = 44 }
+		custom_trigger_tooltip = {
+			tooltip = anger_needed_tt
+			check_variable = { ROOT.allied_anger > anger }
+		}		
+	}
+		
+	bypass = {
+
+	}
+
+	cancel_if_invalid = yes
+	continue_if_invalid = no
+	available_if_capitulated = yes
+
+	complete_tooltip = {
+
+		
+	}
+
+	completion_reward = {
+		subtract_from_variable = { ROOT.allied_anger = 45 tooltip = anger_spent_TT }
+		set_temp_variable = { aa_xp = air_strength }
+		divide_temp_variable = { aa_xp = 40 }
+		clamp_temp_variable = {
+			var = aa_xp
+			min = 10
+		}	
+		air_experience = aa_xp
+	}
+}
+shared_focus = {
+	id = CW_aa_air_sci
+	icon = GFX_focus_NORDIC_dem_airforce
+	x = 1
+	y = 1
+	relative_position_id = CW_aa_air
+	prerequisite = { focus = CW_aa_air }
+	search_filters = {FOCUS_FILTER_ANGER}
+	text_icon = NORDIC_focus_style
+
+	cost = 0 
+
+
+	available = {
+		set_temp_variable = { anger = 49 }
+		custom_trigger_tooltip = {
+			tooltip = anger_needed_tt
+			check_variable = { ROOT.allied_anger > anger }
+		}		
+	}
+		
+	bypass = {
+
+	}
+
+	cancel_if_invalid = yes
+	continue_if_invalid = no
+	available_if_capitulated = yes
+
+	complete_tooltip = {
+
+		
+	}
+
+	completion_reward = {
+		subtract_from_variable = { ROOT.allied_anger = 50 tooltip = anger_spent_TT }
+		set_temp_variable = { aa_xp = air_strength }
+		divide_temp_variable = { aa_xp = 80 }
+		clamp_temp_variable = {
+			var = aa_xp
+			min = 5
+		}	
+		add_tech_bonus = {
+			name = CW_aa
+			bonus = 0.10
+			uses = 2
+			category = air_equipment
+		}
+	}
+}
+shared_focus = {
+	id = CW_aa_navy
+	icon = GFX_focus_ARG_study_the_battle_of_the_river_plate
+	x = 2
+	y = 1
+	relative_position_id = CW_aa_army
+	prerequisite = { focus = CW_aa_army }
+	search_filters = {FOCUS_FILTER_ANGER}
+	text_icon = NORDIC_focus_style
+
+	cost = 0 
+
+
+	available = {
+		set_temp_variable = { anger = 44 }
+		custom_trigger_tooltip = {
+			tooltip = anger_needed_tt
+			check_variable = { ROOT.allied_anger > anger }
+		}		
+	}
+		
+	bypass = {
+
+	}
+
+	cancel_if_invalid = yes
+	continue_if_invalid = no
+	available_if_capitulated = yes
+
+	complete_tooltip = {
+
+		
+	}
+
+	completion_reward = {
+		subtract_from_variable = { ROOT.allied_anger = 45 tooltip = anger_spent_TT }
+		set_temp_variable = { aa_xp = navy_strength }
+		divide_temp_variable = { aa_xp = 8 }
+		clamp_temp_variable = {
+			var = aa_xp
+			min = 10
+		}	
+		navy_experience = aa_xp
+	}
+}
+shared_focus = {
+	id = CW_aa_navy_sci
+	icon = GFX_focus_NORDIC_dem_navy
+	x = -1
+	y = 1
+	relative_position_id = CW_aa_navy
+	prerequisite = { focus = CW_aa_navy }
+	search_filters = {FOCUS_FILTER_ANGER}
+	text_icon = NORDIC_focus_style
+
+	cost = 0 
+
+
+	available = {
+		set_temp_variable = { anger = 49 }
+		custom_trigger_tooltip = {
+			tooltip = anger_needed_tt
+			check_variable = { ROOT.allied_anger > anger }
+		}		
+	}
+		
+	bypass = {
+
+	}
+
+	cancel_if_invalid = yes
+	continue_if_invalid = no
+	available_if_capitulated = yes
+
+	complete_tooltip = {
+
+		
+	}
+
+	completion_reward = {
+		subtract_from_variable = { ROOT.allied_anger = 50 tooltip = anger_spent_TT }
+		set_temp_variable = { aa_xp = navy_strength }
+		divide_temp_variable = { aa_xp = 16 }
+		clamp_temp_variable = {
+			var = aa_xp
+			min = 5
+		}	
+		navy_experience = aa_xp
+		add_tech_bonus = {
+			name = CW_aa
+			bonus = 0.10
+			uses = 2
+			category = naval_equipment
+		}
+	}
+}
+shared_focus = {
+	id = CW_aa_cmd
+	icon = GFX_focus_NORDIC_dem_institution_1
+	x = 0
+	y = 3
+	relative_position_id = CW_aa_army
+	prerequisite = { focus = CW_aa_navy  focus = CW_aa_air }
+	search_filters = {FOCUS_FILTER_ANGER}
+	text_icon = NORDIC_focus_style
+
+	cost = 0 
+
+
+	available = {
+		set_temp_variable = { anger = 24 }
+		custom_trigger_tooltip = {
+			tooltip = anger_needed_tt
+			check_variable = { ROOT.allied_anger > anger }
+		}		
+	}
+		
+	bypass = {
+
+	}
+
+	cancel_if_invalid = yes
+	continue_if_invalid = no
+	available_if_capitulated = yes
+
+	complete_tooltip = {
+
+		
+	}
+
+	completion_reward = {
+		subtract_from_variable = { ROOT.allied_anger = 25 tooltip = anger_spent_TT }
+		add_command_power = 25
+	}
+}
+shared_focus = {
+	id = CW_aa_air_prod
+	icon = GFX_goal_hungarian_lloyd_aircraft_factory
+	x = -1
+	y = 2
+	relative_position_id = CW_aa_cmd
+	prerequisite = { focus = CW_aa_cmd }
+	prerequisite = { focus = CW_aa_air_sci }
+	search_filters = {FOCUS_FILTER_ANGER}
+	text_icon = NORDIC_focus_style
+
+	cost = 0 
+
+
+	available = {
+		set_temp_variable = { anger = 74 }
+		custom_trigger_tooltip = {
+			tooltip = anger_needed_tt
+			check_variable = { ROOT.allied_anger > anger }
+		}		
+	}
+		
+	bypass = {
+
+	}
+
+	cancel_if_invalid = yes
+	continue_if_invalid = no
+	available_if_capitulated = yes
+
+	complete_tooltip = {
+
+		
+	}
+
+	completion_reward = {
+		subtract_from_variable = { ROOT.allied_anger = 75 tooltip = anger_spent_TT }
+		set_temp_variable = { building = token:air_assembly }
+		set_temp_variable = { add = num_of_military_factories  }
+		divide_temp_variable = { add = 45 }
+		clamp_temp_variable = {
+			var = add
+			min = 1
+		}
+		focus_add_building_prioritize_home_area = yes		
+	}
+}
+shared_focus = {
+	id = CW_aa_navy_prod
+	icon = GFX_goal_upgrade_ships
+	x = 1
+	y = 2
+	relative_position_id = CW_aa_cmd
+	prerequisite = { focus = CW_aa_cmd }
+	prerequisite = { focus = CW_aa_navy_sci}
+	search_filters = {FOCUS_FILTER_ANGER}
+	text_icon = NORDIC_focus_style
+
+	cost = 0 
+
+
+	available = {
+		set_temp_variable = { anger = 79 }
+		custom_trigger_tooltip = {
+			tooltip = anger_needed_tt
+			check_variable = { ROOT.allied_anger > anger }
+		}		
+	}
+		
+	bypass = {
+
+	}
+
+	cancel_if_invalid = yes
+	continue_if_invalid = no
+	available_if_capitulated = yes
+
+	complete_tooltip = {
+
+		
+	}
+
+	completion_reward = {
+		subtract_from_variable = { ROOT.allied_anger = 80 tooltip = anger_spent_TT }
+		if = {
+			limit = {
+				tag = ENG
+			}
+			set_temp_variable = { building = token:dockyard }
+		}
+		else = {
+			set_temp_variable = { building = token:shipyard }
+			set_temp_variable = { add = num_of_naval_factories }
+			divide_temp_variable = { add = 7 }
+			clamp_temp_variable = {
+				var = add
+				min = 1
+			}
+		}
+		focus_add_building_prioritize_home_area = yes
+	}
+}
+shared_focus = {
+	id = CW_aa_cmd_imp
+	icon = GFX_focus_NORDIC_dem_institution_2
+	x = 0
+	y = 1
+	relative_position_id = CW_aa_cmd
+	prerequisite = { focus = CW_aa_cmd }
+	search_filters = {FOCUS_FILTER_ANGER}
+	text_icon = NORDIC_focus_style
+
+	cost = 0 
+
+
+	available = {
+		set_temp_variable = { anger = 49 }
+		custom_trigger_tooltip = {
+			tooltip = anger_needed_tt
+			check_variable = { ROOT.allied_anger > anger }
+		}		
+	}
+		
+	bypass = {
+
+	}
+
+	cancel_if_invalid = yes
+	continue_if_invalid = no
+	available_if_capitulated = yes
+
+	complete_tooltip = {
+
+		
+	}
+
+	completion_reward = {
+		subtract_from_variable = { ROOT.allied_anger = 50 tooltip = anger_spent_TT }
+		cmd_increase_up_1_level = yes
+	}
+}
+shared_focus = {
+	id = CW_aa_political
+	icon = GFX_focus_SWE_undermine_fascism
+	x = 0
+	y = 3
+	relative_position_id = CW_allied_anger
+	prerequisite = { focus = CW_allied_anger }
+	search_filters = {FOCUS_FILTER_ANGER}
+	text_icon = NORDIC_focus_style
+	offset = {
+		x = 2
+		y = -2
+		trigger = {
+			tag = CAN
+		}
+	}
+	cost = 0 
+
+
+	available = {
+		set_temp_variable = { anger = 29 }
+		custom_trigger_tooltip = {
+			tooltip = anger_needed_tt
+			check_variable = { ROOT.allied_anger > anger }
+		}	
+	}
+		
+	bypass = {
+
+	}
+
+	cancel_if_invalid = yes
+	continue_if_invalid = no
+	available_if_capitulated = yes
+
+	complete_tooltip = {
+
+		
+	}
+
+	completion_reward = {
+		subtract_from_variable = { ROOT.allied_anger = 30 tooltip = anger_spent_TT }
+		add_political_power = 25
+        custom_override_tooltip = {
+            tooltip = {
+                localization_key = LAW_DISCOUNT_TOOLTIP
+                LAW_TYPE = mobilization_laws
+                DISCOUNT = 50
+            }          
+            set_variable = { law_cost_discount@token:mobilization_laws = -0.5 }
+        }	
+	}
+}
+shared_focus = {
+	id = CW_aa_get_ger
+	icon = GFX_focus_GER_subdue_the_wehrmacht
+	x = -1
+	y = 2
+	relative_position_id = CW_aa_political
+	prerequisite = { focus = CW_aa_political }
+	search_filters = {FOCUS_FILTER_ANGER}
+	text_icon = NORDIC_focus_style
+
+	cost = 0 
+
+
+	available = {
+		set_temp_variable = { anger = 14 }
+		custom_trigger_tooltip = {
+			tooltip = anger_needed_tt
+			check_variable = { ROOT.allied_anger > anger }
+		}		
+	}
+		
+	bypass = {
+
+	}
+
+	cancel_if_invalid = yes
+	continue_if_invalid = no
+	available_if_capitulated = yes
+
+	complete_tooltip = {
+
+		
+	}
+
+	completion_reward = {
+		subtract_from_variable = { ROOT.allied_anger = 15 tooltip = anger_spent_TT }
+		add_opinion_modifier = {
+			target = GER
+			modifier = minor_embargo
+		}
+	}
+}
+shared_focus = {
+	id = CW_aa_get_ita
+	icon = GFX_focus_ITA_subdue_the_sentinels
+	x = 0
+	y = 1
+	relative_position_id = CW_aa_political
+	prerequisite = { focus = CW_aa_political }
+	search_filters = {FOCUS_FILTER_ANGER}
+	text_icon = NORDIC_focus_style
+
+	cost = 0 
+
+
+	available = {
+		set_temp_variable = { anger = 14 }
+		custom_trigger_tooltip = {
+			tooltip = anger_needed_tt
+			check_variable = { ROOT.allied_anger > anger }
+		}		
+	}
+		
+	bypass = {
+
+	}
+
+	cancel_if_invalid = yes
+	continue_if_invalid = no
+	available_if_capitulated = yes
+
+	complete_tooltip = {
+
+		
+	}
+
+	completion_reward = {
+		subtract_from_variable = { ROOT.allied_anger = 15 tooltip = anger_spent_TT }
+		add_opinion_modifier = {
+			target = ITA
+			modifier = minor_embargo
+		}
+	}
+}
+shared_focus = {
+	id = CW_aa_get_jap
+	icon = GFX_focus_AST_war_japan
+	x = 1
+	y = 2
+	relative_position_id = CW_aa_political
+	prerequisite = { focus = CW_aa_political }
+	search_filters = {FOCUS_FILTER_ANGER}
+	text_icon = NORDIC_focus_style
+
+	cost = 0 
+
+
+	available = {
+		set_temp_variable = { anger = 14 }
+		custom_trigger_tooltip = {
+			tooltip = anger_needed_tt
+			check_variable = { ROOT.allied_anger > anger }
+		}		
+	}
+		
+	bypass = {
+
+	}
+
+	cancel_if_invalid = yes
+	continue_if_invalid = no
+	available_if_capitulated = yes
+
+	complete_tooltip = {
+
+		
+	}
+
+	completion_reward = {
+		subtract_from_variable = { ROOT.allied_anger = 15 tooltip = anger_spent_TT }
+		add_opinion_modifier = {
+			target = JAP
+			modifier = minor_embargo
+		}
+	}
+}
+shared_focus = {
+	id = CW_aa_into_china
+	icon = GFX_focus_chi_one_china_policy
+	x = 0
+	y = 2
+	relative_position_id = CW_aa_get_jap
+	prerequisite = { focus = CW_aa_get_jap }
+	search_filters = {FOCUS_FILTER_ANGER}
+	text_icon = NORDIC_focus_style
+
+	cost = 0 
+	allow_branch = {
+		OR = {
+			tag = ENG
+			tag = RAJ
+		}
+	}
+
+	available = {
+		set_temp_variable = { anger = 11 }
+		custom_trigger_tooltip = {
+			tooltip = anger_needed_tt
+			check_variable = { ROOT.allied_anger > anger }
+		}	
+		CHI = {
+			has_war_with = JAP
+		}
+	}
+		
+	bypass = {
+
+	}
+
+	cancel_if_invalid = yes
+	continue_if_invalid = no
+	available_if_capitulated = yes
+
+	complete_tooltip = {
+
+		
+	}
+
+	completion_reward = {
+		subtract_from_variable = { ROOT.allied_anger = 12 tooltip = anger_spent_TT }
+		CHI = {
+			ROOT_bypass_volunteer_ideology_for_THIS = yes
+		}
+	}
+}
+shared_focus = {
+	id = CW_aa_embargo
+	icon = GFX_goal_blockade_trade
+	x = 0
+	y = 2
+	relative_position_id = CW_aa_get_ita
+	prerequisite = { focus = CW_aa_get_ita }
+	prerequisite = { focus = CW_aa_get_jap }
+	prerequisite = { focus = CW_aa_get_ger }
+	search_filters = {FOCUS_FILTER_ANGER}
+	text_icon = NORDIC_focus_style
+
+	cost = 0 
+
+
+	available = {
+		set_temp_variable = { anger = 99 }
+		custom_trigger_tooltip = {
+			tooltip = anger_needed_tt
+			check_variable = { ROOT.allied_anger > anger }
+		}		
+	}
+		
+	bypass = {
+
+	}
+
+	cancel_if_invalid = yes
+	continue_if_invalid = no
+	available_if_capitulated = yes
+
+	complete_tooltip = {
+
+		
+	}
+
+	completion_reward = {
+		subtract_from_variable = { ROOT.allied_anger = 100 tooltip = anger_spent_TT }
+		send_embargo = ITA
+		send_embargo = GER
+		send_embargo = JAP
+	}
+}
+shared_focus = {
+	id = CW_aa_infra
+	icon = GFX_generic_rail
+	x = 2
+	y = 1
+	relative_position_id = CW_allied_anger
+	prerequisite = { focus = CW_allied_anger }
+	search_filters = {FOCUS_FILTER_ANGER}
+	text_icon = NORDIC_focus_style
+	offset = {
+		x = -2
+		y = 0
+		trigger = {
+			tag = CAN
+		}
+	}
+	cost = 0 
+
+
+	available = {
+		set_temp_variable = { anger = 29 }
+		custom_trigger_tooltip = {
+			tooltip = anger_needed_tt
+			check_variable = { ROOT.allied_anger > anger }
+		}		
+	}
+		
+	bypass = {
+
+	}
+
+	cancel_if_invalid = yes
+	continue_if_invalid = no
+	available_if_capitulated = yes
+
+	complete_tooltip = {
+
+		
+	}
+
+	completion_reward = {
+		subtract_from_variable = { ROOT.allied_anger = 30 tooltip = anger_spent_TT }
+		set_temp_variable = { building = token:infrastructure }
+		focus_add_building_prioritize_home_area = yes
+	}
+}
+shared_focus = {
+	id = CW_aa_economic
+	icon = GFX_focus_NORDIC_dem_capstone_civilian
+	x = 0
+	y = 1
+	relative_position_id = CW_aa_infra
+	prerequisite = { focus = CW_aa_infra }
+	search_filters = {FOCUS_FILTER_ANGER}
+	text_icon = NORDIC_focus_style
+
+	cost = 0 
+	offset = {
+		x = 0
+		y = 2
+		trigger = {
+			tag = CAN
+		}
+	}
+
+	available = {
+		set_temp_variable = { anger = 49 }
+		custom_trigger_tooltip = {
+			tooltip = anger_needed_tt
+			check_variable = { ROOT.allied_anger > anger }
+		}		
+	}
+		
+	bypass = {
+
+	}
+
+	cancel_if_invalid = yes
+	continue_if_invalid = no
+	available_if_capitulated = yes
+
+	complete_tooltip = {
+
+		
+	}
+
+	completion_reward = {
+		subtract_from_variable = { ROOT.allied_anger = 50 tooltip = anger_spent_TT }
+		
+		set_temp_variable = { building = token:industrial_complex }
+		set_temp_variable = { add = num_owned_civilian_factories }
+		divide_temp_variable = { add = 25 }
+		clamp_temp_variable = {
+			var = add
+			min = 1
+		}
+		focus_add_building_prioritize_home_area = yes
+	}
+}
+shared_focus = {
+	id = CW_aa_industry
+	icon = GFX_focus_NORDIC_dem_materiel
+	x = 0
+	y = 1
+	relative_position_id = CW_aa_economic
+	prerequisite = { focus = CW_aa_economic }
+	search_filters = {FOCUS_FILTER_ANGER}
+	text_icon = NORDIC_focus_style
+
+	cost = 0 
+
+
+	available = {
+		set_temp_variable = { anger = 49 }
+		custom_trigger_tooltip = {
+			tooltip = anger_needed_tt
+			check_variable = { ROOT.allied_anger > anger }
+		}		
+	}
+		
+	bypass = {
+
+	}
+
+	cancel_if_invalid = yes
+	continue_if_invalid = no
+	available_if_capitulated = yes
+
+	complete_tooltip = {
+
+		
+	}
+
+	completion_reward = {
+		subtract_from_variable = { ROOT.allied_anger = 50 tooltip = anger_spent_TT }
+		set_temp_variable = { building = token:arms_factory }
+		set_temp_variable = { add = num_of_military_factories }
+		divide_temp_variable = { add = 25 }
+		clamp_temp_variable = {
+			var = add
+			min = 1
+		}
+		focus_add_building_prioritize_home_area = yes
+	}
+}
+shared_focus = {
+	id = CW_aa_scraps
+	icon = GFX_stop_peace
+	x = 0
+	y = 3
+	relative_position_id = CW_aa_industry
+	prerequisite = { focus = CW_aa_industry }
+	search_filters = {FOCUS_FILTER_ANGER}
+	text_icon = NORDIC_focus_style
+
+	cost = 0 
+	offset = {
+		x = -1
+		y = -1
+		trigger = {
+			tag = CAN
+		}
+	}
+
+	available = {
+		set_temp_variable = { anger = 24 }
+		custom_trigger_tooltip = {
+			tooltip = anger_needed_tt
+			check_variable = { ROOT.allied_anger > anger }
+		}		
+	}
+		
+	bypass = {
+
+	}
+
+	cancel_if_invalid = yes
+	continue_if_invalid = no
+	available_if_capitulated = yes
+
+	complete_tooltip = {
+
+		
+	}
+
+	completion_reward = {
+		subtract_from_variable = { ROOT.allied_anger = 25 tooltip = anger_spent_TT }
+		set_temp_variable = { time = num_owned_civilian_factories }
+		add_to_temp_variable = { time = num_of_military_factories }
+		add_to_temp_variable = { time = num_of_naval_factories }
+		add_timed_idea = {
+			idea = CW_scrap_program
+			days = time
+		}
+	}
+}
+shared_focus = {
+	id = CW_aa_food
+	icon = GFX_potatoes
+	x = -1
+	y = 1
+	relative_position_id = CW_allied_anger
+	prerequisite = { focus = CW_allied_anger }
+	search_filters = {FOCUS_FILTER_ANGER}
+	text_icon = NORDIC_focus_style
+	offset = {
+		x = 5
+		y = 0
+		trigger = {
+			tag = CAN
+		}
+	}
+	cost = 0 
+
+
+	available = {
+		set_temp_variable = { anger = 9 }
+		custom_trigger_tooltip = {
+			tooltip = anger_needed_tt
+			check_variable = { ROOT.allied_anger > anger }
+		}		
+	}
+		
+	bypass = {
+
+	}
+
+	cancel_if_invalid = yes
+	continue_if_invalid = no
+	available_if_capitulated = yes
+
+	complete_tooltip = {
+
+		
+	}
+
+	completion_reward = {
+		subtract_from_variable = { anger = 10 tooltip = anger_spent_TT }
+		set_temp_variable = { time = num_owned_civilian_factories }
+		add_to_temp_variable = { time = num_of_military_factories }
+		add_to_temp_variable = { time = num_of_naval_factories }
+		multiply_temp_variable = { time = 1.2 }
+		add_timed_idea = {
+			idea = Arab_Farms
+			days = time
+		}
+	}
+}
+shared_focus = {
+	id = CW_aa_arty
+	icon = GFX_goal_national_artillery
+	x = 1
+	y = 1
+	relative_position_id = CW_aa_industry
+	prerequisite = { focus = CW_aa_industry }
+	search_filters = {FOCUS_FILTER_ANGER}
+	text_icon = NORDIC_focus_style
+
+	cost = 0 
+	offset = {
+		x = 0
+		y = 1
+		trigger = {
+			tag = CAN
+		}
+	}
+	available = {
+		set_temp_variable = { anger = 54 }
+		custom_trigger_tooltip = {
+			tooltip = anger_needed_tt
+			check_variable = { ROOT.allied_anger > anger }
+		}		
+	}
+		
+	bypass = {
+
+	}
+
+	cancel_if_invalid = yes
+	continue_if_invalid = no
+	available_if_capitulated = yes
+
+	complete_tooltip = {
+
+		
+	}
+
+	completion_reward = {
+		subtract_from_variable = { anger = 55 tooltip = anger_spent_TT }
+		set_temp_variable = { building = token:artillery_assembly }
+		set_temp_variable = { add = num_of_military_factories  }
+		divide_temp_variable = { add = 25 }
+		clamp_temp_variable = {
+			var = add
+			min = 1
+		}
+		focus_add_building_prioritize_home_area = yes		
+	}
+}
+shared_focus = {
+	id = CW_aa_motor
+	icon = GFX_generic_trucks
+	x = 2
+	y = 2
+	relative_position_id = CW_aa_industry
+	prerequisite = { focus = CW_aa_industry }
+	search_filters = {FOCUS_FILTER_ANGER}
+	text_icon = NORDIC_focus_style
+
+	cost = 0 
+	offset = {
+		x = -2
+		y = -1
+		trigger = {
+			tag = CAN
+		}
+	}
+	available = {
+		set_temp_variable = { anger = 54 }
+		custom_trigger_tooltip = {
+			tooltip = anger_needed_tt
+			check_variable = { ROOT.allied_anger > anger }
+		}		
+	}
+		
+	bypass = {
+
+	}
+
+	cancel_if_invalid = yes
+	continue_if_invalid = no
+	available_if_capitulated = yes
+
+	complete_tooltip = {
+
+		
+	}
+
+	completion_reward = {
+		subtract_from_variable = { anger = 55 tooltip = anger_spent_TT }
+		set_temp_variable = { building = token:engine_assembly }
+		set_temp_variable = { add = num_of_military_factories  }
+		divide_temp_variable = { add = 30 }
+		clamp_temp_variable = {
+			var = add
+			min = 1
+		}
+		focus_add_building_prioritize_home_area = yes		
+	}
+}
+shared_focus = {
+	id = CW_aa_tanks
+	icon = GFX_whippet_tank
+	x = 0
+	y = 1
+	relative_position_id = CW_aa_motor
+	prerequisite = { focus = CW_aa_motor }
+	search_filters = {FOCUS_FILTER_ANGER}
+	text_icon = NORDIC_focus_style
+
+	cost = 0 
+	offset = {
+		x = 0
+		y = 1
+		trigger = {
+			tag = CAN
+		}
+	}
+	available = {
+		set_temp_variable = { anger = 74 }
+		custom_trigger_tooltip = {
+			tooltip = anger_needed_tt
+			check_variable = { ROOT.allied_anger > anger }
+		}		
+	}
+		
+	bypass = {
+
+	}
+
+	cancel_if_invalid = yes
+	continue_if_invalid = no
+	available_if_capitulated = yes
+
+	complete_tooltip = {
+
+		
+	}
+
+	completion_reward = {
+		subtract_from_variable = { anger = 75 tooltip = anger_spent_TT }
+		set_temp_variable = { building = token:tank_assembly }
+		set_temp_variable = { add = num_of_military_factories  }
+		divide_temp_variable = { add = 45 }
+		clamp_temp_variable = {
+			var = add
+			min = 1
+		}
+		focus_add_building_prioritize_home_area = yes		
+	}
+}

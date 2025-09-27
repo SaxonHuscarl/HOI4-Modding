@@ -1,0 +1,979 @@
+@MAN_HUNT_BANDITS_EQUIPMENT_COST_TRIGGER = 499
+@MAN_HUNT_BANDITS_EQUIPMENT_COST_EFFECT = -500
+
+MAN_banditry_category = {
+
+#  #  ##  ###  ### #  # ### ###  #  # 
+## # #  # #  #  #  #  # #   #  # ## # 
+# ## #  # ###   #  #### ##  ###  # ## 
+#  # #  # #  #  #  #  # #   #  # #  # 
+#  #  ##  #  #  #  #  # ### #  # #  # 
+
+	MAN_pacify_bandits_in_the_northern_countryside = {
+
+		icon = generic_oppression
+		
+		available = {
+			has_country_flag = MAN_northern_bandits
+			OR = {
+				has_completed_focus = MAN_pacify_the_countryside
+				has_completed_focus = MCK_enhance_local_policing
+			}
+			714 = {
+				has_active_resistance = yes
+			}
+			divisions_in_state = {
+				state = 714	
+				size > 5
+			}
+		}
+		allowed = { 
+			tag = MAN 
+		}
+		highlight_states = { 
+			highlight_state_targets = {
+				state = 714
+			}
+		}
+
+		cost = 0
+
+		ai_will_do = {
+			factor = 0
+			modifier = {
+				add = 200
+				divisions_in_state = {
+					state = 714	
+					size > 5
+				}
+			}
+		}
+
+		visible = {
+			NOT = { has_active_mission = MAN_maintain_northern_control }
+			has_country_flag = MAN_northern_bandits
+		}
+
+		complete_effect = {
+			activate_mission = MAN_maintain_northern_control
+			custom_effect_tooltip = MAN_pacify_bandits_mission_explanation
+		}
+	}
+
+	MAN_hunt_down_northern_bandits = {
+
+		icon = generic_oppression
+
+		available = {
+			OR = {
+				has_completed_focus = MAN_pacify_the_countryside
+				has_completed_focus = MCK_enhance_local_policing
+			}
+			714 = {
+				has_active_resistance = yes
+			}
+			has_equipment = { infantry_equipment > @MAN_HUNT_BANDITS_EQUIPMENT_COST_TRIGGER }
+			has_country_flag = MAN_northern_bandits
+		}
+
+		allowed = { 
+			tag = MAN 
+		}
+		cost = 0
+
+		highlight_states = { 
+			highlight_state_targets = {
+				state = 714
+			}
+		}
+		visible = {
+			has_country_flag = MAN_northern_bandits
+		}
+		fire_only_once = yes
+
+		ai_will_do = {
+			factor = 0
+			modifier = {
+				add = 200
+				divisions_in_state = {
+					state = 714	
+					size < 6
+				}
+			}
+		}
+
+		complete_effect = {
+			custom_effect_tooltip = MAN_hunt_down_northern_bandits_tt
+			add_manpower = -1000
+			714 = {
+				cancel_resistance = yes
+			}			
+			add_equipment_to_stockpile = {
+				type = infantry_equipment
+				amount = @MAN_HUNT_BANDITS_EQUIPMENT_COST_EFFECT
+			}
+
+			army_experience = 10
+
+			remove_mission = MAN_maintain_northern_control
+			clr_country_flag = MAN_northern_bandits
+			if = {
+				limit = {
+					NOT = { has_country_flag = MAN_eastern_bandits }
+					NOT = { has_country_flag = MAN_western_bandits }
+				}
+				remove_ideas = { 
+					MCK_dongbei_partisan
+					MCK_dongbei_partisan_pacified
+				}
+			}
+		}
+	}
+
+	MAN_maintain_northern_control = {
+
+		icon = generic_civil_support
+
+		available = {
+			always = no
+		}
+
+		days_mission_timeout = MAN_main_control_timer?180
+
+		activation = {
+			always = no #Triggered from effect
+		}
+		allowed = { 
+			tag = MAN 
+		}
+		cancel_trigger = {
+			divisions_in_state = {
+				state = 714	
+				size < 6
+			}
+		}
+
+		highlight_states = { 
+			highlight_state_targets = {
+				state = 714
+			}
+		}
+
+		visible = {
+			
+		}
+
+		is_good = yes
+
+		timeout_effect = {
+			custom_effect_tooltip = MAN_hunt_down_northern_bandits_tt
+			army_experience = 10
+			clr_country_flag = MAN_northern_bandits
+			714 = {
+				cancel_resistance = yes
+			}
+			if = {
+				limit = {
+					NOT = { has_country_flag = MAN_eastern_bandits }
+					NOT = { has_country_flag = MAN_western_bandits }
+				}
+				remove_ideas = { 
+					MCK_dongbei_partisan
+					MCK_dongbei_partisan_pacified
+				}
+			}
+		}
+	}
+
+###  ##   ## ### ### ###  #  # 
+#   #  # #    #  #   #  # ## # 
+##  ####  #   #  ##  ###  # ## 
+#   #  #   #  #  #   #  # #  # 
+### #  # ##   #  ### #  # #  # 
+
+	MAN_pacify_bandits_in_the_eastern_countryside = {
+
+		icon = generic_oppression
+		
+		available = {
+			OR = {
+				has_completed_focus = MAN_pacify_the_countryside
+				has_completed_focus = MCK_enhance_local_policing
+			}
+			812 = {
+				has_active_resistance = yes
+			}
+			has_country_flag = MAN_eastern_bandits
+			divisions_in_state = {
+				state = 812
+				size > 5
+			}
+		}
+
+		highlight_states = { 
+			highlight_state_targets = {
+				state = 812
+			}
+		}
+		allowed = { 
+			tag = MAN 
+		}
+		cost = 0
+
+		ai_will_do = {
+			factor = 0
+			modifier = {
+				add = 200
+				divisions_in_state = {
+					state = 812	
+					size > 5
+				}
+			}
+		}
+
+		visible = {
+			NOT = { has_active_mission = MAN_maintain_eastern_control }
+			has_country_flag = MAN_eastern_bandits
+		}
+
+		complete_effect = {
+			activate_mission = MAN_maintain_eastern_control
+			custom_effect_tooltip = MAN_pacify_bandits_mission_explanation
+		}
+	}
+
+	MAN_hunt_down_eastern_bandits = {
+
+		icon = generic_oppression
+
+		available = {
+			OR = {
+				has_completed_focus = MAN_pacify_the_countryside
+				has_completed_focus = MCK_enhance_local_policing
+			}
+			812 = {
+				has_active_resistance = yes
+			}
+			has_equipment = { infantry_equipment > @MAN_HUNT_BANDITS_EQUIPMENT_COST_TRIGGER }
+			has_country_flag = MAN_eastern_bandits
+		}
+
+		visible = {
+			has_country_flag = MAN_eastern_bandits
+		}
+		allowed = { 
+			tag = MAN 
+		}
+		cost = 0
+
+		highlight_states = { 
+			highlight_state_targets = {
+				state = 812
+			}
+		}
+
+		fire_only_once = yes
+
+		ai_will_do = {
+			factor = 0
+			modifier = {
+				add = 200
+				divisions_in_state = {
+					state = 812	
+					size < 6
+				}
+			}
+		}
+
+		complete_effect = {
+			custom_effect_tooltip = MAN_hunt_down_eastern_bandits_tt
+			add_manpower = -1000
+			
+			add_equipment_to_stockpile = {
+				type = infantry_equipment
+				amount = @MAN_HUNT_BANDITS_EQUIPMENT_COST_EFFECT
+			}
+
+			army_experience = 10
+
+			remove_mission = MAN_maintain_eastern_control
+			clr_country_flag = MAN_eastern_bandits
+			812 = {
+				cancel_resistance = yes
+			}
+			if = {
+				limit = {
+					NOT = { has_country_flag = MAN_northern_bandits }
+					NOT = { has_country_flag = MAN_western_bandits }
+				}
+				remove_ideas = { 
+					MCK_dongbei_partisan
+					MCK_dongbei_partisan_pacified
+				}
+			}
+		}
+	}
+
+	MAN_maintain_eastern_control = {
+
+		icon = generic_civil_support
+
+		available = {			
+			always = no
+		}
+		allowed = { 
+			tag = MAN 
+		}
+		days_mission_timeout = MAN_main_control_timer?180
+
+		activation = {
+			always = no #Triggered from effect
+		}
+
+		cancel_trigger = {
+			divisions_in_state = {
+				state = 812	
+				size < 6
+			}
+		}
+
+		highlight_states = { 
+			highlight_state_targets = {
+				state = 812
+			}
+		}
+
+		visible = {
+			
+		}
+
+		is_good = yes
+
+		timeout_effect = {
+			custom_effect_tooltip = MAN_hunt_down_eastern_bandits_tt
+			army_experience = 10
+			clr_country_flag = MAN_eastern_bandits
+			812 = {
+				cancel_resistance = yes
+			}
+			if = {
+				limit = {
+					NOT = { has_country_flag = MAN_northern_bandits }
+					NOT = { has_country_flag = MAN_western_bandits }
+				}
+				remove_ideas = { 
+					MCK_dongbei_partisan
+					MCK_dongbei_partisan_pacified
+				}
+			}
+		}
+	}
+
+#   # ###  ## ### ### ###  #  # 
+#   # #   #    #  #   #  # ## # 
+# # # ##   #   #  ##  ###  # ## 
+# # # #     #  #  #   #  # #  # 
+ # #  ### ##   #  ### #  # #  # 
+	
+	MAN_pacify_bandits_in_the_western_countryside = {
+
+		icon = generic_oppression
+		
+		available = {
+			OR = {
+				has_completed_focus = MAN_pacify_the_countryside
+				has_completed_focus = MCK_enhance_local_policing
+			}
+			813 = {
+				has_active_resistance = yes
+			}
+			has_country_flag = MAN_western_bandits
+			divisions_in_state = {
+				state = 813	
+				size > 5
+			}
+		}
+		allowed = { 
+			tag = MAN 
+		}
+		highlight_states = { 
+			highlight_state_targets = {
+				state = 813
+			}
+		}
+
+		cost = 0
+
+		ai_will_do = {
+			factor = 0
+			modifier = {
+				add = 200
+				divisions_in_state = {
+					state = 813	
+					size > 5
+				}
+			}
+		}
+
+		visible = {
+			NOT = { has_active_mission = MAN_maintain_western_control }
+			has_country_flag = MAN_western_bandits
+		}
+
+		complete_effect = {
+			activate_mission = MAN_maintain_western_control
+			custom_effect_tooltip = MAN_pacify_bandits_mission_explanation
+		}
+	}
+
+	MAN_hunt_down_western_bandits = {
+
+		icon = generic_oppression
+
+		available = {
+			OR = {
+				has_completed_focus = MAN_pacify_the_countryside
+				has_completed_focus = MCK_enhance_local_policing
+			}
+			813 = {
+				has_active_resistance = yes
+			}
+			has_equipment = { infantry_equipment > @MAN_HUNT_BANDITS_EQUIPMENT_COST_TRIGGER }
+			has_country_flag = MAN_western_bandits
+		}
+
+		cost = 0
+
+		highlight_states = { 
+			highlight_state_targets = {
+				state = 813
+			}
+		}
+
+		visible = {
+			has_country_flag = MAN_western_bandits
+		}
+		allowed = { 
+			tag = MAN 
+		}
+		fire_only_once = yes
+
+		ai_will_do = {
+			factor = 0
+			modifier = {
+				add = 200
+				divisions_in_state = {
+					state = 813	
+					size < 6
+				}
+			}
+		}
+
+		complete_effect = {
+			custom_effect_tooltip = MAN_hunt_down_western_bandits_tt
+			add_manpower = -1000
+			
+			add_equipment_to_stockpile = {
+				type = infantry_equipment
+				amount = @MAN_HUNT_BANDITS_EQUIPMENT_COST_EFFECT
+			}
+
+			army_experience = 10
+
+			remove_mission = MAN_maintain_western_control
+			clr_country_flag = MAN_western_bandits
+			813 = {
+				cancel_resistance = yes
+			}
+			if = {
+				limit = {
+					NOT = { has_country_flag = MAN_eastern_bandits }
+					NOT = { has_country_flag = MAN_northern_bandits }
+				}
+				remove_ideas = { 
+					MCK_dongbei_partisan
+					MCK_dongbei_partisan_pacified
+				}
+			}
+		}
+	}
+
+	MAN_maintain_western_control = {
+
+		icon = generic_civil_support
+
+		available = {			
+			always = no
+		}
+		allowed = { 
+			tag = MAN 
+		}
+		days_mission_timeout = MAN_main_control_timer?180
+
+		activation = {
+			always = no #Triggered from effect
+		}
+
+		cancel_trigger = {
+			divisions_in_state = {
+				state = 813	
+				size < 6
+			}
+		}
+
+		highlight_states = { 
+			highlight_state_targets = {
+				state = 813
+			}
+		}
+
+		visible = {
+			
+		}
+
+		is_good = yes
+
+		timeout_effect = {
+			custom_effect_tooltip = MAN_hunt_down_western_bandits_tt
+			army_experience = 10
+			clr_country_flag = MAN_western_bandits
+			813 = {
+				cancel_resistance = yes
+			}
+			if = {
+				limit = {
+					NOT = { has_country_flag = MAN_eastern_bandits }
+					NOT = { has_country_flag = MAN_northern_bandits }
+				}
+				remove_ideas = { 
+					MCK_dongbei_partisan
+					MCK_dongbei_partisan_pacified
+				}
+			}
+		}
+	}
+#North Western ##761##
+	
+	MAN_pacify_bandits_in_the_NW_countryside = {
+
+		icon = generic_oppression
+		
+		available = {
+			OR = {
+				has_completed_focus = MAN_pacify_the_countryside
+				has_completed_focus = MCK_enhance_local_policing
+			}
+			761 = {
+				has_active_resistance = yes
+			}
+			has_country_flag = MAN_NW_bandits
+			divisions_in_state = {
+				state = 761	
+				size > 5
+			}
+		}
+		allowed = { 
+			tag = MAN 
+		}
+		highlight_states = { 
+			highlight_state_targets = {
+				state = 761
+			}
+		}
+
+		cost = 0
+
+		ai_will_do = {
+			factor = 0
+			modifier = {
+				add = 200
+				divisions_in_state = {
+					state = 761	
+					size > 5
+				}
+			}
+		}
+
+		visible = {
+			NOT = { has_active_mission = MAN_maintain_NW_control }
+			has_country_flag = MAN_NW_bandits
+		}
+
+		complete_effect = {
+			activate_mission = MAN_maintain_NW_control
+			custom_effect_tooltip = MAN_pacify_bandits_mission_explanation
+		}
+	}
+
+	MAN_hunt_down_NW_bandits = {
+
+		icon = generic_oppression
+
+		available = {
+			OR = {
+				has_completed_focus = MAN_pacify_the_countryside
+				has_completed_focus = MCK_enhance_local_policing
+			}
+			761 = {
+				has_active_resistance = yes
+			}
+			has_equipment = { infantry_equipment > @MAN_HUNT_BANDITS_EQUIPMENT_COST_TRIGGER }
+			has_country_flag = MAN_NW_bandits
+		}
+
+		cost = 0
+
+		highlight_states = { 
+			highlight_state_targets = {
+				state = 761
+			}
+		}
+
+		visible = {
+			has_country_flag = MAN_NW_bandits
+		}
+		allowed = { 
+			tag = MAN 
+		}
+
+		fire_only_once = yes
+
+		ai_will_do = {
+			factor = 0
+			modifier = {
+				add = 200
+				divisions_in_state = {
+					state = 761	
+					size < 6
+				}
+			}
+		}
+
+		complete_effect = {
+			custom_effect_tooltip = MAN_hunt_down_NW_bandits_tt
+			add_manpower = -1000
+			
+			add_equipment_to_stockpile = {
+				type = infantry_equipment
+				amount = @MAN_HUNT_BANDITS_EQUIPMENT_COST_EFFECT
+			}
+
+			army_experience = 10
+
+			remove_mission = MAN_maintain_NW_control
+			clr_country_flag = MAN_NW_bandits
+			761 = {
+				cancel_resistance = yes
+			}
+		}
+	}
+
+	MAN_maintain_NW_control = {
+
+		icon = generic_civil_support
+
+		available = {			
+			always = no
+		}
+		allowed = { 
+			tag = MAN 
+		}
+		days_mission_timeout = MAN_main_control_timer?180
+
+		activation = {
+			always = no #Triggered from effect
+		}
+
+		cancel_trigger = {
+			divisions_in_state = {
+				state = 761	
+				size < 6
+			}
+		}
+
+		highlight_states = { 
+			highlight_state_targets = {
+				state = 761
+			}
+		}
+
+		visible = {
+			
+		}
+
+		is_good = yes
+
+		timeout_effect = {
+			custom_effect_tooltip = MAN_hunt_down_NW_bandits_tt
+			army_experience = 10
+			clr_country_flag = MAN_NW_bandits
+			761 = {
+				cancel_resistance = yes
+			}
+		}
+	}	
+
+#far north ##814##
+	
+	MAN_pacify_bandits_in_the_far_north_countryside = {
+
+		icon = generic_oppression
+		
+		available = {
+			OR = {
+				has_completed_focus = MAN_pacify_the_countryside
+				has_completed_focus = MCK_enhance_local_policing
+			}
+			814 = {
+				has_active_resistance = yes
+			}
+			has_country_flag = MAN_far_north_bandits
+			divisions_in_state = {
+				state = 814	
+				size > 5
+			}
+		}
+		allowed = { 
+			tag = MAN 
+		}
+		highlight_states = { 
+			highlight_state_targets = {
+				state = 814
+			}
+		}
+
+		cost = 0
+
+		ai_will_do = {
+			factor = 0
+			modifier = {
+				add = 200
+				divisions_in_state = {
+					state = 814	
+					size > 5
+				}
+			}
+		}
+
+		visible = {
+			NOT = { has_active_mission = MAN_maintain_far_north_control }
+			has_country_flag = MAN_far_north_bandits
+		}
+
+		complete_effect = {
+			activate_mission = MAN_maintain_far_north_control
+			custom_effect_tooltip = MAN_pacify_bandits_mission_explanation
+		}
+	}
+
+	MAN_hunt_down_far_north_bandits = {
+
+		icon = generic_oppression
+
+		available = {
+			OR = {
+				has_completed_focus = MAN_pacify_the_countryside
+				has_completed_focus = MCK_enhance_local_policing
+			}
+			814 = {
+				has_active_resistance = yes
+			}
+			has_equipment = { infantry_equipment > @MAN_HUNT_BANDITS_EQUIPMENT_COST_TRIGGER }
+			has_country_flag = MAN_far_north_bandits
+		}
+
+		cost = 0
+
+		highlight_states = { 
+			highlight_state_targets = {
+				state = 814
+			}
+		}
+
+		visible = {
+			has_country_flag = MAN_far_north_bandits
+		}
+		allowed = { 
+			tag = MAN 
+		}
+
+		fire_only_once = yes
+
+		ai_will_do = {
+			factor = 0
+			modifier = {
+				add = 200
+				divisions_in_state = {
+					state = 814	
+					size < 6
+				}
+			}
+		}
+
+		complete_effect = {
+			custom_effect_tooltip = MAN_hunt_down_far_north_bandits_tt
+			add_manpower = -1000
+			
+			add_equipment_to_stockpile = {
+				type = infantry_equipment
+				amount = @MAN_HUNT_BANDITS_EQUIPMENT_COST_EFFECT
+			}
+
+			army_experience = 10
+
+			remove_mission = MAN_maintain_far_north_control
+			clr_country_flag = MAN_far_north_bandits
+			814 = {
+				cancel_resistance = yes
+			}
+		}
+	}
+
+	MAN_maintain_far_north_control = {
+
+		icon = generic_civil_support
+
+		available = {			
+			always = no
+		}
+		allowed = { 
+			tag = MAN 
+		}
+		days_mission_timeout = MAN_main_control_timer?180
+
+		activation = {
+			always = no #Triggered from effect
+		}
+
+		cancel_trigger = {
+			divisions_in_state = {
+				state = 814	
+				size < 6
+			}
+		}
+
+		highlight_states = { 
+			highlight_state_targets = {
+				state = 814
+			}
+		}
+
+		visible = {
+			
+		}
+
+		is_good = yes
+
+		timeout_effect = {
+			custom_effect_tooltip = MAN_hunt_down_far_north_bandits_tt
+			army_experience = 10
+			clr_country_flag = MAN_far_north_bandits
+			814 = {
+				cancel_resistance = yes
+			}
+		}
+	}	
+
+}
+
+#prospect_for_resources = {
+#
+#	MAN_develop_kirin_aluminium_deposits = { #328
+#		
+#		icon = aluminium
+#
+#		allowed = {
+#			original_tag = MAN
+#		}
+#
+#		available = {
+#			has_tech = excavation1
+#		}
+#		highlight_state_targets = {
+#			state = 328
+#		}
+#
+#		visible = {
+#			has_completed_focus = MCK_aluminium_deposit_in_liaoning
+#			controls_state = 328
+#			328 = {
+#				NOT = {
+#					has_state_flag = kirin_aluminium_developed
+#				}
+#			}
+#		}
+#
+#		fire_only_once = yes
+#
+#		cost = 25
+#		days_remove = 60
+#
+#		modifier = {
+#			civilian_factory_use = 2
+#		}
+#
+#		ai_will_do = {
+#			factor = 1
+#		}
+#		remove_effect = { 
+#			328 = { set_state_flag = kirin_aluminium_developed } 
+#			328 = {
+#				add_resource = {
+#					type = aluminium
+#					amount = 12
+#				}
+#			}
+#		}	
+#	}
+#
+#	MAN_develop_liaotung_iron_ore_deposits = { #716
+#		
+#		icon = steel
+#
+#		allowed = {
+#
+#		}
+#
+#		highlight_state_targets = {
+#			state = 716
+#		}
+#
+#		available = {
+#			has_tech = construction2
+#			has_tech = excavation1
+#		}
+#
+#		visible = {
+#			has_completed_focus = MCK_showa_steel_mill
+#			controls_state = 716
+#			716 = {
+#				NOT = {
+#					has_state_flag = liaotung_steel_developed
+#				}
+#			}
+#		}
+#
+#		fire_only_once = yes
+#
+#		cost = 25
+#		days_remove = 60
+#
+#		modifier = {
+#			civilian_factory_use = 2
+#		}
+#
+#		remove_effect = {
+#			716 = { set_state_flag = liaotung_steel_developed }
+#			716 = {
+#				add_resource = {
+#					type = steel
+#					amount = 16
+#				}
+#			}
+#		}
+#
+#		ai_will_do = {
+#			factor = 1
+#		}
+#	}
+#}

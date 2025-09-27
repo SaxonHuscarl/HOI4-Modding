@@ -1,0 +1,967 @@
+#LAWS
+
+BI_on_startup_laws_effect = {
+	if = {
+		limit = {
+			is_ai = no 
+			NOT = {
+				has_dynamic_modifier = {
+					modifier = officer_training_laws_modifier
+				}
+			}
+		}
+		add_dynamic_modifier = {
+			modifier = officer_training_laws_modifier
+		}
+	}
+	
+	if = {
+		limit = {
+			check_variable = { law_level@token:trade_laws = 0 }
+		}
+		set_country_flag = has_free_trade
+	}
+	else_if = {
+		limit = {
+			check_variable = { law_level@token:trade_laws = 1 }
+		}
+		set_country_flag = has_export_focus
+	}
+	else_if = {
+		limit = {
+			check_variable = { law_level@token:trade_laws = 2 }
+		}
+		set_country_flag = has_limited_exports
+	}
+	else_if = {
+		limit = {
+			check_variable = { law_level@token:trade_laws = 3 }
+		}
+		set_country_flag = has_closed_economy
+	}
+	
+	remove_ideas = free_trade
+	remove_ideas = export_focus
+	remove_ideas = limited_exports
+	remove_ideas = closed_economy
+	
+	update_cadet_org_bonus = yes
+}
+
+add_law = {
+	set_temp_variable = { current_or_future_law_lvl = law_level@var:input_group }
+	add_to_temp_variable = { current_or_future_law_lvl = law_change_num@var:input_group }
+		
+	if = {
+		limit = {
+			check_variable = { input_only_upgrade = 1 }
+			check_variable = { current_or_future_law_lvl < input_lvl }
+		}
+		#log = "add_law [?global.law@var:input_group^input_lvl.GetTokenKey]"
+		add_ideas = var:global.law@var:input_group^input_lvl
+		
+		set_temp_variable = { input_only_upgrade = 0 }
+	}
+	else_if = {
+		limit = {
+			check_variable = { input_only_downgrade = 1 }
+			check_variable = { current_or_future_law_lvl > input_lvl }
+		}
+		#log = "add_law [?global.law@var:input_group^input_lvl.GetTokenKey]"
+		add_ideas = var:global.law@var:input_group^input_lvl
+		
+		set_temp_variable = { input_only_downgrade = 0 }
+	}
+	else_if = {
+		limit = {
+			NOT = { check_variable = { current_or_future_law_lvl = input_lvl } }
+		}
+		#log = "add_law 3 [?global.law@var:input_group^input_lvl.GetTokenKey]"
+		add_ideas = var:global.law@var:input_group^input_lvl
+	}
+	
+	set_temp_variable = { input_lvl = 0 }
+	set_temp_variable = { input_group = 0 }
+}
+update_cadet_org_bonus = {
+
+	set_temp_variable = { factor = modifier@cadet_org_bonus_factor }
+	add_to_temp_variable = { factor = 1 }
+	
+	set_temp_variable = { bonus = modifier@cadet_org_bonus }
+	
+	if = {
+		limit = {
+			check_variable = { bonus > 0 }
+		}
+		set_temp_variable = { t = bonus }
+		set_temp_variable = { x = bonus }
+		multiply_temp_variable = { t = factor }
+		subtract_from_temp_variable = { t = x }
+		
+		add_to_temp_variable = { bonus = t }
+	}
+	else = {
+		set_temp_variable = { t = bonus }
+		set_temp_variable = { x = bonus }
+		multiply_temp_variable = { t = factor }
+		subtract_from_temp_variable = { t = x }
+		
+		subtract_from_temp_variable = { bonus = t }
+		multiply_temp_variable = { t = -1 }
+	}
+	
+	set_variable = { officer_cadet_bonus = bonus }
+	
+}
+
+level_up_conscription = {
+	
+	set_temp_variable = { law_category = token:conscription_law }
+	set_temp_variable = { max_level = 6 }
+
+	if = {
+		limit = {
+			check_variable = { law_level@var:law_category < max_level }
+		}
+
+		set_temp_variable = { level = law_level@var:law_category }
+		add_to_temp_variable = { level = 1 }
+		
+		set_temp_variable = { save_level = law_level@var:law_category }
+		clear_variable = law_level@var:law_category
+		
+		swap_ideas = {
+			remove_idea = var:global.law@var:law_category^save_level
+			add_idea = var:global.law@var:law_category^level
+		}
+	}
+}
+
+level_down_conscription = {
+	
+	set_temp_variable = { law_category = token:conscription_law }
+	set_temp_variable = { max_level = 6 }
+
+	if = {
+		limit = {
+			check_variable = { law_level@var:law_category > 0 }
+			check_variable = { law_level@var:law_category < max_level }
+		}
+
+		set_temp_variable = { level = law_level@var:law_category }
+		add_to_temp_variable = { level = -1 }
+		
+		set_temp_variable = { save_level = law_level@var:law_category }
+		clear_variable = law_level@var:law_category
+		
+		swap_ideas = {
+			remove_idea = var:global.law@var:law_category^save_level
+			add_idea = var:global.law@var:law_category^level
+		}
+	}
+}
+
+level_up_manpower = {
+	set_temp_variable = { law_category = token:age_laws }
+	set_temp_variable = { max_level = 9 }
+
+	if = {
+		limit = {
+			check_variable = { law_level@var:law_category < max_level }
+		}
+
+		set_temp_variable = { level = law_level@var:law_category }
+		add_to_temp_variable = { level = 1 }
+		
+		set_temp_variable = { save_level = law_level@var:law_category }
+		clear_variable = law_level@var:law_category
+		
+		swap_ideas = {
+			remove_idea = var:global.law@var:law_category^save_level
+			add_idea = var:global.law@var:law_category^level
+		}
+	}
+}
+
+level_down_manpower = {
+	set_temp_variable = { law_category = token:age_laws }
+
+	if = {
+		limit = {
+			check_variable = { law_level@var:law_category > 0 }
+		}
+
+		set_temp_variable = { level = law_level@var:law_category }
+		add_to_temp_variable = { level = -1 }
+		
+		set_temp_variable = { save_level = law_level@var:law_category }
+		clear_variable = law_level@var:law_category
+		
+		swap_ideas = {
+			remove_idea = var:global.law@var:law_category^save_level
+			add_idea = var:global.law@var:law_category^level
+		}
+	}
+}
+
+level_up_cadet_training = {
+	
+	set_temp_variable = { law_category = token:cadet_training_standards }
+	set_temp_variable = { max_level = 4 }
+
+	if = {
+		limit = {
+			check_variable = { law_level@var:law_category < max_level }
+		}
+
+		set_temp_variable = { level = law_level@var:law_category }
+		add_to_temp_variable = { level = 1 }
+		start_law_change = yes
+	}
+}
+
+level_down_cadet_training = {
+	
+	set_temp_variable = { law_category = token:cadet_training_standards }
+
+	if = {
+		limit = {
+			check_variable = { law_level@var:law_category > 0 }
+		}
+
+		set_temp_variable = { level = law_level@var:law_category }
+		add_to_temp_variable = { level = -1 }
+		start_law_change = yes
+	}
+}
+
+level_up_officer_training = {
+	
+	set_temp_variable = { law_category = token:officer_training_standards }
+	set_temp_variable = { max_level = 3 }
+
+	if = {
+		limit = {
+			check_variable = { law_level@var:law_category < max_level }
+		}
+
+		set_temp_variable = { level = law_level@var:law_category }
+		add_to_temp_variable = { level = 1 }
+		start_law_change = yes
+	}
+}
+
+level_down_officer_training = {
+	
+	set_temp_variable = { law_category = token:officer_training_standards }
+
+	if = {
+		limit = {
+			check_variable = { law_level@var:law_category > 0 }
+		}
+
+		set_temp_variable = { level = law_level@var:law_category }
+		add_to_temp_variable = { level = -1 }
+		start_law_change = yes
+	}
+}
+level_up_education = {
+
+	set_temp_variable = { law_category = token:education }
+	set_temp_variable = { max_level = 3 }
+
+	if = {
+		limit = {
+			check_variable = { law_level@var:law_category < max_level }
+		}
+
+		set_temp_variable = { level = law_level@var:law_category }
+		add_to_temp_variable = { level = 1 }
+		
+		set_temp_variable = { save_level = law_level@var:law_category }
+		clear_variable = law_level@var:law_category
+		
+		swap_ideas = {
+			remove_idea = var:global.law@var:law_category^save_level
+			add_idea = var:global.law@var:law_category^level
+		}
+	}
+}
+level_down_education = {
+	set_temp_variable = { law_category = token:education }
+	set_temp_variable = { max_level = 3 }
+	
+	if = {
+		limit = {
+			check_variable = { law_level@var:law_category > 0 }
+			check_variable = { max_level > law_level@var:law_category }
+		}
+
+		set_temp_variable = { level = law_level@var:law_category }
+		add_to_temp_variable = { level = -1 }
+		
+		set_temp_variable = { save_level = law_level@var:law_category }
+		clear_variable = law_level@var:law_category
+		
+		swap_ideas = {
+			remove_idea = var:global.law@var:law_category^save_level
+			add_idea = var:global.law@var:law_category^level
+		}
+	}
+}
+level_up_economy_law = {
+
+	set_temp_variable = { max_level = 6 }
+	set_temp_variable = { law_category = token:economy }
+
+	if = {
+		limit = {
+			check_variable = { max_level > law_level@var:law_category }
+		}
+
+		set_temp_variable = { level = law_level@var:law_category }
+		add_to_temp_variable = { level = 1 }
+		start_law_change = yes
+	}
+	
+}
+
+level_down_economy_law = {
+	
+	set_temp_variable = { max_level = 6 }
+	set_temp_variable = { law_category = token:economy }
+
+	if = {
+		limit = {
+			check_variable = { law_level@var:law_category > 0 }
+			check_variable = { max_level > law_level@var:law_category }
+		}
+
+		set_temp_variable = { level = law_level@var:law_category }
+		add_to_temp_variable = { level = -1 }
+		start_law_change = yes
+	}
+}
+
+level_up_labor_law = {
+
+	set_temp_variable = { law_category = token:labor_laws }
+	set_temp_variable = { max_level = 3 }
+
+	if = {
+		limit = {
+			check_variable = { law_level@var:law_category < max_level }
+		}
+
+		set_temp_variable = { level = law_level@var:law_category }
+		add_to_temp_variable = { level = 1 }
+		
+		set_temp_variable = { save_level = law_level@var:law_category }
+		clear_variable = law_level@var:law_category
+		
+		swap_ideas = {
+			remove_idea = var:global.law@var:law_category^save_level
+			add_idea = var:global.law@var:law_category^level
+		}
+	}
+}
+
+level_down_labor_law = {
+	set_temp_variable = { law_category = token:labor_laws }
+
+	if = {
+		limit = {
+			check_variable = { law_level@var:law_category > 0 }
+		}
+
+		set_temp_variable = { level = law_level@var:law_category }
+		add_to_temp_variable = { level = -1 }
+		
+		set_temp_variable = { save_level = law_level@var:law_category }
+		clear_variable = law_level@var:law_category
+		
+		swap_ideas = {
+			remove_idea = var:global.law@var:law_category^save_level
+			add_idea = var:global.law@var:law_category^level
+		}
+	}
+}
+level_up_tariffs = {
+	set_temp_variable = { law_category = token:tariffs }
+	set_temp_variable = { max_level = 4 }
+
+	if = {
+		limit = {
+			check_variable = { law_level@var:law_category < max_level }
+		}
+
+		set_temp_variable = { level = law_level@var:law_category }
+		add_to_temp_variable = { level = 1 }
+		
+		set_temp_variable = { save_level = law_level@var:law_category }
+		clear_variable = law_level@var:law_category
+		
+		swap_ideas = {
+			remove_idea = var:global.law@var:law_category^save_level
+			add_idea = var:global.law@var:law_category^level
+		}
+	}
+}
+level_up_trade_policy = {
+	set_temp_variable = { law_category = token:trade_laws }
+	set_temp_variable = { max_level = 3 }
+
+	if = {
+		limit = {
+			check_variable = { law_level@var:law_category < max_level }
+		}
+
+		set_temp_variable = { level = law_level@var:law_category }
+		add_to_temp_variable = { level = 1 }
+		
+		set_temp_variable = { save_level = law_level@var:law_category }
+		clear_variable = law_level@var:law_category
+		
+		swap_ideas = {
+			remove_idea = var:global.law@var:law_category^save_level
+			add_idea = var:global.law@var:law_category^level
+		}
+	}
+}
+level_up_economic_nationalization = {
+	set_temp_variable = { law_category = token:nationalization }
+	set_temp_variable = { max_level = 3 }
+
+	if = {
+		limit = {
+			check_variable = { law_level@var:law_category < max_level }
+		}
+
+		set_temp_variable = { level = law_level@var:law_category }
+		add_to_temp_variable = { level = 1 }
+		
+		set_temp_variable = { save_level = law_level@var:law_category }
+		clear_variable = law_level@var:law_category
+		
+		swap_ideas = {
+			remove_idea = var:global.law@var:law_category^save_level
+			add_idea = var:global.law@var:law_category^level
+		}
+	}
+}
+	
+level_down_security = {
+	set_temp_variable = { law_category = token:security }
+
+	if = {
+		limit = {
+			check_variable = { law_level@var:law_category > 0 }
+		}
+
+		set_temp_variable = { level = law_level@var:law_category }
+		add_to_temp_variable = { level = -1 }
+		
+		set_temp_variable = { save_level = law_level@var:law_category }
+		clear_variable = law_level@var:law_category
+		
+		swap_ideas = {
+			remove_idea = var:global.law@var:law_category^save_level
+			add_idea = var:global.law@var:law_category^level
+		}
+	}
+}
+level_up_bonds = {
+	if = {
+		limit = {
+			has_idea = bonds_peace
+		}
+		add_ideas = bonds_basic 
+	}
+	else_if = {
+		limit = {
+			has_idea = bonds_basic
+		}
+		if = {
+			limit = {
+				can_take_bonds_war_domestic = yes 
+			}
+			add_ideas = bonds_war_domestic 
+		}
+		else_if = {
+			limit = {
+				can_take_bonds_war_international = yes 
+			}
+			add_ideas = bonds_war_international 
+		}
+	}
+	else_if = {
+		limit = {
+			has_idea = bonds_war_domestic
+		}
+		add_ideas = bonds_state_requisition
+	}
+	else_if = {
+		limit = {
+			has_idea = bonds_war_international
+		}
+		add_ideas = bonds_war_public 
+	}
+	else_if = {
+		limit = {
+			OR = {
+				has_idea = bonds_state_requisition
+				has_idea = bonds_war_public
+			}
+		}
+		add_ideas = bonds_print 
+	}
+}
+level_down_bonds = {
+	if = {
+		limit = {
+			has_idea = bonds_print
+		}
+		if = {
+			limit = {
+				can_take_bonds_war_public = yes 
+			}
+			add_ideas = bonds_war_public 
+		}
+		else_if = {
+			limit = {
+				can_take_bonds_state_requisition = yes 
+			}
+			add_ideas = bonds_state_requisition 
+		}
+	}
+	
+	else_if = {
+		limit = {
+			OR = {
+				has_idea = bonds_war_public
+				has_idea = bonds_state_requisition
+			}
+		}
+		if = {
+			limit = {
+				can_take_bonds_war_domestic = yes 
+			}
+			add_ideas = bonds_war_domestic 
+		}
+		else_if = {
+			limit = {
+				can_take_bonds_war_international = yes 
+			}
+			add_ideas = bonds_war_international 
+		}
+	}
+	
+	else_if = {
+		limit = {
+			OR = {
+				has_idea = bonds_war_domestic
+				has_idea = bonds_war_international
+			}
+		}
+		add_ideas = bonds_basic
+	}
+	
+	else_if = {
+		limit = {
+			has_idea = bonds_basic
+		}
+		add_ideas = bonds_peace
+	}
+	
+	else_if = {
+		limit = {
+			OR = {
+				has_idea = bonds_state_requisition
+				has_idea = bonds_war_public
+			}
+		}
+		add_ideas = bonds_print 
+	}
+}
+
+adjust_laws_to_current_ideology = {
+	set_country_law_default = yes
+	if = {
+		limit = {
+			has_government = fascism 
+		}
+		
+		#Nationalization
+		if = {
+			limit = {
+				has_idea = private_control
+			}
+			add_ideas = key_industries 
+		}
+		
+		#Foreign Investment
+		if = {
+			limit = {
+				has_idea = fdi_encouraged
+			}
+			add_ideas = fdi_allowed 
+		}
+		
+		#Tariffs 
+		if = {
+			limit = {
+				OR = {
+					has_idea = tariffs_none
+					has_idea = tariffs_low
+				}
+			}
+			add_ideas = tariffs_average 
+		}
+		
+		#Trade Policy
+		if = {
+			limit = {
+				OR = {
+					has_country_flag = has_free_trade
+					has_country_flag = has_export_focus
+				}
+			}
+			add_ideas = limited_exports 
+		}
+		
+		#Tax Policy
+		if = {
+			limit = {
+				has_idea = tax_minimal
+			}
+			add_ideas = tax_low 
+		}
+		
+		#Press 
+		if = {
+			limit = {
+				OR = {
+					has_idea = press_free
+					has_idea = press_regulated
+				}
+			}
+			add_ideas = press_censored 
+		}
+		
+		#Security 
+		if = {
+			limit = {
+				OR = {
+					has_idea = security_liberty_first
+					has_idea = security_minor_restrictions
+				}
+			}
+			add_ideas = security_major_restrictions 
+		}
+	}
+	else_if = {
+		limit = {
+			has_government = communism 
+		}
+		
+		#Nationalization
+		if = {
+			limit = {
+				OR = {
+					has_idea = private_control
+					has_idea = key_industries
+				}
+			}
+			add_ideas = planned_economy 
+		}
+		
+		#Foreign Investment
+		if = {
+			limit = {
+				OR = {
+					has_idea = fdi_encouraged
+					has_idea = fdi_allowed
+				}
+			}
+			add_ideas = fdi_banned 
+		}
+		
+		#Trade Policy
+		if = {
+			limit = {
+				has_country_flag = has_free_trade
+			}
+			add_ideas = limited_exports 
+		}
+		
+		#Tariffs 
+		if = {
+			limit = {
+				OR = {
+					has_idea = tariffs_none
+					has_idea = tariffs_low
+				}
+			}
+			add_ideas = tariffs_average 
+		}
+		
+		#Tax Policy
+		if = {
+			limit = {
+				has_idea = tax_minimal
+			}
+			add_ideas = tax_low 
+		}
+		
+		#Press 
+		if = {
+			limit = {
+				OR = {
+					has_idea = press_free
+					has_idea = press_regulated
+				}
+			}
+			add_ideas = press_censored 
+		}
+		
+		#Security 
+		if = {
+			limit = {
+				OR = {
+					has_idea = security_liberty_first
+					has_idea = security_minor_restrictions
+				}
+			}
+			add_ideas = security_major_restrictions 
+		}
+	}
+	else_if = {
+		limit = {
+			has_government = monarchism 
+		}
+		
+		#Nationalization
+		if = {
+			limit = {
+				has_idea = private_control
+			}
+			add_ideas = key_industries 
+		}
+		
+		#Foreign Investment
+		if = {
+			limit = {
+				has_idea = fdi_encouraged
+			}
+			add_ideas = fdi_allowed 
+		}
+		
+		#Tariffs 
+		if = {
+			limit = {
+				has_idea = tariffs_none
+			}
+			add_ideas = tariffs_low
+		}
+		
+		#Trade Policy
+		if = {
+			limit = {
+				has_country_flag = has_free_trade
+			}
+			add_ideas = export_focus 
+		}
+		
+		#Tax Policy
+		if = {
+			limit = {
+				has_idea = tax_minimal
+			}
+			add_ideas = tax_low 
+		}
+		
+		#Press 
+		if = {
+			limit = {
+				has_idea = press_free
+			}
+			add_ideas = press_regulated
+		}
+		
+		#Security 
+		if = {
+			limit = {
+				OR = {
+					has_idea = security_liberty_first
+					has_idea = security_minor_restrictions
+				}
+			}
+			add_ideas = security_major_restrictions
+		}
+	}
+	else_if = {
+		limit = {
+			has_government = neutrality 
+		}
+		
+		#Nationalization
+		if = {
+			limit = {
+				has_idea = private_control
+			}
+			add_ideas = key_industries 
+		}
+		
+		#Foreign Investment
+		if = {
+			limit = {
+				has_idea = fdi_encouraged
+			}
+			add_ideas = fdi_allowed 
+		}
+		
+		#Tariffs 
+		if = {
+			limit = {
+				has_idea = tariffs_none
+			}
+			add_ideas = tariffs_low
+		}
+		
+		#Trade Policy
+		if = {
+			limit = {
+				has_country_flag = has_free_trade
+			}
+			add_ideas = export_focus 
+		}
+		
+		#Press 
+		if = {
+			limit = {
+				has_idea = press_free
+			}
+			add_ideas = press_regulated
+		}
+		
+		#Security 
+		if = {
+			limit = {
+				OR = {
+					has_idea = security_liberty_first
+					has_idea = security_minor_restrictions
+				}
+			}
+			add_ideas = security_major_restrictions
+		}
+	}
+	else_if = {
+		limit = {
+			democratic_govt = yes
+		}
+		
+		#Nationalization
+		if = {
+			limit = {
+				OR = {
+					has_idea = planned_economy
+					has_idea = major_industries
+				}
+			}
+			if = {
+				limit = {
+					OR = {	
+						has_government = liberalism 
+						has_government = socialism 
+					}
+					has_war = yes 
+					any_enemy_country = {
+						ic_ratio = { 
+							tag = ROOT 
+							ratio > 0.8
+						}
+					}
+				}
+				add_ideas = major_industries 
+			}
+			else = {
+				add_ideas = key_industries 
+			}
+		}
+		
+		#Foreign Investment
+		if = {
+			limit = {
+				has_idea = fdi_banned
+			}
+			add_ideas = fdi_regulated
+		}
+		
+		#Tariffs 
+		if = {
+			limit = {
+				has_idea = tariffs_extreme
+			}
+			add_ideas = tariffs_high
+		}
+		
+		#Trade Policy
+		if = {
+			limit = {
+				has_country_flag = has_closed_economy
+			}
+			add_ideas = limited_exports 
+		}
+		
+		#Press 
+		if = {
+			limit = {
+				OR = {
+					has_idea = press_state
+					has_idea = press_censored
+				}
+			}
+			if = {
+				limit = {
+					has_war = yes 
+				}
+				add_ideas = press_censored
+			}
+			else = {
+				add_ideas = press_regulated
+			}
+		}
+		
+		#Security 
+		if = {
+			limit = {
+				OR = {
+					has_idea = security_police_state
+					has_idea = security_major_restrictions
+				}
+			}
+			if = {
+				limit = {
+					has_war = yes 
+				}
+				add_ideas = security_major_restrictions
+			}
+			else = {
+				add_ideas = security_minor_restrictions
+			}
+		}
+	}
+
+}
+
+open_abilities = {
+	custom_effect_tooltip = "h i "
+	
+	log = "opened abilities"
+	character = {
+		custom_effect_tooltip = "[This.GetName]"
+		OWNER = { set_variable = { ability_unit_leader = PREV } }
+	}
+	custom_effect_tooltip = "[?This]"
+}

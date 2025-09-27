@@ -1,0 +1,2816 @@
+
+d_allowlaws = {
+	if = {
+		limit = {
+			has_global_flag = allow_laws
+		}
+		clr_global_flag = allow_laws
+		log = "allow_laws disabled"
+	}
+	else = {
+		set_global_flag = allow_laws
+		log = "allow_laws enabled"
+	}
+}
+
+ui_override_law_order = {
+
+	#override law order for these laws. it does not affect days to change, but cost and ui order
+	add_to_temp_array = { law_order_override = token:KMT_corrupted_government }
+	add_to_temp_array = { law_order_override_index = 0 }
+	
+	add_to_temp_array = { law_order_override = token:KMT_corrupted_government_lesser }
+	add_to_temp_array = { law_order_override_index = 0 }
+	
+	add_to_temp_array = { law_order_override = token:KMT_corrupted_government_wartime }
+	add_to_temp_array = { law_order_override_index = 0 }
+	
+	add_to_temp_array = { law_order_override = token:KMT_corrupted_government_wartime_lesser }
+	add_to_temp_array = { law_order_override_index = 0 }
+	
+	add_to_temp_array = { law_order_override = token:SWI_citizen_militia_1 }
+	add_to_temp_array = { law_order_override_index = 0 }
+	
+	add_to_temp_array = { law_order_override = token:SWI_citizen_militia_2 }
+	add_to_temp_array = { law_order_override_index = 0 }
+	
+	add_to_temp_array = { law_order_override = token:PRC_guerrilla_warfare }
+	add_to_temp_array = { law_order_override_index = 0 }
+	
+	add_to_temp_array = { law_order_override = token:propaganda_recruits }
+	add_to_temp_array = { law_order_override_index = 0 }
+	
+	add_to_temp_array = { law_order_override = token:edu_soviets }
+	add_to_temp_array = { law_order_override_index = 2 }
+	
+}
+
+ui_show_law_cost_breakdown = {
+	if = {
+		limit = {
+			NOT = { check_variable = { law_level@var:law_category = selected_laws_index^i } }
+		}
+		set_temp_variable = { factor = 1 }
+		add_to_temp_variable = { factor = law_cost_discount@var:law_category }
+		set_temp_variable = { base_factor = 1 }
+		
+		set_temp_variable = { best_discount = 0 }
+		if = {
+			limit = {
+				check_variable = { law_cost_share^num > 0 }
+				all_of_scopes = {
+					array = law_cost_share
+					
+					if = {
+						limit = {
+							set_temp_variable = { foreign_level = law_level@var:ROOT.law_category }
+							set_temp_variable = { own_level = ROOT.law_level@var:ROOT.law_category }
+							check_variable = { global.law@var:ROOT.law_category^foreign_level = v }
+							set_temp_variable = { compare_to = ROOT.law_cost_share_value@THIS }
+							check_variable = { compare_to < best_discount }
+						}
+						set_temp_variable = { best_discount = ROOT.law_cost_share_value@THIS }
+						set_temp_variable = { best_discount_country = THIS }
+					}
+				}
+				add_to_temp_variable = { base_factor = best_discount }
+			}
+		}
+		if = {
+			limit = {
+				set_temp_variable = { modifiers = 0 }
+				meta_trigger = {
+					text = { 
+						NOT = { check_variable = { modifier@[X]_cost_factor = 0 } }
+						set_temp_variable = { modifiers = modifier@[X]_cost_factor }
+					}
+					X = "[?law_category.GetTokenKey]"
+				}
+			}
+			add_to_temp_variable = { factor = modifiers }
+		}
+		clamp_temp_variable = { var = factor min = 0 }
+		
+		set_temp_variable = { cost = selected_laws_cost^i }
+		set_temp_variable = { level_cost = cost }
+		#divide_temp_variable = { level_cost = base_factor }
+		divide_temp_variable = { level_cost = factor }
+		
+		if = {
+			limit = {
+				has_political_power > cost
+			}
+			custom_effect_tooltip = LAW_COST_TRUE
+		}
+		else = {
+			custom_effect_tooltip = LAW_COST_FALSE
+		}
+		if = {
+			limit = {
+				NOT = {
+					check_variable = { v = token:exploitation_export }
+					check_variable = { v = token:unrefined_export }
+					check_variable = { v = token:refined_export }
+					check_variable = { v = token:balanced_export }
+					check_variable = { v = token:low_volume_export }
+					check_variable = { v = token:free_trade_export_focus }
+					check_variable = { v = token:free_trade_law }
+					check_variable = { v = token:free_trade_protectionist }
+					check_variable = { v = token:protectionist_economy }
+					check_variable = { v = token:export_autarky }
+					check_variable = { v = token:autarky_economy }
+					check_variable = { v = token:closed_economy_law }
+				}
+				meta_trigger = {
+					text = { can_take_[Y] = yes } 
+					Y = "[?v.GetTokenKey]"
+				}
+			}
+		}
+		set_temp_variable = { base_cost = cost }
+		multiply_temp_variable = { base_cost = base_factor }
+		set_temp_variable = { base_cost_diff = cost }
+		subtract_from_temp_variable = { base_cost_diff = base_cost }
+		add_to_temp_variable = { level_cost = base_cost_diff }
+		subtract_from_temp_variable = { level_cost = cost }
+		if = {
+			limit = {
+				check_variable = { base_cost > 0 }
+			}
+			custom_effect_tooltip = LAW_COST_BASE
+		}
+		if = {
+			limit = {
+				NOT = { check_variable = { best_discount = 0 } }
+				var:best_discount_country = {
+					set_temp_variable = { foreign_level = law_level@var:ROOT.law_category }
+					check_variable = { global.law@var:ROOT.law_category^foreign_level = v }
+				}
+			}
+			custom_effect_tooltip = LAW_SHARE_DISCOUNT_APPLIES
+		}
+		if = {
+			limit = {
+				check_variable = { level_cost > 0 }
+			}
+			custom_effect_tooltip = LAW_COST_LEVEL
+		}
+		
+		if = {
+			limit = {
+				has_variable = law_cost_discount@var:law_category
+			}
+			
+			set_temp_variable = { discount = 1 }
+			add_to_temp_variable = { discount = law_cost_discount@var:law_category }
+			custom_effect_tooltip = LAW_DISCOUNT_APPLIES
+			clear_variable = law_cost_discount@var:law_category
+		}
+		if = {
+			limit = {
+				NOT = { check_variable = { modifiers = 0 } }
+			}
+			custom_effect_tooltip = LAW_COST_MODIFIER
+		}
+	}
+}
+
+ui_open_selected_laws = {
+
+	clear_variable = selected_laws_current
+	clear_array = selected_laws
+	clear_array = selected_laws_index
+	clear_array = selected_laws_cost
+	
+	for_each_loop = {
+		array = global.law@var:law_category
+		
+		if = {
+			limit = {
+				OR = {
+					law_visible_trigger = yes
+					has_idea = var:v
+				}
+			}
+			
+			add_to_temp_array = { temp_selected_laws = v }
+			add_to_temp_array = { temp_selected_laws_index = i }
+			
+			if = {
+				limit = {
+					meta_trigger = {
+						text = { can_take_[Y] = yes } 
+						Y = "[?v.GetTokenKey]"
+					}
+				}
+			}
+			
+			set_temp_variable = { cost_actual = cost }
+			
+			set_temp_variable = { factor = 1 }
+			#add_to_temp_variable = { factor = modifier@law_cost_factor }
+			meta_effect = {
+				text = { 
+					add_to_temp_variable = { factor = modifier@[X]_cost_factor }
+				}
+				X = "[?law_category.GetTokenKey]"
+			}
+			
+			add_to_temp_variable = { factor = law_cost_discount@var:law_category }
+			
+			if = {
+				limit = {
+					check_variable = { law_cost_share^num > 0 }
+				}
+				
+				set_temp_variable = { best_discount = 0 }
+				for_each_scope_loop = {
+					array = law_cost_share
+					
+					if = {
+						limit = {
+							set_temp_variable = { foreign_level = law_level@var:ROOT.law_category }
+							set_temp_variable = { own_level = ROOT.law_level@var:ROOT.law_category }
+							check_variable = { global.law@var:ROOT.law_category^foreign_level = v }
+							#log = "[?v.GetTokenKey] VALUE PASS"
+							#check_variable = { global.law@var:ROOT.law_category^foreign_level = global.law@var:ROOT.law_category^own_level }
+							
+							set_temp_variable = { compare_to = ROOT.law_cost_share_value@THIS }
+							#multiply_temp_variable = { compare_to = -1 }
+							check_variable = { compare_to < best_discount }
+						}
+						set_temp_variable = { best_discount = ROOT.law_cost_share_value@THIS }
+					}
+				}
+				#log = "[?best_discount] best_discount"
+				add_to_temp_variable = { factor = best_discount }
+			
+			}
+			
+			clamp_temp_variable = { var = factor min = 0 }
+			multiply_temp_variable = { cost_actual = factor }
+			
+			add_to_temp_array = { temp_selected_laws_cost = cost_actual }
+		}
+	}
+	
+	ui_override_law_order = yes 
+	
+	for_each_loop = {
+		array = law_order_override
+		value = law_order
+		
+		for_each_loop = {
+			array = temp_selected_laws
+			
+				
+			if = {
+				limit = {
+					check_variable = { law_order = v }
+				}
+				if = {
+					limit = {
+						check_variable = { global.law@var:law_category^law_level@var:law_category = v }
+					}
+					set_variable = { selected_laws_current = selected_laws^num }
+				}
+				add_to_array = { selected_laws = v }
+				add_to_array = { selected_laws_index = temp_selected_laws_index^i }
+				add_to_array = { selected_laws_cost = temp_selected_laws_cost^i }
+			}
+			
+		}
+	}
+	for_each_loop = {
+		array = temp_selected_laws
+			
+		if = {
+			limit = {
+				NOT = { is_in_array = { selected_laws = v } }
+			}
+			if = {
+				limit = {
+					check_variable = { global.law@var:law_category^law_level@var:law_category = v }
+				}
+				set_variable = { selected_laws_current = selected_laws^num }
+			}
+			add_to_array = { selected_laws = v }
+			add_to_array = { selected_laws_index = temp_selected_laws_index^i }
+			add_to_array = { selected_laws_cost = temp_selected_laws_cost^i }
+		}
+		
+	}
+	
+	for_each_loop = {
+		array = selected_laws
+		value = sel
+		index = entry
+		
+		if = {
+			limit = {
+				NOT = { check_variable = { entry = selected_laws_current } }
+				
+			}  
+			  
+			if = {
+				limit = {
+					set_temp_variable = { t = entry } #3
+					subtract_from_temp_variable = { t = selected_laws_current } #0
+					add_to_temp_variable = { t = -1 }
+					
+					check_variable = { t > 0 } #t= 2
+				}
+				set_temp_variable = { final_cost = selected_laws_cost^entry } 
+				for_each_loop = {
+					array = selected_laws_cost
+					
+					if = {
+						limit = {
+							check_variable = { i > selected_laws_current }
+							check_variable = { t > 0 }
+						}
+						add_to_temp_variable = { t = -1 }
+						add_to_temp_variable = { final_cost = v }
+					
+					}
+				}
+				#log = "[?final_cost] cost for [?sel.GetTokenKey] index [?entry]"
+				
+				add_to_temp_array = { laws_final_cost = final_cost }
+				add_to_temp_array = { laws_final_cost_index = entry }
+				#set_variable = { selected_laws_cost^entry = final_cost }
+			}
+			else_if = {
+				limit = {
+					set_temp_variable = { t = entry } #0
+					subtract_from_temp_variable = { t = selected_laws_current } #-2
+					add_to_temp_variable = { t = 1 } #-1
+					
+					check_variable = { t < 0 }
+					multiply_temp_variable = { t = -1 }
+					
+				}
+				set_temp_variable = { final_cost = selected_laws_cost^entry } 
+				for_each_loop = {
+					array = selected_laws_cost
+					
+					if = {
+						limit = {
+							check_variable = { i > entry }
+							check_variable = { i < selected_laws_current }
+							check_variable = { t > 0 }
+						}
+						#log = "yes [?selected_laws^i.GetTokenKey] index: [?i] v: [?v]"
+						add_to_temp_variable = { t = -1 }
+						add_to_temp_variable = { final_cost = v }
+					
+					}
+				}
+				#log = "[?final_cost] cost for [?sel.GetTokenKey] index [?entry] | [?t] t"
+				
+				add_to_temp_array = { laws_final_cost = final_cost }
+				add_to_temp_array = { laws_final_cost_index = entry }
+			}
+		}
+			
+	}
+	
+	for_each_loop = {
+		array = laws_final_cost
+		
+		set_temp_variable = { entry = laws_final_cost_index^i }
+		
+		set_variable = { selected_laws_cost^entry = v }
+	}
+	
+	#add_to_array = { global.law@token:trade_laws = token:exploitation_export } #0
+	#add_to_array = { global.law@token:trade_laws = token:unrefined_export } #1
+	#add_to_array = { global.law@token:trade_laws = token:refined_export } #2
+	#add_to_array = { global.law@token:trade_laws = token:balanced_export } #3
+	#add_to_array = { global.law@token:trade_laws = token:low_volume_export } #4
+	
+	#add_to_array = { global.law@token:trade_laws = token:free_trade_export_focus } #4
+	#add_to_array = { global.law@token:trade_laws = token:free_trade_law } #4
+	#add_to_array = { global.law@token:trade_laws = token:free_trade_protectionist } #4
+	
+	#add_to_array = { global.law@token:trade_laws = token:protectionist_economy } #4
+	#add_to_array = { global.law@token:trade_laws = token:export_autarky } #4
+	#add_to_array = { global.law@token:trade_laws = token:autarky_economy } #4
+	
+	#add_to_array = { global.law@token:trade_laws = token:closed_economy_law } #4
+	
+	### TRADE LAWS
+	
+	if = {
+		limit = {
+			check_variable = { law_category = token:trade_laws }
+		}
+	
+		clear_array = selected_sublaws
+		resize_array = { selected_sublaws = selected_laws^num }
+		
+		set_temp_variable = { sublaw_cost = 30 }
+		set_temp_variable = { factor = 1 }
+		add_to_temp_variable = { factor = modifier@trade_sublaw_cost_factor }
+		multiply_temp_variable = { sublaw_cost = factor }
+		
+		if = {
+			limit = {
+				check_variable = { law_level@var:law_category = 0 }
+			}
+			add_to_array = { array = selected_laws value = token:exploitation_export index = 1 }
+			add_to_array = { array = selected_laws_index value = -1 index = 1 }
+			add_to_array = { array = selected_laws_cost value = sublaw_cost index = 1 }
+			add_to_array = { array = selected_sublaws value = -5 index = 1 }
+			
+			add_to_array = { array = selected_laws value = token:unrefined_export index = 2 }
+			add_to_array = { array = selected_laws_index value = -1 index = 2 }
+			add_to_array = { array = selected_laws_cost value = sublaw_cost index = 2 }
+			add_to_array = { array = selected_sublaws value = -30 index = 2 }
+			
+			add_to_array = { array = selected_laws value = token:refined_export index = 3 }
+			add_to_array = { array = selected_laws_index value = -1 index = 3 }
+			add_to_array = { array = selected_laws_cost value = sublaw_cost index = 3 }
+			add_to_array = { array = selected_sublaws value = -55 index = 3 }
+			
+			add_to_array = { array = selected_laws value = token:balanced_export index = 4 }
+			add_to_array = { array = selected_laws_index value = -1 index = 4 }
+			add_to_array = { array = selected_laws_cost value = sublaw_cost index = 4 }
+			add_to_array = { array = selected_sublaws value = -80 index = 4 }
+			
+			add_to_array = { array = selected_laws value = token:low_volume_export index = 5 }
+			add_to_array = { array = selected_laws_index value = -1 index = 5 }
+			add_to_array = { array = selected_laws_cost value = sublaw_cost index = 5 }
+			add_to_array = { array = selected_sublaws value = -105 index = 5 }
+			
+			add_to_array = { array = selected_sublaws value = -120 index = 6 }
+			add_to_array = { array = selected_sublaws value = -120 index = 7 }
+			add_to_array = { array = selected_sublaws value = -120 index = 8 }
+		}
+		else_if = {
+			limit = {
+				check_variable = { law_level@var:law_category = 1 }
+			}
+			add_to_array = { array = selected_laws value = token:free_trade_export_focus index = 2 }
+			add_to_array = { array = selected_laws_index value = 0 index = 2 }
+			add_to_array = { array = selected_laws_cost value = sublaw_cost index = 2 }
+			add_to_array = { array = selected_sublaws value = -5 index = 2 }
+			
+			add_to_array = { array = selected_laws value = token:free_trade_law index = 3 }
+			add_to_array = { array = selected_laws_index value = 0 index = 3 }
+			add_to_array = { array = selected_laws_cost value = sublaw_cost index = 3 }
+			add_to_array = { array = selected_sublaws value = -30 index = 3 }
+			
+			add_to_array = { array = selected_laws value = token:free_trade_protectionist index = 4 }
+			add_to_array = { array = selected_laws_index value = 0 index = 4 }
+			add_to_array = { array = selected_laws_cost value = sublaw_cost index = 4 }
+			add_to_array = { array = selected_sublaws value = -55 index = 4 }
+			
+			add_to_array = { array = selected_sublaws value = -70 index = 5 }
+			add_to_array = { array = selected_sublaws value = -70 index = 6 }
+		}
+		else_if = {
+			limit = {
+				check_variable = { law_level@var:law_category = 2 }
+			}
+			add_to_array = { array = selected_laws value = token:protectionist_economy index = 3 }
+			add_to_array = { array = selected_laws_index value = 0 index = 3 }
+			add_to_array = { array = selected_laws_cost value = sublaw_cost index = 3 }
+			add_to_array = { array = selected_sublaws value = -5 index = 3 }
+			
+			add_to_array = { array = selected_laws value = token:export_autarky index = 4 }
+			add_to_array = { array = selected_laws_index value = 0 index = 4 }
+			add_to_array = { array = selected_laws_cost value = sublaw_cost index = 4 }
+			add_to_array = { array = selected_sublaws value = -30 index = 4 }
+			
+			add_to_array = { array = selected_laws value = token:autarky_economy index = 5 }
+			add_to_array = { array = selected_laws_index value = 0 index = 5 }
+			add_to_array = { array = selected_laws_cost value = sublaw_cost index = 5 }
+			add_to_array = { array = selected_sublaws value = -55 index = 5 }
+			
+			add_to_array = { array = selected_sublaws value = -70 index = 6 }
+			
+		}
+		else_if = {
+			limit = {
+				check_variable = { law_level@var:law_category = 3 }
+			}
+			add_to_array = { array = selected_laws value = token:closed_economy_law index = 4 }
+			add_to_array = { array = selected_laws_index value = 0 index = 4 }
+			add_to_array = { array = selected_laws_cost value = sublaw_cost index = 4 }
+			add_to_array = { array = selected_sublaws value = -5 index = 4 }
+			
+		}
+	}
+
+}
+ui_close_selected_laws = {
+	clear_variable = law_category
+
+	clear_variable = selected_laws_current
+	clear_array = selected_laws
+	clear_array = selected_laws_index
+	clear_array = selected_laws_cost
+	
+}
+
+d_fill_law_array = {
+	set_variable = { global.law_mod@token:economy = token:law_economy_switch_speed_factor }
+	set_variable = { global.law_mod@token:mobilization_laws = token:law_mobilization_switch_speed_factor }
+	set_variable = { global.law_mod@token:cadet_training_standards = token:law_cadet_training_switch_speed_factor }
+	set_variable = { global.law_mod@token:officer_training_standards = token:law_officer_training_switch_speed_factor }
+
+	clear_array = global.law_ui #dont ever use this anywhere ever
+	clear_array = global.law_type
+	clear_array = global.law_type_i
+	clear_array = global.law_default
+	clear_array = global.law_max
+	
+	#ROW 1
+	add_to_array = { global.law_ui = token:economy } #economy
+	add_to_array = { global.law_ui = token:nationalization }
+	add_to_array = { global.law_ui = token:fdi_regulations }
+	add_to_array = { global.law_ui = token:mobilization_laws } #army
+	add_to_array = { global.law_ui = token:cadet_training_standards }
+	add_to_array = { global.law_ui = token:officer_training_standards }	
+	add_to_array = { global.law_ui = token:press } #affairs
+	add_to_array = { global.law_ui = token:security }
+	add_to_array = { global.law_ui = token:education }
+	
+	#ROW 2
+	add_to_array = { global.law_ui = token:tariffs } #economy
+	add_to_array = { global.law_ui = token:trade_laws }
+	add_to_array = { global.law_ui = token:taxes }
+	add_to_array = { global.law_ui = token:recruitment_laws } #army
+	add_to_array = { global.law_ui = token:conscription_law }
+	add_to_array = { global.law_ui = token:age_laws }
+	add_to_array = { global.law_ui = token:labor_laws } #affairs
+	add_to_array = { global.law_ui = token:bonds }
+	add_to_array = { global.law_ui = token:foreign_policy } 
+	
+	#ROW 3
+	add_to_array = { global.law_ui = token:civ_fuel_usage }	
+	add_to_array = { global.law_ui = token:diet_laws }	
+	
+	add_to_array = { global.law_type = token:economy }
+	add_to_array = { global.law_type = token:nationalization }
+	add_to_array = { global.law_type = token:fdi_regulations }
+	add_to_array = { global.law_type = token:tariffs }
+	add_to_array = { global.law_type = token:trade_laws }
+	add_to_array = { global.law_type = token:taxes }
+	add_to_array = { global.law_type = token:press }
+	add_to_array = { global.law_type = token:security }
+	add_to_array = { global.law_type = token:education }
+	add_to_array = { global.law_type = token:foreign_policy }
+	add_to_array = { global.law_type = token:bonds }
+	add_to_array = { global.law_type = token:mobilization_laws }
+	add_to_array = { global.law_type = token:conscription_law }
+	add_to_array = { global.law_type = token:age_laws }
+	add_to_array = { global.law_type = token:labor_laws }
+	add_to_array = { global.law_type = token:recruitment_laws }
+	add_to_array = { global.law_type = token:cadet_training_standards }
+	add_to_array = { global.law_type = token:officer_training_standards }	
+	add_to_array = { global.law_type = token:civ_fuel_usage }	
+	add_to_array = { global.law_type = token:diet_laws }	
+	
+	add_to_array = { global.law_type_i@token:economy = 0 }
+	add_to_array = { global.law_type_i@token:nationalization = 1 }
+	add_to_array = { global.law_type_i@token:fdi_regulations = 2 }
+	add_to_array = { global.law_type_i@token:tariffs = 3 }
+	add_to_array = { global.law_type_i@token:trade_laws = 4 }
+	add_to_array = { global.law_type_i@token:taxes = 5 }
+	add_to_array = { global.law_type_i@token:press = 6 }
+	add_to_array = { global.law_type_i@token:security = 7 }
+	add_to_array = { global.law_type_i@token:education = 8 }
+	add_to_array = { global.law_type_i@token:foreign_policy = 9 }
+	add_to_array = { global.law_type_i@token:bonds = 10 }
+	add_to_array = { global.law_type_i@token:mobilization_laws = 11 }
+	add_to_array = { global.law_type_i@token:conscription_law = 12 }
+	add_to_array = { global.law_type_i@token:age_laws = 13 }
+	add_to_array = { global.law_type_i@token:labor_laws = 14 }
+	add_to_array = { global.law_type_i@token:recruitment_laws = 15 }
+	add_to_array = { global.law_type_i@token:cadet_training_standards = 16 }
+	add_to_array = { global.law_type_i@token:officer_training_standards = 17 }
+	add_to_array = { global.law_type_i@token:civ_fuel_usage = 18 }
+	add_to_array = { global.law_type_i@token:diet_laws = 19 }
+	
+	add_to_array = { global.law_default = token:civilian_economy }
+	add_to_array = { global.law_default = token:key_industries }
+	add_to_array = { global.law_default = token:fdi_regulated }
+	add_to_array = { global.law_default = token:tariffs_average }
+	add_to_array = { global.law_default = token:export_focus }
+	add_to_array = { global.law_default = token:tax_average }
+	add_to_array = { global.law_default = token:press_regulated }
+	add_to_array = { global.law_default = token:security_minor_restrictions }
+	add_to_array = { global.law_default = token:edu_low }
+	add_to_array = { global.law_default = token:foreign_cooperative }
+	add_to_array = { global.law_default = token:bonds_peace }
+	add_to_array = { global.law_default = token:mob_reserve }
+	add_to_array = { global.law_default = token:cons_volunteer }
+	add_to_array = { global.law_default = token:age_19 }
+	add_to_array = { global.law_default = token:labor_allowed }
+	add_to_array = { global.law_default = token:foreign_none }
+	add_to_array = { global.law_default = token:train_medium }
+	add_to_array = { global.law_default = token:officer_train_low }
+	add_to_array = { global.law_default = token:normal_civ_fuel_usage }
+	add_to_array = { global.law_default = token:basic_diet }
+	
+
+	clear_array = global.law@token:economy
+	add_to_array = { global.law@token:economy = token:undisturbed_isolation } #0
+	add_to_array = { global.law@token:economy = token:isolation } #1
+	add_to_array = { global.law@token:economy = token:civilian_economy } #2
+	add_to_array = { global.law@token:economy = token:low_economic_mobilisation } #3
+	add_to_array = { global.law@token:economy = token:partial_economic_mobilisation } #4
+	add_to_array = { global.law@token:economy = token:war_economy } #5
+	add_to_array = { global.law@token:economy = token:tot_economic_mobilisation } #6
+	
+	add_to_array = { global.law@token:economy = token:KMT_corrupted_government } #7
+	add_to_array = { global.law@token:economy = token:KMT_corrupted_government_lesser } #8
+	add_to_array = { global.law@token:economy = token:KMT_corrupted_government_wartime } #9
+	add_to_array = { global.law@token:economy = token:KMT_corrupted_government_wartime_lesser } #10
+	add_to_array = { global.law@token:economy = token:PRC_guerrilla_warfare } #11
+
+	clear_array = global.law@token:bonds
+	add_to_array = { global.law@token:bonds = token:bonds_peace } #0
+	add_to_array = { global.law@token:bonds = token:bonds_basic } #1
+	add_to_array = { global.law@token:bonds = token:bonds_war_domestic } #2
+	add_to_array = { global.law@token:bonds = token:bonds_war_international } #3
+	add_to_array = { global.law@token:bonds = token:bonds_war_public } #4
+	add_to_array = { global.law@token:bonds = token:bonds_state_requisition } #5
+	add_to_array = { global.law@token:bonds = token:bonds_print } #6
+	
+	clear_array = global.law@token:conscription_law
+	add_to_array = { global.law@token:conscription_law = token:cons_volunteer } #0
+	add_to_array = { global.law@token:conscription_law = token:cons_one } #1
+	add_to_array = { global.law@token:conscription_law = token:cons_two } #2
+	add_to_array = { global.law@token:conscription_law = token:cons_three } #3
+	add_to_array = { global.law@token:conscription_law = token:cons_expanded_draft } #4
+	add_to_array = { global.law@token:conscription_law = token:cons_extensive_draft } #5
+	add_to_array = { global.law@token:conscription_law = token:cons_barrel } #6
+	add_to_array = { global.law@token:conscription_law = token:SWI_citizen_militia_1 } #7
+	add_to_array = { global.law@token:conscription_law = token:SWI_citizen_militia_2 } #8
+	add_to_array = { global.law@token:conscription_law = token:propaganda_recruits } #9
+	
+	clear_array = global.law@token:education
+	add_to_array = { global.law@token:education = token:edu_minimal } #0
+	add_to_array = { global.law@token:education = token:edu_low } #1
+	add_to_array = { global.law@token:education = token:edu_high } #2
+	add_to_array = { global.law@token:education = token:edu_excellent } #3
+	add_to_array = { global.law@token:education = token:edu_soviets } #4
+	
+	clear_array = global.law@token:fdi_regulations
+	add_to_array = { global.law@token:fdi_regulations = token:fdi_encouraged } #0
+	add_to_array = { global.law@token:fdi_regulations = token:fdi_allowed } #1
+	add_to_array = { global.law@token:fdi_regulations = token:fdi_regulated } #2
+	add_to_array = { global.law@token:fdi_regulations = token:fdi_banned } #3
+	
+	clear_array = global.law@token:labor_laws
+	add_to_array = { global.law@token:labor_laws = token:labor_none } #0
+	add_to_array = { global.law@token:labor_laws = token:labor_allowed } #1
+	add_to_array = { global.law@token:labor_laws = token:labor_encouraged } #2
+	add_to_array = { global.law@token:labor_laws = token:labor_homefront } #3
+	
+	clear_array = global.law@token:age_laws
+	add_to_array = { global.law@token:age_laws = token:age_19 } #0
+	add_to_array = { global.law@token:age_laws = token:age_18 } #1
+	add_to_array = { global.law@token:age_laws = token:age_17 } #2
+	add_to_array = { global.law@token:age_laws = token:age_16 } #3
+	add_to_array = { global.law@token:age_laws = token:age_15 } #4
+	add_to_array = { global.law@token:age_laws = token:age_14 } #5
+	add_to_array = { global.law@token:age_laws = token:age_13 } #6
+	add_to_array = { global.law@token:age_laws = token:age_12 } #7
+	add_to_array = { global.law@token:age_laws = token:age_11 } #8
+	add_to_array = { global.law@token:age_laws = token:age_10 } #9
+	
+	clear_array = global.law@token:mobilization_laws
+	add_to_array = { global.law@token:mobilization_laws = token:mob_reserve } #0
+	add_to_array = { global.law@token:mobilization_laws = token:mob_standing } #1
+	add_to_array = { global.law@token:mobilization_laws = token:mob_limited } #2
+	add_to_array = { global.law@token:mobilization_laws = token:mob_general } #3
+	
+	clear_array = global.law@token:nationalization
+	add_to_array = { global.law@token:nationalization = token:private_control } #0
+	add_to_array = { global.law@token:nationalization = token:key_industries } #1
+	add_to_array = { global.law@token:nationalization = token:major_industries } #2
+	add_to_array = { global.law@token:nationalization = token:planned_economy } #3
+	add_to_array = { global.law@token:nationalization = token:stalin_economy } #4
+	
+	clear_array = global.law@token:press
+	add_to_array = { global.law@token:press = token:press_free } #0
+	add_to_array = { global.law@token:press = token:press_regulated } #1
+	add_to_array = { global.law@token:press = token:press_censored } #2
+	add_to_array = { global.law@token:press = token:press_state } #3
+	
+	clear_array = global.law@token:recruitment_laws
+	add_to_array = { global.law@token:recruitment_laws = token:foreign_none } #0
+	add_to_array = { global.law@token:recruitment_laws = token:foreign_volunteers } #1
+	add_to_array = { global.law@token:recruitment_laws = token:foreign_encouraged } #2
+	add_to_array = { global.law@token:recruitment_laws = token:foreign_legion } #3
+	add_to_array = { global.law@token:recruitment_laws = token:foreign_conscript } #4
+	
+	clear_array = global.law@token:security
+	add_to_array = { global.law@token:security = token:security_liberty_first } #0
+	add_to_array = { global.law@token:security = token:security_minor_restrictions } #1
+	add_to_array = { global.law@token:security = token:security_major_restrictions } #2
+	add_to_array = { global.law@token:security = token:security_police_state } #3
+	add_to_array = { global.law@token:security = token:security_martial_law } #4
+	
+	clear_array = global.law@token:tariffs
+	add_to_array = { global.law@token:tariffs = token:tariffs_none } #0
+	add_to_array = { global.law@token:tariffs = token:tariffs_low } #1
+	add_to_array = { global.law@token:tariffs = token:tariffs_average } #2
+	add_to_array = { global.law@token:tariffs = token:tariffs_high } #3
+	add_to_array = { global.law@token:tariffs = token:tariffs_extreme } #4
+	
+	clear_array = global.law@token:taxes
+	add_to_array = { global.law@token:taxes = token:tax_minimal } #0
+	add_to_array = { global.law@token:taxes = token:tax_low } #1
+	add_to_array = { global.law@token:taxes = token:tax_average } #2
+	add_to_array = { global.law@token:taxes = token:tax_high } #3
+	add_to_array = { global.law@token:taxes = token:tax_extreme } #4
+	
+	clear_array = global.law@token:trade_laws
+	add_to_array = { global.law@token:trade_laws = token:free_trade } #0
+	add_to_array = { global.law@token:trade_laws = token:export_focus } #1
+	add_to_array = { global.law@token:trade_laws = token:limited_exports } #2
+	add_to_array = { global.law@token:trade_laws = token:closed_economy } #3
+	
+	clear_array = global.law@token:cadet_training_standards
+	add_to_array = { global.law@token:cadet_training_standards = token:train_none } #0
+	add_to_array = { global.law@token:cadet_training_standards = token:train_low } #1
+	add_to_array = { global.law@token:cadet_training_standards = token:train_medium } #2
+	add_to_array = { global.law@token:cadet_training_standards = token:train_high } #3
+	add_to_array = { global.law@token:cadet_training_standards = token:train_elite } #4
+	
+	clear_array = global.law@token:officer_training_standards
+	add_to_array = { global.law@token:officer_training_standards = token:officer_train_none } #0
+	add_to_array = { global.law@token:officer_training_standards = token:officer_train_low } #1
+	add_to_array = { global.law@token:officer_training_standards = token:officer_train_high } #2
+	add_to_array = { global.law@token:officer_training_standards = token:officer_train_elite } #3
+	
+	clear_array = global.law@token:foreign_policy
+	add_to_array = { global.law@token:foreign_policy = token:foreign_isolationism } #0
+	add_to_array = { global.law@token:foreign_policy = token:foreign_neutral } #1
+	add_to_array = { global.law@token:foreign_policy = token:foreign_cooperative } #2
+	add_to_array = { global.law@token:foreign_policy = token:foreign_interventionism } #3
+	add_to_array = { global.law@token:foreign_policy = token:foreign_warmonger } #4
+	
+	clear_array = global.law@token:civ_fuel_usage
+	add_to_array = { global.law@token:civ_fuel_usage = token:very_low_civ_fuel_usage } #0
+	add_to_array = { global.law@token:civ_fuel_usage = token:low_civ_fuel_usage } #1
+	add_to_array = { global.law@token:civ_fuel_usage = token:normal_civ_fuel_usage } #2
+	add_to_array = { global.law@token:civ_fuel_usage = token:medium_civ_fuel_usage } #3
+	add_to_array = { global.law@token:civ_fuel_usage = token:high_civ_fuel_usage } #4
+	
+	clear_array = global.law@token:diet_laws
+	add_to_array = { global.law@token:diet_laws = token:subsistence_diet } #0
+	add_to_array = { global.law@token:diet_laws = token:poor_diet } #1
+	add_to_array = { global.law@token:diet_laws = token:basic_diet } #2
+	add_to_array = { global.law@token:diet_laws = token:modern_diet } #3
+	add_to_array = { global.law@token:diet_laws = token:extravagant_diet } #4
+	
+	clear_array = global.academy_spirit
+	clear_array = global.army_spirit
+	clear_array = global.division_command_spirit
+	clear_array = global.naval_academy_spirit
+	clear_array = global.navy_spirit
+	clear_array = global.naval_command_spirit
+	clear_array = global.air_force_spirit
+	clear_array = global.air_force_command_spirit
+	
+	
+	add_to_array = { global.academy_spirit = token:political_loyalty_spirit }
+	add_to_array = { global.academy_spirit = token:inventive_leadership_spirit }
+	add_to_array = { global.academy_spirit = token:theatre_training_spirit }
+	add_to_array = { global.academy_spirit = token:generic_academy }
+	add_to_array = { global.academy_spirit = token:officer_academy }
+	add_to_array = { global.academy_spirit = token:boot_academy }
+	add_to_array = { global.academy_spirit = token:research_academy }
+	add_to_array = { global.academy_spirit = token:aux_academy }
+	add_to_array = { global.academy_spirit = token:attack_academy }
+	add_to_array = { global.academy_spirit = token:defend_academy }
+	add_to_array = { global.academy_spirit = token:logistics_academy }
+	add_to_array = { global.academy_spirit = token:plans_academy }
+	add_to_array = { global.academy_spirit = token:Per_academy }
+	add_to_array = { global.academy_spirit = token:NZL_academy }
+	add_to_array = { global.academy_spirit = token:AST_duntroon }
+	add_to_array = { global.academy_spirit = token:AST_kapooka }
+	add_to_array = { global.academy_spirit = token:arab_academy }
+	
+	add_to_array = { global.army_spirit = token:professional_officer_corps_spirit }
+	add_to_array = { global.army_spirit = token:elevated_engineering_corps_spirit }
+	add_to_array = { global.army_spirit = token:proper_heritage_spirit }
+	add_to_array = { global.army_spirit = token:quick_improvisation_spirit }
+	add_to_array = { global.army_spirit = token:relief_of_command_spirit }
+	add_to_array = { global.army_spirit = token:ideological_loyalty_spirit }
+	add_to_array = { global.army_spirit = token:state_serves_the_military_spirit }
+	add_to_array = { global.army_spirit = token:mobile_warfare_army_spirit }
+	add_to_array = { global.army_spirit = token:superior_firepower_army_spirit }
+	add_to_array = { global.army_spirit = token:grand_battleplan_army_spirit }
+	add_to_array = { global.army_spirit = token:mass_assault_army_spirit }
+	
+	add_to_array = { global.division_command_spirit = token:static_warfare_spirit }
+	add_to_array = { global.division_command_spirit = token:flexible_organization_spirit }
+	add_to_array = { global.division_command_spirit = token:aggressive_reconnaisance_spirit }
+	add_to_array = { global.division_command_spirit = token:reserve_officers_spirit }
+	add_to_array = { global.division_command_spirit = token:victory_or_death_spirit }
+	add_to_array = { global.division_command_spirit = token:maneuver_warfare_spirit }
+	add_to_array = { global.division_command_spirit = token:smoke_and_fire_spirit }
+	add_to_array = { global.division_command_spirit = token:logistical_focus_spirit }
+	add_to_array = { global.division_command_spirit = token:operational_reserve_spirit }
+	
+	add_to_array = { global.naval_academy_spirit = token:instilled_aggression_spirit }
+	add_to_array = { global.naval_academy_spirit = token:calculated_restraint_spirit }
+	add_to_array = { global.naval_academy_spirit = token:signals_training_spirit }
+	add_to_array = { global.naval_academy_spirit = token:best_of_the_best_naval_academy_spirit }
+	add_to_array = { global.naval_academy_spirit = token:naval_academy_scholarships_spirit }
+	add_to_array = { global.naval_academy_spirit = token:fleet_in_being_academy_spirit }
+	add_to_array = { global.naval_academy_spirit = token:trade_interdiction_academy_spirit }
+	add_to_array = { global.naval_academy_spirit = token:base_strike_academy_spirit }
+	
+	add_to_array = { global.navy_spirit = token:jeune_ecole_spirit }
+	add_to_array = { global.navy_spirit = token:big_gun_club_spirit }
+	add_to_array = { global.navy_spirit = token:aviation_enthusiasts_spirit }
+	add_to_array = { global.navy_spirit = token:cruiser_warfare_spirit }
+	add_to_array = { global.navy_spirit = token:wolfpacks_spirit }
+	add_to_array = { global.navy_spirit = token:flexible_contracts_spirit }
+	add_to_array = { global.navy_spirit = token:integrated_designers_spirit }
+	add_to_array = { global.navy_spirit = token:naval_reform_spirit }
+	add_to_array = { global.navy_spirit = token:naval_refit_yards_spirit }
+	
+	add_to_array = { global.naval_command_spirit = token:close_combat_navy_spirit }
+	add_to_array = { global.naval_command_spirit = token:night_fighting_spirit }
+	add_to_array = { global.naval_command_spirit = token:surprise_attacks_spirit }
+	add_to_array = { global.naval_command_spirit = token:efficient_communications_spirit }
+	add_to_array = { global.naval_command_spirit = token:surface_raiders_spirit }
+	add_to_array = { global.naval_command_spirit = token:decisive_battle_spirit }
+	add_to_array = { global.naval_command_spirit = token:fleet_in_being_navy_spirit }
+	add_to_array = { global.naval_command_spirit = token:base_strike_navy_spirit }
+	add_to_array = { global.naval_command_spirit = token:inclimate_weather_experience_spirit }
+	add_to_array = { global.naval_command_spirit = token:brave_commanders_spirit }
+	
+	
+	add_to_array = { global.air_force_spirit = token:independent_air_force_spirit }
+	add_to_array = { global.air_force_spirit = token:industrial_destruction_spirit }
+	add_to_array = { global.air_force_spirit = token:dive_bombing_spirit }
+	add_to_array = { global.air_force_spirit = token:material_destruction_spirit }
+	add_to_array = { global.air_force_spirit = token:industry_liasons_spirit }
+	add_to_array = { global.air_force_spirit = token:effective_training_programs_spirit }
+	add_to_array = { global.air_force_spirit = token:air_crew_surveys_spirit }
+	
+	add_to_array = { global.air_force_command_spirit = token:battlefield_air_interdiction_spirit }
+	add_to_array = { global.air_force_command_spirit = token:cag_night_fighting_spirit }
+	add_to_array = { global.air_force_command_spirit = token:veteran_air_instructors_spirit }
+	add_to_array = { global.air_force_command_spirit = token:centralized_control_spirit }
+	add_to_array = { global.air_force_command_spirit = token:steel_wings_steel_hearts_spirit }
+	add_to_array = { global.air_force_command_spirit = token:home_defence_spirit }
+	add_to_array = { global.air_force_command_spirit = token:air_power_projection_spirit }
+	add_to_array = { global.air_force_command_spirit = token:massed_strike_spirit }
+	add_to_array = { global.air_force_command_spirit = token:continuous_strike_spirit }
+	add_to_array = { global.air_force_command_spirit = token:strategic_strike_spirit }
+	
+}
+
+law_change_on_add = {
+	if = {
+		limit = {
+			check_variable = { category = token:economy }
+			check_variable = { law_level@var:category > 6 }
+		}
+		set_variable = { law_change_complete = 1 }
+	}
+
+
+	if = { #law change complete
+		limit = {
+			OR = {
+				check_variable = { law_change_complete = 1 }
+				NOT = { has_variable = law_level@var:category }
+			}
+		}
+		
+		if = { #this fires if you add a law which normally uses timed change, but you previously had one that doesnt
+			limit = {
+				has_variable = law_level@var:category
+				NOT = { check_variable = { law_level@var:category = level } }
+			} #correct lvl and clear previous law
+			remove_ideas = var:global.law@var:category^law_level@var:category
+			set_variable = { law_level@var:category = level }
+		}
+		else_if = {
+			limit = {
+				NOT = { has_variable = law_level@var:category }
+			}
+			set_variable = { law_level@var:category = level }
+		}
+		clear_variable = law_change_complete
+	}
+	else_if = { #currently changing law, and add_ideas for this law fired from somewhere
+		limit = {
+			has_variable = law_change_days@var:category
+		}
+	
+		## set the target law level to change to to this law level
+		
+		#current 5
+		#num -1
+		#target 4
+		
+		set_temp_variable = { new_level_target = level } #4
+		subtract_from_temp_variable = { new_level_target = law_level@var:category } #5
+		subtract_from_temp_variable = { new_level_target = law_change_num@var:category } #-1
+		
+		#log = "[?new_level_target] new_level_target"
+		set_variable = { law_target_after_change@var:category = new_level_target }
+		
+		
+		#remove this idea
+		remove_ideas = var:global.law@var:category^level 
+		#log = "REMOVE REMOVE REMOVE [?global.law@var:category^level.GetTokenKey] KEY"
+	}
+	else_if = { #start law change to this law
+		limit = {
+			OR = {
+				check_variable = { category = token:economy }
+				check_variable = { category = token:mobilization_laws }
+				check_variable = { category = token:cadet_training_standards }
+				check_variable = { category = token:officer_training_standards }
+			}
+		}
+		if = {
+			limit = {
+				NOT = { check_variable = { law_level@var:category = level } }
+				NOT = { has_variable = law_change_days@var:category }
+			}
+			
+			set_temp_variable = { law_category = category }
+				 
+			start_law_change = yes
+		}
+		remove_ideas = var:global.law@var:category^level 
+		#log = "REMOVE REMOVE REMOVE [?global.law@var:category^level.GetTokenKey] KEY"
+	}
+}
+
+#requires "level" and "law_category" variables defined
+start_law_change = {
+	if = {
+		limit = {
+			check_variable = { law_change_days@var:v = 0 }
+		}
+		if = {
+			limit = { check_variable = { law_change_system = 0 } law_duration = yes }
+		}
+
+		set_temp_variable = { num_steps = level }
+		subtract_from_temp_variable = { num_steps = law_level@var:law_category }
+		
+		custom_effect_tooltip = Willtakedurationduration162
+		custom_effect_tooltip = numstepsnumsteps09911
+		
+		add_to_array = { law_change_category = law_category }
+		
+		if = {
+			limit = {
+				check_variable = { num_steps > 0 }
+			}
+			set_temp_variable = { start = law_level@var:law_category }
+			#log = "[?start] start | [?law_level@var:law_category] law_level | [?law_category] law_category"
+			
+			set_temp_variable = { start_idea = global.law@var:law_category^start }
+			meta_effect = {
+				text = {
+					set_temp_variable = { t = token:[X]_1 }
+				}
+				X = "[?start_idea.GetTokenKey]"
+			}
+			custom_effect_tooltip = addsideastartideaGetTokenKey16996
+		}
+		else = {
+			set_temp_variable = { start = law_level@var:law_category }
+			add_to_temp_variable = { start = -1 }
+			
+			set_temp_variable = { start_idea = global.law@var:law_category^start }
+			meta_effect = {
+				text = {
+					set_temp_variable = { t = token:[X]_4 }
+				}
+				X = "[?start_idea.GetTokenKey]"
+			}
+			custom_effect_tooltip = addsideastartideaGetTokenKey41716
+		}
+		
+		set_variable = { law_change_idea@var:law_category = t }
+		set_variable = { law_change_days@var:law_category = duration }
+		set_variable = { law_change_progress@var:law_category = 0 }
+		set_variable = { law_change_ratio@var:law_category = 0.2 }
+		
+		if = {
+			limit = {
+				check_variable = { law_change_num@var:law_category = 0 }
+			}
+			set_variable = { law_change_num@var:law_category = num_steps }
+			
+		}
+		
+		#log = " "
+		#log = "[This.GetTag] | QUEUE NEW LAW"
+		#log = "[?law_change_idea@var:law_category.GetTokenKey] law_change_idea@var:law_category"
+		#log = "[?law_change_days@var:law_category] law_change_days@var:law_category"
+		#log = "[?law_change_progress@var:law_category] law_change_progress@var:law_category"
+		#log = "[?law_change_ratio@var:law_category] law_change_ratio@var:law_category"
+		#log = "[?law_change_num@var:law_category] law_change_num@var:law_category"
+	}
+}
+d_update_law_changes = {
+	
+	for_each_loop = {
+		array = law_change_category
+		value = slot
+	
+		#log = "[This.GetTag] | [?slot.GetTokenKey] slot | [?law_change_progress@var:slot] progress "
+		set_temp_variable = { progress = 1 }
+		set_temp_variable = { mod_id = global.law_mod@var:slot }
+		add_to_temp_variable = { progress = modifier@var:mod_id }
+		
+		add_to_variable = { law_change_progress@var:slot = progress } #add to progress
+		
+		#log = "[?law_change_progress@var:slot] law_change_progress"
+		set_temp_variable = { ratio = law_change_progress@var:slot }
+		divide_temp_variable = { ratio = law_change_days@var:slot }
+	
+		if = { ### progress done, but not all steps run yet
+			limit = {
+				check_variable = { law_change_progress@var:slot > law_change_days@var:slot }
+			}
+			set_temp_variable = { ratio = 1.01 }
+			set_variable = { law_change_ratio@var:slot = 1 }
+		}
+		
+		if = {
+			limit = {
+				check_variable = { ratio > law_change_ratio@var:slot }
+			}
+			
+			if = { #this is the first upgrade
+				limit = {
+					check_variable = { law_change_ratio@var:slot = 0.2 }
+				}
+				set_temp_variable = { add = law_change_idea@var:slot }
+				
+				swap_ideas = {
+					remove_idea = var:global.law@var:slot^law_level@var:slot
+					add_idea = var:add
+				}
+					
+				if = { #leveling up
+					limit = {
+						check_variable = { law_change_num@var:slot > 0 }
+					}
+					add_to_variable = { law_change_idea@var:slot = 1 }
+				}
+				else = {
+					add_to_variable = { law_change_idea@var:slot = -1 }
+				}
+				#log = "FIRST upgrade to [?add] [?add.GetTokenKey]"
+				
+			}
+			else_if = {
+				limit = {
+					check_variable = { law_change_ratio@var:slot < 1 } #0.4
+				}
+				
+				if = { #leveling up
+					limit = {
+						check_variable = { law_change_num@var:slot > 0 }
+					}
+					
+					set_temp_variable = { add = law_change_idea@var:slot }
+					
+					set_temp_variable = { remove = add }
+					subtract_from_temp_variable = { remove = 1 }
+					
+					#log = "upgrade to [?add] [?add.GetTokenKey] Remove: [?remove] [?remove.GetTokenKey]"
+					
+					add_to_variable = { law_change_idea@var:slot = 1 }
+				}
+				else = {
+					set_temp_variable = { add = law_change_idea@var:slot }
+					
+					set_temp_variable = { remove = add }
+					add_to_temp_variable = { remove = 1 }
+					
+					#log = "downgrade to [?add] [?add.GetTokenKey] Remove: [?remove] [?remove.GetTokenKey]"
+					
+					add_to_variable = { law_change_idea@var:slot = -1 }
+				}
+				
+				swap_ideas = {
+					remove_idea = var:remove
+					add_idea = var:add
+				}
+			}
+			else = {
+				if = { #leveling up
+					limit = {
+						check_variable = { law_change_num@var:slot > 0 }
+					}
+					
+					set_temp_variable = { remove = law_change_idea@var:slot }
+					add_to_temp_variable = { remove = -1 }
+					
+					set_temp_variable = { l = law_level@var:slot }
+					add_to_temp_variable = { l = 1 }
+					
+					set_temp_variable = { add = global.law@var:slot^l }
+					
+					add_to_variable = { law_change_num@var:slot = -1 }
+					add_to_variable = { law_level@var:slot = 1 }
+					
+					#log = "FINISHED UPGRADE to [?add] [?add.GetTokenKey]"
+					#log = "Remove: [?remove] [?remove.GetTokenKey]"
+				}
+				else = {
+					
+					set_temp_variable = { remove = law_change_idea@var:slot }
+					add_to_temp_variable = { remove = 1 }
+					
+					set_temp_variable = { l = law_level@var:slot }
+					add_to_temp_variable = { l = -1 }
+					
+					set_temp_variable = { add = global.law@var:slot^l }
+					
+					add_to_variable = { law_change_num@var:slot = 1 }
+					add_to_variable = { law_level@var:slot = -1 }
+					
+					#log = "FINISHED DOWNGRADE to [?add] [?add.GetTokenKey]"
+					#log = "Remove: [?remove] [?remove.GetTokenKey]"
+				}
+					
+				set_variable = { law_change_complete = 1 }
+				
+				swap_ideas = {
+					remove_idea = var:remove
+					add_idea = var:add
+				}
+				
+				add_to_temp_array = { to_remove = slot }
+			}
+			
+			add_to_variable = { law_change_ratio@var:slot = 0.2 }
+		}
+	}
+	
+	
+	### remove if finished
+	for_each_loop = {
+		array = to_remove
+		
+		remove_from_array = { law_change_category = v }
+		
+		clear_variable = law_change_idea@var:v
+		clear_variable = law_change_days@var:v
+		clear_variable = law_change_progress@var:v
+		clear_variable = law_change_ratio@var:v
+		
+		#log = "[?law_change_num@var:slot] law_change_num BEFORE"
+	
+		if = {
+			limit = {
+				has_variable = law_target_after_change@var:v
+			}
+			add_to_variable = { law_change_num@var:v = law_target_after_change@var:v }
+			clear_variable = law_target_after_change@var:v
+		}
+		
+		#log = "[?law_change_num@var:slot] law_change_num AFTER"
+	
+		if = {
+			limit = {
+				check_variable = { law_change_num@var:v = 0 }
+			}
+			clear_variable = law_change_num@var:v	
+		}
+		else = {
+			### queue next law
+		
+			if = { #leveling up
+				limit = {
+					check_variable = { law_change_num@var:v > 0 }
+				}
+				
+				set_temp_variable = { level = law_level@var:v }
+				add_to_temp_variable = { level = 1 }
+				
+				set_temp_variable = { law_category = v }
+				
+				start_law_change = yes
+				#log = "QUEUE NEXT LAW"
+							
+			}
+			else = { #leveling down
+			
+				set_temp_variable = { level = law_level@var:v }
+				add_to_temp_variable = { level = -1 }
+				
+				set_temp_variable = { law_category = v }
+				
+				start_law_change = yes
+			}
+				
+			#log = "[?level] level"
+			#log = "[?law_change_num@var:law_category] law_change_num"
+			#log = "[?law_change_category@var:law_category] law_change_category"
+			#log = "[?law_change_idea@var:law_category] law_change_idea"	
+		}
+	}
+}
+
+d_check_country_law_num_all = {
+	every_country = {
+		d_check_country_law_num = yes
+	}
+}
+d_check_country_law_num = {
+	for_each_loop = {
+		array = global.law_type
+		value = law_cat
+		
+		set_temp_variable = { num_law = 0 }
+		for_each_loop = {
+			array = global.law@var:law_cat
+			
+			if = {
+				limit = {
+					has_idea = var:v
+				}
+				add_to_temp_variable = { num_law = 1 }
+			}
+		}
+		
+		if = {
+			limit = {
+				check_variable = { num_law > 1 }
+				NOT = { has_variable = law_change_num@var:law_cat }
+			}
+			#log = "[This.GetTag] | has too many [?law_cat.GetTokenKey] law! ([?num_law])"
+			
+			for_each_loop = {
+				array = global.law@var:law_cat
+				
+				if = {
+					limit = {
+						has_idea = var:v
+					}
+					#log = "[?v.GetTokenKey] law"
+				}
+			}
+		}
+		if = {
+			limit = {
+				check_variable = { num_law = 0 }
+			}
+			#log = "[This.GetTag] | has no [?law_cat.GetTokenKey] law!"
+		}
+	}
+}
+			
+d_set_country_law_default = {
+	set_country_law_default = yes
+}
+set_country_law_default = {
+	
+	if = {
+		limit = {
+			any_of = {
+				array = global.law_type
+				
+				NOT = { has_variable = law_level@var:v }
+			}
+		}
+		
+		#log = "[This.GetTag] LAWS SET TO DEFAULT"
+		
+		for_each_loop = {
+			array = global.law_type
+			
+			if = { #set to default 
+				limit = {
+					NOT = { has_variable = law_level@var:v }
+				}
+				for_each_loop = { #clear all ideas from this law category
+					array = global.law@var:v
+					value = law
+					index = law_i
+					
+					remove_ideas = var:law
+				} 
+				add_ideas = var:global.law_default^i
+			}
+		}
+	}
+	
+}
+		
+undisturbed_isolation_data ={
+	
+}
+isolation_data ={
+	
+}			
+
+civilian_economy_data = {
+	
+}
+low_economic_mobilisation_data = {
+
+	## on_add
+	
+	if = {
+		limit = {
+			tag = USA
+			has_completed_focus = USA_prepare_intervention
+			has_defensive_war = no
+		}
+		USA_congress_large_opposition = yes
+	}
+ 
+}
+partial_economic_mobilisation_data = {
+
+	## on_add
+	
+	custom_effect_tooltip = requires_25_ws_at_peace
+	
+	if = {
+		limit = {
+			tag = USA
+			has_completed_focus = USA_limited_intervention
+			has_defensive_war = no
+		}
+		USA_congress_large_opposition = yes
+	}
+ 
+}
+
+war_economy_data = {
+
+	## on_add
+	if = {
+		limit = {
+			tag = USA
+			has_completed_focus = USA_total_mobilisation
+			has_defensive_war = no
+		}
+		USA_congress_large_opposition = yes
+	}
+
+	custom_effect_tooltip = requires_50_ws_at_peace
+}
+tot_economic_mobilisation_data = {
+
+	## on_add
+	
+	custom_effect_tooltip = requires_50_ws_at_peace
+	
+	if = {
+		limit = {
+			tag = USA
+			has_completed_focus = USA_manifest_destiny
+			has_defensive_war = no
+		}
+		USA_congress_large_opposition = yes
+	}
+}
+KMT_corrupted_government_data ={
+   
+	## on_add
+	
+}
+KMT_corrupted_government_lesser_data ={
+   
+	## on_add
+	
+}
+KMT_corrupted_government_wartime_data ={
+   
+	## on_add
+	
+}
+KMT_corrupted_government_wartime_lesser_data ={
+   
+	## on_add
+	
+}
+PRC_guerrilla_warfare_data ={
+   
+	## on_add
+	
+}
+
+
+
+bonds_peace_data ={
+  
+	## on_add
+	
+	custom_effect_tooltip = bonds_no_downgrade_TT
+	
+}
+bonds_basic_data ={
+
+	## on_add
+	
+	custom_effect_tooltip = space_TT
+	add_timed_idea = {
+		idea = bonds_basic_temp
+		days = 270
+	}		
+	custom_effect_tooltip = bonds_no_downgrade_TT	
+	
+}
+bonds_war_domestic_data ={
+   
+	## on_add
+	custom_effect_tooltip = space_TT
+	add_timed_idea = {
+		idea = bonds_war_domestic_temp
+		days = 270
+	}
+	custom_effect_tooltip = bonds_no_downgrade_TT
+	hidden_effect = {
+		remove_ideas = {
+			bonds_basic_temp
+		}	
+	}
+}
+bonds_war_international_data ={
+    
+	## on_add
+
+	custom_effect_tooltip = space_TT
+	add_timed_idea = {
+		idea = bonds_war_international_temp
+		days = 270
+	}
+	custom_effect_tooltip = bonds_no_downgrade_TT
+	hidden_effect = {
+		remove_ideas = {
+			bonds_basic_temp
+		}
+	}
+}
+bonds_war_public_data ={
+    
+	## on_add
+	custom_effect_tooltip = space_TT
+	add_timed_idea = {
+		idea = bonds_war_public_temp
+		days = 270
+	}
+	custom_effect_tooltip = bonds_no_downgrade_TT
+	hidden_effect = {
+		remove_ideas = {
+			bonds_basic_temp
+			bonds_war_international_temp
+		}	
+	}
+}
+bonds_state_requisition_data ={
+   
+	## on_add
+	custom_effect_tooltip = space_TT
+	add_timed_idea = {
+		idea = bonds_state_requisition_temp
+		days = 270
+	}
+	custom_effect_tooltip = bonds_no_downgrade_TT
+	hidden_effect = {
+		remove_ideas = {
+			bonds_basic_temp
+			bonds_war_domestic_temp
+		}		
+	}	
+}
+bonds_print_data ={
+    
+	## on_add
+	custom_effect_tooltip = space_TT
+	add_timed_idea = {
+		idea = bonds_print_temp
+		days = 270
+	}
+	custom_effect_tooltip = bonds_no_downgrade_TT
+	hidden_effect = {
+		remove_ideas = {
+			bonds_basic_temp
+			bonds_war_domestic_temp
+			bonds_state_requisition_temp
+			bonds_war_public_temp
+			bonds_war_international_temp
+		}	
+	}	
+}
+cons_volunteer_data ={
+   
+	## on_add
+	
+}
+cons_one_data ={
+    
+	## on_add
+	if = {
+		limit = {
+			NOT = {
+				is_chinese_nations/FLAG = yes 
+				tag = ENG 
+			}
+		}
+		custom_effect_tooltip = requires_10_ws_at_peace
+	}
+}
+cons_two_data ={
+    
+	## on_add
+	if = {
+		limit = {
+			NOT = {
+				is_chinese_nations/FLAG = yes 
+				tag = ENG 
+				tag = FRA
+				has_government = communism
+				has_government = fascism
+			}
+		}
+		custom_effect_tooltip = requires_25_ws_at_peace
+	}	
+}
+cons_three_data ={
+    
+	## on_add
+	if = {
+		limit = {
+			NOT = {
+				is_chinese_nations/FLAG = yes 
+				has_government = communism
+				has_government = fascism
+			}
+		}
+		custom_effect_tooltip = requires_40_ws_at_peace
+	}	
+}
+cons_expanded_draft_data ={
+    
+	## on_add
+	if = {
+		limit = {
+			NOT = {
+				is_chinese_nations/FLAG = yes 
+				has_government = communism
+				has_government = fascism
+			}
+		}
+		custom_effect_tooltip = requires_50_ws_at_peace
+	}
+}
+cons_extensive_draft_data ={
+    
+	## on_add
+	custom_effect_tooltip = remove_law_on_peace
+}
+cons_barrel_data ={
+    
+	## on_add
+	custom_effect_tooltip = remove_law_on_peace
+}
+SWI_citizen_militia_1_data ={
+   
+	## on_add
+	custom_effect_tooltip ="SWI_army_limitations_TT"
+
+}
+SWI_citizen_militia_2_data ={
+   
+	## on_add
+	
+}
+propaganda_recruits_data ={
+   
+	## on_add
+	
+}
+edu_minimal_data ={
+    
+	## on_add
+	
+}
+edu_soviets_data ={
+    
+	## on_add
+	
+}
+edu_low_data ={
+    
+	## on_add
+	
+}
+edu_high_data ={
+    
+	## on_add
+	
+}
+edu_excellent_data ={
+   
+	## on_add
+	
+}
+fdi_encouraged_data ={
+    
+	## on_add
+	if = {#change foreign industry cost based on law
+		limit = {
+			tag = ROM
+		}
+		ROM = { 
+			set_variable = { ROM_german_civ_industries_cost = 50 }
+			set_variable = { ROM_british_civ_industries_cost = 50 }
+			set_variable = { ROM_french_civ_industries_cost = 50 }
+			set_variable = { ROM_american_civ_industries_cost = 50 }
+			set_variable = { ROM_italian_civ_industries_cost = 50 }
+		}
+	}
+}
+fdi_allowed_data ={
+    
+    ## on_add
+	if = {#change foreign industry cost based on law
+		limit = {
+			tag = ROM
+		}
+		ROM = { 
+			set_variable = { ROM_german_civ_industries_cost = 60 }
+			set_variable = { ROM_british_civ_industries_cost = 60 }
+			set_variable = { ROM_french_civ_industries_cost = 60 }
+			set_variable = { ROM_american_civ_industries_cost = 60 }
+			set_variable = { ROM_italian_civ_industries_cost = 60 }
+		}
+	}
+}
+fdi_regulated_data ={
+    
+	## on_add
+	if = {#change foreign industry cost based on law
+		limit = {
+			tag = ROM
+		}
+		ROM = { 
+			set_variable = { ROM_german_civ_industries_cost = 70 }
+			set_variable = { ROM_british_civ_industries_cost = 70 }
+			set_variable = { ROM_french_civ_industries_cost = 70 }
+			set_variable = { ROM_american_civ_industries_cost = 70 }
+			set_variable = { ROM_italian_civ_industries_cost = 70 }
+		}
+	}
+}
+fdi_banned_data ={
+    
+    ## on_add
+
+}
+labor_none_data ={
+    
+    ## on_add
+
+}
+labor_allowed_data ={
+   
+    ## on_add
+
+}
+labor_encouraged_data ={
+   
+    ## on_add
+
+}
+labor_homefront_data ={
+    
+    ## on_add
+
+}
+age_19_data ={
+    
+    ## on_add
+
+}
+age_18_data ={
+    
+    ## on_add
+	if = { 
+		limit = {
+			NOT = {
+				is_chinese_nations/FLAG = yes
+				tag = ENG 
+			}
+		}
+		custom_effect_tooltip = requires_15_ws_at_peace
+	}
+}
+age_17_data ={
+   
+    ## on_add
+	if = { 
+		limit = {
+			NOT = {
+				is_chinese_nations/FLAG = yes
+				tag = ENG 
+				tag = FRA
+				has_government = communism
+				has_government = fascism
+			}
+		}
+		custom_effect_tooltip = requires_20_ws_at_peace
+	}
+}
+age_16_data ={
+   
+    ## on_add
+	if = { 
+		limit = {
+			NOT = {
+				is_chinese_nations/FLAG = yes
+				has_government = communism
+				has_government = fascism
+			}
+		}
+		custom_effect_tooltip = requires_25_ws_at_peace
+	}
+}
+age_15_data ={
+    
+    ## on_add
+	if = { 
+		limit = {
+			NOT = {
+				is_chinese_nations/FLAG = yes
+				has_government = communism
+				has_government = fascism
+			}
+		}
+		custom_effect_tooltip = requires_30_ws_at_peace
+	}
+}
+age_14_data ={
+    
+    ## on_add
+	custom_effect_tooltip = remove_law_on_peace
+}
+age_13_data ={
+    
+    ## on_add
+	custom_effect_tooltip = remove_law_on_peace
+}
+age_12_data ={
+   
+    ## on_add
+	custom_effect_tooltip = remove_law_on_peace
+}
+age_11_data ={
+    
+    ## on_add
+	custom_effect_tooltip = remove_law_on_peace
+}
+age_10_data ={
+    
+    ## on_add
+	custom_effect_tooltip = remove_law_on_peace
+}
+mob_reserve_data ={
+    
+    ## on_add
+
+}
+mob_standing_data ={
+    
+    ## on_add
+
+}
+mob_limited_data ={
+    
+    ## on_add
+
+}
+mob_general_data ={
+
+    ## on_add
+
+}
+private_control_data ={
+    
+    ## on_add
+
+}
+key_industries_data ={
+    
+    ## on_add
+
+}
+major_industries_data ={
+    
+    ## on_add
+
+}
+planned_economy_data ={
+    
+    ## on_add
+
+}
+stalin_economy_data ={
+    
+    ## on_add
+
+}
+press_free_data ={
+    
+    ## on_add
+
+}
+press_regulated_data ={
+    
+    ## on_add
+	custom_effect_tooltip = space_TT
+	unlock_decision_tooltip = heroic_tales
+	if = {
+		limit = {
+			tag = USA
+			has_defensive_war = no
+		}
+		USA_congress_large_opposition = yes
+	}
+}
+press_censored_data ={
+    
+    ## on_add
+	custom_effect_tooltip = space_TT
+	unlock_decision_tooltip = heroic_tales
+	unlock_decision_tooltip = demonise_opponents
+	if = {
+		limit = {
+			tag = USA
+			has_defensive_war = no
+		}
+		USA_congress_large_opposition = yes
+	}
+}
+press_state_data ={
+    
+    ## on_add
+	custom_effect_tooltip = space_TT
+	unlock_decision_tooltip = heroic_tales
+	unlock_decision_tooltip = demonise_opponents
+	unlock_decision_tooltip = assured_victory
+	if = {
+		limit = {
+			tag = USA
+			has_defensive_war = no
+		}
+		USA_congress_large_opposition = yes
+	}
+}
+foreign_none_data ={
+
+    ## on_add
+	if = {
+		limit = {
+			check_variable = { subjects^num > 0 }
+		}
+		hidden_effect = {
+			for_each_scope_loop = {
+				array = subjects 
+				subject_update_overlord_foreign_recruitment = yes 
+			}
+		}
+	}
+}
+foreign_volunteers_data ={
+   
+    ## on_add
+	if = {
+		limit = {
+			check_variable = { subjects^num > 0 }
+		}
+		hidden_effect = {
+			for_each_scope_loop = {
+				array = subjects 
+				subject_update_overlord_foreign_recruitment = yes 
+			}
+		}
+	}
+
+}
+foreign_encouraged_data ={
+    
+    ## on_add
+	if = {
+		limit = {
+			check_variable = { subjects^num > 0 }
+		}
+		hidden_effect = {
+			for_each_scope_loop = {
+				array = subjects 
+				subject_update_overlord_foreign_recruitment = yes 
+			}
+		}
+	}
+
+}
+foreign_legion_data ={
+    
+    ## on_add
+	if = {
+		limit = {
+			check_variable = { subjects^num > 0 }
+		}
+		hidden_effect = {
+			for_each_scope_loop = {
+				array = subjects 
+				subject_update_overlord_foreign_recruitment = yes 
+			}
+		}
+	}
+
+}
+foreign_conscript_data ={
+   
+    ## on_add
+	if = {
+		limit = {
+			check_variable = { subjects^num > 0 }
+		}
+		hidden_effect = {
+			for_each_scope_loop = {
+				array = subjects 
+				subject_update_overlord_foreign_recruitment = yes 
+			}
+		}
+	}
+
+}
+security_liberty_first_data ={
+   
+    ## on_add
+
+}
+security_minor_restrictions_data ={
+   
+    ## on_add
+
+}
+security_major_restrictions_data ={
+    
+    ## on_add
+
+}
+security_police_state_data ={
+    
+    ## on_add
+
+}
+security_martial_law_data ={
+   
+    ## on_add
+
+}
+tariffs_none_data ={
+    
+    ## on_add
+
+}
+tariffs_low_data ={
+    
+    ## on_add
+
+}
+tariffs_average_data ={
+    
+    ## on_add
+
+}
+tariffs_high_data ={
+    
+    ## on_add
+
+}
+tariffs_extreme_data ={
+   
+    ## on_add
+
+}
+tax_minimal_data ={
+    
+    ## on_add
+	custom_effect_tooltip = taxes_TT
+}
+tax_low_data ={
+	
+    ## on_add
+	custom_effect_tooltip = taxes_TT
+}
+tax_average_data ={
+   
+    ## on_add
+	custom_effect_tooltip = taxes_TT
+}
+tax_high_data ={
+    
+    ## on_add
+	custom_effect_tooltip = taxes_TT
+}
+tax_extreme_data ={
+    
+    ## on_add
+	custom_effect_tooltip = taxes_TT
+}
+
+free_trade_data ={
+    custom_effect_tooltip =tokenminexportGetTokenLocalizedKey055Y0075Y05513
+    custom_effect_tooltip =tokenminoreexportGetTokenLocalizedKey055Y0075Y01698
+    custom_effect_tooltip =tokenminfoodexportGetTokenLocalizedKey06Y007Y0184
+	custom_effect_tooltip = space_TT
+    custom_effect_tooltip =tokenpoliticalpowerfactorGetTokenLocalizedKey0037632
+    custom_effect_tooltip =tokenconsumergoodsexpectedvalueGetTokenLocalizedKey002Y14741
+    custom_effect_tooltip =tokenrulingpartydriftGetTokenLocalizedKey0057902
+    custom_effect_tooltip =tokenresourcesfactorGetTokenLocalizedKey0055819
+    custom_effect_tooltip =tokentradeopinionfactorGetTokenLocalizedKey0206914
+    custom_effect_tooltip =tokenresearchspeedfactorGetTokenLocalizedKey0032253
+    custom_effect_tooltip =tokencivilianinteltoothersGetTokenLocalizedKey017450
+    custom_effect_tooltip =tokennavyinteltoothersGetTokenLocalizedKey0051424
+
+    ## on_add
+
+}
+export_focus_data ={
+    custom_effect_tooltip =tokenminexportGetTokenLocalizedKey04Y006Y04240
+    custom_effect_tooltip =tokenminoreexportGetTokenLocalizedKey04Y006Y04177
+    custom_effect_tooltip =tokenminfoodexportGetTokenLocalizedKey04Y0055Y07745
+	custom_effect_tooltip = space_TT
+    custom_effect_tooltip =tokenconsumergoodsexpectedvalueGetTokenLocalizedKey001Y11333
+    custom_effect_tooltip =tokenrulingpartydriftGetTokenLocalizedKey0024294
+    custom_effect_tooltip =tokenresourcesfactorGetTokenLocalizedKey0036366
+    custom_effect_tooltip =tokentradeopinionfactorGetTokenLocalizedKey010413
+    custom_effect_tooltip =tokenresearchspeedfactorGetTokenLocalizedKey0011563
+    custom_effect_tooltip =tokencivilianinteltoothersGetTokenLocalizedKey0056000
+    custom_effect_tooltip =tokennavyinteltoothersGetTokenLocalizedKey00254197
+
+    ## on_add
+
+}
+limited_exports_data ={
+    custom_effect_tooltip =tokenminexportGetTokenLocalizedKey015Y0035Y03567
+    custom_effect_tooltip =tokenminoreexportGetTokenLocalizedKey01Y0030Y01292
+    custom_effect_tooltip =tokenminfoodexportGetTokenLocalizedKey015Y0035Y01178
+	custom_effect_tooltip = space_TT
+    custom_effect_tooltip =tokenoppositionpartydriftGetTokenLocalizedKey0029055
+    custom_effect_tooltip =tokenpoliticalpowerfactorGetTokenLocalizedKey0028543
+    custom_effect_tooltip =tokenproductionspeedsteelrefineryfactorGetTokenLocalizedKey0069420
+    custom_effect_tooltip =tokenproductionspeedaluminiumrefineryfactorGetTokenLocalizedKey0067375
+    custom_effect_tooltip =tokenproductionspeedsyntheticrefineryfactorGetTokenLocalizedKey0061712
+    custom_effect_tooltip =tokenproductionspeedsyntheticrubberrefineryfactorGetTokenLocalizedKey0063064
+    custom_effect_tooltip =tokenresourcesfactorGetTokenLocalizedKey0015708
+    custom_effect_tooltip =tokentradeopinionfactorGetTokenLocalizedKey0107516
+    custom_effect_tooltip =tokenresearchspeedfactorGetTokenLocalizedKey0036889
+    custom_effect_tooltip =tokencivilianinteltoothersGetTokenLocalizedKey0031471
+
+    ## on_add
+
+}
+exploitation_export_data ={
+    custom_effect_tooltip =tokenminexportGetTokenLocalizedKey075Y03125
+    custom_effect_tooltip =tokenminoreexportGetTokenLocalizedKey075Y0369
+    custom_effect_tooltip =tokenminfoodexportGetTokenLocalizedKey070Y05411
+    custom_effect_tooltip =tokenpoliticalpowergainGetTokenLocalizedKey0057527
+
+    ## on_add
+
+}
+unrefined_export_data ={
+    custom_effect_tooltip =tokenminexportGetTokenLocalizedKey055Y02538
+    custom_effect_tooltip =tokenminoreexportGetTokenLocalizedKey075Y0369
+    custom_effect_tooltip =tokenminfoodexportGetTokenLocalizedKey065Y06689
+    custom_effect_tooltip =tokenpoliticalpowergainGetTokenLocalizedKey0041299
+
+    ## on_add
+
+}
+refined_export_data ={
+    custom_effect_tooltip =tokenminexportGetTokenLocalizedKey075Y03125
+    custom_effect_tooltip =tokenminoreexportGetTokenLocalizedKey055Y0971
+    custom_effect_tooltip =tokenminfoodexportGetTokenLocalizedKey060Y07052
+    custom_effect_tooltip =tokenpoliticalpowergainGetTokenLocalizedKey0041299
+
+    ## on_add
+
+}
+balanced_export_data ={
+    custom_effect_tooltip =tokenminexportGetTokenLocalizedKey070Y03916
+    custom_effect_tooltip =tokenminoreexportGetTokenLocalizedKey070Y07273
+    custom_effect_tooltip =tokenminfoodexportGetTokenLocalizedKey060Y07052
+    custom_effect_tooltip =tokenpoliticalpowergainGetTokenLocalizedKey0037354
+
+    ## on_add
+
+}
+low_volume_export_data ={
+    custom_effect_tooltip =tokenminexportGetTokenLocalizedKey065Y09381
+    custom_effect_tooltip =tokenminoreexportGetTokenLocalizedKey065Y02405
+    custom_effect_tooltip =tokenminfoodexportGetTokenLocalizedKey060Y07052
+    #custom_effect_tooltip =tokenpoliticalpowercostGetTokenLocalizedKey023858
+    custom_effect_tooltip =tokenpoliticalpowergainGetTokenLocalizedKey0022468
+
+    ## on_add
+
+}
+free_trade_export_focus_data ={
+    custom_effect_tooltip =tokenminexportGetTokenLocalizedKey060Y02548
+    custom_effect_tooltip =tokenminoreexportGetTokenLocalizedKey060Y06519
+    custom_effect_tooltip =tokenminfoodexportGetTokenLocalizedKey055Y09891
+    custom_effect_tooltip =tokenpoliticalpowergainGetTokenLocalizedKey0017851
+
+    ## on_add
+
+}
+free_trade_law_data ={
+    custom_effect_tooltip =tokenminexportGetTokenLocalizedKey050Y0594
+    custom_effect_tooltip =tokenminoreexportGetTokenLocalizedKey050Y07874
+    custom_effect_tooltip =tokenminfoodexportGetTokenLocalizedKey050Y08411
+
+    ## on_add
+
+}
+free_trade_protectionist_data ={
+    custom_effect_tooltip =tokenminexportGetTokenLocalizedKey040Y04055
+    custom_effect_tooltip =tokenminoreexportGetTokenLocalizedKey040Y01761
+    custom_effect_tooltip =tokenminfoodexportGetTokenLocalizedKey040Y01680
+    custom_effect_tooltip =tokenpoliticalpowergainGetTokenLocalizedKey0014372
+
+    ## on_add
+
+}
+protectionist_economy_data ={
+    custom_effect_tooltip =tokenminexportGetTokenLocalizedKey035Y05886
+    custom_effect_tooltip =tokenminoreexportGetTokenLocalizedKey030Y0147
+    custom_effect_tooltip =tokenminfoodexportGetTokenLocalizedKey035Y0142
+    custom_effect_tooltip =tokenpoliticalpowergainGetTokenLocalizedKey0023871
+
+    ## on_add
+
+}
+export_autarky_data ={
+    custom_effect_tooltip =tokenminexportGetTokenLocalizedKey025Y07656
+    custom_effect_tooltip =tokenminoreexportGetTokenLocalizedKey020Y03197
+    custom_effect_tooltip =tokenminfoodexportGetTokenLocalizedKey025Y0782
+    custom_effect_tooltip =tokenpoliticalpowergainGetTokenLocalizedKey0047356
+
+    ## on_add
+
+}
+autarky_economy_data ={
+    custom_effect_tooltip =tokenminexportGetTokenLocalizedKey015Y01882
+    custom_effect_tooltip =tokenminoreexportGetTokenLocalizedKey010Y06742
+    custom_effect_tooltip =tokenminfoodexportGetTokenLocalizedKey015Y09973
+    custom_effect_tooltip =tokenpoliticalpowergainGetTokenLocalizedKey006349
+
+    ## on_add
+
+}
+closed_economy_law_data ={
+    custom_effect_tooltip =tokenminexportGetTokenLocalizedKey00Y06967
+    custom_effect_tooltip =tokenminoreexportGetTokenLocalizedKey00Y03349
+    custom_effect_tooltip =tokenminfoodexportGetTokenLocalizedKey00Y07799
+    custom_effect_tooltip =tokenpoliticalpowergainGetTokenLocalizedKey008879
+
+    ## on_add
+
+}
+closed_economy_data ={
+    custom_effect_tooltip =tokenminexportGetTokenLocalizedKey0Y08775
+    custom_effect_tooltip =tokenminoreexportGetTokenLocalizedKey0Y02890
+	custom_effect_tooltip = space_TT
+    custom_effect_tooltip =tokenoppositionpartydriftGetTokenLocalizedKey0052086
+    custom_effect_tooltip =tokenpoliticalpowerfactorGetTokenLocalizedKey0086899
+    custom_effect_tooltip =tokenproductionspeedsteelrefineryfactorGetTokenLocalizedKey0123785
+    custom_effect_tooltip =tokenproductionspeedaluminiumrefineryfactorGetTokenLocalizedKey0123684
+    custom_effect_tooltip =tokenproductionspeedsyntheticrefineryfactorGetTokenLocalizedKey0125178
+    custom_effect_tooltip =tokenproductionspeedsyntheticrubberrefineryfactorGetTokenLocalizedKey0122330
+    custom_effect_tooltip =tokentradeopinionfactorGetTokenLocalizedKey0209784
+    custom_effect_tooltip =tokenresearchspeedfactorGetTokenLocalizedKey005945
+    custom_effect_tooltip =tokenstabilityweeklyGetTokenLocalizedKey00015568
+    custom_effect_tooltip =tokencivilianinteltoothersGetTokenLocalizedKey0017484
+
+    ## on_add
+
+}
+train_none_data ={
+    ## on_add
+
+	set_temp_variable = { factor = modifier@cadet_org_bonus_factor }
+	add_to_temp_variable = { factor = 1 }
+	
+	set_temp_variable = { bonus = -0.08 }
+	
+	if = {
+		limit = {
+			check_variable = { bonus > 0 }
+		}
+		set_temp_variable = { t = bonus }
+		set_temp_variable = { x = bonus }
+		multiply_temp_variable = { t = factor }
+		subtract_from_temp_variable = { t = x }
+		
+		add_to_temp_variable = { bonus = t }
+	}
+	else = {
+		set_temp_variable = { t = bonus }
+		set_temp_variable = { x = bonus }
+		multiply_temp_variable = { t = factor }
+		subtract_from_temp_variable = { t = x }
+		
+		subtract_from_temp_variable = { bonus = t }
+		multiply_temp_variable = { t = -1 }
+	}
+	
+	custom_effect_tooltip = FOLLOWING_MODIFIER_SCALED
+	custom_effect_tooltip = CADET_TRAINING_BONUS
+	
+}
+train_low_data ={
+    ## on_add
+
+	set_temp_variable = { factor = modifier@cadet_org_bonus_factor }
+	add_to_temp_variable = { factor = 1 }
+	
+	set_temp_variable = { bonus = -0.04 }
+	
+	if = {
+		limit = {
+			check_variable = { bonus > 0 }
+		}
+		set_temp_variable = { t = bonus }
+		set_temp_variable = { x = bonus }
+		multiply_temp_variable = { t = factor }
+		subtract_from_temp_variable = { t = x }
+		
+		add_to_temp_variable = { bonus = t }
+	}
+	else = {
+		set_temp_variable = { t = bonus }
+		set_temp_variable = { x = bonus }
+		multiply_temp_variable = { t = factor }
+		subtract_from_temp_variable = { t = x }
+		
+		subtract_from_temp_variable = { bonus = t }
+		multiply_temp_variable = { t = -1 }
+	}
+	
+	custom_effect_tooltip = FOLLOWING_MODIFIER_SCALED
+	custom_effect_tooltip = CADET_TRAINING_BONUS
+}
+train_medium_data ={
+    ## on_add
+
+	set_temp_variable = { factor = modifier@cadet_org_bonus_factor }
+	add_to_temp_variable = { factor = 1 }
+	
+	set_temp_variable = { bonus = 0.02 }
+	
+	if = {
+		limit = {
+			check_variable = { bonus > 0 }
+		}
+		set_temp_variable = { t = bonus }
+		set_temp_variable = { x = bonus }
+		multiply_temp_variable = { t = factor }
+		subtract_from_temp_variable = { t = x }
+		
+		add_to_temp_variable = { bonus = t }
+	}
+	else = {
+		set_temp_variable = { t = bonus }
+		set_temp_variable = { x = bonus }
+		multiply_temp_variable = { t = factor }
+		subtract_from_temp_variable = { t = x }
+		
+		subtract_from_temp_variable = { bonus = t }
+		multiply_temp_variable = { t = -1 }
+	}
+	
+	custom_effect_tooltip = FOLLOWING_MODIFIER_SCALED
+	custom_effect_tooltip = CADET_TRAINING_BONUS
+}
+train_high_data ={
+    ## on_add
+
+	set_temp_variable = { factor = modifier@cadet_org_bonus_factor }
+	add_to_temp_variable = { factor = 1 }
+	
+	set_temp_variable = { bonus = 0.04 }
+	
+	if = {
+		limit = {
+			check_variable = { bonus > 0 }
+		}
+		set_temp_variable = { t = bonus }
+		set_temp_variable = { x = bonus }
+		multiply_temp_variable = { t = factor }
+		subtract_from_temp_variable = { t = x }
+		
+		add_to_temp_variable = { bonus = t }
+	}
+	else = {
+		set_temp_variable = { t = bonus }
+		set_temp_variable = { x = bonus }
+		multiply_temp_variable = { t = factor }
+		subtract_from_temp_variable = { t = x }
+		
+		subtract_from_temp_variable = { bonus = t }
+		multiply_temp_variable = { t = -1 }
+	}
+	
+	custom_effect_tooltip = FOLLOWING_MODIFIER_SCALED
+	custom_effect_tooltip = CADET_TRAINING_BONUS
+}
+train_elite_data ={
+    ## on_add
+
+	set_temp_variable = { factor = modifier@cadet_org_bonus_factor }
+	add_to_temp_variable = { factor = 1 }
+	
+	set_temp_variable = { bonus = 0.08 }
+	
+	if = {
+		limit = {
+			check_variable = { bonus > 0 }
+		}
+		set_temp_variable = { t = bonus }
+		set_temp_variable = { x = bonus }
+		multiply_temp_variable = { t = factor }
+		subtract_from_temp_variable = { t = x }
+		
+		add_to_temp_variable = { bonus = t }
+	}
+	else = {
+		set_temp_variable = { t = bonus }
+		set_temp_variable = { x = bonus }
+		multiply_temp_variable = { t = factor }
+		subtract_from_temp_variable = { t = x }
+		
+		subtract_from_temp_variable = { bonus = t }
+		multiply_temp_variable = { t = -1 }
+	}
+	
+	custom_effect_tooltip = FOLLOWING_MODIFIER_SCALED
+	custom_effect_tooltip = CADET_TRAINING_BONUS
+
+}
+officer_train_none_data ={
+
+    ## on_add
+
+}
+officer_train_low_data ={
+
+    ## on_add
+
+}
+officer_train_high_data ={
+
+    ## on_add
+
+}
+officer_train_elite_data ={
+
+    ## on_add
+
+}
+foreign_isolationism_data ={
+	
+    ## on_add
+
+}
+foreign_neutral_data ={
+    ## on_add
+
+}
+foreign_cooperative_data ={
+    ## on_add
+
+}
+foreign_interventionism_data ={
+
+    ## on_add
+
+}
+foreign_warmonger_data ={
+
+    ## on_add
+
+}
+
+very_low_civ_fuel_usage_data ={
+}
+low_civ_fuel_usage_data ={
+}
+normal_civ_fuel_usage_data ={
+	
+}
+medium_civ_fuel_usage_data ={
+}
+high_civ_fuel_usage_data ={
+}
+
+extravagant_diet_data ={
+	custom_effect_tooltip = DIET_NO_DOWNGRADE
+}
+modern_diet_data ={
+	custom_effect_tooltip = DIET_NO_DOWNGRADE
+}
+basic_diet_data ={
+	custom_effect_tooltip = DIET_NO_DOWNGRADE
+}
+poor_diet_data ={
+	custom_effect_tooltip = DIET_NO_DOWNGRADE
+}
+subsistence_diet_data ={
+	custom_effect_tooltip = DIET_NO_DOWNGRADE
+}
+
+
+
+##### SPIRITS
+
+
+political_loyalty_spirit_data={
+
+}
+
+inventive_leadership_spirit_data={
+
+}
+theatre_training_spirit_data={
+
+}
+generic_academy_data={
+
+
+	if = {
+		limit = {
+			has_dynamic_modifier = {
+				modifier = officers_purged
+			}	
+		}
+		random_list = {
+			20 = {
+				custom_effect_tooltip = officer_purge_change_TT
+				add_to_variable = { officers_purged_train = -0.01 tooltip = officers_purged_train_TT }
+			}
+			10 = {
+				custom_effect_tooltip = officer_purge_change_TT
+				add_to_variable = { officers_purged_mobilization = 0.02 tooltip = officers_purged_mobilization_TT }
+			}
+			50 = {
+				custom_effect_tooltip = officer_purge_change_TT
+				add_to_variable = { officers_purged_command = 0.04 tooltip = officers_purged_command_TT }
+			}
+			25 = {
+				custom_effect_tooltip = officer_purge_change_TT
+				add_to_variable = { officers_purged_experience = 0.01 tooltip = officers_purged_experience_TT }
+			}
+			25 = {
+				custom_effect_tooltip = officer_purge_change_TT
+				add_to_variable = { officers_purged_experience_cap = 2 tooltip = officers_purged_experience_cap_TT }
+			}
+		}
+	}
+}
+officer_academy_data={
+
+	if = {
+		limit = {
+			has_dynamic_modifier = {
+				modifier = officers_purged
+			}	
+		}
+		random_list = {
+			20 = {
+				custom_effect_tooltip = officer_purge_change_TT
+				add_to_variable = { officers_purged_train = -0.01 tooltip = officers_purged_train_TT }
+			}
+			10 = {
+				custom_effect_tooltip = officer_purge_change_TT
+				add_to_variable = { officers_purged_mobilization = 0.02 tooltip = officers_purged_mobilization_TT }
+			}
+			50 = {
+				custom_effect_tooltip = officer_purge_change_TT
+				add_to_variable = { officers_purged_command = 0.04 tooltip = officers_purged_command_TT }
+			}
+			25 = {
+				custom_effect_tooltip = officer_purge_change_TT
+				add_to_variable = { officers_purged_experience = 0.01 tooltip = officers_purged_experience_TT }
+			}
+			25 = {
+				custom_effect_tooltip = officer_purge_change_TT
+				add_to_variable = { officers_purged_experience_cap = 2 tooltip = officers_purged_experience_cap_TT }
+			}
+		}
+	}
+}
+boot_academy_data={
+
+}
+research_academy_data={
+
+}
+aux_academy_data={
+
+}
+attack_academy_data={
+
+}
+defend_academy_data={
+
+}
+logistics_academy_data={
+
+}
+plans_academy_data={
+
+}
+
+
+professional_officer_corps_spirit_data={
+
+}
+elevated_engineering_corps_spirit_data={
+
+	set_temp_variable = { design_cost = -0.6 }
+	custom_effect_tooltip = unit_design_cost_spirit_start_tt
+
+	custom_effect_tooltip = engineer
+	custom_effect_tooltip = engineer_mot
+	custom_effect_tooltip = engineer_mech
+	custom_effect_tooltip = engineer_arm
+	custom_effect_tooltip = combat_engineer
+	custom_effect_tooltip = combat_engineer_mot
+	custom_effect_tooltip = combat_engineer_mech
+	custom_effect_tooltip = combat_engineer_arm
+	custom_effect_tooltip = airborne_engineer
+	  
+	custom_effect_tooltip = spirit_effect_end_tt
+}
+proper_heritage_spirit_data={
+
+	set_temp_variable = { design_cost = -0.8 }
+	custom_effect_tooltip = unit_design_cost_spirit_start_tt
+
+	custom_effect_tooltip = cavalry
+	custom_effect_tooltip = camelry
+	custom_effect_tooltip = recon_cav
+	  
+	custom_effect_tooltip = spirit_effect_end_tt
+
+}
+quick_improvisation_spirit_data={
+
+}
+relief_of_command_spirit_data={
+
+}
+ideological_loyalty_spirit_data={
+
+}
+state_serves_the_military_spirit_data={
+
+}
+mobile_warfare_army_spirit_data={
+
+	set_temp_variable = { design_cost = -0.6 }
+	custom_effect_tooltip = unit_design_cost_spirit_start_tt
+
+	custom_effect_tooltip = motorcycle_infantry
+	custom_effect_tooltip = semi_motorized
+	custom_effect_tooltip = semi_motorized_assault
+	custom_effect_tooltip = motorized
+	custom_effect_tooltip = motorized_assault
+	custom_effect_tooltip = mechanized
+	custom_effect_tooltip = mechanized_assault
+	  
+	custom_effect_tooltip = spirit_effect_end_tt
+}
+superior_firepower_army_spirit_data={
+	set_temp_variable = { design_cost = -0.6 }
+	custom_effect_tooltip = unit_design_cost_spirit_start_tt
+
+	custom_effect_tooltip = artillery_brigade
+	custom_effect_tooltip = artillery_brigade_med
+	custom_effect_tooltip = artillery_brigade_mot
+	custom_effect_tooltip = artillery_brigade_mot_med
+	custom_effect_tooltip = artillery_heavy
+	custom_effect_tooltip = artillery_heavy_mot
+	custom_effect_tooltip = mountain_artillery_brigade
+	custom_effect_tooltip = mountain_artillery_brigade_mot
+	custom_effect_tooltip = airborne_artillery_brigade
+	custom_effect_tooltip = rocket_artillery_brigade
+	custom_effect_tooltip = motorized_rocket_brigade
+	custom_effect_tooltip = rocket_artillery
+	  
+	custom_effect_tooltip = spirit_effect_end_tt
+}
+grand_battleplan_army_spirit_data={
+
+	set_temp_variable = { design_cost = -0.6 }
+	custom_effect_tooltip = unit_design_cost_spirit_start_tt
+
+	custom_effect_tooltip = mountaineers
+	custom_effect_tooltip = gurkha
+	custom_effect_tooltip = paratrooper
+	custom_effect_tooltip = commando
+	custom_effect_tooltip = marine
+	custom_effect_tooltip = marine_assault
+	custom_effect_tooltip = amphibious_mechanized
+	custom_effect_tooltip = amphibious_mechanized_assault
+	custom_effect_tooltip = american_amph_lv
+	custom_effect_tooltip = american_amph_lv_assault
+	  
+	custom_effect_tooltip = spirit_effect_end_tt
+}
+mass_assault_army_spirit_data={
+
+	set_temp_variable = { design_cost = -0.6 }
+	custom_effect_tooltip = unit_design_cost_spirit_start_tt
+
+	custom_effect_tooltip = infantry
+	custom_effect_tooltip = infantry_assault
+	custom_effect_tooltip = light_infantry
+	custom_effect_tooltip = conscripts
+	custom_effect_tooltip = militia
+	custom_effect_tooltip = irregulars_unit
+	  
+	custom_effect_tooltip = spirit_effect_end_tt
+
+}
+
+
+static_warfare_spirit_data={
+
+}
+flexible_organization_spirit_data={
+
+}
+aggressive_reconnaisance_spirit_data={
+
+}
+reserve_officers_spirit_data={
+
+}
+victory_or_death_spirit_data={
+
+}
+maneuver_warfare_spirit_data={
+
+}
+smoke_and_fire_spirit_data={
+
+}
+logistical_focus_spirit_data={
+
+}
+operational_reserve_spirit_data={
+
+}
+
+Per_academy_data={
+
+}
+NZL_academy_data={
+
+}
+AST_duntroon_data={
+
+}
+AST_kapooka_data={
+
+}
+arab_academy_data={
+
+}
+
+
+
+
+instilled_aggression_spirit_data={
+
+}
+calculated_restraint_spirit_data={
+
+}
+signals_training_spirit_data={
+
+}
+best_of_the_best_naval_academy_spirit_data={
+
+} 
+naval_academy_scholarships_spirit_data={
+
+}
+fleet_in_being_academy_spirit_data={
+
+}
+trade_interdiction_academy_spirit_data={
+
+}
+base_strike_academy_spirit_data={
+
+}
+
+jeune_ecole_spirit_data={
+
+}
+big_gun_club_spirit_data={
+
+}
+aviation_enthusiasts_spirit_data={
+}
+cruiser_warfare_spirit_data={
+}
+wolfpacks_spirit_data={
+}
+flexible_contracts_spirit_data={
+}
+integrated_designers_spirit_data={
+}
+naval_reform_spirit_data={
+}
+naval_refit_yards_spirit_data={
+}
+
+close_combat_navy_spirit_data={
+}
+night_fighting_spirit_data={
+}
+surprise_attacks_spirit_data={
+}
+efficient_communications_spirit_data={
+}
+surface_raiders_spirit_data={
+}
+decisive_battle_spirit_data={
+}
+fleet_in_being_navy_spirit_data={
+}
+base_strike_navy_spirit_data={
+}
+inclimate_weather_experience_spirit_data={
+}
+brave_commanders_spirit_data={
+}
+
+
+### AIR
+
+
+independent_air_force_spirit_data={
+}
+industrial_destruction_spirit_data={
+}
+dive_bombing_spirit_data={
+}
+material_destruction_spirit_data={
+}
+industry_liasons_spirit_data={
+
+}
+effective_training_programs_spirit_data={
+}
+air_crew_surveys_spirit_data={
+}
+
+battlefield_air_interdiction_spirit_data={
+}
+cag_night_fighting_spirit_data={
+}
+veteran_air_instructors_spirit_data={
+}
+centralized_control_spirit_data={
+}
+steel_wings_steel_hearts_spirit_data={
+}
+home_defence_spirit_data={
+}
+air_power_projection_spirit_data={
+}
+massed_strike_spirit_data={
+}
+continuous_strike_spirit_data={
+}
+strategic_strike_spirit_data={
+}

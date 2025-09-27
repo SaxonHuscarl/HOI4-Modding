@@ -1,0 +1,3956 @@
+focus_tree = {
+	id = MEN_focus
+	
+	country = {
+		factor = 0
+		modifier = {
+			add = 150
+			tag = MEN
+			JAP = { has_country_flag = jap_china_occupation_setup }
+		}
+		modifier = {
+			add = 1000
+			tag = CHI
+			is_puppet_of = JAP
+		}
+		modifier = {
+			add = 10
+			tag = RGR 
+		}
+		modifier = {
+			add = 10
+			tag = WJW 
+		}
+	}
+	
+	default = no  
+	continuous_focus_position = { x = 100 y = 945 }
+	
+	focus = {
+		id = MEN_establish_new_regime
+		icon = GFX_goal_generic_secret_weapon
+
+		available = {
+		}
+		x = 12
+		y = 0
+		cost = 35
+		
+		completion_reward = {
+			add_political_power = 100
+			add_ideas = MEN_new_regime # -5% resistance target
+		}
+	}	
+
+	focus = {
+		id = MEN_ban_communism
+		icon = GFX_goal_anti_comintern_pact
+        prerequisite = { focus = MEN_establish_new_regime }
+		relative_position_id = MEN_establish_new_regime
+		x = 0
+		y = 1
+		cost = 35
+		completion_reward = {
+			add_popularity = {
+				ideology = fascism
+				popularity = 0.10
+			}
+			every_country = {
+				limit = {
+					has_government = communism
+				}
+				add_opinion_modifier = {
+					target = ROOT
+					modifier = KMT_commie_banned
+				}
+			}
+			add_ideas = communism_banned
+			if = {
+				limit = {
+					country_exists = PRC
+				}
+				create_wargoal = {
+					target = PRC
+					type = civil_war
+				}
+				if = {
+					limit = {
+						PRC = { is_subject_of = ROOT }
+					}
+					end_puppet = PRC
+				}
+			}
+			get_highest_resistance_state = yes
+			var:highest_resistance_state = {
+				add_resistance = -5
+			}
+		}
+	}
+	
+	focus = {
+		id = MEN_assert_military_control
+		icon = GFX_goal_demand_sudetenland
+
+		x = -3
+		y = 1
+		relative_position_id = MEN_establish_new_regime
+		
+		cost = 35
+		prerequisite = { focus = MEN_establish_new_regime }
+		
+		available = {
+		}
+		completion_reward = {
+			add_ideas = kmt_militarism
+			set_temp_variable = { highest_resistance = 0 }
+			set_temp_variable = { highest_resistance_state = -1 }
+
+			get_highest_resistance_state = yes
+			var:highest_resistance_state = {
+				add_resistance = -10
+			}
+		}
+	}	
+	
+	focus = {
+		id = MEN_strengthen_military_dictatorship
+		icon = GFX_goal_generic_demand_territory
+
+		x = -1
+		y = 1
+		relative_position_id = MEN_assert_military_control
+		
+		cost = 70
+		prerequisite = { focus = MEN_assert_military_control }
+		
+		available = {
+		}
+		completion_reward = {
+			add_political_power = 50
+			add_ideas = militarism_focus
+			add_country_leader_trait = dictator
+			
+			get_highest_resistance_state = yes
+			var:highest_resistance_state = {
+				add_resistance = -10
+			}
+			
+			set_temp_variable = { highest_resistance = 0 }
+			
+			hidden_effect = {
+				every_controlled_state = {
+					limit = {
+						has_active_resistance = yes
+						NOT = { check_variable = { THIS = highest_resistance_state } }
+					}
+					if = {
+						limit = {
+							check_variable = {
+								this.resistance > highest_resistance
+							}
+						}
+						set_temp_variable = { highest_resistance = this.resistance }
+						set_temp_variable = { highest_resistance_state = this }
+					}
+					
+				}
+			}
+			
+			var:highest_resistance_state = {
+				add_resistance = -10
+			}
+		}
+	}	
+	
+	focus = {
+		id = MEN_request_japanese_advisors
+		icon = GFX_goal_Japan-Army
+
+		x = 1
+		y = 1
+		relative_position_id = MEN_assert_military_control
+		
+		cost = 70
+		prerequisite = { focus = MEN_assert_military_control }
+		
+		available = {
+		}
+
+		completion_reward = {
+			add_ideas = KMT_jap_military_advisors
+			get_highest_resistance_state = yes
+			var:highest_resistance_state = {
+				add_resistance = -4
+			}
+		}
+	}	
+	
+	focus = {
+		id = MEN_seize_fishing_ships
+		icon = GFX_goal_generic_industry_fishing
+
+		x = -5
+		y = 1
+		relative_position_id = MEN_assert_military_control
+		
+		cost = 35
+		prerequisite = { focus = MEN_assert_military_control }
+		
+		available = {
+		}
+
+		completion_reward = {
+			add_stability = -0.15
+			add_equipment_to_stockpile = {
+				type = convoy
+				amount = 100
+			}
+		}
+	}	
+	
+	focus = {
+		id = MEN_6th_national_congress
+		icon = GFX_goal_demand_sudetenland
+
+		x = -2
+		y = 1
+		relative_position_id = MEN_strengthen_military_dictatorship
+		
+		cost = 35
+		prerequisite = { focus = MEN_strengthen_military_dictatorship }
+		
+		available = {
+			OR = {
+				AND = {
+					has_war_with = CHI
+					CHI = { surrender_progress > 0.5 }
+				}
+				NOT = { country_exists = CHI }	
+			}
+		}
+
+		completion_reward = {
+			add_political_power = 100
+			add_ideas = MEN_6th_national_congress
+			
+			get_highest_resistance_state = yes
+			var:highest_resistance_state = {
+				add_resistance = -10
+			}
+		}
+	}	
+	
+	focus = {
+		id = MEN_absorb_chinese_government
+		icon = GFX_goal_dissolve_parliment
+
+		x = -2
+		y = 1
+		relative_position_id = MEN_6th_national_congress
+
+		cost = 35
+		prerequisite = { focus = MEN_6th_national_congress }
+		
+		available = {
+			OR = {
+				AND = {
+					has_war_with = CHI
+					CHI = { surrender_progress > 0.85 }
+				}
+				NOT = { country_exists = CHI }	
+			}
+		}
+
+		completion_reward = {
+			swap_ideas = {
+				remove_idea = CHI_ineffective_bureaucracy_warlord
+				add_idea = MEN_puppet_government
+			}
+			random_controlled_state = {
+				limit = {
+					has_active_resistance = yes
+				}
+				add_compliance = 5
+			}
+			random_controlled_state = {
+				limit = {
+					has_active_resistance = yes
+				}
+				add_compliance = 5
+			}
+		}
+	}	
+	
+	focus = {
+		id = MEN_unite_against_external_threats
+		icon = GFX_focus_eng_tackle_capitalism
+
+		x = 0
+		y = 1
+		relative_position_id = MEN_6th_national_congress
+
+		cost = 35
+		prerequisite = { focus = MEN_6th_national_congress }
+		
+		available = {
+			OR = {
+				has_war_with = ENG
+				has_war_with = USA
+				has_war_with = SOV
+				has_war_with = GER
+				has_war_with = ITA
+				has_war_with = FRA
+			}
+		}
+
+		completion_reward = {
+			swap_ideas = {
+				remove_idea = MEN_new_regime
+				add_idea = MEN_unite_against_external_threats # Replace kmt_new_regime with MEN_unite_against_external_threats, decreasing resistance target to -10%, +0.1% weekly stab
+			}
+			random_controlled_state = {
+				limit = {
+					has_active_resistance = yes
+				}
+				add_compliance = 5
+			}
+			random_controlled_state = {
+				limit = {
+					has_active_resistance = yes
+				}
+				add_compliance = 5
+			}
+			random_controlled_state = {
+				limit = {
+					has_active_resistance = yes
+				}
+				add_compliance = 5
+			}
+		}
+	}	
+
+	focus = {
+		id = MEN_war_propaganda1
+		icon = GFX_goal_generic_propaganda
+
+		x = 0
+		y = 1
+		relative_position_id = MEN_unite_against_external_threats
+
+		cost = 70
+		prerequisite = { focus = MEN_unite_against_external_threats }
+		
+		available = {
+		}
+
+		completion_reward = {
+			add_ideas = KMT_war_propaganda_idea
+			random_controlled_state = {
+				limit = {
+					has_active_resistance = yes
+				}
+				add_compliance = 5
+			}
+		}
+	}
+
+	focus = {
+        id = MEN_empower_local_police_forces
+        icon = GFX_secret_police
+
+        x = 0
+        y = 1
+        relative_position_id = MEN_strengthen_military_dictatorship
+
+        cost = 42
+        prerequisite = { focus = MEN_strengthen_military_dictatorship }
+
+        available = {
+        }
+
+        completion_reward = {
+			random_controlled_state= {
+				limit = { NOT = { is_core_of = RGR } 
+				}
+				add_building_construction = {
+				type = police_station
+				level = 1
+				instant_build = yes }
+				set_state_flag = MEN_expand_police
+			}
+			random_controlled_state= {
+				limit = { NOT = { is_core_of = RGR } 
+				}
+				add_building_construction = {
+				type = police_station
+				level = 1
+				instant_build = yes }
+				set_state_flag = MEN_expand_police
+			}			
+			random_controlled_state= {
+				limit = { NOT = { is_core_of = RGR } 
+				}
+				add_building_construction = {
+				type = police_station
+				level = 1
+				instant_build = yes }
+				set_state_flag = MEN_expand_police
+			}
+		}
+    }
+
+	focus = {
+		id = MEN_expand_the_police
+		icon = GFX_secret_police
+
+		x = 0
+		y = 1
+		relative_position_id = MEN_empower_local_police_forces
+
+		cost = 35
+		prerequisite = { focus = MEN_empower_local_police_forces }
+		
+		available = {
+		}
+
+        completion_reward = {
+			random_controlled_state= {
+				limit = { 
+				NOT = { is_core_of = RGR } 
+				NOT = { has_state_flag = MEN_expand_police }
+				}
+				add_building_construction = {
+				type = police_station
+				level = 1
+				instant_build = yes }
+			}			
+			random_controlled_state= {
+				limit = { 
+				NOT = { is_core_of = RGR } 
+				NOT = { has_state_flag = MEN_expand_police }
+				}
+				add_building_construction = {
+				type = police_station
+				level = 1
+				instant_build = yes }
+			}
+		}
+    }	
+	
+	focus = {
+		id = MEN_kempetai_integration
+		icon = GFX_goal_Urban_Warfare
+
+		x = 0
+		y = 1
+		relative_position_id = MEN_expand_the_police
+
+		cost = 45
+		prerequisite = { focus = MEN_expand_the_police }
+		prerequisite = { focus = MEN_japanese_equipment_shipments }
+		
+		available = {
+		}
+
+		completion_reward = {
+			add_equipment_to_stockpile = {
+				type = garrison_equipment
+				amount = 1500
+				producer = JAP
+			}
+			add_equipment_to_stockpile = {
+				type = infantry_uniforms
+				amount = 1000
+				producer = JAP
+			}			
+			add_tech_bonus = {
+				name = JAP_mili_police
+				bonus = 0.5
+				uses = 1
+				technology = tech_military_police
+			}
+			add_tech_bonus = {
+				name = JAP_mili_police
+				bonus = 0.5
+				uses = 1
+				technology = tech_military_police2
+			}
+			
+			get_highest_resistance_state = yes
+			var:highest_resistance_state = {
+				add_resistance = -3
+			}
+		}
+	}	
+	
+	focus = {
+		id = MEN_suppress_the_coast
+		icon = GFX_goal_generic_major_war
+
+		x = -1
+		y = 1
+		relative_position_id = MEN_kempetai_integration
+
+		cost = 56
+		prerequisite = { focus = MEN_kempetai_integration }
+		
+		available = {
+		}
+
+		completion_reward = {
+			929 = {	add_claim_by = RGR }
+			827 = { add_claim_by = RGR }
+			595 = { add_claim_by = RGR }
+			763 = { add_claim_by = RGR }
+			764 = { add_claim_by = RGR }
+			776 = { add_claim_by = RGR }
+			777 = { add_claim_by = RGR }
+			591 = { add_claim_by = RGR }
+			620 = { add_claim_by = RGR }
+			607 = { add_claim_by = RGR }
+			600 = { add_claim_by = RGR }
+			592 = { add_claim_by = RGR }
+			593 = { add_claim_by = RGR }
+			765 = { add_claim_by = RGR }
+			766 = { add_claim_by = RGR }
+			792 = { add_claim_by = RGR }
+			790 = { add_claim_by = RGR }			
+			791 = { add_claim_by = RGR }
+		}
+	}	
+	
+	focus = {
+		id = MEN_suppress_the_east
+		icon = GFX_goal_generic_major_war
+
+		x = 1
+		y = 1
+		relative_position_id = MEN_kempetai_integration
+
+		cost = 56
+		prerequisite = { focus = MEN_kempetai_integration }
+		
+		available = {
+		}
+
+		completion_reward = {
+			620 = { add_claim_by = RGR }
+			607 = { add_claim_by = RGR }
+			600 = { add_claim_by = RGR }
+			766 = { add_claim_by = RGR }
+			792 = { add_claim_by = RGR }
+			790 = { add_claim_by = RGR }		
+			791 = { add_claim_by = RGR }
+		}
+	}	
+	
+	focus = {
+		id = MEN_japanese_military_investments
+		icon = GFX_goal_generic_construct_mil_factory
+
+		x = 1
+		y = 1
+		relative_position_id = MEN_request_japanese_advisors
+
+		cost = 56
+		prerequisite = { focus = MEN_request_japanese_advisors }
+		
+		available = {
+		}
+
+		completion_reward = {
+			random_controlled_state = {
+				limit = { is_core_of = RGR }
+					add_extra_state_shared_building_slots = 1
+					add_building_construction = {
+						type = arms_factory
+						level = 1
+						instant_build = yes
+					}
+				}
+			random_controlled_state = {
+				limit = { is_core_of = RGR }
+					add_extra_state_shared_building_slots = 1
+					add_building_construction = {
+						type = arms_factory
+						level = 1
+						instant_build = yes
+					}
+				}
+			add_research_slot = 1
+			add_research_centre = yes
+			SLOT:infantry_folder = yes
+			SLOT:support_folder = yes
+			SLOT:artillery_folder = yes
+		}
+	}
+	
+	focus = {
+		id = MEN_japanese_equipment_shipments
+		icon = GFX_goal_generic_small_arms
+
+		x = 0
+		y = 1
+		relative_position_id = MEN_japanese_military_investments
+
+		cost = 35
+		prerequisite = { focus = MEN_japanese_military_investments }
+		
+		available = {
+		}
+
+		completion_reward = {
+			add_equipment_to_stockpile = {
+				type = infantry_equipment
+				amount = 3000
+				producer = JAP
+			}
+			add_equipment_to_stockpile = {
+				type = infantry_uniforms
+				amount = 2000
+				producer = JAP
+			}		
+		}
+	}
+	
+	focus = {
+		id = MEN_army_expansion
+		icon = GFX_focus_generic_little_entente
+
+		x = 0
+		y = 1
+		relative_position_id = MEN_japanese_equipment_shipments
+
+		cost = 35
+		prerequisite = { focus = MEN_japanese_equipment_shipments }
+		
+		available = {
+		}
+
+		completion_reward = {
+			army_experience = 25
+			add_timed_idea = {
+				idea = MEN_army_expansion # -10% Training time, +0.2% Recruitable Population 365 days
+				days = 365
+			}
+		}
+	}
+	
+	focus = {
+		id = MEN_establish_nanjing_military_academy
+		icon = GFX_goal_organize_military_research_branch
+
+		x = 0
+		y = 1
+		relative_position_id = MEN_army_expansion
+
+		cost = 70
+		prerequisite = { focus = MEN_army_expansion }
+		
+		available = {
+		}
+
+		completion_reward = {
+			add_ideas = MEN_nanjing_military_academy
+			add_research_slot = 1
+			add_research_centre = yes
+			SLOT:ww1_land_doctrine_folder = yes
+			SLOT:land_doctrine_folder = yes
+			SLOT:naval_doctrine_folder = yes
+			SLOT:air_doctrine_folder = yes
+		}
+	}	
+	
+	focus = {
+		id = MEN_motorization_effort
+		icon = GFX_goal_generic_army_motorized
+
+		x = -2
+		y = 1
+		relative_position_id = MEN_establish_nanjing_military_academy
+
+		cost = 56
+		prerequisite = { focus = MEN_establish_nanjing_military_academy }
+		
+		available = {
+		}
+
+		completion_reward = {
+			add_tech_bonus = {
+				name = motorized_bonus
+				bonus = 0.4
+				category = motorized_equipment
+			}
+		}
+	}	
+	
+	focus = {
+		id = MEN_mechanized_experiments
+		icon = GFX_goal_generic_build_tank
+
+		x = 0
+		y = 1
+		relative_position_id = MEN_motorization_effort
+
+		cost = 56
+		prerequisite = { focus = MEN_motorization_effort }
+		
+		available = {
+		}
+
+		completion_reward = {
+			add_tech_bonus = {
+				name = mechanized_bonus
+				bonus = 0.2
+				category = motorized_equipment
+			}
+		}
+	}
+	
+	focus = {
+		id = MEN_armor_design_study
+		icon = GFX_goal_generic_army_tanks
+
+		x = 0
+		y = 1
+		relative_position_id = MEN_mechanized_experiments
+
+		cost = 56
+		prerequisite = { focus = MEN_mechanized_experiments }
+		
+		available = {
+		}
+
+		completion_reward = {
+			add_tech_bonus = {
+				name = armor_bonus
+				bonus = 0.3
+				uses = 3
+				category = armor_tech
+			}
+		}
+	}	
+	
+	focus = {
+		id = MEN_sino_japanese_war_studies
+		icon = GFX_goal_chi_daretodie
+
+		x = 0
+		y = 1
+		relative_position_id = MEN_establish_nanjing_military_academy
+
+		cost = 56
+		prerequisite = { focus = MEN_establish_nanjing_military_academy }
+		
+		available = {
+		}
+
+		completion_reward = {
+			army_experience = 5
+			add_tech_bonus = {
+				name = land_doc_bonus
+				bonus = 0.4
+				uses = 2
+				category = land_doctrine
+			}
+		}
+	}	
+	
+	focus = {
+		id = MEN_develop_modern_doctrines
+		icon = GFX_goal_generic_axis_build_infantry
+
+		x = 0
+		y = 1
+		relative_position_id = MEN_sino_japanese_war_studies
+
+		cost = 42
+		prerequisite = { focus = MEN_sino_japanese_war_studies }
+		
+		available = {
+		}
+
+		completion_reward = {
+			army_experience = 5
+			add_tech_bonus = {
+				name = land_doc_bonus
+				bonus = 0.3
+				uses = 2
+				category = land_doctrine
+			}
+		}
+	}	
+	
+	focus = {
+		id = MEN_expand_the_academy
+		icon = GFX_goal_generic_position_armies
+
+		x = 0
+		y = 1
+		relative_position_id = MEN_develop_modern_doctrines
+
+		cost = 35
+		prerequisite = { focus = MEN_develop_modern_doctrines }
+		
+		available = {
+		}
+
+		completion_reward = {
+			army_experience = 10
+				swap_ideas = {
+					remove_idea = MEN_nanjing_military_academy
+					add_idea = MEN_nanjing_military_academy1
+				}
+			add_tech_bonus = {
+				name = land_doc_bonus
+				bonus = 0.2
+				uses = 2
+				category = land_doctrine
+			}
+		}
+	}	
+	
+	focus = {
+		id = MEN_cooperate_with_zaibatsus
+		icon = GFX_focus_jap_zaibatsu
+
+		x = 3
+		y = 1
+		relative_position_id = MEN_establish_new_regime
+
+		cost = 50
+		prerequisite = { focus = MEN_establish_new_regime }
+		
+		available = {
+		}
+
+		completion_reward = {
+			random_owned_controlled_state = {
+				limit = { is_core_of = RGR }
+				add_extra_state_shared_building_slots = 2
+				add_building_construction = {
+						type = industrial_complex
+						level = 2
+						instant_build = yes
+				}
+			}
+			add_tech_bonus = {
+				name = MEN_industry_bonus
+				bonus = 0.3
+				uses = 2
+				category = industry
+			}
+		}
+	}
+	
+	focus = {
+		id = MEN_japanese_industrial_investments
+		icon = GFX_goal_generic_construct_civilian
+
+		x = -1
+		y = 1
+		relative_position_id = MEN_cooperate_with_zaibatsus
+
+		cost = 56
+		prerequisite = { focus = MEN_cooperate_with_zaibatsus }
+		
+		available = {
+		}
+
+		completion_reward = {
+			random_owned_controlled_state = {
+				limit = { is_core_of = RGR }
+				add_extra_state_shared_building_slots = 1
+				add_building_construction = {
+					type = industrial_complex
+					level = 1
+					instant_build = yes
+				}
+			}
+			add_research_slot = 1
+			add_research_centre = yes
+			SLOT:industry_folder = yes
+			SLOT:raw_materials_folder = yes
+			random_controlled_state = {
+				limit = {
+					has_active_resistance = yes
+				}
+				add_compliance = 5
+			}
+		}
+	}	
+	
+	focus = {
+		id = MEN_improve_our_industry
+		icon = GFX_goal_mechanize_laborers
+
+		x = 1
+		y = 1
+		relative_position_id = MEN_japanese_industrial_investments
+
+		cost = 35
+		prerequisite = { focus = MEN_japanese_industrial_investments }
+		
+		available = {
+		}
+
+		completion_reward = {
+			custom_effect_tooltip = KMT_lower_incompetent_industry_tt
+			hidden_effect = {
+				improve_incompetent_industry = yes
+			}
+			add_tech_bonus = {
+				name = MEN_industry_bonus
+				bonus = 0.3
+				uses = 3
+				category = industry
+			}
+		}
+	}	
+	focus = {
+		id = MEN_repair_chinese_factories
+		icon = GFX_goal_generic_production2
+
+		x = -1
+		y = 1
+		relative_position_id = MEN_japanese_industrial_investments
+
+		cost = 35
+		prerequisite = { focus = MEN_japanese_industrial_investments }
+		
+		available = {
+		}
+
+		completion_reward = {
+			add_ideas = MEN_repair_chinese_factories # +10% factory repair speed, +20% free repair
+			random_controlled_state = {
+				limit = {
+					has_active_resistance = yes
+				}
+				add_compliance = 5
+			}
+			random_controlled_state = {
+				limit = {
+					has_active_resistance = yes
+				}
+				add_compliance = 5
+			}
+		}
+	}	
+	
+focus = {
+		id = MEN_revive_hanyang_armory
+		icon = GFX_goal_generic_axis_build_infantry
+		x = 0
+		y = 3
+		relative_position_id = MEN_repair_chinese_factories
+		cost = 42
+		prerequisite = { focus = MEN_improve_our_industry }
+		prerequisite = { focus = MEN_repair_chinese_factories }
+		bypass = {
+			
+		}
+		completion_reward = {
+			if = {
+				limit = {
+					620 = {
+						OR = {
+							OR = { 
+								NOT = {
+									is_owned_by = ROOT
+								}
+								NOT = {
+									is_controlled_by = ROOT
+								}
+							}
+							AND = {
+								is_owned_by = ROOT
+								free_building_slots = {
+									building = arms_factory
+									size < 0
+									include_locked = yes
+								}
+							}
+						}
+					}
+				}
+				random_owned_controlled_state = {
+					limit = { 
+						free_building_slots = {
+							building = arms_factory
+							size > 1
+							include_locked = yes
+						}
+					}
+					add_extra_state_shared_building_slots = 1
+					add_building_construction = {
+						type = arms_factory
+						level = 1
+						instant_build = yes
+					}							
+				}
+			}
+			620 = {
+				if = {
+					limit = { 
+						is_owned_by = ROOT
+						free_building_slots = {
+							building = arms_factory
+							size > 0
+							include_locked = yes
+						}
+						is_controlled_by = ROOT
+					}
+					add_extra_state_shared_building_slots = 1
+					add_building_construction = {
+						type = arms_factory
+						level = 1
+						instant_build = yes
+					}
+				}
+			}
+			if = {
+				limit = { has_dlc = "Arms Against Tyranny" }
+				mio:CHI_hanyan_arsenal_organization = {
+					add_mio_funds = 500
+				}
+			}
+			else = {
+				custom_effect_tooltip = available_designer
+				show_ideas_tooltip = CHI_hanyan_arsenal
+			}
+		}
+	}
+	
+	focus = {
+		id = MEN_new_equipment_designs
+		icon = GFX_goal_generic_small_arms
+		prerequisite = { 
+		focus = MEN_revive_hanyang_armory 
+		focus = MEN_establish_nanjing_military_academy
+		}
+		x = 0
+		y = 1
+		relative_position_id = MEN_revive_hanyang_armory
+		cost = 56
+		available_if_capitulated = yes
+		
+		completion_reward = {
+			add_tech_bonus = {
+				name = infantry_weapons_bonus
+				bonus = 0.3
+				uses = 3
+				category = infantry_weapons
+				category = artillery
+			}
+		}
+	}
+	
+	focus = {
+		id = MEN_infantry_support_efforts
+		icon = GFX_goal_support_equipment
+		prerequisite = { focus = MEN_new_equipment_designs }
+		relative_position_id = MEN_new_equipment_designs
+		x = 0
+		y = 1
+		cost = 56
+		available_if_capitulated = yes
+		
+
+		completion_reward = {
+			army_experience = 10
+			add_tech_bonus = {
+				name = land_doc_bonus3
+				bonus = 0.3
+				uses = 3
+				category = support_tech
+			}
+		}
+	}
+	
+	focus = {
+		id = MEN_arms_modernization
+		icon = GFX_goal_generic_army_artillery2
+		prerequisite = { focus = MEN_infantry_support_efforts }
+		relative_position_id = MEN_infantry_support_efforts
+		x = 0
+		y = 1
+		cost = 56
+		available_if_capitulated = yes
+
+		completion_reward = {
+			add_tech_bonus = {
+				name = infantry_artillery_bonus
+				bonus = 0.3
+				uses = 2
+				category = infantry_weapons
+				category = artillery
+			}
+		}
+	}
+	
+	focus = {
+		id = MEN_rebuild_camco_factories
+		icon = GFX_goal_generic_construct_mil_factory
+
+		x = 1
+		y = 2
+		relative_position_id = MEN_repair_chinese_factories
+
+		cost = 35
+		prerequisite = { focus = MEN_repair_chinese_factories }
+		prerequisite = { focus = MEN_improve_our_industry }
+		
+		available = {
+			CHI = { has_completed_focus = KMT_setup_camco_assembly_plants }
+			OR = {
+				AND = {
+					has_war_with = CHI
+					CHI = { surrender_progress > 0.70 }
+				}
+				NOT = { country_exists = CHI }	
+			}
+		}
+		
+		mutually_exclusive = { focus = MEN_japanese_plane_factories }
+
+		completion_reward = {
+			if = {
+				limit = {
+					has_idea = incompetent_industry_real
+				}
+				add_tech_bonus = {
+					name = KMT_setup_camco_assembly_plants
+					bonus = 0.25
+					uses = 1
+					category = air_equipment
+				}
+				add_ideas = KMT_camco_assembly_plants_1
+				else = {
+					if = {
+						limit = {
+							has_idea = incompetent_industry_real_2
+						}
+						add_tech_bonus = {
+							name = KMT_setup_camco_assembly_plants
+							bonus = 0.25
+							uses = 1
+							category = air_equipment
+						}
+						add_ideas = KMT_camco_assembly_plants_2
+						else = {
+							if = {
+								limit = {
+									has_idea = incompetent_industry_real_3
+								}
+								add_tech_bonus = {
+									name = KMT_setup_camco_assembly_plants
+									bonus = 0.25
+									uses = 1
+									category = air_equipment
+								}
+								add_ideas = KMT_camco_assembly_plants_3
+								else = {
+									if = {
+										limit = {
+											has_idea = incompetent_industry_real_4
+										}
+										add_tech_bonus = {
+											name = KMT_setup_camco_assembly_plants
+											bonus = 0.25
+											uses = 1
+											category = air_equipment
+										}
+										add_ideas = KMT_camco_assembly_plants_4
+										else = {
+											add_tech_bonus = {
+												name = KMT_setup_camco_assembly_plants
+												bonus = 0.5
+												uses = 1
+												category = air_equipment
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}	
+	
+	focus = {
+		id = MEN_japanese_plane_factories
+		icon = GFX_goal_generic_air_production
+
+		x = 3
+		y = 2
+		relative_position_id = MEN_repair_chinese_factories
+
+		cost = 70
+		prerequisite = { focus = MEN_improve_our_industry }
+		prerequisite = { focus = MEN_japanese_military_investments }
+		
+		available = {
+			NOT = { country_exists = CHI }	
+		}
+		
+		mutually_exclusive = { focus = MEN_rebuild_camco_factories }
+
+		completion_reward = {
+			if = {
+				limit = {
+					has_idea = incompetent_industry_real
+				}
+				add_tech_bonus = {
+					name = KMT_setup_camco_assembly_plants
+					bonus = 0.25
+					uses = 1
+					category = air_equipment
+				}
+				add_ideas = KMT_camco_assembly_plants_1
+				else = {
+					if = {
+						limit = {
+							has_idea = incompetent_industry_real_2
+						}
+						add_tech_bonus = {
+							name = KMT_setup_camco_assembly_plants
+							bonus = 0.25
+							uses = 1
+							category = air_equipment
+						}
+						add_ideas = KMT_camco_assembly_plants_2
+						else = {
+							if = {
+								limit = {
+									has_idea = incompetent_industry_real_3
+								}
+								add_tech_bonus = {
+									name = KMT_setup_camco_assembly_plants
+									bonus = 0.25
+									uses = 1
+									category = air_equipment
+								}
+								add_ideas = KMT_camco_assembly_plants_3
+								else = {
+									if = {
+										limit = {
+											has_idea = incompetent_industry_real_4
+										}
+										add_tech_bonus = {
+											name = KMT_setup_camco_assembly_plants
+											bonus = 0.25
+											uses = 1
+											category = air_equipment
+										}
+										add_ideas = KMT_camco_assembly_plants_4
+										else = {
+											add_tech_bonus = {
+												name = KMT_setup_camco_assembly_plants
+												bonus = 0.5
+												uses = 1
+												category = air_equipment
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}	
+	
+	focus = {
+		id = MEN_chinese_air_force
+		icon = GFX_goal_generic_air_fighter
+
+		x = 1
+		y = 1
+		relative_position_id = MEN_rebuild_camco_factories
+
+		cost = 70
+		prerequisite = { 
+		focus = MEN_rebuild_camco_factories 
+		focus = MEN_japanese_plane_factories
+		}
+		
+		available = {
+		}
+
+		completion_reward = {
+			air_experience = 10
+			add_tech_bonus = {
+				name = fighter_bonus
+				bonus = 0.3
+				uses = 2
+				category = light_fighter
+				category = cat_heavy_fighter
+			}
+		}
+	}	
+	
+	focus = {
+		id = MEN_air_doctrine_development
+		icon = GFX_goal_generic_air_doctrine
+
+		x = 0
+		y = 1
+		relative_position_id = MEN_chinese_air_force
+
+		cost = 70
+		prerequisite = { focus = MEN_chinese_air_force }
+		
+		available = {
+			has_completed_focus = MEN_establish_nanjing_military_academy
+		}
+
+		completion_reward = {
+			air_experience = 25
+			add_ideas = MEN_develop_air_doctrine
+			add_tech_bonus = {
+				name =  air_doc_bonus
+				bonus = 0.3
+				uses = 2
+				category = air_doctrine
+			}
+		}
+	}	
+	
+	focus = {
+		id = MEN_develop_naval_bombers
+		icon = GFX_goal_generic_air_naval_bomber
+
+		x = 1
+		y = 2
+		relative_position_id = MEN_chinese_air_force
+
+		cost = 70
+		prerequisite = { focus = MEN_chinese_air_force }
+		
+		available = {
+		}
+
+		completion_reward = {
+			add_tech_bonus = {
+				name = nav_bomber_bonus
+				bonus = 0.3
+				uses = 1
+				category = naval_bomber
+			}
+		}
+	}	
+	
+	focus = {
+		id = MEN_study_foreign_ship_designs
+		icon = GFX_goal_BEL_british_ship_designs
+
+		x = 4
+	
+		y = 1
+		relative_position_id = MEN_cooperate_with_zaibatsus
+
+		cost = 56
+		prerequisite = { focus = MEN_cooperate_with_zaibatsus }
+		
+		available = {
+		}
+
+		completion_reward = {
+			navy_experience = 40
+			add_tech_bonus = {
+				name = MEN_foreign_ship_designs
+				bonus = 0.30
+				uses = 2
+				category = dd_tech
+				}
+		}
+	}	
+	
+	focus = {
+		id = MEN_revive_jiangnan_shipyard
+		icon = GFX_goal_coast_industry
+		x = 0
+		y = 1
+		relative_position_id = MEN_study_foreign_ship_designs
+		cost = 35
+		prerequisite = { focus = MEN_study_foreign_ship_designs }
+		bypass = {
+			
+		}
+		available = {
+			has_country_flag = coastal_state
+		}
+		completion_reward = {
+			if = {
+				limit = {
+					613 = {
+						OR = {
+							OR = { 
+								NOT = {
+									is_owned_by = ROOT
+								}
+								NOT = {
+									is_controlled_by = ROOT
+								}
+							}
+							AND = {
+								is_owned_by = ROOT
+								free_building_slots = {
+									building = dockyard
+									size < 1
+									include_locked = yes
+								}
+							}
+						}
+					}
+				}
+				random_owned_controlled_state = {
+					limit = { 
+						free_building_slots = {
+							building = dockyard
+							size > 0
+							include_locked = yes
+						}
+					}
+					add_extra_state_shared_building_slots = 1
+					add_building_construction = {
+						type = dockyard
+						level = 1
+						instant_build = yes
+					}							
+				}
+			}
+			613 = {
+				if = {
+					limit = { 
+						is_owned_by = ROOT
+						free_building_slots = {
+							building = dockyard
+							size > 0
+							include_locked = yes
+						}
+						is_controlled_by = ROOT
+					}
+					add_extra_state_shared_building_slots = 1
+					add_building_construction = {
+						type = dockyard
+						level = 1
+						instant_build = yes
+					}
+				}
+			}
+			if = {
+				limit = { has_dlc = "Arms Against Tyranny" }
+				mio:CHI_jiangnan_shipyard_group_organization = {
+					add_mio_funds = 500
+				}
+			}
+			else = {
+				custom_effect_tooltip = available_naval_designer
+				show_ideas_tooltip = jiangnan_shipyard_group
+			}
+		}
+	}
+	
+	focus = {
+		id = MEN_coastal_designs
+		icon = GFX_goal_generic_navy_cruiser
+
+		x = -1
+		y = 1
+		relative_position_id = MEN_revive_jiangnan_shipyard
+
+		cost = 70
+		prerequisite = { focus = MEN_revive_jiangnan_shipyard }
+		
+		available = {
+		}
+
+		completion_reward = {
+			navy_experience = 15
+			add_tech_bonus = {
+				name = cr_bonus
+				bonus = 0.40
+				uses = 2
+                category = cl_tech
+                category = ca_tech
+			}
+		}
+	}	
+	
+	focus = {
+		id = KMT_sub_researches
+		icon = GFX_goal_generic_navy_submarine
+		prerequisite = { focus = MEN_revive_jiangnan_shipyard }
+		available = {
+		}
+		x = 1
+		y = 1
+		relative_position_id = MEN_revive_jiangnan_shipyard
+		cost = 10
+		
+		completion_reward = {
+			navy_experience = 15
+			custom_effect_tooltip = KMT_if_have_not_1922_1936_ss_researched_tt
+			effect_tooltip = {	
+				add_tech_bonus = {
+					name = ss_bonus
+					uses = 1
+					bonus = 0.5
+					technology = early_submarine
+					technology = basic_submarine
+				}
+			}
+			custom_effect_tooltip = KMT_if_have_1922_1936_ss_researched_tt
+			effect_tooltip = {	
+				add_tech_bonus = {
+					name = ss_bonus
+					uses = 1
+					bonus = 0.25
+					category = ss_tech
+				}
+			}
+			hidden_effect = {
+				if = {
+					limit = {
+						OR = {
+							can_research = early_submarine
+							can_research = basic_submarine
+						}
+					}
+					add_tech_bonus = {
+						name = ss_bonus
+						uses = 1
+						bonus = 0.5
+						technology = early_submarine
+						technology = basic_submarine
+					}
+					else = {
+						add_tech_bonus = {
+							name = ss_bonus
+							uses = 1
+							bonus = 0.25
+							category = ss_tech
+						}
+					}
+				}
+			}
+		}
+	}
+	
+	focus = {
+		id = MEN_pacific_auxiliary_fleet
+		icon = GFX_goal_generic_navy_battleship
+
+		x = -1
+		y = 1
+		relative_position_id = KMT_sub_researches
+
+		cost = 70
+		prerequisite = { 
+			focus = KMT_sub_researches 
+			focus = MEN_coastal_designs
+			}
+		
+		available = {
+			613 = { is_controlled_by = RGR }
+		}
+
+		completion_reward = {
+			custom_effect_tooltip = KMT_lower_incompetent_naval_industry_tt
+			if = {
+				limit = {
+					has_idea = incompetent_industry_real_navy
+				}
+				hidden_effect = {
+					swap_ideas = {
+						remove_idea = incompetent_industry_real_navy
+						add_idea = incompetent_industry_real_2_navy
+					}
+				}
+			}
+			add_tech_bonus = {
+				name = MEN_foreign_ship_designs
+				bonus = 0.30
+				uses = 2
+				category = dd_tech
+				}
+			add_tech_bonus = {
+				name = naval_doctrine_bonus
+				bonus = 0.3
+				uses = 3
+				category = naval_doctrine_destroyer
+			}
+			613 = {
+				add_extra_state_shared_building_slots = 3
+				add_building_construction = {
+					type = shipyard
+					level = 2
+					instant_build = yes
+				}
+				add_building_construction = {
+					type = dockyard
+					level = 1
+					instant_build = yes
+				}
+			}
+		}
+	}
+
+	focus = {
+		id = MEN_larger_shipyards
+		icon = GFX_goal_generic_construct_naval_dockyard
+
+		x = 1
+		y = 1
+		relative_position_id = MEN_pacific_auxiliary_fleet
+
+		cost = 105
+		prerequisite = { focus = MEN_pacific_auxiliary_fleet }
+		
+		available = {
+			613 = { is_controlled_by = RGR }
+		}
+
+		completion_reward = {
+			613 = {
+				add_extra_state_shared_building_slots = 2
+				add_building_construction = {
+					type = shipyard_capital_building
+					level = 1
+					instant_build = yes
+				}
+				add_building_construction = {
+					type = dockyard
+					level = 1
+					instant_build = yes
+				}
+			}	
+		}
+	}	
+	
+	focus = {
+		id = MEN_japanese_naval_officers
+		icon = GFX_goal_generic_navy_doctrines_tactics
+
+		x = -1
+		y = 1
+		relative_position_id = MEN_pacific_auxiliary_fleet
+
+		cost = 35
+		prerequisite = { focus = MEN_pacific_auxiliary_fleet }
+		
+		available = {
+		}
+
+		completion_reward = {
+		navy_experience = 10
+			add_tech_bonus = {
+				name = JAP_Navy_Doc_Bonus
+				uses = 6
+				bonus = 0.4
+				category = naval_doctrine
+			}
+		}
+	}	
+	
+	focus = {
+		id = MEN_commit_to_pacific_war
+		icon = GFX_goal_generic_large_fleet
+
+		x = 1
+		y = 1
+		relative_position_id = MEN_japanese_naval_officers
+
+		cost = 70
+		prerequisite = { focus = MEN_japanese_naval_officers }
+		prerequisite = { focus = MEN_larger_shipyards }
+		
+		available = {
+			OR = {
+				has_war_with = ENG
+				has_war_with = USA
+			}
+		}
+
+		completion_reward = {
+			custom_effect_tooltip = KMT_lower_incompetent_naval_industry_tt
+			if = {
+				limit = {
+					has_idea = incompetent_industry_real_2_navy
+				}
+				hidden_effect = {
+					swap_ideas = {
+						remove_idea = incompetent_industry_real_2_navy
+						add_idea = incompetent_industry_real_3_navy
+					}
+				}
+			}
+			add_research_slot = 1
+			add_research_centre = yes
+			SLOT:naval_folder = yes
+			SLOT:naval_techs_folder = yes
+			SLOT:naval_doctrine_folder = yes
+			navy_experience = 20
+			add_tech_bonus = {
+				name = bb_bonus
+				bonus = 0.50
+				uses = 3
+				category = bb_tech
+				category = bc_tech
+			}
+		}
+	}	
+	
+	focus = {
+		id = MEN_chinese_carriers
+		icon = GFX_goal_generic_navy_carrier
+
+		x = 0
+		y = 1
+		relative_position_id = MEN_commit_to_pacific_war
+
+		cost = 70
+		prerequisite = { focus = MEN_commit_to_pacific_war }
+		
+		available = {
+		}
+
+		completion_reward = {
+			add_tech_bonus = {
+				name = MEN_chinese_carriers
+				bonus = 0.5
+				uses = 2
+				category = cv_tech
+			}
+			add_tech_bonus = {
+				name = MEN_chinese_carriers
+				bonus = 1
+				uses = 1
+				category = naval_doctrine_carrier
+			}
+			add_tech_bonus = {
+				name = MEN_chinese_carriers
+				bonus = 0.5
+				uses = 1
+				category = naval_doctrine_carrier
+			}
+		}
+	}	
+	
+	focus = {
+		id = MEN_carrier_aircraft_experiments
+		icon = GFX_goal_generic_air_naval_bomber
+
+		x = -2
+		y = 1
+		relative_position_id = MEN_chinese_carriers
+
+		cost = 70
+		prerequisite = { focus = MEN_chinese_carriers }
+		prerequisite = { focus = MEN_chinese_air_force }
+	
+		
+		available = {
+		}
+
+		completion_reward = {
+			add_tech_bonus = {
+				name = MEN_carrier_aircraft_experiments
+				bonus = 0.5
+				uses = 2
+				category = naval_air
+			}
+		}
+	}	
+	
+	focus = {
+		id = MEN_request_taiwan
+		icon = GFX_focus_chi_collaboration_with_the_japanese
+		prerequisite = { focus = MEN_pacific_auxiliary_fleet }
+		x = 3
+		y = 1
+		relative_position_id = MEN_pacific_auxiliary_fleet
+		cost = 35
+		available = {
+			OR = {
+				AND = {
+					has_war_with = CHI
+					CHI = { surrender_progress > 0.6 }
+				}
+			NOT = { country_exists = CHI }	
+			}
+			has_country_flag = coastal_state
+			NOT = { owns_state = 524 }
+			custom_trigger_tooltip = {
+				tooltip = demand_taiwan_tt
+				hidden_trigger = {
+					524 = {
+						owner = {
+							NOT = {
+								has_war_with = ROOT
+							}
+						}
+					}
+				}
+			}
+		}
+		bypass = {
+			524 = {
+				is_owned_by = ROOT
+			}
+		}
+		
+		completion_reward = {
+			524 = {
+				owner = {
+					country_event = { id = kmt.15 days = 3 }
+				}
+			}
+		}
+		
+	}
+	
+	focus = {
+		id = MEN_taiwan_fleet_hub
+		icon = GFX_goal_generic_construct_naval_dockyard
+		prerequisite = { focus = MEN_request_taiwan }
+		prerequisite = { focus = MEN_commit_to_pacific_war }
+		available = {
+			524 = {
+				is_owned_by = ROOT
+				is_controlled_by = ROOT
+			}
+		}
+		x = 0
+		y = 2
+		relative_position_id = MEN_request_taiwan
+		cost = 105
+		bypass = {
+			custom_trigger_tooltip =  {
+				tooltip = KMT_ocean_hub_tt
+				524 = {
+					free_building_slots = {
+						building = dockyard
+						size < 5
+						include_locked = yes
+					}
+				}
+			}
+		}
+		
+		completion_reward = {
+			524 = {
+				add_extra_state_shared_building_slots = 2
+				add_building_construction = {
+					type = dockyard
+					level = 2
+					instant_build = yes
+				}
+				add_building_construction = {
+					type = naval_base
+					level = 4
+					instant_build = yes
+					province = 7186
+				}
+			}
+		}
+	}
+	
+	focus = {
+		id = MEN_post_war_government
+		icon = GFX_focus_generic_support_the_left_right
+
+		x = 30
+		y = 0
+
+		cost = 7
+		
+		available = {
+			NOT = { country_exists = CHI }
+		}
+
+		completion_reward = {
+			add_political_power = 100
+			every_controlled_state = {
+				limit = {
+					has_active_resistance = yes
+				}
+				add_compliance = 5
+			}
+		}
+	}	
+	
+	focus = {
+		id = MEN_a_loyal_china
+		icon = GFX_focus_chi_collaboration_with_the_japanese
+
+		x = 0
+		y = 1
+		relative_position_id = MEN_post_war_government
+
+		cost = 35
+		prerequisite = { focus = MEN_post_war_government }
+		
+		available = {
+		}
+
+		completion_reward = {
+			add_political_power = 50
+			add_stability = 0.1		
+			every_controlled_state = {
+				limit = {
+					has_active_resistance = yes
+				}
+				add_compliance = 5
+			}			
+		}
+	}
+	
+	focus = {
+		id = MEN_found_chinese_zaibatsu
+		icon = GFX_goal_industrial_research_projects
+
+		x = -4
+		y = 1
+		relative_position_id = MEN_a_loyal_china
+
+		cost = 70
+		prerequisite = { focus = MEN_a_loyal_china }
+		prerequisite = { focus = MEN_cooperate_with_zaibatsus }
+		
+		available = {
+		}
+
+		completion_reward = {
+			add_research_slot = 1
+			add_research_centre = yes
+			SLOT:infantry_folder = yes
+			SLOT:support_folder = yes
+			SLOT:tank_techs_folder = yes
+			SLOT:armor_folder = yes
+			SLOT:artillery_folder = yes
+			SLOT:air_techs_folder = yes
+			SLOT:naval_folder = yes
+			SLOT:naval_techs_folder = yes
+			SLOT:industry_folder = yes
+			SLOT:raw_materials_folder = yes
+			SLOT:electronics_folder = yes
+			random_owned_controlled_state={
+				add_extra_state_shared_building_slots = 1
+				add_building_construction = {
+					type = industrial_complex
+					level = 1
+					instant_build = yes
+				}
+			}
+			random_owned_controlled_state={
+				limit = { is_core_of = RGR }
+				add_extra_state_shared_building_slots = 1
+				add_building_construction = {
+					type = industrial_complex
+					level = 1
+					instant_build = yes
+				}
+			}
+			random_owned_controlled_state={
+				limit = { is_core_of = RGR }
+				add_extra_state_shared_building_slots = 1
+				add_building_construction = {
+					type = arms_factory
+					level = 1
+					instant_build = yes
+				}
+			}
+		}
+	}	
+	
+	focus = {
+		id = MEN_exploit_our_minerals
+		icon = GFX_goal_generic_construction2
+
+		x = -1
+		y = 1
+		relative_position_id = MEN_found_chinese_zaibatsu
+
+		cost = 70
+		prerequisite = { focus = MEN_found_chinese_zaibatsu }
+		mutually_exclusive = { focus = MEN_industry_reform }
+		
+		available = {
+		}
+
+		completion_reward = {
+			swap_ideas = {
+				remove_idea = MEN_reduced_excavation
+				add_idea = MEN_reduced_excavation2 # reduce excavation debuff by 2
+			}
+		}
+	}	
+	
+	focus = {
+		id = MEN_mining_advancements
+		icon = GFX_goal_generic_resource_extraction
+
+		x = -1
+		y = 1
+		relative_position_id = MEN_exploit_our_minerals
+
+		cost = 35
+		prerequisite = { focus = MEN_exploit_our_minerals }
+		
+		available = {
+		}
+
+		completion_reward = {
+			custom_effect_tooltip = KMT_lower_incompetent_industry_tt
+			hidden_effect = {
+				improve_incompetent_industry = yes
+			}
+			if = {
+				limit = {
+					has_idea = KMT_camco_assembly_plants_2
+				}
+				swap_ideas = {
+					remove_idea = KMT_camco_assembly_plants_2
+					add_idea = KMT_camco_assembly_plants_3
+				}
+			}
+			add_tech_bonus = {
+				name = MEN_mining_advancements
+				bonus = 0.4
+				uses = 2
+				category = excavation_tech
+			}
+			swap_ideas = {
+				remove_idea = MEN_reduced_excavation2
+				add_idea = MEN_mining_advancements # get rid of excavation debuff, introduce 10% excavation buff
+			}
+		}
+	}	
+	
+	focus = {
+		id = MEN_synthetic_oil_experiments
+		icon = GFX_goal_generic_oil_factory
+
+		x = 0
+		y = 1
+		relative_position_id = MEN_mining_advancements
+
+		cost = 70
+		prerequisite = { focus = MEN_mining_advancements }
+		
+		available = {
+		}
+
+		completion_reward = {
+			add_tech_bonus = {
+				name = MEN_synthetic_oil_experiments
+				bonus = 0.4
+				uses = 2
+				category = synth_resources
+			}
+		}
+	}
+	
+	focus = {
+		id = MEN_industry_reform
+		icon = GFX_goal_mechanize_laborers
+
+		x = 1
+		y = 1
+		relative_position_id = MEN_found_chinese_zaibatsu
+
+		cost = 70
+		prerequisite = { focus = MEN_found_chinese_zaibatsu }
+		mutually_exclusive = { focus = MEN_exploit_our_minerals }
+		
+		available = {
+		}
+
+		completion_reward = {
+			custom_effect_tooltip = KMT_lower_incompetent_industry_tt
+			hidden_effect = {
+				improve_incompetent_industry = yes
+			}
+			swap_ideas = {
+				remove_idea = MEN_reduced_excavation
+				add_idea = MEN_reduced_excavation1 # get rid of excavation debuff, introduce 10% excavation buff
+			}
+			if = {
+				limit = {
+					has_idea = KMT_camco_assembly_plants_2
+				}
+				swap_ideas = {
+					remove_idea = KMT_camco_assembly_plants_2
+					add_idea = KMT_camco_assembly_plants_3
+				}
+			}
+			random_owned_controlled_state = {
+				add_building_construction = {
+					type = infrastructure
+					level = 1
+					instant_build = yes
+				}
+				add_extra_state_shared_building_slots = 1
+			}
+			random_owned_controlled_state = {
+				add_building_construction = {
+					type = infrastructure
+					level = 1
+					instant_build = yes
+				}
+				add_extra_state_shared_building_slots = 1
+			}
+		}
+	}
+	
+	focus = {
+		id = MEN_crack_down_on_opium
+		icon = GFX_goal_demand_sudetenland
+
+		x = 1
+		y = 1
+		relative_position_id = MEN_industry_reform
+
+		cost = 56
+		prerequisite = { focus = MEN_industry_reform }
+		mutually_exclusive = { focus = MEN_embrace_opium_trade }
+		
+		available = {
+		}
+
+		completion_reward = {
+			custom_effect_tooltip = KMT_lower_incompetent_industry_tt
+			remove_ideas = PRC_government_corruption
+			hidden_effect = {
+				improve_incompetent_industry = yes
+			}
+			if = {
+				limit = {
+					has_idea = KMT_camco_assembly_plants_3
+				}
+				swap_ideas = {
+					remove_idea = KMT_camco_assembly_plants_3
+					add_idea = KMT_camco_assembly_plants_4
+				}
+			}
+			random_owned_controlled_state = {
+				add_building_construction = {
+					type = infrastructure
+					level = 1
+					instant_build = yes
+				}
+				add_extra_state_shared_building_slots = 1
+			}
+			random_owned_controlled_state = {
+				add_building_construction = {
+					type = infrastructure
+					level = 1
+					instant_build = yes
+				}
+				add_extra_state_shared_building_slots = 1
+			}
+		}
+	}	
+
+	focus = {
+		id = MEN_embrace_opium_trade
+		icon = GFX_goal_generic_trade
+
+		x = -1
+		y = 1
+		relative_position_id = MEN_industry_reform
+
+		cost = 35
+		prerequisite = { 
+			focus = MEN_industry_reform
+			focus = MEN_exploit_our_minerals 
+		}
+		mutually_exclusive = { focus = MEN_crack_down_on_opium }
+		
+		available = {
+		}
+
+		completion_reward = {
+			add_ideas = CHI_embrace_the_opium_trade
+		}
+	}
+	
+	focus = {
+		id = MEN_towards_stability
+		icon = GFX_goal_government_icon
+
+		x = 0
+		y = 1
+		relative_position_id = MEN_a_loyal_china
+
+		cost = 35
+		prerequisite = { focus = MEN_a_loyal_china }
+		
+		available = { 
+			or = { 
+				JAP = { has_completed_focus = JAP_chinese_occupation }
+				JAP = { is_ai = yes }
+			}
+		}
+
+		completion_reward = {
+			add_ideas = MEN_towards_stability # +5% compliance gain
+			add_timed_idea = { 
+				idea = MEN_post_war_recovery # +5% compliance gain, +0.2% weekly stability for 180 days
+				days = 180
+			}
+		}
+	}	
+	
+	focus = {
+		id = MEN_fight_illiteracy
+		icon = GFX_goal_school_bookstacks
+
+		x = 2
+		y = 1
+		relative_position_id = MEN_towards_stability
+
+		cost = 35
+		prerequisite = { focus = MEN_towards_stability }
+		
+		available = {
+		}
+
+		completion_reward = {
+			custom_effect_tooltip = kmt_pekingu_tt
+			swap_ideas = {
+				remove_idea = public_iliteracy
+				add_idea = public_iliteracy_2
+			}
+			random_controlled_state = {
+				limit = {
+					has_active_resistance = yes
+				}
+				add_compliance = 5
+			}
+		}
+	}
+	
+	focus = {
+		id = MEN_solidify_our_position
+		icon = GFX_focus_government_centralised_icon
+
+		x = 0
+		y = 1
+		relative_position_id = MEN_towards_stability
+
+		cost = 30
+		prerequisite = { focus = MEN_towards_stability }
+		
+		available = { has_completed_focus = MEN_absorb_chinese_government }
+
+		completion_reward = {
+			add_ideas = MEN_solidify_our_position # +0.10 fascist support, +25% drift defense
+		}
+	}	
+	
+	focus = {
+		id = MEN_government_expansion
+		icon = GFX_goal_generic_forceful_treaty
+
+		x = 0
+		y = 1
+		relative_position_id = MEN_solidify_our_position
+
+		cost = 30
+		prerequisite = { focus = MEN_solidify_our_position }
+		
+		available = {
+		}
+
+		completion_reward = {
+			add_ideas = MEN_government_expansion # +20% consumer goods, -10% PP gain
+		}
+	}	
+	
+	focus = {
+		id = MEN_control_coastal_cities
+		icon = GFX_goal_demand_sudetenland
+
+		x = -1
+		y = 1
+		relative_position_id = MEN_government_expansion
+
+		cost = 65
+		prerequisite = { focus = MEN_government_expansion }
+		
+		bypass = {
+			OR = {
+				592 = { is_owned_by = JAP }
+				593 = { is_owned_by = JAP }
+				765 = { is_owned_by = JAP }
+			}
+		}
+		
+		available = {
+			has_completed_focus = MEN_suppress_the_coast
+			592 = { is_owned_by = ROOT }
+			593 = { is_owned_by = ROOT }
+			765 = { is_owned_by = ROOT }
+			592 = { compliance > 40 }
+			593 = { compliance > 40 }
+			765 = { compliance > 40 }
+		}
+
+		select_effect = { 
+			add_timed_idea = {
+				idea = MEN_core_drain # -2000 weekly manpower
+				days = 70
+			}
+		}
+		completion_reward = {
+			hidden_effect = {
+				592 = {
+					remove_claim_by = RGR
+				}
+			}
+			592 = {
+				add_core_of = RGR
+			}
+			hidden_effect = {
+				593 = {
+					remove_claim_by = RGR
+				}
+			}
+			593 = {
+				add_core_of = RGR
+			}
+			hidden_effect = {
+				765 = {
+					remove_claim_by = RGR
+				}
+			}
+			765 = {
+				add_core_of = RGR
+			}
+		}
+	}	
+	
+	focus = {
+		id = MEN_control_eastern_cities
+		icon = GFX_goal_demand_sudetenland
+
+		x = 1
+		y = 1
+		relative_position_id = MEN_government_expansion
+
+		cost = 65
+		prerequisite = { focus = MEN_government_expansion }
+		
+		available = {
+			has_completed_focus = MEN_suppress_the_east
+			620 = { is_owned_by = ROOT }
+			607 = { is_owned_by = ROOT }
+			600 = { is_owned_by = ROOT }
+			620 = { compliance > 40 }
+			607 = { compliance > 40 }
+			600 = { compliance > 40 }
+		}
+
+		select_effect = { 
+			add_timed_idea = {
+				idea = MEN_core_drain # -2000 weekly manpower
+				days = 70
+			}
+		}
+		completion_reward = {
+			hidden_effect = {
+				620 = {
+					remove_claim_by = RGR
+				}
+			}
+			620 = {
+				add_core_of = RGR
+			}
+			hidden_effect = {
+				607 = {
+					remove_claim_by = RGR
+				}
+			}
+			607 = {
+				add_core_of = RGR
+			}
+			hidden_effect = {
+				600 = {
+					remove_claim_by = RGR
+				}
+			}
+			600 = {
+				add_core_of = RGR
+			}
+		}
+	}	
+	
+	focus = {
+		id = MEN_complete_coast_control
+		icon = GFX_goal_generic_demand_territory
+
+		x = -2
+		y = 1
+		relative_position_id = MEN_control_coastal_cities
+
+		cost = 105
+		prerequisite = { focus = MEN_control_coastal_cities }
+		
+		bypass = {
+			OR = {
+				826 = { is_owned_by = JAP }
+				929 = { is_owned_by = JAP }
+				827 = { is_owned_by = JAP }
+				595 = { is_owned_by = JAP }
+				763 = { is_owned_by = JAP }
+				764 = { is_owned_by = JAP }
+				776 = { is_owned_by = JAP }
+				777 = { is_owned_by = JAP }
+				591 = { is_owned_by = JAP }
+			}
+		}
+			
+		available = {
+			929 = { is_owned_by = ROOT }
+			827 = { is_owned_by = ROOT }
+			595 = { is_owned_by = ROOT }
+			763 = { is_owned_by = ROOT }
+			764 = { is_owned_by = ROOT }
+			776 = { is_owned_by = ROOT }
+			777 = { is_owned_by = ROOT }
+			591 = { is_owned_by = ROOT }
+			929 = { compliance > 40 }
+			827 = { compliance > 40 }
+			595 = { compliance > 40 }
+			763 = { compliance > 40 }
+			764 = { compliance > 40 }
+			776 = { compliance > 40 }
+			777 = { compliance > 40 }
+			591 = { compliance > 40 }
+		}
+
+		select_effect = { 
+			add_timed_idea = {
+				idea = MEN_core_drain # -2000 weekly manpower
+				days = 105
+			}
+		}
+		completion_reward = {
+			hidden_effect = {
+				929 = {
+					remove_claim_by = RGR
+				}
+			}
+			929 = {
+				add_core_of = RGR
+			}
+			hidden_effect = {
+				827 = {
+					remove_claim_by = RGR
+				}
+			}
+			827 = {
+				add_core_of = RGR
+			}
+			hidden_effect = {
+				595 = {
+					remove_claim_by = RGR
+				}
+			}
+			595 = {
+				add_core_of = RGR
+			}
+			hidden_effect = {
+				763 = {
+					remove_claim_by = RGR
+				}
+			}
+			763 = {
+				add_core_of = RGR
+			}
+			hidden_effect = {
+				764 = {
+					remove_claim_by = RGR
+				}
+			}
+			764 = {
+				add_core_of = RGR
+			}
+			hidden_effect = {
+				776 = {
+					remove_claim_by = RGR
+				}
+			}
+			776 = {
+				add_core_of = RGR
+			}
+			hidden_effect = {
+				777 = {
+					remove_claim_by = RGR
+				}
+			}
+			777 = {
+				add_core_of = RGR
+			}
+			hidden_effect = {
+				591 = {
+					remove_claim_by = RGR
+				}
+			}
+			591 = {
+				add_core_of = RGR
+			}
+		}
+	}	
+	
+	focus = {
+		id = MEN_drive_resistance_from_south
+		icon = GFX_goal_generic_more_territorial_claims
+
+		x = 0
+		y = 1
+		relative_position_id = MEN_control_coastal_cities
+
+		cost = 35
+		prerequisite = { focus = MEN_control_coastal_cities }
+		
+		available = {
+			780 = { is_owned_by = ROOT }
+			599 = { is_owned_by = ROOT }
+			594 = { is_owned_by = ROOT }
+			780 = { compliance > 15 }
+			599 = { compliance > 15 }
+			594 = { compliance > 15 }
+		}
+		
+		select_effect = { 
+			add_timed_idea = {
+				idea = MEN_core_drain # -2000 weekly manpower
+				days = 35
+			}
+		}
+
+		completion_reward = {
+			every_owned_state = {
+				limit = {
+					has_active_resistance = yes
+				}
+				add_resistance = 5
+			}
+			every_owned_state = {
+				limit = {
+					has_active_resistance = yes
+				}
+				add_compliance = -5
+			}
+			594 = {add_claim_by = RGR }
+			780 = {add_claim_by = RGR }
+			599 = {add_claim_by = RGR }
+		}
+	}	
+	
+	focus = {
+		id = MEN_crush_resistance_in_south
+		icon = GFX_focus_generic_provoke_border_clashes
+
+		x = 0
+		y = 1
+		relative_position_id = MEN_drive_resistance_from_south
+
+		cost = 35
+		prerequisite = { focus = MEN_drive_resistance_from_south }
+		
+		available = {
+			or ={
+				JAP = { has_completed_focus = JAP_chinese_interrior }
+				JAP = { is_ai = yes }
+			}
+			778 = { is_owned_by = ROOT }
+			781 = { is_owned_by = ROOT }
+			779 = { is_owned_by = ROOT }
+			775 = { is_owned_by = ROOT }
+			772 = { is_owned_by = ROOT }
+			768 = { is_owned_by = ROOT }
+			767 = { is_owned_by = ROOT }
+			778 = { compliance > 15 }
+			781 = { compliance > 15 }
+			779 = { compliance > 15 }
+			775 = { compliance > 15 }
+			772 = { compliance > 15 }
+			768 = { compliance > 15 }
+			767 = { compliance > 15 }
+		}
+		
+		select_effect = { 
+			add_timed_idea = {
+				idea = MEN_core_drain # -2000 weekly manpower
+				days = 35
+			}
+		}
+
+		completion_reward = {
+			every_owned_state = {
+				limit = {
+					has_active_resistance = yes
+				}
+				add_resistance = 5
+			}
+			every_owned_state = {
+				limit = {
+					has_active_resistance = yes
+				}
+				add_compliance = -5
+			}
+			778 = {add_claim_by = RGR }
+			781 = {add_claim_by = RGR }
+			779 = {add_claim_by = RGR }
+			775 = {add_claim_by = RGR }
+			772 = {add_claim_by = RGR }
+			768 = {add_claim_by = RGR }
+			767 = {add_claim_by = RGR }
+		}
+	}	
+	
+	focus = {
+		id = MEN_complete_east_control
+		icon = GFX_goal_generic_demand_territory
+
+		x = 0
+		y = 1
+		relative_position_id = MEN_control_eastern_cities
+
+		cost = 105
+		prerequisite = { focus = MEN_control_eastern_cities }
+		
+		available = {
+			766 = { is_owned_by = ROOT }
+			792 = { is_owned_by = ROOT }
+			790 = { is_owned_by = ROOT }		
+			791 = { is_owned_by = ROOT }
+			766 = { compliance > 40 }
+			792 = { compliance > 40 }
+			790 = { compliance > 40 }			
+			791 = { compliance > 40 }
+		}
+		
+		select_effect = { 
+			add_timed_idea = {
+				idea = MEN_core_drain # -2000 weekly manpower
+				days = 105
+			}
+		}
+
+		completion_reward = {
+			hidden_effect = {
+				766 = {
+					remove_claim_by = RGR
+				}
+			}
+			766 = {
+				add_core_of = RGR
+			}
+			hidden_effect = {
+				792 = {
+					remove_claim_by = RGR
+				}
+			}
+			792 = {
+				add_core_of = RGR
+			}
+			hidden_effect = {
+				790 = {
+					remove_claim_by = RGR
+				}
+			}
+			790 = {
+				add_core_of = RGR
+			}
+			hidden_effect = {
+				791 = {
+					remove_claim_by = RGR
+				}
+			}
+			791 = {
+				add_core_of = RGR
+			}
+		}
+	}	
+	
+	focus = {
+		id = MEN_drive_resistance_from_center
+		icon = GFX_goal_generic_more_territorial_claims
+
+		x = 1
+		y = 1
+		relative_position_id = MEN_crush_resistance_in_south
+
+		cost = 35
+		prerequisite = { focus = MEN_crush_resistance_in_south }
+		prerequisite = { focus = MEN_control_eastern_cities }
+		
+		available = {
+			799 = { is_owned_by = ROOT }
+			605 = { is_owned_by = ROOT }
+			602 = { is_owned_by = ROOT }
+			799 = { compliance > 15 }
+			605 = { compliance > 15 }
+			602 = { compliance > 15 }
+		}
+		
+		select_effect = { 
+			add_timed_idea = {
+				idea = MEN_core_drain # -2000 weekly manpower
+				days = 35
+			}
+		}
+
+		completion_reward = {
+			every_owned_state = {
+				limit = {
+					has_active_resistance = yes
+				}
+				add_resistance = 5
+			}
+			every_owned_state = {
+				limit = {
+					has_active_resistance = yes
+				}
+				add_compliance = -5
+			}
+			799 = {add_claim_by = RGR }
+			605 = {add_claim_by = RGR }
+			602 = {add_claim_by = RGR }
+		}
+	}	
+	
+	focus = {
+		id = MEN_control_southern_cities
+		icon = GFX_goal_demand_sudetenland
+
+		x = -1
+		y = 1
+		relative_position_id = MEN_crush_resistance_in_south
+
+		cost = 70
+		prerequisite = { focus = MEN_crush_resistance_in_south }
+		
+		available = {
+			780 = { is_owned_by = ROOT }
+			599 = { is_owned_by = ROOT }
+			594 = { is_owned_by = ROOT }
+			780 = { compliance > 40 }
+			599 = { compliance > 40 }
+			594 = { compliance > 40 }
+		}
+		
+		select_effect = { 
+			add_timed_idea = {
+				idea = MEN_core_drain # -2000 weekly manpower
+				days = 70
+			}
+		}
+
+		completion_reward = {
+			hidden_effect = {
+				780 = {
+					remove_claim_by = RGR
+				}
+			}
+			780	= {
+				add_core_of = RGR
+			}
+			hidden_effect = {
+				599 = {
+					remove_claim_by = RGR
+				}
+			}
+			599 = {
+				add_core_of = RGR
+			}
+			hidden_effect = {
+				594 = {
+					remove_claim_by = RGR
+				}
+			}
+			594 = {
+				add_core_of = RGR
+			}
+		}
+	}	
+	
+	focus = {
+		id = MEN_complete_control_south
+		icon = GFX_goal_generic_demand_territory
+
+		x = 0
+		y = 1
+		relative_position_id = MEN_control_southern_cities
+
+		cost = 105
+		prerequisite = { focus = MEN_control_southern_cities }
+		
+		available = {
+			778 = { is_owned_by = ROOT }
+			781 = { is_owned_by = ROOT }
+			779 = { is_owned_by = ROOT }
+			775 = { is_owned_by = ROOT }
+			772 = { is_owned_by = ROOT }
+			768 = { is_owned_by = ROOT }
+			767 = { is_owned_by = ROOT }
+			778 = { compliance > 40 }
+			781 = { compliance > 40 }
+			779 = { compliance > 40 }
+			775 = { compliance > 40 }
+			772 = { compliance > 40 }
+			768 = { compliance > 40 }
+			767 = { compliance > 40 }
+		}
+		
+		select_effect = { 
+			add_timed_idea = {
+				idea = MEN_core_drain # -2000 weekly manpower
+				days = 105
+			}
+		}
+
+		completion_reward = {
+			hidden_effect = {
+				778 = {
+					remove_claim_by = RGR
+				}
+			}
+			778 = {
+				add_core_of = RGR
+			}
+			hidden_effect = {
+				781 = {
+					remove_claim_by = RGR
+				}
+			}
+			781 = {
+				add_core_of = RGR
+			}
+			hidden_effect = {
+				779 = {
+					remove_claim_by = RGR
+				}
+			}
+			779 = {
+				add_core_of = RGR
+			}
+			hidden_effect = {
+				775 = {
+					remove_claim_by = RGR
+				}
+			}
+			775 = {
+				add_core_of = RGR
+			}
+			hidden_effect = {
+				772 = {
+					remove_claim_by = RGR
+				}
+			}
+			772 = {
+				add_core_of = RGR
+			}
+			hidden_effect = {
+				768 = {
+					remove_claim_by = RGR
+				}
+			}
+			768 = {
+				add_core_of = RGR
+			}
+			hidden_effect = {
+				767 = {
+					remove_claim_by = RGR
+				}
+			}
+			767 = {
+				add_core_of = RGR
+			}
+		}
+	}	
+	
+	focus = {
+		id = MEN_crush_resistance_in_center
+		icon = GFX_focus_generic_provoke_border_clashes
+
+		x = 0
+		y = 1
+		relative_position_id = MEN_drive_resistance_from_center
+
+		cost = 35
+		prerequisite = { focus = MEN_drive_resistance_from_center }
+		
+		available = {
+			798 = { is_owned_by = ROOT }
+			769 = { is_owned_by = ROOT }
+			771 = { is_owned_by = ROOT }
+			773 = { is_owned_by = ROOT }
+			782 = { is_owned_by = ROOT }
+			748 = { is_owned_by = ROOT }
+			783 = { is_owned_by = ROOT }
+			800 = { is_owned_by = ROOT }
+			803 = { is_owned_by = ROOT }
+			770 = { is_owned_by = ROOT }
+			798 = { compliance > 15 }
+			769 = { compliance > 15 }
+			771 = { compliance > 15 }
+			773 = { compliance > 15 }
+			782 = { compliance > 15 }
+			748 = { compliance > 15 }
+			783 = { compliance > 15 }
+			800 = { compliance > 15 }
+			803 = { compliance > 15 }			
+			770 = { compliance > 15 }
+		}
+		
+		select_effect = { 
+			add_timed_idea = {
+				idea = MEN_core_drain # -2000 weekly manpower
+				days = 35
+			}
+		}
+
+		completion_reward = {
+			every_owned_state = {
+				limit = {
+					has_active_resistance = yes
+				}
+				add_resistance = 5
+			}
+			every_owned_state = {
+				limit = {
+					has_active_resistance = yes
+				}
+				add_compliance = -5
+			}
+			798 = {add_claim_by = RGR }
+			769 = {add_claim_by = RGR }
+			771 = {add_claim_by = RGR }			
+			773 = {add_claim_by = RGR }
+			782 = {add_claim_by = RGR }
+			748 = {add_claim_by = RGR }			
+			783 = {add_claim_by = RGR }
+			800 = {add_claim_by = RGR }
+			803 = {add_claim_by = RGR }			
+			770 = {add_claim_by = RGR }
+		}
+	}	
+	
+	focus = {
+		id = MEN_control_central_cities
+		icon = GFX_goal_demand_sudetenland
+
+		x = -2
+		y = 1
+		relative_position_id = MEN_crush_resistance_in_center
+
+		cost =70
+		prerequisite = { focus = MEN_crush_resistance_in_center }
+		
+		available = {
+			799 = { is_owned_by = ROOT }
+			605 = { is_owned_by = ROOT }
+			602 = { is_owned_by = ROOT }
+			799 = { compliance > 40 }
+			605 = { compliance > 40 }
+			602 = { compliance > 40 }
+		}
+		
+		select_effect = { 
+			add_timed_idea = {
+				idea = MEN_core_drain # -2000 weekly manpower
+				days = 70
+			}
+		}
+
+		completion_reward = {
+			hidden_effect = {
+				799 = {
+					remove_claim_by = RGR
+				}
+			}
+			799 = {
+				add_core_of = RGR
+			}
+			hidden_effect = {
+				605 = {
+					remove_claim_by = RGR
+				}
+			}
+			605 = {
+				add_core_of = RGR
+			}
+			hidden_effect = {
+				602 = {
+					remove_claim_by = RGR
+				}
+			}
+			602 = {
+				add_core_of = RGR
+			}
+		}
+	}	
+	
+	focus = {
+		id = MEN_complete_center_control
+		icon = GFX_goal_generic_demand_territory
+
+		x = 0
+		y = 1
+		relative_position_id = MEN_control_central_cities
+
+		cost = 105
+		prerequisite = { focus = MEN_control_central_cities }
+		
+		available = {
+			798 = { is_owned_by = ROOT }
+			769 = { is_owned_by = ROOT }
+			771 = { is_owned_by = ROOT }
+			773 = { is_owned_by = ROOT }
+			782 = { is_owned_by = ROOT }
+			748 = { is_owned_by = ROOT }
+			783 = { is_owned_by = ROOT }
+			800 = { is_owned_by = ROOT }
+			803 = { is_owned_by = ROOT }			
+			770 = { is_owned_by = ROOT }
+			798 = { compliance > 40 }
+			769 = { compliance > 40 }
+			771 = { compliance > 40 }
+			773 = { compliance > 40 }
+			782 = { compliance > 40 }
+			748 = { compliance > 40 }
+			783 = { compliance > 40 }
+			800 = { compliance > 40 }
+			803 = { compliance > 40 }			
+			770 = { compliance > 40 }
+		}
+		
+		select_effect = { 
+			add_timed_idea = {
+				idea = MEN_core_drain # -2000 weekly manpower
+				days = 105
+			}
+		}
+
+		completion_reward = {
+			hidden_effect = {
+				798 = {
+					remove_claim_by = RGR
+				}
+			}
+			798 = {
+				add_core_of = RGR
+			}
+			hidden_effect = {
+				769 = {
+					remove_claim_by = RGR
+				}
+			}
+			769 = {
+				add_core_of = RGR
+			}
+			hidden_effect = {
+				771 = {
+					remove_claim_by = RGR
+				}
+			}
+			771 = {
+				add_core_of = RGR
+			}
+			hidden_effect = {
+				773 = {
+					remove_claim_by = RGR
+				}
+			}
+			773 = {
+				add_core_of = RGR
+			}
+			hidden_effect = {
+				782 = {
+					remove_claim_by = RGR
+				}
+			}
+			782 = {
+				add_core_of = RGR
+			}
+			hidden_effect = {
+				748 = {
+					remove_claim_by = RGR
+				}
+			}
+			748 = {
+				add_core_of = RGR
+			}
+			hidden_effect = {
+				783 = {
+					remove_claim_by = RGR
+				}
+			}
+			783 = {
+				add_core_of = RGR
+			}
+			hidden_effect = {
+				800 = {
+					remove_claim_by = RGR
+				}
+			}
+			800 = {
+				add_core_of = RGR
+			}
+			hidden_effect = {
+				803 = {
+					remove_claim_by = RGR
+				}
+			}
+			803 = {
+				add_core_of = RGR
+			}			
+			hidden_effect = {
+				770 = {
+					remove_claim_by = RGR
+				}
+			}
+			770 = {
+				add_core_of = RGR
+			}
+		}	
+	}
+	
+	focus = {
+		id = MEN_drive_resistance_from_southwest
+		icon = GFX_goal_generic_more_territorial_claims
+
+		x = 0
+		y = 1
+		relative_position_id = MEN_crush_resistance_in_center
+
+		cost = 35
+		prerequisite = { focus = MEN_crush_resistance_in_center }
+		
+		available = {
+			325 = { is_owned_by = ROOT }
+			783 = { is_owned_by = ROOT }
+			325 = { compliance > 15 }
+			783 = { compliance > 15 }
+		}
+		
+		select_effect = { 
+			add_timed_idea = {
+				idea = MEN_core_drain # -2000 weekly manpower
+				days = 35
+			}
+		}
+
+		completion_reward = {
+			every_owned_state = {
+				limit = {
+					has_active_resistance = yes
+				}
+				add_resistance = 5
+			}
+			every_owned_state = {
+				limit = {
+					has_active_resistance = yes
+				}
+				add_compliance = -5
+			}
+			325 = {add_claim_by = RGR }
+			783 = {add_claim_by = RGR }
+		}
+	}	
+	
+	focus = {
+		id = MEN_crush_resistance_in_southwest
+		icon = GFX_focus_generic_provoke_border_clashes
+
+		x = 0
+		y = 1
+		relative_position_id = MEN_drive_resistance_from_southwest
+
+		cost = 35
+		prerequisite = { focus = MEN_drive_resistance_from_southwest }
+		
+		available = {
+			784 = { is_owned_by = ROOT }
+			785 = { is_owned_by = ROOT }
+			747 = { is_owned_by = ROOT }
+			801 = { is_owned_by = ROOT }
+			784 = { compliance > 15 }
+			785 = { compliance > 15 }			
+			747 = { compliance > 15 }
+			801 = { compliance > 15 }
+		}
+		
+		select_effect = { 
+			add_timed_idea = {
+				idea = MEN_core_drain # -2000 weekly manpower
+				days = 35
+			}
+		}
+
+		completion_reward = {
+			every_owned_state = {
+				limit = {
+					has_active_resistance = yes
+				}
+				add_resistance = 5
+			}
+			every_owned_state = {
+				limit = {
+					has_active_resistance = yes
+				}
+				add_compliance = -5
+			}
+			784 = {add_claim_by = RGR }
+			785 = {add_claim_by = RGR }			
+			747 = {add_claim_by = RGR }
+			801 = {add_claim_by = RGR }
+		}
+	}	
+	
+	focus = {
+		id = MEN_control_southwestern_cities
+		icon = GFX_goal_demand_sudetenland
+
+		x = -1
+		y = 1
+		relative_position_id = MEN_crush_resistance_in_southwest
+
+		cost = 70
+		prerequisite = { focus = MEN_crush_resistance_in_southwest }
+		
+		available = {
+			325 = { is_owned_by = ROOT }
+			783 = { is_owned_by = ROOT }
+			325 = { compliance > 40 }
+			783 = { compliance > 40 }
+		}
+		
+		select_effect = { 
+			add_timed_idea = {
+				idea = MEN_core_drain # -2000 weekly manpower
+				days = 70
+			}
+		}
+
+		completion_reward = {
+			hidden_effect = {
+				325 = {
+					remove_claim_by = RGR
+				}
+			}
+			325 = {
+				add_core_of = RGR
+			}
+			hidden_effect = {
+				783 = {
+					remove_claim_by = RGR
+				}
+			}
+			783 = {
+				add_core_of = RGR
+			}
+		}	
+	}	
+	
+	focus = {
+		id = MEN_complete_southwest_control
+		icon = GFX_goal_generic_demand_territory
+
+		x = 0
+		y = 1
+		relative_position_id = MEN_control_southwestern_cities
+
+		cost = 105
+		prerequisite = { focus = MEN_control_southwestern_cities }
+		
+		available = {
+			784 = { is_owned_by = ROOT }
+			785 = { is_owned_by = ROOT }
+			747 = { is_owned_by = ROOT }
+			801 = { is_owned_by = ROOT }
+			784 = { compliance > 40 }
+			785 = { compliance > 40 }			
+			747 = { compliance > 40 }
+			801 = { compliance > 40 }
+		}
+		
+		select_effect = { 
+			add_timed_idea = {
+				idea = MEN_core_drain # -2000 weekly manpower
+				days = 105
+			}
+		}
+
+		completion_reward = {
+			hidden_effect = {
+				784 = {
+					remove_claim_by = RGR
+				}
+			}
+			784 = {
+				add_core_of = RGR
+			}
+			hidden_effect = {
+				785 = {
+					remove_claim_by = RGR
+				}
+			}
+			785 = {
+				add_core_of = RGR
+			}
+			hidden_effect = {
+				747 = {
+					remove_claim_by = RGR
+				}
+			}
+			747 = {
+				add_core_of = RGR
+			}
+			hidden_effect = {
+				801 = {
+					remove_claim_by = RGR
+				}
+			}
+			801 = {
+				add_core_of = RGR
+			}
+		}	
+	}	
+	
+	focus = {
+		id = MEN_drive_resistance_from_north
+		icon = GFX_goal_generic_more_territorial_claims
+
+		x = 2
+		y = 1
+		relative_position_id = MEN_crush_resistance_in_center
+
+		cost = 35
+		prerequisite = { focus = MEN_crush_resistance_in_center }
+		
+		available = {
+			622 = { is_owned_by = ROOT }
+			802 = { is_owned_by = ROOT }
+			615 = { is_owned_by = ROOT }
+			622 = { compliance > 15 }
+			802 = { compliance > 15 }			
+			615 = { compliance > 15 }
+		}
+		
+		select_effect = { 
+			add_timed_idea = {
+				idea = MEN_core_drain # -2000 weekly manpower
+				days = 35
+			}
+		}
+
+		completion_reward = {
+			every_owned_state = {
+				limit = {
+					has_active_resistance = yes
+				}
+				add_resistance = 5
+			}
+			every_owned_state = {
+				limit = {
+					has_active_resistance = yes
+				}
+				add_compliance = -5
+			}
+			622 = {add_claim_by = RGR }
+			802 = {add_claim_by = RGR }			
+			615 = {add_claim_by = RGR }
+		}
+	}	
+	
+	focus = {
+		id = MEN_crush_resistance_in_north
+		icon = GFX_focus_generic_provoke_border_clashes
+
+		x = 0
+		y = 1
+		relative_position_id = MEN_drive_resistance_from_north
+
+		cost = 35
+		prerequisite = { focus = MEN_drive_resistance_from_north }
+		
+		available = {
+			804 = { is_owned_by = ROOT }
+			283 = { is_owned_by = ROOT }
+			616 = { is_owned_by = ROOT }			
+			746 = { is_owned_by = ROOT }
+			621 = { is_owned_by = ROOT }			
+			810 = { is_owned_by = ROOT }
+			796 = { is_owned_by = ROOT }
+			797 = { is_owned_by = ROOT }
+			804 = { compliance > 15 }
+			283 = { compliance > 15 }			
+			616 = { compliance > 15 }
+			746 = { compliance > 15 }			
+			621 = { compliance > 15 }
+			810 = { compliance > 15 }
+			796 = { compliance > 15 }			
+			797 = { compliance > 15 }
+		}
+		
+		select_effect = { 
+			add_timed_idea = {
+				idea = MEN_core_drain # -2000 weekly manpower
+				days = 35
+			}
+		}
+
+		completion_reward = {
+			every_owned_state = {
+				limit = {
+					has_active_resistance = yes
+				}
+				add_resistance = 5
+			}
+			every_owned_state = {
+				limit = {
+					has_active_resistance = yes
+				}
+				add_compliance = -5
+			}
+			804 = {add_claim_by = RGR }
+			283 = {add_claim_by = RGR }			
+			616 = {add_claim_by = RGR }			
+			746 = {add_claim_by = RGR }			
+			621 = {add_claim_by = RGR }			
+			810 = {add_claim_by = RGR }
+			796 = {add_claim_by = RGR }			
+			797 = {add_claim_by = RGR }
+		}
+	}	
+	
+	focus = {
+		id = MEN_control_northern_cities
+		icon = GFX_goal_demand_sudetenland
+
+		x = 1
+		y = 1
+		relative_position_id = MEN_crush_resistance_in_north
+
+		cost = 70
+		prerequisite = { focus = MEN_crush_resistance_in_north }
+		
+		available = {
+			622 = { is_owned_by = ROOT }
+			802 = { is_owned_by = ROOT }
+			615 = { is_owned_by = ROOT }
+			622 = { compliance > 40 }
+			802 = { compliance > 40 }			
+			615 = { compliance > 40 }
+		}
+		
+		select_effect = { 
+			add_timed_idea = {
+				idea = MEN_core_drain # -2000 weekly manpower
+				days = 70
+			}
+		}
+
+		completion_reward = {
+			hidden_effect = {
+				622 = {
+					remove_claim_by = RGR
+				}
+			}
+			622 = {
+				add_core_of = RGR
+			}
+			hidden_effect = {
+				802 = {
+					remove_claim_by = RGR
+				}
+			}
+			802 = {
+				add_core_of = RGR
+			}
+			hidden_effect = {
+				615 = {
+					remove_claim_by = RGR
+				}
+			}
+			615 = {
+				add_core_of = RGR
+			}
+		}	
+	}	
+	
+	focus = {
+		id = MEN_complete_northern_control
+		icon = GFX_goal_generic_demand_territory
+
+		x = 0
+		y = 1
+		relative_position_id = MEN_control_northern_cities
+
+		cost = 105
+		prerequisite = { focus = MEN_control_northern_cities }
+		
+		available = {
+			804 = { is_owned_by = ROOT }
+			283 = { is_owned_by = ROOT }
+			616 = { is_owned_by = ROOT }			
+			746 = { is_owned_by = ROOT }
+			621 = { is_owned_by = ROOT }			
+			810 = { is_owned_by = ROOT }
+			796 = { is_owned_by = ROOT }
+			797 = { is_owned_by = ROOT }
+			804 = { compliance > 40 }
+			283 = { compliance > 40 }			
+			616 = { compliance > 40 }
+			746 = { compliance > 40 }			
+			621 = { compliance > 40 }
+			810 = { compliance > 40 }
+			796 = { compliance > 40 }			
+			797 = { compliance > 40 }
+		}
+		
+		select_effect = { 
+			add_timed_idea = {
+				idea = MEN_core_drain # -2000 weekly manpower
+				days = 105
+			}
+		}
+
+		completion_reward = {
+			hidden_effect = {
+				804 = {
+					remove_claim_by = RGR
+				}
+			}
+			804 = {
+				add_core_of = RGR
+			}
+			hidden_effect = {
+				283 = {
+					remove_claim_by = RGR
+				}
+			}
+			283 = {
+				add_core_of = RGR
+			}
+			hidden_effect = {
+				616 = {
+					remove_claim_by = RGR
+				}
+			}
+			616 = {
+				add_core_of = RGR
+			}
+			hidden_effect = {
+				746 = {
+					remove_claim_by = RGR
+				}
+			}
+			746 = {
+				add_core_of = RGR
+			}
+			hidden_effect = {
+				621 = {
+					remove_claim_by = RGR
+				}
+			}
+			621 = {
+				add_core_of = RGR
+			}
+			hidden_effect = {
+				810 = {
+					remove_claim_by = RGR
+				}
+			}
+			810 = {
+				add_core_of = RGR
+			}
+			hidden_effect = {
+				796 = {
+					remove_claim_by = RGR
+				}
+			}
+			796 = {
+				add_core_of = RGR
+			}
+			hidden_effect = {
+				797 = {
+					remove_claim_by = RGR
+				}
+			}
+			797 = {
+				add_core_of = RGR
+			}
+		}
+	}	
+	
+	focus = {
+		id = MEN_drive_resistance_from_northwest
+		icon = GFX_goal_generic_more_territorial_claims
+
+		x = 1
+		y = 1
+		relative_position_id = MEN_crush_resistance_in_southwest
+
+		cost = 35
+		prerequisite = { focus = MEN_crush_resistance_in_southwest }
+		prerequisite = { focus = MEN_crush_resistance_in_north }
+		
+		available = {
+			805 = { is_owned_by = ROOT }
+			793 = { is_owned_by = ROOT }
+			805 = { compliance > 15 }
+			793 = { compliance > 15 }	
+		}
+		
+		select_effect = { 
+			add_timed_idea = {
+				idea = MEN_core_drain # -2000 weekly manpower
+				days = 35
+			}
+		}
+
+		completion_reward = {
+			every_owned_state = {
+				limit = {
+					has_active_resistance = yes
+				}
+				add_resistance = 5
+			}
+			every_owned_state = {
+				limit = {
+					has_active_resistance = yes
+				}
+				add_compliance = -5
+			}
+			805 = {add_claim_by = RGR }
+			793 = {add_claim_by = RGR }			
+		}
+	}	
+	
+	focus = {
+		id = MEN_crush_resistance_in_northwest
+		icon = GFX_focus_generic_provoke_border_clashes
+
+		x = 0
+		y = 1
+		relative_position_id = MEN_drive_resistance_from_northwest
+
+		cost = 35
+		prerequisite = { focus = MEN_drive_resistance_from_northwest }
+		
+		available = {
+			752 = { is_owned_by = ROOT }
+			753 = { is_owned_by = ROOT }
+			806 = { is_owned_by = ROOT }
+			604 = { is_owned_by = ROOT }
+			755 = { is_owned_by = ROOT }
+			808 = { is_owned_by = ROOT }
+			752 = { compliance > 15 }
+			753 = { compliance > 15 }			
+			806 = { compliance > 15 }			
+			604 = { compliance > 15 }
+			755 = { compliance > 15 }			
+			808 = { compliance > 15 }
+		}
+		
+		select_effect = { 
+			add_timed_idea = {
+				idea = MEN_core_drain # -2000 weekly manpower
+				days = 35
+			}
+		}
+
+		completion_reward = {
+			every_owned_state = {
+				limit = {
+					has_active_resistance = yes
+				}
+				add_resistance = 5
+			}
+			every_owned_state = {
+				limit = {
+					has_active_resistance = yes
+				}
+				add_compliance = -5
+			}
+			752 = {add_claim_by = RGR }
+			753 = {add_claim_by = RGR }						
+			806 = {add_claim_by = RGR }
+			604 = {add_claim_by = RGR }			
+			755 = {add_claim_by = RGR }			
+			808 = {add_claim_by = RGR }
+		}
+	}	
+	
+	focus = {
+		id = MEN_control_northwestern_cities
+		icon = GFX_goal_demand_sudetenland
+
+		x = 0
+		y = 1
+		relative_position_id = MEN_crush_resistance_in_northwest
+
+		cost = 70
+		prerequisite = { focus = MEN_crush_resistance_in_northwest }
+		
+		available = {
+			805 = { is_owned_by = ROOT }
+			793 = { is_owned_by = ROOT }
+			805 = { compliance > 40 }
+			793 = { compliance > 40 }
+		}
+		
+		select_effect = { 
+			add_timed_idea = {
+				idea = MEN_core_drain # -2000 weekly manpower
+				days = 70
+			}
+		}
+
+		completion_reward = {
+			hidden_effect = {
+				805 = {
+					remove_claim_by = RGR
+				}
+			}
+			805 = {
+				add_core_of = RGR
+			}
+			hidden_effect = {
+				793 = {
+					remove_claim_by = RGR
+				}
+			}
+			793 = {
+				add_core_of = RGR
+			}
+		}
+	}	
+	
+	focus = {
+		id = MEN_complete_northwest_control
+		icon = GFX_goal_generic_demand_territory
+
+		x = 0
+		y = 1
+		relative_position_id = MEN_control_northwestern_cities
+
+		cost = 105
+		prerequisite = { focus = MEN_control_northwestern_cities }
+		
+		available = {
+			752 = { is_owned_by = ROOT }
+			753 = { is_owned_by = ROOT }
+			806 = { is_owned_by = ROOT }
+			604 = { is_owned_by = ROOT }
+			755 = { is_owned_by = ROOT }
+			808 = { is_owned_by = ROOT }
+			752 = { compliance > 40 }
+			753 = { compliance > 40 }			
+			806 = { compliance > 40 }			
+			604 = { compliance > 40 }
+			755 = { compliance > 40 }			
+			808 = { compliance > 40 }
+		}
+		
+		select_effect = { 
+			add_timed_idea = {
+				idea = MEN_core_drain # -2000 weekly manpower
+				days = 105
+			}
+		}
+
+		completion_reward = {
+			hidden_effect = {
+				752 = {
+					remove_claim_by = RGR
+				}
+			}
+			752 = {
+				add_core_of = RGR
+			}
+			hidden_effect = {
+				753 = {
+					remove_claim_by = RGR
+				}
+			}
+			753 = {
+				add_core_of = RGR
+			}
+			hidden_effect = {
+				806 = {
+					remove_claim_by = RGR
+				}
+			}
+			806 = {
+				add_core_of = RGR
+			}
+			hidden_effect = {
+				755 = {
+					remove_claim_by = RGR
+				}
+			}
+			755 = {
+				add_core_of = RGR
+			}
+			hidden_effect = {
+				808 = {
+					remove_claim_by = RGR
+				}
+			}
+			808 = {
+				add_core_of = RGR
+			}			
+			hidden_effect = {
+				604 = {
+					remove_claim_by = RGR
+				}
+			}
+			604 = {
+				add_core_of = RGR
+			}
+		}
+	}	
+	
+	focus = {
+		id = MEN_iron_fist
+		icon = GFX_focus_generic_support_the_left_right
+
+		x = 3
+		y = 0
+		relative_position_id = MEN_taiwan_fleet_hub
+
+		cost = 70
+		
+		available = {
+		AND = {
+			has_completed_focus = MEN_complete_center_control
+			has_completed_focus = MEN_complete_coast_control
+			has_completed_focus = MEN_complete_control_south
+			has_completed_focus = MEN_complete_east_control
+			has_completed_focus = MEN_complete_northern_control
+			has_completed_focus = MEN_complete_northwest_control
+			has_completed_focus = MEN_complete_southwest_control
+			}
+		}
+
+		completion_reward = {
+			remove_ideas = MEN_government_expansion
+			remove_ideas = MEN_partisans
+			add_ideas = reign_of_terror
+		}
+	}	
+	
+	focus = {
+		id = MEN_complete_unification
+		icon = GFX_red_dragon
+
+		x = 0
+		y = 1
+		relative_position_id = MEN_iron_fist
+
+		cost = 70
+		prerequisite = { focus = MEN_iron_fist }
+		
+		available = {
+			or = {
+				JAP = { has_completed_focus = JAP_ascend_the_throne }
+				JAP = { is_ai = yes }
+			}
+		}
+
+		completion_reward = {
+			every_state = {
+				limit = { is_core_of = TIB }
+				add_claim_by = RGR
+			}
+			every_state = {
+				limit = { is_core_of = SIK }
+				add_claim_by = RGR
+			}
+			every_state = {
+				limit = { 
+					is_core_of = MAN 
+					NOT = { is_core_of = RGR } 
+				}
+				add_core_of = RGR
+			}
+		}
+	}	
+
+	focus = {
+		id = MEN_integrate_sinkiang
+		icon = GFX_goal_generic_forceful_treaty
+
+		x = -1
+		y = 1
+		relative_position_id = MEN_complete_unification
+
+		cost = 70
+		prerequisite = { focus = MEN_complete_unification }
+		
+		available = {
+			851 = { is_fully_controlled_by_ROOT_or_ally = yes }
+			287 = { is_fully_controlled_by_ROOT_or_ally = yes }
+			918 = { is_fully_controlled_by_ROOT_or_ally = yes }
+			619 = { is_fully_controlled_by_ROOT_or_ally = yes }
+			754 = { is_fully_controlled_by_ROOT_or_ally = yes }
+			759 = { is_fully_controlled_by_ROOT_or_ally = yes }
+			618 = { is_fully_controlled_by_ROOT_or_ally = yes }
+			617 = { is_fully_controlled_by_ROOT_or_ally = yes }
+			861 = { is_fully_controlled_by_ROOT_or_ally = yes }
+			760 = { is_fully_controlled_by_ROOT_or_ally = yes }
+		}
+
+		completion_reward = {
+			every_state = {
+				limit = { is_core_of = SIK }
+				add_core_of = RGR
+				hidden_effect = {
+					remove_claim_by = RGR
+				}
+			}
+		}
+	}
+	
+	focus = {
+		id = MEN_integrate_tibet
+		icon = GFX_goal_generic_forceful_treaty
+
+		x = 1
+		y = 1
+		relative_position_id = MEN_complete_unification
+
+		cost = 70
+		prerequisite = { focus = MEN_complete_unification }
+		
+		available = {
+			601 = { is_fully_controlled_by_ROOT_or_ally = yes }
+			322 = { is_fully_controlled_by_ROOT_or_ally = yes }
+			758 = { is_fully_controlled_by_ROOT_or_ally = yes }
+		}
+
+		completion_reward = {
+			every_state = {
+				limit = { is_core_of = TIB }
+				add_core_of = RGR
+				hidden_effect = {
+					remove_claim_by = RGR
+				}
+			}
+		}
+	}	
+}

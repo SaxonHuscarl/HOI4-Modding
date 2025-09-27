@@ -1,0 +1,139 @@
+on_actions = {
+	#FROM - Country (owner)
+	#ROOT - leader
+	#FROMFROM - original owner for exiled leaders
+	on_unit_leader_level_up = {
+		effect = {
+			unit_leader_level_up_effect = yes
+		}
+	}
+	
+	on_unit_leader_created = { # This uses the UNIT LEADER sub scope of a character, FROM == country
+		effect = {
+			character = {
+				if = {
+					limit = {
+						is_exiled_leader = no
+					}
+						
+					if = { 
+						limit = {
+							is_army_leader = yes
+						}
+						if = {
+							limit = {	
+								FROM = { has_idea = political_loyalty_spirit } 
+							}
+							set_temp_variable = { random_seed = global.daily_random }
+							randomize_temp_variable = random_seed
+							root = {
+								random_list = {
+									seed = random_seed
+									50 = { 
+										add_unit_leader_trait = media_personality
+									}
+									50 = { 
+										add_unit_leader_trait = politically_connected
+									}
+								}
+							}
+							
+						}
+						else_if = {
+							limit = {
+								FROM = { has_idea = inventive_leadership_spirit } 
+							}
+							set_temp_variable = { random_seed = global.daily_random }
+							randomize_temp_variable = random_seed
+							root = {
+								random_list = {
+									seed = random_seed
+									50 = { 
+										random_list = {
+											33 = { add_unit_leader_trait = naval_invader }
+											33 = { add_unit_leader_trait = commando_trait }
+											33 = { add_unit_leader_trait = trickster_CC }
+										}
+									}
+									50 = {}
+								}
+							}
+						}
+						else_if = {
+							limit = {
+								FROM = { has_idea = theatre_training_spirit } 
+							}
+							set_temp_variable = { random_seed = global.daily_random }
+							randomize_temp_variable = random_seed
+							root = {
+								random_list = {
+									seed = random_seed
+									25 = { 
+										random_list = {
+											50 = { add_unit_leader_trait = brilliant_strategist }
+											50 = { add_unit_leader_trait = inflexible_strategist }
+										}
+									}
+									75 = {}
+								}
+							}
+						}
+					}
+					else_if = {
+						limit = {
+							FROM = { has_idea = fleet_in_being_academy_spirit } #done here instead of the trait file to avoid some oddness with generating assignable traits under certain circumstances, makes it easier to control probabilities
+						}
+						set_temp_variable = { random_seed = global.daily_random }
+						randomize_temp_variable = random_seed
+						root = {
+							random_list = {
+								seed = random_seed
+								50 = { 
+									add_unit_leader_trait = gunnery_expert
+								}
+								50 = {}
+							}
+						}
+					}
+					else_if = {
+						limit = {
+							FROM = { has_idea = trade_interdiction_academy_spirit } #done here instead of the trait file to avoid some oddness with generating assignable traits under certain circumstances, makes it easier to control probabilities
+						}
+						set_temp_variable = { random_seed = global.daily_random }
+						randomize_temp_variable = random_seed
+						root = {
+							random_list = {
+								seed = random_seed
+								25 = { 
+									add_unit_leader_trait = seawolf
+								}
+								25 = { 
+									add_unit_leader_trait = blockade_runner
+								}
+								50 = {}
+							}
+						}
+					}
+					else_if = {
+						limit = {
+							FROM = { has_idea = base_strike_academy_spirit } #done here instead of the trait file to avoid some oddness with generating assignable traits under certain circumstances, makes it easier to control probabilities
+						}
+						set_temp_variable = { random_seed = global.daily_random }
+						randomize_temp_variable = random_seed
+						root = {
+							random_list = {
+								seed = random_seed
+								50 = { 
+									add_unit_leader_trait = aviation_enthusiast 
+								}
+								50 = {}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+
+}
+

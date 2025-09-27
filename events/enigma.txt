@@ -1,0 +1,403 @@
+﻿##### Blackice Enigma events from HOI 3 ( events\zDD-Event_chains.txt ) , no French uprisings ( no partisans anymore ) or Sorge event-chain ( no espionage anymore ) from that file
+
+add_namespace = enigma
+
+## JULY 39 - MARIAN REJEWSKI GIVE ENIGMA TO ALLIES (ALLIES)
+country_event = {
+	id = enigma.1
+	title = enigma.1.t
+	desc = enigma.1.d
+	picture = GFX_report_event_enigma1		# don't forget the picture
+	
+	fire_only_once = yes
+	is_triggered_only = yes
+	
+	trigger = {
+		#tag = POL #EOA
+		check_variable = { global.days_passed > 1277} #date > 1939.7.1 }
+	}
+	
+	option = {
+		name = enigma.1.a
+		set_country_flag = enigma_to_allies
+		ENG = { country_event = enigma.2 }
+		FRA = { country_event = enigma.2 }
+		ai_chance = { factor = 100 }
+	}
+	
+	option = {
+		name = enigma.1.b
+		set_country_flag = enigma_to_allies
+		ai_chance = { factor = 0 }
+	}
+}
+country_event = {
+	id = enigma.2
+	title = enigma.2.t
+	desc = enigma.2.d
+	picture = GFX_report_event_engima1		# don't forget the picture
+	
+	is_triggered_only = yes	
+	
+	option = {
+		name = "enigma.2.a"
+		
+		set_country_flag = enigma_to_allies		
+		#add_country_modifier = {				# doesn't exist anymore, and neither does espionage
+		#		name = "Spy_Information"
+		#		duration = 60
+		#}
+	}
+}	
+## AUG 39 - OPERATION ULTRA (ENG)					# just for information purposes right now
+country_event = {
+
+	id = enigma.3
+	title = enigma.3.t
+	desc = enigma.3.d
+	picture = GFX_report_event_bletchley_park 	# don't forget the picture
+	
+	trigger = {
+		tag = ENG
+		has_country_flag = enigma_to_allies
+		OR = {
+			has_tech = basic_decryption
+			has_tech = basic_decryption_lar
+		}
+		controls_state = 126		
+	}
+
+	fire_only_once = yes
+	is_triggered_only = yes
+	
+	option = {
+		name = enigma.3.a
+		#decryption_machine = 180
+		#add_country_modifier = {
+		#		name = "build_heavy_forts"
+		#		duration = 180
+		#}
+		#country_event = enigma.4
+		
+		ai_chance = { factor = 100 }
+	}
+	
+	option = {
+		name = "enigma.3.b"
+		#decryption_machine = 180
+
+		ai_chance = { factor = 0 }
+	}
+}	
+## BLETCHLEY PARK				# event just for information purposes right now
+country_event = {
+	id = enigma.4
+	title = enigma.4.t
+	desc = enigma.4.d
+	picture = GFX_report_event_bletchley_park		# don't forget the picture
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = "enigma.4.a"
+		#126 = { radar_station = 4 }					# comes later
+		set_country_flag = bletchley_park
+	}
+}
+country_event = {
+	id = enigma.5
+	title = enigma.5.t
+	desc = enigma.5.d
+	picture = GFX_report_event_bletchley_park
+	
+	trigger = {
+		tag = ENG
+		has_country_flag = bletchley_park
+		check_variable = { global.days_passed > 1400 } #date > 1939.11.1
+		controls_state = 126
+	}
+	
+	is_triggered_only = yes	
+	fire_only_once = yes
+
+	immediate = {
+		hidden_effect = {
+			add_ideas = Bletchley_Park	
+			country_event = { id = enigma.6 days = 92 }
+		}
+	}
+	
+	option = {
+		name = enigma.5.a
+		# radar stations are state level building, maximum is 6, depending on tech level. State 129 is East Midlands
+		129 = {
+			add_building_construction = {
+				type = radar_station
+				level = 3
+				instant_build = yes
+			}
+		}
+		add_tech_bonus = {
+			name = bletchey_park_focus
+			uses = 1
+			bonus = 0.2
+			category = decryption_tech
+		}
+		effect_tooltip = {
+			add_ideas = Bletchley_Park	
+		}
+	}
+}
+
+country_event = {
+	id = enigma.6
+	title = enigma.6.t
+	desc = enigma.6.d
+	picture = GFX_report_event_bletchley_park
+	
+	trigger = {
+		tag = ENG
+		controls_state = 129		# East Midlands
+	}
+	
+	is_triggered_only = yes	
+	fire_only_once = yes
+
+	option = {
+		name = enigma.6.a
+		129 = {
+			add_building_construction = {
+				type = radar_station
+				level = 3
+				instant_build = yes
+			}
+		}
+		#9268 = { radar_station = 3 }
+	}
+}
+## OCTOBER 39 - OPERATION Z (FRA)
+country_event = {
+	id = enigma.7
+	title = enigma.7.t
+	desc = enigma.7.d
+	picture = GFX_report_event_enigma7
+	
+	trigger = {
+		tag = FRA
+		has_country_flag = enigma_to_allies
+		check_variable = { global.days_passed > 1369 } #date > 1939.10.1 
+		has_tech = computing_machine
+		OR = {
+			has_tech = basic_decryption
+			has_tech = basic_decryption_lar
+		}
+		#mechanical_computing = 1
+		#basic_decryption = 1
+		not = { has_country_flag = operation_z }
+	}
+	
+	is_triggered_only = yes	
+	fire_only_once = yes
+
+	option = {
+		name = enigma.7.a
+		set_country_flag = operation_z
+		add_tech_bonus = {
+			name = decryption_focus
+			uses = 1
+			bonus = 0.2
+			category = decryption_tech
+		}
+		#decryption_machine = 180
+
+	}
+}
+## MAY 40 - CHANGING CODES (GER)
+country_event = {
+	id = enigma.8
+	title = enigma.8.t
+	desc = enigma.8.d
+	picture = GFX_report_event_enigma8
+	
+	is_triggered_only = yes	
+	fire_only_once = yes
+	
+	trigger = { tag = GER }
+
+	option = {
+		name = enigma.8.a
+		set_country_flag = enigma
+		add_tech_bonus = {
+			name = enigma_focus
+			uses = 1
+			bonus = 0.2
+			category = encryption_tech
+		}
+		#encryption_machine = 180
+		ENG = { country_event = enigma.9 }
+		FRA = { country_event = enigma.9 }
+	}
+}
+country_event = {
+
+	id = enigma.9
+	title = enigma.9.t
+	desc = enigma.9.d
+	picture = GFX_report_event_enigma_radio_gfxaddon
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = enigma.9.a
+		
+		#add_country_modifier = {				# no idea what could replace this, maybe another negative idea, right now the event only works as information
+		#		name = "Code_change"
+		#		duration = 220
+		#}
+	}
+}
+## FEBRUARY 42 - ENIGMA M4 (GER)
+country_event = {
+
+	id = enigma.10
+	title = enigma.10.t
+	desc = enigma.10.d
+	picture = GFX_report_event_enigma10
+		
+	fire_only_once = yes
+	is_triggered_only = yes
+	
+	option = {
+		name = enigma.10.a
+		
+		add_tech_bonus = {
+			name = enigma_focus_2
+			uses = 1
+			bonus = 0.5
+			category = naval_doctrine_trade_interdiction
+			category = naval_doctrine_submarine
+		}
+
+	}
+}
+## SOMEWHERE IN '42 - ENIGMA CRACKING ATTEMPT (USA)
+country_event = {
+
+	id = enigma.11
+	title = enigma.11.t
+	desc = enigma.11.d
+	picture = GFX_report_event_enigma10
+	trigger = { tag = USA }
+
+	
+	fire_only_once = yes
+	is_triggered_only = yes
+
+	option = {
+		name = enigma.11.a
+		add_ideas = Cracking_Enigma
+		ai_chance = { factor = 100 }
+		hidden_effect = {
+			country_event = { id = enigma.12 random_days = 325 }
+		}
+	}
+	
+	option = {
+		name = enigma.11.b
+		ai_chance = { factor = 0 }
+	}
+}
+## JANUARY 43 - ENIGMA CODE FOUND (ALLIES)
+country_event = {
+
+	id = enigma.12
+	title = enigma.12.t
+	desc = enigma.12.d
+	picture = GFX_report_event_enigma7
+	
+	
+	fire_only_once = yes
+	is_triggered_only = yes
+
+	immediate = {
+		hidden_effect = {
+			remove_ideas = Cracking_Enigma
+		}
+	}
+	
+	option = {
+		name = enigma.12.a
+		add_tech_bonus = {
+			name = enigma_cracked_1
+			uses = 1
+			bonus = 0.5
+			category = decryption_tech
+		}
+		add_tech_bonus = {
+			name = enigma_cracked_2
+			uses = 1
+			bonus = 0.5
+			category = naval_doctrine_convoy
+		}
+
+		effect_tooltip = {
+			remove_ideas = Cracking_Enigma	
+		}
+		ENG = { country_event = enigma.13 }
+
+	}
+}
+country_event = {
+
+	id = enigma.13
+	title = enigma.13.t
+	desc = enigma.13.d
+	picture = GFX_report_event_enigma2
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = enigma.13.a
+		add_tech_bonus = {
+			name = enigma_cracked_2
+			uses = 1
+			bonus = 0.5
+			category = naval_doctrine_convoy
+		}
+		ai_chance = { factor = 100 }
+	}
+}
+
+#### Bletchley_Park gets taken be the enemies	
+country_event = {
+
+	id = enigma.15
+	title = enigma.15.t
+	desc = enigma.15.d
+	picture = GFX_report_event_bletchley_park
+	
+	trigger = {
+		tag = ENG
+		has_country_flag = bletchley_park
+		129 = { is_controlled_by = GER }				# 129 is East Midlands
+	}
+		
+	fire_only_once = yes
+	is_triggered_only = yes
+
+	immediate = {
+		hidden_effect = {
+			remove_ideas = Bletchley_Park
+		}
+	}
+	
+	option = {
+		name = enigma.15.a
+		clr_country_flag = bletchley_park
+		effect_tooltip = {
+			remove_ideas = Bletchley_Park	
+		}
+		ai_chance = { factor = 100 }
+	}
+}	
+### EOF ###

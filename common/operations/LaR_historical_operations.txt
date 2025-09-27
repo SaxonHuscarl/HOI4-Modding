@@ -1,0 +1,469 @@
+ENG_heavy_water_raid = { ### 1/50
+	icon = GFX_historical_heavy_water
+	map_icon = GFX_historical_heavy_water_small
+	name = heavy_water_raid
+	desc = heavy_water_raid_desc
+	days = 90
+	priority = -1
+
+	allowed = {
+		tag = ENG
+		has_done_agency_upgrade = upgrade_form_operations
+		GER = { has_idea = NOR_GER_bonus }
+		has_war_with = GER
+	}
+	operation_target = {
+		targets = { GER }
+	}
+	available = { 
+		110 = { resistance > 50 }
+		network_strength = {
+			target = GER
+			state = 110
+			value > 50
+		}
+	}
+	visible = {
+		network_national_coverage = {
+			target = GER
+			value > 0
+		}
+	}
+
+	operatives = 1
+
+	# Integer [0-100] - Every operation has a hard requirement of network strength in the target country
+	network_strength = 50
+
+	equipment = {
+		SMG_equipment = 500
+		support_equipment = 150
+		radio_equipment = 50
+	}
+
+	on_start = {  # SCOPE_OPERATION
+		
+	}
+
+	outcome_modifiers = { operation_outcome }
+	cost_modifiers = { operation_cost }
+	risk_modifiers = { operation_risk }
+
+	outcome_potential = {
+		custom_effect_tooltip = heavy_water_raid_outcome_tt
+		FROM = {
+			swap_ideas = {
+				add_idea = NOR_GER_bonus_reduced
+				remove_idea = NOR_GER_bonus
+			}
+		}
+	}
+	risk_chance = 0.50
+	experience = 5
+	# outcome is an effect that runs when the operation has completed
+	outcome_execute = { # SCOPE_OPERATION
+		FROM = { country_event = lar_heavy_water.1 }
+		ROOT = { country_event = lar_heavy_water.2 }
+		effect_tooltip = {
+			FROM = {
+				swap_ideas = {
+					add_idea = NOR_GER_bonus_reduced
+					remove_idea = NOR_GER_bonus
+				}
+			}
+		}
+	}
+	
+	# This is where all the separate phases are defined
+	# Each phase for an operation may have a single actual phase assigned to it, which is determined here
+	phases = { #infiltration 
+		heavy_water_infiltration = { base = 100 }
+	}
+	phases = { 
+		heavy_water_attack = { base = 100 }
+	}
+	phases = { 
+		heavy_water_exfiltration = { base = 100 }
+	}
+}
+
+ENG_bruneval_raid = { ### 1/50
+	icon = GFX_historical_bruneval_raid
+	map_icon = GFX_historical_bruneval_raid_small
+	name = bruneval_raid
+	desc = bruneval_raid_desc
+	days = 180
+	priority = -1
+
+	allowed = {
+		tag = ENG
+	}
+	operation_target = {
+		targets = { GER }
+	}
+	available = { 
+		enemy_has_equal_or_better_radar_tech_trigger = yes
+	}
+
+	visible = {
+		has_war_with = GER
+		GER = {
+			has_tech = radio_detection
+		}
+		FRA = {
+			has_war_with = GER
+			has_capitulated = yes
+		}
+		not = { has_global_flag = bruneval_raid_success }
+		network_national_coverage = {
+			target = GER
+			value > 0
+		}
+		has_done_agency_upgrade = upgrade_form_operations
+		NOT = { has_country_flag = ui_hide_operations@FROM }
+	}
+	operatives = 1
+	experience = 5
+
+	# Integer [0-100] - Every operation has a hard requirement of network strength in the target country
+	network_strength = 50
+
+	equipment = {
+		infantry_equipment = 500
+		support_equipment = 50
+	}
+
+	on_start = {  # SCOPE_OPERATION
+		
+	}
+
+	outcome_modifiers = { operation_outcome }
+	cost_modifiers = { operation_cost }
+	risk_modifiers = { operation_risk }
+
+	outcome_potential = {
+		custom_effect_tooltip = bruneval_raid_outcome_tt
+	}
+	risk_chance = 0.2
+	# outcome is an effect that runs when the operation has completed
+	outcome_execute = { # SCOPE_OPERATION
+		FROM = { country_event = lar_bruneval_raid.1 }
+		ROOT = { country_event = lar_bruneval_raid.2 }
+	}
+	
+	# This is where all the separate phases are defined
+	# Each phase for an operation may have a single actual phase assigned to it, which is determined here
+	phases = { #infiltration 
+		bruneval_infiltration = { base = 100 }
+	}
+	phases = { 
+		bruneval_attack = { base = 100 }
+	}
+	phases = { 
+		bruneval_exfiltration = { base = 100 }
+	}
+}
+SOV_establish_republic_of_uzice = {
+	icon = GFX_operations_boost_resistance
+	map_icon = GFX_operations_boost_resistance_map
+	name = operation_serbian_uprising
+	desc = operation_serbian_uprising_desc
+	priority = -1
+
+	days = 75
+	network_strength = 35
+	operatives = 2
+	
+	allowed = {
+		tag = SOV
+		has_completed_focus = SOV_workers_rise
+		has_war_with = GER
+		has_done_agency_upgrade = upgrade_form_operations
+	}
+	operation_target = {
+		targets = { GER }
+	}
+	available = { 
+		NOT = { has_global_flag = Tito_killed }
+	}
+	visible = {
+		network_national_coverage = {
+			target = GER
+			value > 0
+		}
+		has_operation_token = {
+			tag = GER
+			token = token_resistance_contacts
+		}
+		107 = { 
+			CONTROLLER = {
+				OR = {
+					tag = GER
+					is_in_faction_with = GER
+					is_subject_of = GER
+				}
+			}
+		}
+	}
+
+	equipment = {
+		infantry_equipment = 2500
+		SMG_equipment = 2500
+		support_equipment = 500
+		radio_equipment = 250
+	}
+
+	risk_chance = 0.25
+	experience = 1.5
+	outcome_modifiers = { operation_outcome }
+	outcome_execute = {
+		FROM = { country_event = lar_serb_uprising.1 }
+		ROOT = { country_event = lar_serb_uprising.2 }
+	}
+
+	
+	phases = { #infiltration
+		infiltration_border = { base = 50 }
+		infiltration_submarine = { base = 25 }
+		infiltration_paradrop = { 
+			base = 25 
+		}
+	}
+	phases = { #resistance support
+		resistance_support_arms_depots = { base = 15 }
+		resistance_support_distribute_weapons = { base = 15 }
+		resistance_support_organize_training = { base = 15 }
+		resistance_support_coordinate_groups = { base = 15 }
+		lar_fra_coup_pre_position_units = { base = 50 }
+	}
+	phases = { lar_fra_launch_coup = { base = 100 } }
+}
+GER_capture_tito = { ### 1/50
+	icon = GFX_historical_capture_tito
+	map_icon = GFX_historical_capture_tito_small
+	name = capture_tito
+	desc = capture_tito_desc
+	days = 90
+	priority = -1
+
+	allowed = {
+		tag = GER
+		core_resistance = {
+			occupied_country_tag = YUG
+			value > 10
+		}
+	}
+	operation_target = {
+		targets = { YUG }
+	}
+	available = { 
+		core_resistance = {
+			occupied_country_tag = YUG
+			value > 40
+		}
+	}
+
+	visible = { 
+		network_national_coverage = {
+			target = YUG
+			value > 0
+		}
+		NOT = { has_global_flag = Tito_killed }
+	}
+
+	operatives = 1
+	experience = 5
+	outcome_modifiers = { operation_outcome }
+	cost_modifiers = { operation_cost }
+	risk_modifiers = { operation_risk }
+
+	# Integer [0-100] - Every operation has a hard requirement of network strength in the target country
+	network_strength = 50
+
+	equipment = {
+		infantry_equipment = 2000
+	}
+
+	on_start = {  # SCOPE_OPERATION
+		
+	}
+	outcome_potential = {
+		custom_effect_tooltip = capture_tito_outcome_tt
+	}
+	risk_chance = 0.4
+	# outcome is an effect that runs when the operation has completed
+	outcome_execute = { # SCOPE_OPERATION
+		ROOT = { 
+			random_list = {
+				75 = { country_event = lar_capture_tito.1 } #raid fails
+				25 = { country_event = lar_capture_tito.2 } #raid succeeds
+			}
+		}
+	}
+	
+	# This is where all the separate phases are defined
+	# Each phase for an operation may have a single actual phase assigned to it, which is determined here
+	phases = { #infiltration 
+		capture_tito_infiltration = { base = 100 }
+	}
+	phases = { 
+		capture_tito_attack = { base = 100 }
+	}
+	phases = { 
+		capture_tito_exfiltration = { base = 100 }
+	}
+}
+
+GER_rescue_mussolini = { ### 1/35
+	icon = GFX_historical_mussolini_rescue
+	map_icon = GFX_historical_mussolini_rescue_small
+	name = rescue_mussolini
+	desc = rescue_mussolini_desc
+	days = 90
+	priority = -1
+
+	allowed = {
+		tag = GER
+		has_war_with = ITA
+		not = { has_global_flag = mussolini_rescued_flag }
+	}
+	operation_target = {
+		targets = { ITA }
+	}
+
+	available = { 
+		has_government = fascism
+		ITA = {
+			not = {
+				has_government = fascism
+			}
+		}
+	}
+	visible = {
+		# TODO is this really enough of a check?
+		has_government = fascism
+		FROM = {
+			not = {
+				has_government = fascism
+			}
+		}
+		network_national_coverage = {
+			target = ITA
+			value > 0
+		}
+	}
+
+	operatives = 1
+	experience = 5
+	outcome_modifiers = { operation_outcome }
+	cost_modifiers = { operation_cost }
+	risk_modifiers = { operation_risk }
+
+	# Integer [0-100] - Every operation has a hard requirement of network strength in the target country
+	network_strength = 35
+
+	equipment = {
+		infantry_equipment = 2000
+	}
+
+	on_start = {  # SCOPE_OPERATION
+		
+	}
+	outcome_potential = {
+		custom_effect_tooltip = rescue_mussolini_outcome_tt
+	}
+	risk_chance = 0.3
+	# outcome is an effect that runs when the operation has completed
+	outcome_execute = { # SCOPE_OPERATION
+		ROOT = { 
+			random_list = {
+				25 = { country_event = lar_rescue_mussolini.1 } #raid fails
+				75 = { country_event = lar_rescue_mussolini.2 } #raid succeeds
+			}
+		}
+	}
+	
+	# This is where all the separate phases are defined
+	# Each phase for an operation may have a single actual phase assigned to it, which is determined here
+	phases = { #infiltration 
+		rescue_mussolini_infiltration = { base = 100 }
+	}
+	phases = { 
+		rescue_mussolini_attack = { base = 100 }
+	}
+	phases = { 
+		rescue_mussolini_exfiltration = { base = 100 }
+	}
+}
+SOV_kill_trotsky = { ### 1/50
+	icon = GFX_historical_capture_tito
+	map_icon = GFX_historical_capture_tito_small
+	name = kill_trotsky
+	desc = kill_trotsky_desc
+	days = 30
+	priority = -1
+
+	allowed = {
+		original_tag = SOV
+		has_completed_focus = SOV_assassinate_trotsky
+		NOT = {
+			has_global_flag = trotsky_dead 
+			has_global_flag = trotsky_survives
+		}
+	}
+	available = { 
+		network_national_coverage = {
+			target = MEX
+			value > 0
+		}		
+	}
+	operation_target = {
+		targets = { MEX }
+	}
+
+	visible = { 
+		
+	}
+
+	operatives = 1
+	experience = 5
+	outcome_modifiers = { operation_outcome }
+	cost_modifiers = { operation_cost }
+	risk_modifiers = { operation_risk }
+
+	# Integer [0-100] - Every operation has a hard requirement of network strength in the target country
+	network_strength = 15
+
+	equipment = {
+		infantry_equipment = 200
+	}
+
+	on_start = {  # SCOPE_OPERATION
+		
+	}
+	outcome_potential = {
+		custom_effect_tooltip = kill_trotsky_outcome_tt
+	}
+	risk_chance = 0.1
+	# outcome is an effect that runs when the operation has completed
+	outcome_execute = { # SCOPE_OPERATION
+		ROOT = { 
+			random_list = {
+				10 = { news_event = news.38 } #fails, trosky killed 120 days later
+				90 = { news_event = news.37 } #succeeds
+			}
+		}
+	}
+	
+	# This is where all the separate phases are defined
+	# Each phase for an operation may have a single actual phase assigned to it, which is determined here
+	phases = { #infiltration 
+		capture_tito_infiltration = { base = 100 }
+	}
+	phases = { 
+		capture_tito_attack = { base = 100 }
+	}
+	phases = { 
+		capture_tito_exfiltration = { base = 100 }
+	}
+}

@@ -1,0 +1,2747 @@
+
+@LAND_DOCTRINE_ARMY_WEIGHT = 0.03 #army strength
+@LAND_DOCTRINE_INDUSTRY_WEIGHT = 0.1 #MIC
+@LAND_DOCTRINE_SIZE_WEIGHT = 0.05 #states
+@LAND_DOCTRINE_MAX_WEIGHT = 100 #base score is 1000 
+
+@AIR_DOCTRINE_AIR_WEIGHT = 0.01 #air strength 
+@AIR_DOCTRINE_INDUSTRY_WEIGHT = 0.1 #MIC 
+@AIR_DOCTRINE_SIZE_WEIGHT = 0.05 #states
+@AIR_DOCTRINE_MAX_WEIGHT = 100 #base score is 1000 
+
+@NAVY_DOCTRINE_NAVY_WEIGHT = 0.07 #navy strength 
+@NAVY_DOCTRINE_INDUSTRY_WEIGHT = 0.3 #NIC 
+@NAVY_DOCTRINE_SIZE_WEIGHT = 0.05 #states
+@NAVY_DOCTRINE_MAX_WEIGHT = 100 #base score is 1000 
+
+@DOCTRINE_THREAT_WEIGHT = 10
+
+@AI_INDUSTRY_STOCK_RATIO_WEIGHT = -1.5
+
+####################################################################
+
+# when using ai_has_<unit> triggers in template definitions the ai will try to focus on the required techs if not unlocked yet
+@AI_TEMPLATE_NEED_TECH_MIN_DAYS = 10 #how many days before doing smth
+@AI_TEMPLATE_NEED_TECH_MONTHS_TO_WEIGHT = 0.25 #extra weight per month
+@AI_TEMPLATE_NEED_TECH_MAX_WEIGHT = 5 #max extra weight
+@AI_TEMPLATE_NEED_TECH_MAX_AOT = 1 #4 = 1 year #only if AOT is below this
+
+ai_template_custom_research_need = { # values in here multiply monthly weight and max weight
+
+	set_variable = { global.ai_template_research@tech_Headquarters = 10 }
+	set_variable = { global.ai_template_research@tech_Headquarters_cars = 10 }
+	set_variable = { global.ai_template_research@tech_Headquarters2 = 10 }
+	
+}
+
+ai_update_needed_unit_research = {
+
+	### a template upgrade has asked for a unit tech but failed the trigger
+	
+	for_each_loop = {
+		array = unit_techs
+		
+		if = {
+			limit = {
+				NOT = { is_in_array = { ROOT.ai_template_techs = v } }
+			}
+			add_to_array = { ROOT.ai_template_techs = v }
+			add_to_array = { ROOT.ai_template_techs_date = global.days_passed }
+			add_to_array = { ROOT.ai_template_techs_year = unit_techs_year^i }
+			#log = "AI TEMPLATE TECH: [Root.GetTag] | [?global.year] | [?v.GetTokenKey] "
+		}
+		
+	}
+	
+	if = {
+		limit = {
+			check_variable = { ai_template_techs^num > 0 }
+		}
+			
+		set_temp_variable = { allow_aot = @AI_TEMPLATE_NEED_TECH_MAX_AOT }
+		set_temp_variable = { current_year = global.year }
+		add_to_temp_variable = { current_year = global.year_ratio }
+		
+		for_each_loop = {
+			array = ai_template_techs
+			
+			if = {
+				limit = {
+					set_temp_variable = { aot = ROOT.ai_template_techs_year^i }
+					subtract_from_temp_variable = { aot = current_year }
+					multiply_temp_variable = { aot = 4 }
+					
+					check_variable = { 
+						var = allow_aot 
+						value = aot 
+						compare = greater_than_or_equals 
+					}
+				}
+					
+				set_temp_variable = { score = global.days_passed }
+				subtract_from_temp_variable = { score = ROOT.ai_template_techs_date^i }
+				
+				if = {
+					limit = {
+						check_variable = { score > @AI_TEMPLATE_NEED_TECH_MIN_DAYS }
+					}
+					
+					subtract_from_temp_variable = { score = @AI_TEMPLATE_NEED_TECH_MIN_DAYS }
+					divide_temp_variable = { score = 30 }
+					set_temp_variable = { monthly_value = @AI_TEMPLATE_NEED_TECH_MONTHS_TO_WEIGHT }
+					multiply_temp_variable = { monthly_value = global.ai_template_research@var:v?1 }
+					multiply_temp_variable = { score = monthly_value }
+					add_to_temp_variable = { score = 1 }
+					
+					set_temp_variable = { max_value = @AI_TEMPLATE_NEED_TECH_MAX_WEIGHT }
+					multiply_temp_variable = { max_value = global.ai_template_research@var:v?1 }
+					clamp_temp_variable = { var = score max = max_value }
+					
+					meta_effect = {
+						text = { 
+							set_variable = { ai_tech_need/[X] = score } 
+						}
+						X = "[?v.GetTokenKey]"
+					}
+				}
+			}
+			
+		}
+	}
+
+}
+
+ai_update_research_strategies = { 
+	set_temp_variable = { entry = 0 }
+	
+	#ai_get_<category>_tech_need = yes 		#index
+
+	ai_get_infantry_tech_need = yes 		#0
+	ai_get_support_tech_need = yes 			#1
+	ai_get_artillery_tech_need = yes 		#2 
+	ai_get_tank_tech_need = yes 			#3
+	ai_get_air_tech_need = yes 				#4
+	ai_get_naval_tech_need = yes 			#5 
+	ai_get_ww1_doctrine_tech_need = yes 	#6
+	ai_get_land_doctrine_tech_need = yes 	#7
+	ai_get_air_doctrine_tech_need = yes 	#8
+	ai_get_naval_doctrine_tech_need = yes 	#9
+	ai_get_electronic_tech_need = yes 		#10
+	ai_get_industry_tech_need = yes 		#11
+	ai_get_construction_tech_need = yes 	#12
+	ai_get_materials_tech_need = yes 		#13
+	
+	### TODO_SOL: NSB
+	#ai_get_ww1_doctrine_xp_bonus = yes
+	#ai_get_land_doctrine_xp_bonus = yes
+	#ai_get_air_doctrine_xp_bonus = yes
+	#ai_get_navy_doctrine_xp_bonus = yes
+	
+	if = {
+		limit = {
+			NOT = { has_country_flag = ai_offensive_doctrine_picked }
+		}
+		
+		if = {
+			limit = {
+				OR = {
+					ai_mobile_warfare_pick = yes
+					ai_superior_firepower_pick = yes
+					ai_mass_assault_pick = yes
+					ai_methodical_battle_pick = yes
+					ai_assault_operations_pick = yes
+					ai_guerilla_warfare_pick = yes
+				}
+			}
+			set_country_flag = ai_offensive_doctrine_picked
+			if = { limit = { ai_mobile_warfare_pick = yes }
+				set_country_flag = ai_mobile_warfare_pick
+			}
+			else_if = { limit = { ai_superior_firepower_pick = yes }
+				set_country_flag = ai_superior_firepower_pick
+			}
+			else_if = { limit = { ai_mass_assault_pick = yes }
+				set_country_flag = ai_mass_assault_pick
+			}
+			else_if = { limit = { ai_methodical_battle_pick = yes }
+				set_country_flag = ai_methodical_battle_pick
+			}
+			else_if = { limit = { ai_assault_operations_pick = yes }
+				set_country_flag = ai_assault_operations_pick
+			}
+			else_if = { limit = { ai_guerilla_warfare_pick = yes }
+				set_country_flag = ai_guerilla_warfare_pick
+			}
+		}
+		else = { #default offensive doctrine pick
+			set_country_flag = ai_offensive_doctrine_picked
+			set_country_flag = ai_methodical_battle_pick
+		}
+	}
+	
+	if = {
+		limit = {
+			NOT = { has_country_flag = ai_defensive_doctrine_picked }
+		}
+		
+		if = {
+			limit = {
+				OR = {
+					ai_defence_in_depth_pick = yes
+					ai_prepared_defense_pick = yes
+					ai_elastic_defence_pick = yes
+					ai_attritional_containment_pick = yes
+				}
+			}
+			set_country_flag = ai_defensive_doctrine_picked
+			if = { limit = { ai_defence_in_depth_pick = yes }
+				set_country_flag = ai_defence_in_depth_pick
+			}
+			else_if = { limit = { ai_prepared_defense_pick = yes }
+				set_country_flag = ai_prepared_defense_pick
+			}
+			else_if = { limit = { ai_elastic_defence_pick = yes }
+				set_country_flag = ai_elastic_defence_pick
+			}
+			else_if = { limit = { ai_attritional_containment_pick = yes }
+				set_country_flag = ai_attritional_containment_pick
+			}
+		}
+		else = { #default defensive doctrine pick
+			set_country_flag = ai_defensive_doctrine_picked
+			set_country_flag = ai_defence_in_depth_pick
+		}
+	}
+}
+
+ai_get_infantry_tech_need = { #ai_infantry_tech_need+1
+	
+}
+
+ai_get_support_tech_need = { #ai_support_tech_need+1
+	clear_variable = ai_support_tech_need
+	
+	if = {
+		limit = {
+			tag = CHI 
+			date < 1939.1.1
+		}
+		set_variable = { ai_support_tech_need = -0.8 }
+	}
+	
+}
+
+ai_get_artillery_tech_need = { #ai_artillery_tech_need+1
+	clear_variable = ai_artillery_tech_need
+	
+	if = {
+		limit = {
+			tag = CHI 
+			OR = {
+				date < 1937.6.1
+				is_researching_technology = mntartillery1
+				has_tech = mntartillery1 
+			}
+		}
+		set_variable = { ai_artillery_tech_need = -1 }
+	}
+	
+}
+
+ai_get_tank_tech_need = { #ai_tank_tech_need+1
+	clear_variable = ai_tank_tech_need
+
+	if = {
+		limit = {
+			OR = {
+				tag = GER 
+				tag = SOV 
+				tag = USA 
+				tag = ENG
+				check_variable = { num_armor > 0 }
+			}
+		}
+		
+	}
+	else = {
+		set_variable = { ai_tank_tech_need = -0.75 }
+	}
+	
+}
+
+ai_get_air_tech_need = { #ai_air_tech_need+1 - not used for plane techs, but air related stuff: airbases, radar etc
+ 
+}
+
+ai_get_naval_tech_need = { #ai_naval_tech_need+1
+
+}
+
+ai_get_ww1_doctrine_tech_need = { #ai_ww1_doctrine_tech_need
+	clear_variable = ai_ww1_doctrine_tech_need
+	
+	if = {
+		limit = {
+			check_variable = { modifier@ww1_doctrine_level < 67 }
+		}
+		
+		if = {
+			limit = {
+				NOT = { has_country_flag = ai_ww1_available_initialized }
+				NOT = { has_country_flag = ai_is_useless_country }
+			}
+			set_country_flag = ai_ww1_available_initialized
+			ai_create_ww1_doctrine_list = yes
+		}
+		
+		for_each_loop = {
+			array = ai_ww1_doctrine_available
+			
+			if = {
+				limit = {
+					meta_trigger = {
+						text = { is_researching_technology = [X] }
+						X = "[?v.GetTokenKey]"
+					}
+				}
+				add_to_temp_variable = { num_researching_ww1 = 1 }
+			}
+		}
+		
+		set_variable = { ai_ww1_doctrine_tech_need = 1 }
+		
+		set_temp_variable = { time_passed = global.days_passed }
+		if = { 		limit = { date > 1942.1.1 } divide_temp_variable = { time_passed = 300 } }
+		else_if = { limit = { date > 1941.1.1 } divide_temp_variable = { time_passed = 400 } }
+		else_if = { limit = { date > 1940.1.1 } divide_temp_variable = { time_passed = 500 } }
+		else_if = { limit = { date > 1939.1.1 } divide_temp_variable = { time_passed = 600 } }
+		else_if = { limit = { date > 1938.1.1 } divide_temp_variable = { time_passed = 700 } }
+		else = { 								divide_temp_variable = { time_passed = 800 } }
+		
+		if = {
+			limit = {
+				OR = {
+					is_chinese_nations/FLAG = yes
+					has_war = yes
+				}
+			}
+			add_to_temp_variable = { time_passed = 0.2 }
+		}
+				
+		clamp_temp_variable = { var = time_passed max = 5 }
+		
+		add_to_variable = { ai_ww1_doctrine_tech_need = time_passed }
+		
+		if = {
+			limit = {
+				check_variable = { num_researching_ww1 = 1 }
+			}
+			multiply_variable = { ai_ww1_doctrine_tech_need = 0.75 }
+		}
+		else_if = {
+			limit = {
+				check_variable = { num_researching_ww1 = 2 }
+			}
+			multiply_variable = { ai_ww1_doctrine_tech_need = 0.5 }
+		}
+		else_if = {
+			limit = {
+				check_variable = { num_researching_ww1 = 3 }
+			}
+			multiply_variable = { ai_ww1_doctrine_tech_need = 0.25 }
+		}
+		else_if = {
+			limit = {
+				check_variable = { num_researching_ww1 > 3 }
+			}
+			multiply_variable = { ai_ww1_doctrine_tech_need = 0.1 }
+		}
+		
+	}
+	
+	if = {
+		limit = {
+			tag = RGR
+		}
+		set_variable = { ai_ww1_doctrine_tech_need = 0.1 }
+	}
+	
+}
+
+ai_get_land_doctrine_tech_need = { #ai_land_doctrine_tech_need
+	clear_variable = ai_land_doctrine_tech_need
+	
+	set_temp_variable = { industry = num_of_military_factories }
+	multiply_temp_variable = { industry = @LAND_DOCTRINE_INDUSTRY_WEIGHT }
+	add_to_variable = { ai_land_doctrine_tech_need = industry }
+	
+	set_temp_variable = { army = army_strength }
+	multiply_temp_variable = { army = @LAND_DOCTRINE_ARMY_WEIGHT }
+	add_to_variable = { ai_land_doctrine_tech_need = army }
+	
+	set_temp_variable = { size = num_controlled_states }
+	multiply_temp_variable = { size = @LAND_DOCTRINE_SIZE_WEIGHT }
+	add_to_variable = { ai_land_doctrine_tech_need = size }
+	
+	set_temp_variable = { tension = global.threat }
+	multiply_temp_variable = { tension = @DOCTRINE_THREAT_WEIGHT }
+	add_to_variable = { ai_land_doctrine_tech_need = tension }
+	
+	### country specific stuff 
+	
+	if = {
+		limit = { tag = ROM has_idea = army_corruption } #-0.2
+		
+		multiply_variable = { ai_land_doctrine_tech_need = 0.75 }
+	}
+	else_if = {
+		limit = { tag = SOV }
+		
+		if = { limit = { has_idea = red_army_doctrines } #-0.8, then +0.05 per lvl up to _15
+			multiply_variable = { ai_land_doctrine_tech_need = 0.20 }
+		}
+		else_if = { limit = { has_idea = red_army_doctrines_2 }
+			multiply_variable = { ai_land_doctrine_tech_need = 0.25 }
+		}
+		else_if = { limit = { has_idea = red_army_doctrines_3 }
+			multiply_variable = { ai_land_doctrine_tech_need = 0.3 }
+		}
+		else_if = { limit = { has_idea = red_army_doctrines_4 }
+			multiply_variable = { ai_land_doctrine_tech_need = 0.35 }
+		}
+		else_if = { limit = { has_idea = red_army_doctrines_5 }
+			multiply_variable = { ai_land_doctrine_tech_need = 0.40 }
+		}
+		else_if = { limit = { has_idea = red_army_doctrines_6 }
+			multiply_variable = { ai_land_doctrine_tech_need = 0.45 }
+		}
+		else_if = { limit = { has_idea = red_army_doctrines_7 }
+			multiply_variable = { ai_land_doctrine_tech_need = 0.50 }
+		}
+		else_if = { limit = { has_idea = red_army_doctrines_8 }
+			multiply_variable = { ai_land_doctrine_tech_need = 0.60 }
+		}
+		else_if = { limit = { has_idea = red_army_doctrines_9 }
+			multiply_variable = { ai_land_doctrine_tech_need = 0.70 }
+		}
+		else_if = { limit = { has_idea = red_army_doctrines_10 }
+			multiply_variable = { ai_land_doctrine_tech_need = 0.80 }
+		}
+	}
+	else_if = {
+		limit = { tag = USA has_idea = USA_war_neutrality }
+		
+		multiply_variable = { ai_land_doctrine_tech_need = 0.65 }
+	}
+	
+	multiply_variable = { ai_land_doctrine_tech_need = MULT:land_doctrine?1 }
+		
+	set_temp_variable = { max_weight = @LAND_DOCTRINE_MAX_WEIGHT }
+	clamp_variable = { var = ai_land_doctrine_tech_need max = max_weight }
+	
+}
+
+ai_get_air_doctrine_tech_need = { #ai_air_doctrine_tech_need
+	clear_variable = ai_air_doctrine_tech_need
+	
+	if = {
+		limit = { 
+			has_country_flag = ai_has_air_production
+			OR = {
+				major_country = yes
+				
+				check_variable = { num_deployed_planes > 300 }
+			}
+		}
+
+		set_temp_variable = { industry = num_of_military_factories }
+		multiply_temp_variable = { industry = @AIR_DOCTRINE_INDUSTRY_WEIGHT }
+		add_to_variable = { ai_air_doctrine_tech_need = industry }
+		
+		set_temp_variable = { army = air_strength }
+		multiply_temp_variable = { army = @AIR_DOCTRINE_AIR_WEIGHT }
+		add_to_variable = { ai_air_doctrine_tech_need = army }
+		
+		set_temp_variable = { size = num_controlled_states }
+		multiply_temp_variable = { size = @AIR_DOCTRINE_SIZE_WEIGHT }
+		add_to_variable = { ai_air_doctrine_tech_need = size }
+		
+		set_temp_variable = { tension = global.threat }
+		multiply_temp_variable = { tension = @DOCTRINE_THREAT_WEIGHT }
+		add_to_variable = { ai_air_doctrine_tech_need = tension }
+		
+		multiply_variable = { ai_air_doctrine_tech_need = MULT:air_doctrine?1 }
+		
+		set_temp_variable = { max_weight = @AIR_DOCTRINE_MAX_WEIGHT }
+		clamp_variable = { var = ai_air_doctrine_tech_need max = max_weight }
+	}
+	
+}
+
+ai_get_naval_doctrine_tech_need = { #ai_naval_doctrine_tech_need
+	clear_variable = ai_naval_doctrine_tech_need
+	if = {
+		limit = { 
+			has_country_flag = coastal_state
+			num_of_naval_factories > 5 
+		}
+		
+		set_temp_variable = { industry = num_of_naval_factories }
+		multiply_temp_variable = { industry = @NAVY_DOCTRINE_INDUSTRY_WEIGHT }
+		add_to_variable = { ai_naval_doctrine_tech_need = industry }
+		
+		set_temp_variable = { army = navy_strength }
+		multiply_temp_variable = { army = @NAVY_DOCTRINE_NAVY_WEIGHT }
+		add_to_variable = { ai_naval_doctrine_tech_need = army }
+		
+		set_temp_variable = { size = num_controlled_states }
+		multiply_temp_variable = { size = @NAVY_DOCTRINE_SIZE_WEIGHT }
+		add_to_variable = { ai_naval_doctrine_tech_need = size }
+		
+		set_temp_variable = { tension = global.threat }
+		multiply_temp_variable = { tension = @DOCTRINE_THREAT_WEIGHT }
+		add_to_variable = { ai_naval_doctrine_tech_need = tension }
+		
+		multiply_variable = { ai_naval_doctrine_tech_need = MULT:navy_doctrine?1 }
+		
+		set_temp_variable = { max_weight = @NAVY_DOCTRINE_MAX_WEIGHT }
+		clamp_variable = { var = ai_naval_doctrine_tech_need max = max_weight }
+	}
+	
+}
+
+ai_get_electronic_tech_need = { #ai_electronic_tech_need+1
+	
+	set_variable = { ai_electronic_tech_need = amount_research_slots }
+	multiply_variable = { ai_electronic_tech_need = 0.2 }
+	subtract_from_variable = { ai_electronic_tech_need = 1 }
+	
+	if = {
+		limit = {
+			has_idea = public_iliteracy
+		}
+		set_variable = { ai_electronic_tech_need = -1 }
+	}
+	
+}
+
+ai_get_industry_tech_need = { #ai_industry_tech_need+1
+	
+	set_variable = { ai_industry_tech_need = 0.2 }
+	
+	if = {
+		limit = {
+			major_country = no
+			date > 1940.1.1
+			has_war = no
+		}
+		set_temp_variable = { stock_ratio_weight = stock_ratio }
+		multiply_temp_variable = { stock_ratio_weight = @AI_INDUSTRY_STOCK_RATIO_WEIGHT }
+		add_to_variable = { ai_industry_tech_need = stock_ratio_weight }
+	}
+	
+	if = {
+		limit = {
+			major_country = yes
+		}
+		add_to_variable = { ai_industry_tech_need = 0.2 }
+	}
+	
+	if = {
+		limit = {
+			has_country_flag = ai_is_useless_country
+		}
+		set_variable = { ai_industry_tech_need = -0.75 }
+	}
+	
+	if = {
+		limit = {
+			tag = RGR
+		}
+		set_variable = { ai_industry_tech_need = 2.0 }
+	}
+}
+
+ai_get_construction_tech_need = { #ai_construction_tech_need+1
+	clear_variable = ai_construction_tech_need
+
+	set_variable = { ai_construction_tech_need = amount_research_slots }
+	multiply_variable = { ai_construction_tech_need = 0.2 }
+	subtract_from_variable = { ai_construction_tech_need = 1 }
+	
+	if = {
+		limit = {
+			tag = CHI 
+			has_tech = construction1
+		}
+		set_variable = { ai_construction_tech_need = -0.75 }
+	}
+	
+}
+
+ai_get_materials_tech_need = { #ai_material_tech_need+1
+	
+}
+
+#######################################################################################
+
+#######################################################################################
+
+ai_stay_up_to_date_dirty_fix = {
+	set_temp_variable = { tech_list_id = global.num_three_monthly }
+	
+	if = { limit = { check_variable = { global.ai_difficulty = 4 } }
+		add_to_temp_variable = { tech_list_id = 2 }
+		if = { limit = { check_variable = { global.num_three_monthly = 1 } }
+			ai_research_fix/1 = yes
+			ai_research_fix/2 = yes 
+		}
+	}
+	if = { limit = { check_variable = { global.ai_difficulty = 3 } }
+		add_to_temp_variable = { tech_list_id = 1 }
+		if = { limit = { check_variable = { global.num_three_monthly = 1 } }
+			ai_research_fix/1 = yes 
+		}
+	}
+	
+	if = {
+		limit = {
+			check_variable = { tech_list_id < 45 }
+		}
+		
+		meta_effect = {
+			text = {	
+				ai_research_fix/[NUM] = yes 
+			}
+			NUM = "[?tech_list_id]"
+		}
+		ai_research_fix = yes 
+		
+		for_each_loop = {
+			array = ai_techs
+			value = actual_tech
+			break = none
+			index = none_i
+			
+			set_technology = { var:actual_tech = 1 } 
+			#log = "[?actual_tech.GetTokenKey] researched"
+		}
+		
+	}
+}
+
+d_ai_give_research = { #console command to give all techs AI will get over the course of the game
+
+	set_temp_variable = { iteration = 0 }
+	for_loop_effect = {
+		end = 45
+	
+		add_to_temp_variable = { iteration = 1 }
+		meta_effect = {
+			text = {	
+				ai_research_fix/[NUM] = yes 
+			}
+			NUM = "[?iteration]"
+		}
+	}
+	log = "[?ai_techs^num] NUM"
+
+	for_each_loop = {
+		array = ai_techs
+		set_technology = { var:v = 1 }
+	}
+}
+#######################################################
+#Nation Specific Techs get researched automatically for the AI. (Performance)
+#To compensate they start with less research slots
+#######################################################
+
+ai_research_fix = { #this always fires every 3 months 
+
+	if = {
+		limit = {
+			has_country_flag = ai_start_air_production
+			NOT = { OR = { tag = CAN tag = RAJ tag = AST } }
+		}
+		set_country_flag = ai_tech/fighter_equipment
+		if = {
+			limit = {
+				NOT = { has_tech = early_fighter }
+			}
+			add_to_temp_array = { ai_techs = token:early_fighter }
+		}
+		if = {
+			limit = {
+				NOT = { has_tech = fighter1 }
+			}
+			add_to_temp_array = { ai_techs = token:fighter1 }
+		}
+		
+		if = {
+			limit = {
+				date > 1940.1.1
+				NOT = { has_tech = fighter2 }
+			}
+			add_to_temp_array = { ai_techs = token:fighter2 }
+		}
+		if = {
+			limit = {
+				date > 1944.1.1
+				NOT = { has_tech = fighter3 }
+			}
+			add_to_temp_array = { ai_techs = token:fighter3 }
+		}
+	}			
+		
+}
+
+ai_research_fix/1 = { #1936.3
+	if = { limit = { tag = ITA }
+		HTD_ITA_trm_tankette_tank_chassis_ita_l3_2_b = yes
+		set_country_flag = HTD_ITA_trm_tankette_tank_chassis_ita_l3_2_b
+	}
+	
+	if = {
+		limit = {
+			tag = ENG
+		}
+		
+		if = {
+			limit = {
+				RAJ = { is_ai = yes }
+			}
+			RAJ = {
+				add_equipment_to_stockpile = {
+					type = convoy_1
+					amount = 200
+				}
+			}
+		}
+		if = {
+			limit = {
+				SAF = { is_ai = yes }
+			}
+			SAF = {
+				add_equipment_to_stockpile = {
+					type = convoy_1
+					amount = 100
+				}
+			}
+		}
+		if = {
+			limit = {
+				AST = { is_ai = yes }
+			}
+			AST = {
+				add_equipment_to_stockpile = {
+					type = convoy_1
+					amount = 100
+				}
+			}
+		}
+		
+	}
+
+}
+ai_research_fix/2 = { #1936.6
+	if = { limit = { tag = GER }
+		HTD_GER_trm_light_tank_chassis_ger_panzer2_1_a = yes
+		set_country_flag = HTD_GER_trm_light_tank_chassis_ger_panzer2_1_a
+		
+		add_to_temp_array = { ai_techs = token:tech_ju_87_equipment_1 }
+	}
+	if = { limit = { tag = SOV }
+		add_to_temp_array = { ai_techs = token:tech_db_3_bomber_equipment_1 }
+	}
+	if = { limit = { tag = FRA }
+		add_to_temp_array = { ai_techs = token:tech_ms_405_fighter_equipment_1 }
+		add_to_temp_array = { ai_techs = token:tech_bloch_210_bomber_equipment_1 }
+	}
+	if = { limit = { tag = USA }
+		add_to_temp_array = { ai_techs = token:tech_grumman_f3f_equipment_1 }
+	}
+	if = { limit = { tag = ENG }
+		HTD_ENG_trm_tankette_tank_chassis_eng_cardenloyd_1_a = yes
+		set_country_flag = HTD_ENG_trm_tankette_tank_chassis_eng_cardenloyd_1_a
+		
+		HTD_ENG_trm_light_tank_chassis_eng_vickers_light_4_a = yes
+		set_country_flag = HTD_ENG_trm_light_tank_chassis_eng_vickers_light_4_a
+	}
+	if = { limit = { tag = CZE }
+		HTD_CZE_trm_tankette_tank_chassis_cze_ahiv_1_a = yes
+		set_country_flag = HTD_CZE_trm_tankette_tank_chassis_cze_ahiv_1_a
+	}
+}
+ai_research_fix/3 = { #1936.9
+
+}
+
+ai_research_fix/4 = { #1937.1
+	if = { limit = { tag = GER }
+		add_to_temp_array = { ai_techs = token:tech_he_111_bomber_equipment_2 }
+		
+		HTD_GER_trm_medium_tank_cs_chassis_ger_panzer4_1_a = yes
+		set_country_flag = HTD_GER_trm_medium_tank_cs_chassis_ger_panzer4_1_a
+	}
+	if = { limit = { tag = FRA }
+		#add_to_temp_array = { ai_techs = token:tech_french_infantry_tank_equipment_2 }
+		#add_to_temp_array = { ai_techs = token:tech_french_cavalry_tank_equipment_3 }
+		#add_to_temp_array = { ai_techs = token:tech_french_light_cavalry_tank_equipment_3 }
+	}
+	if = { limit = { tag = JAP }
+	}
+	if = { limit = { tag = ENG }
+		add_to_temp_array = { ai_techs = token:tech_fairey_swordfish_equipment_1 }
+	}
+	if = { limit = { tag = JAP }
+		add_to_temp_array = { ai_techs = token:tech_kawasaki_ki_10_equipment_2 }
+	}
+	if = { limit = { tag = SOV }
+		HTD_SOV_trm_tankette_tank_amphibious_chassis_sov_t38_1_a = yes
+		set_country_flag = HTD_SOV_trm_tankette_tank_amphibious_chassis_sov_t38_1_a
+		
+		HTD_SOV_trm_cavalry_tank_cs_chassis_sov_bt7_1_a = yes
+		set_country_flag = HTD_SOV_trm_cavalry_tank_cs_chassis_sov_bt7_1_a
+	}
+}
+ai_research_fix/5 = { #1937.3
+	if = { limit = { tag = GER }
+		add_to_temp_array = { ai_techs = token:tech_ju_87_equipment_2 }
+	}
+	if = { limit = { tag = ENG }
+		add_to_temp_array = { ai_techs = token:tech_hawker_hurricane_equipment_1 }
+	}
+}
+ai_research_fix/6 = { #1937.6
+	if = { limit = { tag = GER }
+		add_to_temp_array = { ai_techs = token:tech_me_109_fighter_equipment_2 }
+		add_to_temp_array = { ai_techs = token:tech_he_112_equipment_1 }
+		add_to_temp_array = { ai_techs = token:tech_bf_110_fighter_equipment_1 }
+		add_to_temp_array = { ai_techs = token:tech_he_111_bomber_equipment_3 }
+		add_to_temp_array = { ai_techs = token:tech_do_22_bomber_equipment_1 }
+		
+		HTD_GER_trm_medium_tank_chassis_ger_panzer3_1_a = yes
+		set_country_flag = HTD_GER_trm_medium_tank_chassis_ger_panzer3_1_a
+	}
+	if = { limit = { tag = FRA }
+		#add_to_temp_array = { ai_techs = token:tech_french_heavy_tank_equipment_2 }
+	}
+	if = { limit = { tag = ENG }
+		HTD_ENG_trm_cavalry_tank_chassis_eng_mk1_1_a = yes
+		set_country_flag = HTD_ENG_trm_cavalry_tank_chassis_eng_mk1_1_a
+		
+		HTD_ENG_trm_infantry_tank_chassis_eng_matilda1_1_a = yes
+		set_country_flag = HTD_ENG_trm_infantry_tank_chassis_eng_matilda1_1_a
+		
+		add_to_temp_array = { ai_techs = token:tech_gladiator_fighter_equipment_1 }
+		add_to_temp_array = { ai_techs = token:tech_fairey_battle_equipment_1 }
+		add_to_temp_array = { ai_techs = token:tech_sea_gladiator_equipment_1 }
+	}
+	if = { limit = { OR = { tag = AST tag = CAN tag = RAJ } is_in_faction_with = ENG }
+		set_country_flag = ai_skip/mr_fighter_equipment
+		add_to_temp_array = { ai_techs = token:tech_hawker_hurricane_equipment_1 }
+		add_to_temp_array = { ai_techs = token:tech_fairey_battle_equipment_1 }
+	}
+	if = { limit = { tag = JAP }
+		HTD_JAP_trm_medium_tank_chassis_jap_type97_1_a = yes
+		set_country_flag = HTD_JAP_trm_medium_tank_chassis_jap_type97_1_a
+	}
+	if = { limit = { tag = USA }
+		add_to_temp_array = { ai_techs = token:tech_seversky_p35_equipment_1 }
+		add_to_temp_array = { ai_techs = token:tech_seversky_a8v1_equipment_1 }
+		add_to_temp_array = { ai_techs = token:tech_vultee_a19_equipment_1 }
+		add_to_temp_array = { ai_techs = token:tech_douglas_tbd_equipment_1 }
+	}
+	if = { limit = { tag = SOV }
+		add_to_temp_array = { ai_techs = token:tech_i_16_equipment_3 }
+		#add_to_temp_array = { ai_techs = token:tech_r_10_bomber_equipment_1 }
+		
+		HTD_SOV_trm_light_tank_chassis_sov_t26_3_a = yes
+		set_country_flag = HTD_SOV_trm_light_tank_chassis_sov_t26_3_a
+	}
+	if = { limit = { tag = JAP }
+		add_to_temp_array = { ai_techs = token:tech_nakajima_ki_27_equipment_1 }
+	}
+		
+}
+ai_research_fix/7 = { #1937.9
+	if = { limit = { tag = USA }
+		HTD_USA_trm_cavalry_tank_chassis_usa_m1_1_b = yes
+		set_country_flag = HTD_USA_trm_cavalry_tank_chassis_usa_m1_1_b
+	}
+}
+ai_research_fix/8 = { #1938.1
+	if = { limit = { tag = GER }
+
+		add_to_temp_array = { ai_techs = token:tech_bf_110_fighter_equipment_1 }
+		add_to_temp_array = { ai_techs = token:tech_do_17_bomber_equipment_1 }
+		add_to_temp_array = { ai_techs = token:tech_do_11_bomber_equipment_1 }
+		add_to_temp_array = { ai_techs = token:tech_do_23_bomber_equipment_1 }
+	}
+	if = { limit = { tag = FRA }
+		HTD_FRA_trm_light_tank_chassis_fra_h35_1_b = yes
+		set_country_flag = HTD_FRA_trm_light_tank_chassis_fra_h35_1_b
+	}
+	if = { limit = { tag = ENG }
+		add_to_temp_array = { ai_techs = token:tech_short_sunderland_equipment_1 }
+	}
+}
+ai_research_fix/9 = { #1938.3
+	if = { limit = { tag = GER }
+		add_to_temp_array = { ai_techs = token:tech_me_109_early_fighter_equipment_1 }
+	}
+	if = { limit = { tag = ITA }
+		add_to_temp_array = { ai_techs = token:tech_g50_fighter_equipment_1 }
+		add_to_temp_array = { ai_techs = token:tech_z1007_bomber_equipment_1 }
+		add_to_temp_array = { ai_techs = token:tech_sm79_naval_bomber_equipment_1 }
+	}
+	if = { limit = { tag = ENG }
+	
+		HTD_ENG_trm_cavalry_tank_chassis_eng_mk2_1_a = yes
+		set_country_flag = HTD_ENG_trm_cavalry_tank_chassis_eng_mk2_1_a
+		
+		add_to_temp_array = { ai_techs = token:tech_spitfire_equipment_1 }
+	}
+	if = { limit = { tag = USA }
+		add_to_temp_array = { ai_techs = token:tech_curtiss_p36_equipment_1 }
+		add_to_temp_array = { ai_techs = token:tech_consolidated_pby_equipment_1 }
+	}
+	if = { limit = { tag = JAP }
+		add_to_temp_array = { ai_techs = token:tech_mitsubishi_a5m_equipment_2 }
+		
+		HTD_JAP_trm_tankette_tank_chassis_jap_type97_1_a = yes
+		set_country_flag = HTD_JAP_trm_tankette_tank_chassis_jap_type97_1_a
+	}
+	if = { limit = { tag = SOV }
+		HTD_SOV_trm_cavalry_tank_chassis_sov_bt7_1_a = yes
+		set_country_flag = HTD_SOV_trm_cavalry_tank_chassis_sov_bt7_1_a 
+	}
+	if = { limit = { tag = FRA }
+		HTD_FRA_trm_light_tank_chassis_fra_h39_1_b = yes
+		set_country_flag = HTD_FRA_trm_light_tank_chassis_fra_h39_1_b
+	}
+}
+ai_research_fix/10 = { #1938.6
+	if = { limit = { tag = ENG }
+		add_to_temp_array = { ai_techs = token:tech_vickers_wellington_bomber_equipment_1 }
+		HTD_ENG_trm_infantry_tank_chassis_eng_matilda2_1_a = yes
+		set_country_flag = HTD_ENG_trm_infantry_tank_chassis_eng_matilda2_1_a
+	}
+	if = { limit = { tag = GER }
+		HTD_GER_trm_light_tank_chassis_ger_panzer2_2_a = yes
+		set_country_flag = HTD_GER_trm_light_tank_chassis_ger_panzer2_2_a
+		
+		add_to_temp_array = { ai_techs = token:tech_bf_110_fighter_equipment_2 }
+		add_to_temp_array = { ai_techs = token:tech_he_112_equipment_2 }
+		add_to_temp_array = { ai_techs = token:tech_do_17_bomber_equipment_2 }
+		add_to_temp_array = { ai_techs = token:tech_he_111_bomber_equipment_4 }
+	}
+	if = { limit = { tag = FRA }
+		HTD_FRA_trm_light_tank_chassis_fra_fcm36_1_a = yes
+		set_country_flag = HTD_FRA_trm_light_tank_chassis_fra_fcm36_1_a
+		
+		HTD_FRA_trm_tankette_tank_destroyer_chassis_fra_amr35_1_a = yes
+		set_country_flag = HTD_FRA_trm_tankette_tank_destroyer_chassis_fra_amr35_1_a
+		
+		#add_to_temp_array = { ai_techs = token:tech_french_medium_tank_equipment_3 }
+		
+		add_to_temp_array = { ai_techs = token:tech_ms_406_fighter_equipment_1 }
+		add_to_temp_array = { ai_techs = token:tech_breguet_691_bomber_equipment_1 }
+		add_to_temp_array = { ai_techs = token:tech_leo_451_bomber_equipment_1 }
+	}
+	if = { limit = { tag = SOV }
+		HTD_SOV_trm_infantry_tank_chassis_sov_t28_2_a = yes
+		set_country_flag = HTD_SOV_trm_infantry_tank_chassis_sov_t28_2_a  
+		
+		add_to_temp_array = { ai_techs = token:tech_i_16_equipment_4 }
+	}
+	if = { limit = { tag = ITA }
+		HTD_ITA_trm_tankette_tank_chassis_ita_l3_3_a = yes
+		set_country_flag = HTD_ITA_trm_tankette_tank_chassis_ita_l3_3_a 
+	}
+	if = { limit = { tag = JAP }
+		HTD_JAP_trm_light_tank_chassis_jap_type95_1_b = yes
+		set_country_flag = HTD_JAP_trm_light_tank_chassis_jap_type95_1_b  
+		
+		add_to_temp_array = { ai_techs = token:tech_mitsubishi_ki_30_equipment_1 }
+		add_to_temp_array = { ai_techs = token:tech_mitsubishi_g3m_equipment_2 }
+	}
+	if = { limit = { tag = USA }
+	}
+}
+ai_research_fix/11 = { #1938.9
+	if = { limit = { tag = GER }
+		add_to_temp_array = { ai_techs = token:tech_ju_87_cv_equipment_1 }
+	}
+	if = { limit = { tag = FRA }
+		HTD_FRA_trm_cavalry_tank_chassis_fra_amc35_1_a = yes
+		set_country_flag = HTD_FRA_trm_cavalry_tank_chassis_fra_amc35_1_a
+	}
+	if = { limit = { tag = ITA }
+		HTD_ITA_trm_tankette_tank_destroyer_chassis_ita_l3_2_a = yes
+		set_country_flag = HTD_ITA_trm_tankette_tank_destroyer_chassis_ita_l3_2_a
+		
+		HTD_ITA_trm_tankette_tank_chassis_ita_l3_3_b = yes
+		set_country_flag = HTD_ITA_trm_tankette_tank_chassis_ita_l3_3_b
+	}
+	if = { limit = { tag = USA }
+		HTD_USA_trm_cavalry_tank_chassis_usa_t7_1_a = yes
+		set_country_flag = HTD_USA_trm_cavalry_tank_chassis_usa_t7_1_a
+	}
+	if = { limit = { OR = { tag = AST tag = CAN tag = RAJ } is_in_faction_with = ENG }
+		set_country_flag = ai_skip/fighter_equipment
+		add_to_temp_array = { ai_techs = token:tech_spitfire_equipment_1 }
+	}
+	if = { limit = { tag = CZE }
+		remove_ideas = ai_useless_country
+	}
+}
+ai_research_fix/12 = { #1939.1
+	if = { limit = { tag = GER }
+		HTD_GER_trm_medium_tank_chassis_ger_panzer3_2_a = yes
+		set_country_flag = HTD_GER_trm_medium_tank_chassis_ger_panzer3_2_a 
+	}
+	if = { limit = { tag = CZE }
+		HTD_CZE_trm_cavalry_tank_chassis_cze_lt38_1_a = yes
+		set_country_flag = HTD_CZE_trm_cavalry_tank_chassis_cze_lt38_1_a 
+	}
+}
+ai_research_fix/13 = { #1939.3
+	if = { limit = { tag = GER }
+		HTD_GER_trm_medium_tank_cs_chassis_ger_panzer4_2_a = yes
+		set_country_flag = HTD_GER_trm_medium_tank_cs_chassis_ger_panzer4_2_a 
+		
+		HTD_GER_trm_cavalry_tank_chassis_ger_panzer2_1_a = yes
+		set_country_flag = HTD_GER_trm_cavalry_tank_chassis_ger_panzer2_1_a
+		
+		add_to_temp_array = { ai_techs = token:tech_me_109_mid_fighter_equipment_1 } #1939
+	}
+	if = { limit = { tag = ITA }
+		add_to_temp_array = { ai_techs = token:tech_z1007bis_bomber_equipment_1 }
+	}
+	if = { limit = { tag = ENG }
+		HTD_ENG_trm_cavalry_tank_chassis_eng_mk3_1_a = yes
+		set_country_flag = HTD_ENG_trm_cavalry_tank_chassis_eng_mk3_1_a
+		
+		add_to_temp_array = { ai_techs = token:tech_trm_cavalry_tank_chassis_eng_mk3_1 }
+		
+		add_to_temp_array = { ai_techs = token:tech_spitfire_equipment_2 }
+	}
+	if = { limit = { tag = USA }
+		HTD_USA_trm_medium_tank_chassis_usa_m2_1_a = yes
+		set_country_flag = HTD_USA_trm_medium_tank_chassis_usa_m2_1_a 
+		
+		add_to_temp_array = { ai_techs = token:tech_consolidated_pby_equipment_2 }
+		add_to_temp_array = { ai_techs = token:tech_brewster_f2a_equipment_1 }
+	}
+}
+ai_research_fix/14 = { #1939.6
+	if = { limit = { tag = GER }
+		add_to_temp_array = { ai_techs = token:tech_ju_87_equipment_3 }
+		add_to_temp_array = { ai_techs = token:tech_motorkannon }
+		add_to_temp_array = { ai_techs = token:tech_he_100_equipment_1 }
+		add_to_temp_array = { ai_techs = token:tech_bf_110_fighter_equipment_3 }
+		add_to_temp_array = { ai_techs = token:tech_ju_88_bomber_equipment_1 }
+		add_to_temp_array = { ai_techs = token:tech_he_111_bomber_equipment_5 }
+		add_to_temp_array = { ai_techs = token:tech_he_111_j_bomber_equipment_1 }
+	}
+	if = { limit = { tag = ENG }
+		HTD_ENG_trm_para_tank_chassis_eng_tetrarch_1_a = yes
+		set_country_flag = HTD_ENG_trm_para_tank_chassis_eng_tetrarch_1_a 
+		
+		HTD_ENG_trm_infantry_tank_chassis_eng_valentine_1_a = yes
+		set_country_flag = HTD_ENG_trm_infantry_tank_chassis_eng_valentine_1_a
+		
+		add_to_temp_array = { ai_techs = token:tech_trm_infantry_tank_chassis_eng_valentine_1 }
+	}
+
+	if = { limit = { tag = FRA }
+		#add_to_temp_array = { ai_techs = token:tech_french_infantry_tank_equipment_3 }
+		#add_to_temp_array = { ai_techs = token:tech_french_light_cavalry_tank_equipment_4 }
+	}
+	if = { limit = { tag = SOV }
+		HTD_SOV_trm_light_tank_chassis_sov_t26_3_b = yes
+		set_country_flag = HTD_SOV_trm_light_tank_chassis_sov_t26_3_b
+		
+		HTD_SOV_trm_cavalry_tank_chassis_sov_bt7_1_c = yes
+		set_country_flag = HTD_SOV_trm_cavalry_tank_chassis_sov_bt7_1_c  
+		
+		HTD_SOV_trm_infantry_tank_chassis_sov_t28_2_b = yes
+		set_country_flag = HTD_SOV_trm_infantry_tank_chassis_sov_t28_2_b   
+		
+		HTD_SOV_trm_heavy_tank_chassis_sov_kv1_1_a = yes
+		set_country_flag = HTD_SOV_trm_heavy_tank_chassis_sov_kv1_1_a   
+		
+		add_to_temp_array = { ai_techs = token:tech_su_2_equipment_1 }
+		add_to_temp_array = { ai_techs = token:tech_db_3_bomber_equipment_2 }
+	}
+	if = { limit = { tag = ITA }
+		HTD_ITA_trm_light_tank_chassis_ita_l6_1_a = yes
+		set_country_flag = HTD_ITA_trm_light_tank_chassis_ita_l6_1_a 
+		
+		HTD_ITA_trm_medium_tank_chassis_ita_m11_1_a = yes
+		set_country_flag = HTD_ITA_trm_medium_tank_chassis_ita_m11_1_a 
+		
+		add_to_temp_array = { ai_techs = token:tech_mc200_fighter_equipment_1 }
+		add_to_temp_array = { ai_techs = token:tech_g50_cv_fighter_equipment_1 }
+		add_to_temp_array = { ai_techs = token:tech_g50_cv_nav_bomber_equipment_1 }
+	}
+	if = { limit = { tag = USA }
+		add_to_temp_array = { ai_techs = token:tech_boeing_b17_equipment_1 }
+		
+	}
+	if = { limit = { tag = JAP }
+		HTD_JAP_trm_light_tank_chassis_jap_type98_1_a = yes
+		set_country_flag = HTD_JAP_trm_light_tank_chassis_jap_type98_1_a
+		
+		add_to_temp_array = { ai_techs = token:tech_nakajima_b5n_equipment_2 }
+	}
+}
+ai_research_fix/15 = { #1939.9
+	if = { limit = { tag = GER }
+		HTD_GER_trm_medium_tank_chassis_ger_panzer3_3_a = yes
+		set_country_flag = HTD_GER_trm_medium_tank_chassis_ger_panzer3_3_a 
+	}
+	if = { limit = { tag = FRA }
+		HTD_FRA_trm_medium_tank_chassis_fra_amx38_1_a = yes
+		set_country_flag = HTD_FRA_trm_medium_tank_chassis_fra_amx38_1_a
+		
+		HTD_FRA_trm_tankette_tank_chassis_fra_amr35_1_c = yes
+		set_country_flag = HTD_FRA_trm_tankette_tank_chassis_fra_amr35_1_c
+	}
+	if = { limit = { OR = { tag = AST tag = CAN tag = RAJ } is_in_faction_with = ENG }
+		add_to_temp_array = { ai_techs = token:tech_spitfire_equipment_2 }
+	}
+}
+ai_research_fix/16 = { #1940.1
+	if = { 
+		limit = {
+			OR = {
+				tag = GER
+				tag = ITA
+				tag = JAP
+				tag = SOV
+				tag = ENG
+				tag = FRA
+				tag = USA
+			}
+		}
+		
+		#### dirrtttyyy fix
+		add_to_temp_array = { ai_techs = token:tech_recovery_tanks }
+		add_to_temp_array = { ai_techs = token:mechanised_infantry }
+		add_to_temp_array = { ai_techs = token:tech_ac_recon3}
+		add_to_temp_array = { ai_techs = token:tech_liaison_cars_3}
+	}
+	if = { limit = { tag = ENG }
+		HTD_ENG_trm_cavalry_tank_chassis_eng_mk4_1_a = yes
+		set_country_flag = HTD_ENG_trm_cavalry_tank_chassis_eng_mk4_1_a
+	}
+	if = { limit = { tag = GER }
+		HTD_GER_trm_light_tank_amphibious_chassis_ger_panzer2_2_a = yes
+		set_country_flag = HTD_GER_trm_light_tank_amphibious_chassis_ger_panzer2_2_a
+	}
+	if = { limit = { tag = FRA }
+		HTD_FRA_trm_medium_tank_chassis_fra_d2_1_b = yes
+		set_country_flag = HTD_FRA_trm_medium_tank_chassis_fra_d2_1_b
+		
+		HTD_FRA_trm_infantry_tank_chassis_fra_r35_1_b = yes
+		set_country_flag = HTD_FRA_trm_infantry_tank_chassis_fra_r35_1_b
+		
+		HTD_FRA_trm_light_tank_chassis_fra_h39_1_a = yes
+		set_country_flag = HTD_FRA_trm_light_tank_chassis_fra_h39_1_a
+	}
+}
+ai_research_fix/17 = { #1940.3
+	if = { limit = { tag = GER }
+		HTD_GER_trm_light_tank_destroyer_chassis_ger_panzer1_2_a = yes
+		set_country_flag = HTD_GER_trm_light_tank_destroyer_chassis_ger_panzer1_2_a
+		
+		HTD_GER_trm_light_tank_artillery_chassis_ger_panzer1_2_a = yes
+		set_country_flag = HTD_GER_trm_light_tank_artillery_chassis_ger_panzer1_2_a
+		
+		add_to_temp_array = { ai_techs = token:tech_me_109_late_fighter_equipment_1 }
+	}
+	if = { limit = { tag = ITA }
+		HTD_ITA_trm_tankette_tank_destroyer_chassis_ita_l3_2_b = yes
+		set_country_flag = HTD_ITA_trm_tankette_tank_destroyer_chassis_ita_l3_2_b
+		
+		add_to_temp_array = { ai_techs = token:tech_ca313_light_bomber_equipment_1 }
+		add_to_temp_array = { ai_techs = token:tech_sm84_naval_bomber_equipment_1 }
+	}
+	if = { limit = { tag = SOV }
+		HTD_SOV_trm_medium_tank_chassis_sov_t34_1_a = yes
+		set_country_flag = HTD_SOV_trm_medium_tank_chassis_sov_t34_1_a 
+		
+		HTD_SOV_trm_heavy_tank_assault_gun_chassis_sov_kv1_1_a = yes
+		set_country_flag = HTD_SOV_trm_heavy_tank_assault_gun_chassis_sov_kv1_1_a
+		
+		add_to_temp_array = { ai_techs = token:tech_yak_1_equipment_1 }
+		add_to_temp_array = { ai_techs = token:tech_lagg_1_equipment_1 }
+		#add_to_temp_array = { ai_techs = token:tech_mig_1_equipment_1 }
+		add_to_temp_array = { ai_techs = token:tech_su_2_equipment_2 }
+	}
+	if = { limit = { tag = ENG }
+		HTD_ENG_trm_cavalry_tank_chassis_eng_mk5_1_a = yes
+		set_country_flag = HTD_ENG_trm_cavalry_tank_chassis_eng_mk5_1_a
+		
+		add_to_temp_array = { ai_techs = token:tech_hawker_hurricane_equipment_2 }
+		
+	}
+	if = { limit = { tag = USA }
+		HTD_USA_trm_light_tank_chassis_usa_m2_2_a = yes
+		set_country_flag = HTD_USA_trm_light_tank_chassis_usa_m2_2_a 
+		
+		add_to_temp_array = { ai_techs = token:tech_curtiss_p40_equipment_1 }
+		add_to_temp_array = { ai_techs = token:tech_martin_pbm_equipment_1 }
+		add_to_temp_array = { ai_techs = token:tech_grumman_f4f_equipment_1 }
+	}
+	if = { limit = { tag = FRA }
+		HTD_FRA_trm_heavy_tank_chassis_fra_b1_2_a = yes
+		set_country_flag = HTD_FRA_trm_heavy_tank_chassis_fra_b1_2_a
+		
+		HTD_FRA_trm_medium_tank_chassis_fra_amx40_1_a = yes
+		set_country_flag = HTD_FRA_trm_medium_tank_chassis_fra_amx40_1_a
+		
+		HTD_FRA_trm_cavalry_tank_destroyer_chassis_fra_s35_1_a = yes
+		set_country_flag = HTD_FRA_trm_cavalry_tank_destroyer_chassis_fra_s35_1_a
+	}
+	if = { limit = { tag = CZE }
+		HTD_CZE_trm_medium_tank_chassis_cze_st39_1_a = yes
+		set_country_flag = HTD_CZE_trm_medium_tank_chassis_cze_st39_1_a
+	}
+}
+ai_research_fix/18 = { #1940.6
+	if = { limit = { tag = GER }
+		add_to_temp_array = { ai_techs = token:tech_ju_87_equipment_4 } 
+		add_to_temp_array = { ai_techs = token:tech_bf_110_fighter_equipment_4 }
+		add_to_temp_array = { ai_techs = token:tech_he_111_h_bomber_equipment_1 }
+		
+		HTD_GER_trm_medium_tank_assault_gun_chassis_ger_panzer3_2_a = yes
+		set_country_flag = HTD_GER_trm_medium_tank_assault_gun_chassis_ger_panzer3_2_a 
+		
+		HTD_GER_trm_medium_tank_amphibious_chassis_ger_panzer3_3_a = yes
+		set_country_flag = HTD_GER_trm_medium_tank_amphibious_chassis_ger_panzer3_3_a
+		
+		HTD_GER_trm_medium_tank_amphibious_chassis_ger_panzer4_2_a = yes
+		set_country_flag = HTD_GER_trm_medium_tank_amphibious_chassis_ger_panzer4_2_a
+		
+	}
+	if = { limit = { tag = ENG }
+		HTD_ENG_trm_cavalry_tank_cs_chassis_eng_mk5_1_a = yes
+		set_country_flag = HTD_ENG_trm_cavalry_tank_cs_chassis_eng_mk5_1_a
+		
+		add_to_temp_array = { ai_techs = token:tech_vickers_wellington_bomber_equipment_2 }
+		add_to_temp_array = { ai_techs = token:tech_fairey_albacore_equipment_1 }
+		add_to_temp_array = { ai_techs = token:tech_avro_manchester_bomber_equipment_1 }
+	}
+	if = { limit = { OR = { tag = AST tag = CAN tag = RAJ } is_in_faction_with = ENG }
+		add_to_temp_array = { ai_techs = token:tech_hawker_hurricane_equipment_2 }
+	}
+	
+	if = { limit = { tag = FRA }
+		#add_to_temp_array = { ai_techs = token:tech_french_cavalry_tank_equipment_4 }
+		#add_to_temp_array = { ai_techs = token:tech_french_medium_tank_equipment_4 }
+		#add_to_temp_array = { ai_techs = token:tech_french_heavy_tank_equipment_3 }
+		
+		HTD_FRA_trm_heavy_tank_chassis_fra_b1_2_b = yes
+		set_country_flag = HTD_FRA_trm_heavy_tank_chassis_fra_b1_2_b
+		
+		HTD_FRA_trm_infantry_tank_chassis_fra_r40_1_a = yes
+		set_country_flag = HTD_FRA_trm_infantry_tank_chassis_fra_r40_1_a
+		
+		HTD_FRA_trm_cavalry_tank_chassis_fra_s40_1_a = yes
+		set_country_flag = HTD_FRA_trm_cavalry_tank_chassis_fra_s40_1_a
+		
+		HTD_FRA_trm_cavalry_tank_destroyer_chassis_fra_s35_1_b = yes
+		set_country_flag = HTD_FRA_trm_cavalry_tank_destroyer_chassis_fra_s35_1_b
+		
+		add_to_temp_array = { ai_techs = token:tech_ms_410_fighter_equipment_1 }
+		add_to_temp_array = { ai_techs = token:tech_leo_455_bomber_equipment_1 }
+	}
+	if = { limit = { tag = SOV }
+		HTD_SOV_trm_light_tank_chassis_sov_t40_1_a = yes
+		set_country_flag = HTD_SOV_trm_light_tank_chassis_sov_t40_1_a
+	}
+	if = { limit = { tag = ITA }
+		HTD_ITA_trm_medium_tank_chassis_ita_m13_1_a = yes
+		set_country_flag = HTD_ITA_trm_medium_tank_chassis_ita_m13_1_a
+	}
+	if = { limit = { tag = JAP }
+		HTD_JAP_trm_medium_tank_chassis_jap_type97_1_b = yes
+		set_country_flag = HTD_JAP_trm_medium_tank_chassis_jap_type97_1_b
+		
+	}
+	if = { limit = { tag = USA }
+		add_to_temp_array = { ai_techs = token:tech_republic_p43_equipment_1 }
+		add_to_temp_array = { ai_techs = token:tech_bell_p39_equipment_1 }
+		
+		add_to_temp_array = { ai_techs = token:tech_martin_a22_equipment_1 }
+	}
+	if = { limit = { tag = JAP }
+		add_to_temp_array = { ai_techs = token:tech_nakajima_ki_43_equipment_1 }
+		add_to_temp_array = { ai_techs = token:tech_kawasaki_ki_45_equipment_1 }
+		add_to_temp_array = { ai_techs = token:tech_mitsubishi_ki_51_equipment_1 }
+		add_to_temp_array = { ai_techs = token:tech_kawasaki_ki_48_equipment_1 }
+	}
+}
+ai_research_fix/19 = { #1940.9
+	if = { limit = { tag = FRA }
+		#add_to_temp_array = { ai_techs = token:tech_french_superheavy_tank_equipment_3 }
+	}
+	if = { limit = { tag = ENG }
+		HTD_ENG_trm_cavalry_tank_chassis_eng_mk6_1_a = yes
+		set_country_flag = HTD_ENG_trm_cavalry_tank_chassis_eng_mk6_1_a
+	}
+}
+ai_research_fix/20 = { #1941.1
+	if = { limit = { tag = GER }
+		add_to_temp_array = { ai_techs = token:tech_bf_110_fighter_equipment_4 }
+	}
+	if = { limit = { tag = JAP }
+		add_to_temp_array = { ai_techs = token:tech_mitsubishi_a6m_equipment_1 }
+	}
+	if = { limit = { tag = USA }
+		HTD_USA_trm_light_tank_chassis_usa_m3_1_a = yes
+		set_country_flag = HTD_USA_trm_light_tank_chassis_usa_m3_1_a 
+	}
+	if = { limit = { tag = ENG }
+		HTD_ENG_trm_cavalry_tank_cs_chassis_eng_mk6_1_a = yes
+		set_country_flag = HTD_ENG_trm_cavalry_tank_cs_chassis_eng_mk6_1_a
+	}
+}
+ai_research_fix/21 = { #1941.3
+	if = { limit = { tag = ENG }
+		add_to_temp_array = { ai_techs = token:tech_hawker_sea_hurricane_equipment_1 }
+		add_to_temp_array = { ai_techs = token:tech_mid_spitfire_equipment_1 }
+		
+		HTD_ENG_trm_medium_tank_chassis_eng_mk7_1_a = yes
+		set_country_flag = HTD_ENG_trm_medium_tank_chassis_eng_mk7_1_a
+		
+		HTD_ENG_trm_light_tank_aa_chassis_eng_vickers_light_4_a = yes
+		set_country_flag = HTD_ENG_trm_light_tank_aa_chassis_eng_vickers_light_4_a
+		
+		add_to_temp_array = { ai_techs = token:tech_trm_medium_tank_chassis_eng_mk7_1 }
+	}
+	if = { limit = { tag = GER }
+		HTD_GER_trm_medium_tank_cs_chassis_ger_panzer4_3_a = yes
+		set_country_flag = HTD_GER_trm_medium_tank_cs_chassis_ger_panzer4_3_a 
+		
+		HTD_GER_trm_light_tank_aa_chassis_ger_panzer1_1_a = yes
+		set_country_flag = HTD_GER_trm_light_tank_aa_chassis_ger_panzer1_1_a
+		
+		HTD_GER_trm_cavalry_tank_chassis_ger_pz38_2_a = yes
+		set_country_flag = HTD_GER_trm_cavalry_tank_chassis_ger_pz38_2_a
+		
+		HTD_GER_trm_medium_tank_chassis_ger_panzer3_4_a = yes
+		set_country_flag = HTD_GER_trm_medium_tank_chassis_ger_panzer3_4_a 
+		
+		add_to_temp_array = { ai_techs = token:tech_me_109_late_fighter_equipment_2 }
+	}
+	if = { limit = { tag = ITA }
+		add_to_temp_array = { ai_techs = token:tech_g50v_fighter_equipment_1 }
+		add_to_temp_array = { ai_techs = token:tech_ro57_fighter_equipment_1 }
+	}
+	if = { limit = { tag = SOV }
+		HTD_SOV_trm_medium_tank_chassis_sov_t34_2_a = yes
+		set_country_flag = HTD_SOV_trm_medium_tank_chassis_sov_t34_2_a  
+		
+		HTD_SOV_trm_heavy_tank_chassis_sov_kv1_2_a = yes
+		set_country_flag = HTD_SOV_trm_heavy_tank_chassis_sov_kv1_2_a    
+		
+		HTD_SOV_trm_light_tank_chassis_sov_t50_1_a = yes
+		set_country_flag = HTD_SOV_trm_light_tank_chassis_sov_t50_1_a
+		
+		HTD_SOV_trm_light_tank_amphibious_chassis_sov_t40_1_a = yes
+		set_country_flag = HTD_SOV_trm_light_tank_amphibious_chassis_sov_t40_1_a
+		
+		add_to_temp_array = { ai_techs = token:tech_il_2_equipment_1 }
+		#add_to_temp_array = { ai_techs = token:tech_mig_3_equipment_1 }
+	}
+	if = { limit = { tag = USA }
+		HTD_USA_trm_medium_tank_chassis_usa_m3_1_a = yes
+		set_country_flag = HTD_USA_trm_medium_tank_chassis_usa_m3_1_a 
+		
+		HTD_USA_trm_medium_tank_artillery_chassis_usa_m3_1_b = yes
+		set_country_flag = HTD_USA_trm_medium_tank_artillery_chassis_usa_m3_1_b 
+		
+		add_to_temp_array = { ai_techs = token:tech_trm_medium_tank_chassis_usa_m3_1 }
+		
+		add_to_temp_array = { ai_techs = token:tech_curtiss_p40_equipment_2 }
+		add_to_temp_array = { ai_techs = token:tech_lockheed_p38_equipment_1 }
+		add_to_temp_array = { ai_techs = token:tech_douglas_a24_equipment_1 }
+		add_to_temp_array = { ai_techs = token:tech_boeing_b17_equipment_2 }
+	}
+	if = { limit = { tag = CAN is_in_faction_with = ENG }
+		HTD_CAN_trm_infantry_tank_chassis_eng_valentine_1_b = yes
+		set_country_flag = HTD_CAN_trm_infantry_tank_chassis_eng_valentine_1_b
+	}
+}
+ai_research_fix/22 = { #1941.6
+	if = { limit = { tag = GER }
+		HTD_GER_trm_light_tank_chassis_ger_panzer2_3_a = yes
+		set_country_flag = HTD_GER_trm_light_tank_chassis_ger_panzer2_3_a
+		
+		add_to_temp_array = { ai_techs = token:tech_bf_110_fighter_equipment_5 }
+		add_to_temp_array = { ai_techs = token:tech_fw_190_fighter_equipment_1 }
+		add_to_temp_array = { ai_techs = token:tech_bf_110_fighter_equipment_5 }
+		add_to_temp_array = { ai_techs = token:tech_ju_88_a4_bomber_equipment_1 }
+		add_to_temp_array = { ai_techs = token:tech_he_111_h6_bomber_equipment_1 }
+		add_to_temp_array = { ai_techs = token:tech_he_177_bomber_equipment_1 }
+		add_to_temp_array = { ai_techs = token:tech_me_109_t_fighter_equipment_1 }
+		
+	}
+	if = { limit = { tag = ENG }
+		add_to_temp_array = { ai_techs = token:tech_hawker_typhoon_equipment_1 }
+		add_to_temp_array = { ai_techs = token:tech_hawker_hurricane_iic_equipment_1 }
+		add_to_temp_array = { ai_techs = token:tech_mosquito_fsb_equipment_1 }
+		add_to_temp_array = { ai_techs = token:tech_vickers_wellington_gr_bomber_equipment_1 }
+		
+		HTD_ENG_trm_infantry_tank_chassis_eng_valentine_2_a = yes
+		set_country_flag = HTD_ENG_trm_infantry_tank_chassis_eng_valentine_2_a
+		
+		HTD_ENG_trm_heavy_tank_chassis_eng_churchill_1_a = yes
+		set_country_flag = HTD_ENG_trm_heavy_tank_chassis_eng_churchill_1_a
+	}
+	if = { limit = { OR = { tag = AST tag = CAN } }
+		add_to_temp_array = { ai_techs = token:tech_mid_spitfire_equipment_1 }
+		
+	}
+	if = { limit = { tag = FRA }
+		#add_to_temp_array = { ai_techs = token:tech_french_cavalry_tank_equipment_5 }
+		#add_to_temp_array = { ai_techs = token:tech_french_light_cavalry_tank_equipment_5 }
+		
+	}
+	if = { limit = { tag = SOV }
+		HTD_SOV_trm_light_tank_chassis_sov_t60_1_a = yes
+		set_country_flag = HTD_SOV_trm_light_tank_chassis_sov_t60_1_a
+		
+		HTD_SOV_trm_light_tank_chassis_sov_t40_1_a = yes
+		set_country_flag = HTD_SOV_trm_light_tank_chassis_sov_t40_1_a
+		
+		add_to_temp_array = { ai_techs = token:tech_lagg_3_equipment_1 }
+		add_to_temp_array = { ai_techs = token:tech_yak_7_equipment_1 }
+		add_to_temp_array = { ai_techs = token:tech_il_4_bomber_equipment_1 }
+		
+	}
+	if = { limit = { tag = ITA }
+		HTD_ITA_trm_medium_tank_chassis_ita_m14_1_a = yes
+		set_country_flag = HTD_ITA_trm_medium_tank_chassis_ita_m14_1_a
+		
+		HTD_ITA_trm_medium_tank_assault_gun_chassis_ita_m13_1_a = yes
+		set_country_flag = HTD_ITA_trm_medium_tank_assault_gun_chassis_ita_m13_1_a
+		
+		HTD_ITA_trm_heavy_tank_chassis_ita_p26_1_a = yes
+		set_country_flag = HTD_ITA_trm_heavy_tank_chassis_ita_p26_1_a
+	
+		add_to_temp_array = { ai_techs = token:tech_mc202_fighter_equipment_1 }
+		
+	}
+	if = { limit = { tag = USA }
+		HTD_USA_trm_light_tank_chassis_usa_m3_1_b = yes
+		set_country_flag = HTD_USA_trm_light_tank_chassis_usa_m3_1_b 
+		
+		add_to_temp_array = { ai_techs = token:tech_northamerican_b25_equipment_1 }
+		
+	}
+	if = { limit = { tag = AST }
+		add_to_temp_array = { ai_techs = token:tech_mid_spitfire_equipment_1 }
+	}
+	if = { limit = { tag = JAP }
+		add_to_temp_array = { ai_techs = token:tech_mitsubishi_g4m_equipment_1 }
+		
+	}
+}
+ai_research_fix/23 = { #1941.9
+	if = { limit = { tag = GER }
+		HTD_GER_trm_light_tank_artillery_chassis_ger_panzer2_2_a = yes
+		set_country_flag = HTD_GER_trm_light_tank_artillery_chassis_ger_panzer2_2_a
+		
+		HTD_GER_trm_medium_tank_assault_gun_chassis_ger_panzer3_3_a = yes
+		set_country_flag = HTD_GER_trm_medium_tank_assault_gun_chassis_ger_panzer3_3_a 
+	}
+	if = { limit = { tag = ITA }
+	}
+	if = { limit = { tag = JAP }
+		HTD_JAP_trm_medium_tank_destroyer_chassis_jap_type97_1_a = yes
+		set_country_flag = HTD_JAP_trm_medium_tank_destroyer_chassis_jap_type97_1_a
+	}
+	if = { limit = { tag = ENG }
+		HTD_ENG_trm_infantry_tank_cs_chassis_eng_valentine_2_a = yes
+		set_country_flag = HTD_ENG_trm_infantry_tank_cs_chassis_eng_valentine_2_a
+		
+		HTD_ENG_trm_heavy_tank_chassis_eng_churchill_1_b = yes
+		set_country_flag = HTD_ENG_trm_heavy_tank_chassis_eng_churchill_1_b
+	}
+	if = { limit = { tag = SOV }
+		HTD_SOV_trm_light_tank_destroyer_chassis_sov_komsomolets_1_a = yes
+		set_country_flag = HTD_SOV_trm_light_tank_destroyer_chassis_sov_komsomolets_1_a
+		
+		HTD_SOV_trm_medium_tank_destroyer_chassis_sov_t34_2_a = yes
+		set_country_flag = HTD_SOV_trm_medium_tank_destroyer_chassis_sov_t34_2_a
+	}
+	if = { limit = { OR = { tag = AST tag = CAN tag = RAJ } is_in_faction_with = ENG }
+		set_country_flag = ai_skip/CAS_equipment
+		add_to_temp_array = { ai_techs = token:tech_hawker_hurricane_equipment_2 }
+		add_to_temp_array = { ai_techs = token:tech_hawker_hurricane_iic_equipment_1 }
+		
+	}
+	if = { limit = { tag = CAN is_in_faction_with = ENG }
+		HTD_CAN_trm_infantry_tank_chassis_eng_valentine_1_c = yes
+		set_country_flag = HTD_CAN_trm_infantry_tank_chassis_eng_valentine_1_c
+	}
+	if = { limit = { tag = USA }
+		add_to_temp_array = { ai_techs = token:tech_curtiss_p40f_equipment_1 }
+	}
+}
+ai_research_fix/24 = { #1942.1
+	if = { limit = { tag = JAP }
+		HTD_JAP_trm_light_tank_aa_chassis_jap_type98_1_a = yes
+		set_country_flag = HTD_JAP_trm_light_tank_aa_chassis_jap_type98_1_a
+	}
+	if = { limit = { tag = ENG }
+		HTD_ENG_trm_infantry_tank_artillery_chassis_eng_valentine_2_a = yes
+		set_country_flag = HTD_ENG_trm_infantry_tank_artillery_chassis_eng_valentine_2_a
+		
+		HTD_ENG_trm_heavy_tank_cs_chassis_eng_churchill_1_a = yes
+		set_country_flag = HTD_ENG_trm_heavy_tank_cs_chassis_eng_churchill_1_a
+	
+		add_to_temp_array = { ai_techs = token:tech_short_sunderland_equipment_2 }
+	}
+	if = { limit = { tag = CAN is_in_faction_with = ENG }
+		HTD_CAN_trm_medium_tank_chassis_usa_ram_1_b = yes
+		set_country_flag = HTD_CAN_trm_medium_tank_chassis_usa_ram_1_b
+	}
+	if = { limit = { tag = ITA }
+		HTD_ITA_trm_light_tank_destroyer_chassis_ita_l6_1_a = yes
+		set_country_flag = HTD_ITA_trm_light_tank_destroyer_chassis_ita_l6_1_a
+	}
+	if = { limit = { tag = USA }
+		HTD_USA_trm_light_tank_chassis_usa_m3_2_a = yes
+		set_country_flag = HTD_USA_trm_light_tank_chassis_usa_m3_2_a
+		
+		HTD_USA_trm_medium_tank_chassis_usa_m3_1_b = yes
+		set_country_flag = HTD_USA_trm_medium_tank_chassis_usa_m3_1_b
+	}
+}
+ai_research_fix/25 = { #1942.3
+	if = { limit = { tag = GER }
+		HTD_GER_trm_medium_tank_chassis_ger_panzer4_3_b = yes
+		set_country_flag = HTD_GER_trm_medium_tank_chassis_ger_panzer4_3_b   
+		
+		HTD_GER_trm_medium_tank_destroyer_chassis_ger_panzer3_4_a = yes
+		set_country_flag = HTD_GER_trm_medium_tank_destroyer_chassis_ger_panzer3_4_a    
+		
+		HTD_GER_trm_para_tank_chassis_ger_panzer1_1_a = yes
+		set_country_flag = HTD_GER_trm_para_tank_chassis_ger_panzer1_1_a
+		
+		add_to_temp_array = { ai_techs = token:tech_me_109_late_fighter_equipment_3 }
+	}
+	if = { limit = { tag = ITA }
+		HTD_ITA_trm_heavy_tank_chassis_ita_p26_1_b = yes
+		set_country_flag = HTD_ITA_trm_heavy_tank_chassis_ita_p26_1_b
+		
+		add_to_temp_array = { ai_techs = token:tech_mc205_fighter_equipment_1 }
+		add_to_temp_array = { ai_techs = token:tech_ca314_light_bomber_equipment_1 }
+		add_to_temp_array = { ai_techs = token:tech_z1007ter_bomber_equipment_1 }
+		add_to_temp_array = { ai_techs = token:tech_sm79_naval_bomber_equipment_2 }
+		
+	}
+	if = { limit = { tag = SOV }
+		HTD_SOV_trm_medium_tank_chassis_sov_t34_3_b = yes
+		set_country_flag = HTD_SOV_trm_medium_tank_chassis_sov_t34_3_b  
+		
+		HTD_SOV_trm_heavy_tank_chassis_sov_kv1_3_a  = yes
+		set_country_flag = HTD_SOV_trm_heavy_tank_chassis_sov_kv1_3_a   
+	}
+	if = { limit = { tag = ENG }
+		HTD_ENG_trm_cavalry_tank_chassis_eng_mk6_1_b = yes
+		set_country_flag = HTD_ENG_trm_cavalry_tank_chassis_eng_mk6_1_b
+		
+		HTD_ENG_trm_heavy_tank_chassis_eng_churchill_2_a = yes
+		set_country_flag = HTD_ENG_trm_heavy_tank_chassis_eng_churchill_2_a
+	
+		HTD_ENG_trm_heavy_tank_amphibious_chassis_eng_churchill_2_a = yes
+		set_country_flag = HTD_ENG_trm_heavy_tank_amphibious_chassis_eng_churchill_2_a
+		
+		HTD_ENG_trm_infantry_tank_chassis_eng_matilda2_1_b = yes
+		set_country_flag = HTD_ENG_trm_infantry_tank_chassis_eng_matilda2_1_b
+		
+		HTD_ENG_trm_heavy_tank_destroyer_chassis_eng_churchill_1_a = yes
+		set_country_flag = HTD_ENG_trm_heavy_tank_destroyer_chassis_eng_churchill_1_a
+		
+		add_to_temp_array = { ai_techs = token:amphibious_mechanized_infantry}
+		
+		add_to_temp_array = { ai_techs = token:tech_late_spitfire_equipment_1 }
+		
+	}
+	if = { limit = { tag = USA }
+		HTD_USA_trm_light_tank_chassis_usa_m5_1_a = yes
+		set_country_flag = HTD_USA_trm_light_tank_chassis_usa_m5_1_a 
+		
+		HTD_USA_trm_medium_tank_chassis_usa_m4_1_a = yes
+		set_country_flag = HTD_USA_trm_medium_tank_chassis_usa_m4_1_a
+		
+		HTD_USA_trm_medium_tank_artillery_chassis_usa_m4_1_a = yes
+		set_country_flag = HTD_USA_trm_medium_tank_artillery_chassis_usa_m4_1_a 
+		
+		add_to_temp_array = { ai_techs = token:tech_trm_medium_tank_chassis_usa_m4_1 }
+		
+		add_to_temp_array = { ai_techs = token:tech_northamerican_mustang_equipment_1 }
+		add_to_temp_array = { ai_techs = token:tech_republic_p47_equipment_1 }
+		add_to_temp_array = { ai_techs = token:tech_lockheed_p38g_equipment_1 }
+		add_to_temp_array = { ai_techs = token:tech_boeing_b17_equipment_3 }
+		add_to_temp_array = { ai_techs = token:tech_consolidated_pb2y_equipment_1 }
+		#add_to_temp_array = { ai_techs = token:tech_grumman_f4f_equipment_2 }
+	}
+	if = { limit = { tag = JAP }
+		add_to_temp_array = { ai_techs = token:tech_mitsubishi_a6m3_equipment_1 }
+		
+		HTD_JAP_trm_medium_tank_chassis_jap_type1_1_a = yes
+		set_country_flag = HTD_JAP_trm_medium_tank_chassis_jap_type1_1_a
+		
+	}
+	if = { limit = { tag = CAN is_in_faction_with = ENG }
+		HTD_CAN_trm_medium_tank_chassis_usa_ram_1_a = yes
+		set_country_flag = HTD_CAN_trm_medium_tank_chassis_usa_ram_1_a
+	}
+}
+ai_research_fix/26 = { #1942.6
+	if = { limit = { tag = GER }
+		add_to_temp_array = { ai_techs = token:tech_ju_87_equipment_5 }
+		add_to_temp_array = { ai_techs = token:tech_bf_110_g_fighter_equipment_1 }
+		add_to_temp_array = { ai_techs = token:tech_fw_190_fighter_equipment_2 }
+		add_to_temp_array = { ai_techs = token:tech_bf_110_g_fighter_equipment_1 }
+		add_to_temp_array = { ai_techs = token:tech_he_111_h16_bomber_equipment_1 }
+		add_to_temp_array = { ai_techs = token:tech_he_177_bomber_equipment_2 }
+		
+		HTD_GER_trm_medium_tank_chassis_ger_panzer3_4_b = yes
+		set_country_flag = HTD_GER_trm_medium_tank_chassis_ger_panzer3_4_b
+		
+		HTD_GER_trm_medium_tank_chassis_ger_panzer4_3_c = yes
+		set_country_flag = HTD_GER_trm_medium_tank_chassis_ger_panzer4_3_c   
+		
+		HTD_GER_trm_heavy_tank_chassis_ger_tiger_1_a = yes
+		set_country_flag = HTD_GER_trm_heavy_tank_chassis_ger_tiger_1_a   
+		
+		HTD_GER_trm_light_tank_chassis_ger_panzer2_4_a = yes
+		set_country_flag = HTD_GER_trm_light_tank_chassis_ger_panzer2_4_a
+		
+		HTD_GER_trm_light_tank_chassis_ger_panzer2_3_b = yes
+		set_country_flag = HTD_GER_trm_light_tank_chassis_ger_panzer2_3_b
+		
+		HTD_GER_trm_light_tank_destroyer_chassis_ger_panzer2_3_a = yes
+		set_country_flag = HTD_GER_trm_light_tank_destroyer_chassis_ger_panzer2_3_a
+		
+	}
+	if = { limit = { tag = ENG }
+		add_to_temp_array = { ai_techs = token:tech_hawker_typhoon1b_equipment_1 }
+		add_to_temp_array = { ai_techs = token:tech_supermarine_seafire_equipment_1 }
+		add_to_temp_array = { ai_techs = token:tech_vickers_wellington_bomber_equipment_3 }
+		add_to_temp_array = { ai_techs = token:tech_mosquito_nf_equipment_1 }
+		add_to_temp_array = { ai_techs = token:tech_avro_lancaster_equipment_1 }
+		
+		HTD_ENG_trm_infantry_tank_chassis_eng_valentine_3_a = yes
+		set_country_flag = HTD_ENG_trm_infantry_tank_chassis_eng_valentine_3_a
+		
+		HTD_ENG_trm_medium_tank_chassis_eng_mk8_1_a = yes
+		set_country_flag = HTD_ENG_trm_medium_tank_chassis_eng_mk8_1_a
+		
+		HTD_ENG_trm_infantry_tank_cs_chassis_eng_matilda2_1_a = yes
+		set_country_flag = HTD_ENG_trm_infantry_tank_cs_chassis_eng_matilda2_1_a
+	}
+	if = { limit = { OR = { tag = AST tag = CAN } }
+		add_to_temp_array = { ai_techs = token:tech_late_spitfire_equipment_1 }
+	}
+	if = { limit = { tag = FRA }
+		#add_to_temp_array = { ai_techs = token:tech_french_cavalry_tank_equipment_6 }
+		#add_to_temp_array = { ai_techs = token:tech_french_medium_tank_equipment_5 }
+		if = { limit = { is_in_faction_with = USA } 
+			#add_to_temp_array = { ai_techs = token:tech_french_stuart_light_tank_equipment_1 }
+		}
+		HTD_FRA_trm_medium_tank_chassis_fra_sarl42_1_a = yes
+		set_country_flag = HTD_FRA_trm_medium_tank_chassis_fra_sarl42_1_a
+	}
+	if = { limit = { tag = SOV }
+		HTD_SOV_trm_light_tank_chassis_sov_t70_1_a = yes
+		set_country_flag = HTD_SOV_trm_light_tank_chassis_sov_t70_1_a
+		
+		add_to_temp_array = { ai_techs = token:tech_lagg_5_equipment_1 }
+		add_to_temp_array = { ai_techs = token:tech_yak_9_equipment_1 }
+		add_to_temp_array = { ai_techs = token:tech_il_2_equipment_2 }
+	}
+	if = { limit = { tag = ITA }
+		HTD_ITA_trm_medium_tank_chassis_ita_m15_1_a = yes
+		set_country_flag = HTD_ITA_trm_medium_tank_chassis_ita_m15_1_a
+		
+		HTD_ITA_trm_medium_tank_assault_gun_chassis_ita_m14_1_a = yes
+		set_country_flag = HTD_ITA_trm_medium_tank_assault_gun_chassis_ita_m14_1_a
+		
+		HTD_ITA_trm_medium_tank_destroyer_chassis_ita_m14_1_a = yes
+		set_country_flag = HTD_ITA_trm_medium_tank_destroyer_chassis_ita_m14_1_a
+		
+		add_to_temp_array = { ai_techs = token:tech_re2001_cv_fighter_equipment_1 }
+		add_to_temp_array = { ai_techs = token:tech_re2001_cv_nav_bomber_equipment_1 }
+	}
+	if = { limit = { tag = JAP }
+		HTD_JAP_trm_amph_tank_chassis_jap_type2_1_a = yes
+		set_country_flag = HTD_JAP_trm_amph_tank_chassis_jap_type2_1_a
+		
+		HTD_JAP_trm_light_tank_chassis_jap_type2_1_a = yes
+		set_country_flag = HTD_JAP_trm_light_tank_chassis_jap_type2_1_a
+		
+		add_to_temp_array = { ai_techs = token:tech_nakajima_ki_43_equipment_2 }
+		add_to_temp_array = { ai_techs = token:tech_kawasaki_ki_61_equipment_1 }
+		add_to_temp_array = { ai_techs = token:tech_kawasaki_ki_45_kai_equipment_1 }
+		add_to_temp_array = { ai_techs = token:tech_mansyu_ki_71_equipment_1 }
+		add_to_temp_array = { ai_techs = token:tech_kawasaki_ki_48_equipment_2 }
+		add_to_temp_array = { ai_techs = token:tech_nakajima_b6n_equipment_1 }
+	}
+	if = { limit = { tag = USA }
+		HTD_USA_trm_medium_tank_chassis_usa_m4_1_b = yes
+		set_country_flag = HTD_USA_trm_medium_tank_chassis_usa_m4_1_b
+		
+		HTD_USA_trm_para_tank_chassis_usa_m22_1_a = yes
+		set_country_flag = HTD_USA_trm_para_tank_chassis_usa_m22_1_a
+		
+		HTD_USA_trm_medium_tank_chassis_usa_m4_1_e = yes
+		set_country_flag = HTD_USA_trm_medium_tank_chassis_usa_m4_1_e
+		
+		add_to_temp_array = { ai_techs = token:tech_northamerican_a36_equipment_1 }
+		add_to_temp_array = { ai_techs = token:tech_northamerican_b25_equipment_2 }
+		add_to_temp_array = { ai_techs = token:tech_grumman_tbf_equipment_1 }
+	}
+	if = { limit = { tag = CAN is_in_faction_with = ENG }
+		HTD_CAN_trm_medium_tank_artillery_chassis_usa_ram_1_a = yes
+		set_country_flag = HTD_CAN_trm_medium_tank_artillery_chassis_usa_ram_1_a
+	}
+}
+ai_research_fix/27 = { #1942.9
+	if = { limit = { tag = ITA }
+		HTD_ITA_trm_heavy_tank_chassis_ita_p26_1_c = yes
+		set_country_flag = HTD_ITA_trm_heavy_tank_chassis_ita_p26_1_c
+		
+		HTD_ITA_trm_medium_tank_assault_gun_chassis_ita_m14_1_b = yes
+		set_country_flag = HTD_ITA_trm_medium_tank_assault_gun_chassis_ita_m14_1_b
+	}
+	if = { limit = { tag = USA }
+		HTD_USA_trm_medium_tank_chassis_usa_m4_2_a = yes
+		set_country_flag = HTD_USA_trm_medium_tank_chassis_usa_m4_2_a
+		
+		HTD_USA_trm_medium_tank_destroyer_chassis_usa_m4_1_a = yes
+		set_country_flag = HTD_USA_trm_medium_tank_destroyer_chassis_usa_m4_1_a
+		
+		HTD_USA_trm_heavy_tank_chassis_usa_m6_1_a = yes
+		set_country_flag = HTD_USA_trm_heavy_tank_chassis_usa_m6_1_a
+		
+		HTD_USA_trm_light_tank_cs_chassis_usa_m5_1_a = yes
+		set_country_flag = HTD_USA_trm_light_tank_cs_chassis_usa_m5_1_a
+		
+		HTD_USA_trm_cavalry_tank_chassis_usa_m7_1_a = yes
+		set_country_flag = HTD_USA_trm_cavalry_tank_chassis_usa_m7_1_a
+		
+		HTD_USA_trm_medium_tank_artillery_chassis_usa_m3_1_a = yes
+		set_country_flag = HTD_USA_trm_medium_tank_artillery_chassis_usa_m3_1_a
+	}
+	if = { limit = { tag = JAP }
+		HTD_JAP_trm_medium_tank_assault_gun_chassis_jap_type97_1_a = yes
+		set_country_flag = HTD_JAP_trm_medium_tank_assault_gun_chassis_jap_type97_1_a
+		
+		HTD_JAP_trm_medium_tank_cs_chassis_jap_type97_1_a = yes
+		set_country_flag = HTD_JAP_trm_medium_tank_cs_chassis_jap_type97_1_a
+	}
+	if = { limit = { tag = ENG }
+		HTD_ENG_trm_medium_tank_chassis_eng_mk8_1_b = yes
+		set_country_flag = HTD_ENG_trm_medium_tank_chassis_eng_mk8_1_b
+	}
+	if = { limit = { tag = SOV }
+		HTD_SOV_trm_heavy_tank_chassis_sov_kv1_3_b = yes
+		set_country_flag = HTD_SOV_trm_heavy_tank_chassis_sov_kv1_3_b
+	}
+	if = { limit = { OR = { tag = AST tag = CAN tag = RAJ } is_in_faction_with = ENG }
+		set_country_flag = ai_tech/tac_bomber_equipment
+		add_to_temp_array = { ai_techs = token:tech_late_spitfire_equipment_1 }
+		add_to_temp_array = { ai_techs = token:tech_hawker_typhoon1b_equipment_1 }
+	}
+	if = { limit = { tag = AST is_in_faction_with = ENG }
+		HTD_AST_trm_medium_tank_chassis_ast_ac1_1_a = yes
+		set_country_flag = HTD_AST_trm_medium_tank_chassis_ast_ac1_1_a
+	}
+
+}
+ai_research_fix/28 = { #1943.1
+	if = { limit = { tag = GER }
+		HTD_GER_trm_medium_tank_chassis_ger_panzer3_5_a = yes
+		set_country_flag = HTD_GER_trm_medium_tank_chassis_ger_panzer3_5_a
+		
+		HTD_GER_trm_medium_tank_cs_chassis_ger_panzer3_5_a = yes
+		set_country_flag = HTD_GER_trm_medium_tank_cs_chassis_ger_panzer3_5_a 
+		
+		HTD_GER_trm_medium_tank_destroyer_chassis_ger_panzer3_5_a = yes
+		set_country_flag = HTD_GER_trm_medium_tank_destroyer_chassis_ger_panzer3_5_a 
+		
+		HTD_GER_trm_cavalry_tank_destroyer_chassis_ger_pz38_2_b = yes
+		set_country_flag = HTD_GER_trm_cavalry_tank_destroyer_chassis_ger_pz38_2_b
+	}
+	if = { limit = { tag = SOV }
+		HTD_SOV_trm_medium_tank_chassis_sov_t34_3_a = yes
+		set_country_flag = HTD_SOV_trm_medium_tank_chassis_sov_t34_3_a 
+		
+		HTD_SOV_trm_heavy_tank_chassis_sov_kv1_3_c = yes
+		set_country_flag = HTD_SOV_trm_heavy_tank_chassis_sov_kv1_3_c 
+		
+		HTD_SOV_trm_light_tank_destroyer_chassis_sov_t70_1_b = yes
+		set_country_flag = HTD_SOV_trm_light_tank_destroyer_chassis_sov_t70_1_b 
+		
+		HTD_SOV_trm_medium_tank_assault_gun_chassis_sov_t34_3_a = yes
+		set_country_flag = HTD_SOV_trm_medium_tank_assault_gun_chassis_sov_t34_3_a 
+	}
+	if = { limit = { tag = USA }
+		HTD_USA_trm_medium_tank_destroyer_chassis_usa_m4_2_b = yes
+		set_country_flag = HTD_USA_trm_medium_tank_destroyer_chassis_usa_m4_2_b
+	}
+
+}
+ai_research_fix/29 = { #1943.3
+	if = { limit = { tag = GER }
+		HTD_GER_trm_medium_tank_chassis_ger_panzer4_4_a = yes
+		set_country_flag = HTD_GER_trm_medium_tank_chassis_ger_panzer4_4_a 
+		
+		HTD_GER_trm_medium_advanced_tank_chassis_ger_panther_1_b = yes
+		set_country_flag = HTD_GER_trm_medium_advanced_tank_chassis_ger_panther_1_b 
+		
+		HTD_GER_trm_heavy_tank_chassis_ger_tiger_1_b = yes
+		set_country_flag = HTD_GER_trm_heavy_tank_chassis_ger_tiger_1_b
+		
+		HTD_GER_trm_medium_tank_assault_gun_chassis_ger_panzer3_5_a = yes
+		set_country_flag = HTD_GER_trm_medium_tank_assault_gun_chassis_ger_panzer3_5_a 
+		
+		HTD_GER_trm_light_tank_artillery_chassis_ger_panzer2_3_a = yes
+		set_country_flag = HTD_GER_trm_light_tank_artillery_chassis_ger_panzer2_3_a
+		
+		HTD_GER_trm_medium_tank_artillery_chassis_ger_panzer34_1_a = yes
+		set_country_flag = HTD_GER_trm_medium_tank_artillery_chassis_ger_panzer34_1_a
+		
+		HTD_GER_trm_medium_tank_destroyer_chassis_ger_panzer34_1_a = yes
+		set_country_flag = HTD_GER_trm_medium_tank_destroyer_chassis_ger_panzer34_1_a
+		
+		HTD_GER_trm_heavy_tank_destroyer_chassis_ger_tiger_1_a = yes
+		set_country_flag = HTD_GER_trm_heavy_tank_destroyer_chassis_ger_tiger_1_a
+	}
+	if = { limit = { tag = ITA }
+		HTD_ITA_trm_medium_tank_aa_chassis_ita_m15_1_a = yes
+		set_country_flag = HTD_ITA_trm_medium_tank_aa_chassis_ita_m15_1_a
+		
+		HTD_ITA_trm_medium_tank_assault_gun_chassis_ita_m15_1_a = yes
+		set_country_flag = HTD_ITA_trm_medium_tank_assault_gun_chassis_ita_m15_1_a
+		
+		HTD_ITA_trm_medium_tank_assault_gun_chassis_ita_m15_1_b = yes
+		set_country_flag = HTD_ITA_trm_medium_tank_assault_gun_chassis_ita_m15_1_b
+		
+		add_to_temp_array = { ai_techs = token:tech_g55_fighter_equipment_1 }
+		add_to_temp_array = { ai_techs = token:tech_ro58_fighter_equipment_1 }
+		add_to_temp_array = { ai_techs = token:tech_fc20_cas_equipment_1 }
+	}
+	if = { limit = { tag = ENG }
+		HTD_ENG_trm_medium_tank_chassis_eng_mk8_2_a = yes
+		set_country_flag = HTD_ENG_trm_medium_tank_chassis_eng_mk8_2_a
+		
+		HTD_ENG_trm_cavalry_tank_aa_chassis_eng_mk6_1_a = yes
+		set_country_flag = HTD_ENG_trm_cavalry_tank_aa_chassis_eng_mk6_1_a
+		
+		HTD_ENG_trm_infantry_tank_chassis_eng_valentine_3_b = yes
+		set_country_flag = HTD_ENG_trm_infantry_tank_chassis_eng_valentine_3_b
+		
+		HTD_ENG_trm_heavy_tank_cs_chassis_eng_churchill_2_a = yes
+		set_country_flag = HTD_ENG_trm_heavy_tank_cs_chassis_eng_churchill_2_a
+		
+		add_to_temp_array = { ai_techs = token:tech_griffon_fighter_equipment_1 }
+	}
+	if = { limit = { tag = USA }
+		HTD_USA_trm_medium_tank_cs_chassis_usa_m4_1_a = yes
+		set_country_flag = HTD_USA_trm_medium_tank_cs_chassis_usa_m4_1_a
+		
+		add_to_temp_array = { ai_techs = token:tech_northamerican_p51b_equipment_1 }
+		add_to_temp_array = { ai_techs = token:tech_boeing_b17_equipment_4 }
+		add_to_temp_array = { ai_techs = token:tech_grumman_f6f_equipment_1 }
+	}
+	if = { limit = { tag = SOV }
+		HTD_SOV_trm_heavy_tank_assault_gun_chassis_sov_kv1_3_a = yes
+		set_country_flag = HTD_SOV_trm_heavy_tank_assault_gun_chassis_sov_kv1_3_a 
+	}
+}
+ai_research_fix/30 = { #1943.6
+	if = { limit = { tag = GER }
+		HTD_GER_trm_light_tank_chassis_ger_vk1602_leopard_1_a = yes
+		set_country_flag = HTD_GER_trm_light_tank_chassis_ger_vk1602_leopard_1_a
+		
+		HTD_GER_trm_medium_tank_assault_gun_chassis_ger_panzer4_4_a = yes
+		set_country_flag = HTD_GER_trm_medium_tank_assault_gun_chassis_ger_panzer4_4_a
+		
+		add_to_temp_array = { ai_techs = token:tech_fw_190_fighter_equipment_3 }
+		add_to_temp_array = { ai_techs = token:tech_bf_109_h_equipment_1 }
+		add_to_temp_array = { ai_techs = token:tech_ju_188_bomber_equipment_1 }
+		add_to_temp_array = { ai_techs = token:tech_ju_88_s_bomber_equipment_1 }
+		add_to_temp_array = { ai_techs = token:tech_he_177_bomber_equipment_3 }
+		add_to_temp_array = { ai_techs = token:tech_ju_88_a17_bomber_equipment_1 }
+		add_to_temp_array = { ai_techs = token:tech_me_155_fighter_equipment_1 }
+		add_to_temp_array = { ai_techs = token:tech_ju_87_cv_equipment_3 }
+	}
+	if = { limit = { tag = ITA }
+		add_to_temp_array = { ai_techs = token:tech_mc205n_fighter_equipment_1 }
+	}
+	if = { limit = { tag = ENG }
+		add_to_temp_array = { ai_techs = token:tech_hawker_typhoon1b_equipment_2 }
+		add_to_temp_array = { ai_techs = token:tech_supermarine_seafire_iii_equipment_1 }
+		add_to_temp_array = { ai_techs = token:tech_hawker_hurricane_iv_equipment_1 }
+		add_to_temp_array = { ai_techs = token:tech_mosquito_hvf_equipment_1 }
+		add_to_temp_array = { ai_techs = token:tech_mosquito_fsb_equipment_2 }
+		add_to_temp_array = { ai_techs = token:tech_supermarine_dumbo_equipment_1 }
+		add_to_temp_array = { ai_techs = token:tech_vickers_wellington_gr_bomber_equipment_2 }
+		
+		HTD_ENG_trm_infantry_tank_chassis_eng_valentine_3_c = yes
+		set_country_flag = HTD_ENG_trm_infantry_tank_chassis_eng_valentine_3_c 
+		
+		HTD_ENG_trm_para_tank_chassis_eng_mk8_1_a = yes
+		set_country_flag = HTD_ENG_trm_para_tank_chassis_eng_mk8_1_a 
+		
+		HTD_ENG_trm_medium_tank_cs_chassis_eng_mk8_1_a = yes
+		set_country_flag = HTD_ENG_trm_medium_tank_cs_chassis_eng_mk8_1_a
+		
+		HTD_ENG_trm_infantry_tank_destroyer_chassis_eng_valentine_2_a = yes
+		set_country_flag = HTD_ENG_trm_infantry_tank_destroyer_chassis_eng_valentine_2_a
+	}
+	if = { limit = { tag = FRA }
+		#add_to_temp_array = { ai_techs = token:tech_french_infantry_tank_equipment_4 }
+		if = { limit = { is_in_faction_with = USA } 
+			#add_to_temp_array = { ai_techs = token:tech_french_stuart_light_tank_equipment_2 }
+			#add_to_temp_array = { ai_techs = token:tech_french_sherman_m4_medium_tank_equipment_1 }
+		}
+		if = { limit = { is_in_faction_with = ENG } 
+			#add_to_temp_array = { ai_techs = token:tech_french_crusader_cavalry_tank_equipment_1 }
+		}
+	}
+	if = { limit = { tag = SOV }
+		HTD_SOV_trm_light_tank_chassis_sov_t80_1_a = yes
+		set_country_flag = HTD_SOV_trm_light_tank_chassis_sov_t80_1_a
+		
+		HTD_SOV_trm_medium_tank_chassis_sov_t34_4_a = yes
+		set_country_flag = HTD_SOV_trm_medium_tank_chassis_sov_t34_4_a 
+		
+		HTD_SOV_trm_heavy_tank_chassis_sov_is_1_a = yes
+		set_country_flag = HTD_SOV_trm_heavy_tank_chassis_sov_is_1_a  
+		
+		HTD_SOV_trm_light_tank_destroyer_chassis_sov_t70_1_a = yes
+		set_country_flag = HTD_SOV_trm_light_tank_destroyer_chassis_sov_t70_1_a
+		
+		add_to_temp_array = { ai_techs = token:tech_lagg_5_equipment_2 }
+		add_to_temp_array = { ai_techs = token:tech_yak_9_equipment_2 }
+		add_to_temp_array = { ai_techs = token:tech_il_10_equipment_1 }
+	}
+	if = { limit = { tag = ITA }
+		HTD_ITA_trm_medium_tank_assault_gun_chassis_ita_m15_2_a = yes
+		set_country_flag = HTD_ITA_trm_medium_tank_assault_gun_chassis_ita_m15_2_a
+	}
+	if = { limit = { tag = JAP }
+		HTD_JAP_trm_amph_tank_chassis_jap_type3_1_a = yes
+		set_country_flag = HTD_JAP_trm_amph_tank_chassis_jap_type3_1_a
+		
+		HTD_JAP_trm_medium_tank_chassis_jap_type3_1_a = yes
+		set_country_flag = HTD_JAP_trm_medium_tank_chassis_jap_type3_1_a
+	}
+	if = { limit = { tag = USA }
+		HTD_USA_trm_cavalry_tank_destroyer_chassis_usa_m18_1_a = yes
+		set_country_flag = HTD_USA_trm_cavalry_tank_destroyer_chassis_usa_m18_1_a
+		
+		add_to_temp_array = { ai_techs = token:tech_northamerican_pbj1_equipment_1 }
+	}
+	if = { limit = { tag = JAP }
+		add_to_temp_array = { ai_techs = token:tech_nakajima_ki_43_equipment_2 }
+		add_to_temp_array = { ai_techs = token:tech_kawasaki_ki_61_equipment_2 }
+		add_to_temp_array = { ai_techs = token:tech_mitsubishi_g4m2_equipment_1 }
+	}
+	if = { limit = { tag = AST is_in_faction_with = ENG }
+		HTD_AST_trm_medium_tank_chassis_ast_ac3_1_a = yes
+		set_country_flag = HTD_AST_trm_medium_tank_chassis_ast_ac3_1_a
+	}
+	if = { limit = { tag = CAN is_in_faction_with = ENG }
+		HTD_CAN_trm_medium_tank_artillery_chassis_usa_grizzly_1_a = yes
+		set_country_flag = HTD_CAN_trm_medium_tank_artillery_chassis_usa_grizzly_1_a
+	}
+}
+ai_research_fix/31 = { #1943.9
+	if = { limit = { tag = GER }
+		HTD_GER_trm_medium_advanced_tank_chassis_ger_panther_1_a = yes
+		set_country_flag = HTD_GER_trm_medium_advanced_tank_chassis_ger_panther_1_a 
+	}
+	if = { limit = { tag = ENG }
+		HTD_ENG_trm_medium_tank_chassis_eng_mk8_2_b = yes
+		set_country_flag = HTD_ENG_trm_medium_tank_chassis_eng_mk8_2_b 
+		
+		HTD_ENG_trm_medium_tank_cs_chassis_eng_mk8_2_a = yes
+		set_country_flag = HTD_ENG_trm_medium_tank_cs_chassis_eng_mk8_2_a
+		
+		HTD_ENG_trm_infantry_tank_amphibious_chassis_eng_valentine_3_a = yes
+		set_country_flag = HTD_ENG_trm_infantry_tank_amphibious_chassis_eng_valentine_3_a
+		
+	}
+	if = { limit = { tag = ITA }
+		HTD_ITA_trm_medium_tank_chassis_ita_m16_1_a = yes
+		set_country_flag = HTD_ITA_trm_medium_tank_chassis_ita_m16_1_a
+		
+		HTD_ITA_trm_medium_tank_assault_gun_chassis_ita_m15_2_b = yes
+		set_country_flag = HTD_ITA_trm_medium_tank_assault_gun_chassis_ita_m15_2_b
+		
+		HTD_ITA_trm_medium_tank_artillery_chassis_ita_m15_2_a = yes
+		set_country_flag = HTD_ITA_trm_medium_tank_artillery_chassis_ita_m15_2_a
+	}
+	if = { limit = { tag = JAP }
+		add_to_temp_array = { ai_techs = token:tech_nakajima_ki_43_equipment_3 }
+	}
+	if = { limit = { tag = SOV }
+		HTD_SOV_trm_medium_tank_destroyer_chassis_sov_t34_3_a = yes
+		set_country_flag = HTD_SOV_trm_medium_tank_destroyer_chassis_sov_t34_3_a 
+		
+		HTD_SOV_trm_medium_tank_destroyer_chassis_sov_t34_4_c = yes
+		set_country_flag = HTD_SOV_trm_medium_tank_destroyer_chassis_sov_t34_4_c
+	}
+	if = { limit = { tag = USA }
+		HTD_USA_trm_medium_tank_cs_chassis_usa_m4_1_b = yes
+		set_country_flag = HTD_USA_trm_medium_tank_cs_chassis_usa_m4_1_b
+		
+		HTD_USA_trm_medium_tank_amphibious_chassis_usa_m4_1_a = yes
+		set_country_flag = HTD_USA_trm_medium_tank_amphibious_chassis_usa_m4_1_a
+		
+		HTD_USA_trm_medium_tank_chassis_usa_t23_1_a = yes
+		set_country_flag = HTD_USA_trm_medium_tank_chassis_usa_t23_1_a
+		
+		HTD_USA_trm_amph_tank_chassis_usa_lvt_1_a = yes
+		set_country_flag = HTD_USA_trm_amph_tank_chassis_usa_lvt_1_a
+	}
+	if = { limit = { OR = { tag = AST tag = CAN tag = RAJ } is_in_faction_with = ENG }
+		add_to_temp_array = { ai_techs = token:tech_hawker_hurricane_iv_equipment_1 }
+		add_to_temp_array = { ai_techs = token:tech_hawker_typhoon1b_equipment_2 }
+	}
+	if = { limit = { tag = CAN is_in_faction_with = ENG }
+		HTD_CAN_trm_medium_tank_chassis_usa_grizzly_1_a = yes
+		set_country_flag = HTD_CAN_trm_medium_tank_chassis_usa_grizzly_1_a
+	}
+}
+ai_research_fix/32 = { #1944.1
+	if = { limit = { tag = GER }
+		HTD_GER_trm_medium_tank_destroyer_chassis_ger_panzer4_4_a  = yes
+		set_country_flag = HTD_GER_trm_medium_tank_destroyer_chassis_ger_panzer4_4_a  
+		
+		HTD_GER_trm_medium_tank_destroyer_chassis_ger_panzer4_3_a = yes
+		set_country_flag = HTD_GER_trm_medium_tank_destroyer_chassis_ger_panzer4_3_a
+		
+		HTD_GER_trm_medium_advanced_tank_destroyer_chassis_ger_panther_2_a = yes
+		set_country_flag = HTD_GER_trm_medium_advanced_tank_destroyer_chassis_ger_panther_2_a
+		
+		HTD_GER_trm_cavalry_tank_aa_chassis_ger_pz38_2_a = yes
+		set_country_flag = HTD_GER_trm_cavalry_tank_aa_chassis_ger_pz38_2_a
+		
+		HTD_GER_trm_cavalry_tank_artillery_chassis_ger_pz38_2_a = yes
+		set_country_flag = HTD_GER_trm_cavalry_tank_artillery_chassis_ger_pz38_2_a
+	}
+	if = { limit = { tag = SOV }
+		HTD_SOV_trm_heavy_tank_assault_gun_chassis_sov_is_1_a = yes
+		set_country_flag = HTD_SOV_trm_heavy_tank_assault_gun_chassis_sov_is_1_a 
+	}
+	if = { limit = { tag = ITA }
+		HTD_ITA_trm_heavy_tank_chassis_ita_p30_1_a = yes
+		set_country_flag = HTD_ITA_trm_heavy_tank_chassis_ita_p30_1_a
+	}
+	if = { limit = { tag = ENG }
+		HTD_ENG_trm_cavalry_tank_aa_chassis_eng_mk6_1_b = yes
+		set_country_flag = HTD_ENG_trm_cavalry_tank_aa_chassis_eng_mk6_1_b
+		
+		if = { limit = { is_in_faction_with = USA }
+			HTD_ENG_trm_medium_tank_chassis_usa_m4_1_g = yes
+			set_country_flag = HTD_ENG_trm_medium_tank_chassis_usa_m4_1_g
+		}
+	}
+	if = { limit = { tag = JAP }
+		HTD_JAP_trm_medium_tank_destroyer_chassis_jap_type97_1_b = yes
+		set_country_flag = HTD_JAP_trm_medium_tank_destroyer_chassis_jap_type97_1_b
+		
+		HTD_JAP_trm_medium_tank_assault_gun_chassis_jap_type97_1_b = yes
+		set_country_flag = HTD_JAP_trm_medium_tank_assault_gun_chassis_jap_type97_1_b
+		
+		HTD_JAP_trm_medium_tank_cs_chassis_jap_type1_1_a = yes
+		set_country_flag = HTD_JAP_trm_medium_tank_cs_chassis_jap_type1_1_a
+	}
+	if = { limit = { tag = USA }
+		HTD_USA_trm_medium_tank_chassis_usa_m4_1_c = yes
+		set_country_flag = HTD_USA_trm_medium_tank_chassis_usa_m4_1_c
+		
+		HTD_USA_trm_medium_tank_chassis_usa_m4_2_f = yes
+		set_country_flag = HTD_USA_trm_medium_tank_chassis_usa_m4_2_f
+		
+		HTD_USA_trm_medium_tank_chassis_usa_t23_1_c = yes
+		set_country_flag = HTD_USA_trm_medium_tank_chassis_usa_t23_1_c
+	}
+	if = { limit = { tag = AST is_in_faction_with = ENG }
+		HTD_AST_trm_medium_tank_chassis_ast_ac4_1_a = yes
+		set_country_flag = HTD_AST_trm_medium_tank_chassis_ast_ac4_1_a
+	}
+
+}
+ai_research_fix/33 = { #1944.3
+	if = { limit = { tag = GER }
+		HTD_GER_trm_medium_tank_chassis_ger_panzer4_4_b = yes
+		set_country_flag = HTD_GER_trm_medium_tank_chassis_ger_panzer4_4_b 
+		
+		HTD_GER_trm_cavalry_tank_destroyer_chassis_ger_pz38_2_a = yes
+		set_country_flag = HTD_GER_trm_cavalry_tank_destroyer_chassis_ger_pz38_2_a
+		
+		add_to_temp_array = { ai_techs = token:tech_me_262_fighter_equipment_1 }
+	}
+	if = { limit = { tag = ITA }
+		HTD_ITA_trm_medium_tank_destroyer_chassis_ita_m15_2_a = yes
+		set_country_flag = HTD_ITA_trm_medium_tank_destroyer_chassis_ita_m15_2_a
+		
+		add_to_temp_array = { ai_techs = token:tech_g56_fighter_equipment_1 }
+		add_to_temp_array = { ai_techs = token:tech_sm91_fighter_equipment_1 }
+		add_to_temp_array = { ai_techs = token:tech_sm89_cas_equipment_1 }
+	}
+	if = { limit = { tag = SOV }
+		HTD_SOV_trm_medium_tank_chassis_sov_t34_4_b = yes
+		set_country_flag = HTD_SOV_trm_medium_tank_chassis_sov_t34_4_b 
+		
+		HTD_SOV_trm_light_tank_aa_chassis_sov_t70_1_a = yes
+		set_country_flag = HTD_SOV_trm_light_tank_aa_chassis_sov_t70_1_a
+		
+		HTD_SOV_trm_heavy_tank_destroyer_chassis_sov_is_1_a = yes
+		set_country_flag = HTD_SOV_trm_heavy_tank_destroyer_chassis_sov_is_1_a
+		
+	}
+	if = { limit = { tag = ENG }
+		HTD_ENG_trm_heavy_tank_chassis_eng_churchill_3_a = yes
+		set_country_flag = HTD_ENG_trm_heavy_tank_chassis_eng_churchill_3_a 
+		
+			HTD_ENG_trm_heavy_tank_amphibious_chassis_eng_churchill_3_a = yes
+			set_country_flag = HTD_ENG_trm_heavy_tank_amphibious_chassis_eng_churchill_3_a
+		
+		HTD_ENG_trm_medium_tank_aa_chassis_eng_mk8_1_a = yes
+		set_country_flag = HTD_ENG_trm_medium_tank_aa_chassis_eng_mk8_1_a
+		
+		HTD_ENG_trm_medium_tank_chassis_eng_mk8_3_a = yes
+		set_country_flag = HTD_ENG_trm_medium_tank_chassis_eng_mk8_3_a
+		
+		HTD_ENG_trm_heavy_tank_chassis_eng_excelsior_1_a = yes
+		set_country_flag = HTD_ENG_trm_heavy_tank_chassis_eng_excelsior_1_a
+		
+		if = { limit = { is_in_faction_with = USA }
+			HTD_ENG_trm_medium_tank_chassis_usa_m4_2_h = yes
+			set_country_flag = HTD_ENG_trm_medium_tank_chassis_usa_m4_2_h 
+			
+			HTD_ENG_trm_medium_tank_destroyer_chassis_usa_m4_1_b = yes
+			set_country_flag = HTD_ENG_trm_medium_tank_destroyer_chassis_usa_m4_1_b 
+		}
+		
+		add_to_temp_array = { ai_techs = token:tech_griffon_spitfire_equipment_1 }
+	}
+	if = { limit = { tag = USA }
+		HTD_USA_trm_light_tank_chassis_usa_m24_1_a = yes
+		set_country_flag = HTD_USA_trm_light_tank_chassis_usa_m24_1_a 
+		
+		HTD_USA_trm_medium_tank_chassis_usa_m4_2_b = yes
+		set_country_flag = HTD_USA_trm_medium_tank_chassis_usa_m4_2_b
+		
+		HTD_USA_trm_medium_tank_cs_chassis_usa_m4_2_a = yes
+		set_country_flag = HTD_USA_trm_medium_tank_cs_chassis_usa_m4_2_a
+		
+		HTD_USA_trm_medium_tank_artillery_chassis_usa_m4_2_c = yes
+		set_country_flag = HTD_USA_trm_medium_tank_artillery_chassis_usa_m4_2_c
+		
+		HTD_USA_trm_medium_tank_destroyer_chassis_usa_m4_2_c = yes
+		set_country_flag = HTD_USA_trm_medium_tank_destroyer_chassis_usa_m4_2_c
+		
+		HTD_USA_trm_medium_tank_chassis_usa_m4_1_d = yes
+		set_country_flag = HTD_USA_trm_medium_tank_chassis_usa_m4_1_d
+		
+		HTD_USA_trm_medium_tank_chassis_usa_m4_1_f = yes
+		set_country_flag = HTD_USA_trm_medium_tank_chassis_usa_m4_1_f
+		
+		HTD_USA_trm_infantry_tank_chassis_usa_t14_1_a = yes
+		set_country_flag = HTD_USA_trm_infantry_tank_chassis_usa_t14_1_a
+		
+		# Jumbo - maybe remove from AI?
+		HTD_USA_trm_medium_tank_chassis_usa_m4_2_g = yes
+		set_country_flag = HTD_USA_trm_medium_tank_chassis_usa_m4_2_g
+		
+		add_to_temp_array = { ai_techs = token:tech_northamerican_p51d_equipment_1 }
+		add_to_temp_array = { ai_techs = token:tech_northamerican_b25_equipment_3 }
+		add_to_temp_array = { ai_techs = token:tech_grumman_f6f_equipment_2 }
+		
+	}
+	if = { limit = { tag = JAP }
+		HTD_JAP_trm_light_tank_cs_chassis_jap_type95_1_a = yes
+		set_country_flag = HTD_JAP_trm_light_tank_cs_chassis_jap_type95_1_a
+		
+		add_to_temp_array = { ai_techs = token:tech_mitsubishi_a6m5c_equipment_1 }
+	}
+	if = { limit = { tag = CAN is_in_faction_with = ENG }
+		HTD_CAN_trm_medium_tank_chassis_usa_grizzly_1_b = yes
+		set_country_flag = HTD_CAN_trm_medium_tank_chassis_usa_grizzly_1_b
+	}
+}
+ai_research_fix/34 = { #1944.6
+	if = { limit = { tag = GER }
+		add_to_temp_array = { ai_techs = token:tech_me_109_late_fighter_equipment_4 }
+		add_to_temp_array = { ai_techs = token:tech_fw_190_interceptor_equipment_1 }
+		add_to_temp_array = { ai_techs = token:tech_do_335_fighter_equipment_1 }
+		add_to_temp_array = { ai_techs = token:tech_ju_288_bomber_equipment_1 }
+		add_to_temp_array = { ai_techs = token:tech_ju_188_nav_bomber_equipment_1 }
+		
+		HTD_GER_trm_medium_advanced_tank_chassis_ger_panther_2_a = yes
+		set_country_flag = HTD_GER_trm_medium_advanced_tank_chassis_ger_panther_2_a 
+		
+		HTD_GER_trm_heavy_tank_chassis_ger_tiger2_1_a = yes
+		set_country_flag = HTD_GER_trm_heavy_tank_chassis_ger_tiger2_1_a 
+		
+		HTD_GER_trm_medium_tank_aa_chassis_ger_panzer4_4_b = yes
+		set_country_flag = HTD_GER_trm_medium_tank_aa_chassis_ger_panzer4_4_b
+		
+	}
+	if = { limit = { tag = ENG }
+		HTD_ENG_trm_medium_tank_destroyer_chassis_eng_mk8_3_a = yes
+		set_country_flag = HTD_ENG_trm_medium_tank_destroyer_chassis_eng_mk8_3_a
+		
+		HTD_ENG_trm_heavy_tank_cs_chassis_eng_churchill_3_a = yes
+		set_country_flag = HTD_ENG_trm_heavy_tank_cs_chassis_eng_churchill_3_a
+		
+		add_to_temp_array = { ai_techs = token:tech_hawker_tempest_equipment_1 }
+		add_to_temp_array = { ai_techs = token:tech_supermarine_seafire_xv_equipment_1 }
+		add_to_temp_array = { ai_techs = token:tech_vickers_warwick_equipment_1 }
+		add_to_temp_array = { ai_techs = token:tech_avro_lancaster_equipment_2 }
+	}
+	if = { limit = { tag = FRA }		
+		if = { limit = { is_in_faction_with = USA } 
+			#add_to_temp_array = { ai_techs = token:tech_french_sherman_m4_medium_tank_equipment_2 }
+			#add_to_temp_array = { ai_techs = token:tech_french_m_24_light_tank_equipment_1 }
+			
+		}
+	}
+	if = { limit = { tag = SOV }
+		HTD_SOV_trm_heavy_tank_chassis_sov_is_2_a = yes
+		set_country_flag = HTD_SOV_trm_heavy_tank_chassis_sov_is_2_a
+		
+		HTD_SOV_trm_medium_tank_destroyer_chassis_sov_t34_4_b = yes
+		set_country_flag = HTD_SOV_trm_medium_tank_destroyer_chassis_sov_t34_4_b 
+		
+		add_to_temp_array = { ai_techs = token:tech_lagg_7_equipment_1 }
+		add_to_temp_array = { ai_techs = token:tech_yak_9_equipment_3 }
+	}
+	if = { limit = { tag = JAP }
+		HTD_JAP_trm_medium_tank_chassis_jap_type4_1_a = yes
+		set_country_flag = HTD_JAP_trm_medium_tank_chassis_jap_type4_1_a
+		
+		add_to_temp_array = { ai_techs = token:tech_nakajima_ki_84_equipment_1 }
+		add_to_temp_array = { ai_techs = token:tech_kawasaki_ki_102_equipment_1 }
+		add_to_temp_array = { ai_techs = token:tech_yokosuka_p1_equipment_1 }
+		add_to_temp_array = { ai_techs = token:tech_aichi_b7a_equipment_1 }
+	}
+	if = { limit = { tag = USA }
+		HTD_USA_trm_amph_tank_chassis_usa_lvt_1_b = yes
+		set_country_flag = HTD_USA_trm_amph_tank_chassis_usa_lvt_1_b
+		
+		add_to_temp_array = { ai_techs = token:tech_republic_p47m_equipment_1 }
+		add_to_temp_array = { ai_techs = token:tech_lockheed_p38l_equipment_1 }
+		add_to_temp_array = { ai_techs = token:tech_curtiss_a25_equipment_1 }
+		add_to_temp_array = { ai_techs = token:tech_boeing_b29_equipment_1 }
+		add_to_temp_array = { ai_techs = token:tech_grumman_tbf_equipment_2 }
+	}
+	if = { limit = { tag = ITA }
+		add_to_temp_array = { ai_techs = token:tech_mc207_fighter_equipment_1 }
+		add_to_temp_array = { ai_techs = token:tech_g55_cv_fighter_equipment_1 }
+		add_to_temp_array = { ai_techs = token:tech_g55s_cv_nav_bomber_equipment_1 }
+	}
+	if = { limit = { tag = CAN is_in_faction_with = ENG }
+		HTD_CAN_trm_medium_tank_aa_chassis_usa_grizzly_1_a = yes
+		set_country_flag = HTD_CAN_trm_medium_tank_aa_chassis_usa_grizzly_1_a
+	}
+}
+ai_research_fix/35 = { #1944.9
+	if = { limit = { tag = GER }
+		HTD_GER_trm_medium_tank_destroyer_chassis_ger_panzer4_4_b  = yes
+		set_country_flag = HTD_GER_trm_medium_tank_destroyer_chassis_ger_panzer4_4_b  
+		
+		HTD_GER_trm_heavy_tank_assault_gun_chassis_ger_tiger_1_a = yes
+		set_country_flag = HTD_GER_trm_heavy_tank_assault_gun_chassis_ger_tiger_1_a
+		
+		HTD_GER_trm_heavy_tank_destroyer_chassis_ger_tiger2_1_a = yes
+		set_country_flag = HTD_GER_trm_heavy_tank_destroyer_chassis_ger_tiger2_1_a
+	}
+	if = { limit = { tag = ITA }
+		HTD_ITA_trm_heavy_tank_chassis_ita_p30_2_a = yes
+		set_country_flag = HTD_ITA_trm_heavy_tank_chassis_ita_p30_2_a
+		
+	}
+	if = { limit = { tag = USA }
+		HTD_USA_trm_medium_tank_chassis_usa_m4_2_c = yes
+		set_country_flag = HTD_USA_trm_medium_tank_chassis_usa_m4_2_c 
+		
+		HTD_USA_trm_medium_tank_destroyer_chassis_usa_m4_2_a = yes
+		set_country_flag = HTD_USA_trm_medium_tank_destroyer_chassis_usa_m4_2_a 
+		
+		HTD_USA_trm_medium_tank_destroyer_chassis_usa_m4_2_c = yes
+		set_country_flag = HTD_USA_trm_medium_tank_destroyer_chassis_usa_m4_2_c
+		
+		HTD_USA_trm_medium_advanced_tank_chassis_usa_m26_1_a = yes
+		set_country_flag = HTD_USA_trm_medium_advanced_tank_chassis_usa_m26_1_a
+		
+	}
+	if = { limit = { tag = ENG }
+		HTD_ENG_trm_medium_tank_chassis_eng_comet_1_a = yes
+		set_country_flag = HTD_ENG_trm_medium_tank_chassis_eng_comet_1_a 
+		
+		add_to_temp_array = { ai_techs = token:tech_gloster_meteor_equipment_1 }
+		
+	}
+	if = { limit = { OR = { tag = AST tag = CAN tag = RAJ } is_in_faction_with = ENG }
+		add_to_temp_array = { ai_techs = token:tech_avro_lancaster_equipment_2 }
+		add_to_temp_array = { ai_techs = token:tech_hawker_tempest_equipment_1 }
+		add_to_temp_array = { ai_techs = token:griffon_spitfire_equipment_1 }
+	}
+	if = { limit = { tag = SOV }
+		HTD_SOV_trm_medium_tank_chassis_sov_t34_4_c = yes
+		set_country_flag = HTD_SOV_trm_medium_tank_chassis_sov_t34_4_c 
+		
+		HTD_SOV_trm_heavy_tank_destroyer_chassis_sov_is_2_a = yes
+		set_country_flag = HTD_SOV_trm_heavy_tank_destroyer_chassis_sov_is_2_a
+	}
+
+}
+ai_research_fix/36 = { #1945.1
+	if = { limit = { tag = SOV }
+		HTD_SOV_trm_medium_tank_destroyer_chassis_sov_t34_4_a = yes
+		set_country_flag = HTD_SOV_trm_medium_tank_destroyer_chassis_sov_t34_4_a 
+	}
+	if = { limit = { tag = GER }
+		HTD_GER_trm_medium_tank_aa_chassis_ger_panzer4_4_c = yes
+		set_country_flag = HTD_GER_trm_medium_tank_aa_chassis_ger_panzer4_4_c
+	}
+	if = { limit = { tag = USA }
+		HTD_USA_trm_medium_tank_cs_chassis_usa_m4_2_b = yes
+		set_country_flag = HTD_USA_trm_medium_tank_cs_chassis_usa_m4_2_b
+	}
+		
+}
+ai_research_fix/37 = { #1945.3
+	if = { limit = { tag = GER }
+		HTD_GER_trm_cavalry_tank_destroyer_chassis_ger_pz38_3_a = yes
+		set_country_flag = HTD_GER_trm_cavalry_tank_destroyer_chassis_ger_pz38_3_a
+		
+		add_to_temp_array = { ai_techs = token:tech_he_162_fighter_equipment_1 }
+	}
+	if = { limit = { tag = ITA }
+		add_to_temp_array = { ai_techs = token:tech_ca_183_fighter_equipment_1 }
+		add_to_temp_array = { ai_techs = token:tech_sm92_fighter_equipment_1 }
+	}
+	if = { limit = { tag = USA }
+		HTD_USA_trm_medium_tank_artillery_chassis_usa_m4_2_a = yes
+		set_country_flag = HTD_USA_trm_medium_tank_artillery_chassis_usa_m4_2_a 
+		
+		HTD_USA_trm_heavy_tank_chassis_usa_t29_1_a = yes
+		set_country_flag = HTD_USA_trm_heavy_tank_chassis_usa_t29_1_a 
+		
+		HTD_USA_trm_light_tank_aa_chassis_usa_m24_1_a = yes
+		set_country_flag = HTD_USA_trm_light_tank_aa_chassis_usa_m24_1_a
+		
+		HTD_USA_trm_light_tank_artillery_chassis_usa_m24_1_a = yes
+		set_country_flag = HTD_USA_trm_light_tank_artillery_chassis_usa_m24_1_a
+		
+		HTD_USA_trm_cavalry_tank_destroyer_chassis_usa_m18_1_b = yes
+		set_country_flag = HTD_USA_trm_cavalry_tank_destroyer_chassis_usa_m18_1_b
+		
+		HTD_USA_trm_cavalry_tank_cs_chassis_usa_m18_1_a = yes
+		set_country_flag = HTD_USA_trm_cavalry_tank_cs_chassis_usa_m18_1_a
+		
+		HTD_USA_trm_medium_tank_artillery_chassis_usa_m4_2_b = yes
+		set_country_flag = HTD_USA_trm_medium_tank_artillery_chassis_usa_m4_2_b
+		
+		HTD_USA_trm_medium_advanced_tank_destroyer_chassis_usa_m26_1_a = yes
+		set_country_flag = HTD_USA_trm_medium_advanced_tank_destroyer_chassis_usa_m26_1_a
+		
+		add_to_temp_array = { ai_techs = token:tech_northamerican_p51h_equipment_1 }
+		add_to_temp_array = { ai_techs = token:tech_grumman_f8f_equipment_1 }
+	}
+	if = { limit = { tag = ENG }
+		add_to_temp_array = { ai_techs = token:tech_griffon_spitfire_equipment_2 }
+	}
+	if = { limit = { tag = JAP }
+		add_to_temp_array = { ai_techs = token:tech_mitsubishi_a7m2_equipment_1 }
+	}
+		
+}
+ai_research_fix/38 = { #1945.6
+	if = { limit = { tag = GER }
+		HTD_GER_trm_medium_advanced_tank_chassis_ger_panther_3_a = yes
+		set_country_flag = HTD_GER_trm_medium_advanced_tank_chassis_ger_panther_3_a 
+		
+		add_to_temp_array = { ai_techs = token:tech_ta_152_fighter_equipment_1 }
+		add_to_temp_array = { ai_techs = token:tech_ta_152_fighter_equipment_2 }
+		add_to_temp_array = { ai_techs = token:tech_bv_155_fighter_equipment_1 }
+		add_to_temp_array = { ai_techs = token:tech_do_335_fighter_equipment_2 }
+	}
+	if = { limit = { tag = ENG }
+		add_to_temp_array = { ai_techs = token:tech_griffon_spitfire_equipment_2 }
+		add_to_temp_array = { ai_techs = token:tech_blackburn_firebrand_equipment_1 }
+		add_to_temp_array = { ai_techs = token:tech_avro_lincoln_equipment_1 }
+		add_to_temp_array = { ai_techs = token:tech_gloster_meteor_equipment_2 }
+		
+		HTD_ENG_trm_heavy_tank_chassis_eng_churchill_4_a = yes
+		set_country_flag = HTD_ENG_trm_heavy_tank_chassis_eng_churchill_4_a 
+		
+		HTD_ENG_trm_superheavy_tank_chassis_eng_tortoise_1_a = yes
+		set_country_flag = HTD_ENG_trm_superheavy_tank_chassis_eng_tortoise_1_a 
+	}
+	if = { limit = { tag = FRA }
+		#add_to_temp_array = { ai_techs = token:tech_french_main_tank_equipment_1 }
+	}
+	if = { limit = { tag = SOV }
+		HTD_SOV_trm_medium_advanced_tank_chassis_sov_t44_1_a = yes
+		set_country_flag = HTD_SOV_trm_medium_advanced_tank_chassis_sov_t44_1_a 
+		
+		HTD_SOV_trm_heavy_tank_chassis_sov_is3_1_a = yes
+		set_country_flag = HTD_SOV_trm_heavy_tank_chassis_sov_is3_1_a
+
+	}
+	if = { limit = { tag = ITA }
+	}
+	if = { limit = { tag = JAP }
+		HTD_JAP_trm_light_tank_chassis_jap_type5_1_a = yes
+		set_country_flag = HTD_JAP_trm_light_tank_chassis_jap_type5_1_a
+		
+		HTD_JAP_trm_light_tank_destroyer_chassis_jap_type95_1_a = yes
+		set_country_flag = HTD_JAP_trm_light_tank_destroyer_chassis_jap_type95_1_a
+		
+		HTD_JAP_trm_light_tank_assault_gun_chassis_jap_type95_1_a = yes
+		set_country_flag = HTD_JAP_trm_light_tank_assault_gun_chassis_jap_type95_1_a
+		
+		HTD_JAP_trm_medium_advanced_tank_chassis_jap_type5_1_a = yes
+		set_country_flag = HTD_JAP_trm_medium_advanced_tank_chassis_jap_type5_1_a
+		
+		HTD_JAP_trm_medium_tank_destroyer_chassis_jap_apc_type4_1_a = yes
+		set_country_flag = HTD_JAP_trm_medium_tank_destroyer_chassis_jap_apc_type4_1_a
+	}
+	if = { limit = { tag = USA }
+		HTD_USA_trm_medium_advanced_tank_cs_chassis_usa_m26_1_a = yes
+		set_country_flag = HTD_USA_trm_medium_advanced_tank_cs_chassis_usa_m26_1_a
+		
+		add_to_temp_array = { ai_techs = token:tech_republic_p47n_equipment_1 }
+		add_to_temp_array = { ai_techs = token:tech_btd_destroyer_equipment_1 }
+		add_to_temp_array = { ai_techs = token:tech_lockheed_p80_equipment_1 }
+		
+	}
+	if = { limit = { tag = JAP }
+		add_to_temp_array = { ai_techs = token:tech_kawasaki_ki_100_equipment_1 }
+		add_to_temp_array = { ai_techs = token:tech_nakajima_ki_84_equipment_2 }
+		add_to_temp_array = { ai_techs = token:tech_mitsubishi_ki_83_equipment_1 }
+	}
+}
+ai_research_fix/39 = { #1945.9
+	if = { limit = { tag = ENG }
+		HTD_ENG_trm_medium_advanced_tank_chassis_eng_centurion_1_a = yes
+		set_country_flag = HTD_ENG_trm_medium_advanced_tank_chassis_eng_centurion_1_a 
+		
+		HTD_ENG_trm_medium_tank_destroyer_chassis_eng_mk8_3_a = yes
+		set_country_flag = HTD_ENG_trm_medium_tank_destroyer_chassis_eng_mk8_3_a 
+		
+		HTD_ENG_trm_heavy_tank_chassis_eng_excelsior_1_b = yes
+		set_country_flag = HTD_ENG_trm_heavy_tank_chassis_eng_excelsior_1_b 
+	}
+	if = { limit = { tag = JAP }
+		HTD_JAP_trm_medium_tank_chassis_jap_type3_1_b = yes
+		set_country_flag = HTD_JAP_trm_medium_tank_chassis_jap_type3_1_b
+		
+		HTD_JAP_trm_medium_tank_destroyer_chassis_jap_type4_1_a = yes
+		set_country_flag = HTD_JAP_trm_medium_tank_destroyer_chassis_jap_type4_1_a
+		
+		HTD_JAP_trm_medium_advanced_tank_destroyer_chassis_jap_type5_1_a = yes
+		set_country_flag = HTD_JAP_trm_medium_advanced_tank_destroyer_chassis_jap_type5_1_a
+	}
+		if = { limit = { OR = { tag = AST tag = CAN tag = RAJ } is_in_faction_with = ENG }
+		add_to_temp_array = { ai_techs = token:griffon_spitfire_equipment_2 }
+	}
+	if = { limit = { tag = SOV }
+		HTD_SOV_trm_medium_advanced_tank_chassis_sov_t44_1_b = yes
+		set_country_flag = HTD_SOV_trm_medium_advanced_tank_chassis_sov_t44_1_b
+	}
+	if = { limit = { tag = USA }
+		HTD_USA_trm_heavy_tank_chassis_usa_t29_1_b = yes
+		set_country_flag = HTD_USA_trm_heavy_tank_chassis_usa_t29_1_b
+		
+		HTD_USA_trm_superheavy_tank_chassis_usa_t28_1_a = yes
+		set_country_flag = HTD_USA_trm_superheavy_tank_chassis_usa_t28_1_a
+	}
+}
+ai_research_fix/40 = { #1946.1
+	if = { limit = { tag = GER }
+		HTD_GER_trm_heavy_tank_chassis_ger_tiger2_1_b = yes
+		set_country_flag = HTD_GER_trm_heavy_tank_chassis_ger_tiger2_1_b 
+		
+		HTD_GER_trm_superheavy_tank_chassis_ger_maus_1_a = yes
+		set_country_flag = HTD_GER_trm_superheavy_tank_chassis_ger_maus_1_a
+	}
+}
+ai_research_fix/41 = { #1946.3
+	if = { limit = { tag = ENG }
+		add_to_temp_array = { ai_techs = token:tech_spitfire_24_equipment_1 }
+	}
+	if = { limit = { tag = JAP }
+		add_to_temp_array = { ai_techs = token:tech_nakajima_ki_201_equipment_1 }
+	}
+	if = { limit = { tag = USA }
+		HTD_USA_trm_heavy_tank_chassis_usa_t32_1_a = yes
+		set_country_flag = HTD_USA_trm_heavy_tank_chassis_usa_t32_1_a 
+	}
+	if = { limit = { tag = FRA }
+		HTD_FRA_trm_heavy_tank_chassis_fra_arl44_1_a = yes
+		set_country_flag = HTD_FRA_trm_heavy_tank_chassis_fra_arl44_1_a
+	}
+}
+ai_research_fix/42 = { #1946.6
+	if = { limit = { tag = ENG }
+		add_to_temp_array = { ai_techs = token:tech_hornet_equipment_1 }
+		add_to_temp_array = { ai_techs = token:tech_sea_fire45_equipment_1 }
+		add_to_temp_array = { ai_techs = token:tech_fairey_spearfish_equipment_1 }
+		add_to_temp_array = { ai_techs = token:tech_gloster_meteor_equipment_3 }
+		add_to_temp_array = { ai_techs = token:tech_vampire_equipment_1 }
+		
+	}
+	if = { limit = { tag = USA }
+		add_to_temp_array = { ai_techs = token:tech_northamerican_p82_equipment_1 }
+	}
+	if = { limit = { tag = SOV }
+		HTD_SOV_trm_medium_advanced_tank_chassis_sov_t54_1_a = yes
+		set_country_flag = HTD_SOV_trm_medium_advanced_tank_chassis_sov_t54_1_a 
+		
+		HTD_SOV_trm_heavy_tank_chassis_sov_is4_1_a = yes
+		set_country_flag = HTD_SOV_trm_heavy_tank_chassis_sov_is4_1_a
+		
+		add_to_temp_array = { ai_techs = token:tech_lagg_9_equipment_1 }
+		add_to_temp_array = { ai_techs = token:tech_yak_9_equipment_4 }
+		add_to_temp_array = { ai_techs = token:tech_mig_9_fighter_equipment_1 }
+	}
+}
+ai_research_fix/43 = { #1946.9
+}
+ai_research_fix/44 = { #1947.1
+	if = { limit = { tag = ENG }
+		HTD_ENG_trm_medium_advanced_tank_chassis_eng_centurion_1_b = yes
+		set_country_flag = HTD_ENG_trm_medium_advanced_tank_chassis_eng_centurion_1_b 
+		
+		HTD_ENG_trm_medium_advanced_tank_cs_chassis_eng_centurion_1_a = yes
+		set_country_flag = HTD_ENG_trm_medium_advanced_tank_cs_chassis_eng_centurion_1_a
+	}
+}
+
+ai_update_on_tech_complete = {
+	# var:tech returns tech token
+	# this does NOT fire for all techs! check on_xxxx_tech_research_complete scripted effects
+
+	if = {
+		limit = {
+			check_variable = { ai_template_techs^num > 0 }
+			is_in_array = { ai_template_techs = tech }
+		}
+		
+		############################ clean up research score increase
+		
+		meta_effect = { text = { clear_variable = ai_tech_need/[X] }
+			X = "[?tech.GetTokenKey]"
+		}
+		
+		for_each_loop = {
+			array = ai_template_techs
+			
+			if = {
+				limit = {
+					check_variable = { v = tech }
+				}
+				remove_from_array = { ROOT.ai_template_techs_date = ROOT.ai_template_techs_date^i }
+				remove_from_array = { ROOT.ai_template_techs_year = ROOT.ai_template_techs_year^i }
+				
+				set_temp_variable = { break = 1 }
+			}
+		}
+		remove_from_array = { ai_template_techs = tech }
+		
+		if = { limit = { check_variable = { ai_template_techs^num = 0 } }
+			clear_array = ai_template_techs
+			clear_array = ai_template_techs_date
+			clear_array = ai_template_techs_year
+		}
+	
+		############################ either mechanic, add unit to template
+		
+		if = {
+			limit = {
+				is_in_array = { ai_template_either_tech = tech }
+			}
+			
+			#log = "[?tech.GetTokenKey] is in ai_template_either_tech"
+			
+			for_each_loop = {
+				array = ai_roles
+				index = role_index
+				value = role_v
+				
+				clear_temp_array = removal_array
+					
+				for_each_loop = {
+					array = ai_either_support_tech@var:role_v
+					value = either_tech
+					index = either_ixix
+					
+					if = {
+						limit = { #tech is in array
+							check_variable = { tech = either_tech }
+						}
+						#log = "[?tech.GetTokenKey] is in array for role [?role_v.GetTokenKey]"
+						
+						#set_temp_variable = { add_unit = ai_either_support@var:role_v^i }
+						
+						ai_respawn_template = yes
+						
+						#log = "add unit [?add_unit.GetTokenKey]"
+						#meta_effect = {
+						#	text = {
+						#		add_units_to_division_template = {
+						#			template_name = "[ROLE]"
+						#			support = {
+						#				[X] = 0
+						#			}
+						#		}
+						#	}
+						#	ROLE = "[?ai_roles_title^role_index.GetTokenLocalizedKey]"
+						#	X = "[?add_unit.GetTokenKey]"
+						#}
+						
+						add_to_temp_array = { array = removal_array index = 0 value = either_ixix }
+					}
+				}
+				
+				for_each_loop = {
+					array = removal_array
+					
+					#log = "remove [?ai_either_support@var:role_v^v.GetTokenKey] as its finished"
+					remove_from_array = { array = ai_either_support@var:role_v index = v }
+					remove_from_array = { array = ai_either_support_tech@var:role_v index = v }
+				}
+				
+				clear_temp_array = removal_array
+					
+				for_each_loop = {
+					array = ai_either_regiment_tech@var:role_v
+					value = either_tech
+					index = either_ixix
+					
+					if = {
+						limit = { #tech is in array
+							check_variable = { tech = either_tech }
+						}
+						#log = "[?tech.GetTokenKey] is in array for role [?role_v.GetTokenKey]"
+						
+						#set_temp_variable = { add_unit = ai_either_regiment@var:role_v^i }
+						#set_temp_variable = { add_x = ai_either_regiment_x@var:role_v^i }
+						
+						ai_respawn_template = yes 
+						
+						#meta_effect = {
+						#	text = {
+						#		add_units_to_division_template = {
+						#			template_name = "[ROLE]"
+						#			regiments = {
+						#				[X] = [Y]
+						#			}
+						#		}
+						#	}
+						#	ROLE = "[?ai_roles_title^role_index.GetTokenLocalizedKey]"
+						#	X = "[?add_unit.GetTokenKey]"
+						#	Y = "[?add_x]"
+						#}
+						
+						add_to_temp_array = { array = removal_array index = 0 value = either_ixix }
+					}
+				}
+				
+				for_each_loop = {
+					array = removal_array
+					
+					#log = "remove [?ai_either_regiment@var:role_v^v.GetTokenKey] as its finished"
+					remove_from_array = { array = ai_either_regiment@var:role_v index = v }
+					remove_from_array = { array = ai_either_regiment_tech@var:role_v index = v }
+					remove_from_array = { array = ai_either_regiment_x@var:role_v index = v }
+				}
+					
+				if = {
+					limit = {
+						check_variable = { ai_either_regiment@var:role_v^num = 0 }
+						check_variable = { ai_either_support@var:role_v^num = 0 }
+					}
+					
+					log = "[This.GetTag] | [GetYear] [GetMonth] | TEMPLATE DONE | [?role_v.GetTokenKey]"
+				}
+			}
+			
+			remove_from_array = { ai_template_either_tech = tech }
+		}		
+					
+	}
+}
+
+ai_create_ww1_doctrine_list = {
+	for_each_loop = {
+		array = global.ww1_doctrines
+		value = starting_techs
+		
+		if = {
+			limit = {
+				meta_trigger = {
+					text = { has_tech = [X] }
+					X = "[?starting_techs.GetTokenKey]"
+				}
+			}
+			for_each_loop = {
+				array = global.ww1_progression@var:starting_techs
+				
+				add_to_array = { ai_ww1_doctrine_available = v }
+			}
+		}
+	}
+	
+}
+
+d_print_ww1_available = {
+	for_each_loop = {
+		array = ai_ww1_doctrine_available
+		
+		log = "[?v.GetTokenKey]"
+	}
+	
+	log = "[?ai_ww1_doctrine_available^num] TOTAL"
+}
+
+ai_update_ww1_doctrine_list = {
+	if = {
+		limit = {
+			is_ai = yes
+		}
+		if = {
+			limit = {
+				is_in_array = { ai_ww1_doctrine_available = tech }
+			}
+			#log = "remove [?tech.GetTokenKey]"
+			remove_from_array = { ai_ww1_doctrine_available = tech }
+		}
+		for_each_loop = {
+			array = global.ww1_progression@var:tech
+			
+			add_to_array = { ai_ww1_doctrine_available = v }
+		}
+	}
+}

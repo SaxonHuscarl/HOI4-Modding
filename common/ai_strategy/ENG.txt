@@ -1,0 +1,618 @@
+# befriend
+# conquer
+# antagonize
+# build_ship
+# build_army
+# unit_ratio
+# build_building
+# research_tech
+# garrison
+# protect
+# influence
+# invade
+# contain
+# area_priority
+
+ENG_default_defense = {
+	allowed = {
+		tag = ENG
+	}
+	enable = { always = yes }
+	abort = { always = no }
+
+	# London
+	#ai_strategy = {
+	#	type = theatre_distribution_demand_increase
+	#	id = 128
+	#	value = 0
+	#}
+	
+	# Alexandria
+	ai_strategy = {
+		type = theatre_distribution_demand_increase
+		id = 447
+		value = 4
+	}
+	
+	ai_strategy = {
+		type = put_unit_buffers
+		states = { 126 127 125 338 123 122 128 129 } #Southern England
+		ratio = 0.6
+		subtract_invasions_from_need = yes
+		subtract_fronts_from_need = no
+		area = britain
+	}
+	
+	ai_strategy = {
+		type = put_unit_buffers
+		states = { 116 } #Malta
+		ratio = 0.1
+		area = central_mediteranean
+		subtract_fronts_from_need = no
+		subtract_invasions_from_need = yes
+	}
+	ai_strategy = {
+		type = put_unit_buffers
+		states = { 118 } #Gibraltar
+		ratio = 0.05
+		area = iberia
+		subtract_fronts_from_need = no
+		subtract_invasions_from_need = yes
+	}
+	
+}
+
+ENG_egypt_buffer_1 = {
+	allowed = { tag = ENG }
+	enable = {
+		controls_state = 853
+		NOT = { ITA = { has_idea = ITA_bad_war } }
+	}
+	abort_when_not_enabled = yes
+	
+	ai_strategy = {
+		type = put_unit_buffers
+		states = { 853 446 447 453 454 } #Northern Egypt + Palestine
+		ratio = 0.15
+		area = north_africa
+		area = middle_east
+		order_id = 9
+		subtract_invasions_from_need = no
+	}
+}
+
+ENG_egypt_buffer_2 = {
+	allowed = { tag = ENG }
+	enable = {
+		controls_state = 853
+		ITA = { has_idea = ITA_bad_war }
+	}
+	abort_when_not_enabled = yes
+	
+	ai_strategy = {
+		type = put_unit_buffers
+		states = { 853 446 447 453 454 } #Northern Egypt + Palestine
+		ratio = 0.05
+		area = north_africa
+		area = middle_east
+		order_id = 9
+		subtract_invasions_from_need = no
+	}
+}
+
+ENG_central_africa_buffer = {
+	allowed = { tag = ENG }
+	enable = {
+		OR = {
+			# IEA exists
+			ETH = { exists = yes is_subject_of = ITA }
+			
+			#if we loose egypt, keep garrison
+			any_state_in = {
+				strategic_region = 128
+				OR = {
+					GER = { divisions_in_state = { state = PREV size > 0 } }
+					ITA = { divisions_in_state = { state = PREV size > 0 } }
+				}
+			}	
+			
+			#if enemy unit in east africa, keep garrison
+			any_state_in = {
+				strategic_region = 17
+				OR = {
+					GER = { divisions_in_state = { state = PREV size > 0 } }
+					ITA = { divisions_in_state = { state = PREV size > 0 } }
+				}
+			}	
+			any_state_in = {
+				strategic_region = 183
+				OR = {
+					GER = { divisions_in_state = { state = PREV size > 0 } }
+					ITA = { divisions_in_state = { state = PREV size > 0 } }
+				}
+			}		
+			any_state_in = {
+				strategic_region = 244
+				OR = {
+					GER = { divisions_in_state = { state = PREV size > 0 } }
+					ITA = { divisions_in_state = { state = PREV size > 0 } }
+				}
+			}		
+			any_state_in = {
+				strategic_region = 185
+				OR = {
+					GER = { divisions_in_state = { state = PREV size > 0 } }
+					ITA = { divisions_in_state = { state = PREV size > 0 } }
+				}
+			}	
+		}
+	}
+	abort_when_not_enabled = yes
+	
+	ai_strategy = {
+		type = put_unit_buffers
+		states = { 
+			275 # Transvaal
+		} 
+		ratio = 0.08
+		area = africa
+		order_id = 8
+		subtract_invasions_from_need = no
+	}
+}
+
+ENG_ignore_finland = {
+	allowed = { tag = ENG }
+	enable = {
+		FIN = { is_in_faction = no }
+	}
+	abort = {
+		FIN = {
+			OR = {
+				is_in_faction_with = GER 
+				is_in_faction_with = SOV
+			}
+		}
+	}
+	
+	ai_strategy = {
+		type = ignore
+		id = "FIN"
+		value = 400
+	}
+}
+FIN_ignore_england = {
+	allowed = { tag = FIN }
+	enable = {
+		is_in_faction = no 
+	}
+	abort = {
+		OR = {
+			is_in_faction_with = GER 
+			is_in_faction_with = SOV
+		}
+	}
+	
+	ai_strategy = {
+		type = ignore
+		id = "ENG"
+		value = 400
+	}
+}
+ENG_ignore_VIC = {
+	allowed = { tag = ENG }
+	enable = {
+		country_exists = VIC
+		NOT = { has_war_with = VIC }
+	}
+	abort_when_not_enabled = yes
+	
+	ai_strategy = {
+		type = front_unit_request
+		tag = VIC
+		value = -100
+	}
+}
+ENG_ignore_baltics = {
+	allowed = { tag = ENG }
+	enable = { always = yes }
+	abort = { always = no }
+	
+	ai_strategy = {
+		type = ignore
+		id = "EST"
+		value = 4000
+	}
+	ai_strategy = {
+		type = alliance
+		id = "EST"
+		value = -4000
+	}
+	ai_strategy = {
+		type = ignore
+		id = "LIT"
+		value = 4000
+	}
+	ai_strategy = {
+		type = alliance
+		id = "LIT"
+		value = -4000
+	}
+	ai_strategy = {
+		type = ignore
+		id = "LAT"
+		value = 4000
+	}	
+	ai_strategy = {
+		type = alliance
+		id = "LAT"
+		value = -4000
+	}
+}
+ENG_ignore_middle_east_early = {
+	allowed = { tag = ENG }
+	enable = { always = yes }
+	abort = {
+		OR = {
+			date > 1943.1.1
+			has_war_with = IRQ
+			has_war_with = SYR
+			has_war_with = PER
+		}
+	}
+	
+	ai_strategy = { type = conquer id = "IRQ"	value = -5000 }
+	ai_strategy = { type = ignore id = "IRQ"	value = 5000 }
+	ai_strategy = { type = ignore id = "SYR"	value = 5000 }
+	ai_strategy = { type = ignore id = "LEB"	value = 5000 }
+	ai_strategy = { type = ignore id = "PER"	value = 5000 }
+}
+ENG_ignore_middle_east_war = {
+	allowed = { tag = ENG }
+	enable = {
+		OR = {
+			date > 1943.1.1
+			has_war_with = IRQ
+			has_war_with = SYR
+			has_war_with = PER
+		}
+	}
+	abort = {
+		has_capitulated = yes
+	}
+	
+	ai_strategy = { type = conquer id = "IRQ"	value = 100 }
+	ai_strategy = { type = conquer id = "PER"	value = 80 }
+	ai_strategy = { type = conquer id = "SYR"	value = 50 }
+	ai_strategy = { type = ignore id = "LEB"	value = 400 }
+	ai_strategy = { type = ignore id = "PER"	value = 400 }
+}
+ENG_kuwait_garrison = {
+	allowed = { tag = ENG }
+	enable = {
+		date > 1940.9.1
+	}
+	abort = {
+		IRQ = { has_capitulated = yes }
+	}
+	
+	ai_strategy = {
+		type = put_unit_buffers
+		order_id = 2
+		states = { 656 } #Kuwait
+		area = middle_east
+		ratio = 0.03
+		subtract_invasions_from_need = no
+		subtract_fronts_from_need = yes
+	}
+	ai_strategy = {
+		type = theatre_distribution_demand_increase
+		id = 656
+		value = 2
+	}
+}
+ENG_IRQ_WAR = {
+	allowed = { tag = ENG }
+	enable = {
+		has_war_with = IRQ
+	}
+	abort = {
+		has_capitulated = yes
+	}
+	ai_strategy = {
+		type = conquer
+		id = IRQ
+		value = 200
+	}
+	ai_strategy = {
+		type = consider_weak
+		id = IRQ
+		value = 2000
+	}
+	ai_strategy = {
+		type = front_control
+		tag = IRQ
+		priority = 100
+		execution_type = rush
+		execute_order = yes
+	}	
+}
+
+ENG_war_against_ITA = {
+	allowed = { OR = { tag = EGY tag = ENG } }
+	enable = {
+		OR = {
+			has_war_with = ITA
+			date > 1940.1.1
+			has_war_with = GER
+		}
+	}
+	abort = {
+		ITA = { 
+			OR = { 
+				has_capitulated = yes 
+				exists = no 
+			}		
+		}
+	}
+	
+	ai_strategy = { type = conquer id = "ITA"	value = 250 }
+	
+}
+ENG_war_against_ETH = {
+	allowed = { tag = ENG }
+	enable = {
+		OR = {
+			has_war_with = ETH
+			date > 1940.1.1
+			has_war_with = GER
+		}
+	}
+	abort = {
+		ETH = { 
+			OR = { 
+				has_capitulated = yes 
+				exists = no 
+			}		
+		}
+	}
+	
+	ai_strategy = { type = conquer id = "ETH"	value = 200 }
+	ai_strategy = { type = consider_weak id = "ETH"	value = 500 }
+	
+}
+# Naval invasion ai_strategy moved to EAI_naval_strategies
+
+# ENG strategy for Spanish Civil War
+ENG_smack_around_SPA = {
+	allowed = { tag = ENG }
+	enable = {
+		has_war_with = SPA
+		NOT = {
+			SPA = { has_capitulated = yes }
+			has_war_with = GER
+			has_war_with = ITA
+		}
+	}
+	abort = {
+		OR = {
+			has_capitulated = yes
+			SPA = { has_capitulated = yes }
+			has_war_with = GER
+			has_war_with = ITA
+		}
+	}
+	
+	ai_strategy = {
+		type = conquer
+		id = "SPA"			
+		value = 1000
+	}
+	ai_strategy = {
+		type = invade
+		id = "SPA"			
+		value = 2500	# Needs to be this high to overcome restrictions on invasion ai
+	}
+}
+
+# Strategies to expand Allies faction during the blitz
+ENG_ally_poland_against_ger = {
+	allowed = { tag = ENG }
+	enable = {
+		country_exists = POL
+		GER = {
+			OR = {
+				has_war_with = POL
+				has_completed_focus = GER_danzig_or_war
+			}
+		}
+	}
+	abort = {
+		POL = { has_capitulated = yes }
+	}
+	
+	ai_strategy = {
+		type = conquer
+		id = "GER"
+		value = 500
+	}
+	ai_strategy = {
+		type = alliance
+		id = "POL"
+		value = 5000
+	}
+}
+ENG_ally_benelux_against_ger = {
+	allowed = { tag = ENG }
+	enable = {
+		GER = {
+			OR = {
+				has_war_with = HOL
+				has_war_with = BEL
+				has_war_with = LUX
+			}
+		}
+	}
+	abort = {
+		is_in_faction_with = HOL
+		is_in_faction_with = BEL
+	}
+	
+	ai_strategy = {
+		type = alliance
+		id = "BEL"
+		value = 2000
+	}
+	ai_strategy = {
+		type = alliance
+		id = "HOL"
+		value = 2000
+	}
+	ai_strategy = {
+		type = alliance
+		id = "LUX"
+		value = 200
+	}
+}
+ENG_ally_denmark_against_ger = {
+	allowed = { tag = ENG }
+	enable = {
+		GER = { has_war_with = DEN }
+		country_exists = DEN
+	}
+	abort = {
+		DEN = {
+			OR = {
+				has_capitulated = yes
+				has_war_with = ENG
+			}
+		}
+	}
+	
+	ai_strategy = {
+		type = alliance
+		id = "DEN"			
+		value = 200
+	}
+}
+
+# English Strategies to help counter Blitzkrieg
+ENG_prepare_for_blitz = {
+	allowed = { tag = ENG }
+	enable = {
+		has_war_with = GER
+		is_in_faction_with = FRA
+		#NOT = { is_in_faction_with = BEL }
+		#FRA = { has_completed_focus = FRA_defend_bel }
+	}
+	abort = {
+		OR = {
+			BEL = { has_capitulated = yes }
+			FRA = { has_capitulated = yes }
+		}
+	}
+	ai_strategy = {
+		type = put_unit_buffers
+		order_id = 1
+		states = { 29 } #Pad de Calais
+		area = europe
+		ratio = 0.10
+		subtract_invasions_from_need = no
+	}
+}
+ENG_run_away_from_french_collapse = {
+	allowed = { tag = ENG }
+	enable = {
+		NOT = { has_global_flag = fall_of_france }
+		is_in_faction_with = FRA
+		has_war_with = GER
+		886 = { is_controlled_by = GER }
+	}
+	abort = {
+		OR = {
+			has_global_flag = { flag = fall_of_france value = 1 days > 30 }
+			date > 1941.6.1
+		}
+	}
+	
+	ai_strategy = {
+		type = front_unit_request
+		tag = GER
+		value = -100
+	}
+}
+
+## should stop ENG from lend leasing or otherwise helping Ireland until Ireland has made a decision to be in or out
+ENG_does_not_like_ireland = {
+	allowed = { tag = ENG }
+	enable = { always = yes }
+	abort = {
+		IRE = {
+			has_completed_focus = IRE_dominion
+			has_completed_focus = IRE_indi		
+		}
+	}
+	
+	ai_strategy = {
+		type = ignore
+		id = "IRE"
+		value = 500
+	}
+	ai_strategy = {
+		type = support
+		id = "IRE"
+		value = -500
+	}
+}
+ENG_dont_bother_with_nigeria = {
+	allowed = { OR = { tag = ENG tag = FRA } }
+	enable = {
+		has_war = no
+	}
+	abort = {
+		has_war = yes
+	}
+	
+	
+	ai_strategy = {
+		type = front_unit_request
+		strategic_region = 140
+		value = -100
+	}
+	ai_strategy = {
+		type = front_unit_request
+		strategic_region = 252
+		value = -100
+	}
+}
+
+ENG_take_ICE = {
+	allowed = {
+		tag = ENG
+	}
+	enable = {
+		is_in_faction_with = ENG
+		has_war_with = ICE
+	}
+	abort_when_not_enabled = yes
+	ai_strategy = {
+		type = invade
+		id = "ICE"			
+		value = 3000 # take them fast
+	}
+	ai_strategy = {
+		type = invasion_unit_request
+		tag = ICE
+		value = -60
+	}
+}
+
+
+
+
+
+
+
+
+
+

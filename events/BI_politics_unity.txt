@@ -1,0 +1,81 @@
+﻿
+add_namespace = politics
+
+#Ideology opinions --- DONT REMOVE 899 AND 900 
+country_event = {
+	id = politics.899
+	hidden = yes  #timeout
+    timeout_days = 1
+	 
+	trigger = {
+		NOT = { has_country_flag = BI_ideology_opinion_applied@ROOT }
+	}
+	
+	mean_time_to_happen = { #and dont put this into the on actions
+		days = 4 
+	}
+	
+	immediate = {
+		log = "EVENT HAS ACTUALLY FIRED FOR [Root.GetTag] [GetDate]"
+		#update_country_initialize = yes
+		
+		update_diplomacy_ideology = yes
+	}
+	
+	option = {
+		name = politics.996.a
+	}
+}
+country_event = {
+	id = politics.900
+	hidden = yes  #timeout
+    timeout_days = 1
+	is_triggered_only = yes
+	
+	immediate = {
+		if = {
+			limit = {
+				NOT = { check_variable = { last_opinion_update = global.date } }
+			}
+			log = "[THIS.GetTag] | [GetDate] | update_diplomacy_ideology"
+			set_variable = { last_opinion_update = global.date }
+				
+			update_diplomacy_ideology = yes
+		}
+		else = {
+			log = "[THIS.GetTag] | [GetDate] | update_diplomacy_ideology, BUT it updated already during this hour!"
+		}
+	}
+	
+	option = {
+		name = politics.996.a
+	}
+}
+country_event = {
+	id = politics.901
+	hidden = yes  #timeout
+    timeout_days = 1
+	is_triggered_only = yes
+	
+	immediate = {
+		if = {
+			limit = {
+				NOT = { check_variable = { last_ideology_update = global.date } }
+			}
+			log = "[THIS.GetTag] | [GetDate] | update_decision_on_ideology_change"
+			set_variable = { last_ideology_update = global.date }
+				
+			update_decision_on_ideology_change = yes
+		}
+		else = {
+			log = "[THIS.GetTag] | [GetDate] | update_decision_on_ideology_change, BUT it updated already during this hour!"
+		}
+	}
+	
+	option = {
+		name = politics.996.a
+	}
+}
+
+
+### EOF ###

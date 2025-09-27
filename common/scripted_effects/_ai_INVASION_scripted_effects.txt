@@ -1,0 +1,1760 @@
+@MAX_INVASION_AREAS = 3
+
+@AREA_MIN_SCORE = 1
+
+@AREA_SCORE_COASTAL_FORT_DENSITY = -0.4
+@AREA_SCORE_ENEMY_UNIT_DENSITY = -0.5
+@AREA_SCORE_ENEMY_AIR_BASE_CAPACITY = -0.05
+@AREA_SCORE_ENEMY_RADAR_LEVEL = -0.1
+@AREA_SCORE_INFRASTRUCTURE_LEVEL = 0.02
+
+@AREA_SCORE_CURRENTLY_ACTIVE_MULT = 1.2
+
+@AREA_SCORE_BASE_DISTANCE = 250
+@AREA_SCORE_DISTANCE_DIVISOR = 1500
+
+
+@STRATEGY_INVADE_MIN_DURATION = 90 #disabled
+@STRATEGY_AREA_PRIORITY_MIN_DURATION = 30 #disabled
+
+
+ai_custom_invasion_area_score = {
+	# THIS = country that can invade
+	# var:ai_area = invasion target area
+	# invade_targets@var:ai_area = array of enemy state controllers
+
+	set_temp_variable = { ADD_AREA_SCORE_BASE_DISTANCE = 0 }
+	set_temp_variable = { ADD_AREA_SCORE_DISTANCE_DIVISOR = 0 }
+	
+	multiply_temp_variable = { score = priority@var:ai_area?1 }
+	
+	if = {
+		limit = {
+			tag = USA
+		}
+		
+		if = { #focus on Japan
+			limit = {
+				OR = {
+					is_in_array = { invade_targets@var:ai_area = JAP }
+					is_in_array = { invade_targets@var:ai_area = SIA }
+				}
+			}
+			multiply_temp_variable = { score = 2 }
+		}
+	}
+	else_if = {
+		limit = {
+			tag = ENG
+		}
+		
+		if = {
+			limit = {
+				has_war_with = GER
+				is_in_array = { invade_targets@var:ai_area = GER }
+				date < 1942.6.1
+				NOT = { is_in_faction_with = USA }
+			}
+			
+			multiply_temp_variable = { score = 0.5 }
+		}
+		
+		#if = { #TODO damn ok this was actually cool
+		#	limit = {
+		#		var:region_states^0 = { is_on_continent = africa }
+		#	}
+		#	
+		#	multiply_temp_variable = { score = 1.5 }
+		#}
+	}
+}
+
+
+ai_custom_area_priority = {
+	if = {
+		limit = {
+			OR = {
+				tag = ENG
+				tag = USA
+				tag = ITA
+				tag = JAP
+			}
+		}
+		meta_effect = {
+			text = {
+				ai_area_priority/[X] = yes
+			}
+			X = "[This.GetTag]"
+		}
+	}
+}
+
+ai_area_priority/ENG = {
+	add_to_temp_array = { ai_invasion_launch_sites = 447 } #Alexandria
+	add_to_temp_array = { ai_invasion_launch_sites = 442 } #Ceylon
+	
+	########################################
+
+	set_temp_variable = { priority@malay = 1.25 }
+	set_temp_variable = { priority@north_africa = 1.5 }
+	set_temp_variable = { priority@north_west_africa = 1.25 }
+	set_temp_variable = { priority@central_mediteranean = 1.5 }
+	set_temp_variable = { priority@sardinia_corsica = 1.1 }
+	
+	## Dont get stuck in balkan
+	set_temp_variable = { priority@greece = 0.75 }
+	
+	## Dont get stuck in Norway
+	set_temp_variable = { priority@norway = 0.25 }
+	
+	if = {
+		limit = {
+			has_war_with = ITA
+			NOT = {
+				448 = { is_controlled_by_ROOT_or_ally = yes }
+				450 = { is_controlled_by_ROOT_or_ally = yes }
+			}
+		}
+		set_temp_variable = { priority@central_italy = 0.25 }
+		set_temp_variable = { priority@italy = 0.25 }
+	}
+	
+	if = {
+		limit = {
+			has_war_with = GER
+			OR = {
+				NOT = { is_in_faction_with = USA }
+				NOT = { GER = { has_war_with = SOV } }
+			}
+		}
+		set_temp_variable = { priority@benelux = 0.25 }
+		set_temp_variable = { priority@western_france = 0.25 }
+		set_temp_variable = { priority@normandy = 0.25 }
+		set_temp_variable = { priority@norway = 0.25 }
+	}
+	
+	if = {
+		limit = {
+			has_war_with = GER
+			is_in_faction_with = USA
+		}
+		set_temp_variable = { priority@benelux = 2.1 }
+		set_temp_variable = { priority@western_france = 2.25 }
+		set_temp_variable = { priority@normandy = 2.25 }
+		set_temp_variable = { priority@norway = 0.25 }
+	}
+}
+
+ai_area_priority/USA = {
+	add_to_temp_variable = { max_areas = 6 } 
+	add_to_temp_array = { ai_invasion_launch_sites = 636 }
+	
+	########################################
+
+	set_temp_variable = { priority@malay = 1.25 }
+	set_temp_variable = { priority@north_africa = 1.5 }
+	set_temp_variable = { priority@north_west_africa = 1.25 }
+	set_temp_variable = { priority@central_mediteranean = 1.5 }
+	set_temp_variable = { priority@sardinia_corsica = 1.1 }
+	
+	## Dont get stuck in balkan
+	set_temp_variable = { priority@greece = 0.75 }
+	
+	## Dont get stuck in Norway
+	set_temp_variable = { priority@norway = 0.5 }
+	
+	if = {
+		limit = {
+			has_war_with = GER
+			is_in_faction_with = ENG
+		}
+		set_temp_variable = { priority@normandy = 2.25 }
+	}
+}
+
+ai_area_priority/JAP = {
+	add_to_temp_variable = { max_areas = 2 } 
+	
+	########################################
+	
+}
+
+ai_area_priority/ITA = {
+	
+	set_temp_variable = { priority@norway = 0 } #please just STOP
+		
+	if = {
+		limit = { #we cant leave mediterranean
+			118 = { NOT = { is_controlled_by_ROOT_or_ally = yes } } 
+			853 = { NOT = { is_controlled_by_ROOT_or_ally = yes } } 
+		}
+		ai_area_priority_none = yes 
+		
+		set_temp_variable = { priority@greece = 1 }
+		set_temp_variable = { priority@mediteranean = 1 }
+		set_temp_variable = { priority@west_mediteranean = 1 }
+		set_temp_variable = { priority@sardinia_corsica = 1 }
+		set_temp_variable = { priority@central_mediteranean = 1 }
+		set_temp_variable = { priority@east_mediteranean = 1 }
+		set_temp_variable = { priority@north_africa = 1 }
+		set_temp_variable = { priority@north_west_africa = 1 }
+		set_temp_variable = { priority@west_middle_east = 1 }
+	}
+	
+}
+
+
+####################
+
+ai_area_invasion_data = {
+
+	add_to_temp_array = { area_priority_weight = 1000 } #highest priority area gets this score, the next one the score below etc
+	add_to_temp_array = { area_priority_weight = 800 }
+	add_to_temp_array = { area_priority_weight = 600 }
+	add_to_temp_array = { area_priority_weight = 400 }
+	add_to_temp_array = { area_priority_weight = 200 }
+	add_to_temp_array = { area_priority_weight = 100 }
+	add_to_temp_array = { area_priority_weight = 100 }
+	add_to_temp_array = { area_priority_weight = 100 }
+	add_to_temp_array = { area_priority_weight = 100 }
+	add_to_temp_array = { area_priority_weight = 100 }
+	
+	set_temp_variable = { min_area_score = @AREA_MIN_SCORE }
+	set_temp_variable = { min_invade_duration = @STRATEGY_INVADE_MIN_DURATION }
+	set_temp_variable = { min_area_duration = @STRATEGY_AREA_PRIORITY_MIN_DURATION }
+	set_temp_variable = { max_areas = @MAX_INVASION_AREAS }
+	
+	add_to_temp_array = { ai_invasion_launch_sites = capital }
+}
+
+ai_area_priority_none = {
+	set_temp_variable = { priority@iberia = 0 }
+	set_temp_variable = { priority@normandy = 0 }
+	set_temp_variable = { priority@western_france = 0 }
+	set_temp_variable = { priority@benelux = 0 }
+	set_temp_variable = { priority@italy = 0 }
+	set_temp_variable = { priority@south_italy = 0 }
+	set_temp_variable = { priority@central_italy = 0 }
+	set_temp_variable = { priority@britain = 0 }
+	set_temp_variable = { priority@south_england = 0 }
+	set_temp_variable = { priority@north_germany = 0 }
+	set_temp_variable = { priority@norway = 0 }
+	set_temp_variable = { priority@iceland = 0 } 
+	set_temp_variable = { priority@leningrad = 0 }
+	set_temp_variable = { priority@crimea = 0 }
+	set_temp_variable = { priority@greece = 0 }
+	set_temp_variable = { priority@mediteranean = 0 }
+	set_temp_variable = { priority@west_mediteranean = 0 }
+	set_temp_variable = { priority@sardinia_corsica = 0 }
+	set_temp_variable = { priority@central_mediteranean = 0 }
+	set_temp_variable = { priority@east_mediteranean = 0 }
+	set_temp_variable = { priority@north_africa = 0 }
+	set_temp_variable = { priority@north_west_africa = 0 }
+	set_temp_variable = { priority@south_africa = 0 }
+	set_temp_variable = { priority@east_africa = 0 }
+	set_temp_variable = { priority@west_middle_east = 0 }
+	set_temp_variable = { priority@arabia = 0 }
+	set_temp_variable = { priority@japan = 0 }
+	set_temp_variable = { priority@far_east = 0 }
+	set_temp_variable = { priority@manchu_korea = 0 }
+	set_temp_variable = { priority@north_west_china = 0 }
+	set_temp_variable = { priority@west_china = 0 }
+	set_temp_variable = { priority@south_west_china = 0 }
+	set_temp_variable = { priority@philippines = 0 }
+	set_temp_variable = { priority@south_west_indonesia = 0 }
+	set_temp_variable = { priority@central_indonesia = 0 }
+	set_temp_variable = { priority@west_australia = 0 }
+	set_temp_variable = { priority@new_zealand = 0 }
+	set_temp_variable = { priority@south_india = 0 }
+	set_temp_variable = { priority@bengal = 0 }
+	set_temp_variable = { priority@burma = 0 }
+	set_temp_variable = { priority@indochina = 0 }
+	set_temp_variable = { priority@malay = 0 }
+	set_temp_variable = { priority@bismark_sea = 0 }
+	set_temp_variable = { priority@mariana_region = 0 }
+	set_temp_variable = { priority@solomon_sea = 0 }
+	set_temp_variable = { priority@micronesia = 0 }
+	set_temp_variable = { priority@polynesia = 0 }
+	set_temp_variable = { priority@pacific_ridge = 0 }
+	set_temp_variable = { priority@hawaii = 0 }
+}
+
+# command which outputs all area_priority and invade strategy values
+d_log_ai_invasion_values = {
+	log = "======= AI AREA_PRIORITY WEIGHTS ======="
+	for_each_loop = {
+		array = global.ai_invasion_areas
+		
+		if = { limit = { check_variable = { ai_area_priority@var:v > 0 } }
+			log = "Area: [?v.GetTokenKey] | Current Weight: [?ai_area_priority@var:v]"
+		}
+	}
+	log = " "
+	log = "======= AI INVASION TARGET COUNTRIES ======="
+	for_each_loop = {
+		array = ai_invasion_targets
+		
+		set_temp_variable = { t1 = global.date }
+		subtract_from_temp_variable = { t1 = ai_invasion_targets_date^i }
+		multiply_temp_variable = { t1 = 24 }
+		
+		log = "[?v.GetTag] | Invade value: [?ROOT.ai_strategy_invade@var:v] | Active since [?t1|0] days: [?ai_invasion_targets_date^i.GetDateStringNoHour]"
+	}
+}
+
+	
+ai_invasion_areas = {
+
+	clear_array = global.ai_invasion_areas
+	add_to_array = { global.ai_invasion_areas = token:iberia }
+	add_to_array = { global.ai_invasion_areas = token:normandy }
+	add_to_array = { global.ai_invasion_areas = token:western_france }
+	add_to_array = { global.ai_invasion_areas = token:benelux }
+	add_to_array = { global.ai_invasion_areas = token:italy }
+	add_to_array = { global.ai_invasion_areas = token:south_italy }
+	add_to_array = { global.ai_invasion_areas = token:central_italy }
+	add_to_array = { global.ai_invasion_areas = token:britain }
+	add_to_array = { global.ai_invasion_areas = token:south_england }
+	add_to_array = { global.ai_invasion_areas = token:north_germany }
+	add_to_array = { global.ai_invasion_areas = token:norway }
+	add_to_array = { global.ai_invasion_areas = token:iceland } 
+	add_to_array = { global.ai_invasion_areas = token:leningrad }
+	add_to_array = { global.ai_invasion_areas = token:crimea }
+	add_to_array = { global.ai_invasion_areas = token:greece }
+	add_to_array = { global.ai_invasion_areas = token:mediteranean }
+	add_to_array = { global.ai_invasion_areas = token:west_mediteranean }
+	add_to_array = { global.ai_invasion_areas = token:sardinia_corsica }
+	add_to_array = { global.ai_invasion_areas = token:central_mediteranean }
+	add_to_array = { global.ai_invasion_areas = token:east_mediteranean }
+	add_to_array = { global.ai_invasion_areas = token:north_africa }
+	add_to_array = { global.ai_invasion_areas = token:north_west_africa }
+	add_to_array = { global.ai_invasion_areas = token:south_africa }
+	add_to_array = { global.ai_invasion_areas = token:east_africa }
+	add_to_array = { global.ai_invasion_areas = token:west_middle_east }
+	add_to_array = { global.ai_invasion_areas = token:arabia }
+	add_to_array = { global.ai_invasion_areas = token:japan }
+	add_to_array = { global.ai_invasion_areas = token:far_east }
+	add_to_array = { global.ai_invasion_areas = token:manchu_korea }
+	add_to_array = { global.ai_invasion_areas = token:north_west_china }
+	add_to_array = { global.ai_invasion_areas = token:west_china }
+	add_to_array = { global.ai_invasion_areas = token:south_west_china }
+	add_to_array = { global.ai_invasion_areas = token:philippines }
+	add_to_array = { global.ai_invasion_areas = token:south_west_indonesia }
+	add_to_array = { global.ai_invasion_areas = token:central_indonesia }
+	add_to_array = { global.ai_invasion_areas = token:west_australia }
+	add_to_array = { global.ai_invasion_areas = token:new_zealand }
+	add_to_array = { global.ai_invasion_areas = token:south_india }
+	add_to_array = { global.ai_invasion_areas = token:bengal }
+	add_to_array = { global.ai_invasion_areas = token:burma }
+	add_to_array = { global.ai_invasion_areas = token:indochina }
+	add_to_array = { global.ai_invasion_areas = token:malay }
+	add_to_array = { global.ai_invasion_areas = token:bismark_sea }
+	add_to_array = { global.ai_invasion_areas = token:mariana_region }
+	add_to_array = { global.ai_invasion_areas = token:solomon_sea }
+	add_to_array = { global.ai_invasion_areas = token:micronesia }
+	add_to_array = { global.ai_invasion_areas = token:polynesia }
+	add_to_array = { global.ai_invasion_areas = token:pacific_ridge }
+	add_to_array = { global.ai_invasion_areas = token:hawaii }
+	
+	for_each_loop = {
+		array = global.ai_invasion_areas
+		value = invasion_area
+		
+		clear_temp_array = regions
+		meta_effect = {
+			text = {
+				ai_invasion_score_[X] = yes
+			}
+			X = "[?invasion_area.GetTokenKey]"
+		}
+		
+		for_each_loop = {
+			array = regions
+			value = r
+			
+			for_each_loop = {
+				array = global.region_states@var:r
+				value = s
+				
+				var:s = {
+					set_variable = { ai_invasion_area = invasion_area }
+				}
+			}
+		}
+		
+	}
+}
+	##########################
+	
+d_ai_update_invasion_logic = {
+	if = { limit = { ai_allow_naval_invasions = yes }
+	#log = "================= AI INVASION LOGIC ================="
+	
+	set_country_flag = ai_allow_naval_invasions
+	
+	ai_area_invasion_data = yes
+	ai_custom_area_priority = yes
+	
+	### Check ai areas if we fullfil triggers, if yes then load its score
+	for_each_loop = {
+		array = global.ai_invasion_areas
+		value = ai_area
+		
+		if = {
+			limit = {
+			
+				#meta_trigger = {
+				#	text = { ai_can_invade_[X] = yes }
+				#	X = "[?ai_area.GetTokenKey]"
+				#}
+			}
+			clear_temp_array = regions
+				
+			meta_effect = { 
+				text = { ai_invasion_score_[X] = yes }
+				X = "[?ai_area.GetTokenKey]"
+			}
+			
+		}
+		else_if = {
+			limit = {
+				NOT = { check_variable = { ai_area_priority@var:ai_area = 0 } }
+			}
+			ai_clear_invasion_area_priority = yes
+		}
+	}
+	
+	### Sort areas based on scores
+	for_each_loop = {
+		array = score_ai_areas_score
+		break = no_break
+	
+		set_temp_variable = { link = score_ai_areas^i }
+		
+		for_each_loop = { array = ai_areas_sorted_score
+			value = not_v
+
+			if = { limit = { check_variable = { v > not_v } }
+
+				add_to_temp_array = { array = ai_areas_sorted index = i value = link }
+				add_to_temp_array = { array = ai_areas_sorted_score index = i value = v }
+				set_temp_variable = { break = 1 }
+			}
+		}
+		
+		if = { limit = { check_variable = { break = 0 } }
+			
+			add_to_temp_array = { array = ai_areas_sorted value = link }
+			add_to_temp_array = { array = ai_areas_sorted_score value = v }
+		}
+	}
+	
+	### CHECK TARGET COUNTRIES IN AREAS IF WE CAN INVADE THEM, IF YES APPLY THE AREA_PRIORITY STRATEGIES
+	
+	for_each_loop = {
+		array = ai_areas_sorted
+		value = ai_area
+		
+		#log = "AI_AREA: [?ai_area.GetTokenKey] | Score: [?ai_areas_sorted_score^i]"
+		
+		set_temp_variable = { area_active = 0 }
+		#clear_temp_array = ai_new_invade_targets
+		if = {
+			limit = {
+				check_variable = { area_priority < max_areas }
+				check_variable = { ai_areas_sorted_score^i > min_area_score }
+				check_variable = { invade_targets@var:ai_area^num > 0 }
+			}
+			for_each_loop = { #if any enemy country which controls a coastal state in the ai_area fullfils ai_can_ROOT_naval_invade_THIS, area_active is set to 1
+				array = invade_targets@var:ai_area
+				value = invade_target
+				
+				#log = "  -INVADE TARGET: [?invade_target.GetTag]"
+				
+				if = {
+					limit = {
+						OR = {
+							is_in_array = { ai_new_invade_targets = invade_target }
+							var:invade_target = { ai_can_ROOT_naval_invade_THIS = yes }
+						}
+					}
+					
+					#log = "      -ai_can_ROOT_naval_invade_THIS = yes"
+					set_temp_variable = { area_active = 1 }
+					add_to_temp_array = { ai_new_invade_targets = invade_target }
+				}
+			}
+		}
+		
+		#log = "[?area_active] area_active"
+		#log = "[?ai_area_priority@var:ai_area] ai_area_priority@var:ai_area"
+		#log = "[?area_priority_weight^area_priority] area_priority_weight^area_priority"
+		
+		#if we can invade anyone in the area, it is considered active and the area_priority ai strategy gets updated if needed
+		
+		if = { 
+			limit = {
+				check_variable = { area_active = 1 }
+			}
+			if = { #update the ai strategy if the current value doesnt match the new one
+				limit = {
+					NOT = { check_variable = { ai_area_priority@var:ai_area = area_priority_weight^area_priority } }
+				}
+				
+				ai_update_invasion_area_priority = yes
+			}
+			
+			add_to_temp_variable = { area_priority = 1 }
+		}
+		
+		else_if = { #if our region isnt active or max_areas is reached, we clear potential ai strategies
+			limit = {
+				NOT = { check_variable = { ai_area_priority@var:ai_area = 0 } }
+			}
+			#log = " "
+			#log = "---> clear area_priority | Current: [?ai_area_priority@var:ai_area] -> 0"
+			
+			ai_clear_invasion_area_priority = yes
+		}
+		#log = " "
+		#log = " "
+	}
+	
+	### NOW APPLY THE INVADE STRATEGIES TOWARDS THE COUNTRIES WHICH CONTROL STATES IN OUR TARGET AREAS
+	
+	#log = "APPLY STRATS TO COUNTRIES"
+	### ITERATE THROUGH EXISTING TARGETS, REMOVE IF NOT IN THE NEW TARGETS
+	for_each_loop = { #existing targets, remove them if now allowed anymore
+		array = ai_invasion_targets
+		
+		if = {
+			limit = {
+				set_temp_variable = { duration = global.date }
+				subtract_from_temp_variable = { duration = ai_invasion_targets_date^i }
+				multiply_temp_variable = { duration = 24 }
+				#check_variable = { duration > min_invade_duration }
+				
+				NOT = { is_in_array = { ai_new_invade_targets = v } }
+			}
+			#log = "    -CLEAR [?v.GetTag] invade strategy"
+			add_to_temp_array = { to_be_removed = v }
+			add_to_temp_array = { to_be_removed_index = i }
+			
+			meta_effect = {
+				text = {
+					add_ai_strategy = {
+						type = invade
+						id = [X]
+						value = -12000
+					}
+				}
+				X = "[?v.GetTag]"
+			}
+		}
+	}
+	for_each_loop = {
+		array = to_be_removed
+		
+		set_temp_variable = { link = to_be_removed_index^i }
+		remove_from_array = { ai_invasion_targets = v }
+		remove_from_array = { ai_invasion_targets_date = ai_invasion_targets_date^link }
+	}
+	
+	### ITERATE THROUGH NEW TARGETS, ADD TO CURRENT TARGETS IF NOT ALREADY
+	for_each_loop = { #allowed targets, add them to the array if not already
+		array = ai_new_invade_targets
+		
+		if = {
+			limit = {
+				NOT = { is_in_array = { ai_invasion_targets = v } }
+			}
+			#log = "    -CREATE [?v.GetTag] invade strategy"
+			add_to_array = { ai_invasion_targets = v }
+			add_to_array = { ai_invasion_targets_date = global.date }
+			
+			meta_effect = {
+				text = {
+					add_ai_strategy = {
+						type = invade
+						id = [X]
+						value = 12000
+					}
+				}
+				X = "[?v.GetTag]"
+			}
+		}
+	}
+	
+	}
+	else_if = { #if ai_allow_naval_invasions is false but used to be true, clear potential ai strategies
+		limit = { has_country_flag = ai_allow_naval_invasions }
+		
+		clr_country_flag = ai_allow_naval_invasions
+		#TODO
+	}
+}
+
+# creates temp vars per ai_area: num_enemy_states, num_coastal_enemy_states, num_enemy_units
+# stores all hostile state controller in invade_targets@var:ai_area temp array
+ai_evaluate_invasion_area = {
+	set_temp_variable = { num_enemy_states = 0 }
+	set_temp_variable = { num_coastal_enemy_states = 0 }
+	set_temp_variable = { num_enemy_units = 0 }
+	
+	set_temp_variable = { num_infra = 0 }
+	set_temp_variable = { num_air = 0 }
+	set_temp_variable = { num_radar = 0 }
+	
+	clear_temp_array = distance_invasion_site_state
+	
+	for_each_loop = {
+		array = regions
+		value = r
+		
+		for_each_scope_loop = { #check the states in the region
+			array = global.region_states@var:r
+			
+			if = {
+				limit = { 
+					CONTROLLER = { has_war_with = ROOT } 
+				}
+				
+				# get enemy states and enemy units
+				add_to_temp_variable = { num_enemy_states = 1 }
+				add_to_temp_variable = { num_infra = building_level@infrastructure }
+				add_to_temp_variable = { num_air = building_level@air_base }
+				add_to_temp_variable = { num_radar = building_level@radar_station }
+				
+				if = {
+					limit = { 
+						is_coastal = yes
+					}
+					add_to_temp_variable = { num_coastal_enemy_states = 1 }
+					
+					for_each_loop = {
+						array = ai_invasion_launch_sites
+						
+						if = {
+							limit = {
+								check_variable = { distance_to@var:v > 0 }
+							}
+							add_to_temp_array = { distance_invasion_site_state = distance_to@var:v }
+						}
+					}
+					
+					# add countries controlling coastal states to target array
+					CONTROLLER = {
+						if = {
+							limit = {
+								NOT = { is_in_array = { invade_targets@var:ai_area = THIS } }
+							}
+							add_to_temp_array = { invade_targets@var:ai_area = THIS }
+						}
+						
+						add_to_temp_variable = { num_enemy_units = num_armies_in_state@PREV } 
+					}
+				}
+				else = {
+					CONTROLLER = { 
+						add_to_temp_variable = { num_enemy_units = num_armies_in_state@PREV } 	
+					}
+				}
+				
+				
+			}
+		}
+	}
+	
+	find_lowest_in_array = {
+		array = distance_invasion_site_state
+		value = lowest_distance
+	}
+	
+	#log = "[?lowest_distance] LOWEST DISTANCE out of [?distance_invasion_site_state^num] States"
+	divide_temp_variable = { num_infra = num_enemy_states }
+}
+
+# Default score run for ai area scoring
+
+ai_invasion_default_score = { #TODO: coastal fort density, airbase / air strength comparison, navy comparison
+	
+	set_temp_variable = { t1 = num_enemy_units }
+	divide_temp_variable = { t1 = num_enemy_states }
+	multiply_temp_variable = { t1 = @AREA_SCORE_ENEMY_UNIT_DENSITY }
+	
+	add_to_temp_variable = { score = t1 }
+	
+	
+	set_temp_variable = { t1 = num_air }
+	multiply_temp_variable = { t1 = @AREA_SCORE_ENEMY_AIR_BASE_CAPACITY }
+	
+	add_to_temp_variable = { score = t1 }
+	
+	
+	set_temp_variable = { t1 = num_infra }
+	multiply_temp_variable = { t1 = @AREA_SCORE_INFRASTRUCTURE_LEVEL }
+	
+	add_to_temp_variable = { score = t1 }
+	
+	
+	set_temp_variable = { t1 = num_radar }
+	multiply_temp_variable = { t1 = @AREA_SCORE_ENEMY_RADAR_LEVEL }
+	
+	add_to_temp_variable = { score = t1 }
+	
+	
+	ai_custom_invasion_area_score = yes
+	
+	if = {
+		limit = {
+			check_variable = { ai_area_priority@var:ai_area > 0 }
+		}
+		multiply_temp_variable = { score = @AREA_SCORE_CURRENTLY_ACTIVE_MULT }
+	}
+	
+	set_temp_variable = { base_distance = @AREA_SCORE_BASE_DISTANCE }
+	add_to_temp_variable = { base_distance = ADD_AREA_SCORE_BASE_DISTANCE }
+	add_to_temp_variable = { lowest_distance = base_distance }
+	
+	
+	set_temp_variable = { distance_divisor = @AREA_SCORE_DISTANCE_DIVISOR }
+	add_to_temp_variable = { distance_divisor = ADD_AREA_SCORE_DISTANCE_DIVISOR }
+	divide_temp_variable = { distance_divisor = lowest_distance }
+	
+	#multiply_temp_variable = { score = distance_divisor }
+	
+	set_variable = { ai_invasion_area_score@var:ai_area = score }
+	set_variable = { ai_invasion_area_distance@var:ai_area = distance_divisor }
+	
+	#log = "[?ai_area.GetTokenKey] | SCORE: [?score] | DISTANCE: [?lowest_distance] | MULT [?distance_divisor] "
+	#log = "		[?num_enemy_units] num_enemy_units"
+	#log = "		[?num_radar] num_radar"
+	#log = "		[?num_infra] num_infra"
+	#log = "		[?num_air] num_air"
+	#log = "		[?num_enemy_states] num_enemy_states"
+	#log = " "
+	
+}
+
+ai_update_invasion_area_priority = { #fires when the current area_priority value doesnt match with the newly calculated one
+
+	set_temp_variable = { value_difference = area_priority_weight^area_priority }
+	subtract_from_temp_variable = { value_difference = ai_area_priority@var:ai_area }
+	
+	#log = " "
+	#log = "---> update area_priority | Current: [?ai_area_priority@var:ai_area] | Diff: [?value_difference] | New: [?area_priority_weight^area_priority]"
+	
+	meta_effect = {
+		text = {
+			add_ai_strategy = {
+				type = area_priority
+				id = [X]
+				value = [Y]
+			}
+		}
+		X = "[?ai_area.GetTokenKey]"
+		Y = "[?value_difference]"
+	}
+	
+	set_variable = { ai_area_priority@var:ai_area = area_priority_weight^area_priority }
+	set_variable = { ai_area_priority_date@var:ai_area = global.date }
+	
+}
+
+ai_clear_invasion_area_priority = { #runs when area score is below the min, or if no enemy coastal state in area, or if the trigger for the area is false, or if ai_allow_naval_invasions trigger is false
+
+	set_temp_variable = { value_difference = ai_area_priority@var:ai_area }
+	multiply_temp_variable = { value_difference = -1 }
+	
+	clear_variable = ai_area_priority@var:ai_area
+	clear_variable = ai_area_priority_date@var:ai_area
+	
+	meta_effect = {
+		text = {
+			add_ai_strategy = {
+				type = area_priority
+				id = [X]
+				value = [Y]
+			}
+		}
+		X = "[?ai_area.GetTokenKey]"
+		Y = "[?value_difference]"
+	}
+
+}
+
+
+
+# AI Area definitions & scores
+
+ai_invasion_score_western_france = {
+	add_to_temp_array = { regions = 240 }
+	
+	ai_evaluate_invasion_area = yes 
+	
+	# CALCULATE SCORE
+	if = { limit = { check_variable = { num_coastal_enemy_states > 0 } }
+		
+		set_temp_variable = { score = 10 } #BASE
+		
+		ai_invasion_default_score = yes
+		
+		#--------------------------------------------------
+		add_to_temp_array = { score_ai_areas = ai_area }
+		add_to_temp_array = { score_ai_areas_score = score }
+	}
+	#if no coastal enemy states, clear potential ai strategies related to area. invade strategy get cleared if necessary later in the effect due to this area not being in the score_ai_areas array
+	else_if = { limit = { NOT = { check_variable = { ai_area_priority@var:ai_area = 0 } } } ai_clear_invasion_area_priority = yes }
+}
+
+ai_invasion_score_normandy = {
+	add_to_temp_array = { regions = 19 }
+	
+	ai_evaluate_invasion_area = yes 
+	
+	# CALCULATE SCORE
+	if = { limit = { check_variable = { num_coastal_enemy_states > 0 } }
+		
+		set_temp_variable = { score = 10 } #BASE
+		
+		ai_invasion_default_score = yes
+		
+		#--------------------------------------------------
+		add_to_temp_array = { score_ai_areas = ai_area }
+		add_to_temp_array = { score_ai_areas_score = score }
+	}
+	else_if = { limit = { NOT = { check_variable = { ai_area_priority@var:ai_area = 0 } } } ai_clear_invasion_area_priority = yes }
+}
+
+ai_invasion_score_iberia = {
+	add_to_temp_array = { regions = 254 }
+	add_to_temp_array = { regions = 255 }
+	add_to_temp_array = { regions = 256 }
+	add_to_temp_array = { regions = 257 }
+	add_to_temp_array = { regions = 41 }
+	
+	ai_evaluate_invasion_area = yes 
+	
+	# CALCULATE SCORE
+	if = { limit = { check_variable = { num_coastal_enemy_states > 0 } }
+		
+		set_temp_variable = { score = 10 } #BASE
+		
+		ai_invasion_default_score = yes
+		
+		#--------------------------------------------------
+		add_to_temp_array = { score_ai_areas = ai_area }
+		add_to_temp_array = { score_ai_areas_score = score }
+	}
+	else_if = { limit = { NOT = { check_variable = { ai_area_priority@var:ai_area = 0 } } } ai_clear_invasion_area_priority = yes }
+}
+
+ai_invasion_score_benelux = {
+	add_to_temp_array = { regions = 5 }
+	add_to_temp_array = { regions = 237 }
+	
+	ai_evaluate_invasion_area = yes 
+	
+	# CALCULATE SCORE
+	if = { limit = { check_variable = { num_coastal_enemy_states > 0 } }
+		
+		set_temp_variable = { score = 10 } #BASE
+		
+		ai_invasion_default_score = yes
+		
+		#--------------------------------------------------
+		add_to_temp_array = { score_ai_areas = ai_area }
+		add_to_temp_array = { score_ai_areas_score = score }
+	}
+	else_if = { limit = { NOT = { check_variable = { ai_area_priority@var:ai_area = 0 } } } ai_clear_invasion_area_priority = yes }
+}
+
+ai_invasion_score_italy = {
+	add_to_temp_array = { regions = 248 }
+	add_to_temp_array = { regions = 23 }
+	add_to_temp_array = { regions = 21 }
+	
+	ai_evaluate_invasion_area = yes 
+	
+	# CALCULATE SCORE
+	if = { limit = { check_variable = { num_coastal_enemy_states > 0 } }
+		
+		set_temp_variable = { score = 10 } #BASE
+		
+		ai_invasion_default_score = yes
+		
+		#--------------------------------------------------
+		add_to_temp_array = { score_ai_areas = ai_area }
+		add_to_temp_array = { score_ai_areas_score = score }
+	}
+	else_if = { limit = { NOT = { check_variable = { ai_area_priority@var:ai_area = 0 } } } ai_clear_invasion_area_priority = yes }
+}
+
+ai_invasion_score_south_italy = {
+	add_to_temp_array = { regions = 248 }
+	
+	ai_evaluate_invasion_area = yes 
+	
+	# CALCULATE SCORE
+	if = { limit = { check_variable = { num_coastal_enemy_states > 0 } }
+		
+		set_temp_variable = { score = 10 } #BASE
+		
+		ai_invasion_default_score = yes
+		
+		#--------------------------------------------------
+		add_to_temp_array = { score_ai_areas = ai_area }
+		add_to_temp_array = { score_ai_areas_score = score }
+	}
+	else_if = { limit = { NOT = { check_variable = { ai_area_priority@var:ai_area = 0 } } } ai_clear_invasion_area_priority = yes }
+}
+
+ai_invasion_score_central_italy = {
+	add_to_temp_array = { regions = 23 }
+	
+	ai_evaluate_invasion_area = yes 
+	
+	# CALCULATE SCORE
+	if = { limit = { check_variable = { num_coastal_enemy_states > 0 } }
+		
+		set_temp_variable = { score = 10 } #BASE
+		
+		ai_invasion_default_score = yes
+		
+		#--------------------------------------------------
+		add_to_temp_array = { score_ai_areas = ai_area }
+		add_to_temp_array = { score_ai_areas_score = score }
+	}
+	else_if = { limit = { NOT = { check_variable = { ai_area_priority@var:ai_area = 0 } } } ai_clear_invasion_area_priority = yes }
+}
+
+ai_invasion_score_britain = {
+	add_to_temp_array = { regions = 1 }
+	add_to_temp_array = { regions = 2 }
+	add_to_temp_array = { regions = 3 }
+	add_to_temp_array = { regions = 4 }
+	add_to_temp_array = { regions = 236 }
+	
+	ai_evaluate_invasion_area = yes 
+	
+	# CALCULATE SCORE
+	if = { limit = { check_variable = { num_coastal_enemy_states > 0 } }
+		
+		set_temp_variable = { score = 10 } #BASE
+		
+		ai_invasion_default_score = yes
+		
+		#--------------------------------------------------
+		add_to_temp_array = { score_ai_areas = ai_area }
+		add_to_temp_array = { score_ai_areas_score = score }
+	}
+	else_if = { limit = { NOT = { check_variable = { ai_area_priority@var:ai_area = 0 } } } ai_clear_invasion_area_priority = yes }
+}
+
+ai_invasion_score_south_england = {
+	add_to_temp_array = { regions = 1 }
+	add_to_temp_array = { regions = 236 }
+	
+	ai_evaluate_invasion_area = yes 
+	
+	# CALCULATE SCORE
+	if = { limit = { check_variable = { num_coastal_enemy_states > 0 } }
+		
+		set_temp_variable = { score = 10 } #BASE
+		
+		ai_invasion_default_score = yes
+		
+		#--------------------------------------------------
+		add_to_temp_array = { score_ai_areas = ai_area }
+		add_to_temp_array = { score_ai_areas_score = score }
+	}
+	else_if = { limit = { NOT = { check_variable = { ai_area_priority@var:ai_area = 0 } } } ai_clear_invasion_area_priority = yes }
+}
+
+ai_invasion_score_north_germany = {
+	add_to_temp_array = { regions = 6 }
+	add_to_temp_array = { regions = 205 }
+	add_to_temp_array = { regions = 203 }
+	
+	ai_evaluate_invasion_area = yes 
+	
+	# CALCULATE SCORE
+	if = { limit = { check_variable = { num_coastal_enemy_states > 0 } }
+		
+		set_temp_variable = { score = 10 } #BASE
+		
+		ai_invasion_default_score = yes
+		
+		#--------------------------------------------------
+		add_to_temp_array = { score_ai_areas = ai_area }
+		add_to_temp_array = { score_ai_areas_score = score }
+	}
+	else_if = { limit = { NOT = { check_variable = { ai_area_priority@var:ai_area = 0 } } } ai_clear_invasion_area_priority = yes }
+}
+
+ai_invasion_score_norway = {
+	add_to_temp_array = { regions = 11 }
+	add_to_temp_array = { regions = 191 }
+	
+	ai_evaluate_invasion_area = yes 
+	
+	# CALCULATE SCORE
+	if = { limit = { check_variable = { num_coastal_enemy_states > 0 } }
+		
+		set_temp_variable = { score = 10 } #BASE
+		
+		ai_invasion_default_score = yes
+		
+		#--------------------------------------------------
+		add_to_temp_array = { score_ai_areas = ai_area }
+		add_to_temp_array = { score_ai_areas_score = score }
+	}
+	else_if = { limit = { NOT = { check_variable = { ai_area_priority@var:ai_area = 0 } } } ai_clear_invasion_area_priority = yes }
+}
+
+ai_invasion_score_iceland = {
+	add_to_temp_array = { regions = 161 }
+	
+	ai_evaluate_invasion_area = yes 
+	
+	# CALCULATE SCORE
+	if = { limit = { check_variable = { num_coastal_enemy_states > 0 } }
+		
+		set_temp_variable = { score = 10 } #BASE
+		
+		ai_invasion_default_score = yes
+		
+		#--------------------------------------------------
+		add_to_temp_array = { score_ai_areas = ai_area }
+		add_to_temp_array = { score_ai_areas_score = score }
+	}
+	else_if = { limit = { NOT = { check_variable = { ai_area_priority@var:ai_area = 0 } } } ai_clear_invasion_area_priority = yes }
+}
+
+ai_invasion_score_leningrad = {
+	add_to_temp_array = { regions = 266 }
+	
+	ai_evaluate_invasion_area = yes 
+	
+	# CALCULATE SCORE
+	if = { limit = { check_variable = { num_coastal_enemy_states > 0 } }
+		
+		set_temp_variable = { score = 10 } #BASE
+		
+		ai_invasion_default_score = yes
+		
+		#--------------------------------------------------
+		add_to_temp_array = { score_ai_areas = ai_area }
+		add_to_temp_array = { score_ai_areas_score = score }
+	}
+	else_if = { limit = { NOT = { check_variable = { ai_area_priority@var:ai_area = 0 } } } ai_clear_invasion_area_priority = yes }
+}
+
+ai_invasion_score_crimea = {
+	add_to_temp_array = { regions = 264 }
+	
+	ai_evaluate_invasion_area = yes 
+	
+	# CALCULATE SCORE
+	if = { limit = { check_variable = { num_coastal_enemy_states > 0 } }
+		
+		set_temp_variable = { score = 10 } #BASE
+		
+		ai_invasion_default_score = yes
+		
+		#--------------------------------------------------
+		add_to_temp_array = { score_ai_areas = ai_area }
+		add_to_temp_array = { score_ai_areas_score = score }
+	}
+	else_if = { limit = { NOT = { check_variable = { ai_area_priority@var:ai_area = 0 } } } ai_clear_invasion_area_priority = yes }
+}
+
+ai_invasion_score_greece = {
+	add_to_temp_array = { regions = 25 }
+	
+	ai_evaluate_invasion_area = yes 
+	
+	# CALCULATE SCORE
+	if = { limit = { check_variable = { num_coastal_enemy_states > 0 } }
+		
+		set_temp_variable = { score = 10 } #BASE
+		
+		ai_invasion_default_score = yes
+		
+		#--------------------------------------------------
+		add_to_temp_array = { score_ai_areas = ai_area }
+		add_to_temp_array = { score_ai_areas_score = score }
+	}
+	else_if = { limit = { NOT = { check_variable = { ai_area_priority@var:ai_area = 0 } } } ai_clear_invasion_area_priority = yes }
+}
+
+ai_invasion_score_mediteranean = {
+	add_to_temp_array = { regions = 129 }
+	
+	ai_evaluate_invasion_area = yes 
+	
+	# CALCULATE SCORE
+	if = { limit = { check_variable = { num_coastal_enemy_states > 0 } }
+		
+		set_temp_variable = { score = 10 } #BASE
+		
+		ai_invasion_default_score = yes
+		
+		#--------------------------------------------------
+		add_to_temp_array = { score_ai_areas = ai_area }
+		add_to_temp_array = { score_ai_areas_score = score }
+	}
+	else_if = { limit = { NOT = { check_variable = { ai_area_priority@var:ai_area = 0 } } } ai_clear_invasion_area_priority = yes }
+}
+
+ai_invasion_score_west_mediteranean = {
+	add_to_temp_array = { regions = 68 }
+	
+	ai_evaluate_invasion_area = yes 
+	
+	# CALCULATE SCORE
+	if = { limit = { check_variable = { num_coastal_enemy_states > 0 } }
+		
+		set_temp_variable = { score = 10 } #BASE
+		
+		ai_invasion_default_score = yes
+		
+		#--------------------------------------------------
+		add_to_temp_array = { score_ai_areas = ai_area }
+		add_to_temp_array = { score_ai_areas_score = score }
+	}
+	else_if = { limit = { NOT = { check_variable = { ai_area_priority@var:ai_area = 0 } } } ai_clear_invasion_area_priority = yes }
+}
+
+ai_invasion_score_sardinia_corsica = {
+	add_to_temp_array = { regions = 169 }
+	
+	ai_evaluate_invasion_area = yes 
+	
+	# CALCULATE SCORE
+	if = { limit = { check_variable = { num_coastal_enemy_states > 0 } }
+		
+		set_temp_variable = { score = 10 } #BASE
+		
+		ai_invasion_default_score = yes
+		
+		#--------------------------------------------------
+		add_to_temp_array = { score_ai_areas = ai_area }
+		add_to_temp_array = { score_ai_areas_score = score }
+	}
+	else_if = { limit = { NOT = { check_variable = { ai_area_priority@var:ai_area = 0 } } } ai_clear_invasion_area_priority = yes }
+}
+
+ai_invasion_score_central_mediteranean = {
+	add_to_temp_array = { regions = 29 }
+	add_to_temp_array = { regions = 299 }
+	
+	ai_evaluate_invasion_area = yes 
+	
+	# CALCULATE SCORE
+	if = { limit = { check_variable = { num_coastal_enemy_states > 0 } }
+		
+		set_temp_variable = { score = 10 } #BASE
+		
+		ai_invasion_default_score = yes
+		
+		#--------------------------------------------------
+		add_to_temp_array = { score_ai_areas = ai_area }
+		add_to_temp_array = { score_ai_areas_score = score }
+	}
+	else_if = { limit = { NOT = { check_variable = { ai_area_priority@var:ai_area = 0 } } } ai_clear_invasion_area_priority = yes }
+}
+
+ai_invasion_score_east_mediteranean = {
+	add_to_temp_array = { regions = 69 }
+	add_to_temp_array = { regions = 298 }
+	
+	ai_evaluate_invasion_area = yes 
+	
+	# CALCULATE SCORE
+	if = { limit = { check_variable = { num_coastal_enemy_states > 0 } }
+		
+		set_temp_variable = { score = 10 } #BASE
+		
+		ai_invasion_default_score = yes
+		
+		#--------------------------------------------------
+		add_to_temp_array = { score_ai_areas = ai_area }
+		add_to_temp_array = { score_ai_areas_score = score }
+	}
+	else_if = { limit = { NOT = { check_variable = { ai_area_priority@var:ai_area = 0 } } } ai_clear_invasion_area_priority = yes }
+}
+
+
+ai_invasion_score_north_africa = {
+	add_to_temp_array = { regions = 128 }
+	add_to_temp_array = { regions = 287 }
+	add_to_temp_array = { regions = 245 }
+	add_to_temp_array = { regions = 300 }
+	
+	ai_evaluate_invasion_area = yes 
+	
+	# CALCULATE SCORE
+	if = { limit = { check_variable = { num_coastal_enemy_states > 0 } }
+		
+		set_temp_variable = { score = 10 } #BASE
+		
+		ai_invasion_default_score = yes
+		
+		#--------------------------------------------------
+		add_to_temp_array = { score_ai_areas = ai_area }
+		add_to_temp_array = { score_ai_areas_score = score }
+	}
+	else_if = { limit = { NOT = { check_variable = { ai_area_priority@var:ai_area = 0 } } } ai_clear_invasion_area_priority = yes }
+}
+ai_invasion_score_north_west_africa = {
+	add_to_temp_array = { regions = 286 }
+	add_to_temp_array = { regions = 126 }
+	add_to_temp_array = { regions = 182 }
+	add_to_temp_array = { regions = 246 }
+	
+	ai_evaluate_invasion_area = yes 
+	
+	# CALCULATE SCORE
+	if = { limit = { check_variable = { num_coastal_enemy_states > 0 } }
+		
+		set_temp_variable = { score = 10 } #BASE
+		
+		ai_invasion_default_score = yes
+		
+		#--------------------------------------------------
+		add_to_temp_array = { score_ai_areas = ai_area }
+		add_to_temp_array = { score_ai_areas_score = score }
+	}
+	else_if = { limit = { NOT = { check_variable = { ai_area_priority@var:ai_area = 0 } } } ai_clear_invasion_area_priority = yes }
+}
+
+ai_invasion_score_south_africa = {
+	add_to_temp_array = { regions = 139 }
+	
+	ai_evaluate_invasion_area = yes 
+	
+	# CALCULATE SCORE
+	if = { limit = { check_variable = { num_coastal_enemy_states > 0 } }
+		
+		set_temp_variable = { score = 10 } #BASE
+		
+		ai_invasion_default_score = yes
+		
+		#--------------------------------------------------
+		add_to_temp_array = { score_ai_areas = ai_area }
+		add_to_temp_array = { score_ai_areas_score = score }
+	}
+	else_if = { limit = { NOT = { check_variable = { ai_area_priority@var:ai_area = 0 } } } ai_clear_invasion_area_priority = yes }
+}
+
+ai_invasion_score_east_africa = {
+	add_to_temp_array = { regions = 17 }
+	
+	ai_evaluate_invasion_area = yes 
+	
+	# CALCULATE SCORE
+	if = { limit = { check_variable = { num_coastal_enemy_states > 0 } }
+		
+		set_temp_variable = { score = 10 } #BASE
+		
+		ai_invasion_default_score = yes
+		
+		#--------------------------------------------------
+		add_to_temp_array = { score_ai_areas = ai_area }
+		add_to_temp_array = { score_ai_areas_score = score }
+	}
+	else_if = { limit = { NOT = { check_variable = { ai_area_priority@var:ai_area = 0 } } } ai_clear_invasion_area_priority = yes }
+}
+
+ai_invasion_score_west_middle_east = {
+	add_to_temp_array = { regions = 28 }
+	add_to_temp_array = { regions = 289 }
+	
+	ai_evaluate_invasion_area = yes 
+	
+	# CALCULATE SCORE
+	if = { limit = { check_variable = { num_coastal_enemy_states > 0 } }
+		
+		set_temp_variable = { score = 10 } #BASE
+		
+		ai_invasion_default_score = yes
+		
+		#--------------------------------------------------
+		add_to_temp_array = { score_ai_areas = ai_area }
+		add_to_temp_array = { score_ai_areas_score = score }
+	}
+	else_if = { limit = { NOT = { check_variable = { ai_area_priority@var:ai_area = 0 } } } ai_clear_invasion_area_priority = yes }
+}
+
+ai_invasion_score_arabia = {
+	add_to_temp_array = { regions = 290 }
+	add_to_temp_array = { regions = 196 }
+	
+	ai_evaluate_invasion_area = yes 
+	
+	# CALCULATE SCORE
+	if = { limit = { check_variable = { num_coastal_enemy_states > 0 } }
+		
+		set_temp_variable = { score = 10 } #BASE
+		
+		ai_invasion_default_score = yes
+		
+		#--------------------------------------------------
+		add_to_temp_array = { score_ai_areas = ai_area }
+		add_to_temp_array = { score_ai_areas_score = score }
+	}
+	else_if = { limit = { NOT = { check_variable = { ai_area_priority@var:ai_area = 0 } } } ai_clear_invasion_area_priority = yes }
+}
+
+ai_invasion_score_japan = {
+	add_to_temp_array = { regions = 154 }
+	add_to_temp_array = { regions = 260 }
+	
+	ai_evaluate_invasion_area = yes 
+	
+	# CALCULATE SCORE
+	if = { limit = { check_variable = { num_coastal_enemy_states > 0 } }
+		
+		set_temp_variable = { score = 10 } #BASE
+		
+		ai_invasion_default_score = yes
+		
+		#--------------------------------------------------
+		add_to_temp_array = { score_ai_areas = ai_area }
+		add_to_temp_array = { score_ai_areas_score = score }
+	}
+	else_if = { limit = { NOT = { check_variable = { ai_area_priority@var:ai_area = 0 } } } ai_clear_invasion_area_priority = yes }
+}
+
+ai_invasion_score_far_east = {
+	add_to_temp_array = { regions = 148 }
+	
+	ai_evaluate_invasion_area = yes 
+	
+	# CALCULATE SCORE
+	if = { limit = { check_variable = { num_coastal_enemy_states > 0 } }
+		
+		set_temp_variable = { score = 10 } #BASE
+		
+		ai_invasion_default_score = yes
+		
+		#--------------------------------------------------
+		add_to_temp_array = { score_ai_areas = ai_area }
+		add_to_temp_array = { score_ai_areas_score = score }
+	}
+	else_if = { limit = { NOT = { check_variable = { ai_area_priority@var:ai_area = 0 } } } ai_clear_invasion_area_priority = yes }
+}
+
+ai_invasion_score_manchu_korea = {
+	add_to_temp_array = { regions = 155 }
+	add_to_temp_array = { regions = 186 }
+	
+	ai_evaluate_invasion_area = yes 
+	
+	# CALCULATE SCORE
+	if = { limit = { check_variable = { num_coastal_enemy_states > 0 } }
+		
+		set_temp_variable = { score = 10 } #BASE
+		
+		ai_invasion_default_score = yes
+		
+		#--------------------------------------------------
+		add_to_temp_array = { score_ai_areas = ai_area }
+		add_to_temp_array = { score_ai_areas_score = score }
+	}
+	else_if = { limit = { NOT = { check_variable = { ai_area_priority@var:ai_area = 0 } } } ai_clear_invasion_area_priority = yes }
+}
+
+ai_invasion_score_north_west_china = {
+	add_to_temp_array = { regions = 143 }
+	add_to_temp_array = { regions = 211 }
+	add_to_temp_array = { regions = 164 }
+	
+	ai_evaluate_invasion_area = yes 
+	
+	# CALCULATE SCORE
+	if = { limit = { check_variable = { num_coastal_enemy_states > 0 } }
+		
+		set_temp_variable = { score = 10 } #BASE
+		
+		ai_invasion_default_score = yes
+		
+		#--------------------------------------------------
+		add_to_temp_array = { score_ai_areas = ai_area }
+		add_to_temp_array = { score_ai_areas_score = score }
+	}
+	else_if = { limit = { NOT = { check_variable = { ai_area_priority@var:ai_area = 0 } } } ai_clear_invasion_area_priority = yes }
+}
+
+ai_invasion_score_west_china = {
+	add_to_temp_array = { regions = 229 }
+	
+	ai_evaluate_invasion_area = yes 
+	
+	# CALCULATE SCORE
+	if = { limit = { check_variable = { num_coastal_enemy_states > 0 } }
+		
+		set_temp_variable = { score = 10 } #BASE
+		
+		ai_invasion_default_score = yes
+		
+		#--------------------------------------------------
+		add_to_temp_array = { score_ai_areas = ai_area }
+		add_to_temp_array = { score_ai_areas_score = score }
+	}
+	else_if = { limit = { NOT = { check_variable = { ai_area_priority@var:ai_area = 0 } } } ai_clear_invasion_area_priority = yes }
+}
+
+ai_invasion_score_south_west_china = {
+	add_to_temp_array = { regions = 165 }
+	
+	ai_evaluate_invasion_area = yes 
+	
+	# CALCULATE SCORE
+	if = { limit = { check_variable = { num_coastal_enemy_states > 0 } }
+		
+		set_temp_variable = { score = 10 } #BASE
+		
+		ai_invasion_default_score = yes
+		
+		#--------------------------------------------------
+		add_to_temp_array = { score_ai_areas = ai_area }
+		add_to_temp_array = { score_ai_areas_score = score }
+	}
+	else_if = { limit = { NOT = { check_variable = { ai_area_priority@var:ai_area = 0 } } } ai_clear_invasion_area_priority = yes }
+}
+
+ai_invasion_score_philippines = {
+	add_to_temp_array = { regions = 160 }
+	
+	ai_evaluate_invasion_area = yes 
+	
+	# CALCULATE SCORE
+	if = { limit = { check_variable = { num_coastal_enemy_states > 0 } }
+		
+		set_temp_variable = { score = 10 } #BASE
+		
+		ai_invasion_default_score = yes
+		
+		#--------------------------------------------------
+		add_to_temp_array = { score_ai_areas = ai_area }
+		add_to_temp_array = { score_ai_areas_score = score }
+	}
+	else_if = { limit = { NOT = { check_variable = { ai_area_priority@var:ai_area = 0 } } } ai_clear_invasion_area_priority = yes }
+}
+
+ai_invasion_score_south_west_indonesia = {
+	add_to_temp_array = { regions = 158 }
+	add_to_temp_array = { regions = 187 }
+	
+	ai_evaluate_invasion_area = yes 
+	
+	# CALCULATE SCORE
+	if = { limit = { check_variable = { num_coastal_enemy_states > 0 } }
+		
+		set_temp_variable = { score = 10 } #BASE
+		
+		ai_invasion_default_score = yes
+		
+		#--------------------------------------------------
+		add_to_temp_array = { score_ai_areas = ai_area }
+		add_to_temp_array = { score_ai_areas_score = score }
+	}
+	else_if = { limit = { NOT = { check_variable = { ai_area_priority@var:ai_area = 0 } } } ai_clear_invasion_area_priority = yes }
+}
+
+ai_invasion_score_central_indonesia = {
+	add_to_temp_array = { regions = 159 }
+	add_to_temp_array = { regions = 93 }
+	
+	ai_evaluate_invasion_area = yes 
+	
+	# CALCULATE SCORE
+	if = { limit = { check_variable = { num_coastal_enemy_states > 0 } }
+		
+		set_temp_variable = { score = 10 } #BASE
+		
+		ai_invasion_default_score = yes
+		
+		#--------------------------------------------------
+		add_to_temp_array = { score_ai_areas = ai_area }
+		add_to_temp_array = { score_ai_areas_score = score }
+	}
+	else_if = { limit = { NOT = { check_variable = { ai_area_priority@var:ai_area = 0 } } } ai_clear_invasion_area_priority = yes }
+}
+
+ai_invasion_score_west_australia = {
+	add_to_temp_array = { regions = 194 }
+	add_to_temp_array = { regions = 195 }
+	
+	ai_evaluate_invasion_area = yes 
+	
+	# CALCULATE SCORE
+	if = { limit = { check_variable = { num_coastal_enemy_states > 0 } }
+		
+		set_temp_variable = { score = 10 } #BASE
+		
+		ai_invasion_default_score = yes
+		
+		#--------------------------------------------------
+		add_to_temp_array = { score_ai_areas = ai_area }
+		add_to_temp_array = { score_ai_areas_score = score }
+	}
+	else_if = { limit = { NOT = { check_variable = { ai_area_priority@var:ai_area = 0 } } } ai_clear_invasion_area_priority = yes }
+}
+
+ai_invasion_score_new_zealand = {
+	add_to_temp_array = { regions = 157 }
+	
+	ai_evaluate_invasion_area = yes 
+	
+	# CALCULATE SCORE
+	if = { limit = { check_variable = { num_coastal_enemy_states > 0 } }
+		
+		set_temp_variable = { score = 10 } #BASE
+		
+		ai_invasion_default_score = yes
+		
+		#--------------------------------------------------
+		add_to_temp_array = { score_ai_areas = ai_area }
+		add_to_temp_array = { score_ai_areas_score = score }
+	}
+	else_if = { limit = { NOT = { check_variable = { ai_area_priority@var:ai_area = 0 } } } ai_clear_invasion_area_priority = yes }
+}
+
+ai_invasion_score_south_india = {
+	add_to_temp_array = { regions = 31 }
+	
+	ai_evaluate_invasion_area = yes 
+	
+	# CALCULATE SCORE
+	if = { limit = { check_variable = { num_coastal_enemy_states > 0 } }
+		
+		set_temp_variable = { score = 10 } #BASE
+		
+		ai_invasion_default_score = yes
+		
+		#--------------------------------------------------
+		add_to_temp_array = { score_ai_areas = ai_area }
+		add_to_temp_array = { score_ai_areas_score = score }
+	}
+	else_if = { limit = { NOT = { check_variable = { ai_area_priority@var:ai_area = 0 } } } ai_clear_invasion_area_priority = yes }
+}
+
+ai_invasion_score_bengal = {
+	add_to_temp_array = { regions = 141 }
+	
+	ai_evaluate_invasion_area = yes 
+	
+	# CALCULATE SCORE
+	if = { limit = { check_variable = { num_coastal_enemy_states > 0 } }
+		
+		set_temp_variable = { score = 10 } #BASE
+		
+		ai_invasion_default_score = yes
+		
+		#--------------------------------------------------
+		add_to_temp_array = { score_ai_areas = ai_area }
+		add_to_temp_array = { score_ai_areas_score = score }
+	}
+	else_if = { limit = { NOT = { check_variable = { ai_area_priority@var:ai_area = 0 } } } ai_clear_invasion_area_priority = yes }
+}
+
+ai_invasion_score_burma = {
+	add_to_temp_array = { regions = 189 }
+	
+	ai_evaluate_invasion_area = yes 
+	
+	# CALCULATE SCORE
+	if = { limit = { check_variable = { num_coastal_enemy_states > 0 } }
+		
+		set_temp_variable = { score = 10 } #BASE
+		
+		ai_invasion_default_score = yes
+		
+		#--------------------------------------------------
+		add_to_temp_array = { score_ai_areas = ai_area }
+		add_to_temp_array = { score_ai_areas_score = score }
+	}
+	else_if = { limit = { NOT = { check_variable = { ai_area_priority@var:ai_area = 0 } } } ai_clear_invasion_area_priority = yes }
+}
+
+ai_invasion_score_indochina = {
+	add_to_temp_array = { regions = 253 }
+	add_to_temp_array = { regions = 142 }
+	
+	ai_evaluate_invasion_area = yes 
+	
+	# CALCULATE SCORE
+	if = { limit = { check_variable = { num_coastal_enemy_states > 0 } }
+		
+		set_temp_variable = { score = 10 } #BASE
+		
+		ai_invasion_default_score = yes
+		
+		#--------------------------------------------------
+		add_to_temp_array = { score_ai_areas = ai_area }
+		add_to_temp_array = { score_ai_areas_score = score }
+	}
+	else_if = { limit = { NOT = { check_variable = { ai_area_priority@var:ai_area = 0 } } } ai_clear_invasion_area_priority = yes }
+}
+
+ai_invasion_score_malay = {
+	add_to_temp_array = { regions = 188 }
+	
+	ai_evaluate_invasion_area = yes 
+	
+	# CALCULATE SCORE
+	if = { limit = { check_variable = { num_coastal_enemy_states > 0 } }
+		
+		set_temp_variable = { score = 10 } #BASE
+		
+		ai_invasion_default_score = yes
+		
+		#--------------------------------------------------
+		add_to_temp_array = { score_ai_areas = ai_area }
+		add_to_temp_array = { score_ai_areas_score = score }
+	}
+	else_if = { limit = { NOT = { check_variable = { ai_area_priority@var:ai_area = 0 } } } ai_clear_invasion_area_priority = yes }
+}
+
+ai_invasion_score_bismark_sea = {
+	add_to_temp_array = { regions = 78 }
+	add_to_temp_array = { regions = 84 }
+	
+	ai_evaluate_invasion_area = yes 
+	
+	# CALCULATE SCORE
+	if = { limit = { check_variable = { num_coastal_enemy_states > 0 } }
+		
+		set_temp_variable = { score = 10 } #BASE
+		
+		ai_invasion_default_score = yes
+		
+		#--------------------------------------------------
+		add_to_temp_array = { score_ai_areas = ai_area }
+		add_to_temp_array = { score_ai_areas_score = score }
+	}
+	else_if = { limit = { NOT = { check_variable = { ai_area_priority@var:ai_area = 0 } } } ai_clear_invasion_area_priority = yes }
+}
+
+ai_invasion_score_mariana_region = {
+	add_to_temp_array = { regions = 94 }
+	
+	ai_evaluate_invasion_area = yes 
+	
+	# CALCULATE SCORE
+	if = { limit = { check_variable = { num_coastal_enemy_states > 0 } }
+		
+		set_temp_variable = { score = 10 } #BASE
+		
+		ai_invasion_default_score = yes
+		
+		#--------------------------------------------------
+		add_to_temp_array = { score_ai_areas = ai_area }
+		add_to_temp_array = { score_ai_areas_score = score }
+	}
+	else_if = { limit = { NOT = { check_variable = { ai_area_priority@var:ai_area = 0 } } } ai_clear_invasion_area_priority = yes }
+}
+
+ai_invasion_score_solomon_sea = {
+	add_to_temp_array = { regions = 83 }
+	
+	ai_evaluate_invasion_area = yes 
+	
+	# CALCULATE SCORE
+	if = { limit = { check_variable = { num_coastal_enemy_states > 0 } }
+		
+		set_temp_variable = { score = 10 } #BASE
+		
+		ai_invasion_default_score = yes
+		
+		#--------------------------------------------------
+		add_to_temp_array = { score_ai_areas = ai_area }
+		add_to_temp_array = { score_ai_areas_score = score }
+	}
+	else_if = { limit = { NOT = { check_variable = { ai_area_priority@var:ai_area = 0 } } } ai_clear_invasion_area_priority = yes }
+}
+
+ai_invasion_score_micronesia = {
+	add_to_temp_array = { regions = 97 }
+	
+	ai_evaluate_invasion_area = yes 
+	
+	# CALCULATE SCORE
+	if = { limit = { check_variable = { num_coastal_enemy_states > 0 } }
+		
+		set_temp_variable = { score = 10 } #BASE
+		
+		ai_invasion_default_score = yes
+		
+		#--------------------------------------------------
+		add_to_temp_array = { score_ai_areas = ai_area }
+		add_to_temp_array = { score_ai_areas_score = score }
+	}
+	else_if = { limit = { NOT = { check_variable = { ai_area_priority@var:ai_area = 0 } } } ai_clear_invasion_area_priority = yes }
+}
+
+ai_invasion_score_polynesia = {
+	add_to_temp_array = { regions = 178 }
+	add_to_temp_array = { regions = 179 }
+	
+	ai_evaluate_invasion_area = yes 
+	
+	# CALCULATE SCORE
+	if = { limit = { check_variable = { num_coastal_enemy_states > 0 } }
+		
+		set_temp_variable = { score = 10 } #BASE
+		
+		ai_invasion_default_score = yes
+		
+		#--------------------------------------------------
+		add_to_temp_array = { score_ai_areas = ai_area }
+		add_to_temp_array = { score_ai_areas_score = score }
+	}
+	else_if = { limit = { NOT = { check_variable = { ai_area_priority@var:ai_area = 0 } } } ai_clear_invasion_area_priority = yes }
+}
+
+ai_invasion_score_pacific_ridge = {
+	add_to_temp_array = { regions = 95 }
+	add_to_temp_array = { regions = 180 }
+	add_to_temp_array = { regions = 172 }
+	
+	ai_evaluate_invasion_area = yes 
+	
+	# CALCULATE SCORE
+	if = { limit = { check_variable = { num_coastal_enemy_states > 0 } }
+		
+		set_temp_variable = { score = 10 } #BASE
+		
+		ai_invasion_default_score = yes
+		
+		#--------------------------------------------------
+		add_to_temp_array = { score_ai_areas = ai_area }
+		add_to_temp_array = { score_ai_areas_score = score }
+	}
+	else_if = { limit = { NOT = { check_variable = { ai_area_priority@var:ai_area = 0 } } } ai_clear_invasion_area_priority = yes }
+}
+
+ai_invasion_score_hawaii = {
+	add_to_temp_array = { regions = 105 }
+	
+	ai_evaluate_invasion_area = yes 
+	
+	# CALCULATE SCORE
+	if = { limit = { check_variable = { num_coastal_enemy_states > 0 } }
+		
+		set_temp_variable = { score = 10 } #BASE
+		
+		ai_invasion_default_score = yes
+		
+		#--------------------------------------------------
+		add_to_temp_array = { score_ai_areas = ai_area }
+		add_to_temp_array = { score_ai_areas_score = score }
+	}
+	else_if = { limit = { NOT = { check_variable = { ai_area_priority@var:ai_area = 0 } } } ai_clear_invasion_area_priority = yes }
+}
+
+
+### EOF ###

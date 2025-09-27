@@ -1,0 +1,3593 @@
+#####################
+
+###  ##  #  # # #  ##
+ #  #  # ## # # # #
+ #  #### # ## ##   #
+ #  #  # #  # # #   #
+ #  #  # #  # # # ##
+
+ ####################
+ 
+GER_man_organization = {
+	#include = generic_medium_tank_organization
+	icon = GFX_idea_GER_MAN
+	allowed = {
+		tag = GER
+	}
+	equipment_type = {
+		mio_cat_eq_light_only
+		mio_cat_eq_medium_only
+	}
+	research_categories = {
+		cat_light_armor
+		cat_medium_armor
+		cat_light_armor_component
+		cat_medium_armor_component
+		armor_tech_special
+		#mio_cat_eq_all_medium_tank
+		#mio_cat_eq_all_light_tank
+	}
+
+	tree_header_text = {
+		text = mio_header_engine_and_drive_system
+		x = 1
+	}
+
+	tree_header_text = {
+		text = mio_header_chassis
+		x = 5
+	}
+
+	tree_header_text = {
+		text = mio_header_guns_and_turret
+		x = 8
+	}
+
+	initial_trait = {
+		name = GER_man_chassis_builder
+		production_bonus = {
+			production_capacity_factor = 0.01
+		}
+		equipment_bonus = {
+			reliability = 0.02
+		}
+		organization_modifier = {
+			military_industrial_organization_size_up_requirement = 0.2
+			military_industrial_organization_funds_gain = 0.33
+			military_industrial_organization_task_capacity = -8
+		}
+	}
+	trait = {
+		name = GER_man_vocational_schools
+		token = GER_man_vocational_schools
+		icon = GFX_generic_mio_trait_icon_efficiency_cap
+		position = { x = 0 y = 0 }
+		production_bonus = {
+			production_efficiency_cap_factor = 0.02
+			production_efficiency_gain_factor = 0.02
+		}
+		organization_modifier = {
+			military_industrial_organization_research_bonus = 0.03
+		}
+	}
+	trait = {
+		name = GER_man_social_services
+		token = GER_man_social_services
+		icon = GFX_generic_mio_trait_icon_production_capacity
+		relative_position_id = GER_man_vocational_schools
+		position = { x = 0 y = 1 }
+		all_parents = {	GER_man_vocational_schools }
+		production_bonus = {
+			production_capacity_factor = 0.02
+			production_resource_need_factor = 0.02
+		}
+		organization_modifier = {
+			military_industrial_organization_funds_gain = -0.05
+		}
+	}
+	trait = {
+		name = GER_tank_factory_expansion
+		token = GER_tank_factory_expansion
+		icon = GFX_generic_mio_trait_icon_production_capacity
+		relative_position_id = GER_man_social_services
+		mutually_exclusive = {
+			GER_man_machine_production
+		}
+		position = { x = 1 y = 1 }
+		all_parents = {
+			GER_man_social_services
+			GER_man_corrupt_the_system
+		}
+		production_bonus = {
+			production_capacity_factor = 0.01
+			production_resource_need_factor = 0.02
+		}
+		on_complete = {
+			FROM = {
+				random_owned_controlled_state = {
+					prioritize = { 53 }
+					add_extra_state_shared_building_slots = 1
+					add_building_construction = {
+						type = tank_assembly
+						level = 1
+						instant_build = yes
+					}
+				}
+			}			
+		}
+		organization_modifier = {
+			military_industrial_organization_task_capacity = 1
+		}
+	}
+	trait = {
+		name = GER_man_apprentice_training
+		token = GER_man_apprentice_training
+		icon = GFX_generic_mio_trait_icon_mio
+		position = { x = 1 y = 0 }
+
+		organization_modifier = {
+			military_industrial_organization_design_team_assign_cost = -0.2
+			military_industrial_organization_design_team_change_cost = -0.2
+		}
+	}
+	trait = {
+		name = GER_man_corrupt_the_system
+		token = GER_man_corrupt_the_system
+		icon = GFX_generic_mio_trait_icon_mio
+		position = { x = 5 y = 0 }
+		organization_modifier = {
+			military_industrial_organization_funds_gain = 0.15
+			military_industrial_organization_research_bonus = 0.04
+		}
+		on_complete = {
+			FROM = {
+				add_stability = -0.03
+			}
+		}
+
+	}
+	trait = {
+		name = GER_man_plant_advanced_suspension
+		token = GER_man_plant_advanced_suspension
+		icon = GFX_generic_mio_trait_icon_breakthrough
+		position = { x = -1 y = 1 }
+		relative_position_id = GER_man_corrupt_the_system
+		all_parents = {
+			GER_man_corrupt_the_system
+		}
+		equipment_bonus = {
+			breakthrough = 0.03
+
+		}
+	}
+	trait = {
+		name = GER_man_machine_production
+		token = GER_man_machine_production
+		icon = GFX_generic_mio_trait_icon_building
+		relative_position_id = GER_man_plant_advanced_suspension
+		position = { x = -2 y = 1 }
+
+		all_parents = {
+			#GER_man_social_services
+			GER_man_corrupt_the_system
+		}
+		mutually_exclusive = {
+			GER_tank_factory_expansion
+		}
+		production_bonus = {
+			production_efficiency_gain_factor = 0.02
+		}
+		on_complete = {
+			FROM = {
+				random_owned_controlled_state = {
+					prioritize = { 53 }
+					add_extra_state_shared_building_slots = 4
+					add_building_construction = {
+						type = industrial_complex
+						level = 4
+						instant_build = yes
+					}
+				}
+			}
+		}
+	}
+	trait = {
+		name = GER_man_maybach_engines
+		token = GER_man_maybach_engines
+		icon = GFX_generic_mio_trait_icon_maximum_speed
+		mutually_exclusive = { GER_man_high_performance_engines_development }
+		relative_position_id = GER_man_plant_advanced_suspension
+		position = { x = -1 y = 1 }
+
+		equipment_bonus = {
+			reliability = 0.02
+			maximum_speed = 0.01
+			fuel_consumption = -0.02
+		}
+	}
+	trait = {
+		name = GER_man_high_performance_engines_development
+		token = GER_man_high_performance_engines_development
+		icon = GFX_generic_mio_trait_icon_building
+		relative_position_id = GER_man_plant_advanced_suspension
+		position = { x = 0 y = 1 }
+		mutually_exclusive = { GER_man_maybach_engines }
+		all_parents = {
+			GER_man_plant_advanced_suspension
+		}
+		on_complete = {
+			FROM = {
+				random_owned_controlled_state = {
+					add_building_construction = {
+						type = engine_assembly
+						level = 1
+						instant_build = yes
+					}
+				}
+			}
+		}
+	}
+	trait = {
+		name = GER_high_performance_engines
+		token = GER_high_performance_engines
+		icon = GFX_generic_mio_trait_icon_efficiency_cap
+		relative_position_id = GER_man_high_performance_engines_development
+		position = { x = 0 y = 1 }
+		all_parents = { GER_man_high_performance_engines_development }
+		production_bonus = {
+			production_efficiency_cap_factor = 0.02
+		}
+		organization_modifier = {
+			military_industrial_organization_funds_gain = 0.33
+		}
+
+		equipment_bonus = {
+			reliability = 0.01
+		}
+	}
+	trait = {
+		name = GER_man_new_combustion_processes
+		token = GER_man_new_combustion_processes
+		icon = GFX_generic_mio_trait_icon_fuel_consumption
+		relative_position_id = GER_high_performance_engines
+		position = { x = 0 y = 1 }
+		all_parents = { GER_high_performance_engines }
+
+		equipment_bonus = {
+			fuel_consumption = -0.05
+			maximum_speed = 0.01
+		}
+	}
+	trait = {
+		name = GER_man_reinforced_chassies
+		token = GER_man_reinforced_chassies
+		icon = GFX_generic_mio_trait_icon_hardness
+		relative_position_id = GER_man_plant_advanced_suspension
+		position = { x = 2 y = 1 }
+		all_parents = {
+			GER_man_plant_advanced_suspension
+			GER_man_reinforced_suspension
+		}
+		equipment_bonus = {
+			hardness = 0.03
+		}
+	}
+	trait = {
+		name = GER_man_reinforced_suspension
+		token = GER_man_reinforced_suspension
+		icon = GFX_generic_mio_trait_icon_armor_value
+		relative_position_id = GER_man_corrupt_the_system
+		position = { x = 1 y = 1 }
+		all_parents = {
+			GER_man_corrupt_the_system
+		}
+		equipment_bonus = {
+			armor_value = 0.03
+			build_cost_ic = 0.03
+		}
+	}
+	trait = {
+		name = GER_man_self_sealing_fuel_tanks
+		token = GER_man_self_sealing_fuel_tanks
+		icon = GFX_generic_mio_trait_icon_reliability
+		relative_position_id = GER_man_corrupt_the_system
+		position = { x = 3 y = 1 }
+		all_parents = {
+			GER_man_corrupt_the_system
+		}
+		mutually_exclusive = {
+			GER_man_easy_parts_extraction
+		}
+		equipment_bonus = {
+			reliability = 0.03
+		}
+	}
+	trait = {
+		name = GER_man_easy_parts_extraction
+		token = GER_man_easy_parts_extraction
+		icon = GFX_generic_mio_trait_icon_build_cost_ic
+		relative_position_id = GER_man_corrupt_the_system
+		position = { x = 4 y = 1 }
+		all_parents = {
+			GER_man_corrupt_the_system
+		}
+		mutually_exclusive = {
+			GER_man_self_sealing_fuel_tanks
+		}
+		equipment_bonus = {
+			reliability = -0.04
+			build_cost_ic = -0.05
+		}
+	}
+	trait = {
+		name = GER_man_extra_exhaust_pipes
+		token = GER_man_extra_exhaust_pipes
+		icon = GFX_generic_mio_trait_icon_maximum_speed
+		relative_position_id = GER_man_reinforced_chassies
+		position = { x = 2 y = 1 }
+		all_parents = {
+			GER_man_reinforced_chassies
+		}
+		any_parent = {
+			GER_man_self_sealing_fuel_tanks
+			GER_man_easy_parts_extraction
+		}
+		equipment_bonus = {
+			maximum_speed = 0.02
+			build_cost_ic = 0.02
+		}
+	}
+	trait = {
+		name = GER_man_improved_gearbox_lubrication
+		token = GER_man_improved_gearbox_lubrication
+		mutually_exclusive = {
+			GER_man_hydrostatic_transmission 
+		}
+		icon = GFX_generic_mio_trait_icon_reliability
+		relative_position_id = GER_man_reinforced_chassies
+		position = { x = 0 y = 1 }
+		all_parents = {
+			GER_man_reinforced_chassies
+		}
+		equipment_bonus = {
+			reliability =  0.03
+		}
+	}
+	trait = {
+		name = GER_man_hydrostatic_transmission
+		token = GER_man_hydrostatic_transmission
+		icon = GFX_generic_mio_trait_icon_research
+		relative_position_id = GER_man_reinforced_chassies
+		position = { x = 1 y = 1 }
+		mutually_exclusive = {
+			GER_man_improved_gearbox_lubrication
+		}
+		all_parents = {
+			GER_man_reinforced_chassies
+		}
+		available = {
+			has_mio_size > 6
+		}
+		on_complete = {
+			FROM = {
+				add_tech_bonus = {
+					bonus = 0.1
+					ahead_reduction = 2
+					uses = 1
+					technology = tech_trm_gearbox_advanced_ger
+				}
+			}
+		}
+	}
+	trait = {
+		name = GER_man_sleeve_bearings
+		token = GER_man_sleeve_bearings
+		icon = GFX_generic_mio_trait_icon_build_cost_ic
+		relative_position_id = GER_man_hydrostatic_transmission
+		position = { x = 0 y = 1 }
+
+		any_parent = {
+			GER_man_hydrostatic_transmission
+			GER_man_improved_gearbox_lubrication
+		}
+
+		equipment_bonus = {
+			build_cost_ic = -0.07
+			reliability = -0.04
+		}
+	}
+	trait = {
+		name = GER_man_incendiary_charges
+		token = GER_man_incendiary_charges
+		icon = GFX_generic_mio_trait_icon_defense
+		relative_position_id = GER_man_reinforced_chassies
+		position = { x = 3 y = 1 }
+
+		all_parents = {
+			GER_man_reinforced_chassies
+		}
+		any_parent = {
+			GER_man_self_sealing_fuel_tanks
+			GER_man_easy_parts_extraction
+		}
+
+		equipment_bonus = {
+			defense = 0.05
+		}
+	}
+	trait = {
+		name = GER_man_improved_recoil_mechanism
+		token = GER_man_improved_recoil_mechanism
+		icon = GFX_generic_mio_trait_icon_soft_attack
+		relative_position_id = GER_man_incendiary_charges
+		position = { x = 0 y = 1 }
+
+		all_parents = {
+			GER_man_incendiary_charges
+			GER_man_extra_exhaust_pipes
+		}
+
+		equipment_bonus = {
+			soft_attack = 0.03
+			hard_attack = 0.05
+		}
+	}
+}
+
+#Benz
+GER_daimler_benz_organization = {
+	#include = generic_tank_organization
+	icon = GFX_idea_generic_tank_manufacturer_2 # TODO change
+
+	allowed = {
+		tag = GER
+	}
+
+	allowed = {
+		tag = GER
+	}
+	equipment_type = {
+		mio_cat_eq_light_only
+		mio_cat_eq_medium_only
+	}
+	research_categories = {
+		#mio_cat_eq_all_medium_tank
+		#mio_cat_eq_all_light_tank
+		cat_light_armor
+		cat_medium_armor
+		cat_light_armor_component
+		cat_medium_armor_component
+		armor_tech_special
+	}
+
+	tree_header_text = {
+		text = mio_header_engine_and_drive_system
+		x = 1
+	}
+
+	tree_header_text = {
+		text = mio_header_chassis
+		x = 5
+	}
+
+	tree_header_text = {
+		text = mio_header_guns_and_turret
+		x = 8
+	}
+
+	initial_trait = {
+		name = GER_db_sophisticated_designs
+		equipment_bonus = {
+			soft_attack = 0.02
+			hard_attack = 0.01
+		}
+		organization_modifier = {
+			military_industrial_organization_research_bonus = -0.05
+			military_industrial_organization_size_up_requirement = 0.2
+			military_industrial_organization_funds_gain = 0.33
+			military_industrial_organization_task_capacity = -7
+		}
+	}
+
+
+	add_trait = {
+		token = GER_db_marenfeld_expansion
+		name = GER_db_marenfeld_expansion
+		icon = GFX_generic_mio_trait_icon_efficiency_cap
+		special_trait_background = yes
+
+		position = { x=0 y=0 }
+		production_bonus = {
+			production_efficiency_cap_factor = 0.03
+		}
+		limit_to_equipment_type = {
+			mio_cat_eq_light_only
+			mio_cat_eq_medium_only
+		}
+		on_complete = {
+			FROM = {
+				random_owned_controlled_state = {
+					prioritize = { 895 }
+					add_building_construction = {
+						type = engine_assembly
+						level = 2
+						instant_build = yes
+					}
+				}
+			}
+		}
+		organization_modifier = {
+			military_industrial_organization_task_capacity = 3
+		}
+	}
+
+	add_trait = {
+		token = GER_db_adapt_the_factories
+		name = GER_db_adapt_the_factories
+		icon = GFX_generic_mio_trait_icon_production_capacity
+		all_parents = {
+			GER_db_marenfeld_expansion
+		}
+		limit_to_equipment_type = {
+			mio_cat_eq_light_only
+			mio_cat_eq_medium_only
+		}
+		relative_position_id = GER_db_marenfeld_expansion
+
+		position = { x=0 y=1 }
+		production_bonus = {
+			production_capacity_factor = 0.02
+			production_resource_need_factor = 0.04
+		}
+
+	}
+	add_trait = {
+		token = GER_db_improved_carburators
+		name = GER_db_improved_carburators
+		icon = GFX_generic_mio_trait_icon_fuel_consumption
+		all_parents = {
+			GER_db_adapt_the_factories
+		}
+		relative_position_id = GER_db_adapt_the_factories
+		limit_to_equipment_type = {
+			mio_cat_eq_light_only
+			mio_cat_eq_medium_only
+		}
+		mutually_exclusive = {
+			GER_db_fuel_injection
+		}
+
+		position = { x=0 y=1 }
+		equipment_bonus = {
+			fuel_consumption = -0.05
+			fuel_capacity = 0.10
+		}
+
+	}
+	add_trait = {
+		token = GER_db_fuel_injection
+		name = GER_db_fuel_injection
+		icon = GFX_generic_mio_trait_icon_maximum_speed
+		all_parents = {
+			GER_db_adapt_the_factories
+		}
+		mutually_exclusive = {
+			GER_db_improved_carburators
+		}
+		limit_to_equipment_type = {
+			mio_cat_eq_light_only
+			mio_cat_eq_medium_only
+		}
+		relative_position_id = GER_db_adapt_the_factories
+		limit_to_equipment_type = { armor }
+
+		position = { x=1 y=1 }
+		equipment_bonus = {
+			maximum_speed = 0.02
+			soft_attack = 0.03
+			reliability = -0.03
+			build_cost_ic = 0.02
+		}
+
+	}
+	add_trait = {
+		token = GER_db_turret_design_department
+		name = GER_db_turret_design_department
+		icon = GFX_generic_mio_trait_icon_mio
+		special_trait_background = yes
+		limit_to_equipment_type = {
+			mio_cat_eq_light_only
+			mio_cat_eq_medium_only
+		}
+		position = { x=4 y=0 }
+		organization_modifier = {
+			military_industrial_organization_research_bonus = 0.05
+		}
+	}
+	add_trait = {
+		token = GER_db_windshield_wipers
+		name = GER_db_windshield_wipers
+		icon = GFX_generic_mio_trait_icon_breakthrough
+		all_parents = { GER_db_turret_design_department }
+		relative_position_id = GER_db_turret_design_department
+		limit_to_equipment_type = {
+			mio_cat_eq_light_only
+			mio_cat_eq_medium_only
+		}
+		position = { x=1 y=1 }
+		equipment_bonus = {
+			breakthrough = 0.04
+		}
+	}
+	add_trait = {
+		token = GER_db_wider_tracks
+		name = GER_db_wider_tracks
+		icon = GFX_generic_mio_trait_icon_maximum_speed
+		all_parents = { GER_db_windshield_wipers }
+		relative_position_id = GER_db_windshield_wipers
+
+		position = { x=0 y=1 }
+		equipment_bonus = {
+			maximum_speed = 0.01
+			reliability = 0.02
+
+		}
+	}
+	add_trait = {
+		token = GER_db_rotating_periscopes
+		name = GER_db_rotating_periscopes
+		icon = GFX_generic_mio_trait_icon_soft_attack
+		all_parents = { GER_db_turret_design_department }
+		relative_position_id = GER_db_turret_design_department
+
+		mutually_exclusive = {
+			GER_db_photo_optical_components
+		}
+		position = { x=-2 y=1 }
+		equipment_bonus = {
+			soft_attack = 0.02
+		}
+	}
+	add_trait = {
+		token = GER_db_photo_optical_components
+		name = GER_db_photo_optical_components
+		icon = GFX_generic_mio_trait_icon_hard_attack
+		all_parents = { GER_db_turret_design_department }
+		relative_position_id = GER_db_turret_design_department
+		mutually_exclusive = {
+			GER_db_rotating_periscopes
+		}
+
+		position = { x=0 y=1 }
+		equipment_bonus = {
+			hard_attack = 0.02
+			ap_attack = 0.01
+		}
+	}
+	add_trait = {
+		token = GER_db_prisms
+		name = GER_db_prisms
+		icon = GFX_generic_mio_trait_icon_ap_attack
+		any_parent = { GER_db_photo_optical_components GER_db_rotating_periscopes }
+		relative_position_id = GER_db_photo_optical_components
+
+		position = { x=-1 y=1 }
+		equipment_bonus = {
+			ap_attack = 0.02
+		}
+	}
+	add_trait = {
+		token = GER_mio_infrared_technology
+		name = GER_mio_infrared_technology
+		icon = GFX_generic_mio_trait_icon_ap_attack
+		all_parents = {
+			GER_db_prisms
+		}
+		mutually_exclusive = {
+			GER_mio_db_emergency_firing
+		}
+		relative_position_id = GER_db_prisms
+
+		position = { x=0 y=2 }
+		equipment_bonus = {
+			soft_attack = 0.02
+			hard_attack = 0.02
+			ap_attack = 0.05
+		}
+	}
+	add_trait = {
+		token = GER_db_standardized_turrets
+		name = GER_db_standardized_turrets
+		icon = GFX_generic_mio_trait_icon_build_cost_ic
+		all_parents = { GER_db_turret_design_department	}
+		relative_position_id = GER_db_turret_design_department
+		limit_to_equipment_type = { armor }
+		mutually_exclusive = {
+			GER_db_especific_designs
+		}
+		position = { x=2 y=2 }
+		production_bonus = {
+			production_cost_factor = -0.03
+			production_efficiency_cap_factor = 0.01
+		}
+	}
+	add_trait = {
+		token = GER_db_especific_designs
+		name = GER_db_especific_designs
+		icon = GFX_generic_mio_trait_icon_soft_attack
+		all_parents = { GER_db_turret_design_department	}
+		relative_position_id = GER_db_turret_design_department
+		mutually_exclusive = {
+			GER_db_standardized_turrets
+		}
+		limit_to_equipment_type = { armor }
+
+		position = { x=3 y=2 }
+		equipment_bonus = {
+			build_cost_ic = 0.05
+			soft_attack = 0.03
+			hard_attack = 0.02
+			ap_attack = 0.01
+		}
+	}
+	add_trait = {
+		token = GER_db_rapid_reload_device
+		name = GER_db_rapid_reload_device
+		icon = GFX_generic_mio_trait_icon_soft_attack
+		relative_position_id = GER_db_standardized_turrets
+		any_parent = {
+			GER_db_standardized_turrets
+			GER_db_especific_designs
+		}
+		mutually_exclusive = {
+			GER_db_recoiless_gun
+		}
+		limit_to_equipment_type = { armor }
+
+		position = { x=0 y=1 }
+		equipment_bonus = {
+			soft_attack = 0.05
+			reliability = -0.05
+			build_cost_ic = 0.02
+		}
+	}
+	add_trait = {
+		token = GER_db_recoiless_gun
+		name = GER_db_recoiless_gun
+		icon = GFX_generic_mio_trait_icon_breakthrough
+		relative_position_id = GER_db_standardized_turrets
+		any_parent = {
+			GER_db_standardized_turrets
+			GER_db_especific_designs
+		}
+		mutually_exclusive = {
+			GER_db_rapid_reload_device
+		}
+		limit_to_equipment_type = { armor }
+
+		position = { x=1 y=1 }
+		equipment_bonus = {
+			breakthrough = 0.03
+			reliability = -0.02
+		}
+	}
+	add_trait = {
+		token = GER_db_improved_pre_selector_gearbox
+		name = GER_db_improved_pre_selector_gearbox
+		icon = GFX_generic_mio_trait_icon_reliability
+		all_parents = { GER_db_turret_design_department }
+		relative_position_id = GER_db_turret_design_department
+		limit_to_equipment_type = { mio_cat_eq_all_medium_tank }
+		mutually_exclusive = {
+			GER_db_syncromeshed_gearbox
+		}
+
+		position = { x=4 y=1 }
+		equipment_bonus = {
+			reliability = 0.03
+		}
+	}
+	add_trait = {
+		token = GER_db_syncromeshed_gearbox
+		name = GER_db_syncromeshed_gearbox
+		icon = GFX_generic_mio_trait_icon_research
+		all_parents = { GER_db_turret_design_department }
+		relative_position_id = GER_db_turret_design_department
+		limit_to_equipment_type = { mio_cat_eq_all_medium_tank }
+		mutually_exclusive = {
+			GER_db_improved_pre_selector_gearbox
+		}
+		available = {
+			has_mio_size > 6
+		}
+		position = { x=5 y=1 }
+		on_complete = {
+			FROM = {
+				add_tech_bonus = {
+					bonus = 0.1
+					ahead_reduction = 2
+					uses = 1
+					technology = tech_trm_gearbox_advanced_ger
+				}
+			}
+		}
+	}
+
+	add_trait = {
+		token = GER_mio_db_emergency_firing
+		name = GER_mio_db_emergency_firing
+		icon = GFX_generic_mio_trait_icon_soft_attack
+
+		any_parent = {
+			GER_db_rapid_reload_device
+			GER_db_recoiless_gun
+		}
+		mutually_exclusive = {
+			GER_mio_infrared_technology
+		}
+		relative_position_id = GER_db_rapid_reload_device
+		position = {
+			x = 0
+			y = 1
+		}
+
+		limit_to_equipment_type = { mio_cat_eq_all_light_tank mio_cat_eq_all_medium_tank }
+		equipment_bonus = {
+			soft_attack = 0.05
+			hard_attack = 0.03
+			ap_attack = 0.01
+		}
+
+		ai_will_do = {
+			base = 2
+			modifier = {
+				factor = 1.5
+				date > 1937.1.1
+			}
+		}
+	}
+}
+
+GER_alkett_organization = {
+	#include = generic_heavy_tank_organization
+	icon = GFX_idea_alkett_mio
+
+	equipment_type = {
+		mio_cat_eq_all_spgs
+		mio_cat_eq_all_tank_destroyers		
+	}
+	research_categories = {
+		cat_spg_components
+		armor_tech_gun_spgs
+	}
+
+	tree_header_text = {
+		text = mio_header_engine_and_drive_system
+		x = 1
+	}
+
+	tree_header_text = {
+		text = mio_header_chassis
+		x = 5
+	}
+
+	tree_header_text = {
+		text = mio_header_guns_and_turret
+		x = 8
+	}
+
+	task_capacity = 2
+	
+	initial_trait = {
+		name = GER_mio_improvisor
+
+		production_bonus = {
+			production_resource_penalty_factor = -0.10
+		}
+		organization_modifier = {
+			military_industrial_organization_size_up_requirement = 0.25
+			military_industrial_organization_funds_gain = 0.33
+		}
+
+	}
+
+	allowed = {
+		tag = GER
+	}
+
+	trait = {
+		name = GER_mio_alkett_minimum_testing
+		token = GER_mio_alkett_minimum_testing
+		icon = GFX_generic_mio_trait_icon_efficiency_cap
+		position = { x = 0 y = 0 }
+		equipment_bonus = {
+			reliability = -0.04
+		}
+		production_bonus = {
+			production_efficiency_cap_factor = 0.07
+		}
+	}
+	trait = {
+		name = GER_mio_alkett_practical_development
+		token = GER_mio_alkett_practical_development
+		icon = GFX_generic_mio_trait_icon_research
+		position = { x = 0 y = 1 }
+		relative_position_id = GER_mio_alkett_minimum_testing
+		organization_modifier = {
+			military_industrial_organization_research_bonus = 0.1
+		}
+		equipment_bonus = {
+			reliability = -0.02
+		}
+		on_complete = {
+			FROM = {
+				add_tech_bonus = {
+					bonus = 0.3
+					uses = 1
+					category = cat_spg_components
+				}
+				add_tech_bonus = {
+					bonus = 0.25
+					uses = 1
+					category = armor_tech_gun
+				}
+			}
+		}
+
+		all_parents = {
+			GER_mio_alkett_minimum_testing
+		}
+	}
+	trait = {
+		name = GER_mio_alkett_panten_hall
+		token = GER_mio_alkett_panten_hall
+		icon = GFX_generic_mio_trait_icon_production_capacity
+		position = { x = 0 y = 1 }
+		relative_position_id = GER_mio_alkett_practical_development
+		production_bonus = {
+			production_capacity_factor = 0.05
+			production_resource_need_factor = 0.07
+		}
+		organization_modifier = {
+			military_industrial_organization_task_capacity = 3
+		}
+		all_parents = {
+			GER_mio_alkett_practical_development
+		}
+	}
+
+	trait = {
+		token = GER_mio_alkett_tank_destroyer_development
+		name = GER_mio_alkett_tank_destroyer_development
+		icon = GFX_generic_mio_trait_icon_research
+		position = { x = 4 y = 0 }
+		
+
+		organization_modifier = {
+			military_industrial_organization_funds_gain = 0.1
+			military_industrial_organization_research_bonus = 0.03
+		}
+
+		on_complete = {
+			FROM = {
+				add_tech_bonus = {
+					bonus = 0.3
+					uses = 1
+					category = cat_spg_components
+				}
+				add_tech_bonus = {
+					bonus = 0.25
+					uses = 1
+					category = armor_tech_gun
+				}
+			}
+		}
+
+	}
+
+	trait = {
+		token = GER_mio_alkett_spg_tank_development
+		name = GER_mio_alkett_spg_tank_development
+		icon = GFX_generic_mio_trait_icon_research
+		position = { x = 8 y = 0 }
+		
+
+		organization_modifier = {
+			military_industrial_organization_funds_gain = 0.1
+			military_industrial_organization_research_bonus = 0.03
+		}
+		on_complete = {
+			FROM = {
+				add_tech_bonus = {
+					bonus = 0.3
+					uses = 1
+					category = cat_spg_components
+				}
+				add_tech_bonus = {
+					bonus = 0.25
+					uses = 1
+					category = armor_tech_gun
+				}
+			}
+		}
+
+	}
+
+	trait = {
+		token = GER_mio_alkett_simplified_mountings
+		name = GER_mio_alkett_simplified_mountings
+		icon = GFX_generic_mio_trait_icon_build_cost_ic
+		relative_position_id = GER_mio_alkett_tank_destroyer_development
+		position = { x = -2 y = 1 }
+		limit_to_equipment_type = {
+			mio_cat_eq_all_tank_destroyers
+		}
+		all_parents = {
+			GER_mio_alkett_tank_destroyer_development
+		}
+		equipment_bonus = {
+			build_cost_ic = -0.02
+		}
+	}
+	trait = {
+		token = GER_mio_alkett_gun_sight_cleaner
+		name = GER_mio_alkett_gun_sight_cleaner
+		icon = GFX_generic_mio_trait_icon_ap_attack
+		relative_position_id = GER_mio_alkett_simplified_mountings
+		position = { x = 1 y = 1 }
+		limit_to_equipment_type = {
+			mio_cat_eq_all_tank_destroyers
+		}
+		all_parents = {
+			GER_mio_alkett_simplified_mountings
+		}
+		mutually_exclusive = {
+			GER_mio_alkett_better_stowage
+		}
+		equipment_bonus = {
+			ap_attack = 0.03
+		}
+	}
+	trait = {
+		token = GER_mio_alkett_better_stowage
+		name = GER_mio_alkett_better_stowage
+		icon = GFX_generic_mio_trait_icon_breakthrough
+		relative_position_id = GER_mio_alkett_simplified_mountings
+		position = { x = 0 y = 1 }
+		limit_to_equipment_type = {
+			mio_cat_eq_all_tank_destroyers
+		}
+		all_parents = {
+			GER_mio_alkett_simplified_mountings
+		}
+		mutually_exclusive = {
+			GER_mio_alkett_gun_sight_cleaner
+		}
+		equipment_bonus = {
+			breakthrough = 0.03
+		}
+	}
+	trait = {
+		token = GER_mio_alkett_heaters
+		name = GER_mio_alkett_heaters
+		icon = GFX_generic_mio_trait_icon_defense
+		relative_position_id = GER_mio_alkett_simplified_mountings
+		position = { x = 0 y = 2 }
+		limit_to_equipment_type = {
+			mio_cat_eq_all_tank_destroyers
+		}
+		any_parent = {
+			GER_mio_alkett_better_stowage
+			GER_mio_alkett_gun_sight_cleaner
+		}
+		mutually_exclusive = {
+			GER_mio_standardized_components
+		}
+		equipment_bonus = {
+			build_cost_ic = 0.01
+			breakthrough = 0.02
+			defense = 0.04
+		}
+	}
+	trait = {
+		token = GER_mio_standardized_components
+		name = GER_mio_standardized_components
+		icon = GFX_generic_mio_trait_icon_production_capacity
+		relative_position_id = GER_mio_alkett_simplified_mountings
+		position = { x = 1 y = 2 }
+		limit_to_equipment_type = {
+			mio_cat_eq_all_tank_destroyers
+		}
+		any_parent = {
+			GER_mio_alkett_better_stowage
+			GER_mio_alkett_gun_sight_cleaner
+		}
+		mutually_exclusive = {
+			GER_mio_alkett_heaters
+		}
+		production_bonus = {
+			production_capacity_factor = 0.02
+		}
+	}
+	trait = {
+		token = GER_mio_alkett_stabilized_gunsights
+		name = GER_mio_alkett_stabilized_gunsights
+		icon = GFX_generic_mio_trait_icon_hard_attack
+		relative_position_id = GER_mio_alkett_simplified_mountings
+		position = { x = 0 y = 3 }
+		limit_to_equipment_type = {
+			mio_cat_eq_all_tank_destroyers
+		}
+		any_parent = {
+			GER_mio_standardized_components
+			GER_mio_alkett_heaters
+		}
+		mutually_exclusive = {
+			GER_mio_alkett_range_finders
+		}
+		equipment_bonus = {
+			hard_attack = 0.05
+			ap_attack = 0.01
+		}
+	}
+	trait = {
+		token = GER_mio_alkett_range_finders
+		name = GER_mio_alkett_range_finders
+		icon = GFX_generic_mio_trait_icon_ap_attack
+		relative_position_id = GER_mio_alkett_simplified_mountings
+		position = { x = 1 y = 3 }
+		limit_to_equipment_type = {
+			mio_cat_eq_all_tank_destroyers
+		}
+		any_parent = {
+			GER_mio_standardized_components
+			GER_mio_alkett_heaters
+		}
+		mutually_exclusive = {
+			GER_mio_alkett_stabilized_gunsights
+		}
+		equipment_bonus = {
+			soft_attack = 0.03
+			ap_attack = 0.05
+			build_cost_ic = 0.05
+		}
+	}
+
+
+	trait = {
+		token = GER_mio_alkett_maybach_engines
+		name = GER_mio_alkett_maybach_engines
+		icon = GFX_generic_mio_trait_icon_reliability
+
+		position = { x = 4 y = 1 }
+
+		any_parent = {
+			GER_mio_alkett_tank_destroyer_development
+			GER_mio_alkett_spg_tank_development
+		}
+		mutually_exclusive = {
+			GER_mio_alkett_db_engines
+			GER_mio_alkett_man_engines
+		}
+
+		equipment_bonus = {
+			reliability = 0.02
+			fuel_consumption = -0.02
+		}
+	}
+	trait = {
+		token = GER_mio_alkett_db_engines
+		name = GER_mio_alkett_db_engines
+		icon = GFX_generic_mio_trait_icon_maximum_speed
+		mutually_exclusive = {
+			GER_mio_alkett_maybach_engines
+			GER_mio_alkett_man_engines
+		}
+		position = { x = 5 y = 1 }
+
+		available = {
+			FROM = {
+				mio:GER_daimler_benz_organization = {
+					has_mio_size > 3
+				}
+			}
+		}
+		any_parent = {
+			GER_mio_alkett_tank_destroyer_development
+			GER_mio_alkett_spg_tank_development
+		}
+		equipment_bonus = {
+			soft_attack = 0.02
+			reliability = -0.03
+			maximum_speed = 0.02
+			build_cost_ic = 0.01
+		}
+		on_complete = {
+			FROM = {
+				mio:GER_daimler_benz_organization = {
+					add_mio_funds = 1000
+				}
+			}
+		}
+	}
+	trait = {
+		token = GER_mio_alkett_man_engines
+		name = GER_mio_alkett_man_engines
+		icon = GFX_generic_mio_trait_icon_fuel_consumption
+		mutually_exclusive = {
+			GER_mio_alkett_maybach_engines
+			GER_mio_alkett_db_engines
+		}
+		available = {
+			FROM = {
+				mio:GER_man_organization = {
+					is_mio_trait_completed = GER_high_performance_engines
+				}
+			}
+		}
+		position = { x = 6 y = 1 }
+
+		any_parent = {
+			GER_mio_alkett_tank_destroyer_development
+			GER_mio_alkett_spg_tank_development
+		}
+		equipment_bonus = {
+			fuel_consumption = -0.05
+		}
+		on_complete = {
+			FROM = {
+				mio:GER_man_organization = {
+					add_mio_funds = 1000
+				}
+			}
+		}
+	}
+
+	trait = {
+		token = GER_mio_alkett_remove_mufflers
+		name = GER_mio_alkett_remove_mufflers
+		icon = GFX_generic_mio_trait_icon_build_cost_ic
+		relative_position_id = GER_mio_alkett_db_engines
+		position = { x = 0 y = 1 }
+
+		any_parent = {
+			GER_mio_alkett_db_engines
+			GER_mio_alkett_man_engines
+			GER_mio_alkett_maybach_engines
+		}
+		equipment_bonus = {
+			reliability = -0.04
+			build_cost_ic = -0.03
+		}
+	}
+	trait = {
+		token = GER_mio_alkett_self_cleaning_idler_wheel
+		name = GER_mio_alkett_self_cleaning_idler_wheel
+		icon = GFX_generic_mio_trait_icon_reliability
+		relative_position_id = GER_mio_alkett_spg_tank_development
+		position = { x = 1 y = 1 }
+		limit_to_equipment_type = {
+			mio_cat_eq_all_spgs
+		}
+		mutually_exclusive = {
+			GER_mio_alkett_improved_traverse_mechanism
+		}
+		all_parents = {
+			GER_mio_alkett_spg_tank_development
+
+		}
+		equipment_bonus = {
+			reliability = 0.03
+		}
+	}
+	trait = {
+		token = GER_mio_alkett_improved_traverse_mechanism
+		name = GER_mio_alkett_improved_traverse_mechanism
+		icon = GFX_generic_mio_trait_icon_soft_attack
+		relative_position_id = GER_mio_alkett_spg_tank_development
+		position = { x = 0 y = 1 }
+		limit_to_equipment_type = {
+			mio_cat_eq_all_spgs
+		}
+		mutually_exclusive = {
+			GER_mio_alkett_self_cleaning_idler_wheel
+		}
+		all_parents = {
+			GER_mio_alkett_spg_tank_development
+
+		}
+		equipment_bonus = {
+			soft_attack = 0.03
+		}
+	}
+	trait = {
+		token = GER_mio_alkett_stabilized_sights
+		name = GER_mio_alkett_stabilized_sights
+		icon = GFX_generic_mio_trait_icon_breakthrough
+		relative_position_id = GER_mio_alkett_improved_traverse_mechanism
+		position = { x = 0 y = 1 }
+		limit_to_equipment_type = {
+			mio_cat_eq_all_spgs
+		}
+
+		any_parent = {
+			GER_mio_alkett_improved_traverse_mechanism
+			GER_mio_alkett_self_cleaning_idler_wheel
+
+		}
+		equipment_bonus = {
+			breakthrough = 0.04
+		}
+	}
+	trait = {
+		token = GER_mio_alkett_utilize_components_from_other_developments
+		name = GER_mio_alkett_utilize_components_from_other_developments
+		icon = GFX_generic_mio_trait_icon_resources
+		relative_position_id = GER_mio_alkett_stabilized_sights
+		position = { x = -1 y = 1 }
+		limit_to_equipment_type = {
+			mio_cat_eq_all_spgs
+		}
+		mutually_exclusive = {
+			GER_mio_alkett_auxiliary_engine_oil_filters
+		}
+
+		all_parents = {
+			GER_mio_alkett_stabilized_sights
+		}
+		production_bonus = {
+			production_resource_penalty_factor = -0.33
+		}
+	}
+	trait = {
+		token = GER_mio_alkett_auxiliary_engine_oil_filters
+		name = GER_mio_alkett_auxiliary_engine_oil_filters
+		icon = GFX_generic_mio_trait_icon_reliability
+		relative_position_id = GER_mio_alkett_stabilized_sights
+		position = { x = 1 y = 1 }
+		limit_to_equipment_type = {
+			mio_cat_eq_all_spgs
+		}
+		mutually_exclusive = {
+			GER_mio_alkett_utilize_components_from_other_developments
+		}
+		all_parents = {
+			GER_mio_alkett_stabilized_sights
+		}
+		equipment_bonus = {
+			build_cost_ic = 0.02
+			reliability = 0.03
+			fuel_consumption = -0.03
+		}
+	}
+	trait = {
+		token = GER_mio_alkett_conical_muzzle_breaks
+		name = GER_mio_alkett_conical_muzzle_breaks
+		icon = GFX_generic_mio_trait_icon_hard_attack
+		relative_position_id = GER_mio_alkett_auxiliary_engine_oil_filters
+		position = { x = -1 y = 1 }
+		limit_to_equipment_type = {
+			mio_cat_eq_all_spgs
+		}
+		mutually_exclusive = {
+			GER_mio_alkett_gun_elevation_technology
+		}
+		any_parent = {
+			GER_mio_alkett_utilize_components_from_other_developments
+			GER_mio_alkett_auxiliary_engine_oil_filters
+		}
+		equipment_bonus = {
+			build_cost_ic = 0.05
+			hard_attack = 0.04
+			#soft_attack = 0.03
+			ap_attack = 0.02
+		}
+	}
+	trait = {
+		token = GER_mio_alkett_gun_elevation_technology
+		name = GER_mio_alkett_gun_elevation_technology
+		icon = GFX_generic_mio_trait_icon_soft_attack
+		relative_position_id = GER_mio_alkett_auxiliary_engine_oil_filters
+		position = { x = 0 y = 1 }
+		limit_to_equipment_type = {
+			mio_cat_eq_all_spgs
+		}
+		mutually_exclusive = {
+			GER_mio_alkett_conical_muzzle_breaks
+		}
+		all_parents = {
+			GER_mio_alkett_auxiliary_engine_oil_filters
+		}
+		equipment_bonus = {
+			soft_attack = 0.05
+			build_cost_ic = 0.04
+		}
+	}
+	trait = {
+		token = GER_mio_alkett_eliminate_shock_absorbers
+		name = GER_mio_alkett_eliminate_shock_absorbers
+		icon = GFX_generic_mio_trait_icon_build_cost_ic
+		relative_position_id = GER_mio_alkett_utilize_components_from_other_developments
+		position = { x = 0 y = 1 }
+		limit_to_equipment_type = {
+			mio_cat_eq_all_spgs
+		}
+		any_parent = {
+			GER_mio_alkett_utilize_components_from_other_developments
+			GER_mio_alkett_auxiliary_engine_oil_filters
+		}
+		equipment_bonus = {
+			build_cost_ic = -0.05
+		}
+	}
+}
+
+GER_krupp_organization = {
+	#include = generic_heavy_tank_organization
+	icon = GFX_idea_krupp_mio
+
+	equipment_type = {
+		#medium_tank_equipment
+		armor
+	}
+	research_categories = {
+		armor_tech_gun
+		cat_light_armor
+		cat_medium_armor
+		cat_light_armor_component
+		cat_medium_armor_component
+	}
+
+	tree_header_text = {
+		text = mio_header_engine_and_drive_system
+		x = 1
+	}
+
+	tree_header_text = {
+		text = mio_header_chassis
+		x = 5
+	}
+
+	tree_header_text = {
+		text = mio_header_guns_and_turret
+		x = 8
+	}
+
+	allowed = {
+		tag = GER
+	}
+	
+	task_capacity = 8
+
+	initial_trait = {
+		name = GER_mio_krupp_steel_specialist
+
+		production_bonus = {
+			production_capacity_factor = 0.01
+		}
+		equipment_bonus = {
+			armor_value = 0.02
+		}
+
+		organization_modifier = {
+			military_industrial_organization_funds_gain = 0.33
+			military_industrial_organization_size_up_requirement = 0.4
+		}
+	}
+
+
+
+	trait = {
+		name = GER_mio_krupp_reap_the_benefits_of_hitler_support
+		token = GER_mio_krupp_reap_the_benefits_of_hitler_support
+		icon = GFX_generic_mio_trait_icon_mio
+		position = { x = 4 y = 0 }
+		organization_modifier = {
+			military_industrial_organization_funds_gain = 0.15
+		}
+		
+		ai_will_do = {
+			base = 2
+		}
+ 	}
+
+	trait = {
+		name = GER_mio_krupp_autogenous_cutting
+		token = GER_mio_krupp_autogenous_cutting
+		icon = GFX_generic_mio_trait_icon_build_cost_ic
+		relative_position_id = GER_mio_krupp_reap_the_benefits_of_hitler_support
+		position = { x = -4 y = 1 }
+
+		all_parents = {
+			GER_mio_krupp_reap_the_benefits_of_hitler_support
+		}
+
+		organization_modifier = {
+			military_industrial_organization_task_capacity = -3
+			military_industrial_organization_size_up_requirement = 0.15
+		}
+		on_complete = {
+			FROM = {
+				add_equipment_bonus = {
+					name = GER_mio_krupp_autogenous_cutting
+					bonus = {
+						armor = {
+							build_cost_ic = -0.02
+						}
+					}
+				}
+			}
+		}
+		ai_will_do = {
+			base = 5
+		}
+ 	}
+
+	trait = {
+		token = GER_mio_krupp_interlocking_welds
+		name = GER_mio_krupp_interlocking_welds
+		icon = GFX_generic_mio_trait_icon_max_strength
+		relative_position_id = GER_mio_krupp_adaptative_welds
+		position = { x = -1 y = 1 }
+
+		available = {
+			FROM = {
+				has_tech =  tech_trm_heavy_tank_chassis_ger_tiger_1
+			}
+		}
+
+		any_parent = {
+			GER_mio_krupp_standardized_welds
+			GER_mio_krupp_adaptative_welds
+		}
+
+		organization_modifier = {
+			military_industrial_organization_task_capacity = -1
+		}
+		on_complete = {
+			FROM = {
+				add_equipment_bonus = {
+					name = GER_mio_krupp_interlocking_welds
+					bonus = {
+						trm_heavy_tank_chassis = {
+							build_cost_ic = 0.03
+							armor_value = 0.04
+							hardness = 0.01
+						}
+					}
+				}
+			}
+		}
+	}
+
+	trait = {
+		token = GER_mio_krupp_specialized_heat_treatments
+		name = GER_mio_krupp_specialized_heat_treatments
+		icon = GFX_generic_mio_trait_icon_armor_value
+		special_trait_background = yes
+		position = { x = 0 y = 1 }
+		relative_position_id = GER_mio_krupp_interlocking_welds
+		all_parents = { GER_mio_krupp_interlocking_welds }
+
+		organization_modifier = {
+			military_industrial_organization_task_capacity = -2
+		}
+		on_complete = {
+			FROM = {
+				add_equipment_bonus = {
+					name = GER_mio_krupp_specialized_heat_treatments
+					bonus = {
+						armor = {
+							build_cost_ic = 0.05
+							armor_value = 0.04
+							hardness = 0.01
+							reliability = 0.02
+						}
+					}
+				}
+			}
+		}
+	}
+	trait = {
+		token = GER_mio_krupp_heavy_turret_pressing
+		name = GER_mio_krupp_heavy_turret_pressing
+		icon = GFX_generic_mio_trait_icon_build_cost_ic
+		relative_position_id = GER_mio_krupp_autogenous_cutting
+		all_parents = { GER_mio_krupp_autogenous_cutting }
+		position = { x = 0 y = 1 }
+
+		organization_modifier = {
+			military_industrial_organization_funds_gain = -0.1
+			military_industrial_organization_task_capacity = -2
+		}
+		available = {
+			has_mio_size > 7
+		}
+
+		on_complete = {
+			FROM = {
+				add_equipment_bonus = {
+					name = GER_mio_krupp_heavy_turret_pressing
+					bonus = {
+						trm_heavy_tank_chassis = {
+							build_cost_ic = -0.04
+						}
+					}
+				}
+			}
+		}
+	}
+
+	trait = {
+		name = GER_mio_krupp_long_range_shells
+		token = GER_mio_krupp_long_range_shells
+		icon = GFX_generic_mio_trait_icon_soft_attack
+		position = { x = 4 y = 1 }
+		all_parents = {	GER_mio_krupp_reap_the_benefits_of_hitler_support }
+		equipment_bonus = {
+			soft_attack = 0.02
+		}
+	}
+	trait = {
+		token = GER_mio_krupp_face_harden_armor
+		name = GER_mio_krupp_face_harden_armor
+		icon = GFX_generic_mio_trait_icon_armor_value
+		position = { x = 5 y = 1 }
+		all_parents = {	GER_mio_krupp_reap_the_benefits_of_hitler_support }
+		equipment_bonus = {
+			armor_value = 0.03
+			build_cost_ic = 0.01
+		}
+	}
+	trait = {
+		name = GER_mio_krupp_enlarged_exhaust_pipe
+		token = GER_mio_krupp_enlarged_exhaust_pipe
+		icon = GFX_generic_mio_trait_icon_reliability
+		position = { x = 6 y = 1 }
+		all_parents = {	GER_mio_krupp_reap_the_benefits_of_hitler_support }
+
+		equipment_bonus = {
+			reliability = 0.02
+		}
+	}
+	trait = {
+		name = GER_mio_krupp_remove_tachometers
+		token = GER_mio_krupp_remove_tachometers
+		icon = GFX_generic_mio_trait_icon_build_cost_ic
+		all_parents = {	GER_mio_krupp_reap_the_benefits_of_hitler_support }
+		position = { x = 7 y = 1 }
+
+		equipment_bonus = {
+			build_cost_ic = -0.02
+		}
+	}
+	trait = {
+		name = GER_mio_krupp_improved_air_flow_cooling
+		token = GER_mio_krupp_improved_air_flow_cooling
+		icon = GFX_generic_mio_trait_icon_reliability
+		all_parents = {	GER_mio_krupp_reap_the_benefits_of_hitler_support }
+		position = { x = 8 y = 1 }
+
+		equipment_bonus = {
+			reliability =  0.02
+		}
+	}
+	trait = {
+		name = GER_mio_krupp_steel_tires
+		token = GER_mio_krupp_steel_tires
+		icon = GFX_generic_mio_trait_icon_resources
+		position = { x = 9 y = 1 }
+		all_parents = {	GER_mio_krupp_reap_the_benefits_of_hitler_support }
+
+		production_bonus = {
+			production_resource_need_factor = -0.1
+		}
+		equipment_bonus = {
+			reliability = -0.03
+		}
+	}
+
+
+	trait = {
+		token = GER_mio_krupp_maybach_engines
+		name = GER_mio_krupp_maybach_engines
+		icon = GFX_generic_mio_trait_icon_fuel_consumption
+		parent = {
+			traits = {  GER_mio_krupp_long_range_shells GER_mio_krupp_face_harden_armor GER_mio_krupp_enlarged_exhaust_pipe GER_mio_krupp_steel_tires GER_mio_krupp_remove_tachometers GER_mio_krupp_improved_air_flow_cooling }
+			num_parents_needed = 4
+		}
+		position = { x = 7 y = 2 }
+
+		mutually_exclusive = {
+			GER_mio_krupp_db_engines
+			GER_mio_krupp_man_engines
+		}
+
+		equipment_bonus = {
+			reliability = 0.02
+			fuel_consumption = -0.02
+		}
+	}
+	trait = {
+		token = GER_mio_krupp_db_engines
+		name = GER_mio_krupp_db_engines
+		icon = GFX_generic_mio_trait_icon_soft_attack
+		parent = {
+			traits = {  GER_mio_krupp_long_range_shells GER_mio_krupp_face_harden_armor GER_mio_krupp_enlarged_exhaust_pipe GER_mio_krupp_steel_tires GER_mio_krupp_remove_tachometers GER_mio_krupp_improved_air_flow_cooling }
+			num_parents_needed = 4
+		}
+		mutually_exclusive = {
+			GER_mio_krupp_maybach_engines
+			GER_mio_krupp_man_engines
+		}
+		position = { x = 5 y = 2 }
+
+		available = {
+			FROM = {
+				mio:GER_daimler_benz_organization = {
+					has_mio_size > 3
+				}
+			}
+		}
+
+		equipment_bonus = {
+			soft_attack = 0.02
+			reliability = -0.03
+			maximum_speed = 0.02
+			build_cost_ic = 0.01
+		}
+		on_complete = {
+			FROM = {
+				mio:GER_daimler_benz_organization = {
+					add_mio_funds = 1000
+				}
+			}
+		}
+	}
+	trait = {
+		token = GER_mio_krupp_man_engines
+		name = GER_mio_krupp_man_engines
+		icon = GFX_generic_mio_trait_icon_fuel_consumption
+		parent = {
+			traits = {  GER_mio_krupp_long_range_shells GER_mio_krupp_face_harden_armor GER_mio_krupp_enlarged_exhaust_pipe GER_mio_krupp_steel_tires GER_mio_krupp_remove_tachometers GER_mio_krupp_improved_air_flow_cooling }
+			num_parents_needed = 4
+		}
+		mutually_exclusive = {
+			GER_mio_krupp_maybach_engines
+			GER_mio_krupp_db_engines
+		}
+		available = {
+			FROM = {
+				mio:GER_man_organization = {
+					is_mio_trait_completed = GER_high_performance_engines
+				}
+			}
+		}
+		position = { x = 6 y = 2 }
+
+		equipment_bonus = {
+			fuel_consumption = -0.05
+		}
+		on_complete = {
+			FROM = {
+				mio:GER_man_organization = {
+					add_mio_funds = 1000
+				}
+			}
+		}
+	}
+	trait = {
+		token = GER_mio_krupp_piercing_technology
+		name = GER_mio_krupp_piercing_technology
+		icon = GFX_generic_mio_trait_icon_ap_attack
+		relative_position_id = GER_mio_krupp_db_engines
+		mutually_exclusive = {
+			GER_mio_krupp_high_explosive_technology
+		}
+		any_parent = {
+			GER_mio_krupp_db_engines
+			GER_mio_krupp_man_engines
+			GER_mio_krupp_maybach_engines
+		}
+		position = { x = 2 y = 1 }
+		limit_to_equipment_type = {
+			mio_cat_eq_all_tank_destroyers
+		}
+		equipment_bonus = {
+			hard_attack = 0.05
+			ap_attack = 0.05
+		}
+
+	}
+	trait = {
+		token = GER_mio_krupp_high_explosive_technology
+		name = GER_mio_krupp_high_explosive_technology
+		icon = GFX_generic_mio_trait_icon_hard_attack
+		relative_position_id = GER_mio_krupp_db_engines
+		mutually_exclusive = {
+			GER_mio_krupp_piercing_technology
+		}
+		position = { x = 0 y = 1 }
+		limit_to_equipment_type = {
+			mio_cat_eq_all_spgs
+		}
+		any_parent = {
+			GER_mio_krupp_db_engines
+			GER_mio_krupp_man_engines
+			GER_mio_krupp_maybach_engines
+		}
+		equipment_bonus = {
+			soft_attack = 0.03
+			breakthrough = 0.01
+			defense = 0.01
+		}
+
+	}
+	trait = {
+		token = GER_mio_krupp_standardized_welds
+		name = GER_mio_krupp_standardized_welds
+		icon = GFX_generic_mio_trait_icon_build_cost_ic
+		relative_position_id = GER_mio_krupp_autogenous_cutting
+		position = { x = 1	y = 1 }
+		all_parents = {
+			GER_mio_krupp_autogenous_cutting
+		}
+		mutually_exclusive = {
+			GER_mio_krupp_adaptative_welds
+		}
+		on_complete = {
+			FROM = {
+				add_equipment_bonus = {
+					name = GER_mio_krupp_standardized_welds
+					bonus = {
+						armor = {
+							build_cost_ic = -0.03
+							hardness = -0.02
+							armor_value = -0.05
+						}
+					}
+				}
+			}
+		}
+	}
+	trait = {
+		token = GER_mio_krupp_adaptative_welds
+		name = GER_mio_krupp_adaptative_welds
+		icon = GFX_generic_mio_trait_icon_max_strength
+		relative_position_id = GER_mio_krupp_autogenous_cutting
+		position = { x = 3	y = 1  }
+		all_parents = {
+			GER_mio_krupp_autogenous_cutting
+		}
+		mutually_exclusive = {
+			GER_mio_krupp_standardized_welds
+		}
+		on_complete = {
+			FROM = {
+				add_equipment_bonus = {
+					name = GER_mio_krupp_adaptative_welds
+					bonus = {
+						armor = {
+							build_cost_ic = 0.03
+							hardness = 0.01
+							armor_value = 0.05
+						}
+					}
+				}
+			}
+		}
+	}
+}
+
+GER_porsche_organization = {
+	#include = generic_heavy_tank_organization
+	icon = GFX_idea_porsche_mio
+
+	equipment_type = {
+		mio_cat_eq_all_heavy_tank
+		#mio_cat_eq_all_medium_tank
+		motorized_lia_equipment
+	}
+	research_categories = {
+		mio_cat_eq_all_heavy_tank
+		#armor_tech_gun
+		#mio_cat_eq_all_medium_tank
+		armor_tech_ger_tiger
+		cat_heavy_armor_component
+		motorized_lia_equipment
+		armor_tech_transmission
+		armor_tech_suspension
+		armor_tech_engine
+	}
+
+	tree_header_text = {
+		text = mio_header_engine_and_drive_system
+		x = 1
+	}
+
+	tree_header_text = {
+		text = mio_header_chassis
+		x = 5
+	}
+
+	tree_header_text = {
+		text = mio_header_guns_and_turret
+		x = 8
+	}
+
+	initial_trait = {
+		name = GER_porsche_mio_fuhrer_friend
+
+		organization_modifier = {
+			military_industrial_organization_funds_gain = 0.3
+			military_industrial_organization_size_up_requirement = 0.10
+		}
+		equipment_bonus = {
+			reliability = -0.05
+			
+		}
+	}
+
+	allowed = {
+		tag = GER
+	}
+
+	trait = {
+		name = GER_porsche_innovator
+		token = GER_porsche_innovator
+		icon = GFX_mio_policy_experimental_development_teams
+		position = { x = 2 y = 0 }
+		organization_modifier = {
+			military_industrial_organization_research_bonus = 0.07
+		}
+
+	}
+	trait = {
+		name = GER_porsche_modernized_factories
+		token = GER_porsche_modernized_factories
+		relative_position_id = GER_porsche_innovator
+		icon = GFX_ger_porsche_mio_modernized_factroes
+		position = { x = 2 y = 1 }
+		all_parents = {
+			GER_porsche_innovator
+		}
+		organization_modifier = {
+			military_industrial_organization_funds_gain = -0.10
+		}
+		production_bonus = {
+			production_capacity_factor = 0.06
+			production_resource_need_factor = 0.05
+		}
+		equipment_bonus = {
+			reliability = 0.04
+		}
+	}
+
+	trait = {
+		token = GER_porsche_extensive_quality_control
+		name = GER_porsche_extensive_quality_control
+		icon = GFX_generic_mio_trait_icon_reliability
+		position = { x = -1 y = 1 }
+		relative_position_id = GER_porsche_modernized_factories
+		all_parents = { GER_porsche_modernized_factories }
+		mutually_exclusive = {
+			GER_porsche_limited_quality_control
+			GER_porsche_minimal_quality_control
+		}
+
+		equipment_bonus = {
+			reliability = 0.04
+			hardness = 0.03
+			armor_value = 0.03
+		}
+		production_bonus = {
+			production_cost_factor = 0.06
+		}
+	}
+	trait = {
+		token = GER_porsche_limited_quality_control
+		name = GER_porsche_limited_quality_control
+		icon = GFX_generic_mio_balance
+		position = { x = 0 y = 1 }
+		relative_position_id = GER_porsche_modernized_factories
+		all_parents = { GER_porsche_modernized_factories }
+		mutually_exclusive = {
+			GER_porsche_extensive_quality_control
+			GER_porsche_minimal_quality_control
+		}
+
+
+		equipment_bonus = {
+			reliability = 0.02
+			hardness = 0.02
+			armor_value = 0.01
+		}
+		production_bonus = {
+			production_cost_factor = 0.03
+		}
+	}
+	trait = {
+		token = GER_porsche_minimal_quality_control
+		name = GER_porsche_minimal_quality_control
+		icon = GFX_generic_mio_trait_icon_build_cost_ic
+		position = { x = 1 y = 1 }
+		relative_position_id = GER_porsche_modernized_factories
+		all_parents = { GER_porsche_modernized_factories }
+		mutually_exclusive = {
+			GER_porsche_limited_quality_control
+			GER_porsche_extensive_quality_control
+		}
+
+		equipment_bonus = {
+			reliability = -0.12
+			hardness = -0.04
+			armor_value = -0.02
+		}
+		production_bonus = {
+			production_cost_factor = -0.1
+		}
+	}
+
+	trait = {
+		token = GER_porsche_alloy_shortage
+		name = GER_porsche_alloy_shortage
+		icon = GFX_generic_mio_department_icon_tank_medium_tank_materials
+		position = { x = 1 y = 1 }
+		relative_position_id = GER_porsche_extensive_quality_control
+		any_parent = { GER_porsche_extensive_quality_control GER_porsche_minimal_quality_control GER_porsche_limited_quality_control }
+		limit_to_equipment_type = { mio_cat_eq_all_heavy_tank }
+
+		production_bonus = {
+			production_resource_need_factor = -0.15
+			production_resource_penalty_factor = -0.15
+		}
+		equipment_bonus = {
+			reliability = -0.07
+			armor_value = -0.1
+		}
+	}
+
+
+
+	trait = {
+		name = GER_porsche_kubelwagen
+		token = GER_porsche_kubelwagen
+		icon = GFX_ger_porsche_mio_kubelwagen
+
+		all_parents = {
+			GER_porsche_innovator
+		}
+		relative_position_id = GER_porsche_innovator
+		position = { x = -1 y = 1 }
+		on_complete = {
+			FROM = {
+				add_tech_bonus = {
+					ahead_reduction = 0.5
+					uses = 1
+					technology = tech_liaison_cars_3
+				}
+				add_tech_bonus = {
+					bonus = 0.4
+					uses = 1
+					technology = tech_liaison_cars_3
+				}
+			}
+		}
+	}
+
+	trait = {
+		token = GER_porsche_gear_reduction_hubs
+		name = GER_porsche_gear_reduction_hubs
+		icon = GFX_generic_mio_department_icon_motorized_engine
+		relative_position_id = GER_porsche_kubelwagen
+		position = { x = 0 y = 1 }
+		all_parents = { GER_porsche_kubelwagen	}
+		limit_to_equipment_type = { motorized_lia_equipment }
+		equipment_bonus = {
+			maximum_speed = 0.03
+			fuel_consumption = -0.02
+		}
+	}
+
+	trait = {
+		token = GER_porsche_turbocharger
+		name = GER_porsche_turbocharger
+		relative_position_id = GER_porsche_gear_reduction_hubs
+		icon = GFX_generic_mio_department_icon_motorized_engine
+		position = { x = 0	y = 1	}
+		all_parents = { GER_porsche_gear_reduction_hubs	}
+		limit_to_equipment_type = { motorized_lia_equipment }
+		equipment_bonus = {
+			maximum_speed = 0.02
+			fuel_consumption = -0.02
+			reliability = -0.06
+		}
+	}
+
+	trait = {
+		token = GER_porsche_supercharger
+		name = GER_porsche_supercharger
+		icon = GFX_generic_mio_department_icon_motorized_engine
+		relative_position_id = GER_porsche_gear_reduction_hubs
+		all_parents = {	GER_porsche_gear_reduction_hubs	}
+		position = { x = -1	y = 1 }
+		limit_to_equipment_type = { motorized_lia_equipment }
+		equipment_bonus = {
+			maximum_speed = 0.05
+			fuel_consumption = 0.02
+			build_cost_ic = 0.03
+		}
+	}
+
+	trait = {
+		token = GER_porsche_synchronized_gearbox
+		name = GER_porsche_synchronized_gearbox
+		icon = GFX_ger_porsche_mio_department_icon_motorized_engine
+		relative_position_id = GER_porsche_supercharger
+		all_parents = {	GER_porsche_supercharger GER_porsche_turbocharger }
+		position = { x = 0	y = 1 }
+		limit_to_equipment_type = { motorized_lia_equipment }
+		equipment_bonus = {
+			reliability = 0.05
+			fuel_consumption = -0.03
+		}
+	}
+
+	trait = {
+		token = GER_porsche_torsion_bar_suspension
+		name = GER_porsche_torsion_bar_suspension
+		icon = GFX_generic_mio_trait_icon_research
+		position = { x = 5 y = 1 }
+		all_parents = {
+			GER_porsche_innovator
+		}
+		relative_position_id = GER_porsche_innovator
+		on_complete = {
+			FROM = {
+				if = {
+					limit = {
+						NOT = { has_tech = tech_trm_suspension_torsion_ger }
+					}
+					add_tech_bonus = {
+						ahead_reduction = 0.5
+						uses = 1
+						technology = tech_trm_suspension_torsion_ger
+					}
+					add_tech_bonus = {
+						bonus = 0.35
+						uses = 1
+						technology = tech_trm_suspension_torsion_ger
+					}
+				}
+				else = {
+					ROOT = { add_mio_size = 1 }
+				}
+			}
+		}
+	}
+	trait = {
+		token = GER_porsche_torsion_bar_suspension_2
+		name = GER_porsche_torsion_bar_suspension_2
+		icon = GFX_generic_mio_trait_icon_reliability
+		position = { x = -1 y = 1 }
+		all_parents = {
+			GER_porsche_torsion_bar_suspension
+		}
+		relative_position_id = GER_porsche_torsion_bar_suspension
+		limit_to_equipment_type = { mio_cat_eq_all_heavy_tank }
+		equipment_bonus = {
+			reliability = 0.04
+			maximum_speed = -0.02
+		}
+	}
+
+	trait = {
+		token = GER_porsche_electrical_transmission_pioneer
+		name = GER_porsche_electrical_transmission_pioneer
+		icon = GFX_ger_porsche_mio_transmission_electrical
+		position = { x = 6 y = 1 }
+		all_parents = {
+			GER_porsche_innovator
+		}
+		relative_position_id = GER_porsche_innovator
+		on_complete = {
+			FROM = {
+				if = {
+					limit = {
+						NOT = { has_tech = tech_trm_transmission_xelectrical_ger }
+					}
+					add_tech_bonus = {
+						bonus = 0.5
+						ahead_reduction = 0.5
+						uses = 1
+						technology = tech_trm_transmission_xelectrical_ger
+					}
+				}
+				else = {
+					ROOT = { add_mio_size = 1 }
+				}
+			}
+		}
+	}
+
+	trait = {
+		token = GER_porsche_maus
+		name = GER_porsche_maus
+		relative_position_id = GER_porsche_experimental_engines
+		icon = GFX_porsche_mio_maus
+
+		all_parents = {
+			GER_porsche_experimental_engines
+		}
+		position = {
+			x = 1
+			y = 1
+		}
+		limit_to_equipment_type = { trm_superheavy_tank_chassis	}
+		on_complete = {
+			FROM = {
+				add_tech_bonus = {
+					bonus = 0.2
+					ahead_reduction = 2
+					uses = 1
+					technology = tech_trm_superheavy_tank_chassis_ger_maus_1
+				}
+			}
+		}
+		equipment_bonus = {
+			reliability = -0.15
+		}
+	}
+	trait = {
+		token = GER_porsche_maus_2
+		name = GER_porsche_maus_2
+		icon = GFX_porsche_maus_quality
+		relative_position_id = GER_porsche_maus
+		position = { x = 0	y = 1 }
+		all_parents = {	GER_porsche_maus }
+		limit_to_equipment_type = { trm_superheavy_tank_chassis	}
+		equipment_bonus = {
+			reliability =  0.1
+			build_cost_ic = 0.02
+		}
+	}
+	trait = {
+		token = GER_porsche_maus_3
+		name = GER_porsche_maus_3
+		icon = GFX_porsche_maus_quality
+		relative_position_id = GER_porsche_maus_2
+		position = { x = 0	y = 1 }
+		all_parents = {	GER_porsche_maus_2 }
+		limit_to_equipment_type = { trm_superheavy_tank_chassis	}
+		equipment_bonus = {
+			maximum_speed = 0.05
+			build_cost_ic = 0.03
+		}
+	}
+
+
+	trait = {
+		token = GER_porsche_experimental_engines
+		name = GER_porsche_experimental_engines
+		icon = GFX_mio_policy_propulsion_experimenters
+		relative_position_id = GER_porsche_electrical_transmission_pioneer
+		special_trait_background = yes
+		any_parent = { GER_porsche_electrical_transmission_pioneer GER_porsche_torsion_bar_suspension	}
+		position = { x = 0 y = 1 }
+		available = {
+			has_mio_size > 4
+		}
+		limit_to_equipment_type = { mio_cat_eq_all_heavy_tank }
+		on_complete = {
+			effect_tooltip = {
+				FROM = {
+					random_list = {
+						1 = {
+							complete_mio_trait = {
+								trait = GER_porsche_good_engine
+								show_modifiers = yes
+							}
+						}
+						1 = {
+							complete_mio_trait = {
+								trait = GER_porsche_bad_engine
+								show_modifiers = yes
+							}
+						}
+					}
+				}
+			}
+			hidden_effect = {
+				FROM = {
+					country_event = germany.8201
+				}
+			}
+		}
+	}
+
+	trait = {
+		token = GER_porsche_gas_super_turbochargers
+		name = GER_porsche_gas_turbochargers
+		icon = GFX_generic_mio_trait_icon_maximum_speed
+		relative_position_id = GER_porsche_experimental_engines
+		all_parents = { GER_porsche_experimental_engines }
+		position = { x = 1 y = 0 }
+		equipment_bonus = {
+			maximum_speed = 0.04
+			reliability = -0.05
+		}
+	}
+
+	trait = {
+		token = GER_porsche_good_engine
+		name = GER_porsche_good_engine
+		relative_position_id = GER_porsche_experimental_engines
+		icon = GFX_mio_policy_propulsion_experimenters_good
+		all_parents = { GER_porsche_experimental_engines }
+		relative_position_id = GER_porsche_experimental_engines
+		mutually_exclusive = {
+			GER_porsche_bad_engine
+		}
+		position = { x = -2 y = 1 }
+		limit_to_equipment_type = { mio_cat_eq_all_heavy_tank }
+		equipment_bonus = {
+			reliability = 0.02
+			maximum_speed = 0.03
+			soft_attack = 0.01
+			hard_attack = 0.01
+			fuel_consumption = -0.02
+			build_cost_ic = -0.01
+		}
+	}
+
+	trait = {
+		token = GER_porsche_bad_engine
+		name = GER_porsche_bad_engine
+		relative_position_id = GER_porsche_experimental_engines
+		icon = GFX_mio_policy_propulsion_experimenters_bad
+		all_parents = { GER_porsche_experimental_engines	}
+		relative_position_id = GER_porsche_experimental_engines
+		mutually_exclusive = {
+			GER_porsche_good_engine
+		}
+		position = { x = -1 y = 1 }
+
+		limit_to_equipment_type = { mio_cat_eq_all_heavy_tank }
+		equipment_bonus = {
+			reliability = -0.05
+			build_cost_ic = 0.01
+		}
+	}
+
+	trait = {
+		token = GER_porsche_bad_engine_2
+		name = GER_porsche_bad_engine_2
+		relative_position_id = GER_porsche_experimental_engines
+		icon = GFX_mio_policy_propulsion_experimenters_bad
+		all_parents = { GER_porsche_bad_engine	}
+		relative_position_id = GER_porsche_bad_engine
+		
+		position = { x = 0 y = 1 }
+
+		limit_to_equipment_type = { mio_cat_eq_all_heavy_tank }
+		equipment_bonus = {
+			reliability = 0.07			
+		}
+	}
+
+
+	trait = {
+		token = GER_porsche_special_tooling
+		name = GER_porsche_special_tooling
+		relative_position_id = GER_porsche_bad_engine
+		icon = GFX_generic_mio_department_icon_tank_heavy_tank_quality
+		any_parent = {
+			GER_porsche_bad_engine_2 GER_porsche_good_engine
+		}
+		position = { x = -2 y = 2 }
+		limit_to_equipment_type = { trm_heavy_tank_chassis }
+		equipment_bonus = {
+			reliability = 0.05
+			build_cost_ic = 0.02
+		}
+	}
+	trait = {
+		token = GER_porsche_emergency_scape_hatches
+		name = GER_porsche_emergency_scape_hatches
+		icon = GFX_generic_mio_department_icon_tank_heavy_tank_quality
+		relative_position_id = GER_porsche_bad_engine
+		any_parent = {
+			GER_porsche_bad_engine_2 GER_porsche_good_engine
+		}
+		position = { x = -1 y = 2 }
+		limit_to_equipment_type = { trm_heavy_tank_chassis }
+		equipment_bonus = {
+			defense = 0.05
+		}
+	}
+	trait = {
+		token = GER_porsche_breaks_armor_protection
+		name = GER_porsche_breaks_armor_protection
+		icon = GFX_generic_mio_department_icon_tank_heavy_tank_quality
+		relative_position_id = GER_porsche_bad_engine
+		any_parent = {
+			GER_porsche_bad_engine_2 GER_porsche_good_engine
+		}
+		position = { x = 0 y = 2 }
+		limit_to_equipment_type = { trm_heavy_tank_chassis }
+		equipment_bonus = {
+			armor_value = 0.01
+			hardness = 0.04
+			build_cost_ic = 0.01
+			reliability = 0.01
+		}
+	}
+	trait = {
+		token = GER_porsche_improved_turret_basket
+		name = GER_porsche_improved_turret_basket
+		relative_position_id = GER_porsche_experimental_engines
+		icon = GFX_mio_turret
+		position = { x = 0 y = 3 }
+		limit_to_equipment_type = { mio_cat_eq_all_heavy_tank }
+		any_parent = {
+			GER_porsche_bad_engine_2 GER_porsche_good_engine
+		}
+		equipment_bonus = {
+			soft_attack = 0.04
+			hard_attack = 0.03
+			build_cost_ic = 0.02
+		}
+	}
+	trait = {
+		token = GER_porsche_Kurskreisel
+		name = GER_porsche_Kurskreisel
+		icon = GFX_ger_porsche_mio_kurskreisel
+		relative_position_id = GER_porsche_special_tooling
+		parent = {
+			traits = {
+				GER_porsche_breaks_armor_protection GER_porsche_emergency_scape_hatches GER_porsche_special_tooling GER_porsche_improved_turret_basket
+			}
+			num_parents_needed = 2
+		}
+		position = { x = 1 y = 1 }
+		limit_to_equipment_type = { mio_cat_eq_all_heavy_tank }
+		equipment_bonus = {
+			maximum_speed =  0.02
+			breakthrough = 0.05
+			soft_attack = 0.02
+			hard_attack = 0.02
+			fuel_consumption = -0.02
+			build_cost_ic = 0.02
+		}
+	}
+
+}
+
+GER_henschel_organization = {
+	icon = GFX_idea_henschel
+
+	equipment_type = {
+		mio_cat_eq_all_light_tank
+		mio_cat_eq_all_medium_tank
+		mio_cat_eq_all_heavy_tank
+	}
+	research_categories = {
+		#mio_cat_eq_all_heavy_tank
+		armor_tech_ger_tiger
+		cat_heavy_armor_component
+		cat_heavy_armor
+	}
+
+	tree_header_text = {
+		text = mio_header_engine_and_drive_system
+		x = 1
+	}
+
+	tree_header_text = {
+		text = mio_header_chassis
+		x = 5
+	}
+
+	tree_header_text = {
+		text = mio_header_guns_and_turret
+		x = 8
+	}
+
+	task_capacity = 2
+	
+	initial_trait = {
+		name = GER_henschel_kessel_factory
+
+		production_bonus = {
+			production_efficiency_cap_factor = 0.01
+			production_efficiency_gain_factor = 0.01
+		}
+		organization_modifier = {
+			military_industrial_organization_research_bonus = -0.15
+			military_industrial_organization_size_up_requirement = 0.25
+			military_industrial_organization_funds_gain = 0.33
+
+		}
+		equipment_bonus = {
+			reliability = -0.1
+		}
+	}
+
+	allowed = {
+		tag = GER
+	}
+
+	trait = {
+		name = GER_henschel_takt
+		token = GER_henschel_takt
+		icon = GFX_generic_mio_trait_icon_efficiency_cap
+		position = { x = 0 y = 0 }
+		production_bonus = {
+			production_efficiency_cap_factor = 0.02
+			production_efficiency_gain_factor = 0.05
+		}
+	}
+	trait = {
+		name = GER_henschel_marketing
+		token = GER_henschel_marketing
+		icon = GFX_generic_mio_trait_icon_mio
+		position = { x = 0 y = 1 }
+		all_parents = {	GER_henschel_takt }
+		relative_position_id = GER_henschel_takt
+
+		organization_modifier = {
+			military_industrial_organization_funds_gain = 0.1
+		}
+	}
+	trait = {
+		name = GER_henschel_scientific_approach
+		token = GER_henschel_scientific_approach
+		icon = GFX_generic_mio_trait_icon_build_cost_ic
+		position = { x = 0 y = 1 }
+		all_parents = {	GER_henschel_marketing }
+		relative_position_id = GER_henschel_marketing
+
+		production_bonus = {
+			production_cost_factor = -0.02
+		}
+		organization_modifier = {
+			military_industrial_organization_size_up_requirement = 0.1
+		}
+	}
+
+	trait = {
+		name = GER_henschel_tank_design_department
+		token = GER_henschel_tank_design_department
+		icon = GFX_generic_mio_trait_icon_reliability
+		position = { x = 7 y = 0 }
+
+		equipment_bonus = {
+			reliability = 0.05
+		}
+		organization_modifier = {
+			military_industrial_organization_research_bonus = 0.2
+		}
+		on_complete = {
+			ROOT = {
+				add_mio_funds = 1200
+			}
+		}
+	}
+
+	trait = {
+		name = GER_henschel_standardized_designs
+		token = GER_henschel_standardized_designs
+		icon = GFX_generic_mio_trait_icon_resources
+		position = { x = 3 y = 1 }
+		all_parents = {	GER_henschel_scientific_approach  GER_henschel_adapt_train_assemblies }
+		relative_position_id = GER_henschel_scientific_approach
+
+		production_bonus = {
+			production_cost_factor = -0.02
+			production_resource_need_factor = -0.03
+			production_resource_penalty_factor = -0.05
+		}
+		organization_modifier = {
+			military_industrial_organization_research_bonus = 0.03
+		}
+	}
+	trait = {
+		name = GER_henschel_tool_sets
+		token = GER_henschel_tool_sets
+		icon = GFX_generic_mio_trait_icon_reliability
+		relative_position_id = GER_henschel_tank_design_department
+		position = { x = 1 y = 1 }
+		all_parents = {	GER_henschel_tank_design_department	}
+
+		equipment_bonus = {
+			reliability = 0.05
+		}
+		production_bonus = {
+			production_cost_factor = 0.01
+		}
+	}
+
+	trait = {
+		name = GER_henschel_heavy_chassis_designs
+		token = GER_henschel_heavy_chassis_designs
+		icon = GFX_generic_mio_trait_icon_research
+		relative_position_id = GER_henschel_tank_design_department
+		position = { x = -1 y = 2 }
+		available = {
+			has_mio_trait = GER_henschel_scientific_approach
+		}
+		all_parents = {	GER_henschel_adapt_train_assemblies	}
+		limit_to_equipment_type = {
+			mio_cat_eq_all_heavy_tank
+			#mio_cat_eq_all_tank_destroyers
+		}
+
+		equipment_bonus = {
+			reliability = 0.03
+		}
+		production_bonus = {
+			production_cost_factor = 0.01
+		}
+		on_complete = {
+			FROM = {
+				add_tech_bonus = {
+					bonus = 0.35					
+					uses = 1
+					category = cat_heavy_armor
+				}
+			}
+		}
+	}
+	trait = {
+		name = GER_henschel_adapt_train_assemblies
+		token = GER_henschel_adapt_train_assemblies
+		icon = GFX_generic_mio_trait_icon_building
+		relative_position_id = GER_henschel_tank_design_department
+		position = { x = -4 y = 1 }
+		all_parents = {	GER_henschel_tank_design_department	}
+		limit_to_equipment_type = {
+			mio_cat_eq_all_heavy_tank
+		}
+
+		on_complete = {
+			FROM = {
+				random_owned_controlled_state = {
+					prioritize = { 51 }
+					add_extra_state_shared_building_slots = 3
+					add_building_construction = {
+						type = tank_assembly
+						level = 3
+						instant_build = yes
+					}
+				}
+			}
+		}
+	}
+
+	trait = {
+		name = GER_henschel_feifel_air_cleaner_system
+		token = GER_henschel_feifel_air_cleaner_system
+		icon = GFX_generic_mio_trait_icon_fuel_consumption
+		relative_position_id = GER_henschel_heavy_chassis_designs
+		position = { x = 0 y = 1 }
+		all_parents = {	GER_henschel_heavy_chassis_designs	}
+		limit_to_equipment_type = {
+			mio_cat_eq_all_heavy_tank
+		}
+
+		equipment_bonus = {
+			reliability = 0.03
+			fuel_consumption = -0.02
+			build_cost_ic = 0.01
+		}
+	}
+	trait = {
+		name = GER_henschel_track_guards
+		token = GER_henschel_track_guards
+		icon = GFX_generic_mio_trait_icon_reliability
+		relative_position_id = GER_henschel_heavy_chassis_designs
+		position = { x = -1 y = 1 }
+		all_parents = {	GER_henschel_heavy_chassis_designs	}
+		limit_to_equipment_type = {
+			mio_cat_eq_all_heavy_tank
+		}
+
+		equipment_bonus = {
+			reliability = 0.03		
+			defense = 0.02	
+		}
+	}
+	trait = {
+		name = GER_henschel_reinforced_gun_mantlet
+		token = GER_henschel_reinforced_gun_mantlet
+		icon = GFX_generic_mio_trait_icon_hardness
+		relative_position_id = GER_henschel_feifel_air_cleaner_system
+		position = { x = 3 y = 0 }
+		any_parent = {	GER_henschel_heavy_chassis_designs GER_henschel_tool_sets }
+		limit_to_equipment_type = {
+			mio_cat_eq_all_heavy_tank
+		}
+		equipment_bonus = {
+			hardness = 0.04
+			armor_value = 0.04
+			build_cost_ic = 0.02
+		}
+	}
+	trait = {
+		name = GER_henschel_shock_absorbers
+		token = GER_henschel_shock_absorbers
+		icon = GFX_generic_mio_trait_icon_maximum_speed
+		relative_position_id = GER_henschel_track_guards
+		position = { x = 1 y = 1 }
+		all_parents = {	GER_henschel_track_guards GER_henschel_feifel_air_cleaner_system	}
+		limit_to_equipment_type = {
+			mio_cat_eq_all_heavy_tank
+		}
+
+		equipment_bonus = {
+			maximum_speed = 0.02
+			fuel_consumption = -0.02
+			breakthrough = 0.02
+			build_cost_ic = 0.02
+		}
+	}
+	trait = {
+		name = GER_henschel_strengthen_the_gearbox
+		token = GER_henschel_strengthen_the_gearbox
+		icon = GFX_generic_mio_trait_icon_breakthrough
+		relative_position_id = GER_henschel_heavy_chassis_designs
+		position = { x = 1 y = 2 }
+		all_parents = {	GER_henschel_heavy_chassis_designs GER_henschel_shock_absorbers }
+		limit_to_equipment_type = {
+			mio_cat_eq_all_heavy_tank
+		}
+		equipment_bonus = {
+			breakthrough = 0.02
+			reliability = 0.04
+			build_cost_ic = 0.02
+		}
+	}
+	trait = {
+		name = GER_henschel_range_finders
+		token = GER_henschel_range_finders
+		icon = GFX_generic_mio_trait_icon_soft_attack
+		relative_position_id = GER_henschel_strengthen_the_gearbox
+		position = { x = 2 y = 1 }
+		all_parents = {	GER_henschel_strengthen_the_gearbox GER_henschel_reinforced_gun_mantlet }
+		limit_to_equipment_type = {
+			mio_cat_eq_all_heavy_tank
+		}
+		equipment_bonus = {
+			soft_attack = 0.04
+			hard_attack = 0.02
+			ap_attack = 0.07
+			build_cost_ic = 0.1
+		}
+	}
+	trait = {
+		name = GER_henschel_wooden_fuel_tank_decks
+		token = GER_henschel_wooden_fuel_tank_decks
+		icon = GFX_generic_mio_trait_icon_build_cost_ic
+		relative_position_id = GER_henschel_strengthen_the_gearbox
+		position = { x = 0 y = 1}
+		all_parents = {	GER_henschel_strengthen_the_gearbox }
+		limit_to_equipment_type = {
+			mio_cat_eq_all_heavy_tank
+		}
+		equipment_bonus = {
+			build_cost_ic = -0.02
+			reliability = -0.03
+			hardness = -0.03
+		}
+	}
+	trait = {
+		name = GER_henschel_scrap_additions
+		token = GER_henschel_scrap_additions
+		icon = GFX_generic_mio_trait_icon_build_cost_ic
+		relative_position_id = GER_henschel_wooden_fuel_tank_decks
+		position = { x = -1 y = 0 }
+		all_parents = {	GER_henschel_wooden_fuel_tank_decks	}
+		limit_to_equipment_type = {
+			mio_cat_eq_all_heavy_tank
+		}
+
+		equipment_bonus = {
+			build_cost_ic = -0.10
+			reliability = -0.03
+			hardness = -0.04
+			maximum_speed = -0.03
+			fuel_consumption = 0.02
+			soft_attack = -0.05
+		}
+	}
+}
+
+
+#####################
+
+ ## #  # ### ###   ##
+#   #  #  #  #  # #
+ #  ####  #  ###   #
+  # #  #  #  #      #
+##  #  # ### #    ##
+
+#####################
+
+GER_kriegsmarinewerft_organization = {
+	include = generic_battle_line_ship_organization
+	icon = GFX_idea_kriegsmarinewerft
+
+	allowed = {
+		tag = GER
+	}
+}
+
+GER_germaniawerft_organization = {
+	include = generic_submarine_organization
+	icon = GFX_idea_germaniawerft
+
+	allowed = {
+		tag = GER
+	}
+}
+
+GER_blohm_und_voss_organization = {
+	include = generic_raider_ship_organization
+	icon = GFX_idea_blohm_und_voss
+
+	allowed = {
+		tag = GER
+	}
+}
+
+###########################
+
+###  #    ##  #  # ###  ##
+#  # #   #  # ## # #   #
+###  #   #### # ## ##   #
+#    #   #  # #  # #     #
+#    ### #  # #  # ### ##
+
+###########################
+
+
+GER_messerschmitt_organization = {
+	include = generic_light_aircraft_organization
+	icon = GFX_idea_messerschmitt
+	research_categories = {
+		messerschmitt_air
+	}
+	allowed = {
+		tag = GER
+	}
+	equipment_type = {
+		mio_cat_eq_only_light_fighter
+		mio_cat_eq_only_heavy_fighter
+		#mio_cat_messerschmitt_air
+	}
+	
+	initial_trait = {
+		name = GER_messerschmitt_initial
+		
+		organization_modifier = {
+			military_industrial_organization_research_bonus = 0.03
+		}
+		
+		equipment_bonus = {
+			air_attack = 0.01
+			air_agility = 0.01
+		}
+	}
+
+	add_trait = {
+		token = GER_mio_trait_minengeschoss
+		name = GER_mio_trait_minengeschoss
+
+		icon = GFX_generic_mio_trait_icon_anti_air_attack
+		special_trait_background = yes
+
+		position = { x=9 y=0 }
+		
+		available = {
+			FROM = {
+				has_tech = advanced_machine_tools
+				has_tech = chemical_industry_i
+			}
+		}
+
+		equipment_bonus = {
+			air_attack = 0.03
+			build_cost_ic = 0.01
+		}
+	}
+
+	add_trait = {
+		token = GER_mio_trait_maintenance_first_design
+		name = GER_mio_trait_maintenance_first_design
+
+		icon = GFX_generic_mio_department_icon_plane_fighter_line_efficiency
+		special_trait_background = yes
+
+		position = { x=-2 y=1 }
+		relative_position_id = generic_mio_trait_expanded_production_facilities
+
+		all_parents = { generic_mio_trait_expanded_production_facilities }
+
+		equipment_bonus = {
+			reliability = 0.02
+		}
+
+		production_bonus = {
+			production_efficiency_gain_factor = 0.02
+		}
+	}
+}
+
+GER_junkers_organization = {
+	include = generic_cas_aircraft_organization
+	icon = GFX_idea_junkers
+	research_categories = {
+		junkers_air
+	}
+	allowed = {
+		tag = GER
+	}
+	equipment_type = {
+		mio_cat_eq_all_close_air_support
+		#mio_cat_junkers_air
+	}
+
+	add_trait = {
+		token = GER_mio_trait_psychological_warfare
+		name = GER_mio_trait_psychological_warfare
+
+		icon = GFX_generic_mio_trait_icon_fuel_consumption
+		special_trait_background = yes
+
+		position = { x=2 y=0 }
+		relative_position_id = generic_mio_trait_reinforced_wings
+
+		equipment_bonus = {
+			fuel_consumption = -0.05
+		}
+	}
+}
+
+GER_focke_wulf_organization = {
+	include = generic_multi_role_aircraft_organization
+	icon = GFX_idea_focke_wulf
+	research_categories = {
+		focke_wulf_air
+	}
+	equipment_type = {
+		mio_cat_eq_all_small_plane
+		mio_cat_eq_all_medium_plane
+		transport_plane_equipment
+		#mio_cat_focke_wulf_air
+	}
+	allowed = {
+		tag = GER
+	}
+	
+	add_trait = {
+		token = GER_mio_trait_minengeschoss
+		name = GER_mio_trait_minengeschoss
+
+		icon = GFX_generic_mio_trait_icon_anti_air_attack
+		special_trait_background = yes
+
+		position = { x=9 y=0 }
+
+		available = {
+			FROM = {
+				has_tech = advanced_machine_tools
+				has_tech = chemical_industry_i
+			}
+		}
+
+		equipment_bonus = {
+			air_attack = 0.03
+			build_cost_ic = 0.01
+		}
+	}
+	
+	
+	add_trait = {
+		token = GER_mio_trait_fuselage_based_weapons
+		name = GER_mio_trait_fuselage_based_weapons
+
+		icon = GFX_generic_mio_trait_icon_anti_air_attack
+		special_trait_background = yes
+
+		position = { x=-1 y=0 }
+		relative_position_id = generic_mio_trait_hardened_frames
+
+		any_parent = { generic_mio_trait_light_airframe }
+		
+		limit_to_equipment_type = { mio_cat_eq_all_small_plane }
+
+		equipment_bonus = {
+			air_attack = 0.03
+			air_agility = -0.01
+		}
+	}
+}
+
+GER_heinkel_organization = {
+	include = generic_medium_aircraft_organization
+	icon = GFX_idea_heinkel
+	research_categories = {
+		heinkel_air
+	}
+	equipment_type = {
+		mio_cat_eq_all_medium_plane
+		transport_plane_equipment
+		#mio_cat_heinkel_air
+	}
+	allowed = {
+		tag = GER
+	}
+
+}
+
+GER_dornier_organization = {
+	include = generic_naval_aircraft_organization
+	icon = GFX_idea_dornier
+	research_categories = {
+		dornier_air
+	}
+	equipment_type = {
+		mio_cat_eq_all_cv_aircraft
+		mio_cat_eq_all_naval_aircraft
+		#mio_cat_dornier_air
+	}
+	allowed = {
+		tag = GER
+	}
+}
+
+###################################
+
+#   #  ##  ### ### ###  ### ### #
+## ## #  #  #  #   #  #  #  #   #
+# # # ####  #  ##  ###   #  ##  #
+#   # #  #  #  #   #  #  #  #   #
+#   # #  #  #  ### #  # ### ### ###
+
+
+###################################
+
+GER_rheinmetall_organization = {
+	#include = generic_artillery_organization
+	icon = GFX_idea_rheinmetall
+
+	allowed = {
+		OR = {
+			tag = GER
+			tag = CHI
+		}
+	}
+	available = {
+		# When in a Foreign MIO, countries need to be at peace with original country
+		IF = {
+			limit = {
+				FROM = { NOT = { original_tag = GER } }
+			}
+			FROM = { NOT = { has_war_with = GER } }
+		}
+		IF = {
+			limit = {
+				FROM = { tag = CHI }
+			}
+			FROM = { has_completed_focus = KMT_national_defense_council }
+		}
+	}
+	equipment_type = {
+		mio_cat_eq_all_artillery
+		mio_cat_eq_all_anti_tank
+		mio_cat_eq_all_anti_air
+		mortar_equipment
+		para_equipment
+	}
+
+	research_categories = {
+		artillery
+		mortar_equipment
+		para_equipment
+		#mio_cat_eq_tank_guns
+		armor_tech_gun
+	}
+
+	tree_header_text = {
+		text = mio_header_mechanical_design
+		x = 1
+	}
+
+	tree_header_text = {
+		text = mio_header_armament_and_ammunition
+		x = 6
+	}
+
+	initial_trait = {
+		name = generic_mio_initial_trait_artillery_manufacturer
+
+		organization_modifier = {
+			military_industrial_organization_research_bonus = 0.02
+		}
+		production_bonus = {
+			production_efficiency_cap_factor = 0.01
+		}
+	}
+
+	trait = {
+		token = ger_rhe_mio_party_ally
+		name = ger_rhe_mio_party_ally
+		icon = GFX_generic_mio_trait_gold
+
+		position = { x=2 y=0 }
+		#mutually_exclusive = { generic_mio_trait_stable_platforms }
+
+		organization_modifier = {
+			military_industrial_organization_funds_gain = 0.15
+			military_industrial_organization_design_team_assign_cost = -0.1
+		}
+		ai_will_do = {
+			factor = 3
+		}
+	}
+
+	trait = {
+		token = ger_rhe_mio_flexible_research
+		name = ger_rhe_mio_flexible_research
+		icon = GFX_generic_mio_trait_icon_air_range
+
+		position = { x=0 y=0 }
+		#mutually_exclusive = { generic_mio_trait_stable_platforms }
+
+		organization_modifier = {
+			military_industrial_organization_research_bonus = 0.03
+			military_industrial_organization_size_up_requirement = -0.1
+		}
+	}
+
+	trait = {
+		token = ger_rhe_mio_zeiss_optics
+		name = ger_rhe_mio_zeiss_optics
+		icon = GFX_generic_mio_trait_icon_detection
+
+		position = { x=1 y=1 }
+		all_parents = { ger_rhe_mio_flexible_research ger_rhe_mio_party_ally ger_rhe_mio_arsenal_of_germany }
+
+		limit_to_equipment_type = {
+			mio_cat_eq_all_anti_tank
+			mio_cat_eq_all_anti_air
+		}
+
+		equipment_bonus = {
+			soft_attack = 0.05
+			hard_attack = 0.05
+		}
+	}
+
+	trait = {
+		token = ger_rhe_mio_arsenal_of_germany
+		name = ger_rhe_mio_arsenal_of_germany
+		icon = GFX_generic_mio_trait_icon_breakthrough
+
+		special_trait_background = yes
+		position = { x=1 y=0 }
+		#mutually_exclusive = { generic_mio_trait_stable_platforms }
+
+		organization_modifier = {
+			military_industrial_organization_industrial_manufacturer_assign_cost = -0.5
+		}
+	}
+
+	trait = {
+		token = ger_rhe_mio_luftwaffe_contacts
+		name = ger_rhe_mio_luftwaffe_contacts
+		icon = GFX_generic_mio_trait_icon_air_superiority
+
+		special_trait_background = yes
+		position = { x=1 y=2 }
+		organization_modifier = {
+			military_industrial_organization_funds_gain = 0.2
+		}
+		
+		ai_will_do = {
+			factor = 3
+		}
+	}
+
+	trait = {
+		token = ger_rhe_mio_luftwaffe_contacts_2
+		name = ger_rhe_mio_luftwaffe_contacts_2
+		icon = GFX_ger_rhe_mio_luftwaffe_contacts_2
+
+		#special_trait_background = yes
+		position = { x = 0 y = 1 }
+		relative_position_id = ger_rhe_mio_luftwaffe_contacts
+		all_parents = {
+			ger_rhe_mio_luftwaffe_contacts
+		}
+		limit_to_equipment_type = {
+			para_equipment
+			#infantry_equipment
+		}
+
+		equipment_bonus = {
+			soft_attack = 0.2
+			hard_attack = 0.3
+			build_cost_ic = 0.15
+		}
+	}
+
+	trait = {
+		token = ger_rhe_mio_anti_tank_specialist
+		name = ger_rhe_mio_anti_tank_specialist
+		icon = GFX_generic_mio_department_icon_anti_tank_production
+
+		position = { x=4 y=0 }
+		limit_to_equipment_type = {
+			medanti_tank_equipment
+		}
+
+		organization_modifier = {
+			military_industrial_organization_research_bonus = 0.02
+		}
+		production_bonus = {
+			production_capacity_factor = 0.05
+			production_cost_factor = -0.05
+			production_resource_need_factor = 0.07
+		}
+	}
+	trait = {
+		token = ger_rhe_mio_light_anti_tank_specialist_1
+		name = ger_rhe_mio_light_anti_tank_specialist_1
+		icon = GFX_generic_mio_department_icon_anti_tank_line_efficiency
+
+		position = { x=4 y=1 }
+		all_parents = { ger_rhe_mio_anti_tank_specialist }
+
+		limit_to_equipment_type = {
+			anti_tank_equipment
+		}
+
+		equipment_bonus = {
+			ap_attack = 0.1
+			breakthrough = 0.05
+		}
+	}
+	trait = {
+		token = ger_rhe_mio_anti_tank_specialist_1
+		name = ger_rhe_mio_anti_tank_specialist_1
+		icon = GFX_generic_mio_department_icon_anti_tank_production
+		all_parents = { ger_rhe_mio_light_anti_tank_specialist_1 }
+		position = { x=4 y=2 }
+		#mutually_exclusive = { ger_rhe_mio_heavy_anti_tank_specialist_1 }
+
+		limit_to_equipment_type = {
+			mio_cat_eq_all_anti_tank
+		}
+
+		equipment_bonus = {
+			build_cost_ic = -0.05
+		}
+	}
+
+	trait = {
+		token = ger_rhe_mio_artillery_specialist
+		name = ger_rhe_mio_artillery_specialist
+		icon = GFX_generic_mio_department_icon_artillery_production
+
+		position = { x=6 y=0 }
+		limit_to_equipment_type = {
+			artillery_equipment
+			mountain_artillery_equipment
+			medartillery_equipment
+		}
+
+		organization_modifier = {
+			military_industrial_organization_research_bonus = 0.02
+		}
+		production_bonus = {
+			production_capacity_factor = 0.05
+			production_cost_factor = -0.05
+		}
+		ai_will_do = {
+			factor = 1
+		}
+	}
+	trait = {
+		token = ger_rhe_mio_light_artillery_specialist_1
+		name = ger_rhe_mio_light_artillery_specialist_1
+		icon = GFX_generic_mio_department_icon_artillery_line_efficiency
+
+		position = { x=6 y=1 }
+		all_parents = { ger_rhe_mio_artillery_specialist }
+
+		limit_to_equipment_type = {
+			artillery_equipment
+			mountain_artillery_equipment
+			medartillery_equipment
+		}
+
+		equipment_bonus = {
+			#maximum_speed = 0.010
+			defense = 0.07
+			soft_attack = 0.05
+			breakthrough = 0.05
+			reliability = 0.1
+		}
+	}
+
+	trait = {
+		token = ger_rhe_mio_anti_air_specialist
+		name = ger_rhe_mio_anti_air_specialist
+		icon = GFX_generic_mio_department_icon_anti_air_production
+
+
+
+		position = { x=8 y=0 }
+		#all_parents = { ger_rhe_mio_artillery_specialist }
+		#mutually_exclusive = { ger_rhe_mio_light_artillery_specialist_1 }
+
+		limit_to_equipment_type = {
+			mio_cat_eq_all_anti_air
+		}
+
+		production_bonus = {
+			production_capacity_factor = 0.05
+			production_cost_factor = -0.05
+		}
+	}
+	trait = {
+		token = ger_rhe_mio_anti_air_specialist_light
+		name = ger_rhe_mio_anti_air_specialist_light
+		icon = GFX_generic_mio_department_icon_anti_air_line_efficiency
+
+		position = { x=8 y=1 }
+		all_parents = { ger_rhe_mio_anti_air_specialist }
+
+		limit_to_equipment_type = {
+			anti_air_equipment
+		}
+
+		equipment_bonus = {
+			soft_attack = 0.07
+			hard_attack = 0.05
+			breakthrough = 0.05
+			build_cost_ic = 0.05
+		}
+	}
+
+	trait = {
+		token = ger_rhe_mio_mortar
+		name = ger_rhe_mio_mortar
+		icon = GFX_ger_rhe_mio_mortar
+
+		position = { x=6 y=2 }
+		#all_parents = { ger_rhe_mio_anti_air_specialist }
+
+		limit_to_equipment_type = {
+			mortar_equipment
+		}
+
+		equipment_bonus = {
+			soft_attack = 0.04
+			build_cost_ic = -0.05
+		}
+	}
+	trait = {
+		token = ger_rhe_mio_demolition_charge
+		name = ger_rhe_mio_demolition_charge
+		icon = ger_rhe_mio_demolition_charge
+
+		position = { x=8 y=2 }
+		#all_parents = { ger_rhe_mio_anti_air_specialist }
+
+		limit_to_equipment_type = {
+			infantrygun_equipment
+		}
+
+		equipment_bonus = {
+			hard_attack = 0.2
+			ap_attack = 0.1
+			build_cost_ic = 0.1
+		}
+	}
+}
+
+GER_mauser_organization = {
+	include = generic_infantry_equipment_organization
+	icon = GFX_idea_mauser
+
+	allowed = {
+		OR = {
+			tag = GER
+			tag = CHI
+		}
+	}
+	available = {
+		# When in a Foreign MIO, countries need to be at peace with original country
+		IF = {
+			limit = {
+				FROM = { NOT = { original_tag = GER } }
+			}
+			FROM = { NOT = { has_war_with = GER } }
+		}
+		IF = {
+			limit = {
+				FROM = { tag = CHI }
+			}
+			FROM = { has_completed_focus = KMT_national_defense_council }
+		}
+	}
+}
+
+GER_opel_organization = {
+	include = generic_motorized_mechanized_organization
+	icon = GFX_idea_opel
+
+	allowed = {
+		OR = {
+			tag = GER
+			tag = ROM
+		}
+	}
+
+	available = {
+		# When in a Foreign MIO, countries need to be at peace with original country
+		IF = {
+			limit = {
+				FROM = { NOT = { original_tag = GER } }
+			}
+			FROM = { NOT = { has_war_with = GER } }
+		}
+
+		IF = {
+			limit = { FROM = { original_tag = ROM } }
+			FROM = { has_country_flag = GER_mot_chosen } #TODO make sure this gets set somewhere
+		}
+	}
+
+	override_trait = {
+		token = generic_mio_trait_medium_machinegun_mounts
+		name = generic_mio_trait_medium_machinegun_mounts
+
+		position = { x=2 y=3 }
+		#all_parents = { ger_rhe_mio_anti_air_specialist }
+
+		#limit_to_equipment_type = {
+		#	infantrygun_equipment
+		#}
+
+		equipment_bonus = {
+			soft_attack = 0.01
+			maximum_speed = 0.02
+			#ap_attack = 0.1
+			#build_cost_ic = 0.1
+		}
+	}
+
+	override_trait = {
+		token = generic_mio_trait_all_wheel_drive
+		name = ger_opel_mio_trait_4_wheel_drive
+
+		position = { x=1 y=1 }
+		#all_parents = { ger_rhe_mio_anti_air_specialist }
+
+		#limit_to_equipment_type = {
+		#	infantrygun_equipment
+		#}
+
+		equipment_bonus = {
+			breakthrough = 0.02
+			maximum_speed = 0.03
+			#ap_attack = 0.1
+			#build_cost_ic = 0.1
+		}
+	}
+
+	override_trait = {
+		token = generic_mio_trait_open_chassi
+		name = generic_mio_trait_open_chassi
+
+		position = { x=2 y=-3 }
+
+		#limit_to_equipment_type = {
+		#	infantrygun_equipment
+		#}
+
+		equipment_bonus = {
+			defense = -0.02
+			build_cost_ic = -0.01
+			maximum_speed = 0.03
+			#ap_attack = 0.1
+			#build_cost_ic = 0.1
+		}
+	}
+
+	add_trait = {
+		token = ger_opel_mio_trait_pressed_cards
+		name = ger_opel_mio_trait_pressed_cards
+		icon = GFX_generic_mio_trait_icon_resources
+
+		position = { x = 0 y = 1 }
+		relative_position_id = generic_mio_trait_all_wheel_drive
+		all_parents = {
+			generic_mio_trait_all_wheel_drive
+		}
+
+		production_bonus = {
+			production_resource_need_factor = -0.05
+		}
+	}
+
+	add_trait = {
+		token = ger_opel_mio_trait_standardized_production
+		name = ger_opel_mio_trait_standardized_production
+		icon = GFX_generic_mio_trait_icon_efficiency_gain
+
+		position = { x = 4 y = 0 }
+
+		production_bonus = {
+			production_efficiency_gain_factor = 0.12
+			production_capacity_factor = 0.05
+		}
+		organization_modifier = {
+			military_industrial_organization_industrial_manufacturer_assign_cost = 0.15
+			military_industrial_organization_design_team_change_cost = 0.07
+			military_industrial_organization_design_team_assign_cost = 0.15
+			military_industrial_organization_size_up_requirement = -0.1
+		}
+	}
+
+
+	add_trait = {
+		token = ger_opel_mio_trait_aircraft_contracts
+		name = ger_opel_mio_trait_aircraft_contracts
+		icon = GFX_generic_mio_trait_gold
+
+		position = { x = 1 y = 1 }
+
+		relative_position_id = ger_opel_mio_trait_standardized_production
+		all_parents = {
+			ger_opel_mio_trait_standardized_production
+		}
+
+		organization_modifier = {
+			military_industrial_organization_funds_gain = 0.2
+		}
+	}
+
+	add_trait = {
+		token = ger_opel_mio_trait_american_mass_production
+		name = ger_opel_mio_trait_american_mass_production
+		icon = GFX_generic_mio_trait_icon_efficiency_cap
+
+		position = { x = -1 y = 1 }
+
+		relative_position_id = ger_opel_mio_trait_standardized_production
+		all_parents = {
+			ger_opel_mio_trait_standardized_production
+		}
+
+		production_bonus = {
+			production_efficiency_cap_factor = 0.05
+		}
+	}
+}
+GER_hugo_boss_organization = {
+	include = generic_support_equipment_organization
+	icon = GFX_idea_Hugo_Boss
+	allowed = {
+		tag = GER
+	}
+	equipment_type = { 
+		mio_cat_eq_radio_recon
+		handheld_at_equipment
+		mio_cat_eq_all_special_forces
+		ss_infantry_uniforms
+	}
+}

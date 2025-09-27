@@ -1,0 +1,941 @@
+
+update_decisions_start = {
+	
+	if = {
+		limit = {
+			is_ai = no
+		}
+		
+		activate_targeted_decision = {
+			target = var:original_capital
+			decision = sell_stockpiles
+		}
+		activate_targeted_decision = {
+			target = var:original_capital
+			decision = celebrate_holiday
+		}
+		activate_targeted_decision = {
+			target = var:original_capital
+			decision = food_relief
+		}
+		
+		if = {
+			limit = {
+				has_war = no
+			}
+		
+			activate_targeted_decision = {
+				target = var:original_capital
+				decision = War_games_navy
+			}
+			activate_targeted_decision = {
+				target = var:original_capital
+				decision = War_games_Airforce
+			}
+			activate_targeted_decision = {
+				target = var:original_capital
+				decision = War_games_Army
+			}
+		}
+		update_political_party_change = yes
+	}
+	
+	set_variable = { current_ideology = current_party_ideology_group }
+	add_to_array = { global.ideology@var:current_party_ideology_group = THIS }
+	update_decision_on_ideology_change = yes
+	
+}
+
+update_decision_on_ideology_change = {
+	
+	set_original_capital = yes
+ 
+	if = {
+		limit = {
+			has_government = fascism
+		}
+		#PARTY BANNED
+		clr_country_flag = party_banned@fascism
+		if = { limit = { is_in_array = { party_banned = token:fascism } } remove_from_array = { party_banned = token:fascism } }
+		remove_targeted_decision = { decision = ban_fascism_party target = var:original_capital }
+		if = {
+			limit = {
+				is_ai = no
+			}
+			activate_targeted_decision = { decision = ban_democratic_party target = var:original_capital }
+			activate_targeted_decision = { decision = ban_communist_party target = var:original_capital }
+			activate_targeted_decision = { decision = ban_monarchist_party target = var:original_capital }
+			activate_targeted_decision = { decision = ban_neutrality_party target = var:original_capital }
+		}
+		
+		#PARTY SUPPORT
+		activate_targeted_decision = { decision = goverment_support_fascist target = var:original_capital }
+		remove_targeted_decision = { decision = goverment_support_democracy target = var:original_capital }
+		remove_targeted_decision = { decision = goverment_support_communism target = var:original_capital }
+		
+		#OPPOSITION RAID
+		remove_targeted_decision = { decision = anti_fascist_raids target = var:original_capital }
+		activate_targeted_decision = { decision = anti_communist_raids target = var:original_capital }
+		activate_targeted_decision = { decision = anti_democratic_raids target = var:original_capital }
+		activate_targeted_decision = { decision = anti_monarchist_raids target = var:original_capital }
+		activate_targeted_decision = { decision = anti_neutrality_raids target = var:original_capital }
+	}
+	else_if = {
+		limit = {
+			has_government = communism
+		}
+		#PARTY BANNED
+		clr_country_flag = party_banned@communism
+		if = { limit = { is_in_array = { party_banned = token:communism } } remove_from_array = { party_banned = token:communism } }
+		remove_targeted_decision = { decision = ban_communist_party target = var:original_capital }
+		if = {
+			limit = {
+				is_ai = no
+			}
+			activate_targeted_decision = { decision = ban_democratic_party target = var:original_capital }
+			activate_targeted_decision = { decision = ban_fascism_party target = var:original_capital }
+			activate_targeted_decision = { decision = ban_monarchist_party target = var:original_capital }
+			activate_targeted_decision = { decision = ban_neutrality_party target = var:original_capital }
+		}
+		
+		#PARTY SUPPORT
+		activate_targeted_decision = { decision = goverment_support_communism target = var:original_capital }
+		remove_targeted_decision = { decision = goverment_support_democracy target = var:original_capital }
+		remove_targeted_decision = { decision = goverment_support_fascist target = var:original_capital }
+		
+		#OPPOSITION RAID
+		remove_targeted_decision = { decision = anti_communist_raids target = var:original_capital }
+		activate_targeted_decision = { decision = anti_fascist_raids target = var:original_capital }
+		activate_targeted_decision = { decision = anti_democratic_raids target = var:original_capital }
+		activate_targeted_decision = { decision = anti_monarchist_raids target = var:original_capital }
+		activate_targeted_decision = { decision = anti_neutrality_raids target = var:original_capital }
+	}
+	else_if = {
+		limit = {
+			has_government = monarchism
+		}
+		#PARTY BANNED
+		clr_country_flag = party_banned@monarchism
+		if = { limit = { is_in_array = { party_banned = token:monarchism } } remove_from_array = { party_banned = token:monarchism } }
+		remove_targeted_decision = { decision = ban_monarchist_party target = var:original_capital }
+		if = {
+			limit = {
+				is_ai = no
+			}
+			activate_targeted_decision = { decision = ban_communist_party target = var:original_capital }
+			activate_targeted_decision = { decision = ban_democratic_party target = var:original_capital }
+			activate_targeted_decision = { decision = ban_fascism_party target = var:original_capital }
+			activate_targeted_decision = { decision = ban_neutrality_party target = var:original_capital }
+		}
+		
+		#PARTY SUPPORT
+		activate_targeted_decision = { decision = goverment_support_fascist target = var:original_capital }
+		remove_targeted_decision = { decision = goverment_support_democracy target = var:original_capital }
+		remove_targeted_decision = { decision = goverment_support_communism target = var:original_capital }
+		
+		#OPPOSITION RAID
+		remove_targeted_decision = { decision = anti_monarchist_raids target = var:original_capital }
+		activate_targeted_decision = { decision = anti_fascist_raids target = var:original_capital }
+		activate_targeted_decision = { decision = anti_democratic_raids target = var:original_capital }
+		activate_targeted_decision = { decision = anti_communist_raids target = var:original_capital }
+		activate_targeted_decision = { decision = anti_neutrality_raids target = var:original_capital }
+	}
+	else_if = {
+		limit = {
+			has_government = neutrality
+		}
+		#PARTY BANNED
+		clr_country_flag = party_banned@neutrality
+		if = { limit = { is_in_array = { party_banned = token:neutrality } } remove_from_array = { party_banned = token:neutrality } }
+		remove_targeted_decision = { decision = ban_neutrality_party target = var:original_capital }
+		if = {
+			limit = {
+				is_ai = no
+			}
+			activate_targeted_decision = { decision = ban_communist_party target = var:original_capital }
+			activate_targeted_decision = { decision = ban_democratic_party target = var:original_capital }
+			activate_targeted_decision = { decision = ban_fascism_party target = var:original_capital }
+			activate_targeted_decision = { decision = ban_monarchist_party target = var:original_capital }
+		}
+		
+		#PARTY SUPPORT
+		activate_targeted_decision = { decision = goverment_support_fascist target = var:original_capital }
+		remove_targeted_decision = { decision = goverment_support_democracy target = var:original_capital }
+		remove_targeted_decision = { decision = goverment_support_communism target = var:original_capital }
+		
+		#OPPOSITION RAID
+		remove_targeted_decision = { decision = anti_neutrality_raids target = var:original_capital }
+		activate_targeted_decision = { decision = anti_fascist_raids target = var:original_capital }
+		activate_targeted_decision = { decision = anti_democratic_raids target = var:original_capital }
+		activate_targeted_decision = { decision = anti_communist_raids target = var:original_capital }
+		activate_targeted_decision = { decision = anti_monarchist_raids target = var:original_capital }
+	}
+	else_if = {
+		limit = {
+			OR = {
+				has_government = conservatism
+				has_government = liberalism
+				has_government = socialism
+				has_government = agrarianism
+			}
+		}
+		#PARTY BANNED
+		clr_country_flag = party_banned@conservatism
+		clr_country_flag = party_banned@liberalism
+		clr_country_flag = party_banned@socialism
+		clr_country_flag = party_banned@agrarianism
+		if = { limit = { is_in_array = { party_banned = token:conservatism } } remove_from_array = { party_banned = token:conservatism } }
+		if = { limit = { is_in_array = { party_banned = token:liberalism } } remove_from_array = { party_banned = token:liberalism } }
+		if = { limit = { is_in_array = { party_banned = token:socialism } } remove_from_array = { party_banned = token:socialism } }
+		if = { limit = { is_in_array = { party_banned = token:conservatism } } remove_from_array = { party_banned = token:agrarianism } }
+		remove_targeted_decision = { decision = ban_democratic_party target = var:original_capital }
+		if = {
+			limit = {
+				is_ai = no
+			}
+			activate_targeted_decision = { decision = ban_communist_party target = var:original_capital }
+			activate_targeted_decision = { decision = ban_fascism_party target = var:original_capital }
+			activate_targeted_decision = { decision = ban_monarchist_party target = var:original_capital }
+			activate_targeted_decision = { decision = ban_neutrality_party target = var:original_capital }
+		}
+		
+		#PARTY SUPPORT
+		activate_targeted_decision = { decision = goverment_support_democracy target = var:original_capital }
+		remove_targeted_decision = { decision = goverment_support_communism target = var:original_capital }
+		remove_targeted_decision = { decision = goverment_support_fascist target = var:original_capital }
+		
+		#OPPOSITION RAID
+		remove_targeted_decision = { decision = anti_democratic_raids target = var:original_capital }
+		activate_targeted_decision = { decision = anti_fascist_raids target = var:original_capital }
+		activate_targeted_decision = { decision = anti_neutrality_raids target = var:original_capital }
+		activate_targeted_decision = { decision = anti_communist_raids target = var:original_capital }
+		activate_targeted_decision = { decision = anti_monarchist_raids target = var:original_capital }
+	}
+}
+
+update_decision_on_war = {
+
+	set_original_capital = yes
+
+	if = {
+		limit = { #these ones have ai_will_do 0
+			is_ai = no
+		}
+		activate_targeted_decision = {
+			target = var:original_capital
+			decision = requisition_trucks
+		}
+		activate_targeted_decision = {
+			target = var:original_capital
+			decision = requisition_cars
+		}
+		activate_targeted_decision = {
+			target = var:original_capital
+			decision = requisition_motorcycles
+		}
+		activate_targeted_decision = {
+			target = var:original_capital
+			decision = round_up_horses
+		}
+		activate_targeted_decision = {
+			target = var:original_capital
+			decision = troop_rations
+		}
+	}
+	
+	activate_targeted_decision = {
+		target = var:original_capital
+		decision = institute_press_censorship
+	}
+
+	remove_targeted_decision = {
+		target = var:original_capital
+		decision = War_games_navy
+	}
+	remove_targeted_decision = {
+		target = var:original_capital
+		decision = War_games_Airforce
+	}
+	remove_targeted_decision = {
+		target = var:original_capital
+		decision = War_games_Army
+	}
+}
+
+update_decision_on_peace = {
+
+	set_original_capital = yes
+	
+	remove_targeted_decision = {
+		target = var:original_capital
+		decision = requisition_trucks
+	}
+	remove_targeted_decision = {
+		target = var:original_capital
+		decision = requisition_cars
+	}
+	remove_targeted_decision = {
+		target = var:original_capital
+		decision = requisition_motorcycles
+	}
+	remove_targeted_decision = {
+		target = var:original_capital
+		decision = round_up_horses
+	}
+
+	remove_targeted_decision = {
+		target = var:original_capital
+		decision = institute_press_censorship
+	}
+
+	if = {
+		limit = {
+			is_ai = no
+		}
+			
+		activate_targeted_decision = {
+			target = var:original_capital
+			decision = War_games_navy
+		}
+		activate_targeted_decision = {
+			target = var:original_capital
+			decision = War_games_Airforce
+		}
+		activate_targeted_decision = {
+			target = var:original_capital
+			decision = War_games_Army
+		}
+	
+	}
+}
+
+apply_gie_targeted_decisions = {
+	var:host = {
+		if = {
+			limit = {
+				NOT = { has_variable = exile_decision_target }
+			}
+			set_variable = { exile_decision_target = PREV }
+			activate_targeted_decision = {
+				target = PREV
+				decision = purge_infiltrators
+			}
+			activate_targeted_decision = {
+				target = PREV
+				decision = weapons_for_the_resistance
+			}
+			activate_targeted_decision = {
+				target = PREV
+				decision = unity_parade
+			}
+			activate_targeted_decision = {
+				target = PREV
+				decision = joint_training_exercise
+			}
+			activate_targeted_decision = {
+				target = PREV
+				decision = request_control_of_navy
+			}
+			activate_targeted_decision = {
+				target = PREV
+				decision = exile_extraction_campaign
+			}
+			activate_targeted_decision = {
+				target = PREV
+				decision = grant_parliamentary_audience
+			}
+			activate_targeted_decision = {
+				target = PREV
+				decision = expatriate_donations
+			}
+		}
+		ROOT = {
+			activate_targeted_decision = {
+				target = PREV
+				decision = request_reinstatement
+			}
+			activate_targeted_decision = {
+				target = PREV
+				decision = lobby_for_parliamentary_support
+			}
+			activate_targeted_decision = {
+				target = PREV
+				decision = exile_recruitment_campaign
+			}
+		}
+	}
+}
+remove_gie_targeted_decisions = {
+	var:host = {
+		remove_targeted_decision = {
+			target = PREV
+			decision = purge_infiltrators
+		}
+		remove_targeted_decision = {
+			target = PREV
+			decision = weapons_for_the_resistance
+		}
+		remove_targeted_decision = {
+			target = PREV
+			decision = unity_parade
+		}
+		remove_targeted_decision = {
+			target = PREV
+			decision = joint_training_exercise
+		}
+		remove_targeted_decision = {
+			target = PREV
+			decision = request_control_of_navy
+		}
+		remove_targeted_decision = {
+			target = PREV
+			decision = exile_extraction_campaign
+		}
+		remove_targeted_decision = {
+			target = PREV
+			decision = grant_parliamentary_audience
+		}
+		remove_targeted_decision = {
+			target = PREV
+			decision = expatriate_donations
+		}
+		ROOT = {
+			remove_targeted_decision = {
+				target = PREV
+				decision = request_reinstatement
+			}
+			remove_targeted_decision = {
+				target = PREV
+				decision = lobby_for_parliamentary_support
+			}
+			remove_targeted_decision = {
+				target = PREV
+				decision = exile_recruitment_campaign
+			}
+		}
+	}
+}
+
+update_mission_decisions = { #weekly
+	update_demobilization_decisions = yes
+	
+	
+}
+
+update_targeted_decisions = {
+
+	update_chinese_road_decisions = yes 
+	
+	#####war_propaganda_against_warmonger
+	if = {
+		limit = {
+			has_capitulated = no
+			
+			check_variable = { global.countries_at_war^num > 0 }
+			any_of_scopes = {
+				array = global.countries_at_war
+				NOT = { 
+					has_country_flag = war_propaganda_against_warmonger_@ROOT 
+					tag = ROOT
+					tag = OVERLORD
+					has_government = ROOT
+					is_in_faction_with = ROOT
+				}
+				if = {
+					limit = {
+						is_puppet = yes 
+					}
+					compare_autonomy_state > autonomy_puppet
+				}
+				OR = {
+					AND = {
+						has_offensive_war = yes
+						has_added_tension_amount > 5
+					}
+					is_justifying_wargoal_against = ROOT
+					has_offensive_war_with = ROOT
+				}
+				
+				set_temp_variable = { FROM_ws_amount = 0 }
+				
+				#Amount of damage done
+				add_to_temp_variable = { FROM_ws_amount = num_occupied_states }
+				
+				#Tension created
+				set_temp_variable = { tempvar = has_added_tension_amount }
+				if = {
+					limit = { 
+						check_variable = { tempvar > 99 }
+					}
+					set_temp_variable = { tempvar = 100 }
+				}
+				add_to_temp_variable = { FROM_ws_amount = tempvar }
+				
+				#Size
+				add_to_temp_variable = { FROM_ws_amount = num_controlled_states }
+				
+				divide_temp_variable = { FROM_ws_amount = 2000 }	
+				
+				check_variable = { FROM_ws_amount > 0.01 }
+				set_temp_variable = { war_propaganda_against_warmonger = this.id }
+			}
+		}
+		var:war_propaganda_against_warmonger = {
+			set_country_flag = war_propaganda_against_warmonger_@ROOT
+			ROOT = {
+				activate_targeted_decision = {
+					target = PREV
+					decision = war_propaganda_against_warmonger
+				}
+			}
+		}
+	}
+	
+	#####object_to_attaches
+	if = {
+		limit = {
+			has_war = yes
+			has_capitulated = no
+			any_enemy_country = { #this sucks big time, maybe monthly?
+				has_attache = yes 
+			}
+		}
+		random_other_country = {
+			limit = {
+				any_of_scopes = {
+					array = Root.enemies
+					
+					has_attache_from = PREV
+				}
+			}
+			ROOT = {
+				activate_targeted_decision = {
+					target = PREV
+					decision = object_to_attaches
+				}
+			}
+		}
+	}
+	
+	#####targeted_race_for_the_bomb
+	if = {
+		limit = {
+			has_tech = atomic_research
+			NOT = { 
+				has_global_flag = first_nuke_dropped 
+				has_idea = race_for_the_bomb
+			}
+			any_other_country = {
+				NOT = { 
+					has_country_flag = targeted_race_for_the_bomb_@ROOT
+					is_in_faction_with = ROOT 
+				}
+				has_tech = nuclear_reactor
+				nuclear_reactor > 0
+				
+				set_temp_variable = { targeted_race_for_the_bomb = this.id }
+			}
+		}
+		set_global_flag = targeted_race_for_the_bomb
+		var:targeted_race_for_the_bomb = { 
+			set_country_flag = targeted_race_for_the_bomb_@ROOT
+			ROOT = {
+				activate_targeted_decision = {
+					target = PREV
+					decision = targeted_race_for_the_bomb
+				}
+			}
+		}
+	}
+	
+	#####MTG_invite_FROM_to_treaty
+	### Check this only once globally
+	if = {
+		limit = {
+			NOT = { has_global_flag = MTG_invite_FROM_to_treaty_done }
+			if = {
+				limit = {
+					ENG = { has_naval_treaty_trigger = yes }
+				}
+				any_country = {
+					has_war = no
+					has_naval_treaty_trigger = no
+					NOT = { has_country_flag = MTG_naval_treaty_abandoned }
+					NOT = { has_country_flag = MTG_refused_naval_treaty }
+					
+					naval_strength_comparison = {
+						other = ENG
+						ratio > 0.35
+						sub_unit_def_weights = {
+							super_carrier = 1
+							fleet_carrier = 0.75
+							armored_carrier = 0.75
+							light_carrier = 0.25
+							battleship = 1
+							battle_cruiser = 1
+							large_cruiser = 0.75
+							heavy_cruiser = 0.25
+							pocket_battleship = 0.25
+						}
+					}
+					set_temp_variable = { MTG_invite_FROM_to_treaty = this.id }
+				}
+			}
+			else_if = {
+				limit = { USA = { has_naval_treaty_trigger = yes } }
+				any_country = {
+					has_war = no
+					has_naval_treaty_trigger = no
+					NOT = { has_country_flag = MTG_naval_treaty_abandoned }
+					NOT = { has_country_flag = MTG_refused_naval_treaty }
+					
+					naval_strength_comparison = {
+						other = USA
+						ratio > 0.35
+						sub_unit_def_weights = {
+							super_carrier = 1
+							fleet_carrier = 0.75
+							armored_carrier = 0.75
+							light_carrier = 0.25
+							battleship = 1
+							battle_cruiser = 1
+							large_cruiser = 0.75
+							heavy_cruiser = 0.25
+							pocket_battleship = 0.25
+						}
+					}
+					set_temp_variable = { MTG_invite_FROM_to_treaty = this.id }
+				}	
+			}
+			else = {
+				any_country = {
+					has_war = no
+					has_naval_treaty_trigger = no
+					NOT = { has_country_flag = MTG_naval_treaty_abandoned }
+					NOT = { has_country_flag = MTG_refused_naval_treaty }
+					
+					has_navy_size = {
+						type = capital_ship
+						size > 10
+					}
+					set_temp_variable = { MTG_invite_FROM_to_treaty = this.id }
+				}	
+			}
+				
+		}
+		var:MTG_invite_FROM_to_treaty = {	
+			for_each_scope_loop = { 
+				array = global.MTG_naval_treaty
+				
+				activate_targeted_decision = {
+					target = PREV
+					decision = MTG_invite_FROM_to_treaty
+				}
+			}
+		}
+	}
+	set_global_flag = { flag = MTG_invite_FROM_to_treaty_done value = 1 days = 2 }
+	
+	#####MTG_send_treaty_warning_to_FROM_previous_signatory
+	### Check this only once globally
+	if = {
+		limit = {
+			NOT = { has_global_flag = MTG_send_treaty_warning_to_FROM_previous_signatory_done }
+			if = {
+				limit = {
+					ENG = { has_naval_treaty_trigger = yes }
+				}
+				any_of_scopes = {
+					array = global.MTG_naval_treaty_abandoned
+					has_war = no
+					
+					naval_strength_comparison = {
+						other = ENG
+						ratio > 0.9
+						sub_unit_def_weights = {
+							super_carrier = 1
+							fleet_carrier = 0.75
+							armored_carrier = 0.75
+							light_carrier = 0.25
+							battleship = 1
+							battle_cruiser = 1
+							large_cruiser = 0.75
+							heavy_cruiser = 0.25
+							pocket_battleship = 0.25
+						}
+					}
+					set_temp_variable = { MTG_send_treaty_warning_to_FROM_previous_signatory = this.id }
+				}
+			}
+			else_if = {
+				limit = { USA = { has_naval_treaty_trigger = yes } }
+				any_of_scopes = {
+					array = global.MTG_naval_treaty_abandoned
+					has_war = no
+					
+					naval_strength_comparison = {
+						other = USA
+						ratio > 0.9
+						sub_unit_def_weights = {
+							super_carrier = 1
+							fleet_carrier = 0.75
+							armored_carrier = 0.75
+							light_carrier = 0.25
+							battleship = 1
+							battle_cruiser = 1
+							large_cruiser = 0.75
+							heavy_cruiser = 0.25
+							pocket_battleship = 0.25
+						}
+					}
+					set_temp_variable = { MTG_send_treaty_warning_to_FROM_previous_signatory = this.id }
+				}	
+			}
+				
+		}
+		set_global_flag = { flag = MTG_send_treaty_warning_to_FROM_previous_signatory_done value = 1 days = 2 }
+		var:MTG_send_treaty_warning_to_FROM_previous_signatory = {	
+			for_each_scope_loop = { 
+				array = global.MTG_naval_treaty
+				
+				if = {
+					limit = {
+						NOT = { tag = PREV }
+					}
+					activate_targeted_decision = {
+						target = PREV
+						decision = MTG_send_treaty_warning_to_FROM_previous_signatory
+					}
+				}
+			}
+		}
+	}
+	
+	#####MTG_send_treaty_warning_to_FROM
+	### Check this only once globally
+	if = {
+		limit = {
+			NOT = { has_global_flag = MTG_send_treaty_warning_to_FROM_done }
+			if = {
+				limit = {
+					ENG = { has_naval_treaty_trigger = yes }
+				}
+				any_country = {
+					OR = {
+						AND = {
+							NOT = { has_country_flag = MTG_naval_treaty_abandoned }
+							NOT = { has_country_flag = MTG_refused_naval_treaty }
+							has_naval_treaty_trigger = no
+							naval_strength_comparison = {
+								other = ENG
+								ratio > 1
+								sub_unit_def_weights = {
+									super_carrier = 1
+									fleet_carrier = 0.75
+									armored_carrier = 0.75
+									light_carrier = 0.25
+									battleship = 1
+									battle_cruiser = 1
+									large_cruiser = 0.75
+									heavy_cruiser = 0.25
+									pocket_battleship = 0.25
+								}
+							}
+						}
+						AND = {
+							has_naval_treaty_trigger = yes
+							NOT = { tag = ENG }
+							naval_strength_comparison = {
+								other = ENG
+								ratio > 1.1
+								sub_unit_def_weights = {
+									super_carrier = 1
+									fleet_carrier = 0.75
+									armored_carrier = 0.75
+									light_carrier = 0.25
+									battleship = 1
+									battle_cruiser = 1
+									large_cruiser = 0.75
+									heavy_cruiser = 0.25
+									pocket_battleship = 0.25
+								}
+							}
+						}
+					}
+					set_temp_variable = { MTG_send_treaty_warning_to_FROM = this.id }
+				}
+			}
+			else_if = {
+				limit = { USA = { has_naval_treaty_trigger = yes } }
+				any_country = {
+					OR = {
+						AND = {
+							NOT = { has_country_flag = MTG_naval_treaty_abandoned }
+							NOT = { has_country_flag = MTG_refused_naval_treaty }
+							has_naval_treaty_trigger = no
+							naval_strength_comparison = {
+								other = USA
+								ratio > 1
+								sub_unit_def_weights = {
+									super_carrier = 1
+									fleet_carrier = 0.75
+									armored_carrier = 0.75
+									light_carrier = 0.25
+									battleship = 1
+									battle_cruiser = 1
+									large_cruiser = 0.75
+									heavy_cruiser = 0.25
+									pocket_battleship = 0.25
+								}
+							}
+						}
+						AND = {
+							has_naval_treaty_trigger = yes
+							NOT = { tag = USA }
+							naval_strength_comparison = {
+								other = USA
+								ratio > 1.1
+								sub_unit_def_weights = {
+									super_carrier = 1
+									fleet_carrier = 0.75
+									armored_carrier = 0.75
+									light_carrier = 0.25
+									battleship = 1
+									battle_cruiser = 1
+									large_cruiser = 0.75
+									heavy_cruiser = 0.25
+									pocket_battleship = 0.25
+								}
+							}
+						}
+					}
+					set_temp_variable = { MTG_send_treaty_warning_to_FROM = this.id }
+				}
+				
+			}
+				
+		}
+		var:MTG_send_treaty_warning_to_FROM = {	
+			for_each_scope_loop = { 
+				array = global.MTG_naval_treaty
+				
+				if = {
+					limit = {
+						NOT = { tag = PREV }
+					}
+					activate_targeted_decision = {
+						target = PREV
+						decision = MTG_send_treaty_warning_to_FROM
+					}
+				}
+			}
+		}
+	}
+	set_global_flag = { flag = MTG_send_treaty_warning_to_FROM_done value = 1 days = 2 }
+	
+	#####ENG_demand_treaty_compliance
+	if = {
+		limit = {
+			ENG = { 
+				has_completed_focus = ENG_enforce_the_naval_treaties
+			}
+			NOT = { original_tag = ENG }
+		}
+		if = {
+			limit = {
+				NOT = { has_country_flag = ENG_demand_treaty_compliance }
+				original_tag = USA 
+				naval_strength_comparison = {
+					other = ENG
+					ratio > 0.8
+					sub_unit_def_weights = {
+						super_carrier = 1
+						fleet_carrier = 0.75
+						armored_carrier = 0.75
+						light_carrier = 0.25
+						battleship = 1
+						battle_cruiser = 1
+						large_cruiser = 0.75
+						heavy_cruiser = 0.25
+						pocket_battleship = 0.25
+					}
+				}
+				NOT = { is_in_faction_with = ENG }
+				NOT = { has_war_with = ENG }
+			}
+			
+			set_country_flag = ENG_demand_treaty_compliance
+			ENG = {
+				activate_targeted_decision = {
+					target = PREV
+					decision = ENG_demand_treaty_compliance
+				}
+			}
+		}
+		else_if = {
+			limit = {
+				NOT = { has_country_flag = ENG_demand_treaty_compliance }
+				original_tag = JAP 
+				NOT = { original_tag = USA }
+				naval_strength_comparison = {
+					other = ENG
+					ratio > 0.6
+					sub_unit_def_weights = {
+						super_carrier = 1
+						fleet_carrier = 0.75
+						armored_carrier = 0.75
+						light_carrier = 0.25
+						battleship = 1
+						battle_cruiser = 1
+						large_cruiser = 0.75
+						heavy_cruiser = 0.25
+						pocket_battleship = 0.25
+					}
+				}
+				NOT = { is_in_faction_with = ENG }
+				NOT = { has_war_with = ENG }
+			}
+			
+			set_country_flag = ENG_demand_treaty_compliance
+			ENG = {
+				activate_targeted_decision = {
+					target = PREV
+					decision = ENG_demand_treaty_compliance
+				}
+			}
+		}
+		else_if = {
+			limit = {
+				NOT = { has_country_flag = ENG_demand_treaty_compliance }
+				NOT = { original_tag = USA }
+				NOT = { original_tag = JAP }
+				naval_strength_comparison = {
+					other = ENG
+					ratio > 0.2
+					sub_unit_def_weights = {
+						super_carrier = 1
+						fleet_carrier = 0.75
+						armored_carrier = 0.75
+						light_carrier = 0.25
+						battleship = 1
+						battle_cruiser = 1
+						large_cruiser = 0.75
+						heavy_cruiser = 0.25
+						pocket_battleship = 0.25
+					}
+				}
+				NOT = { is_in_faction_with = ENG }
+				NOT = { has_war_with = ENG }
+			}
+			
+			set_country_flag = ENG_demand_treaty_compliance
+			ENG = {
+				activate_targeted_decision = {
+					target = PREV
+					decision = ENG_demand_treaty_compliance
+				}
+			}
+		}
+	}
+	
+}

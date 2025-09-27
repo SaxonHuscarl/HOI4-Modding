@@ -1,0 +1,501 @@
+
+
+shared_focus = {
+	id = ANZAC_treaty
+	icon = GFX_goal_generic_parliament_constitution
+	x = 35
+	y = 0
+	search_filters = { FOCUS_FILTER_POLITICAL }
+	offset = {
+		x = -16
+		y = 8
+		trigger = {
+			tag = NZL
+		}
+	}
+	Available = {
+		NZL = {
+			is_in_faction_with = AST
+		}
+		custom_trigger_tooltip = {
+			tooltip = anzac_started
+			not = { has_country_flag = treaty_started }
+		}
+		hidden_trigger = {
+			not = { has_country_flag = treaty_started }
+		}
+			
+	}
+	select_effect = {
+		IF = {
+			limit = {
+				tag = NZL
+			}
+			
+			AST = {
+				set_country_flag = treaty_started
+			}
+		}
+		else = {
+			NZL = {
+				set_country_flag = treaty_started
+			}
+		}
+    }
+	cost = 18 # Previously was: 17.5 
+	completion_reward = {
+		NZL = {
+			add_opinion_modifier = {
+				target = AST
+				modifier = AST_commitment_to_the_cause
+			}
+		}
+		AST = {
+			add_opinion_modifier = {
+				target = NZL
+				modifier = AST_commitment_to_the_cause
+			}
+		}
+		if = {
+			limit = {
+				tag = AST
+			}
+			NZL = {
+				unlock_national_focus = ANZAC_treaty
+			}
+		}
+		else = {
+			AST = {
+				unlock_national_focus = ANZAC_treaty
+			}
+		}
+	}
+}
+joint_focus = {
+	id = ANZAC_army
+	icon = GFX_focus_anzac_compromise
+	prerequisite = { focus = ANZAC_treaty }
+	x = -3
+	y = 1
+	relative_position_id = ANZAC_treaty
+	search_filters = { FOCUS_FILTER_WAR_SUPPORT }
+	Available = {		
+	}
+	cost = 60 
+	completion_reward = {
+		add_war_support = 0.08
+	}
+}
+joint_focus = {
+	id = ANZAC_drills
+	icon = GFX_goal_military_training
+	prerequisite = { focus = ANZAC_army }
+	search_filters = { FOCUS_FILTER_CP }
+
+	x = 0
+	y = 1
+	relative_position_id = ANZAC_army
+	cost = 56 # Previously was: 56.0 
+
+	completion_reward_joint_member = {
+		add_command_power = 10
+	}
+	completion_reward_joint_originator = {
+		add_command_power = 20
+	}
+
+}
+joint_focus = {
+	id = ANZAC_flight
+	icon = GFX_air_factories
+	prerequisite = { focus = ANZAC_drills }
+	mutually_exclusive = { focus = ANZAC_ground }
+	search_filters = { FOCUS_FILTER_AIRFORCE }
+
+	x = -1
+	y = 1
+	relative_position_id = ANZAC_drills
+	cost = 63 # Previously was: 63.0 
+
+	completion_reward = {
+		add_tech_bonus = {
+			name = nav_bomber_bonus
+			bonus = 0.15
+			ahead_reduction = 1
+			uses = 1
+			category = naval_bomber
+		}
+		add_tech_bonus = {
+			name =  air_doc_bonus
+			bonus = 0.1
+			uses = 1
+			category = air_doctrine
+		}
+		capital_scope = {
+			add_building_construction = {
+				type = air_base
+				level = 1
+				instant_build = yes
+			}
+		}
+	}
+}
+joint_focus = {
+	id = ANZAC_ground
+	icon = GFX_goal_improve_the_support
+	prerequisite = { focus = ANZAC_drills }
+	mutually_exclusive = { focus = ANZAC_flight }
+	search_filters = { FOCUS_FILTER_ARMY }
+
+	x = 1
+	y = 1
+	relative_position_id = ANZAC_drills
+	cost = 63 # Previously was: 63.0 
+
+	completion_reward = {
+		add_tech_bonus = {
+			name = infantry_weapons_bonus
+			bonus = 0.15
+			uses = 1
+			category = infantry_weapons
+			category = artillery
+		}
+		add_tech_bonus = {
+			name = land_doc_bonus
+			bonus = 0.1
+			uses = 1
+			category = land_doctrine
+		}
+	}
+}
+joint_focus = {
+	id = ANZAC_sing
+	icon = GFX_goal_fortify_city_AA
+	prerequisite = { focus = ANZAC_flight focus = ANZAC_ground }
+	search_filters = { FOCUS_FILTER_FORTIFICATION }
+	Available = {
+		threat > 0.2
+	}
+	x = 0
+	y = 2
+	relative_position_id = ANZAC_drills
+	cost = 84 # Previously was: 84.0 
+	completion_reward = {
+		add_ideas = ANZAC_Command
+	}
+
+	completion_reward_joint_originator = {
+		IF = {
+			limit = {
+				#singapore
+				336 = {
+					CONTROLLER = {
+						OR = {
+							tag = ROOT
+							is_in_faction_with = ROOT
+						}
+					}
+				}
+			}
+			336 = {
+				add_building_construction = {
+					type = anti_air_building
+					level = 1					
+					instant_build = yes
+				}
+			}
+		}
+		IF = {
+			limit = {
+				#naru
+				725 = {
+					CONTROLLER = {
+						OR = {
+							tag = ROOT
+							is_in_faction_with = ROOT
+						}
+					}
+				}
+			}
+			725 = {
+				add_building_construction = {
+					type = coastal_bunker
+					province = 13038
+					level = 1					
+					instant_build = yes
+				}
+			}
+		}
+		IF = {
+			limit = {
+				#new Cal
+				635 = {
+					CONTROLLER = {
+						OR = {
+							tag = ROOT
+							is_in_faction_with = ROOT
+						}
+					}
+				}
+			}
+			635 = {
+				add_building_construction = {
+					type = coastal_bunker
+					province = 4268
+					level = 1					
+					instant_build = yes
+				}
+				add_building_construction = {
+					type = anti_air_building
+					level = 1					
+					instant_build = yes
+				}
+			}
+		}
+	
+	}
+}
+joint_focus = {
+	id = ANZAC_museum
+	icon = GFX_goal_supremacy_of_will
+	prerequisite = { focus = ANZAC_treaty }
+	search_filters = { FOCUS_FILTER_POLITICAL }
+	x = -1
+	y = 1
+	relative_position_id = ANZAC_treaty
+	cost = 49 # Previously was: 49.0 
+
+	completion_reward = {
+		add_timed_idea = {
+			idea = ANZAC_art
+			days = 256
+		}
+		hidden_effect = {
+			country_event = { id = australia.26 days = 256 }
+		}
+	}
+}
+joint_focus = {
+	id = ANZAC_sci
+	icon = GFX_goal_research_blue_cogs
+	prerequisite = { focus = ANZAC_museum }
+	search_filters = { FOCUS_FILTER_RESEARCH }
+	x = -1
+	y = 2
+	relative_position_id = ANZAC_treaty
+	cost = 49 # Previously was: 49.0
+	completion_reward_joint_member = {
+		add_research_slot = 1
+		add_research_centre = yes
+		SLOT:industry_folder = yes
+	}
+	completion_reward_joint_originator = {
+		add_research_slot = 1
+		add_research_centre = yes
+		SLOT:industry_folder = yes
+		SLOT:raw_materials_folder = yes
+	}
+}
+joint_focus = {
+	id = ANZAC_antartic
+	icon = GFX_focus_un_7_dec_1946
+	prerequisite = { focus = ANZAC_sci }
+	search_filters = { FOCUS_FILTER_RESEARCH  FOCUS_FILTER_POLITICAL }
+	Available = {
+		has_dlc = "Waking the Tiger"
+		threat < 0.95
+	}
+	x = 0
+	y = 3
+	relative_position_id = ANZAC_museum
+	cost = 43 # Previously was: 43.4 
+
+	completion_reward_joint_originator = {
+		add_threat = -1
+	}
+	completion_reward = {
+		add_timed_idea = {
+			idea = ANZAC_ant
+			days = 150
+		}
+		hidden_effect = {
+			country_event = { id = australia.27 days = 300 }
+		}
+
+	}
+}
+joint_focus = {
+	id = ANZAC_people
+	icon = GFX_Passenger_Cruiser
+	prerequisite = { focus = ANZAC_treaty }
+	search_filters = { FOCUS_FILTER_MANPOWER }
+
+	x = 1
+	y = 1
+	relative_position_id = ANZAC_treaty
+	cost = 54 # Previously was: 53.9 
+
+	completion_reward = {
+		add_ideas = ANZAC_ppl
+	}
+}
+joint_focus = {
+	id = ANZAC_trade
+	icon = GFX_goal_economic_cooperation
+	prerequisite = { focus = ANZAC_people }
+	search_filters = { FOCUS_FILTER_POLITICAL }
+
+	x = 0
+	y = 1
+	relative_position_id = ANZAC_people
+	cost = 52 # Previously was: 52.5 
+
+	completion_reward = {
+		if = {
+			limit = {
+				tag = NZL
+			}
+			add_opinion_modifier = {
+				target = AST
+				modifier = trade_partner
+			}
+		}
+		else = {
+			add_opinion_modifier = {
+				target = NZL
+				modifier = trade_partner
+			}
+		}
+	}
+}
+joint_focus = {
+	id = ANZAC_develop
+	icon = GFX_focus_generic_population_growth
+	prerequisite = { focus = ANZAC_trade }
+	search_filters = { FOCUS_FILTER_INDUSTRY }
+
+	x = -1
+	y = 1
+	relative_position_id = ANZAC_trade
+	cost = 46 # Previously was: 46.199999999999996 
+
+	completion_reward = {
+		random_owned_controlled_state  = {
+			add_extra_state_shared_building_slots = 1
+		}
+	}
+}
+joint_focus = {
+	id = ANZAC_econ
+	icon = GFX_Old_Train
+	prerequisite = { focus = ANZAC_trade }
+	search_filters = { FOCUS_FILTER_INDUSTRY }
+	x = 1
+	y = 1
+	relative_position_id = ANZAC_trade
+	cost = 32 # Previously was: 31.5 
+	completion_reward = {
+		random_owned_controlled_state  = {
+			add_building_construction = {
+				type = infrastructure
+				level = 1					
+				instant_build = yes
+			}
+		}
+	}
+}
+joint_focus = {
+	id = ANZAC_fac
+	icon = GFX_goal_tax_reform
+	prerequisite = { focus = ANZAC_econ }
+	prerequisite = { focus = ANZAC_develop }
+	search_filters = { FOCUS_FILTER_INDUSTRY }
+	Available = {
+		NZL = {
+			is_in_depression = no			
+		}
+		AST = {
+			is_in_depression = no
+		}
+	}
+	x = 0
+	y = 2
+	relative_position_id = ANZAC_trade
+	cost = 65 # Previously was: 65.10000000000001
+	completion_reward_joint_originator = {
+		hidden_effect = {
+			country_event = { id = nzl.12 days = 180 random = 3648 } #6 month random
+		}
+	}	
+	completion_reward = {
+		add_offsite_building = { type = industrial_complex level = 1 }
+	}
+}
+joint_focus = {
+	id = ANZAC_navy
+	icon = GFX_goal_upgrade_ships
+	prerequisite = { focus = ANZAC_treaty }
+	search_filters = { FOCUS_FILTER_NAVY }
+	x = 3
+	y = 1
+	relative_position_id = ANZAC_treaty
+	cost = 35 # Previously was: 35.0 
+	completion_reward = {
+		navy_experience = 25
+	}
+}
+joint_focus = {
+	id = ANZAC_dock
+	icon = GFX_goal_coast_industry
+	prerequisite = { focus = ANZAC_navy }
+	search_filters = { FOCUS_FILTER_NAVY }
+	x = 0
+	y = 1
+	relative_position_id = ANZAC_navy
+	cost = 35 # Previously was: 35.0 
+	completion_reward = {
+		random_owned_controlled_state  = {
+			limit = {
+				is_coastal = yes
+				NOT = { has_state_category = tiny_island }
+				NOT = { has_state_category = small_island }
+			}
+			add_extra_state_shared_building_slots = 1
+			add_building_construction = {
+				type = shipyard
+				level = 1					
+				instant_build = yes
+			}
+		}
+	}
+}
+joint_focus = {
+	id = ANZAC_sea
+	icon = GFX_focus_generic_coastal_fort
+	prerequisite = { focus = ANZAC_dock }
+	prerequisite = { focus = ANZAC_sing }
+	search_filters = { FOCUS_FILTER_NAVY }
+	Available = {
+		threat > 0.5
+	}
+	x = 0
+	y = 3
+	relative_position_id = ANZAC_dock
+	cost = 105 # Previously was: 105.0 
+	completion_reward = {
+		add_ideas = ANZAC_sea_patrol
+		random_owned_controlled_state  = {
+			limit = {
+				is_coastal = yes
+				NOT = { has_state_category = tiny_island }
+				NOT = { has_state_category = small_island }
+			}
+			add_extra_state_shared_building_slots = 1
+			add_building_construction = {
+				type = dockyard
+				level = 1					
+				instant_build = yes
+			}
+		}
+	}
+}

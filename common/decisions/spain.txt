@@ -1,0 +1,2698 @@
+
+spanish_civil_war = {
+### Foreign involvement
+	## German Operations (most of the german help is done via events)
+    GER_franco_help = {
+		allowed = {
+			tag = GER
+		}
+        available = {
+            has_global_flag = franco_saved
+        }
+        activation = {
+			has_global_flag = spanish_civil_war
+			MOR = {
+				has_idea = MOR_coup
+			}
+        }
+		cosmetic_tag = SPA
+        is_good = no
+        days_mission_timeout = 25
+		fire_only_once = yes
+        timeout_effect = {
+		
+            custom_effect_tooltip = GER_franco_stuck
+			hidden_effect = {
+				random_list = {
+					50 = {
+						if = {
+							limit = {
+								SPR = {
+									has_government = fascism
+								}
+							}
+							MOR = {
+								set_nationality = { target_country = SPR character = SPR_francisco_franco } 
+							}
+						}
+						else = {
+							MOR = {
+								set_nationality = { target_country = D01 character = SPR_francisco_franco }
+							}
+						}						
+					}
+					50 = {
+						if = {
+							limit = {
+								SPR = {
+									has_government = fascism
+								}
+							}
+							SPR = {
+								country_event = { id = spain.108 days = 1 }
+							}
+						}
+						else = {
+							D01 = {
+								country_event = { id = spain.108 days = 1 }
+							}
+						}
+					}
+				}
+			}
+        }
+        complete_effect = {
+			add_tech_bonus = {
+				name = transport_bonus
+				bonus = 0.20
+				uses = 1
+				technology = tech_transport_he_111_h20r2_equipment_1
+			}
+        }
+    }
+
+	GER_franco = {
+		allowed = {
+			tag = GER
+		}
+		cosmetic_tag = SPA
+        available = {
+			if = {
+				limit = {
+					is_ai = no
+				}
+				command_power > 24.9
+				has_equipment = { #on the map does not work with the removal later
+					transport_plane_equipment > 9
+				}
+			}
+        }
+		custom_cost_trigger = {
+			if = {
+				limit = {
+					is_ai = no
+				}
+				command_power > 24.9
+			}
+		}
+		custom_cost_text = cp_atleast_25
+		
+        visible = {
+			SPR = {
+				has_civil_war = yes
+			}
+			MOR = {
+				has_idea = MOR_coup
+			}
+        }
+		ai_will_do = {
+			factor = 100
+		}
+		fire_only_once = yes
+		days_remove = 5
+		complete_effect = {
+			set_global_flag = franco_saved
+			add_equipment_to_stockpile = {
+				type = transport_plane_equipment
+				amount = -10
+				producer = GER
+			}
+			hidden_effect = {
+				add_command_power = -25
+			}
+		}
+		remove_effect = { 
+			air_experience = 25
+			custom_effect_tooltip = GER_franco_TT
+			hidden_effect = {
+				if = {
+					limit = {
+						is_ai = no 
+					}
+					random_list = {
+						10 = {
+							add_equipment_to_stockpile = {
+								type = transport_plane_equipment
+								amount = 10
+								producer = GER
+							}
+						}
+						10 = {
+							add_equipment_to_stockpile = {
+								type = transport_plane_equipment
+								amount = 9
+								producer = GER
+							}
+						}
+						10 = {
+							add_equipment_to_stockpile = {
+								type = transport_plane_equipment
+								amount = 8
+								producer = GER
+							}
+						}
+						10 = {
+							add_equipment_to_stockpile = {
+								type = transport_plane_equipment
+								amount = 7
+								producer = GER
+							}
+						}
+						10 = {
+							add_equipment_to_stockpile = {
+								type = transport_plane_equipment
+								amount = 6
+								producer = GER
+							}
+						}
+						10 = {
+							add_equipment_to_stockpile = {
+								type = transport_plane_equipment
+								amount = 5
+								producer = GER
+							}
+						}
+						10 = {
+							add_equipment_to_stockpile = {
+								type = transport_plane_equipment
+								amount = 4
+								producer = GER
+							}
+						}
+						10 = {
+							add_equipment_to_stockpile = {
+								type = transport_plane_equipment
+								amount = 3
+								producer = GER
+							}
+						}
+						10 = {
+							add_equipment_to_stockpile = {
+								type = transport_plane_equipment
+								amount = 2
+								producer = GER
+							}
+						}
+						10 = {
+							add_equipment_to_stockpile = {
+								type = transport_plane_equipment
+								amount = 1
+								producer = GER
+							}
+						}
+					}
+				}
+				if = {
+					limit = {
+						SPR = {
+							has_government = fascism
+						}
+					}
+					reverse_add_opinion_modifier = {
+						target = SPR
+						modifier = temp_boost
+					}
+					MOR = {
+						set_nationality = { target_country = SPR character = SPR_francisco_franco }
+					}
+				}
+				else = {
+					reverse_add_opinion_modifier = {
+						target = D01
+						modifier = temp_boost
+					}
+					MOR = {
+						set_nationality = { target_country = D01 character = SPR_francisco_franco }
+					}
+				}	
+
+			}
+		}
+	}
+			
+	GER_rugen = {
+		allowed = {
+			always = no #fired via GER_condor_legion focus
+		}
+        available = {
+			command_power > 24.9
+			#has_completed_focus = GER_condor_legion
+			172 = { is_controlled_by = SPR }
+        }
+		custom_cost_trigger = {
+			command_power > 24.9
+		}
+		custom_cost_text = cp_atleast_25
+		highlight_states = {
+			highlight_state_targets = {
+				state = 172
+			}
+		}
+		
+        visible = {
+			SPR = {
+				has_civil_war = yes
+			}
+        }
+		ai_will_do = {
+			factor = 100
+		}
+		days_remove = 5
+		complete_effect = {
+			hidden_effect = {
+				add_command_power = -25
+			}
+		}
+		remove_effect = { 
+			air_experience = 25
+			AST = {
+				add_opinion_modifier = {
+					target = GER
+					modifier = protest_action_light
+				}
+			}
+			ENG = {
+				add_opinion_modifier = {
+					target = GER
+					modifier = protest_action_light
+				}
+			}
+			USA = {
+				add_opinion_modifier = {
+					target = GER
+					modifier = protest_action_light
+				}
+			}
+			custom_effect_tooltip = GER_rugen_tt
+			hidden_effect = {
+				SPR = {
+					delete_unit_template_and_units = {
+						division_template = "Euzko Gudarostea"
+					}					
+				}
+				172 = {
+					add_manpower = -592
+					damage_building = {
+						type = infrastructure
+						damage = 5
+					}
+					damage_building = {
+						type = industrial_complex
+						damage = 2
+					}
+					damage_building = {
+						type = arms_factory
+						damage = 1
+					}
+				}
+				random_list = {
+					80 = { }
+					10 = {
+						SPR = {
+							add_offsite_building = { type = arms_factory level = -1 }
+							add_to_variable = { civil_war_mic = -1 }
+							clamp_variable = { var = civil_war_mic min = 0 }
+						}
+					}
+					7 = { 
+						add_ace = {
+							name = "Walter"
+							surname = "Stotz"
+							callsign = ""
+							type = bomber_good
+							is_female = no
+						}
+					}
+					2 = {
+						add_ace = {
+							name = "Walter"
+							surname = "Stotz"
+							callsign = ""
+							type = bomber_unique
+							is_female = no
+						}
+					}
+					1 = {
+						add_ace = {
+							name = "Walter"
+							surname = "Stotz"
+							callsign = ""
+							type = bomber_genius
+							is_female = no
+						}
+					}
+				}
+				
+				remove_targeted_decision = {
+					decision = GER_rugen
+					target = SPA
+				}
+			}
+		}
+	}
+	GER_ursula = {
+		allowed = {
+			tag = GER
+		}
+        available = {
+			command_power > 24.9
+			has_fuel > 100
+        }
+		custom_cost_trigger = {
+			command_power > 24.9
+		}
+		custom_cost_text = cp_atleast_25
+		
+		cosmetic_tag = SPR
+        visible = {
+			SPR = {
+				has_civil_war = yes
+			}
+        }
+		ai_will_do = {
+			factor = 75
+		}
+		days_remove = 31
+		fire_only_once = yes
+		modifier = {
+			experience_gain_navy = 0.25			
+		}
+		complete_effect = {
+			hidden_effect = {
+				add_command_power = -25
+			}
+			add_fuel = -100
+		}
+		remove_effect = {
+			navy_experience = 5
+			SPR = {
+				destroy_ships = {
+					type = nrm_ship_hull_submarine
+					count = 1
+				}
+				add_equipment_to_stockpile = {
+					type = convoy_1
+					amount = -15
+				}
+				
+			}
+		}		
+	}
+	##Ita Help
+
+	ROM_iron = {
+		allowed = {
+			tag = ROM
+		}
+        available = {
+			command_power > 24.9
+        }
+		custom_cost_trigger = {
+			command_power > 24.9
+		}
+		custom_cost_text = cp_atleast_25
+		
+        visible = {
+			has_government = fascism
+			SPR = {
+				has_civil_war = yes
+			}
+        }
+		cosmetic_tag = D01
+		ai_will_do = {
+			factor = 3
+		}
+		fire_only_once = yes
+		complete_effect = {
+			add_manpower = -3000
+			army_experience = 10
+			add_popularity = {
+				ideology = fascism
+				popularity = 0.03
+			}
+			hidden_effect = {
+				random_country_with_original_tag = {
+					original_tag_to_check = SPR
+					limit = {
+						or = {
+							has_government = fascism
+							has_government = neutrality
+							has_government = monarchism
+						}						
+					}
+					add_to_array = { volunteers_send = ROOT }
+					random_owned_controlled_state = {
+						create_unit = {
+							division = "name = \"Iron Guard\" division_template = \"Fascist Volunteers\" start_experience_factor = 0.05 start_equipment_factor = 1"
+							owner = PREV
+						}
+					}
+				}
+			}
+		}
+	}
+	IRE_duffy = {
+		allowed = {
+			tag = IRE
+		}
+        available = {
+			command_power > 24.9
+			has_completed_focus = IRE_magfort
+        }
+		custom_cost_trigger = {
+			command_power > 24.9
+		}
+		custom_cost_text = cp_atleast_25
+		
+        visible = {
+			SPR = {
+				has_civil_war = yes
+			}
+        }
+		ai_will_do = {
+			factor = 35
+		}
+		cosmetic_tag = SPA
+		fire_only_once = yes
+		complete_effect = {
+			add_manpower = -700
+			army_experience = 10
+			add_tech_bonus = {
+				name = land_doc_bonus
+				bonus = 0.15
+				uses = 1
+				category = ww1_doctrine
+			}			
+			add_popularity = {
+				ideology = neutrality
+				popularity = 0.03
+			}
+			add_popularity = {
+				ideology = fascism
+				popularity = 0.01
+			}
+			hidden_effect = {
+				random_country_with_original_tag = {
+					original_tag_to_check = SPR
+					limit = {
+						or = {
+							has_government = fascism
+							has_government = neutrality
+							has_government = monarchism
+						}						
+					}
+					add_to_array = { volunteers_send = ROOT }
+					random_owned_controlled_state = {
+						create_unit = {
+							division = "name = \"Irish Brigade\" division_template = \"Fascist Volunteers\" start_experience_factor = 0.00 start_equipment_factor = 0.1"
+							owner = PREV
+						}
+					}
+					add_opinion_modifier = {
+						target = IRE
+						modifier = small_increase
+					}
+				}
+			}
+		}
+	}
+	POR_supply = {
+		allowed = {
+			tag = POR
+		}
+        available = {
+			command_power > 24.9
+        }
+		custom_cost_trigger = {
+			command_power > 24.9
+		}
+		custom_cost_text = cp_atleast_25
+		
+        visible = {
+			SPR = {
+				has_civil_war = yes
+			}
+        }
+		ai_will_do = {
+			factor = 3
+		}
+		cosmetic_tag = SPA
+		fire_only_once = yes
+		complete_effect = {
+			171 = {
+				add_building_construction = {
+					type = infrastructure
+					level = 1
+					instant_build = yes
+				}
+			}
+			
+			add_to_array = { SPA.volunteers_send = ROOT }
+			POR = {
+				give_military_access = SPA
+				
+				add_relation_modifier = {
+					target = SPA
+					modifier = POR_send_volunteers_to_SPA
+				}
+			}
+			add_ai_strategy = { type = send_volunteers_desire id = SPA value = 2500 }
+			add_war_support = 0.05
+			add_popularity = {
+				ideology = fascism
+				popularity = 0.01
+			}
+			hidden_effect = {
+				add_command_power = -25
+				SPA = { ROOT_bypass_volunteer_ideology_for_THIS = yes }
+			}
+		}
+	}
+	SPR_war_vols_bad = {
+		allowed = {
+			or = {
+				tag = AUS
+				tag = HUN
+				tag = GER
+				tag = ITA
+			}
+		}
+		cancel_trigger = {
+			hidden_trigger = {
+				OR = {
+					has_country_flag = SPR_vol_stopped
+					check_variable = { civil_war_vols > 5 }
+					SPR = {
+						has_civil_war = no
+					}
+				}
+			}
+		}
+		#targets = { SPR }
+		selectable_mission = yes
+        activation = {
+			has_global_flag = spanish_civil_war
+			not = { has_country_flag = SPR_vol_stopped }
+        }
+        is_good = no
+        days_mission_timeout = 45
+		fire_only_once = no
+        timeout_effect = {
+			add_manpower = -500
+			random_country_with_original_tag = {
+				original_tag_to_check = SPR
+				limit = {
+					or = {
+						has_government = communism
+						has_government = liberalism
+						has_government = socialism
+					}
+				}
+				add_manpower = 500
+			}
+			hidden_effect = {
+				add_to_variable = { SPR_volunteer_strength = 5 }
+			}
+        }
+        complete_effect = {
+			add_political_power = SPR_volunteer_strength
+			add_popularity = {
+				ideology = communism
+				popularity = 0.02
+			}
+			add_popularity = {
+				ideology = socialism
+				popularity = 0.01
+			}
+			add_popularity = {
+				ideology = liberalism
+				popularity = 0.005
+			}
+			set_country_flag = SPR_vol_stopped
+        }
+		
+        visible = {
+			NOT = { 
+				has_country_flag = SPR_vol_stopped
+			}
+			SPR = {
+				has_civil_war = yes
+			}
+        }
+		ai_will_do = {
+			factor = 0
+			modifier = {
+				add = 25
+				IF = {
+					limit = {
+						OR = {
+							tag = AUS
+							tag = HUN
+						}
+						check_variable = { SPR_volunteer_strength > -45 }
+					}				
+				}
+			}
+			modifier = {
+				add = 25
+				IF = {
+					limit = {
+						OR = {
+							tag = ITA
+							tag = GER
+						}
+						check_variable = { SPR_volunteer_strength > -30 }
+					}					
+				}
+			}
+		}
+	}
+	SPR_war_vols = {
+		allowed = {
+			always = no #added manually
+			or = {
+				tag = SOV
+				tag = FRA
+				tag = USA
+				tag = ENG
+				tag = POL
+				tag = YUG
+				tag = CAN
+				tag = CHI
+			}
+		}
+        available = {
+			command_power > 4.9
+        }
+		custom_cost_trigger = {
+			command_power > 4.9
+		}
+		custom_cost_text = cp_atleast_5
+		#targets = { SPR }
+		
+        visible = {
+			NOT = { 
+				has_country_flag = civil_war_sent 
+			}
+			SPR = {
+				has_civil_war = yes
+			}
+			has_war = no
+        }
+		ai_will_do = {
+			factor = 10
+			modifier = {
+				add = -10
+				check_variable = { aus_civil_war > 4 }
+			}
+			modifier = {
+				add = -10
+				check_variable = { fra_civil_war > 10 }
+			}
+		}
+		fire_only_once = no
+		days_re_enable = 45
+		complete_effect = {
+			add_manpower = -1000
+			army_experience = 2
+			add_popularity = {
+				ideology = communism
+				popularity = 0.02
+			}
+			add_popularity = {
+				ideology = socialism
+				popularity = 0.01
+			}
+			random_country_with_original_tag = {
+				original_tag_to_check = SPR
+				limit = {
+					or = {
+						has_government = communism
+						has_government = liberalism
+						has_government = socialism
+					}
+				}
+				#if = {
+				#	limit = { NOT = { is_in_array = { volunteers_send = ROOT } } }
+				#	add_to_array = { volunteers_send = ROOT }
+				#}
+				add_manpower = 1000
+				add_opinion_modifier = {
+					target = ROOT
+					modifier = volunteers_civil_war
+				}
+			}
+			hidden_effect = {
+				add_command_power = -5
+				IF = {
+					limit = {
+						tag = AUS
+					}
+					add_to_variable = { var = aus_civil_war value = 1 }
+				}
+				else_if = {
+					limit = {
+						tag = FRA
+					}
+					add_to_variable = { var = fra_civil_war value = 1 }
+				}
+				else = {
+					remove_targeted_decision = {
+						decision = SPR_war_vols
+						target = SPR
+					}
+				}
+			}
+		}
+	}
+	SPR_food_support = {
+		allowed = {
+			tag = ENG
+		}
+		icon = RAJ_famine
+		cosmetic_tag = SPR
+        available = {
+			custom_trigger_tooltip = {
+				tooltip = food_atleast_100_trigger
+				check_variable = { food > 100 }
+			}
+        }
+		custom_cost_trigger = {
+			check_variable = { food > 100 }
+		}
+		custom_cost_text = food_atleast_100
+        visible = {
+			has_global_flag = spanish_civil_war
+			has_country_flag = league_member
+			has_war = no
+			has_completed_focus = ENG_National
+        }
+		ai_will_do = {
+			factor = 0		
+		}
+		fire_only_once = no
+		days_remove = 50
+		days_re_enable = 15
+	
+		complete_effect = {
+			add_popularity = {
+				ideology = socialism
+				popularity = 0.01
+			}
+			add_political_power = 10
+			set_temp_variable = { food_sent = 25 }
+			custom_effect_tooltip = x_food_subtracted
+			hidden_effect = {
+				subtract_from_variable = { food = 25 }
+			}
+
+		}
+			
+		remove_effect = {
+			random_country_with_original_tag = {
+				original_tag_to_check = SPR
+				limit = {
+					or = {
+						has_government = communism
+						has_government = liberalism
+						has_government = socialism
+					}
+				}
+				set_temp_variable = { food_received = 20 }
+				custom_effect_tooltip = x_food_added
+				add_to_variable = { food = 20 }
+				add_stability = 0.05
+				add_opinion_modifier = {
+					target = ROOT
+					modifier = offered_support
+				}
+				add_to_variable = { var = lib_inf value = 5 tooltip = LIBERAL_INFLUENCE_INCREASE }
+				add_to_variable = { var = com_inf value = -2 tooltip = COMMUNIST_INFLUENCE_INCREASE }
+				add_to_variable = { var = ana_inf value = -1 tooltip = ANARCHIST_INFLUENCE_INCREASE }
+			}
+		}
+	}
+	SPR_medical_support = {
+		allowed = {
+			OR = {
+				tag = ENG
+				tag = FRA
+			}
+		}
+		icon = generic_fundraising
+		cosmetic_tag = SPR
+        available = {
+			has_equipment = {
+				support_equipment > 99
+			}
+        }
+		cost = 25
+        visible = {
+			has_global_flag = spanish_civil_war
+			has_country_flag = league_member
+			has_war = no
+			OR = {
+				has_completed_focus = ENG_National
+				has_completed_focus = FRA_arms
+			}
+        }
+		ai_will_do = {
+			factor = 0		
+		}
+		days_re_enable = 60
+	
+		complete_effect = {
+			add_popularity = {
+				ideology = socialism
+				popularity = 0.01
+			}
+			add_tech_bonus = {
+				name = medical_support
+				bonus = 0.05
+				uses = 1
+				category = medical_tech
+			}
+			random_country_with_original_tag = {
+				original_tag_to_check = SPR
+				limit = {
+					or = {
+						has_government = communism
+						has_government = liberalism
+						has_government = socialism
+					}
+				}
+				add_stability = 0.03
+				add_war_support = 0.02
+				add_opinion_modifier = {
+					target = ROOT
+					modifier = democratic_leanings_good_temp
+				}
+				add_to_variable = { var = lib_inf value = 5 tooltip = LIBERAL_INFLUENCE_INCREASE }
+				add_to_variable = { var = com_inf value = -3 tooltip = COMMUNIST_INFLUENCE_INCREASE }
+				add_to_variable = { var = ana_inf value = 1 tooltip = ANARCHIST_INFLUENCE_INCREASE }
+				random_army_leader = {
+					limit = { is_assigned = yes }
+					add_temporary_buff_to_units = {		
+						org_damage_multiplier = -0.10
+						war_support_reduction_on_damage = -0.02
+						days = 10
+						tooltip = medical_support
+					}
+
+					supply_units = 60
+				}
+				ROOT = {
+					send_equipment = {
+						equipment = support_equipment
+						amount = 100
+						target = PREV
+					}
+				}
+			}
+		}
+	}
+	SPR_feed_information = {
+		allowed = {
+			tag = ENG
+		}
+		icon = SWI_expand_covert_operations
+		cosmetic_tag = SPR
+        available = {
+			has_done_agency_upgrade = upgrade_operation_strengthen_society
+        }
+		cost = 50
+        visible = {
+			has_global_flag = spanish_civil_war
+			has_country_flag = league_member
+			has_war = no
+			has_completed_focus = ENG_National
+        }
+		ai_will_do = {
+			factor = 0		
+		}
+		fire_only_once = yes
+	
+		complete_effect = {
+			add_popularity = {
+				ideology = socialism
+				popularity = 0.01
+			}
+			random_country_with_original_tag = {
+				original_tag_to_check = SPR
+				limit = {
+					or = {
+						has_government = communism
+						has_government = liberalism
+						has_government = socialism
+					}
+				}
+				add_opinion_modifier = {
+					target = ROOT
+					modifier = backed_our_cause
+				}
+				add_to_variable = { var = lib_inf value = 6 tooltip = LIBERAL_INFLUENCE_INCREASE }
+				add_to_variable = { var = ana_inf value = 3 tooltip = ANARCHIST_INFLUENCE_INCREASE }
+				random_enemy_country = {
+					limit = {
+						original_tag = SPR
+					}
+					PREV.PREV.PREV = {
+						add_intel = {
+							target = PREV
+							civilian_intel = 15
+							army_intel = 20
+							navy_intel = 15
+							airforce_intel = 10
+						}
+						add_intel = {
+							target = GER
+							civilian_intel = 0
+							army_intel = 4
+							navy_intel = 0
+							airforce_intel = 2
+						}
+					}
+					ENG = {
+						add_intel = {
+							target = PREV
+							civilian_intel = 15
+							army_intel = 20
+							navy_intel = 15
+							airforce_intel = 10
+						}	
+						add_intel = {
+							target = GER
+							civilian_intel = 0
+							army_intel = 4
+							navy_intel = 0
+							airforce_intel = 2
+						}
+					}
+				}
+			}
+		}
+	}
+	SPR_CIV_support = {
+		allowed = {
+			always = no
+			
+		}
+        available = {
+			hidden_trigger = { command_power > 9.9 }
+        }
+		custom_cost_trigger = {
+			command_power > 9.9
+		}
+		custom_cost_text = cp_atleast_10
+        visible = {
+			has_global_flag = spanish_civil_war
+			has_war = no
+			OR = {
+				has_government = socialism
+				has_government = conservatism
+				has_government = liberalism
+				has_government = communism
+				has_government = neutrality
+			}
+        }
+		ai_will_do = {
+			factor = 0
+			modifier = {
+				add = 300
+				tag = MEX
+			}
+			modifier = {
+				add = 2
+				tag = FRA
+			}
+			modifier = {
+				add = 5
+				tag = USA
+			}
+		}
+		fire_only_once = no
+		days_remove = 100
+		modifier = {
+			civilian_factory_use = 1
+			war_support_weekly = 0.002
+			country_resource_cost_steel = 10
+		}
+		targeted_modifier = {
+			tag = SPR
+			country_resource_steel = 10
+		}	
+		complete_effect = {
+			add_popularity = {
+				ideology = communism
+				popularity = 0.02
+			}
+			add_popularity = {
+				ideology = socialism
+				popularity = 0.01
+			}
+			add_political_power = 10
+			random_country_with_original_tag = {
+				original_tag_to_check = SPR
+				limit = {
+					or = {
+						has_government = communism
+						has_government = liberalism
+						has_government = socialism
+					}
+				}
+				if = {
+					limit = { NOT = { is_in_array = { volunteers_send = ROOT } } }
+					add_to_array = { volunteers_send = ROOT }
+				}
+				add_offsite_building = { type = industrial_complex level = 1 }
+				add_to_variable = { civil_war_ic = 1 }
+				add_opinion_modifier = {
+					target = ROOT
+					modifier = offered_support
+				}
+			}
+			hidden_effect = {
+				add_command_power = -10
+			}
+			if = {
+				limit = {
+					tag = USA
+				}
+				custom_effect_tooltip = mtg_usa_house_tiny_opposition_tt
+				add_to_variable = { representatives_support = -1 }
+				clamp_variable = { var = representatives_support max = representatives_total min = 0 }
+				USA_recalc_congress_icon_frames = yes	
+			}
+		}
+			
+		remove_effect = {
+			hidden_effect = {
+				remove_targeted_decision = {
+					decision = SPR_CIV_support
+					target = FROM
+				}
+			}
+		}
+	}
+	SPR_MIL_support = {
+		allowed = {
+			always = no
+		}
+        available = {
+			hidden_trigger = { command_power > 24.9 }
+        }
+		custom_cost_trigger = {
+			command_power > 24.9
+		}
+		custom_cost_text = cp_atleast_25
+        visible = {
+			has_global_flag = spanish_civil_war
+			has_war = no
+			OR = {
+				has_government = socialism
+				has_government = conservatism
+				has_government = liberalism
+				has_government = communism
+				has_government = neutrality
+			}
+        }
+		ai_will_do = {
+			factor = 0
+			modifier = {
+				add = 60
+				tag = MEX
+			}
+			modifier = {
+				add = 20
+				tag = SOV
+			}
+			modifier = {
+				add = 20
+				tag = EST
+			}
+			modifier = {
+				add = 40
+				tag = POL
+			}
+			modifier = {
+				add = 20
+				tag = CZE
+				not = { has_government = fascism }
+			}
+		}
+		fire_only_once = no
+		days_remove = 100
+		modifier = {
+			civilian_factory_use = 1
+			experience_gain_army = 0.1
+		}
+		complete_effect = {
+			add_popularity = {
+				ideology = communism
+				popularity = 0.02
+			}
+			add_popularity = {
+				ideology = socialism
+				popularity = 0.01
+			}
+			random_country_with_original_tag = {
+				original_tag_to_check = SPR
+				limit = {
+					or = {
+						has_government = communism
+						has_government = liberalism
+						has_government = socialism
+					}
+				}
+				if = {
+					limit = { NOT = { is_in_array = { volunteers_send = ROOT } } }
+					add_to_array = { volunteers_send = ROOT }
+				}
+				add_offsite_building = { type = arms_factory level = 1 }
+				add_to_variable = { civil_war_mic = 1 }
+				add_opinion_modifier = {
+					target = ROOT
+					modifier = offered_support
+				}
+			}
+			hidden_effect = {
+				add_command_power = -25
+			}
+			if = {
+				limit = {
+					tag = USA
+				}
+				custom_effect_tooltip = mtg_usa_house_tiny_opposition_tt
+				add_to_variable = { representatives_support = -1 }
+				clamp_variable = { var = representatives_support max = representatives_total min = 0 }
+				USA_recalc_congress_icon_frames = yes	
+			}
+		}
+		remove_effect = {
+			hidden_effect = {
+				remove_targeted_decision = {
+					decision = SPR_MIL_support
+					target = FROM
+				}
+			}
+		}
+	}
+	SPA_CIV_support = {
+		allowed = {
+			always = no
+		}
+        available = {
+			hidden_trigger = { command_power > 9.9 }
+        }
+		custom_cost_trigger = {
+			command_power > 9.9
+		}
+		custom_cost_text = cp_atleast_10
+        visible = {
+			has_global_flag = spanish_civil_war
+			has_war = no
+			OR = {
+				has_government = conservatism
+				has_government = fascism
+				has_government = neutrality
+				has_government = monarchism
+			}
+        }
+		ai_will_do = {
+			factor = 0
+			modifier = {
+				add = 30
+				tag = ITA
+			}
+			modifier = {
+				add = 30
+				tag = GER
+			}
+		}
+		fire_only_once = no
+		days_remove = 100
+		modifier = {
+			civilian_factory_use = 1
+			war_support_weekly = 0.002
+			country_resource_cost_steel = 10
+		}
+		targeted_modifier = {
+			tag = SPA
+			country_resource_steel = 10
+		}	
+		complete_effect = {
+			add_popularity = {
+				ideology = fascism
+				popularity = 0.02
+			}
+			add_popularity = {
+				ideology = monarchism
+				popularity = 0.01
+			}
+			random_country_with_original_tag = {
+				original_tag_to_check = SPR
+				limit = {
+					or = {
+						has_government = fascism
+						has_government = neutrality
+						has_government = monarchism
+					}				
+				}
+				if = {
+					limit = { NOT = { is_in_array = { volunteers_send = ROOT } } }
+					add_to_array = { volunteers_send = ROOT }
+				}
+				add_offsite_building = { type = industrial_complex level = 1 }
+				add_to_variable = { civil_war_ic = 1 }
+				add_opinion_modifier = {
+					target = ROOT
+					modifier = offered_support
+				}
+			}
+			hidden_effect = {
+				add_command_power = -10
+			}
+		}
+		remove_effect = {
+			hidden_effect = {
+				remove_targeted_decision = {
+					decision = SPA_CIV_support
+					target = FROM
+				}
+			}
+		}
+	}
+	SPA_MIL_support = {
+		allowed = {
+			always = no
+		}
+        available = {
+			hidden_trigger = { command_power > 24.9 }
+        }
+		custom_cost_trigger = {
+			command_power > 24.9
+		}
+		custom_cost_text = cp_atleast_25
+        visible = {
+			has_global_flag = spanish_civil_war
+			has_war = no
+			OR = {
+				has_government = conservatism
+				has_government = fascism
+				has_government = neutrality
+				has_government = monarchism
+			}
+        }
+		ai_will_do = {
+			factor = 0
+			modifier = {
+				add = 30
+				tag = ITA
+			}
+			modifier = {
+				add = 20
+				tag = GER
+			}
+		}
+		fire_only_once = no
+		days_remove = 100
+		modifier = {
+			civilian_factory_use = 1
+			experience_gain_army = 0.1
+		}
+		complete_effect = {
+			add_popularity = {
+				ideology = fascism
+				popularity = 0.02
+			}
+			add_popularity = {
+				ideology = monarchism
+				popularity = 0.01
+			}
+			random_country_with_original_tag = {
+				original_tag_to_check = SPR
+				limit = {
+					or = {
+						has_government = fascism
+						has_government = neutrality
+						has_government = monarchism
+					}				
+				}
+				if = {
+					limit = { NOT = { is_in_array = { volunteers_send = ROOT } } }
+					add_to_array = { volunteers_send = ROOT }
+				}
+				add_offsite_building = { type = arms_factory level = 1 }
+				add_to_variable = { civil_war_mic = 1 }
+				add_opinion_modifier = {
+					target = ROOT
+					modifier = offered_support
+				}
+			}
+			hidden_effect = {
+				add_command_power = -25
+			}
+		}
+		remove_effect = {
+			hidden_effect = {
+				remove_targeted_decision = {
+					decision = SPA_MIL_support
+					target = FROM
+				}
+			}
+		}
+	}
+	FRA_escadrile = {
+		allowed = {
+			always = no #added manually
+		}
+        available = {
+			hidden_trigger = { command_power > 24.9 }
+        }
+		custom_cost_trigger = {
+			command_power > 24.9
+		}
+		custom_cost_text = cp_atleast_25
+        visible = {
+			SPR = {
+				has_civil_war = yes
+			}
+        }
+		ai_will_do = {
+			factor = 30
+		}
+		fire_only_once = no
+		days_remove = 50
+		complete_effect = {
+			add_manpower = -100
+			add_popularity = {
+				ideology = communism
+				popularity = 0.02
+			}
+			add_popularity = {
+				ideology = socialism
+				popularity = 0.01
+			}
+			hidden_effect = {
+				add_command_power = -25
+			}
+		}
+		
+		remove_effect = {
+			air_experience = 12
+			random_country_with_original_tag = {
+				original_tag_to_check = SPR
+				limit = {
+					or = {
+						has_government = communism
+						has_government = liberalism
+						has_government = socialism
+					}
+				}
+				if = {
+					limit = { NOT = { is_in_array = { volunteers_send = ROOT } } }
+					add_to_array = { volunteers_send = ROOT }
+				}
+				air_experience = 50
+				add_war_support = 0.05
+				add_opinion_modifier = {
+					target = FRA
+					modifier = offered_support
+				}
+				add_equipment_to_stockpile = {
+					type = d_371_fighter_equipment_1
+					amount = 10
+					producer = FRA
+				}
+				add_equipment_to_stockpile = {
+					type = nid_62_fighter_equipment_2
+					amount = 20
+					producer = FRA
+				}
+				add_equipment_to_stockpile = {
+					type = nid_62_fighter_equipment_3
+					amount = 20
+					producer = FRA
+				}
+			}
+			
+			hidden_effect = {
+				remove_targeted_decision = {
+					decision = FRA_escadrile
+					target = FROM
+				}
+			}
+		}
+	}
+	## Spanish stuff
+	SPR_sab = {
+		allowed = {
+			or = {
+				original_tag = SPR
+				tag = MOR				
+			}
+		}
+        available = {
+			hidden_trigger = { command_power > 4.9 }
+        }
+		custom_cost_trigger = {
+			command_power > 4.9
+		}
+		fixed_random_seed = no
+		custom_cost_text = cp_atleast_5
+        visible = {
+			has_civil_war = yes
+        }
+		ai_will_do = {
+			factor = 30
+		}
+		fire_only_once = no
+		days_remove = 5
+		days_re_enable = 45
+		complete_effect = {
+			add_manpower = -15
+			hidden_effect = {
+				add_command_power = -5
+			}
+		}
+		remove_effect = { 
+			if = {
+				limit = {
+					tag = MOR
+				}
+				add_autonomy_ratio = {
+					value = 10
+					localization = MOR_war_aid
+				}
+			}
+			random_enemy_country = {
+				random_owned_controlled_state = {
+					limit = {
+						is_capital = no
+					}
+					random_list = {
+						83 = {
+							damage_building = {
+								type = infrastructure
+								damage = 1
+							}
+						}
+						7 = {		
+							create_unit = {
+								division = "name = \"Angry Mob\" division_template = \"Militia\" start_experience_factor = 0.01 start_equipment_factor = 0.5" 
+								owner = FROM
+								allow_spawning_on_enemy_provs = yes
+							}
+							modifier = {
+								factor = 0
+								state = 876
+							}
+						}
+						5 = {
+							add_manpower = -100
+						}
+						3 = {
+							damage_building = {
+								type = industrial_complex
+								damage = 1
+							}
+						}
+						2 = {
+							damage_building = {
+								type = arms_factory
+								damage = 1
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+	SPA_bombs = {
+		allowed = {
+			original_tag = SPR
+		}
+        available = {
+			hidden_trigger = { command_power > 9.9 }
+			has_volunteers_amount_from = {
+				tag = ITA
+				count > 0
+			}
+        }
+		fixed_random_seed = no
+		custom_cost_trigger = {
+			command_power > 9.9
+		}
+		custom_cost_text = cp_atleast_10
+		cosmetic_tag = SPR
+        visible = {
+			has_civil_war = yes
+			OR = {
+				has_government = fascism
+				has_government = neutrality
+				has_government = monarchism
+			}
+        }
+		ai_will_do = {
+			factor = 30
+		}
+		fire_only_once = no
+		days_remove = 5
+		days_re_enable = 35
+		complete_effect = {
+			hidden_effect = {
+				add_command_power = -10
+			}
+		}
+		remove_effect = {
+			air_experience = 1
+			ITA = {
+				air_experience = 2
+			}
+			random_enemy_country = {
+				add_equipment_to_stockpile = {
+					type = train_equipment
+					amount = -1
+				}
+				random_army_leader = {
+					add_temporary_buff_to_units = {
+						combat_offense = -0.25
+						combat_breakthrough = -0.25
+						combat_defense = -0.25
+						combat_entrenchment = -0.1
+						org_damage_multiplier = 0.5
+						war_support_reduction_on_damage = 0.02
+				
+						days = 7
+						tooltip = SPA_bombed
+					}
+				}
+			}
+		}
+	}
+	SPA_training = {
+		allowed = {
+			original_tag = SPR
+		}
+        available = {
+			hidden_trigger = { command_power > 9.9 }
+			has_volunteers_amount_from = {
+				tag = GER
+				count > 0
+			}
+        }
+		custom_cost_trigger = {
+			command_power > 9.9
+		}
+		custom_cost_text = cp_atleast_10
+		
+        visible = {
+			has_civil_war = yes
+			OR = {
+				has_government = fascism
+				has_government = neutrality
+				has_government = monarchism
+			}
+        }
+		ai_will_do = {
+			factor = 30
+		}
+		fire_only_once = no
+		days_remove = 5
+		days_re_enable = 75
+		complete_effect = {
+			hidden_effect = {
+				add_command_power = -10
+			}
+		}
+		fixed_random_seed = no
+		remove_effect = {
+			GER = {
+				army_experience = 2
+			}
+			random_army_leader = {
+				gain_xp = 5
+				add_temporary_buff_to_units = {
+					combat_offense = 0.10
+					combat_breakthrough = 0.10
+					combat_defense = 0.10
+					combat_entrenchment = 0.1				
+					days = 14
+					tooltip = SPA_trained
+				}
+			}			
+		}
+	}
+}
+
+frente_popular = {
+    ban_falange = {
+        allowed = { 
+	        tag = SPR
+		}
+        available = {
+            has_idea = SPR_polarization
+			democratic_govt = yes
+            has_civil_war = no
+        }
+		cost = 30
+        visible = {
+			has_country_flag = popular_front
+        }
+        fire_only_once = yes
+        complete_effect = {
+            add_popularity = { ideology = fascism popularity = -0.1 }
+            add_political_power = 20				
+            set_country_flag = falange_banned
+
+        }
+
+    }
+	
+	land_redistribution = {
+        allowed = { 
+	        tag = SPR
+		}
+        available = {
+		    democratic_govt = yes
+            has_civil_war = no
+        }
+        visible = {
+			has_country_flag = popular_front
+        }
+        fire_only_once = yes
+		cost = 50
+        complete_effect = {
+            add_political_power = -20				
+            169 = {
+				add_extra_state_shared_building_slots = 1					
+			}
+			170 = {
+				add_extra_state_shared_building_slots = 1					
+			}
+			173 = {
+				add_extra_state_shared_building_slots = 1					
+			}
+
+        }
+
+    }
+	
+	vote_galicia = {
+        allowed = { 
+	        tag = SPR
+		}
+        available = {
+		    democratic_govt = yes
+            has_civil_war = no
+        }
+		cost = 30
+        visible = {
+			has_country_flag = popular_front
+        }
+        fire_only_once = yes
+        complete_effect = {
+            add_stability = 0.1				
+			171 = {
+				add_extra_state_shared_building_slots = 1					
+			}
+
+        }
+
+    }
+	
+	amnesty = {
+        allowed = { 
+	        tag = SPR
+		}
+        available = {
+		    democratic_govt = yes
+            has_civil_war = no
+        }
+		ai_will_do = {
+			factor = 0.5
+		}
+		cost = 20
+        visible = {
+			has_country_flag = popular_front
+        }
+        fire_only_once = yes
+        complete_effect = {
+            add_political_power = -10				
+			add_popularity = { ideology = communism popularity = 0.05 }
+			set_country_flag = amnesty_granted
+        }
+    }
+}
+
+SPR_republican_struggle = {
+	bug_fix = {
+        allowed = { 
+	        original_tag = SPR
+		}
+        available = {
+			has_government = conservatism		
+            has_civil_war = yes
+        }
+		
+		ai_will_do = {
+			factor = 999999
+		}
+		cost = 0
+        visible = {
+			is_ai = yes
+			has_government = conservatism
+			original_tag = SPR
+        }
+        complete_effect = {
+		    set_politics = {
+				ruling_party = liberalism
+			}
+        }
+    }
+#    SPR_political_unrest = {
+#
+#		icon = generic_operation
+#
+#		allowed = {
+#			original_tag = SPR		
+#		}
+#
+#		available = {
+#			OR = {
+#				## Andalusia
+#				has_full_control_of_state = 169
+#				## Extremadura
+#				has_full_control_of_state = 170
+#			}			
+#		}
+#
+#		days_mission_timeout = 35
+#		fire_only_once = yes
+#
+#		activation = {
+#            NOT = {
+#				## Andalusia
+#				has_full_control_of_state = 169
+#				## Extremadura
+#				has_full_control_of_state = 170
+#			}
+#		}
+#
+#		is_good = no
+#
+#		complete_effect = {
+#			add_war_support = 0.1
+#		}
+#
+#		timeout_effect = {
+#			add_war_support = -0.1
+#		}
+#
+#		ai_will_do = {
+#			factor = 1
+#		}
+#	}
+	
+    expand_quinto = {
+        allowed = { 
+	        tag = SPR
+		}
+		ai_will_do = {
+			factor = 1
+		}
+        available = {
+            NOT = { has_completed_focus = CIV_popular }
+            has_civil_war = yes
+			command_power > 24.9
+        }
+		custom_cost_trigger = {
+			command_power > 24.9
+		}
+		custom_cost_text = cp_atleast_25
+        visible = {
+			NOT = {
+				OR = {
+					has_country_flag = struggle_over
+					has_country_flag = CNTFAI_take_power
+					has_country_flag = libs_take_power
+				}
+			}
+        }
+        fire_only_once = yes
+        complete_effect = {
+		    add_to_variable = { var = com_inf value = 15 tooltip = COMMUNIST_INFLUENCE_INCREASE }
+			add_to_variable = { var = ana_inf value = -10 tooltip = ANARCHIST_INFLUENCE_INCREASE }
+			add_to_variable = { var = lib_inf value = -5 tooltip = LIBERAL_INFLUENCE_INCREASE }
+			add_popularity = {
+				ideology = socialism
+				popularity = 0.15
+			}
+            hidden_effect = {
+				add_command_power = -25
+				SPR_seize_power = yes
+			    delete_unit_template_and_units = {
+					division_template = "Quinto Regimiento"
+				}
+				division_template = {
+					name = "Quinto Regimiento ex"
+					is_locked = yes
+					priority = 2
+					regiments = {
+						guards_infantry = { x = 0 y = 0 }
+						guards_infantry = { x = 0 y = 1 }
+						guards_infantry = { x = 0 y = 2 }
+						guards_infantry = { x = 0 y = 3 }
+						
+						guards_infantry = { x = 1 y = 0 }
+						guards_infantry = { x = 1 y = 1 }
+						guards_infantry = { x = 1 y = 2 }
+						guards_infantry = { x = 1 y = 3 }
+		
+						infantry = { x = 2 y = 0 }
+						infantry = { x = 2 y = 1 }
+						infantry = { x = 2 y = 2 }
+						cavalry = { x = 2 y = 3 }
+		
+						artillery_brigade = { x = 3 y = 0 }
+						artillery_brigade = { x = 3 y = 1 }
+						anti_tank_brigade =  { x = 3 y = 2 }
+					}
+					support = {
+						DIV_HQ = { x = 0 y = 0 }
+						recon_cav = { x = 0 y = 1 }
+						engineer = { x = 0 y = 2 }
+						artillery_heavy = { x = 0 y = 3 }
+					}
+				}
+				capital_scope = {
+					create_unit = {
+						division = "name = \"Quinto Regimiento\" division_template = \"Quinto Regimiento ex\" start_experience_factor = 0.75 start_equipment_factor = 1" owner = SPR 
+					}
+				}
+			}
+            custom_effect_tooltip = get_quinto
+        }
+    }
+	
+	distribute_sov = {
+        allowed = { 
+	        tag = SPR
+		}
+        available = {
+            has_completed_focus = CIV_moscow
+            has_civil_war = yes
+        }
+		cost = 25
+        visible = {
+			NOT = {
+				OR = {
+					has_country_flag = struggle_over
+					has_country_flag = CNTFAI_take_power
+					has_country_flag = libs_take_power
+				}
+			}
+        }
+		ai_will_do = {
+			factor = 5
+		}
+		days_remove = 75
+        complete_effect = {
+		    add_to_variable = { var = com_inf value = 20 tooltip = COMMUNIST_INFLUENCE_INCREASE }
+			add_to_variable = { var = ana_inf value = -5 tooltip = ANARCHIST_INFLUENCE_INCREASE }
+			add_to_variable = { var = lib_inf value = -10 tooltip = LIBERAL_INFLUENCE_INCREASE }
+            hidden_effect = {
+				SPR_seize_power = yes
+			}
+			add_popularity = {
+				ideology = communism
+				popularity = 0.2
+			}
+		}
+		remove_effect = {
+			add_equipment_to_stockpile = {
+				type = infantry_equipment_0
+				amount = 1000
+				producer = SOV
+			}
+        }
+
+    }
+	distribute_sov_uni = {
+        allowed = { 
+	        tag = SPR
+		}
+        available = {
+            has_completed_focus = CIV_moscow
+            has_civil_war = yes
+        }
+		cost = 25
+        visible = {
+			NOT = {
+				OR = {
+					has_country_flag = struggle_over
+					has_country_flag = CNTFAI_take_power
+					has_country_flag = libs_take_power
+				}
+			}
+        }
+		ai_will_do = {
+			factor = 5
+		}
+		days_remove = 75
+        complete_effect = {
+		    add_to_variable = { var = com_inf value = 20 tooltip = COMMUNIST_INFLUENCE_INCREASE }
+			add_to_variable = { var = ana_inf value = -5 tooltip = ANARCHIST_INFLUENCE_INCREASE }
+			add_to_variable = { var = lib_inf value = -10 tooltip = LIBERAL_INFLUENCE_INCREASE }
+            hidden_effect = {
+				SPR_seize_power = yes
+			}
+			add_popularity = {
+				ideology = communism
+				popularity = 0.2
+			}
+		}
+		remove_effect = {
+			add_equipment_to_stockpile = {
+				type = infantry_uniforms_0
+				amount = 1000
+				producer = SOV
+			}
+			add_equipment_to_stockpile = {
+				type = support_equipment_0
+				amount = 100
+				producer = SOV
+			}
+			add_equipment_to_stockpile = {
+				type = recon_equipment_0
+				amount = 100
+				producer = SOV
+			}
+        }
+
+    }
+	
+	stop_colective = {
+        allowed = { 
+	        tag = SPR
+		}
+        available = {
+            has_civil_war = yes
+        }
+		ai_will_do = {
+			factor = 0
+			modifier = {
+				add = 1
+				check_variable = { com_inf > lib_inf }
+				check_variable = { lib_inf < 80 }
+			}
+		}
+		cost = 60
+        visible = {
+			NOT = {
+				OR = {
+					has_country_flag = struggle_over
+					has_country_flag = commie_take_power
+					has_country_flag = CNTFAI_take_power
+				}
+			}
+        }
+        fire_only_once = yes
+        complete_effect = {
+		    add_to_variable = { var = com_inf value = -5 tooltip = COMMUNIST_INFLUENCE_INCREASE }
+			add_to_variable = { var = ana_inf value = -25 tooltip = ANARCHIST_INFLUENCE_INCREASE }
+			add_to_variable = { var = lib_inf value = 20 tooltip = LIBERAL_INFLUENCE_INCREASE }
+            hidden_effect = {
+				SPR_seize_power = yes
+			}
+			add_war_support = 0.15
+			add_popularity = {
+				ideology = liberalism
+				popularity = 0.15
+			}
+        }
+
+    }
+	
+	train_militias = {
+        allowed = { 
+	        tag = SPR
+		}
+        available = {
+            has_civil_war = yes
+			command_power > 24.9
+        }
+		custom_cost_trigger = {
+			command_power > 24.9
+		}
+		custom_cost_text = cp_atleast_25
+		ai_will_do = {
+			factor = 0
+			modifier = {
+				add = 4
+				check_variable = { com_inf > ana_inf }
+				check_variable = { ana_inf < 80 }
+			}
+		}
+        visible = {
+			NOT = {
+				OR = {
+					has_country_flag = struggle_over
+					has_country_flag = commie_take_power
+					has_country_flag = libs_take_power
+				}
+			}
+        }
+		days_remove = 90
+        fire_only_once = yes
+        complete_effect = {
+		    add_to_variable = { var = com_inf value = -10 tooltip = COMMUNIST_INFLUENCE_INCREASE }
+			add_to_variable = { var = ana_inf value = 20 tooltip = ANARCHIST_INFLUENCE_INCREASE }
+			add_to_variable = { var = lib_inf value = -10 tooltip = LIBERAL_INFLUENCE_INCREASE }
+			add_popularity = {
+				ideology = socialism
+				popularity = 0.15
+			}
+			hidden_effect = {
+				add_command_power = -25
+				SPR_seize_power = yes
+			}
+        }
+		remove_effect = {
+			
+			random_owned_controlled_state = {
+				limit = { is_on_continent = europe NOT = { state = 177 } }
+				prioritize = { 165 167 }
+				
+				create_unit = {
+					division = "name = \"Militia\" division_template = \"Militia\" start_experience_factor = 0.15 start_equipment_factor = 0.15"
+					OWNER = ROOT
+					allow_spawning_on_enemy_provs = no
+					count = 2
+				}
+			}
+			set_country_flag = SPR_mil_trained
+			
+		}
+    }
+	
+	cnt_min = {
+        allowed = {
+	        tag = SPR
+		}
+        available = {
+            has_civil_war = yes
+        }
+		ai_will_do = {
+			factor = 0
+			modifier = {
+				add = 1
+				check_variable = { com_inf > ana_inf }
+				check_variable = { ana_inf < 80 }
+			}
+		}
+		cost = 30
+        visible = {
+			NOT = {
+				OR = {
+					has_country_flag = struggle_over
+					has_country_flag = commie_take_power
+					has_country_flag = libs_take_power
+				}
+			}
+        }
+        fire_only_once = yes
+        complete_effect = {
+		    add_to_variable = { var = com_inf value = -10 tooltip = COMMUNIST_INFLUENCE_INCREASE }
+			add_to_variable = { var = ana_inf value = 10 tooltip = ANARCHIST_INFLUENCE_INCREASE }
+			add_to_variable = { var = lib_inf value = 0 tooltip = LIBERAL_INFLUENCE_INCREASE }
+			add_popularity = {
+				ideology = socialism
+				popularity = 0.10
+			}
+			hidden_effect = {
+				## allows a selection of CNT ministers
+				set_country_flag = cnt_ministers
+				
+				SPR_seize_power = yes
+			}
+        }
+
+    }
+	
+	pce_min = {
+        allowed = { 
+	        tag = SPR
+		}
+        available = {
+            has_civil_war = yes
+        }
+		ai_will_do = {
+			factor = 1
+		}
+		cost = 30
+        visible = {
+			NOT = {
+				OR = {
+					has_country_flag = struggle_over
+					has_country_flag = CNTFAI_take_power
+					has_country_flag = libs_take_power
+				}
+			}
+        }
+        fire_only_once = yes
+        complete_effect = {
+		    add_to_variable = { var = com_inf value = 10 tooltip = COMMUNIST_INFLUENCE_INCREASE }
+			add_to_variable = { var = ana_inf value = -10 tooltip = ANARCHIST_INFLUENCE_INCREASE }
+			add_to_variable = { var = lib_inf value = 0 tooltip = LIBERAL_INFLUENCE_INCREASE }
+			add_popularity = {
+				ideology = communism
+				popularity = 0.10
+			}
+			set_country_flag = pce_ministers
+			
+        }
+    }
+	
+	professional_officers = {
+        allowed = { 
+	        tag = SPR
+		}
+        available = {
+            has_civil_war = yes
+        }
+		ai_will_do = {
+			factor = 0
+			modifier = {
+				add = 1
+				check_variable = { com_inf > lib_inf }
+				check_variable = { lib_inf < 85 }
+			}
+		}
+		cost = 55
+        visible = {
+			NOT = {
+				OR = {
+					has_country_flag = struggle_over
+					has_country_flag = commie_take_power
+					has_country_flag = CNTFAI_take_power
+				}
+			}
+        }
+		modifier = { 
+			political_power_gain = 1
+			command_power_gain_mult = 0.05
+			experience_gain_army_factor = 0.20
+		}
+		days_remove = 180
+        fire_only_once = yes
+        complete_effect = {
+		    add_to_variable = { var = com_inf value = 0 tooltip = COMMUNIST_INFLUENCE_INCREASE }
+			add_to_variable = { var = ana_inf value = -15 tooltip = ANARCHIST_INFLUENCE_INCREASE }
+			add_to_variable = { var = lib_inf value = 15 tooltip = LIBERAL_INFLUENCE_INCREASE }
+			add_popularity = {
+				ideology = liberalism
+				popularity = 0.15
+			}
+			hidden_effect = {
+				SPR_seize_power = yes
+			}
+        }
+
+    }	
+	quinto_officers = {
+        allowed = { 
+	        tag = SPR
+		}
+        available = {
+            has_civil_war = yes
+			has_completed_focus = CIV_advisors
+        }
+		ai_will_do = {
+			factor = 1
+		}
+		cost = 80
+        visible = {
+			NOT = {
+				OR = {
+					has_country_flag = struggle_over
+					has_country_flag = CNTFAI_take_power
+					has_country_flag = libs_take_power
+				}
+			}
+        }
+		modifier = { 
+			political_power_gain = 1
+			command_power_gain_mult = 0.05
+			experience_gain_army_factor = 0.20
+			communism_drift = 0.01
+		}
+		days_remove = 180
+        fire_only_once = yes
+        complete_effect = {
+		    add_to_variable = { var = com_inf value = 20 tooltip = COMMUNIST_INFLUENCE_INCREASE }
+			add_to_variable = { var = ana_inf value = -10 tooltip = ANARCHIST_INFLUENCE_INCREASE }
+			add_to_variable = { var = lib_inf value = -10 tooltip = LIBERAL_INFLUENCE_INCREASE }
+			add_popularity = {
+				ideology = communism
+				popularity = 0.10
+			}
+			hidden_effect = {
+				SPR_seize_power = yes
+			}
+        }
+
+    }
+	
+	expand_police = {
+        allowed = { 
+	        tag = SPR
+		}
+        available = {
+            has_civil_war = yes
+        }
+		ai_will_do = {
+			factor = 0
+			modifier = {
+				add = 2
+				check_variable = { com_inf > lib_inf }
+				check_variable = { lib_inf < 85 }
+			}
+		}
+		cost = 70
+        visible = {
+			NOT = {
+				OR = {
+					has_country_flag = struggle_over
+					has_country_flag = commie_take_power
+					has_country_flag = CNTFAI_take_power
+				}
+			}
+        }
+        fire_only_once = yes
+        complete_effect = {
+		    add_to_variable = { var = com_inf value = 5 tooltip = COMMUNIST_INFLUENCE_INCREASE }
+			add_to_variable = { var = ana_inf value = -20 tooltip = ANARCHIST_INFLUENCE_INCREASE }
+			add_to_variable = { var = lib_inf value = 15 tooltip = LIBERAL_INFLUENCE_INCREASE }
+			add_ideas = SPR_police
+			add_popularity = {
+				ideology = liberalism
+				popularity = 0.10
+			}
+			hidden_effect = {
+				add_command_power = -25
+				SPR_seize_power = yes
+			}
+        }
+    }
+
+	guerrillas_retaguardia = {
+        allowed = { 
+	        tag = SPR
+		}
+        available = {
+            has_civil_war = yes
+			command_power > 24.9
+        }
+		custom_cost_trigger = {
+			command_power > 24.9
+		}
+		custom_cost_text = cp_atleast_25
+		ai_will_do = {
+			factor = 0
+			modifier = {
+				add = 2
+				check_variable = { com_inf > ana_inf }
+				check_variable = { ana_inf < 80 }
+			}
+		}
+        visible = {
+			NOT = {
+				OR = {
+					has_country_flag = struggle_over
+					has_country_flag = commie_take_power
+					has_country_flag = libs_take_power
+				}
+			}
+        }
+        fire_only_once = no
+
+		days_remove = 35
+        complete_effect = {		
+			add_to_variable = { var = com_inf value = -15 tooltip = COMMUNIST_INFLUENCE_INCREASE }
+			add_to_variable = { var = ana_inf value = 20 tooltip = ANARCHIST_INFLUENCE_INCREASE }
+			add_to_variable = { var = lib_inf value = -5 tooltip = LIBERAL_INFLUENCE_INCREASE }   
+			add_popularity = {
+				ideology = socialism
+				popularity = 0.10
+			}
+			hidden_effect = {
+				add_command_power = -25
+				SPR_seize_power = yes
+			}	
+        }
+		remove_effect = {
+			calculate_communist_spanish_partisan_state = yes
+			calculate_communist_spanish_partisan_state = yes
+		}
+    }
+
+	reserva_milicia = {
+        allowed = { 
+	        tag = SPR
+		}
+        available = {
+            has_civil_war = yes			
+			command_power > 24.9
+        }
+		custom_cost_trigger = {
+			command_power > 24.9
+		}
+		custom_cost_text = cp_atleast_25
+		ai_will_do = {
+			factor = 0
+			modifier = {
+				add = 2
+				check_variable = { com_inf > ana_inf }
+				check_variable = { ana_inf < 90 }
+			}
+		}
+        visible = {
+			NOT = {
+				OR = {
+					has_country_flag = struggle_over
+					has_country_flag = commie_take_power
+					has_country_flag = libs_take_power
+				}
+			}
+			has_country_flag = SPR_mil_trained
+        }
+        fire_only_once = yes
+        complete_effect = {
+		    add_to_variable = { var = com_inf value = -5 tooltip = COMMUNIST_INFLUENCE_INCREASE }
+			add_to_variable = { var = ana_inf value = 10 tooltip = ANARCHIST_INFLUENCE_INCREASE }
+			add_to_variable = { var = lib_inf value = -5 tooltip = LIBERAL_INFLUENCE_INCREASE }
+			add_popularity = {
+				ideology = socialism
+				popularity = 0.10
+			}
+			hidden_effect = {
+				add_command_power = -25
+				SPR_seize_power = yes
+			}
+        }
+		remove_effect = {
+			random_owned_controlled_state = {
+				limit = { is_on_continent = europe NOT = { state = 177 } }
+				prioritize = { 165 167 }
+				
+				create_unit = {
+					division = "name = \"Militia\" division_template = \"Militia\" start_experience_factor = 0.03 start_equipment_factor = 0.15"
+					OWNER = ROOT
+					allow_spawning_on_enemy_provs = no
+					count = 2
+				}
+			}
+			random_owned_controlled_state = {
+				limit = { is_on_continent = europe NOT = { state = 177 } }
+				prioritize = { 167 165 }
+				
+				create_unit = {
+					division = "name = \"Militia\" division_template = \"Militia\" start_experience_factor = 0.03 start_equipment_factor = 0.15"
+					OWNER = ROOT
+					allow_spawning_on_enemy_provs = no
+					count = 2
+				}
+			}
+			
+			random_owned_controlled_state = {
+				limit = { is_on_continent = europe NOT = { state = 177 } }
+				prioritize = { 168 }
+				
+				create_unit = {
+					division = "name = \"Partisans\" division_template = \"Militia\" start_experience_factor = 0.2 start_equipment_factor = 0.5"
+					OWNER = ROOT
+					allow_spawning_on_enemy_provs = no
+					count = 2
+				}
+			}
+			random_owned_controlled_state = {
+				limit = { is_on_continent = europe NOT = { state = 177 } }
+				prioritize = { 175 }
+				
+				create_unit = {
+					division = "name = \"Partisans\" division_template = \"Militia\" start_experience_factor = 0.2 start_equipment_factor = 0.5"
+					OWNER = ROOT
+					allow_spawning_on_enemy_provs = no
+					count = 3
+				}
+			}
+		}
+    }
+	
+	quinta_biberon = {
+        allowed = { 
+	        tag = SPR
+		}
+        available = {
+            has_civil_war = yes			
+			command_power > 24.9
+        }
+		custom_cost_trigger = {
+			command_power > 24.9
+		}
+		ai_will_do = {
+			factor = 1
+			modifier = {
+				factor = -1
+				surrender_progress < 0.01
+			}			
+			modifier = {
+				factor = 50
+				surrender_progress > 0.45
+			}
+			modifier = {
+				factor = 50
+				has_manpower < 1000
+			}
+			
+		}
+		custom_cost_text = cp_atleast_25
+        visible = {
+			NOT = {
+				OR = {
+					has_country_flag = struggle_over
+					has_country_flag = CNTFAI_take_power
+				}
+			}
+        }
+        fire_only_once = yes
+        complete_effect = {
+		    add_to_variable = { var = com_inf value = 5 tooltip = COMMUNIST_INFLUENCE_INCREASE }
+			add_to_variable = { var = ana_inf value = -10 tooltip = ANARCHIST_INFLUENCE_INCREASE }
+			add_to_variable = { var = lib_inf value = 5 tooltip = LIBERAL_INFLUENCE_INCREASE }
+			hidden_effect = {
+				add_command_power = -25
+				SPR_seize_power = yes
+				division_template = {
+					name = "Quinta del Biberón"			
+					template_counter = 86
+					regiments = {
+						militia = { x = 0 y = 0 }
+						militia = { x = 0 y = 1 }
+						
+						partisan = { x = 1 y = 0 }
+						partisan = { x = 1 y = 1 }
+					}
+					support = {
+						recon_cav = { x = 0 y = 0 }
+						anti_tank = { x = 0 y = 1 }
+					}
+				}
+			}
+			
+			add_manpower = 30000
+			add_stability = -0.20
+			
+			random_owned_controlled_state = {
+				limit = { is_on_continent = europe NOT = { state = 177 } }
+				prioritize = { 173 168 167 }
+				
+				create_unit = {
+					division = "name = \"Republican levies\" division_template = \"Quinta del Biberón\" start_experience_factor = 0.0 start_equipment_factor = 0.5"
+					OWNER = ROOT
+					allow_spawning_on_enemy_provs = no
+					count = 4
+				}
+			}	
+			random_owned_controlled_state = {
+				limit = { is_on_continent = europe NOT = { state = 177 } }
+				prioritize = { 168 173 167 }
+				
+				create_unit = {
+					division = "name = \"Republican levies\" division_template = \"Quinta del Biberón\" start_experience_factor = 0.0 start_equipment_factor = 0.5"
+					OWNER = ROOT
+					allow_spawning_on_enemy_provs = no
+					count = 3
+				}
+			}	
+			random_owned_controlled_state = {
+				limit = { is_on_continent = europe NOT = { state = 177 } }
+				prioritize = { 167 165 168 167 }
+				
+				create_unit = {
+					division = "name = \"Republican levies\" division_template = \"Quinta del Biberón\" start_experience_factor = 0.0 start_equipment_factor = 0.5"
+					OWNER = ROOT
+					allow_spawning_on_enemy_provs = no
+					count = 3
+				}
+			}	
+        }
+    }
+	SPR_move_capital = {
+		icon = generic_political_discourse
+        allowed = {
+	        tag = SPR
+		}
+		highlight_states = { 
+			highlight_state_targets = {
+				state = 167
+			}
+		}
+        available = {
+            has_civil_war = yes
+			controls_state = 167
+			SPA = {
+				OR = {
+					count_triggers = {
+						amount > 4 
+						controls_province = 896
+						controls_province = 3794
+						controls_province = 9767
+						controls_province = 3858
+						controls_province = 6914
+						controls_province = 858
+					}
+					controls_state = 175
+				}
+			}
+        }
+		ai_will_do = {
+			factor = 100
+		}
+		fire_only_once = yes
+		cost = 25
+        visible = {
+			
+        }
+        complete_effect = {
+			set_capital = { state = 167 }
+        }
+
+    }
+}
+#SPR_alzamiento_nacional = {
+#    SPR_unify_land = {
+#
+#		icon = generic_operation
+#
+#		allowed = {
+#			original_tag = SPR
+#			has_government = fascism
+#			has_civil_war = yes			
+#		}
+#
+#		available = {
+#			## Andalusia
+#			has_full_control_of_state = 169
+#			## Extremadura
+#			has_full_control_of_state = 170
+#			## East Aragon
+#			has_full_control_of_state = 497
+#		}
+#
+#		days_mission_timeout = 70
+#		fire_only_once = yes
+#
+#		activation = {
+#           NOT = {
+#				## Andalusia
+#				has_full_control_of_state = 169
+#				## Extremadura
+#				has_full_control_of_state = 170
+#			}
+#		}
+#
+#		is_good = no
+#
+#		complete_effect = {
+#			add_war_support = 0.1
+#		}
+#
+#		timeout_effect = {
+#			add_war_support = -0.1
+#		}
+#
+#		ai_will_do = {
+#			factor = 1
+#		}
+#	}
+#	
+#	SPR_madrid_attack = {
+#
+#		icon = generic_operation
+#
+#		allowed = {
+#			original_tag = SPR
+#			has_government = fascism
+#			has_civil_war = yes			
+#		}
+#
+#		available = {
+#			## Madrid outer area
+#			controls_state = 41
+#		}
+#
+#		days_mission_timeout = 120
+#		fire_only_once = yes
+#
+#		activation = {
+#			    NOT = {
+#					## Madrid outer area
+#			        controls_state = 41
+#				}
+#			## Andalusia
+#			controls_state = 169
+#			## Extremadura
+#			controls_state = 170
+#			## Castille
+#			controls_state = 176
+#		}
+#
+#		is_good = no
+#		complete_effect = {
+#			add_war_support = 0.1
+#			every_country = {
+#			    limit = {
+#				    original_tag = SPR
+#					OR = {
+#					    democratic_govt = yes
+#						has_government = communism
+#				    }
+#				}
+#               add_war_support = -0.2
+#            }				
+#		}
+#
+#		timeout_effect = {
+#			add_war_support = -0.1
+#			add_political_power = -100
+#		}
+#
+#		ai_will_do = {
+#			factor = 1
+#		}
+#	}
+# 
+#}
+

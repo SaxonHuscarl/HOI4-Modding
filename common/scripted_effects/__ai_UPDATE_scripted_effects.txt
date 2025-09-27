@@ -1,0 +1,398 @@
+ai_startup_effect = {
+	ai_templates_startup/generic = yes
+	
+	ai_set_difficulty_modifier = yes	
+	
+	set_global_flag = ai_country_defence
+		
+	#### CUSTOM ADVISOR AI 
+	
+	if = {
+		limit = {
+			OR = {
+				tag = GER
+				tag = SOV
+				tag = USA
+				tag = ENG
+				tag = FRA
+				tag = ITA
+				tag = JAP
+				tag = CAN
+				tag = SAF
+				tag = AST
+				tag = RAJ
+				tag = NZL
+				tag = ARG
+				tag = ROM
+				tag = HUN
+				tag = BUL
+				tag = MAN
+				tag = SPR
+				tag = SWE
+				tag = BEL
+				tag = HOL
+				tag = CZE
+				tag = POL
+				tag = YUG
+				tag = GRE
+				tag = TUR
+				tag = GRE
+				tag = PRC
+				tag = CHI
+				tag = POR
+				tag = FIN
+				tag = IRE
+				tag = BRA
+				tag = NOR
+				tag = MEX
+				tag = DEN
+				tag = PER
+				tag = SIA
+			}
+		}
+		set_country_flag = ai_custom_advisor_ai
+	}
+	
+	#### MISC 
+	
+	ai_templates_on_startup = yes
+	
+	set_global_flag = EAI_lend_lease
+	set_global_flag = EAI_anti_aggression_diplomacy
+	
+	if = { limit = { ai_is_useless_country = yes }
+		set_country_flag = ai_is_useless_country
+		
+		add_ideas = ai_useless_country
+	}
+	if = { limit = { ai_use_unit_leader_storage = yes }
+		set_country_flag = ai_use_unit_leader_storage
+	}
+	
+	if = {
+		limit = {
+			is_in_faction = yes
+		}
+		set_temp_variable = { joining_country = THIS }
+		set_temp_variable = { leading_country = faction_leader }
+		
+		ai_update_on_joining_faction = yes
+	}
+	
+	#### RESEARCH
+
+	set_technology = { BICE_airrange_balance = 1 }
+	
+	set_country_flag = UNLOCK:infantry_folder
+	set_country_flag = UNLOCK:support_folder
+	set_country_flag = UNLOCK:artillery_folder
+	set_country_flag = UNLOCK:tank_techs_folder
+	#set_country_flag = UNLOCK:armor_folder
+	#set_country_flag = UNLOCK:air_techs_folder
+	#set_country_flag = UNLOCK:air_techs_folder_army
+	#set_country_flag = UNLOCK:air_techs_folder_navy
+	set_country_flag = UNLOCK:naval_folder
+	set_country_flag = UNLOCK:naval_techs_folder
+	set_country_flag = UNLOCK:industry_folder
+	set_country_flag = UNLOCK:raw_materials_folder
+	set_country_flag = UNLOCK:ww1_land_doctrine_folder
+	set_country_flag = UNLOCK:land_doctrine_folder
+	set_country_flag = UNLOCK:naval_doctrine_folder
+	set_country_flag = UNLOCK:air_doctrine_folder
+	set_country_flag = UNLOCK:electronics_folder
+	if = {
+		limit = { major_country = yes }
+		set_country_flag = UNLOCK:nuclear_folder
+	}	
+	
+	ai_update_research_strategies = yes
+	
+	d_ai_update_create_group = yes 
+	
+	add_offsite_building = { type = arms_factory level = 1 }
+}
+ai_startup_delayed_effect = {
+
+}
+
+ai_on_war_delayed = {
+
+}
+
+ai_update_start = {
+	country_event = { id = BI_on_action.500 days = ai_update_1 }
+	country_event = { id = BI_on_action.502 days = ai_update_2 }
+	country_event = { id = BI_on_action.504 days = ai_update_3 }
+	country_event = { id = BI_on_action.506 days = ai_update_4 }
+}
+
+d_ai_update_create_group = {
+	if = {
+		limit = {
+			major_country = yes
+		}
+		d_ai_updates_high = yes
+	}
+	else_if = {
+		limit = {
+			ai_low_update = yes
+		}
+		d_ai_updates_low = yes
+		set_country_flag = ai_low_update
+	}
+	else_if = {
+		limit = {
+			ai_very_low_update = yes
+		}
+		d_ai_updates_very_low = yes 
+		set_country_flag = ai_very_low_update
+	}
+	else = {
+		d_ai_updates_med = yes
+	}
+}
+
+ai_update_check = {
+	if = {
+		limit = {
+			check_variable = { ai_update_1 = 0 }
+		}
+		d_ai_update_create_group = yes
+	}
+	
+	set_temp_variable = { t = global.num_weeks }
+	modulo_temp_variable = { t = ai_update_1 }
+	
+	if = {
+		limit = {
+			check_variable = { t = 0 }
+		}
+		ai_update_1 = yes
+	}
+	
+	set_temp_variable = { t = global.num_weeks }
+	modulo_temp_variable = { t = ai_update_2 }
+	
+	if = {
+		limit = {
+			check_variable = { t = 0 }
+		}
+		ai_update_2 = yes
+	}
+	
+	set_temp_variable = { t = global.num_weeks }
+	modulo_temp_variable = { t = ai_update_3 }
+	
+	if = {
+		limit = {
+			check_variable = { t = 0 }
+		}
+		ai_update_3 = yes
+	}
+	
+}
+
+d_ai_updates_high = { #majors
+	set_variable = { ai_update_1 = 1 }
+	set_variable = { ai_update_2 = 2 }
+	set_variable = { ai_update_3 = 3 }
+}
+d_ai_updates_med = { #everybody else
+	set_variable = { ai_update_1 = 1 }
+	set_variable = { ai_update_2 = 2 }
+	set_variable = { ai_update_3 = 3 }
+}
+d_ai_updates_low = { #x3  #blue
+	set_variable = { ai_update_1 = 2 }
+	set_variable = { ai_update_2 = 4 }
+	set_variable = { ai_update_3 = 6 }
+}
+d_ai_updates_very_low = { #x10  #red
+	set_variable = { ai_update_1 = 5 }
+	set_variable = { ai_update_2 = 10 }
+	set_variable = { ai_update_3 = 15 }
+}
+
+ai_update_1 = {
+	#log = "[This.GetTag] | UPDATE 1 | [GetDate]"
+	ai_update_mobilization_law = yes
+	ai_check_stability_need = yes
+	ai_check_war_support_need = yes 
+	#d_ai_check_focus_list_adherence = yes
+	
+}
+
+ai_update_2 = {
+	#log = "[This.GetTag] | UPDATE 2 | [GetDate]"
+	ai_pay_xp_debt = yes
+	ai_major_equipment_deficit_bonus = yes
+	if = {
+		limit = {
+			NOT = { has_country_flag = ai_low_update }
+			NOT = { has_country_flag = ai_very_low_update }
+		}
+		d_ai_update_construction_queue = yes
+
+	}
+	if = {
+		limit = {
+			NOT = { has_country_flag = ai_very_low_update }
+		}
+	
+		ai_update_advisor_logic = yes
+	}
+	
+	ai_update_resource_conversion = yes
+}
+
+ai_update_3 = {
+	#log = "[This.GetTag] | UPDATE 3 | [GetDate]"
+	ai_update_rail_way_construction = yes
+	
+	if = {
+		limit = {
+			NOT = { has_country_flag = ai_low_update }
+			NOT = { has_country_flag = ai_very_low_update }
+		}
+		d_ai_update_invasion_logic = yes
+	}
+	
+	ai_update_resource_storage = yes
+	
+	d_ai_update_air_region_priorities = yes
+}
+
+ai_update_30 = {
+	#log = "[This.GetTag] | UPDATE 4 | [GetDate]"
+
+	set_temp_variable = { ai_num_of_military_factories = mtth:ai_num_of_military_factories }
+	
+	ai_update_equipment_introduction = yes
+	
+	ai_update_division_templates = yes 
+	
+	ai_update_front_aggressiveness = yes
+		
+	ai_update_diplomacy = yes
+		
+	ai_check_bonuses = yes
+
+	if = {
+		limit = {
+			NOT = { has_country_flag = ai_very_low_update }
+		}
+		
+		ai_update_army_trait_assignments = yes
+		ai_update_naval_trait_assignments = yes
+				
+		ai_check_piercing_value = yes
+		ai_check_enemy_armor_value = yes
+		
+		ai_update_research_strategies = yes #research category weights
+		
+		if = {
+			limit = {
+				NOT = { has_country_flag = ai_is_useless_country }
+			}
+			ai_update_equipment_production = yes #stopping / resuming land production
+		}
+		
+		ai_update_convoy_production = yes #checking how many NIC for convoy production
+		
+		ai_create_new_radar_state_near_front = yes
+
+		ai_update_equipment_variants = yes #creating equipment variants
+		
+		ai_update_country_laws = yes #checking the need to change laws
+		
+		ai_update_agency_strategies = yes #agency strategies *vomits profusely*
+
+		### set targets for these actions
+		
+		EAI_update_lend_lease_targets = yes
+		
+		EAI_update_volunteer_targets = yes
+
+		### anti-aggression script
+		
+		if = {
+			limit = {
+				is_faction_leader = yes 
+			}
+			EAI_anti_aggression_check = yes 
+		}
+		
+		if = {
+			limit = { 
+				has_intelligence_agency = yes
+				is_ai = yes
+			}
+			update_intel_networks = yes
+			update_operation_ai = yes
+		}
+		
+		
+		if = { limit = { anti_submarine_strategy_required = yes }
+			set_country_flag = anti_submarine_strategy_required
+		}
+		else = {
+			clr_country_flag = anti_submarine_strategy_required
+		}
+	}
+}
+
+ai_update_30_1 = {
+	
+}
+ai_update_30_2 = {
+	
+}
+
+ai_update_90 = {
+	ai_stay_up_to_date_dirty_fix = yes
+	
+	d_ai_get_global_resource_need = yes #needed for ai_update_trade_laws
+	
+	if = {
+		limit = {
+			has_country_flag = ai_is_useless_country
+		}
+		ai_update_country_laws = yes #checking the need to change laws
+	}
+		
+	if = {
+		limit = {
+			NOT = { has_country_flag = ai_is_useless_country }
+			NOT = { has_idea = ai_advisor_3 }
+		}
+		if = {
+			limit = {
+				has_idea = ai_advisor_2
+			}
+			swap_ideas = {
+				remove_idea = ai_advisor_2
+				add_idea = ai_advisor_3
+			}
+		}
+		else_if = {
+			limit = {
+				has_idea = ai_advisor_1
+			}
+			swap_ideas = {
+				remove_idea = ai_advisor_1
+				add_idea = ai_advisor_2
+			}
+		}
+		else = {
+			add_ideas = ai_advisor_1
+		}
+	}
+}
+ai_update_90_1 = {
+	d_ai_update_trade_laws = yes
+	
+}
+
+ai_update_365 = {
+	ai_clean_up_construction_queue = yes
+}

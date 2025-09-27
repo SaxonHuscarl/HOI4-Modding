@@ -1,0 +1,362 @@
+
+ability = {
+
+	force_attack = {
+		name = ABILITY_FORCE_ATTACK
+		desc = ABILITY_FORCE_ATTACK_DESC
+		
+		sound_effect = command_power_ability_offensive
+		
+		type = army_leader
+		
+		allowed = {
+			is_leading_army_group = no
+		}
+		
+		cost = 0.22
+		duration = 168
+		
+		one_time_effect = {
+			custom_effect_tooltip = only_one_ability
+			add_timed_unit_leader_trait = {
+				trait = force_attack
+				days = 7
+			}
+            add_temporary_buff_to_units = {
+                combat_offense = 0.1
+                combat_breakthrough = 0.20
+                org_damage_multiplier = -0.5
+                str_damage_multiplier = 0.6
+                war_support_reduction_on_damage = 0.2
+                cannot_retreat_while_attacking = 1.0
+                
+                days = 7
+                tooltip = ABILITY_FORCE_ATTACK_TOOLTIP
+            }
+		}
+	}
+	
+	last_stand = {
+		name = ABILITY_LAST_STAND
+		desc = ABILITY_LAST_STAND_DESC
+		
+		sound_effect = command_power_ability_offensive
+		
+		type = army_leader
+		
+		allowed = {
+			is_leading_army_group = no
+		}
+		
+		cost = 0.22
+		duration = 168
+		
+		one_time_effect = {
+			custom_effect_tooltip = only_one_ability
+			add_timed_unit_leader_trait = {
+				trait = last_stand
+				days = 7
+			}
+            add_temporary_buff_to_units = {
+                combat_defense = 0.1
+                combat_entrenchment = 0.25
+                org_damage_multiplier = -0.75
+                str_damage_multiplier = 0.75
+                war_support_reduction_on_damage = 0.4
+                cannot_retreat_while_defending = 1.0
+                
+                days = 7
+                tooltip = ABILITY_LAST_STAND_TOOLTIP
+            }
+
+		}
+		
+	}
+	
+	staff_office_plan = {
+		name = ABILITY_STAFF_OFFICE_PLAN
+		desc = ABILITY_STAFF_OFFICE_PLAN_DESC
+		
+		sound_effect = command_power_ability_defensive
+		
+		type = army_leader
+		
+		allowed = {
+		}
+		
+		cost = 0.12
+		duration = 168
+		
+		unit_modifiers = {
+			planning_speed = 3.5
+		}
+		
+		ai_will_do = {
+			factor = -1.8
+			modifier = {  #TODO_AI: maybe expand ai on abilities but put a flag trigger here
+				check_variable = { unit_ratio_ready_for_plan > 0.65 }
+				check_variable = { avg_unit_planning_ratio < 0.50 }
+				check_variable = { num_units > 7 }
+				
+				check_variable = { avg_unit_planning_ratio > 0 }
+				FROM = {
+					command_power > 10
+				}
+				
+				set_temp_variable = { ai_add = unit_ratio_ready_for_plan }
+				divide_temp_variable = { ai_add = avg_unit_planning_ratio }
+				add = ai_add
+			}
+		}
+	}
+	
+	
+	siege_artillery = {
+		name = ABILITY_SIEGE_ARTILLERY
+		desc = ABILITY_SIEGE_ARTILLERY_DESC
+		
+		type = army_leader
+		
+		allowed = {
+			has_ability = siege_artillery
+		}
+		
+		unit_modifiers = {
+			fort = {
+				attack = 0.2
+			}
+			fortification_damage = 2.0
+			fortification_collateral_chance = 2.0
+		}
+		cost = 0.1
+		duration = 168
+		
+		
+		ai_will_do = {
+			factor = -1
+			modifier = {
+				check_variable = { num_units_offensive_combats > 5 }
+				
+				set_temp_variable = { temp = num_units_offensive_combats_against@fort }
+				divide_temp_variable = { temp = num_units_offensive_combats }
+				check_variable = { temp > 0.4 }
+				
+				FROM = {
+					command_power > 10
+				}
+				
+				add = 2
+			}
+		}
+	}
+	
+	glider_planes = {
+		name = ABILITY_GLIDER_PLANES_ARTILLERY
+		desc = ABILITY_GLIDER_PLANES_ARTILLERY_DESC
+		
+		type = army_leader
+		
+		allowed = {
+			has_ability = glider_planes
+		}
+		
+		unit_modifiers = {
+			paratrooper_weight_factor = -0.10
+			paradrop_organization_factor = 2.0
+			paratrooper_aa_defense = 0.5
+		}
+		
+		cost = 0.1
+		duration = 168
+	}
+	faster_naval_invasion_planning = {
+		name = ABILITY_FASTER_NAVAL_PLANNING
+		desc = ABILITY_FASTER_NAVAL_PLANNING_DESC
+		
+		type = army_leader
+		
+		allowed = {
+			has_ability = faster_naval_invasion_planning
+		}
+		
+		unit_modifiers = {
+			naval_invasion_prep_speed = 0.5
+		}
+		
+		cost = 0.1
+		duration = 168
+	}
+	
+	probing_attack = {
+		name = ABILITY_PROBING_ATTACK
+		desc = ABILITY_PROBING_ATTACK_DESC
+		
+		type = army_leader
+		
+		allowed = {
+			has_ability = probing_attack
+		}
+		
+		unit_modifiers = {
+			dont_lose_dig_in_on_attack = 1.0
+			offence = -0.2
+		}
+		
+		cancelable = yes
+		cost = 0.1
+		duration = -1
+	}
+	
+	makeshift_bridges = {
+		name = ABILITY_MAKESHIFT_BRIDGES
+		desc = ABILITY_MAKESHIFT_BRIDGES_DESC
+		
+		type = army_leader
+		
+		allowed = {
+			#has_ability = makeshift_bridges
+			check_variable = { FROM.tech_engineers_bridges = 1 }
+		}
+		
+		
+		unit_modifiers = {
+			river_crossing_factor = -0.5
+			river = {
+				attack = 0.4
+			}
+		}
+		
+		cost = 0.1
+		duration = 168
+		
+		ai_will_do = {
+			factor = -1
+			modifier = {
+				check_variable = { num_units_crossing_river > 5 }
+				check_variable = { num_units_in_combat > 2 }
+				FROM = {
+					command_power > 2.0
+				}
+				add = 2
+			}
+		}
+	}
+	
+	extra_suplies = {
+		name = ABILITY_EXTRA_SUPLIES
+		desc = ABILITY_EXTRA_SUPLIES_DESC
+		
+		type = army_leader
+		
+		allowed = {
+			has_ability = extra_suplies
+		}
+		
+		unit_modifiers = {
+			no_supply_grace = 240
+		}
+		
+		one_time_effect = {
+			supply_units = 168
+		}
+		
+		cost = 0.2
+		duration = 168
+		cooldown = 504
+	}
+	
+	requisition_winter_gear = {
+		name = ABILITY_REQUISITION_WINTER_GEAR
+		desc = ABILITY_REQUISITION_WINTER_GEAR_DESC
+		
+		type = army_leader
+		
+		allowed = {
+			check_variable = { FROM.requisition_winter_gear = 1 }
+		}
+		
+		unit_modifiers = {
+			acclimatization_cold_climate_gain_factor = 0.5
+		}
+		
+		cost = 0.1
+		duration = 168
+		
+		ai_will_do = {
+			factor = -1
+			modifier = {
+				check_variable = { num_units_on_climate@cold_climate > 8 }
+				
+				set_temp_variable = { temp = avg_units_acclimation@cold_climate }
+				divide_temp_variable = { temp =  num_units }
+				check_variable = { temp < 0.5 }
+				
+				FROM = {
+					command_power > 2.0
+				}
+				
+				add = 2
+			}
+		}
+	}
+	
+	ITA_ADAPTIVE = {
+		name = ABILITY_ADAPTIVE
+		desc = ABILITY_ADAPTIVE_DESC
+		
+		sound_effect = command_power_ability_offensive
+		
+		type = army_leader
+		
+		allowed = {
+			check_variable = { FROM.ITA_adaption = 1 }
+		}
+
+		unit_modifiers = {
+			terrain_penalty_reduction = 0.5
+			attrition = 0.05
+		}
+		
+		one_time_effect = {
+			add_temporary_buff_to_units = {
+				combat_entrenchment = 0.25
+				str_damage_multiplier = 0.05
+				combat_breakthrough = 0.05
+				days = 10
+				tooltip = ABILITY_ADAPTIVE_TOOLTIP
+			}		
+		}
+		cost = 0.04
+		duration = 240
+		
+		ai_will_do = {
+			factor = -1
+			modifier = {
+				check_variable = { num_units_defensive_combats > 6 }
+				
+				check_variable = { avg_defensive_combat_status < 0.40 }
+				check_variable = { ai_random > avg_defensive_combat_status }
+				
+				FROM = {
+					has_war_support > 0.4
+				}
+				add = 2
+			}
+		}
+	}
+	#open_operation = {
+	#	name = ABILITY_ADAPTIVE
+	#	desc = ABILITY_ADAPTIVE_DESC
+	#	
+	#	sound_effect = command_power_ability_offensive
+	#	
+	#	type = army_leader
+		
+	#	one_time_effect = {
+	#		open_abilities = yes
+	#	}
+		
+	#}
+	
+	
+}

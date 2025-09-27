@@ -1,0 +1,235 @@
+scripted_gui = {
+	
+	historical_equipment_design = {
+		context_type = player_context
+		
+		window_name = "historical_design_parent_container"
+		parent_window_token = production_tab
+		 
+		visible = {
+			has_country_flag = show_HTD
+		}
+		
+		dirty = ui_HTD
+		
+		properties = {
+			flag = {
+				image = "[This.GetFlag]"
+			}
+			ship_tab = { frame = naval_frame }
+			armor_tab = { frame = armor_frame }
+			
+			tech = {
+				image = "[GetHDTTechBG]"
+				frame = tech_status
+				x = tech_x
+				y = tech_y
+			}
+			overlay = {
+				frame = overlay_frame
+				x = overlay_x
+				y = overlay_y
+			}
+			naval_tech = {
+				image = "[GetHDTTechBG]"
+				frame = tech_status
+				x = tech_x
+				y = tech_y
+			}
+			tech_icon = {
+				image = "[GetHDTTechIcon]"
+				x = icon_x
+				y = icon_y
+			}  
+			subtech_icon = {
+				x = subicon_x
+				y = subicon_y
+			}  
+			tech_name = {
+				x = name_x
+				y = name_y
+			}  
+			tech_cost = {
+				x = name_x
+				y = cost_y
+			} 
+			tech_cost_bg = {
+				x = cost_bg_x
+				y = cost_bg_y
+			}
+			role_icon_index = {
+				x = role_x
+				y = role_y
+				frame = role_icon_index
+			} 
+		}
+		
+		effects = { 
+			close_button_click = {
+				clr_country_flag = show_HTD
+				clear_array = HTD_countries
+			}
+			armor_tab_click = {
+				set_country_flag = HED_armor
+				clear_array = HED_entry
+				HTD_open_window = yes
+				
+				add_to_variable = { ui_HTD = 1 }
+			}
+			ship_tab_click = {
+				clr_country_flag = HED_armor
+				clear_array = HED_entry
+				HTD_open_window = yes
+				
+				add_to_variable = { ui_HTD = 1 }
+			}
+			unlock_all_click = {
+							
+				for_each_loop = {
+					array = HED_entry
+					
+					meta_effect = {
+						text = {
+							HTD_[X]_[Y] = yes 
+							set_country_flag = HTD_[X]_[Y]
+						}
+						X = "[?HTD_target.GetTag]"
+						Y = "[?v.GetTokenKey]"
+					}
+				}
+				
+				add_to_variable = { ui_HTD = 1 }
+			}
+			bypass_trigger_click = {
+				if = {
+					limit = {
+						has_country_flag = HTD_skip_trigger
+					}
+					clr_country_flag = HTD_skip_trigger
+				}
+				else = {
+					set_country_flag = HTD_skip_trigger
+				}
+				
+				add_to_variable = { ui_HTD = 1 }
+			}
+			
+			tech_click = {
+				HTD_tech_effect = yes
+			}   
+			naval_tech_click = {
+				HTD_naval_tech_effect = yes
+			} 
+			tech_icon_click = {
+				meta_effect = {
+					text = {
+						custom_effect_tooltip = [V]_desc
+					}
+					V = "[?v.GetTokenKey]"
+				}
+			}
+		}
+		
+		triggers = {
+			ship_tab_visible = {
+				add_to_temp_array = { HTD_page = HTD_target }
+				if = {
+					limit = {
+						has_country_flag = HED_armor
+					}
+					set_temp_variable = { naval_frame = 2 }
+				}
+				else = {
+					set_temp_variable = { armor_frame = 2 }
+				}
+				
+				major_country = yes
+			}
+			unlock_all_visible = {
+				is_debug = yes
+			}
+			bypass_trigger_visible = {
+				is_debug = yes
+			}
+			  
+			tech_name_visible = {
+				check_variable = { subtech = 0 } 
+			}      
+			tech_icon_visible = {
+				check_variable = { subtech = 0 }
+			}    
+			tech_cost_visible = {
+				check_variable = { subtech = 0 }
+			}         
+			tech_cost_bg_visible = {
+				check_variable = { subtech = 0 }
+				NOT = { check_variable = { tech_status = 3 } }
+			}  
+			subtech_icon_visible = { 
+				check_variable = { subtech > 0 }
+			}
+			role_icon_index_visible = {
+				check_variable = { subtech = 0 }
+			}         
+			
+			tech_click_enabled = {       
+				set_temp_variable = { tech_x = 0 }
+				set_temp_variable = { tech_y = 0 }
+				
+				meta_trigger = {
+					text = {
+						HTD_[X]_tech_position = yes
+					}
+					X = "[?HTD_target.GetTag]"
+				}
+				
+				HTD_army_can_unlock = yes
+				
+			}
+			
+			naval_tech_click_enabled = {       
+				set_temp_variable = { tech_x = 0 }
+				set_temp_variable = { tech_y = 0 }
+				
+				meta_trigger = {
+					text = {
+						HTD_[X]_tech_position = yes
+					}
+					X = "[?HTD_target.GetTag]"
+				}
+				
+				HTD_navy_can_unlock = yes
+				
+			}
+			
+		}
+		
+		dynamic_lists = {
+			HTD_list = {
+				array = HTD_countries
+				change_scope = yes
+				entry_container = "HTD_list_entry"
+			}
+			historical_design_page_list = {
+				array = HTD_page
+				change_scope = yes
+				entry_container = "[GetHEDWindow]"
+			}
+			tech_list = {
+				array = HED_entry
+				change_scope = yes
+				entry_container = "tech_entry"
+			}
+			naval_tech_list = {
+				array = HED_entry
+				change_scope = yes
+				entry_container = "naval_tech_entry"
+			}
+			year_list = {
+				array = HTD_year
+				change_scope = yes
+				entry_container = "year_entry"
+			}
+		}
+	}
+}

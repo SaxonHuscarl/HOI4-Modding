@@ -1,0 +1,112 @@
+foreign_politics = {
+	
+	HUN_back_out_from_enforcing_the_treaty_of_trianon = {
+
+		icon = generic_break_treaty
+
+		available = {
+		}
+
+		visible = {
+			has_country_flag = HUN_policing_expansion_of_hungary
+			HUN = { has_completed_focus = HUN_revisionism }
+			
+			# Decision only shows up, once Hungary has accumulated at some badboy rating
+			OR = {
+				AND = {
+					HUN = { has_country_flag = HUN_realism }
+					check_variable = { var = global.HUN_badboy_rating value = 1 compare = greater_than_or_equals }
+				}
+				AND = {
+					NOT = { HUN = { has_country_flag = HUN_realism } }
+					check_variable = { var = global.HUN_badboy_rating value = 2 compare = greater_than_or_equals }
+				}
+			}
+		}
+		
+		ai_will_do = {
+			factor = -1
+			modifier = {
+				OR = {
+					is_in_faction_with = HUN
+					AND = {
+						has_opinion = { target = HUN value > 74 }
+						HUN = { has_same_government_as_root = yes }
+					}
+					has_opinion = { target = HUN value > 99 }
+					tag = USA
+				}
+				
+				add = 51
+			}
+		}
+		
+		complete_effect = {
+			custom_effect_tooltip = HUN_will_no_longer_be_responsible_for_curbing_hungarian_expansion
+			clr_country_flag = HUN_policing_expansion_of_hungary
+			set_country_flag = HUN_backed_out_from_treaty_of_trianon
+			clear_aggression_opinion = yes
+			hidden_effect = {
+				HUN = { news_event = { id = hun_news.42 } }
+			}
+			if = {
+				limit = {
+					ENG = {
+						exists = yes
+						NOT = { has_country_flag = HUN_backed_out_from_treaty_of_trianon }
+					}
+				}
+				ENG = { country_event = { id = hungary_flavor_gen.34 days = 1 } }
+				else = {
+					if = {
+						limit = {
+							FRA = {
+								exists = yes
+								NOT = { has_country_flag = HUN_backed_out_from_treaty_of_trianon }
+							}
+						}
+						FRA = { country_event = { id = hungary_flavor_gen.34 days = 1 } }
+						else = {
+							if = {
+								limit = {
+									USA = {
+										exists = yes
+										NOT = { has_country_flag = HUN_backed_out_from_treaty_of_trianon }
+									}
+								}
+								USA = { country_event = { id = hungary_flavor_gen.34 days = 1 } }
+								else = {
+									random_country = {
+										limit = {
+											is_major = yes
+											NOT = { has_country_flag = HUN_backed_out_from_treaty_of_trianon }
+											OR = {
+												# These are the rest of the countries who signed the treaty in 1920
+												tag = ITA
+												tag = JAP
+												tag = BEL
+												tag = CHI
+												tag = CUB
+												tag = GRE
+												tag = NIC
+												tag = PAN
+												tag = POL
+												tag = POR
+												tag = ROM
+												tag = YUG
+												tag = SIA
+												tag = CZE
+											}
+										}
+										country_event = { id = hungary_flavor_gen.34 days = 1 }
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+	
+}

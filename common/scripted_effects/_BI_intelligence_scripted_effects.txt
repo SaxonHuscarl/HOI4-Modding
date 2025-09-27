@@ -1,0 +1,2499 @@
+
+d_unlock_all_agency_upgrades = {
+	for_loop_effect = {
+		start = token:upgrade_agency_second_upgrade
+		end = token:upgrade_crypto_strength_2
+		
+		meta_effect = {
+			text = {
+				if = {
+					limit = {
+						NOT = { has_done_agency_upgrade = [X] }
+					}
+					upgrade_intelligence_agency = [X]
+				}
+			}
+			X = "[?v.GetTokenKey]"
+		}
+	}
+}
+
+update_intel_networks = {
+	every_operative = {
+		
+		if = {
+			limit = {
+				NOT = { check_variable = { operation_country = 0 } }
+				NOT = { 
+					is_in_array = { ROOT.intel_networks = operation_country } 
+				}
+			}
+			add_to_array = { ROOT.intel_networks = operation_country }
+		}
+	}
+	
+	########### 
+	
+	for_each_scope_loop = {
+		array = intel_networks
+		
+		### Remove check 
+		
+		if = {
+			limit = {
+				check_variable = { ROOT.intel_civilian_asset_level@THIS = 0 }
+				check_variable = { ROOT.intel_army_asset_level@THIS = 0 }
+				check_variable = { ROOT.intel_air_asset_level@THIS = 0 }
+				check_variable = { ROOT.intel_navy_asset_level@THIS = 0 }
+				check_variable = { ROOT.intel_resistance_asset_area@THIS = 0 }
+				ROOT = { 
+					NOT = {
+						network_strength = {
+							target = PREV
+							value > 0
+						}
+						network_national_coverage = {
+							target = PREV
+							value > 0
+						}
+					}
+				}
+			}
+			add_to_temp_array = { remove_asset = THIS }
+		}
+		
+	}
+	
+	for_each_loop = { 
+		array = remove_asset
+		
+		remove_from_array = { intel_networks = v }
+	}
+}
+
+update_intel_networks_weekly = {
+
+	for_each_scope_loop = {
+		array = intel_networks
+		
+		### Check if we have the variable, but lost an asset due to save bug
+		
+		ROOT = {
+			if = {
+				limit = {
+					check_variable = { intel_civilian_asset_level@PREV > 0 }
+					NOT = {
+						has_operation_token = {
+							tag = PREV
+							token = token_civilian
+						}
+					}
+				}
+				add_operation_token = {
+					tag = PREV
+					token = token_civilian
+				}
+				meta_effect = {
+					text = {		
+						add_operation_token = {
+							tag = PREV
+							token = token_civilian_[X]
+						}
+					}
+					X = "[?intel_civilian_asset_level@PREV]"
+				}
+			}
+			if = {
+				limit = {
+					check_variable = { intel_army_asset_level@PREV > 0 }
+					NOT = {
+						has_operation_token = {
+							tag = PREV
+							token = token_army
+						}
+					}
+				}
+				add_operation_token = {
+					tag = PREV
+					token = token_army
+				}
+				meta_effect = {
+					text = {		
+						add_operation_token = {
+							tag = PREV
+							token = token_army_[X]
+						}
+					}
+					X = "[?intel_army_asset_level@PREV]"
+				}
+			}
+			if = {
+				limit = {
+					check_variable = { intel_air_asset_level@PREV > 0 }
+					NOT = {
+						has_operation_token = {
+							tag = PREV
+							token = token_airforce
+						}
+					}
+				}
+				add_operation_token = {
+					tag = PREV
+					token = token_airforce
+				}
+				meta_effect = {
+					text = {		
+						add_operation_token = {
+							tag = PREV
+							token = token_airforce_[X]
+						}
+					}
+					X = "[?intel_air_asset_level@PREV]"
+				}
+			}
+			if = {
+				limit = {
+					check_variable = { intel_navy_asset_level@PREV > 0 }
+					NOT = {
+						has_operation_token = {
+							tag = PREV
+							token = token_navy
+						}
+					}
+				}
+				add_operation_token = {
+					tag = PREV
+					token = token_navy
+				}
+				meta_effect = {
+					text = {		
+						add_operation_token = {
+							tag = PREV
+							token = token_navy_[X]
+						}
+					}
+					X = "[?intel_navy_asset_level@PREV]"
+				}
+			}
+		}
+	}
+}
+
+agency_upgrade_tooltip = {
+	if = {
+		limit = {
+			NOT = {
+				meta_trigger = {
+					text = {
+						has_done_agency_upgrade = [V]
+					}
+					V = "[?v.GetTokenKey]"
+				}
+			}
+		}
+			
+		if = {
+			limit = {
+				check_variable = { cost > 0 }
+			}
+			custom_effect_tooltip = AGENCY_UPGRADE_COST
+		}
+		if = {
+			limit = {
+				check_variable = { duration > 0 }
+			}
+			set_temp_variable = { factor = 1 }
+			if = {
+				limit = {
+					check_variable = { agency_cost_share^num > 0 }
+						
+					set_temp_variable = { best_discount = 0 }
+					all_of_scopes = {
+						array = agency_cost_share
+						
+						if = {
+							limit = {
+								OR = {
+									meta_trigger = {
+										text = {
+											has_done_agency_upgrade = [V]
+										}
+										V = "[?v.GetTokenKey]"
+									}
+									AND = {
+										meta_trigger = {
+											text = {
+												has_country_flag = [X]
+												ROOT = { NOT = { has_country_flag = [X] } }
+											}
+											X = "[?v.GetTokenKey]"
+										}
+									}
+									AND = {
+										meta_trigger = {
+											text = {
+												has_country_flag = { flag = [X] value = 2 }
+												ROOT = { has_country_flag = { flag = [X] value < 2 } }
+											}
+											X = "[?v.GetTokenKey]"
+										}
+									}
+									AND = {
+										meta_trigger = {
+											text = {
+												has_country_flag = { flag = [X] value = 3 }
+												ROOT = { has_country_flag = { flag = [X] value < 3 } }
+											}
+											X = "[?v.GetTokenKey]"
+										}
+									}
+									AND = {
+										meta_trigger = {
+											text = {
+												has_country_flag = { flag = [X] value = 4 }
+												ROOT = { has_country_flag = { flag = [X] value < 4 } }
+											}
+											X = "[?v.GetTokenKey]"
+										}
+									}
+								}
+								set_temp_variable = { compare_to = ROOT.agency_cost_share_value@THIS }
+								check_variable = { compare_to < best_discount }
+							}
+							set_temp_variable = { best_discount = ROOT.agency_cost_share_value@THIS }
+							set_temp_variable = { best_discount_tag = THIS }
+						}
+					}
+					add_to_temp_variable = { factor = best_discount }
+				}
+			}
+			
+			set_temp_variable = { base = duration }
+			set_temp_variable = { modifiers = modifier@agency_upgrade_time }
+		
+			add_to_temp_variable = { factor = modifier@agency_upgrade_time }
+			multiply_temp_variable = { duration = factor }
+			round_temp_variable = duration
+			clamp_temp_variable = { var = duration min = 1 }
+			custom_effect_tooltip = AGENCY_UPGRADE_DURATION
+			
+			if = {
+				limit = {
+					NOT = { check_variable = { best_discount = 0 } }
+				}
+				custom_effect_tooltip = AGENCY_UPGRADE_DURATION_SHARED
+			}
+			if = {
+				limit = {
+					NOT = { check_variable = { modifiers = 0 } }
+				}
+				custom_effect_tooltip = AGENCY_UPGRADE_DURATION_MODIFIER
+			}
+		}
+	}
+}
+
+update_current_agency_upgrades = {
+	if = {
+		limit = {
+			is_ai = yes 
+		}
+		set_temp_variable = { iteration_progress = 14 }
+	}
+	else = {
+		set_temp_variable = { iteration_progress = 1 }
+	}
+	for_each_loop = {
+		array = current_upgrade_array
+		
+		add_to_variable = { agency_progress@var:v = iteration_progress }
+		if = {
+			limit = {
+				check_variable = { agency_target_progress@var:v < agency_progress@var:v }
+			}
+			subtract_from_variable = { agency_upgrade_cost = agency_cost@var:v }
+			meta_effect = {
+				text = {
+					upgrade_intelligence_agency = [V]
+				}
+				V = "[?v.GetTokenKey]"
+			}
+			clear_variable = agency_progress@var:v
+			clear_variable = agency_target_progress@var:v
+			clear_variable = agency_cost@var:v
+			add_to_temp_array = { remove_agency = v }
+		}
+	}
+	
+	for_each_loop = {
+		array = remove_agency
+		
+		remove_from_array = { current_upgrade_array = v }
+	}
+	
+	# upgrade queue
+	
+	if = {
+		limit = {
+			check_variable = { modifier@agency_upgrades > current_upgrade_array^num }
+		}
+		for_each_loop = {
+			array = agency_queue
+			
+			set_temp_variable = { trigger_passed = 0 }
+			if = {
+				limit = {
+					NOT = { is_in_array = { agency_queue_remove = v } }
+					NOT = { is_in_array = { current_upgrade_array = v } }
+				}
+					
+				if = {
+					limit = {
+						meta_trigger = {
+							text = { 
+								[X] = yes 
+							}
+							X = "[?v.GetTokenKey]"
+						}
+					}
+					set_temp_variable = { trigger_passed = 1 }
+				}
+				else_if = {
+					limit = {
+						NOT = { has_country_flag = agency_skip_unavailable }
+					}
+					set_temp_variable = { trigger_passed = 0 }
+					set_temp_variable = { break = 1 }
+				}
+				
+				if = {
+					limit = {
+						check_variable = { trigger_passed = 1 }
+						check_variable = { modifier@agency_upgrades > current_upgrade_array^num }
+					}
+					add_agency_upgrade_to_queue = yes
+					add_to_temp_array = { agency_queue_remove = v }
+				}
+			}
+		}
+		
+		for_each_loop = {
+			array = agency_queue_remove
+			
+			remove_from_array = { agency_queue = v }
+		}
+			
+	}
+			
+}
+
+start_agency_upgrade = {
+
+	agency_upgrade_tooltip = yes 
+	effect_tooltip = {
+		meta_effect = {
+			text = {
+				[X] = yes
+			}
+			X = "[?v.GetTokenKey]"
+		}
+	}
+	if = {
+		limit = {
+			has_country_flag = ui_show_upgrade_queue
+		}
+		
+		if = {
+			limit = {
+				meta_trigger = {
+					text = {
+						[X] = yes
+					}
+					X = "[?v.GetTokenKey]"
+				}
+			}
+		}
+		
+		set_temp_variable = { max_queue = level }
+		
+		for_each_loop = {
+			array = agency_queue
+			value = queue_entry
+			
+			if = {
+				limit = {
+					check_variable = { v = queue_entry }
+				}
+				subtract_from_temp_variable = { max_queue = 1 }
+			}
+		}
+		
+		if = {
+			limit = {
+				is_in_array = { current_upgrade_array = v }
+			}
+			subtract_from_temp_variable = { max_queue = 1 }
+		}
+		
+		if = {
+			limit = {
+				meta_trigger = {
+					text = {
+						has_country_flag = { flag = [X] value = 1 }
+					}
+					X = "[?v.GetTokenKey]"
+				}
+			}
+			subtract_from_temp_variable = { max_queue = 1 }
+		}
+		else_if = {
+			limit = {
+				meta_trigger = {
+					text = {
+						has_country_flag = { flag = [X] value = 2 }
+					}
+					X = "[?v.GetTokenKey]"
+				}
+			}
+			subtract_from_temp_variable = { max_queue = 2 }
+		}
+		else_if = {
+			limit = {
+				meta_trigger = {
+					text = {
+						has_country_flag = { flag = [X] value = 3 }
+					}
+					X = "[?v.GetTokenKey]"
+				}
+			}
+			subtract_from_temp_variable = { max_queue = 3 }
+		}
+		else_if = {
+			limit = {
+				meta_trigger = {
+					text = {
+						has_country_flag = { flag = [X] value = 4 }
+					}
+					X = "[?v.GetTokenKey]"
+				}
+			}
+			subtract_from_temp_variable = { max_queue = 4 }
+		}
+		else_if = {
+			limit = {
+				meta_trigger = {
+					text = {
+						has_done_agency_upgrade = [X]
+					}
+					X = "[?v.GetTokenKey]"
+				}
+			}
+			set_temp_variable = { max_queue = 0 }
+		}
+		
+		if = {
+			limit = {
+				check_variable = { max_queue > 0 }
+			}
+			add_to_array = { agency_queue = v }
+		}
+	}
+	else_if = {
+		limit = {
+			NOT = { is_in_array = { current_upgrade_array = v } }
+			
+			check_variable = { modifier@agency_upgrades > current_upgrade_array^num }
+		}
+		add_agency_upgrade_to_queue = yes
+	}
+}
+
+add_agency_upgrade_to_queue = {
+
+	if = {
+		limit = {
+			meta_trigger = {
+				text = {
+					[V] = yes 
+				}
+				V = "[?v.GetTokenKey]"
+			}
+		}
+	}
+	
+	set_temp_variable = { factor = 1 }
+	if = {
+		limit = {
+			check_variable = { agency_cost_share^num > 0 }
+		}
+		
+		set_temp_variable = { best_discount = 0 }
+		for_each_scope_loop = {
+			array = agency_cost_share
+			
+			if = {
+				limit = {
+					meta_trigger = {
+						text = {
+							has_done_agency_upgrade = [V]
+						}
+						V = "[?v.GetTokenKey]"
+					}
+					log = "[This.GetTag] [?agency_cost_share_value^i] "
+					
+					set_temp_variable = { compare_to = ROOT.agency_cost_share_value@THIS }
+					#multiply_temp_variable = { compare_to = -1 }
+					check_variable = { compare_to < best_discount }
+				}
+				set_temp_variable = { best_discount = ROOT.agency_cost_share_value@THIS }
+			}
+		}
+		log = "[?best_discount] best_discount"
+		add_to_temp_variable = { factor = best_discount }
+	
+	}
+	
+	add_to_temp_variable = { factor = modifier@agency_upgrade_time }
+	multiply_temp_variable = { duration = factor }
+	round_temp_variable = duration
+	clamp_temp_variable = { var = duration min = 1 }
+	
+	if = {
+		limit = {	
+			NOT = {
+				meta_trigger = {
+					text = {
+						has_done_agency_upgrade = [V]
+					}
+					V = "[?v.GetTokenKey]"
+				}
+			}
+		}
+		add_to_array = { current_upgrade_array = v }
+		set_variable = { agency_progress@var:v = 0 }
+		set_variable = { agency_target_progress@var:v = duration }
+		set_variable = { agency_cost@var:v = cost }
+		
+		add_to_variable = { agency_upgrade_cost = cost }
+		if = {
+			limit = {
+				NOT = {
+					has_dynamic_modifier = {
+						modifier = agency_upgrade_cost
+					}
+				}
+			}
+			hidden_effect = {
+				add_dynamic_modifier = {
+					modifier = agency_upgrade_cost
+				}
+			}
+		}
+	}
+}
+
+update_asset_discovery = {
+	every_operative = {
+		remove_unit_leader_trait = operative_discover_army_asset
+		remove_unit_leader_trait = operative_discover_air_asset
+		remove_unit_leader_trait = operative_discover_navy_asset
+		remove_unit_leader_trait = operative_discover_civilian_asset
+	}
+	if = {
+		limit = {
+			check_variable = { modifier@enemy_army_asset_discover_chance > 0 }
+			NOT = { 
+				any_operative_leader = { 
+					has_trait = operative_discover_army_asset
+					check_variable = { operation_country = ROOT }
+				} 
+			}
+		}
+		random_operative = {
+			limit = {
+				NOT = { has_trait = operative_discover_army_asset }
+				check_variable = { operation_country = ROOT }
+			}
+			add_unit_leader_trait = operative_discover_army_asset
+		}
+	}
+	if = {
+		limit = {
+			check_variable = { modifier@enemy_air_asset_discover_chance > 0 }
+			NOT = { 
+				any_operative_leader = { 
+					has_trait = operative_discover_air_asset
+					check_variable = { operation_country = ROOT }
+				} 
+			}
+		}
+		random_operative = {
+			limit = {
+				NOT = { has_trait = operative_discover_air_asset }
+				check_variable = { operation_country = ROOT }
+			}
+			add_unit_leader_trait = operative_discover_air_asset
+		}
+	}
+	if = {
+		limit = {
+			check_variable = { modifier@enemy_navy_asset_discover_chance > 0 }
+			NOT = { 
+				any_operative_leader = { 
+					has_trait = operative_discover_navy_asset
+					check_variable = { operation_country = ROOT }
+				} 
+			}
+		}
+		random_operative = {
+			limit = {
+				NOT = { has_trait = operative_discover_navy_asset }
+				check_variable = { operation_country = ROOT }
+			}
+			add_unit_leader_trait = operative_discover_navy_asset
+		}
+	}
+	if = {
+		limit = {
+			check_variable = { modifier@enemy_economy_asset_discover_chance > 0 }
+			NOT = { 
+				any_operative_leader = { 
+					has_trait = operative_discover_civilian_asset
+					check_variable = { operation_country = ROOT }
+				} 
+			}
+		}
+		random_operative = {
+			limit = {
+				NOT = { has_trait = operative_discover_civilian_asset }
+				check_variable = { operation_country = ROOT }
+			}
+			add_unit_leader_trait = operative_discover_civilian_asset
+		}
+	}
+}
+
+operation_add_civilian_asset = {
+
+	add_to_variable = { intel_civilian_asset_level@FROM = 1 }
+
+	hidden_effect = {
+		if = { limit = { has_operation_token = { tag = FROM token = token_civilian_1 } } remove_operation_token = { tag = FROM token = token_civilian_1 } }
+		if = { limit = { has_operation_token = { tag = FROM token = token_civilian_2 } } remove_operation_token = { tag = FROM token = token_civilian_2 } }
+		if = { limit = { has_operation_token = { tag = FROM token = token_civilian_3 } } remove_operation_token = { tag = FROM token = token_civilian_3 } }
+		if = { limit = { has_operation_token = { tag = FROM token = token_civilian_4 } } remove_operation_token = { tag = FROM token = token_civilian_4 } }
+
+		if = {
+			limit = {
+				NOT = {
+					has_operation_token = {
+						tag = FROM
+						token = token_civilian
+					}
+				}
+			}
+			add_operation_token = { tag = FROM token = token_civilian }
+		}
+		
+		set_temp_variable = { token_num = intel_civilian_asset_level@FROM }
+		clamp_temp_variable = { var = token_num max = 4 }
+		meta_effect = {
+			text = {
+				add_operation_token = { tag = FROM token = token_civilian_[X] }
+			}
+			X = "[?token_num]"
+		}
+	}
+}
+operation_remove_civilian_asset = {
+
+	subtract_from_variable = { intel_civilian_asset_level@FROM = 1 }
+	clamp_variable = { var = intel_civilian_asset_level@FROM min = 0 }
+	
+	hidden_effect = {
+		if = { limit = { has_operation_token = { tag = FROM token = token_civilian_1 } } remove_operation_token = { tag = FROM token = token_civilian_1 } }
+		if = { limit = { has_operation_token = { tag = FROM token = token_civilian_2 } } remove_operation_token = { tag = FROM token = token_civilian_2 } }
+		if = { limit = { has_operation_token = { tag = FROM token = token_civilian_3 } } remove_operation_token = { tag = FROM token = token_civilian_3 } }
+		if = { limit = { has_operation_token = { tag = FROM token = token_civilian_4 } } remove_operation_token = { tag = FROM token = token_civilian_4 } }
+
+		if = {
+			limit = {
+				check_variable = { intel_civilian_asset_level@FROM = 0 }
+			}
+			remove_operation_token = { tag = FROM token = token_civilian }
+		}
+		else = {
+			set_temp_variable = { token_num = intel_civilian_asset_level@FROM }
+			clamp_temp_variable = { var = token_num max = 4 }
+			meta_effect = {
+				text = {
+					add_operation_token = { tag = FROM token = token_civilian_[X] }
+				}
+				X = "[?token_num]"
+			}
+		}
+	}
+}
+
+operation_add_army_asset = {
+
+	add_to_variable = { intel_army_asset_level@FROM = 1 }
+
+	hidden_effect = {
+		if = { limit = { has_operation_token = { tag = FROM token = token_army_1 } } remove_operation_token = { tag = FROM token = token_army_1 } }
+		if = { limit = { has_operation_token = { tag = FROM token = token_army_2 } } remove_operation_token = { tag = FROM token = token_army_2 } }
+		if = { limit = { has_operation_token = { tag = FROM token = token_army_3 } } remove_operation_token = { tag = FROM token = token_army_3 } }
+		if = { limit = { has_operation_token = { tag = FROM token = token_army_4 } } remove_operation_token = { tag = FROM token = token_army_4 } }
+
+		if = {
+			limit = {
+				NOT = {
+					has_operation_token = {
+						tag = FROM
+						token = token_army
+					}
+				}
+			}
+			add_operation_token = { tag = FROM token = token_army }
+		}
+		
+		set_temp_variable = { token_num = intel_army_asset_level@FROM }
+		clamp_temp_variable = { var = token_num max = 4 }
+		meta_effect = {
+			text = {
+				add_operation_token = { tag = FROM token = token_army_[X] }
+			}
+			X = "[?token_num]"
+		}
+	}
+}
+operation_remove_army_asset = {
+
+	subtract_from_variable = { intel_army_asset_level@FROM = 1 }
+	clamp_variable = { var = intel_army_asset_level@FROM min = 0 }
+	
+	hidden_effect = {
+		if = { limit = { has_operation_token = { tag = FROM token = token_army_1 } } remove_operation_token = { tag = FROM token = token_army_1 } }
+		if = { limit = { has_operation_token = { tag = FROM token = token_army_2 } } remove_operation_token = { tag = FROM token = token_army_2 } }
+		if = { limit = { has_operation_token = { tag = FROM token = token_army_3 } } remove_operation_token = { tag = FROM token = token_army_3 } }
+		if = { limit = { has_operation_token = { tag = FROM token = token_army_4 } } remove_operation_token = { tag = FROM token = token_army_4 } }
+
+		if = {
+			limit = {
+				check_variable = { intel_army_asset_level@FROM = 0 }
+			}
+			remove_operation_token = { tag = FROM token = token_army }
+		}
+		else = {
+			set_temp_variable = { token_num = intel_army_asset_level@FROM }
+			clamp_temp_variable = { var = token_num max = 4 }
+			meta_effect = {
+				text = {
+					add_operation_token = { tag = FROM token = token_army_[X] }
+				}
+				X = "[?token_num]"
+			}
+		}
+	}
+}
+
+operation_add_air_asset = {
+
+	add_to_variable = { intel_air_asset_level@FROM = 1 }
+
+	hidden_effect = {
+		if = { limit = { has_operation_token = { tag = FROM token = token_airforce_1 } } remove_operation_token = { tag = FROM token = token_airforce_1 } }
+		if = { limit = { has_operation_token = { tag = FROM token = token_airforce_2 } } remove_operation_token = { tag = FROM token = token_airforce_2 } }
+		if = { limit = { has_operation_token = { tag = FROM token = token_airforce_3 } } remove_operation_token = { tag = FROM token = token_airforce_3 } }
+		if = { limit = { has_operation_token = { tag = FROM token = token_airforce_4 } } remove_operation_token = { tag = FROM token = token_airforce_4 } }
+
+		if = {
+			limit = {
+				NOT = {
+					has_operation_token = {
+						tag = FROM
+						token = token_airforce
+					}
+				}
+			}
+			add_operation_token = { tag = FROM token = token_airforce }
+		}
+		
+		set_temp_variable = { token_num = intel_air_asset_level@FROM }
+		clamp_temp_variable = { var = token_num max = 4 }
+		meta_effect = {
+			text = {
+				add_operation_token = { tag = FROM token = token_airforce_[X] }
+			}
+			X = "[?token_num]"
+		}
+	}
+}
+operation_remove_air_asset = {
+
+	subtract_from_variable = { intel_air_asset_level@FROM = 1 }
+	clamp_variable = { var = intel_air_asset_level@FROM min = 0 }
+	
+	hidden_effect = {
+		if = { limit = { has_operation_token = { tag = FROM token = token_airforce_1 } } remove_operation_token = { tag = FROM token = token_airforce_1 } }
+		if = { limit = { has_operation_token = { tag = FROM token = token_airforce_2 } } remove_operation_token = { tag = FROM token = token_airforce_2 } }
+		if = { limit = { has_operation_token = { tag = FROM token = token_airforce_3 } } remove_operation_token = { tag = FROM token = token_airforce_3 } }
+		if = { limit = { has_operation_token = { tag = FROM token = token_airforce_4 } } remove_operation_token = { tag = FROM token = token_airforce_4 } }
+
+		if = {
+			limit = {
+				check_variable = { intel_air_asset_level@FROM = 0 }
+			}
+			remove_operation_token = { tag = FROM token = token_airforce }
+		}
+		else = {
+			set_temp_variable = { token_num = intel_air_asset_level@FROM }
+			clamp_temp_variable = { var = token_num max = 4 }
+			meta_effect = {
+				text = {
+					add_operation_token = { tag = FROM token = token_airforce_[X] }
+				}
+				X = "[?token_num]"
+			}
+		}
+	}
+}
+
+operation_add_navy_asset = {
+
+	add_to_variable = { intel_navy_asset_level@FROM = 1 }
+
+	hidden_effect = {
+		if = { limit = { has_operation_token = { tag = FROM token = token_navy_1 } } remove_operation_token = { tag = FROM token = token_navy_1 } }
+		if = { limit = { has_operation_token = { tag = FROM token = token_navy_2 } } remove_operation_token = { tag = FROM token = token_navy_2 } }
+		if = { limit = { has_operation_token = { tag = FROM token = token_navy_3 } } remove_operation_token = { tag = FROM token = token_navy_3 } }
+		if = { limit = { has_operation_token = { tag = FROM token = token_navy_4 } } remove_operation_token = { tag = FROM token = token_navy_4 } }
+
+		if = {
+			limit = {
+				NOT = {
+					has_operation_token = {
+						tag = FROM
+						token = token_navy
+					}
+				}
+			}
+			add_operation_token = { tag = FROM token = token_navy }
+		}
+		
+		set_temp_variable = { token_num = intel_navy_asset_level@FROM }
+		clamp_temp_variable = { var = token_num max = 4 }
+		meta_effect = {
+			text = {
+				add_operation_token = { tag = FROM token = token_navy_[X] }
+			}
+			X = "[?token_num]"
+		}
+	}
+}
+operation_remove_navy_asset = {
+
+	subtract_from_variable = { intel_navy_asset_level@FROM = 1 }
+	clamp_variable = { var = intel_navy_asset_level@FROM min = 0 }
+	
+	hidden_effect = {
+		if = { limit = { has_operation_token = { tag = FROM token = token_navy_1 } } remove_operation_token = { tag = FROM token = token_navy_1 } }
+		if = { limit = { has_operation_token = { tag = FROM token = token_navy_2 } } remove_operation_token = { tag = FROM token = token_navy_2 } }
+		if = { limit = { has_operation_token = { tag = FROM token = token_navy_3 } } remove_operation_token = { tag = FROM token = token_navy_3 } }
+		if = { limit = { has_operation_token = { tag = FROM token = token_navy_4 } } remove_operation_token = { tag = FROM token = token_navy_4 } }
+
+		if = {
+			limit = {
+				check_variable = { intel_navy_asset_level@FROM = 0 }
+			}
+			remove_operation_token = { tag = FROM token = token_navy }
+		}
+		else = {
+			set_temp_variable = { token_num = intel_navy_asset_level@FROM }
+			clamp_temp_variable = { var = token_num max = 4 }
+			meta_effect = {
+				text = {
+					add_operation_token = { tag = FROM token = token_navy_[X] }
+				}
+				X = "[?token_num]"
+			}
+		}
+	}
+}
+
+
+THIS_operation_add_civilian_asset_to_PREV = {
+
+	add_to_variable = { intel_civilian_asset_level@PREV = 1 }
+
+	hidden_effect = {
+		if = { limit = { has_operation_token = { tag = PREV token = token_civilian_1 } } remove_operation_token = { tag = PREV token = token_civilian_1 } }
+		if = { limit = { has_operation_token = { tag = PREV token = token_civilian_2 } } remove_operation_token = { tag = PREV token = token_civilian_2 } }
+		if = { limit = { has_operation_token = { tag = PREV token = token_civilian_3 } } remove_operation_token = { tag = PREV token = token_civilian_3 } }
+		if = { limit = { has_operation_token = { tag = PREV token = token_civilian_4 } } remove_operation_token = { tag = PREV token = token_civilian_4 } }
+
+		if = {
+			limit = {
+				NOT = {
+					has_operation_token = {
+						tag = PREV
+						token = token_civilian
+					}
+				}
+			}
+			add_operation_token = { tag = PREV token = token_civilian }
+		}
+		
+		set_temp_variable = { token_num = intel_civilian_asset_level@PREV }
+		clamp_temp_variable = { var = token_num max = 4 }
+		meta_effect = {
+			text = {
+				add_operation_token = { tag = PREV token = token_civilian_[X] }
+			}
+			X = "[?token_num]"
+		}
+	}
+}
+
+THIS_operation_add_army_asset_to_PREV = {
+
+	add_to_variable = { intel_army_asset_level@PREV = 1 }
+
+	hidden_effect = {
+		if = { limit = { has_operation_token = { tag = PREV token = token_army_1 } } remove_operation_token = { tag = PREV token = token_army_1 } }
+		if = { limit = { has_operation_token = { tag = PREV token = token_army_2 } } remove_operation_token = { tag = PREV token = token_army_2 } }
+		if = { limit = { has_operation_token = { tag = PREV token = token_army_3 } } remove_operation_token = { tag = PREV token = token_army_3 } }
+		if = { limit = { has_operation_token = { tag = PREV token = token_army_4 } } remove_operation_token = { tag = PREV token = token_army_4 } }
+
+		if = {
+			limit = {
+				NOT = {
+					has_operation_token = {
+						tag = PREV
+						token = token_army
+					}
+				}
+			}
+			add_operation_token = { tag = PREV token = token_army }
+		}
+		
+		set_temp_variable = { token_num = intel_army_asset_level@PREV }
+		clamp_temp_variable = { var = token_num max = 4 }
+		meta_effect = {
+			text = {
+				add_operation_token = { tag = PREV token = token_army_[X] }
+			}
+			X = "[?token_num]"
+		}
+	}
+}
+
+THIS_operation_add_air_asset_to_PREV = {
+
+	add_to_variable = { intel_air_asset_level@PREV = 1 }
+
+	hidden_effect = {
+		if = { limit = { has_operation_token = { tag = PREV token = token_airforce_1 } } remove_operation_token = { tag = PREV token = token_airforce_1 } }
+		if = { limit = { has_operation_token = { tag = PREV token = token_airforce_2 } } remove_operation_token = { tag = PREV token = token_airforce_2 } }
+		if = { limit = { has_operation_token = { tag = PREV token = token_airforce_3 } } remove_operation_token = { tag = PREV token = token_airforce_3 } }
+		if = { limit = { has_operation_token = { tag = PREV token = token_airforce_4 } } remove_operation_token = { tag = PREV token = token_airforce_4 } }
+
+		if = {
+			limit = {
+				NOT = {
+					has_operation_token = {
+						tag = PREV
+						token = token_airforce
+					}
+				}
+			}
+			add_operation_token = { tag = PREV token = token_airforce }
+		}
+		
+		set_temp_variable = { token_num = intel_air_asset_level@PREV }
+		clamp_temp_variable = { var = token_num max = 4 }
+		meta_effect = {
+			text = {
+				add_operation_token = { tag = PREV token = token_airforce_[X] }
+			}
+			X = "[?token_num]"
+		}
+	}
+}
+
+THIS_operation_add_navy_asset_to_PREV = {
+
+	add_to_variable = { intel_navy_asset_level@PREV = 1 }
+
+	hidden_effect = {
+		if = { limit = { has_operation_token = { tag = PREV token = token_navy_1 } } remove_operation_token = { tag = PREV token = token_navy_1 } }
+		if = { limit = { has_operation_token = { tag = PREV token = token_navy_2 } } remove_operation_token = { tag = PREV token = token_navy_2 } }
+		if = { limit = { has_operation_token = { tag = PREV token = token_navy_3 } } remove_operation_token = { tag = PREV token = token_navy_3 } }
+		if = { limit = { has_operation_token = { tag = PREV token = token_navy_4 } } remove_operation_token = { tag = PREV token = token_navy_4 } }
+
+		if = {
+			limit = {
+				NOT = {
+					has_operation_token = {
+						tag = PREV
+						token = token_navy
+					}
+				}
+			}
+			add_operation_token = { tag = PREV token = token_navy }
+		}
+		
+		set_temp_variable = { token_num = intel_navy_asset_level@PREV }
+		clamp_temp_variable = { var = token_num max = 4 }
+		meta_effect = {
+			text = {
+				add_operation_token = { tag = PREV token = token_navy_[X] }
+			}
+			X = "[?token_num]"
+		}
+	}
+}
+create_fake_intel_units = {
+	hidden_effect = {
+		if = {
+			# create template if not exist
+			limit = {
+				not = {
+					has_country_flag = fake_intel_template_created
+				}
+			}
+			division_template = {
+				name = "Fake Intel Division"
+				
+				is_fake_intel_division = yes
+				#is_locked = yes
+				regiments = {
+					fake_intel_unit = { x = 0 y = 0 }
+				}
+			}
+			set_country_flag = fake_intel_template_created
+		}
+		
+		# give it an id and store id & current date so it can be deleted later
+		if = {
+			limit = { NOT = { has_variable = fake_intel_id } }
+			set_variable = { fake_intel_id = 1000 }
+		}
+		set_temp_variable = { id_to_set = fake_intel_id }
+		add_to_variable = { fake_intel_id = 1 }
+		add_to_array = {
+			fake_intel_ids_to_delete = id_to_set
+		}
+		set_variable = { num_days_for_fake_intel_id@var:id_to_set = global.num_days }
+		
+		# minimum of 0.25 of current armies or 24
+		set_temp_variable = { num_to_create = num_armies }
+		multiply_temp_variable = { num_to_create = 0.25 }
+		round_temp_variable = num_to_create
+		add_to_temp_variable = { num_to_create = 1 }
+		clamp_temp_variable = {
+			var = num_to_create
+			min = 24
+		}
+		
+		# create actual units
+		capital_scope = {
+			create_unit = {
+				division = "division_template = \"Fake Intel Division\" start_experience_factor = 0.5" 
+				owner = PREV
+				id = id_to_set
+				count = num_to_create
+			}
+		}
+		
+		# will delete them after 90 days
+		country_event = { id = lar_fake_intel_units.1 days = 90 }
+	}
+}
+
+asset_civilian_request_most_built_area = {
+	set_temp_variable = { asset_type = token:civilian }
+	
+	if = {
+		limit = {
+			check_variable = { asset_action_complete = 0 }
+		}
+		
+		set_temp_variable = { asset_days = 30 }
+		#set_temp_variable = { asset_risk = 0.1 }
+		
+		meta_effect = {
+			text = {
+				hidden_effect = { country_event = { id = asset_action.1 days = [DAYS] } }
+			}
+			DAYS = "[?asset_days]"
+		}
+	}
+	else = {
+		## Effects
+		
+		#THIS = actor country
+		#PREV = target country
+		
+		PREV = {
+			every_controlled_state = {
+				limit = {
+					NOT = { is_in_array = { region_checked = region } }
+				}
+				set_temp_variable = { num_buildings = 0 }
+				add_to_temp_array = { region_checked = region }
+				
+				for_each_scope_loop = {
+					array = global.region_states@var:region
+					
+					add_to_temp_variable = { num_buildings = building_level@industrial_complex }
+					add_to_temp_variable = { num_buildings = non_damaged_building_level@arms_factory }
+					add_to_temp_variable = { num_buildings = non_damaged_building_level@artillery_assembly }
+					add_to_temp_variable = { num_buildings = non_damaged_building_level@engine_assembly }
+					add_to_temp_variable = { num_buildings = non_damaged_building_level@tank_assembly }
+					add_to_temp_variable = { num_buildings = non_damaged_building_level@air_assembly }
+					add_to_temp_variable = { num_buildings = non_damaged_building_level@steel_refinery }
+					add_to_temp_variable = { num_buildings = non_damaged_building_level@aluminium_refinery }
+					add_to_temp_variable = { num_buildings = non_damaged_building_level@synthetic_refinery }
+					add_to_temp_variable = { num_buildings = non_damaged_building_level@synthetic_rubber_refinery }
+					add_to_temp_variable = { num_buildings = non_damaged_building_level@power_plant }
+					add_to_temp_variable = { num_buildings = non_damaged_building_level@hydro_power }
+					add_to_temp_variable = { num_buildings = non_damaged_building_level@fuel_silo }
+				}
+				
+				#log = "[?region] region | [?num_buildings] num_buildings"
+				if = {
+					limit = {
+						check_variable = { num_buildings > highest_num_buildings }
+					}
+					set_temp_variable = { highest_num_buildings = num_buildings }
+					set_temp_variable = { highest_region = region }
+				}
+			}
+			
+			set_variable = { highest_region_id = highest_region }
+		}
+		log = "[?highest_region] highest_region | [?highest_num_buildings] highest_num_buildings"
+	}
+}
+
+asset_civilian_request_current_research = {
+	set_temp_variable = { asset_type = token:civilian }
+	
+	if = {
+		limit = {
+			check_variable = { asset_action_complete = 0 }
+		}
+		
+		set_temp_variable = { asset_days = 30 }
+		#set_temp_variable = { asset_risk = 0.1 }
+		
+		meta_effect = {
+			text = {
+				hidden_effect = { country_event = { id = asset_action.3 days = [DAYS] } }
+			}
+			DAYS = "[?asset_days]"
+		}
+	}
+	else = {
+		## Effects
+		
+		#THIS = actor country
+		#PREV = target country
+		
+		PREV = {
+			for_each_loop = {
+				array = global.technology
+				
+				if = {
+					limit = {
+						meta_trigger = {
+							text = {
+								is_researching_technology = [X]
+							}
+							X = "[?v.GetTokenKey]"
+						}
+					}
+					add_to_temp_array = { current_research = v }
+				}
+			}
+			
+			for_each_loop = {
+				array = current_research
+				log = "[?v.GetTokenLocalizedKey] is researched currently"
+			}
+		}
+	}
+}
+
+asset_army_request_doctrine = {
+	set_temp_variable = { asset_type = token:army }
+	
+	if = {
+		limit = {
+			check_variable = { asset_action_complete = 0 }
+		}
+		
+		set_temp_variable = { asset_days = 30 }
+		#set_temp_variable = { asset_risk = 0.1 }
+		
+		meta_effect = {
+			text = {
+				hidden_effect = { country_event = { id = asset_action.5 days = [DAYS] } }
+			}
+			DAYS = "[?asset_days]"
+		}
+	}
+	else = {
+		## Effects
+		
+		#THIS = actor country
+		#PREV = target country
+		
+		
+	}
+}
+
+asset_army_request_highest_armor = {
+	set_temp_variable = { asset_type = token:army }
+	
+	if = {
+		limit = {
+			check_variable = { asset_action_complete = 0 }
+		}
+		
+		set_temp_variable = { asset_days = 30 }
+		#set_temp_variable = { asset_risk = 0.1 }
+		
+		meta_effect = {
+			text = {
+				hidden_effect = { country_event = { id = asset_action.7 days = [DAYS] } }
+			}
+			DAYS = "[?asset_days]"
+		}
+	}
+	else = {
+		## Effects
+		
+		#THIS = actor country
+		#PREV = target country
+		
+		
+	}
+}
+
+asset_army_request_highest_pierce = {
+	set_temp_variable = { asset_type = token:army }
+	
+	if = {
+		limit = {
+			check_variable = { asset_action_complete = 0 }
+		}
+		
+		set_temp_variable = { asset_days = 30 }
+		#set_temp_variable = { asset_risk = 0.1 }
+		
+		meta_effect = {
+			text = {
+				hidden_effect = { country_event = { id = asset_action.9 days = [DAYS] } }
+			}
+			DAYS = "[?asset_days]"
+		}
+	}
+	else = {
+		## Effects
+		
+		#THIS = actor country
+		#PREV = target country
+		
+		
+	}
+}
+
+asset_army_request_earned_traits = {
+	set_temp_variable = { asset_type = token:army }
+	
+	if = {
+		limit = {
+			check_variable = { asset_action_complete = 0 }
+		}
+		
+		set_temp_variable = { asset_days = 30 }
+		#set_temp_variable = { asset_risk = 0.1 }
+		
+		meta_effect = {
+			text = {
+				hidden_effect = { country_event = { id = asset_action.11 days = [DAYS] } }
+			}
+			DAYS = "[?asset_days]"
+		}
+	}
+	else = {
+		## Effects
+		
+		#THIS = actor country
+		#PREV = target country
+		
+	}
+}
+
+asset_air_request_doctrine = {
+	set_temp_variable = { asset_type = token:air }
+	
+	if = {
+		limit = {
+			check_variable = { asset_action_complete = 0 }
+		}
+		
+		set_temp_variable = { asset_days = 30 }
+		#set_temp_variable = { asset_risk = 0.1 }
+		
+		meta_effect = {
+			text = {
+				hidden_effect = { country_event = { id = asset_action.13 days = [DAYS] } }
+			}
+			DAYS = "[?asset_days]"
+		}
+	}
+	else = {
+		## Effects
+		
+		#THIS = actor country
+		#PREV = target country
+		
+	}
+}
+
+asset_air_request_air_capacity = {
+	set_temp_variable = { asset_type = token:air }
+	
+	if = {
+		limit = {
+			check_variable = { asset_action_complete = 0 }
+		}
+		
+		set_temp_variable = { asset_days = 30 }
+		#set_temp_variable = { asset_risk = 0.1 }
+		
+		meta_effect = {
+			text = {
+				hidden_effect = { country_event = { id = asset_action.15 days = [DAYS] } }
+			}
+			DAYS = "[?asset_days]"
+		}
+	}
+	else = {
+		## Effects
+		
+		#THIS = actor country
+		#PREV = target country
+		
+	}
+}
+
+asset_navy_request_doctrine = {
+	set_temp_variable = { asset_type = token:navy }
+	
+	if = {
+		limit = {
+			check_variable = { asset_action_complete = 0 }
+		}
+		
+		set_temp_variable = { asset_days = 30 }
+		#set_temp_variable = { asset_risk = 0.1 }
+		
+		meta_effect = {
+			text = {
+				hidden_effect = { country_event = { id = asset_action.17 days = [DAYS] } }
+			}
+			DAYS = "[?asset_days]"
+		}
+	}
+	else = {
+		## Effects
+		
+		#THIS = actor country
+		#PREV = target country
+		
+	}
+}
+
+asset_navy_request_csy_production = {
+	set_temp_variable = { asset_type = token:navy }
+	
+	if = {
+		limit = {
+			check_variable = { asset_action_complete = 0 }
+		}
+		
+		set_temp_variable = { asset_days = 30 }
+		#set_temp_variable = { asset_risk = 0.1 }
+		
+		meta_effect = {
+			text = {
+				hidden_effect = { country_event = { id = asset_action.19 days = [DAYS] } }
+			}
+			DAYS = "[?asset_days]"
+		}
+	}
+	else = {
+		## Effects
+		
+		#THIS = actor country
+		#PREV = target country
+		
+	}
+}
+
+asset_resistance_request_operative_location = {
+	set_temp_variable = { asset_type = token:resistance }
+	
+	if = {
+		limit = {
+			check_variable = { asset_action_complete = 0 }
+		}
+		
+		set_temp_variable = { asset_days = 30 }
+		#set_temp_variable = { asset_risk = 0.1 }
+		
+		meta_effect = {
+			text = {
+				hidden_effect = { country_event = { id = asset_action.21 days = [DAYS] } }
+			}
+			DAYS = "[?asset_days]"
+		}
+	}
+	else = {
+		## Effects
+		
+		#THIS = actor country
+		#PREV = target country
+		
+	}
+}
+
+clear_asset_on_complete = {
+	meta_effect = {
+		text = {
+			clear_variable = [TYPE]_current_asset_action@ROOT
+			clear_variable = [TYPE]_current_asset_action_start@ROOT
+			clear_variable = [TYPE]_current_asset_action_end@ROOT
+		}
+		TYPE = "[?asset_type.GetTokenKey]"
+	}
+}
+
+asset_subasset_resistance_supply = {
+	set_temp_variable = { asset_type = token:resistance }
+	 
+	if = {
+		limit = {
+			check_variable = { asset_action_complete = 0 }
+		}
+		
+		set_temp_variable = { asset_days = 60 }
+		#set_temp_variable = { asset_risk = 0.1 }
+		
+		meta_effect = {
+			text = {
+				hidden_effect = { country_event = { id = asset_action.23 days = [DAYS] } }
+				var:ROOT.selected_resistance_area@FROM = {
+					add_dynamic_modifier = {
+						modifier = [MOD]
+						days = [DAYS]
+					}
+					every_neighbor_state = {
+						limit = {
+							has_resistance = yes
+							is_controlled_by = var:v
+						}
+						add_dynamic_modifier = {
+							modifier = [MOD]
+							days = [DAYS]
+						}
+					}
+				}
+			}
+			MOD = "[?asset_action.GetTokenKey]"
+			DAYS = "[?asset_days]"
+		}
+	}
+	else = {
+		## Effects
+		
+		#THIS = actor country
+		#PREV = target country
+		
+	}
+}
+asset_subasset_resistance_army = {
+	set_temp_variable = { asset_type = token:resistance }
+	 
+	if = {
+		limit = {
+			check_variable = { asset_action_complete = 0 }
+		}
+		
+		set_temp_variable = { asset_days = 60 }
+		#set_temp_variable = { asset_risk = 0.1 }
+		
+		meta_effect = {
+			text = {
+				hidden_effect = { country_event = { id = asset_action.23 days = [DAYS] } }
+				var:ROOT.selected_resistance_area@FROM = {
+					add_dynamic_modifier = {
+						modifier = [MOD]
+						days = [DAYS]
+					}
+					every_neighbor_state = {
+						limit = {
+							has_resistance = yes
+							is_controlled_by = var:v
+						}
+						add_dynamic_modifier = {
+							modifier = [MOD]
+							days = [DAYS]
+						}
+					}
+				}
+			}
+			MOD = "[?asset_action.GetTokenKey]"
+			DAYS = "[?asset_days]"
+		}
+	}
+	else = {
+		## Effects
+		
+		#THIS = actor country
+		#PREV = target country
+		
+	}
+}
+asset_subasset_resistance_fort = {
+	set_temp_variable = { asset_type = token:resistance }
+	 
+	if = {
+		limit = {
+			check_variable = { asset_action_complete = 0 }
+		}
+		
+		set_temp_variable = { asset_days = 60 }
+		#set_temp_variable = { asset_risk = 0.1 }
+		
+		meta_effect = {
+			text = {
+				hidden_effect = { country_event = { id = asset_action.23 days = [DAYS] } }
+				var:ROOT.selected_resistance_area@FROM = {
+					add_dynamic_modifier = {
+						modifier = [MOD]
+						days = [DAYS]
+					}
+					every_neighbor_state = {
+						limit = {
+							has_resistance = yes
+							is_controlled_by = var:v
+						}
+						add_dynamic_modifier = {
+							modifier = [MOD]
+							days = [DAYS]
+						}
+					}
+				}
+			}
+			MOD = "[?asset_action.GetTokenKey]"
+			DAYS = "[?asset_days]"
+		}
+	}
+	else = {
+		## Effects
+		
+		#THIS = actor country
+		#PREV = target country
+		
+	}
+}
+asset_subasset_resistance_defensive = {
+	set_temp_variable = { asset_type = token:resistance }
+	 
+	if = {
+		limit = {
+			check_variable = { asset_action_complete = 0 }
+		}
+		
+		set_temp_variable = { cp_cost = 15 }
+		set_temp_variable = { asset_days = 60 }
+		#set_temp_variable = { asset_risk = 0.1 }
+		
+		meta_effect = {
+			text = {
+				hidden_effect = { country_event = { id = asset_action.23 days = [DAYS] } }
+				var:ROOT.selected_resistance_area@FROM = {
+					add_dynamic_modifier = {
+						modifier = [MOD]
+						days = [DAYS]
+					}
+					every_neighbor_state = {
+						limit = {
+							has_resistance = yes
+							is_controlled_by = var:v
+						}
+						add_dynamic_modifier = {
+							modifier = [MOD]
+							days = [DAYS]
+						}
+					}
+				}
+			}
+			MOD = "[?asset_action.GetTokenKey]"
+			DAYS = "[?asset_days]"
+		}
+	}
+	else = {
+		## Effects
+		
+		#THIS = actor country
+		#PREV = target country
+		
+	}
+}
+asset_subasset_resistance_offensive = {
+	set_temp_variable = { asset_type = token:resistance }
+	 
+	if = {
+		limit = {
+			check_variable = { asset_action_complete = 0 }
+		}
+		
+		set_temp_variable = { cp_cost = 15 }
+		set_temp_variable = { asset_days = 60 }
+		#set_temp_variable = { asset_risk = 0.1 }
+		
+		meta_effect = {
+			text = {
+				hidden_effect = { country_event = { id = asset_action.23 days = [DAYS] } }
+				var:ROOT.selected_resistance_area@FROM = {
+					add_dynamic_modifier = {
+						modifier = [MOD]
+						days = [DAYS]
+					}
+					every_neighbor_state = {
+						limit = {
+							has_resistance = yes
+							is_controlled_by = var:v
+						}
+						add_dynamic_modifier = {
+							modifier = [MOD]
+							days = [DAYS]
+						}
+					}
+				}
+			}
+			MOD = "[?asset_action.GetTokenKey]"
+			DAYS = "[?asset_days]"
+		}
+	}
+	else = {
+		## Effects
+		
+		#THIS = actor country
+		#PREV = target country
+		
+	}
+}
+asset_subasset_resistance_sabotage = {
+	set_temp_variable = { asset_type = token:resistance }
+	 
+	if = {
+		limit = {
+			check_variable = { asset_action_complete = 0 }
+		}
+		
+		set_temp_variable = { cp_cost = 15 }
+		set_temp_variable = { asset_days = 60 }
+		#set_temp_variable = { asset_risk = 0.1 }
+		
+		meta_effect = {
+			text = {
+				hidden_effect = { country_event = { id = asset_action.23 days = [DAYS] } }
+				var:ROOT.selected_resistance_area@FROM = {
+					add_dynamic_modifier = {
+						modifier = [MOD]
+						days = [DAYS]
+					}
+					every_neighbor_state = {
+						limit = {
+							has_resistance = yes
+							is_controlled_by = var:v
+						}
+						add_dynamic_modifier = {
+							modifier = [MOD]
+							days = [DAYS]
+						}
+					}
+				}
+			}
+			MOD = "[?asset_action.GetTokenKey]"
+			DAYS = "[?asset_days]"
+		}
+	}
+	else = {
+		## Effects
+		
+		#THIS = actor country
+		#PREV = target country
+		
+	}
+} 
+
+asset_interrogate_operative = {
+	set_temp_variable = { asset_type = token:capture }
+	 
+	if = {
+		limit = {
+			check_variable = { asset_action_complete = 0 }
+		}
+		
+		set_temp_variable = { asset_days = 60 }
+		#set_temp_variable = { asset_risk = 0.1 }
+		meta_effect = {
+			text = {
+				#hidden_effect = { 
+					country_event = { id = asset_action.23 days = [DAYS] } 
+				#}
+			}
+			DAYS = "[?asset_days]"
+		}
+	}
+	else = {
+		## Effects
+		
+		#THIS = actor country
+		#PREV = target country
+		
+	}
+}
+
+asset_trade_operative = {
+	set_temp_variable = { asset_type = token:capture }
+	 
+	if = {
+		limit = {
+			check_variable = { asset_action_complete = 0 }
+		}
+		
+		set_temp_variable = { asset_days = 60 }
+		#set_temp_variable = { asset_risk = 0.1 }
+		
+	}
+	else = {
+		## Effects
+		
+		#THIS = actor country
+		#PREV = target country
+		
+	}
+}
+
+asset_kill_operative = {
+	set_temp_variable = { asset_type = token:capture }
+	 
+	if = {
+		limit = {
+			check_variable = { asset_action_complete = 0 }
+		}
+		
+		set_temp_variable = { asset_days = 60 }
+		#set_temp_variable = { asset_risk = 0.1 }
+		
+	}
+	else = {
+		## Effects
+		
+		#THIS = actor country
+		#PREV = target country
+		
+	}
+}
+
+
+asset_subasset_civilian_research_steal = {
+	set_temp_variable = { asset_days = 0 }
+	 
+	custom_effect_tooltip = subasset_civilian_research_steal_tooltip
+}
+asset_subasset_army_research_steal = {
+	set_temp_variable = { asset_days = 0 }
+	 
+	custom_effect_tooltip = subasset_army_research_steal_tooltip
+}
+asset_subasset_air_research_steal = {
+	set_temp_variable = { asset_days = 0 }
+	 
+	custom_effect_tooltip = subasset_air_research_steal_tooltip
+}
+asset_subasset_navy_research_steal = {
+	set_temp_variable = { asset_days = 0 }
+	 
+	custom_effect_tooltip = subasset_navy_research_steal_tooltip
+}
+
+roll_navy_asset_dice = {
+	if = {
+		limit = {
+			check_variable = { FROM.modifier@enemy_navy_asset_discover_chance > random }
+		}
+		set_temp_variable = { root_country = FROM }
+		
+		random_scope_in_array = {
+			array = global.agency_countries
+			limit = {
+				NOT = { tag = var:root_country }
+				check_variable = { intel_navy_asset_level@var:root_country > 0 }
+			}
+		
+			set_temp_variable = { target_source = THIS }
+			set_temp_variable = { USE_ASSET_CHANCE = 1 }
+			subtract_from_temp_variable = { USE_ASSET_CHANCE = modifier@operation_navy_keep_asset_chance }
+			multiply_temp_variable = { USE_ASSET_CHANCE = 100 }
+			set_temp_variable = { KEEP_ASSET_CHANCE = 100 }
+			subtract_from_temp_variable = { KEEP_ASSET_CHANCE = USE_ASSET_CHANCE }
+			
+			random_list = {
+				var:USE_ASSET_CHANCE = {
+					PREV = {
+						
+						var:target_source = {
+							meta_effect = {
+								text = { 
+									remove_operation_token = {
+										tag = var:root_country
+										token = token_navy_[X]
+									}
+								}
+								X = "[?intel_navy_asset_level@var:root_country]"
+							}
+							subtract_from_variable = { intel_navy_asset_level@var:root_country = 1 }
+							
+							if = {
+								limit = {
+									check_variable = { intel_navy_asset_level@var:root_country = 0 }
+								}
+								clear_variable = intel_navy_asset_level@var:root_country
+								hidden_effect = {
+									remove_operation_token = {
+										tag = var:root_country
+										token = token_navy
+									}
+								}
+							}
+							else = {
+								meta_effect = {
+									text = { 
+										add_operation_token = {
+											tag = var:root_country
+											token = token_navy_[X]
+										}
+									}
+									X = "[?intel_navy_asset_level@var:root_country]"
+								}
+							}
+						}
+						
+						#country informed they have found an asset
+						operative_leader_event = { 
+							id = lar_operative_event.7
+							recipient = var:root_country
+							originator = var:root_country
+							set_from_from = var:root_country
+							set_from = PREV
+							days = 1
+						}
+						#target country informed they have lost an asset
+						operative_leader_event = {
+							id = lar_operative_event.8
+							recipient = PREV
+							originator = PREV
+							set_from_from = PREV
+							set_from = var:root_country
+							days = 1
+						}
+					}
+				}
+				var:KEEP_ASSET_CHANCE = {
+					PREV = {
+						#target country informed they have kept their asset
+						operative_leader_event = {
+							id = lar_operative_event.9
+							recipient = PREV
+							originator = PREV
+							set_from_from = PREV
+							set_from = var:root_country
+							days = 1
+						}
+					}
+				}
+			}
+			
+		}
+		
+	}
+}
+roll_air_asset_dice = {
+	if = {
+		limit = {
+			check_variable = { FROM.modifier@enemy_air_asset_discover_chance > random }
+		}
+		set_temp_variable = { root_country = FROM }
+		random_scope_in_array = {
+			array = global.agency_countries
+			limit = {
+				NOT = { tag = var:root_country }
+				check_variable = { intel_air_asset_level@var:root_country > 0 }
+			}
+		
+			set_temp_variable = { target_source = THIS }
+			set_temp_variable = { USE_ASSET_CHANCE = 1 }
+			subtract_from_temp_variable = { USE_ASSET_CHANCE = modifier@operation_air_keep_asset_chance }
+			multiply_temp_variable = { USE_ASSET_CHANCE = 100 }
+			set_temp_variable = { KEEP_ASSET_CHANCE = 100 }
+			subtract_from_temp_variable = { KEEP_ASSET_CHANCE = USE_ASSET_CHANCE }
+			
+			random_list = {
+				var:USE_ASSET_CHANCE = {
+					PREV = {
+						
+						var:target_source = {
+							meta_effect = {
+								text = { 
+									remove_operation_token = {
+										tag = var:root_country
+										token = token_airforce_[X]
+									}
+								}
+								X = "[?intel_air_asset_level@var:root_country]"
+							}
+							subtract_from_variable = { intel_air_asset_level@var:root_country = 1 }
+							
+							if = {
+								limit = {
+									check_variable = { intel_air_asset_level@var:root_country = 0 }
+								}
+								clear_variable = intel_air_asset_level@var:root_country
+								hidden_effect = {
+									remove_operation_token = {
+										tag = var:root_country
+										token = token_airforce
+									}
+								}
+							}
+							else = {
+								meta_effect = {
+									text = { 
+										add_operation_token = {
+											tag = var:root_country
+											token = token_airforce_[X]
+										}
+									}
+									X = "[?intel_air_asset_level@var:root_country]"
+								}
+							}
+						}
+						
+						#country informed they have found an asset
+						operative_leader_event = { 
+							id = lar_operative_event.10
+							recipient = var:root_country
+							originator = var:root_country
+							set_from_from = var:root_country
+							set_from = PREV
+							days = 1
+						}
+						#target country informed they have lost an asset
+						operative_leader_event = {
+							id = lar_operative_event.11
+							recipient = PREV
+							originator = PREV
+							set_from_from = PREV
+							set_from = var:root_country
+							days = 1
+						}
+					}
+				}
+				var:KEEP_ASSET_CHANCE = {
+					PREV = {
+						#target country informed they have kept their asset
+						operative_leader_event = {
+							id = lar_operative_event.12
+							recipient = PREV
+							originator = PREV
+							set_from_from = PREV
+							set_from = var:root_country
+							days = 1
+						}
+					}
+				}
+			}
+			
+		}
+		
+	}
+}
+roll_army_asset_dice = {
+	if = {
+		limit = {
+			check_variable = { FROM.modifier@enemy_army_asset_discover_chance > random }
+		}
+		set_temp_variable = { root_country = FROM }
+		
+		random_scope_in_array = {
+			array = global.agency_countries
+			limit = {
+				NOT = { tag = var:root_country }
+				check_variable = { intel_army_asset_level@var:root_country > 0 }
+			}
+		
+			set_temp_variable = { target_source = THIS }
+			set_temp_variable = { USE_ASSET_CHANCE = 1 }
+			subtract_from_temp_variable = { USE_ASSET_CHANCE = modifier@operation_army_keep_asset_chance }
+			multiply_temp_variable = { USE_ASSET_CHANCE = 100 }
+			set_temp_variable = { KEEP_ASSET_CHANCE = 100 }
+			subtract_from_temp_variable = { KEEP_ASSET_CHANCE = USE_ASSET_CHANCE }
+			
+			random_list = {
+				var:USE_ASSET_CHANCE = {
+					PREV = {
+						
+						var:target_source = {
+							meta_effect = {
+								text = { 
+									remove_operation_token = {
+										tag = var:root_country
+										token = token_army_[X]
+									}
+								}
+								X = "[?intel_army_asset_level@var:root_country]"
+							}
+							subtract_from_variable = { intel_army_asset_level@var:root_country = 1 }
+							
+							if = {
+								limit = {
+									check_variable = { intel_army_asset_level@var:root_country = 0 }
+								}
+								clear_variable = intel_army_asset_level@var:root_country
+								hidden_effect = {
+									remove_operation_token = {
+										tag = var:root_country
+										token = token_army
+									}
+								}
+							}
+							else = {
+								meta_effect = {
+									text = { 
+										add_operation_token = {
+											tag = var:root_country
+											token = token_army_[X]
+										}
+									}
+									X = "[?intel_army_asset_level@var:root_country]"
+								}
+							}
+						}
+						
+						#country informed they have found an asset
+						operative_leader_event = { 
+							id = lar_operative_event.13
+							recipient = var:root_country
+							originator = var:root_country
+							set_from_from = var:root_country
+							set_from = PREV
+							days = 1
+						}
+						#target country informed they have lost an asset
+						operative_leader_event = {
+							id = lar_operative_event.14
+							recipient = PREV
+							originator = PREV
+							set_from_from = PREV
+							set_from = var:root_country
+							days = 1
+						}
+					}
+				}
+				var:KEEP_ASSET_CHANCE = {
+					PREV = {
+						#target country informed they have kept their asset
+						operative_leader_event = {
+							id = lar_operative_event.15
+							recipient = PREV
+							originator = PREV
+							set_from_from = PREV
+							set_from = var:root_country
+							days = 1
+						}
+					}
+				}
+			}
+			
+		}
+		
+	}
+}
+roll_civilian_asset_dice = {
+	if = {
+		limit = {
+			check_variable = { FROM.modifier@enemy_economy_asset_discover_chance > random }
+		}
+		set_temp_variable = { root_country = FROM }
+		
+		random_scope_in_array = {
+			array = global.agency_countries
+			limit = {
+				NOT = { tag = var:root_country }
+				check_variable = { intel_civilian_asset_level@var:root_country > 0 }
+			}
+		
+			set_temp_variable = { target_source = THIS }
+			set_temp_variable = { USE_ASSET_CHANCE = 1 }
+			subtract_from_temp_variable = { USE_ASSET_CHANCE = modifier@operation_economy_keep_asset_chance }
+			multiply_temp_variable = { USE_ASSET_CHANCE = 100 }
+			set_temp_variable = { KEEP_ASSET_CHANCE = 100 }
+			subtract_from_temp_variable = { KEEP_ASSET_CHANCE = USE_ASSET_CHANCE }
+			
+			random_list = {
+				var:USE_ASSET_CHANCE = {
+					PREV = {
+						
+						var:target_source = {
+							meta_effect = {
+								text = { 
+									remove_operation_token = {
+										tag = var:root_country
+										token = token_civilian_[X]
+									}
+								}
+								X = "[?intel_civilian_asset_level@var:root_country]"
+							}
+							subtract_from_variable = { intel_civilian_asset_level@var:root_country = 1 }
+							
+							if = {
+								limit = {
+									check_variable = { intel_civilian_asset_level@var:root_country = 0 }
+								}
+								clear_variable = intel_civilian_asset_level@var:root_country
+								hidden_effect = {
+									remove_operation_token = {
+										tag = var:root_country
+										token = token_civilian
+									}
+								}
+							}
+							else = {
+								meta_effect = {
+									text = { 
+										add_operation_token = {
+											tag = var:root_country
+											token = token_civilian_[X]
+										}
+									}
+									X = "[?intel_civilian_asset_level@var:root_country]"
+								}
+							}
+						}
+						
+						#country informed they have found an asset
+						operative_leader_event = { 
+							id = lar_operative_event.16
+							recipient = var:root_country
+							originator = var:root_country
+							set_from_from = var:root_country
+							set_from = PREV
+							days = 1
+						}
+						#target country informed they have lost an asset
+						operative_leader_event = {
+							id = lar_operative_event.17
+							recipient = PREV
+							originator = PREV
+							set_from_from = PREV
+							set_from = var:root_country
+							days = 1
+						}
+					}
+				}
+				var:KEEP_ASSET_CHANCE = {
+					PREV = {
+						#target country informed they have kept their asset
+						operative_leader_event = {
+							id = lar_operative_event.18
+							recipient = PREV
+							originator = PREV
+							set_from_from = PREV
+							set_from = var:root_country
+							days = 1
+						}
+					}
+				}
+			}
+			
+		}
+		
+	}
+}
+
+update_research_steal_army = {
+	if = { #someones leeching off our research
+		limit = {
+			check_variable = { research_steal_army^num > 0 }
+		}
+		
+		for_each_loop = {
+			array = research_steal_army
+			value = research_stealer
+			
+			if = {
+				limit = {
+					check_variable = { research_steal_uses_army@var:research_stealer > 0.999 }
+					var:research_stealer = {
+						NOT = {
+							meta_trigger = {
+								text = {
+									has_tech = [X]
+								}
+								X = "[?tech.GetTokenKey]"
+							}
+						}
+					}
+				}
+				subtract_from_variable = { research_steal_uses_army@var:research_stealer = 1 }
+				
+				set_temp_variable = { bonus = research_steal_bonus_army@var:research_stealer }
+				set_temp_variable = { aot = research_steal_bonus_army@var:research_stealer }
+				
+				var:research_stealer = {
+					meta_effect = {
+						text = {
+							add_tech_bonus = {
+								name = "Steal [NAME] Tech ([TECH_N])"
+								bonus = [BONUS]
+								ahead_reduction = [AHEAD]
+								uses = 1
+								technology = [TECH]
+							}
+						}
+						NAME = "[ROOT.GetAdjective]"
+						TECH_N = "[?tech.GetTokenLocalizedKey]"
+						BONUS = "[?bonus]"
+						AHEAD = "[?aot]"
+						TECH = "[?tech.GetTokenKey]"
+					}
+				}
+				
+				if = {
+					limit = {
+						check_variable = { research_steal_uses_army@var:research_stealer < 1 }
+					}
+					clear_variable = research_steal_uses_army@var:research_stealer
+					clear_variable = research_steal_bonus_army@var:research_stealer
+					clear_variable = research_steal_ahead_of_time_army@var:research_stealer
+					add_to_temp_array = { steal_removal = research_stealer }
+				}
+			}
+		}
+		for_each_loop = { 
+			array = steal_removal
+			remove_from_array = { research_steal_army = v }
+		}
+	}
+}
+		
+update_research_steal_air = {
+	if = { #someones leeching off our research
+		limit = {
+			check_variable = { research_steal_air^num > 0 }
+			NOT = { check_variable = { steal_category = 0 } }
+		}
+		
+		for_each_loop = {
+			array = research_steal_air
+			value = research_stealer
+			
+			if = {
+				limit = {
+					check_variable = { research_steal_uses_air@var:research_stealer > 0.999 }
+				}
+				subtract_from_variable = { research_steal_uses_air@var:research_stealer = 1 }
+				
+				set_temp_variable = { bonus = research_steal_bonus_air@var:research_stealer }
+				set_temp_variable = { aot = research_steal_bonus_air@var:research_stealer }
+				
+				var:research_stealer = {
+					meta_effect = {
+						text = {
+							add_tech_bonus = {
+								name = "Steal [NAME] Tech ([TECH_N])"
+								bonus = [BONUS]
+								ahead_reduction = [AHEAD]
+								uses = 1
+								category = [CAT]
+							}
+						}
+						NAME = "[ROOT.GetAdjective]"
+						TECH_N = "[?steal_category.GetTokenLocalizedKey]"
+						BONUS = "[?bonus]"
+						AHEAD = "[?aot]"
+						CAT = "[?steal_category.GetTokenKey]"
+						
+					}
+				}
+				
+				if = {
+					limit = {
+						check_variable = { research_steal_uses_air@var:research_stealer < 1 }
+					}
+					clear_variable = research_steal_uses_air@var:research_stealer
+					clear_variable = research_steal_bonus_air@var:research_stealer
+					clear_variable = research_steal_ahead_of_time_air@var:research_stealer
+					add_to_temp_array = { steal_removal = research_stealer }
+				}
+			}
+		}
+		for_each_loop = { 
+			array = steal_removal
+			remove_from_array = { research_steal_air = v }
+		}
+	}
+}
+
+update_research_steal_navy = {
+	if = { #someones leeching off our research
+		limit = {
+			check_variable = { research_steal_navy^num > 0 }
+		}
+		
+		for_each_loop = {
+			array = research_steal_navy
+			value = research_stealer
+			
+			if = {
+				limit = {
+					check_variable = { research_steal_uses_navy@var:research_stealer > 0.999 }
+					var:research_stealer = {
+						NOT = {
+							meta_trigger = {
+								text = {
+									has_tech = [X]
+								}
+								X = "[?tech.GetTokenKey]"
+							}
+						}
+					}
+				}
+				subtract_from_variable = { research_steal_uses_navy@var:research_stealer = 1 }
+				
+				set_temp_variable = { bonus = research_steal_bonus_navy@var:research_stealer }
+				set_temp_variable = { aot = research_steal_bonus_navy@var:research_stealer }
+				
+				var:research_stealer = {
+					meta_effect = {
+						text = {
+							add_tech_bonus = {
+								name = "Steal [NAME] Tech ([TECH_N])"
+								bonus = [BONUS]
+								ahead_reduction = [AHEAD]
+								uses = 1
+								technology = [TECH]
+							}
+						}
+						NAME = "[ROOT.GetAdjective]"
+						TECH_N = "[?tech.GetTokenLocalizedKey]"
+						BONUS = "[?bonus]"
+						AHEAD = "[?aot]"
+						TECH = "[?tech.GetTokenKey]"
+					}
+				}
+				
+				if = {
+					limit = {
+						check_variable = { research_steal_uses_navy@var:research_stealer < 1 }
+					}
+					clear_variable = research_steal_uses_navy@var:research_stealer
+					clear_variable = research_steal_bonus_navy@var:research_stealer
+					clear_variable = research_steal_ahead_of_time_navy@var:research_stealer
+					add_to_temp_array = { steal_removal = research_stealer }
+				}
+			}
+			
+		}
+		for_each_loop = { 
+			array = steal_removal
+			remove_from_array = { research_steal_navy = v }
+		}
+	}
+}
+
+update_research_steal_civilian = {
+	if = { #someones leeching off our research
+		limit = {
+			check_variable = { research_steal_civilian^num > 0 }
+		}
+		
+		for_each_loop = {
+			array = research_steal_civilian
+			value = research_stealer
+			
+			if = {
+				limit = {
+					check_variable = { research_steal_uses_civilian@var:research_stealer > 0.999 }
+					var:research_stealer = {
+						NOT = {
+							meta_trigger = {
+								text = {
+									has_tech = [X]
+								}
+								X = "[?tech.GetTokenKey]"
+							}
+						}
+					}
+				}
+				subtract_from_variable = { research_steal_uses_civilian@var:research_stealer = 1 }
+				
+				set_temp_variable = { bonus = research_steal_bonus_civilian@var:research_stealer }
+				set_temp_variable = { aot = research_steal_bonus_civilian@var:research_stealer }
+				
+				var:research_stealer = {
+					meta_effect = {
+						text = {
+							add_tech_bonus = {
+								name = "Steal [NAME] Tech ([TECH_N])"
+								bonus = [BONUS]
+								ahead_reduction = [AHEAD]
+								uses = 1
+								technology = [TECH]
+							}
+						}
+						NAME = "[ROOT.GetAdjective]"
+						TECH_N = "[?tech.GetTokenLocalizedKey]"
+						BONUS = "[?bonus]"
+						AHEAD = "[?aot]"
+						TECH = "[?tech.GetTokenKey]"
+					}
+				}
+				
+				if = {
+					limit = {
+						check_variable = { research_steal_uses_civilian@var:research_stealer < 1 }
+					}
+					clear_variable = research_steal_uses_civilian@var:research_stealer
+					clear_variable = research_steal_bonus_civilian@var:research_stealer
+					clear_variable = research_steal_ahead_of_time_civilian@var:research_stealer
+					add_to_temp_array = { steal_removal = research_stealer }
+				}
+			}
+		}
+		for_each_loop = { 
+			array = steal_removal
+			remove_from_array = { research_steal_civilian = v }
+		}
+	}
+}

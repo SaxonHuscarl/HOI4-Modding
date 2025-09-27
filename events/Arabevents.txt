@@ -1,0 +1,454 @@
+﻿###########################
+# Arab Events
+###########################
+
+add_namespace = Arab
+
+##### Saudi Arabia ###
+news_event = {
+	id = Arab.2 # Al Madina (newspaper in SAU)
+	title = Arab.2.t
+	desc  = Arab.2.desc
+	picture = GFX_news_event_arab2
+	is_triggered_only = yes
+
+	fire_only_once = yes
+	
+	trigger = {
+		#date > 1937.4.8
+		tag = SAU
+	}
+
+	
+	option = { 
+	name = Arab.1.a
+	add_stability = 0.01
+	country_event = { id = Arab.3 days = 307 }
+	ai_chance = {
+		factor = 100
+		}
+	}
+	
+}
+
+news_event = {
+	id = Arab.3 # Dhahran founded 
+	title = Arab.3.t
+	desc  = Arab.3.desc
+	picture = GFX_news_event_dhahran_gfxnews
+	is_triggered_only = yes
+
+	fire_only_once = yes
+	
+	trigger = {
+		tag = SAU
+		#date > 1938.2.9 
+	}
+	
+	option = { 
+	name = Arab.1.a
+		capital_scope = {		
+			add_manpower = 1000
+			}
+	ai_chance = {
+		factor = 100	
+		}
+	}
+	
+}
+country_event = {
+	id = Arab.4 #YEM aids ITA
+	title = Arab.4.t
+	desc  = Arab.4.desc
+	picture = GFX_news_event_handshake
+	is_triggered_only = yes
+	trigger = {
+		tag = ITA
+	}
+	
+	immediate = {
+		add_manpower = 100
+		effect_tooltip = {
+			add_equipment_to_stockpile = {
+				type = infantry_equipment_0
+				amount = 100
+				producer = YEM
+			}
+			add_equipment_to_stockpile = {
+				type = horse_equipment_0
+				amount = 50
+				producer = YEM
+			}
+			add_opinion_modifier = {
+				target = YEM
+				modifier = small_increase
+			}
+		}
+	}
+	option = { #ok
+		name = Arab.1.a
+		ai_chance = {
+			factor = 100	
+		}
+	}
+}
+news_event = {
+	id = Arab.5 # Bloudan Conference
+	title = Arab.5.t
+	desc  = Arab.5.desc
+	picture = GFX_news_event_arab2
+	is_triggered_only = yes
+	major = yes
+	
+	trigger = {
+
+	}
+	
+	option = { 
+		name = Arab.5.a
+		trigger = {
+			is_arab = yes
+		}
+		add_popularity = {
+			ideology = monarchism
+			popularity = 0.02
+		}
+		add_popularity = {
+			ideology = fascism
+			popularity = 0.05
+		}
+		add_opinion_modifier = {
+			target = FRA
+			modifier = protest_action_light
+		}
+		add_opinion_modifier = {
+			target = ENG
+			modifier = protest_action
+		}
+		every_other_country = {
+			limit = {
+				is_arab = yes
+			}
+			reverse_add_opinion_modifier = {
+				target = ROOT
+				modifier = religous_values
+			}
+		}
+	}
+	option = { 
+		name = Arab.5.b
+		trigger = {
+			not = {
+				tag = ENG
+				tag = FRA
+				tag = BMP
+			}
+			is_arab = no
+		}
+	}
+	option = { 
+		name = Arab.5.c
+		trigger = {
+			OR = {
+				tag = ENG
+				tag = FRA
+				tag = BMP
+			}
+		}
+		if = {
+			limit = {
+				tag = ENG
+			}
+			effect_tooltip = {
+				every_other_country = {
+					limit = {
+						is_arab = yes
+					}
+					reverse_add_opinion_modifier = {
+						target = ENG
+						modifier = protest_action
+					}
+				}
+			}
+			add_political_power = -5
+		}
+		else_if = {
+			limit = {
+				tag = FRA
+			}
+			effect_tooltip = {
+				every_other_country = {
+					limit = {
+						is_arab = yes
+					}
+					reverse_add_opinion_modifier = {
+						target = ENG
+						modifier = protest_action_light
+					}
+				}
+			}
+			add_political_power = -2
+		}
+		else = {
+			add_popularity = {
+				ideology = monarchism
+				popularity = 0.02
+			}
+			add_popularity = {
+				ideology = fascism
+				popularity = 0.05
+			}
+		}
+	}	
+	
+}
+news_event = {
+	id = Arab.6 # General Strike in Syria
+	title = Arab.6.t
+	desc  = Arab.6.d
+	picture = GFX_news_event_arab2
+	is_triggered_only = yes
+	major = yes
+	
+	option = { 
+		name = Arab.6.a
+		trigger = {
+			tag = SYR
+		}
+		add_timed_idea = {
+			idea = BMP_arab_revolt
+			days = 50
+		}
+	}
+	option = { 
+		name = Arab.6.b
+		trigger = {
+			tag = FRA
+		}
+		#add_political_power = -10
+		effect_tooltip = {
+			SYR = {
+				add_timed_idea = {
+					idea = BMP_arab_revolt
+					days = 50
+				}
+			}
+		}
+	}
+	option = { 
+		name = Arab.6.b
+		trigger = {
+			not = { 
+				tag = SYR
+			}
+			is_subject_of = FRA
+		}
+		add_stability = -0.05
+	}
+	option = { 
+		name = Arab.6.c
+		trigger = {
+			not = { 
+				tag = FRA
+				is_subject_of = FRA
+			}
+		}
+	}	
+}
+#IRQ SAU small treaty #TODO Description and possibly choice?
+country_event = {
+	id = Arab.7
+	title = Arab.7.t
+	desc = Arab.7.d
+	picture = GFX_news_event_016
+	is_triggered_only = yes
+	major = yes
+	show_major = {
+		is_arab = yes
+	}
+
+	option = {
+		name = Arab.7.a
+		trigger = {
+			tag = IRQ
+		}
+		
+		add_opinion_modifier = {
+			target = SAU
+			modifier = religous_values
+		}
+	}	
+	option = {
+		name = Arab.7.a
+		trigger = {
+			tag = SAU
+		}
+		add_opinion_modifier = {
+			target = IRQ
+			modifier = religous_values
+		}	
+	}
+	option = {
+		name = Arab.7.b
+		trigger = {
+			NOT = {
+				tag = SAU
+				tag = IRQ
+			}
+		}	
+	}	
+}
+#EGY SAU small treaty #TODO possibly choice?
+country_event = {
+	id = Arab.8
+	title = Arab.8.t
+	desc = Arab.8.d
+	picture = GFX_news_event_016
+	is_triggered_only = yes
+	major = yes
+	show_major = {
+		is_arab = yes
+	}
+	option = {
+		name = Arab.7.a
+		trigger = {
+			tag = EGY
+		}	
+		add_opinion_modifier = {
+			target = SAU
+			modifier = religous_values
+		}
+		hidden_effect = {
+			country_event = { id = Arab.10 days = 365 }
+		}
+	}	
+	option = {
+		name = Arab.7.a
+		trigger = {
+			tag = SAU
+		}
+		add_opinion_modifier = {
+			target = EGY
+			modifier = religous_values
+		}	
+	}
+	option = {
+		name = Arab.7.b
+		trigger = {
+			NOT = {
+				tag = SAU
+				tag = EGY
+			}
+		}	
+	}		
+}
+#YEM IRQ SAU treaty #TODO possibly choice?
+country_event = {
+	id = Arab.9
+	title = Arab.9.t
+	desc = Arab.9.d
+	picture = GFX_news_event_arab2
+	is_triggered_only = yes
+	trigger = {
+	}
+	major = yes
+	show_major = {
+		is_arab = yes
+	}
+	
+	option = {
+		name = Arab.7.a
+		trigger = {
+			tag = SAU
+		}		
+		add_opinion_modifier = {
+			target = IRQ
+			modifier = friendship_treaty
+		}
+		add_opinion_modifier = {
+			target = YEM
+			modifier = friendship_treaty
+		}
+	}
+	option = {
+		name = Arab.7.a
+		trigger = {
+			tag = IRQ
+		}
+		add_opinion_modifier = {
+			target = SAU
+			modifier = friendship_treaty
+		}
+		add_opinion_modifier = {
+			target = YEM
+			modifier = friendship_treaty
+		}			
+	}
+	option = {
+		name = Arab.7.a
+		trigger = {
+			tag = YEM
+		}
+		add_opinion_modifier = {
+			target = SAU
+			modifier = friendship_treaty
+		}
+		add_opinion_modifier = {
+			target = IRQ
+			modifier = friendship_treaty
+		}			
+	}
+	option = {
+		name = Arab.7.b
+		trigger = {
+			NOT = {
+				tag = SAU
+				tag = IRQ
+				tag = YEM
+			}
+		}	
+	}
+}	
+#EGY SAU large treaty #TODO possibly choice?
+country_event = {
+	id = Arab.10
+	title = Arab.10.t
+	desc = Arab.10.d
+	picture = GFX_news_event_016
+	is_triggered_only = yes
+	trigger = {
+	}
+	major = yes
+	show_major = {
+		is_arab = yes
+	}
+	option = {
+		name = Arab.7.a
+		trigger = {
+			tag = EGY
+		}	
+		add_opinion_modifier = {
+			target = SAU
+			modifier = friendship_treaty
+		}
+	}	
+	option = {
+		name = Arab.7.a
+		trigger = {
+			tag = SAU
+		}
+		add_opinion_modifier = {
+			target = EGY
+			modifier = friendship_treaty
+		}	
+	}
+	option = {
+		name = Arab.7.b
+		trigger = {
+			NOT = {
+				tag = SAU
+				tag = EGY
+			}
+		}	
+	}
+}

@@ -1,0 +1,46 @@
+# Scripted GUI Pie Chart example by Yard1
+# Feel free to use in your mods, but give credits to Yard1 (both in code, with comments; and on your download page)
+
+# this creates a pie chart of popularities - can be easily adapted to show anything that adds up to 100%
+create_pie_chart = {
+	clear_array = pie_chart
+	resize_array = {
+		array = pie_chart
+		value = 0 # 1 is value for neutrality frame, so we don't have to make a loop for it
+		size = 100 # 100 pieces, each percent is one piece
+	}
+	
+	add_to_temp_array = { pops = 0}
+	set_temp_variable = { sum = 0 }
+	for_each_loop = {
+		array = government
+		
+		add_to_temp_array = { pops = party_popularity@var:v }
+		add_to_temp_variable = { sum = party_popularity@var:v }
+	}
+	set_temp_variable = { last_idx = 0 }
+	for_each_loop = {
+		array = pops
+		value = val
+		index = ind
+		
+		divide_temp_variable = { val = sum }
+		multiply_temp_variable = { val = 100 }
+		round_temp_variable = val
+		
+		add_to_array = { starts = last_idx }
+		add_to_array = { ends = val }
+		
+		add_to_temp_variable = { val = last_idx}
+		for_loop_effect = {
+			start = last_idx
+			end = val
+			value = val2
+			set_variable = { pie_chart^val2 = ind }
+		}
+		set_temp_variable = { last_idx = val }
+	}
+
+	clear_variable = last_idx
+	add_to_variable = { pie_chart_dirty = 1 }
+}

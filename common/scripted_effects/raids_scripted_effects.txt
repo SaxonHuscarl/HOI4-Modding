@@ -1,0 +1,187 @@
+
+raid_plane_loss_and_xp_effect = {
+	## Calculate modifier values
+	
+	set_temp_variable = { p_m = 1 } #plane loss damage
+	set_temp_variable = { x_m = 1 } #plane xp gain
+	var:actor_country = {
+		add_to_temp_variable = { p_m = modifier@raid_plane_loss_factor }
+		add_to_temp_variable = { x_m = modifier@raid_plane_xp_gain_factor }
+	}
+	var:victim_country = {
+		subtract_from_temp_variable = { p_m = modifier@enemy_raid_plane_loss_factor }
+	}
+		
+	## Calculate plane damage
+		
+	multiply_temp_variable = { plane_loss = p_m }
+	clamp_temp_variable = { var = plane_loss min = 0.1 max = 1 }
+	
+	# Damage to raiding units
+	raid_damage_units = {
+		plane_loss = var:plane_loss
+		ratio = yes
+	}
+	
+	## Calculate plane XP gain 
+	
+	multiply_temp_variable = { plane_xp = x_m }
+	# XP etc
+	raid_add_unit_experience = var:plane_xp
+
+}
+
+raid_resource_victim_effect = {
+	# Damage to Target
+	var:target_state = {
+		hidden_effect = {
+			if = {
+				limit = {
+					check_variable = { building_level@var:building = 0 }
+				}
+				meta_effect = {
+					text = {
+						add_building_construction = {
+							type = [B]
+							level = 1
+							instant_build = yes
+						}
+					}
+					B = "[?building.GetTokenKey]"
+				}
+			}
+		}
+		
+		## Calculate modifier values
+		
+		set_temp_variable = { d_m = 1 } #building damage
+		set_temp_variable = { r_m = 1 } #resource debuff
+		var:actor_country = {
+			add_to_temp_variable = { d_m = modifier@raid_building_damage_factor }
+			add_to_temp_variable = { r_m = modifier@raid_resource_debuff_factor }
+		}
+		var:victim_country = {
+			subtract_from_temp_variable = { d_m = modifier@enemy_raid_building_damage_factor }
+			subtract_from_temp_variable = { r_m = modifier@enemy_raid_resource_debuff_factor }
+		}
+		
+		## Calculate resource damage
+		
+		multiply_temp_variable = { resource_damage = r_m }
+		clamp_temp_variable = { var = resource_damage min = 0.1 max = 0.9 }
+		multiply_temp_variable = { resource_damage = -1 }
+		
+		meta_effect = {
+			text = {
+				set_variable = { raid_[B] = resource_damage }
+			}
+			B = "[?building.GetTokenKey]"
+		}
+		
+		## Calculate building damage
+		
+		multiply_temp_variable = { damage = d_m }
+		clamp_temp_variable = { var = damage min = 0.05 max = 1 }
+		
+		custom_override_tooltip = {
+			tooltip = RAID_MINE_DAMAGED
+			
+			meta_effect = {
+				text = {
+					damage_building = {
+						type = [B]
+						damage = [D]
+					}
+				}
+				B = "[?building.GetTokenKey]"
+				D = "[?damage]"
+			}
+		}
+	}
+}
+
+raid_facility_victim_effect = {
+	# Damage to Target
+	var:target_state = {
+	
+		## Calculate modifier values
+		
+		set_temp_variable = { d_m = 1 } #building damage
+		set_temp_variable = { r_m = 1 } #special project progress reduction
+		var:actor_country = {
+			add_to_temp_variable = { d_m = modifier@raid_building_damage_factor }
+			add_to_temp_variable = { r_m = modifier@raid_project_progress_factor }
+		}
+		var:victim_country = {
+			subtract_from_temp_variable = { d_m = modifier@enemy_raid_building_damage_factor }
+			subtract_from_temp_variable = { r_m = modifier@enemy_raid_project_progress_factor }
+		}
+		
+		## Calculate raid progress reduction
+		
+		multiply_temp_variable = { project_progress_reduction = r_m }
+		clamp_temp_variable = { var = project_progress_reduction max = 1 }
+		
+		## Calculate building damage
+		
+		multiply_temp_variable = { damage = d_m }
+		clamp_temp_variable = { var = damage min = 0.05 max = 1 }
+		
+		custom_override_tooltip = {
+			tooltip = FACILITY_DAMAGED
+			
+			meta_effect = {
+				text = {
+					damage_building = {
+						tags = facility
+						damage = [D]
+						province = var:ROOT.target_province
+						repair_speed_modifier = -0.70
+					}
+				}
+				D = "[?damage]"
+			}
+		}
+		meta_effect = {
+			text = {
+				raid_reduce_project_progress_ratio = [R]
+			}
+			R = "[?project_progress_reduction]"
+		}
+	}
+}
+
+raid_hydro_power_victim_effect = {
+	# Damage to Target
+	var:target_state = {
+	
+		## Calculate modifier values
+		
+		set_temp_variable = { d_m = 1 } #building damage
+		var:actor_country = {
+			add_to_temp_variable = { d_m = modifier@raid_building_damage_factor }
+		}
+		var:victim_country = {
+			subtract_from_temp_variable = { d_m = modifier@enemy_raid_building_damage_factor }
+		}
+		
+		## Calculate building damage
+		
+		multiply_temp_variable = { damage = d_m }
+		clamp_temp_variable = { var = damage min = 0.05 max = 1 }
+		
+		custom_override_tooltip = {
+			tooltip = HYDRO_POWER_DAMAGED
+			
+			meta_effect = {
+				text = {
+					damage_building = {
+						type = hydro_power
+						damage = [D]
+					}
+				}
+				D = "[?damage]"
+			}
+		}
+	}
+}

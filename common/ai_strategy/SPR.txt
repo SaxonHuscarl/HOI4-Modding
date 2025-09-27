@@ -1,0 +1,301 @@
+# befriend
+# conquer
+# antagonize
+# build_ship
+# build_army
+# unit_ratio
+# build_building
+# research_tech
+# garrison
+# protect
+# influence
+
+SPA_clean_up_madrid = {
+	allowed = { OR = { tag = ITA tag = GER original_tag = SPR } }
+	enable = {
+		SPR = { 
+			has_civil_war = yes 
+			controls_state = 876 
+			check_variable = { num_controlled_states < 4 }
+		}
+		SPA = {
+			controls_province = 896
+			controls_province = 3794
+			controls_province = 9767
+			controls_province = 3858
+			controls_province = 6914
+			controls_province = 858
+			controls_state = 175
+		}
+			
+	}
+	abort = {
+		SPR = { has_civil_war = no }
+	}
+	
+	ai_strategy = {
+		type = front_control
+	
+		state = 876 
+		
+		ratio = 0.2
+		
+		priority = 100
+		ordertype = front
+		execution_type = rush
+		execute_order = yes
+	}
+	ai_strategy = {
+		type = front_control
+	
+		state = 41 
+		
+		ratio = 0.2
+		
+		priority = 100
+		ordertype = front
+		execution_type = rush
+		execute_order = yes
+	}
+}
+
+SPR_how_about_not_using_convoys = {
+	allowed = { tag = SPR }
+	enable = {
+		has_civil_war = yes 
+		NOT = { controls_state = 290 }
+	}
+	
+	abort = {	
+		OR = {
+			has_civil_war = no 
+			controls_state = 290
+		}
+	}
+	
+	ai_strategy = { type = naval_avoid_region id = 42 value = 2000 }
+	ai_strategy = { type = naval_avoid_region id = 47 value = 2000 }
+	ai_strategy = { type = naval_avoid_region id = 48 value = 5000 }
+}
+mexico_send_equipment = {
+	allowed = { tag = MEX }
+	enable = {
+		has_government = communism
+		SPR = { has_civil_war = yes }
+	}
+	abort = {
+		SPR = { has_civil_war = no }
+	}
+	
+	ai_strategy = {
+		type = support
+		id = SPR
+		value = 500
+	}
+	ai_strategy = {
+		type = befriend
+		id = SPR
+		value = 500
+	}
+}
+
+SPR_offensive_pose = {
+	allowed = { tag = SPR }
+	enable = {
+		has_civil_war = yes
+		country_exists = SPA
+		date > 1939.1.1
+	}
+	abort = {
+		SPR = { has_civil_war = no }
+	}
+	
+	ai_strategy = {
+		type = consider_weak
+		id = D01
+		value = 10
+	}
+	
+	ai_strategy = {
+		type = consider_weak
+		id = SPR
+		value = 10
+	}
+}
+
+SPR_front_focus = {
+	allowed = { original_tag = SPR }
+	enable = {
+		has_civil_war = yes
+	}
+	abort_when_not_enabled = yes
+	
+	ai_strategy = {
+		type = front_unit_request
+		value = 100
+		area = europe
+	}
+}
+
+#Strategies to rush the war in 39
+SPR_crush_them_39 = {
+	allowed = { original_tag = SPR }
+	enable = {
+		has_government = communism
+		has_civil_war = yes
+		country_exists = SPA
+		date > 1939.1.1
+	}
+	abort = {
+		has_civil_war = no 
+	}
+	
+	ai_strategy = {
+		type = consider_weak
+		id = SPA
+		value = 500
+	}
+}
+
+SPA_crush_them_39 = {
+	allowed = { original_tag = SPR }
+	enable = {
+		has_civil_war = yes
+		country_exists = SPR
+		date > 1939.1.1
+	}
+	abort = {
+		has_civil_war = no 
+	}
+	
+	ai_strategy = {
+		type = consider_weak
+		id = SPR
+		value = 500
+	}
+	ai_strategy = {
+		type = consider_weak
+		id = D01
+		value = 500
+	}
+	
+	ai_strategy = {
+		type = front_control
+	
+		tag = SPR
+		
+		ratio = 0.2
+		
+		priority = 100
+		ordertype = front
+		execution_type = rush
+		execute_order = yes
+	}
+	ai_strategy = {
+		type = front_control
+	
+		tag = D01
+		
+		ratio = 0.2
+		
+		priority = 100
+		ordertype = front
+		execution_type = rush
+		execute_order = yes
+	}
+}
+
+SPA_anti_commie = {
+	allowed = { original_tag = SPR }
+	enable = {
+		has_civil_war = no
+		has_government = fascism
+		GER = {
+			has_war_with = SOV
+		}
+	}
+	abort = { always = no }
+	ai_strategy = {
+		type = support
+		id = GER
+		value = 500
+	}
+	ai_strategy = { #blue division
+		type = send_volunteers_desire
+		id = GER
+		value = 2100
+	}
+}
+SPR_allied_state = {
+	allowed = { original_tag = SPR }
+	enable = {
+		has_civil_war = no
+		democratic_govt = yes
+		ENG = {
+			has_war_with = GER
+		}
+	}
+	abort = { always = no }
+	ai_strategy = {
+		type = support
+		id = ENG
+		value = 500
+	}
+	ai_strategy = {
+		type = support
+		id = FRA
+		value = 500
+	}
+}
+SPR_commie_state = {
+	allowed = { original_tag = SPR }
+	enable = {
+		has_civil_war = no
+		has_government = communism
+		SOV = {
+			has_war_with = GER
+		}
+	}
+	abort = { always = no }
+	ai_strategy = {
+		type = support
+		id = SOV
+		value = 500
+	}
+	ai_strategy = {
+		type = send_volunteers_desire
+		id = SOV
+		value = 2100
+	}
+}
+
+SPR_buy_from_SOV = {
+	allowed = { tag = SPR has_dlc = "Arms Against Tyranny" }
+	enable = {
+		has_civil_war = yes
+	}
+	abort_when_not_enabled = yes
+	  
+	ai_strategy = {
+		type = diplo_action_desire
+		id = SOV
+		target = market_access_rights
+		value = 500
+	}
+	ai_strategy = {
+		type = diplo_action_acceptance
+		id = SOV
+		target = market_access_rights
+		value = 500
+	}
+}
+
+
+
+
+
+
+
+
+
+

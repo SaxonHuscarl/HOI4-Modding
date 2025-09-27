@@ -1,0 +1,129 @@
+Research = {
+	
+	research_centre_construction = {
+	
+		icon = generic_research
+
+		available = {
+			#num_of_factories > 74
+			set_temp_variable = { trigger = num_owned_civilian_factories }
+			add_to_temp_variable = { trigger = num_of_military_factories }
+			add_to_temp_variable = { trigger = num_of_naval_factories }
+			
+			set_temp_variable = { check = 74 }
+			custom_trigger_tooltip = {
+				tooltip = "More owned Factories than [?check|Y0] ([?trigger])"
+				check_variable = { trigger > check }
+			}
+		}
+		cost = 50
+		ai_will_do = {
+			base = 1000
+		}
+		fire_only_once = yes
+		visible = {
+			num_of_factories > 60
+			#not = { has_country_flag = construct_slot_gained }
+			date > 1938.01.01
+		}
+		
+		complete_effect = { 
+			set_country_flag = construct_slot_gained
+			country_event = blackiceevents.3
+		}			
+		
+	}	
+	
+@RESEARCH_EVAC_DAYS_BASE = 20
+@RESEARCH_EVAC_DAYS_FROM_DISTANCE = 0.05
+
+@RESEARCH_EVAC_DAYS_MAX = 30
+
+	research_evacuation_decision = {
+		icon = move_industry
+		allowed = {
+			always = no 
+		}
+		
+        available = {
+			#hidden_trigger = { command_power > 4.99 }
+        }
+		#custom_cost_trigger = {
+		#	command_power > 4.99
+		#}
+		#custom_cost_text = cp_atleast_5
+		
+        state_target = yes
+        target_array = research_slots
+        #target_trigger = {
+        #    FROM = { 
+		#		always = yes
+        ##    }
+        #}
+        visible = {
+		
+        }
+		ai_will_do = {
+			factor = 0
+		}
+        fire_only_once = no
+        cost = 0
+		
+        days_re_enable = 1 
+		days_remove = research_evac_days_remove
+		
+		cancel_trigger = {
+			hidden_trigger = {
+				NOT = { FROM = { has_state_flag = industry_evac_in_progress } }
+			}
+		}
+
+		complete_effect = {
+			hidden_effect = { add_command_power = -5 }
+			
+			set_temp_variable = { research_evac_days_remove = 30 }
+			#set_temp_variable = { mod = modifier@research_centre_evac_speed }
+			add_to_temp_variable = { mod = 1 }
+			multiply_temp_variable = { research_evac_days_remove = mod }
+			set_temp_variable = { time = research_evac_days_remove }
+			set_variable = { research_evac_days_remove = time }
+			
+			random_scope_in_array = {
+				array = SOV.soviet_evac_site
+				
+				set_temp_variable = { temp = This.id }
+				custom_effect_tooltip = "[This.GetName] NAME"
+			}
+		}
+		
+		remove_effect = {
+			hidden_effect = {
+				random_scope_in_array = {
+					array = SOV.soviet_evac_site
+					
+					set_temp_variable = { temp = This.id }
+				}
+			}
+			
+			FROM = {
+				if = {
+					limit = {
+						has_state_flag = research_centre_evac
+					}
+					custom_effect_tooltip = RESEARCH_EVAC_MOVE_TOOLTIP
+				}
+				else = {
+					custom_effect_tooltip = RESEARCH_EVAC_MOVE_DURING_TOOLTIP
+				}
+			}
+		}
+	}
+			
+}
+
+
+
+
+
+
+

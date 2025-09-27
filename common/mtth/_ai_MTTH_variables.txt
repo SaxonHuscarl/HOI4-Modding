@@ -1,0 +1,417 @@
+
+# this mtth entries can be used as variables
+# example set_variable = { a = mtth:entry_name }
+# and define entry_name here
+#
+# entry_name = {
+# 	base = 50
+# 	
+# 	modifier = {
+# 		tag = GER
+# 		add = 50
+# 	}
+# }
+
+
+#################################
+### KEEP TEMP VARIABLE NAMES VERY SHORT IN HERE
+
+ai_military_industrial_organisation_weight = {
+	base = 0 
+	
+	modifier = {
+		factor = 0
+		
+		set_temp_variable = { t = max_task_capacity }
+		subtract_from_temp_variable = { t = number_of_currently_assigned_tasks }
+		check_variable = { t = 0 }
+	}
+	modifier = {
+		add = t 
+		
+		set_temp_variable = { t = max_task_capacity }
+		subtract_from_temp_variable = { t = number_of_currently_assigned_tasks }
+		
+		add_to_temp_variable = { t = number_of_unlocked_traits }
+		add_to_temp_variable = { t = size }
+	}
+	
+	## do not ever use these
+	modifier = {
+		factor = 0
+		
+		OR = {
+			is_military_industrial_organization = SOV_gaz_organization
+			is_military_industrial_organization = SOV_Plant37_organization
+			is_military_industrial_organization = SOV_mytishchy_machine_building_plant_organization
+			is_military_industrial_organization = SOV_kirov_plant_organization
+			is_military_industrial_organization = SOV_kharkov_locomotive_plant_organization
+		}
+	}
+}
+
+# ai_focus_army
+# ai_focus_air
+# ai_focus_navy
+
+ai_focus_army = {
+	base = 0 
+	
+	modifier = {
+		add = army_strength
+	}
+	modifier = {
+		add = production
+		set_temp_variable = { production = num_of_military_factories }
+		multiply_temp_variable = { production = 2 }
+	}
+	modifier = {
+		add = doctrine
+		
+		set_temp_variable = { doctrine = land_doctrine_level }
+		multiply_temp_variable = { doctrine = 10 }
+	}
+}
+ai_focus_air = {
+	base = 0 
+	
+	modifier = {
+		add = air_strength
+	}
+	modifier = {
+		add = production
+		set_temp_variable = { production = resource_consumed@air_production }
+		multiply_temp_variable = { production = 2 }
+	}
+	modifier = {
+		add = doctrine
+		
+		set_temp_variable = { doctrine = air_doctrine_level }
+		multiply_temp_variable = { doctrine = 10 }
+	}
+}
+ai_focus_navy = {
+	base = 0 
+	
+	modifier = {
+		add = navy_strength
+	}
+	modifier = {
+		add = production
+		set_temp_variable = { production = num_of_naval_factories }
+		multiply_temp_variable = { production = 6 }
+	}
+	modifier = {
+		add = doctrine
+		
+		set_temp_variable = { doctrine = navy_doctrine_level }
+		multiply_temp_variable = { doctrine = 8 }
+	}
+}
+
+ai_num_of_military_factories = {
+	base = 0 
+	
+	modifier = {
+		add = t1 
+		
+		set_temp_variable = { t1 = num_of_military_factories }
+		
+		set_temp_variable = { t2 = 2 } #+1 for base weight
+		add_to_temp_variable = { t2 = modifier@industrial_capacity_factory }
+		multiply_temp_variable = { t2 = 0.5 } #scaled down
+		multiply_temp_variable = { t1 = t2 }
+		
+		set_temp_variable = { t2 = 2 }
+		add_to_temp_variable = { t2 = modifier@production_factory_max_efficiency_factor }
+		multiply_temp_variable = { t2 = 0.5 }
+		multiply_temp_variable = { t1 = t2 }
+		
+		set_temp_variable = { t2 = num_of_military_factories }
+		multiply_temp_variable = { t2 = 2.5 }
+		clamp_temp_variable = { var = t1 max = t2 } #clamp to a mult of mic count to keep the variable somewhat reliable
+		
+	}
+}
+
+#ROOT = country
+#THIS = character
+#var:slot = character_slot
+#var:max_slot = max character_slot
+new_advisor_ai_will_do = { 
+	base = 1
+	
+	modifier = {
+		factor = 0
+		has_trait = fascist_demagogue
+		NOT = { ROOT = { has_country_flag = ai_focus_fascist } }
+	}
+	modifier = {
+		factor = 0
+		has_trait = communist_revolutionary
+		NOT = { ROOT = { has_country_flag = ai_focus_communist } }
+	}
+	modifier = {
+		factor = 0
+		has_trait = royalist_reformer
+		NOT = { ROOT = { has_country_flag = ai_focus_monarchist } }
+	}
+	modifier = {
+		factor = 0
+		OR = {
+			has_trait = democratic_reformer 
+			has_trait = socialist_reformer 
+			has_trait = liberal_reformer 
+			has_trait = conservative_reformer
+		}
+		NOT = { ROOT = { has_country_flag = ai_focus_democratic } }
+	}
+		
+}
+
+determine_armor_leader_weight = { 
+	base = 0
+	
+	modifier = {
+		add = skill_level
+	}
+	modifier = {
+		add = army_attack_level
+	}
+	modifier = {
+		add = 2
+		has_trait = panzer_leader
+	}
+	modifier = {
+		add = 1
+		has_trait = panzer_expert
+	}
+	modifier = {
+		add = 1
+		has_trait = combined_arms_expert
+	}
+	modifier = {
+		add = 1
+		has_trait = motorized_leader
+	}
+	modifier = {
+		add = 1
+		has_trait = motorized_leader_II
+	}
+	modifier = {
+		add = 2
+		has_trait = offensive_doctrine_CC
+	}
+	modifier = {
+		add = 1
+		has_trait = spearhead_specialist
+	}
+	modifier = {
+		add = 1
+		has_trait = aggressive_assaulter
+	}
+	modifier = {
+		add = 2
+		has_trait = blitzkrieg_master
+	}
+	modifier = {
+		add = 1
+		has_trait = brilliant_strategist
+	}
+	modifier = {
+		add = -3
+		OR = {
+			has_trait = trait_reckless
+			has_trait = trait_cautious
+			has_trait = war_hero
+			has_trait = media_personality
+			has_trait = harsh_leader
+		}
+	}
+}
+determine_invasion_leader_weight = { 
+	base = 0
+	
+	modifier = {
+		factor = 0
+		is_in_array = { FROM.ai_armor_leader = THIS }
+	}
+	modifier = {
+		add = skill_level
+	}
+	modifier = {
+		add = army_attack_level
+	}
+	modifier = {
+		add = 3
+		has_trait = naval_invader
+	}
+	modifier = {
+		add = 1
+		has_trait = commando_trait
+	}
+	modifier = {
+		add = -2
+		has_trait = panzer_leader
+	}
+	modifier = {
+		add = -2
+		has_trait = blitzkrieg_master
+	}
+	modifier = {
+		add = 1
+		has_trait = infantry_leader
+	}
+	modifier = {
+		add = -3
+		OR = {
+			has_trait = trait_reckless
+			has_trait = trait_cautious
+			has_trait = war_hero
+			has_trait = media_personality
+			has_trait = harsh_leader
+		}
+	}
+}
+
+infantry_expert_score = { 
+	base = 0
+	
+	modifier = {
+		add = t
+		set_temp_variable = { t = num_infantry }
+	}
+}
+motorized_expert_score = { 
+	base = 0
+	
+	modifier = {
+		add = 1
+		has_trait = panzer_leader
+	}
+	modifier = {
+		add = 1
+		has_trait = combined_arms_expert
+	}
+	modifier = {
+		add = t
+		set_temp_variable = { t = num_motorized }
+		add_to_temp_variable = { t = num_mechanized }
+	}
+}
+combined_arms_expert_score = { 
+	base = 0
+	
+	modifier = {
+		add = 1
+		has_trait = panzer_leader
+	}
+	modifier = {
+		add = 1
+		has_trait = motorized_expert
+	}
+	modifier = {
+		add = t
+		set_temp_variable = { t = num_motorized }
+		add_to_temp_variable = { t = num_mechanized }
+		add_to_temp_variable = { t = num_armored }
+	}
+	modifier = {
+		factor = 0
+		check_variable = { FROM.num_armor = 0.5 }
+	}
+}
+panzer_expert_score = { 
+	base = 0
+	
+	modifier = {
+		add = 1
+		has_trait = combined_arms_expert
+	}
+	modifier = {
+		add = t
+		add_to_temp_variable = { t = num_armored }
+	}
+	modifier = {
+		factor = 0
+		check_variable = { FROM.num_armor = 0 }
+	}
+}
+logistics_wizard_CC_II_score = { 
+	base = 1
+	
+}
+trench_warfare_specialist_score = { 
+	base = 0
+	
+	modifier = {
+		add = t
+		set_temp_variable = { t = OWNER.modifier@max_dig_in }
+	}
+}
+guerilla_fighter_score = { 
+	base = 0
+	
+	modifier = {
+		add = 3
+		is_in_array = { FROM.ai_armor_leader = key }
+	}
+}
+aggressive_assaulter_score = { 
+	base = 0
+	
+	modifier = {
+		add = t
+		set_temp_variable = { t = num_motorized }
+		add_to_temp_variable = { t = num_mechanized }
+		add_to_temp_variable = { t = num_armored }
+	}
+	modifier = {
+		factor = 2
+		
+		FROM = {
+			OR = {
+				tag = GER
+				tag = JAP
+			}
+		}
+	}
+}
+unyielding_defender_score = { 
+	base = 0
+	
+	modifier = {
+		add = t
+		set_temp_variable = { t = num_infantry }
+	}
+	modifier = {
+		factor = 2
+		
+		FROM = {
+			OR = {
+				tag = FRA
+				tag = SOV
+				tag = CHI
+			}
+		}
+	}
+}
+
+# these only get checked for invasion leaders
+invader_ii_score = { 
+	base = 50
+	
+}
+naval_liason_score = { 
+	base = 50
+	
+}
+
+
+
+
+
+
+
+
+### EOF ###

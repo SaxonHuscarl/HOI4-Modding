@@ -1,0 +1,3225 @@
+technologies = {
+	#Vertical position
+	@1910 = 0
+	@1930 = 2
+	@1936 = 4
+	@1937 = 6
+	@1938 = 8
+	@1939 = 10
+	@1940 = 12
+	@1940_1 = 13
+	@1941 = 14
+	@1942 = 16
+	@1943 = 18
+	@1944 = 20
+	@1944_1 = 21
+	@1945 = 22
+	@1946 = 24
+	
+	@A_T = 3
+	@MED_AT = 0
+	@HVY_AT = 6
+	@HVY_AT_1 = 3
+	@SPT_PLN = 13
+	@MNT_ART = 9
+	@L_ART = 11
+	@M_ART = 15
+	@H_ART = 19
+	@RCT_ART = 22
+	@MOT_RCT_ART = 25
+	@SH_ART = 26
+	@FLAK = 30
+	@FLK_TRM = 29
+	@A_A = 32
+	@GAR_FLK = 34
+	@HVY_AA = 35
+	@HVY_AA2 = 36
+
+	@ARTILLERY_PRIORITY = 10000 
+	@ANTI_AIR_PRIORITY = 7000 
+	@ANTI_TANK_PRIORITY = 7000 
+	@ROCKET_PRIORITY = 10000
+
+	gw_artillery = {
+		allow = { has_country_flag = UNLOCK:artillery_folder } 
+		###################### ww1 artillery
+
+		enable_equipments = {
+			artillery_equipment_0
+		}
+		enable_equipments = {
+			medartillery_equipment_0
+		}
+		enable_equipments = {
+			Hvartillery_equipment_0
+		}
+		enable_equipments = { 
+			mountain_artillery_equipment_0
+		}
+		enable_equipments = {
+			artyhorse_equipment_0
+		}
+		
+		#enable_subunits = {
+		#	artillery_med
+		#}
+		enable_subunits = {
+			mountain_artillery_brigade
+			artillery_brigade
+			artillery_brigade_med
+			artillery_heavy
+		}
+		on_research_complete = {
+			set_temp_variable = { tech = token:gw_artillery }
+			on_artillery_tech_research_complete = yes
+			if = {
+				limit = {
+					tag = GER
+				}
+				custom_effect_tooltip = ENABLE_SS_ART
+			}
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = artillery_tt
+			custom_effect_tooltip = light_artillery_tt
+			custom_effect_tooltip = med_artillery_tt
+			custom_effect_tooltip = heavy_artillery_tt
+			custom_effect_tooltip = horse_tech_tt
+			
+			hidden_effect = {  
+				set_technology = {
+					interwar_artillery = 1
+					popup = no
+				}
+			}
+		}
+		
+		path = {
+			leads_to_tech = interwar_artillery
+			research_cost_coeff = 1
+		}
+		path = {
+			leads_to_tech = interwar_antitank
+			research_cost_coeff = 1
+		}
+		path = {
+			leads_to_tech = interwar_antiair
+			research_cost_coeff = 1
+		}
+		path = {
+			leads_to_tech = rocket_artillery
+			research_cost_coeff = 1
+		}
+		path = {
+			leads_to_tech = interwar_medartillery
+			research_cost_coeff = 1
+		}
+		path = {
+			leads_to_tech = interwar_Hvartillery
+			research_cost_coeff = 1
+		}
+		path = {
+			leads_to_tech = superartillery2
+			research_cost_coeff = 1
+		}
+		
+		research_cost = 1
+		folder = {
+			name = artillery_folder
+			position = { x = @M_ART y = @1910 }
+		}
+		
+		show_equipment_icon = yes
+		
+		categories = {
+			artillery
+			light_artillery
+			med_artillery
+			heavy_artillery	
+			horse_tech
+		}		special_project_specialization = { specialization_land }
+		ai_will_do = {
+			base = @ARTILLERY_PRIORITY
+			modifier = {
+				factor = 2
+				
+				num_of_military_factories > 10 
+			}
+			modifier = {
+				factor = 2
+				
+				num_of_military_factories > 15
+			}
+			modifier = {
+				factor = ai_tech_need/gw_artillery?1
+			}
+			modifier = {
+				factor = ai_factor
+				
+				set_temp_variable = { ai_factor = ai_artillery_tech_need }
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		
+	}
+	### Anit-Air ###
+	interwar_antiair = {
+		allow = { has_country_flag = UNLOCK:artillery_folder } 
+
+		enable_equipments = {
+			anti_air_equipment_1
+		}
+		enable_building = {
+			building = anti_air_building
+			level = 4
+		}
+		
+		path = {
+			leads_to_tech = antiair1
+			research_cost_coeff = 1
+		}
+		path = {
+			leads_to_tech = HVantiair2
+			research_cost_coeff = 1
+		}
+		path = {
+			leads_to_tech = static_antiair1
+			research_cost_coeff = 1
+		}
+		
+		research_cost = 0.75
+		start_year = 1936
+		folder = {
+			name = artillery_folder
+			position = { x = @A_A y = @1936 }
+		}
+		
+		on_research_complete = {
+			set_temp_variable = { tech = token:interwar_antiair }
+			on_artillery_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = artillery_tt
+			custom_effect_tooltip = anti_air_tech_tt
+		}		special_project_specialization = { specialization_land }
+		ai_will_do = {
+			base = 0
+			modifier = {
+				add = ai_base
+				
+				set_temp_variable = { base = @ANTI_AIR_PRIORITY }
+				ai_anti_air_tech = yes 
+			}
+			modifier = {
+				factor = ai_tech_need/interwar_antiair?1
+			}
+			modifier = {
+				factor = ai_factor
+				
+				set_temp_variable = { ai_factor = ai_artillery_tech_need }
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		
+		
+		categories = {
+			artillery
+			anti_air_tech
+		}
+	}
+	static_antiair1 = {
+		allow = { has_country_flag = UNLOCK:artillery_folder } 
+		static_anti_air_damage_factor = 0.15
+		
+		path = {
+			leads_to_tech = static_antiair2
+			research_cost_coeff = 1
+		}		
+		research_cost = 1.2
+		start_year = 1938
+		folder = {
+			name = artillery_folder
+			position = { x = @FLAK y = @1938 }
+		}		special_project_specialization = { specialization_land }
+		ai_will_do = {
+			base = 0
+			modifier = {
+				add = ai_add 
+			
+				ai_anti_air_building_tech_need = yes 
+			}
+			modifier = {
+				factor = ai_factor
+				
+				set_temp_variable = { ai_factor = ai_artillery_tech_need }
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		
+		on_research_complete = {
+			set_temp_variable = { tech = token:static_antiair1 }
+			on_artillery_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = anti_air_tech_tt
+			custom_effect_tooltip = construction_tech_tt
+		}		
+		categories = {
+			anti_air_tech
+			construction_tech
+			
+		}
+	}
+	static_antiair2 = {
+		allow = { has_country_flag = UNLOCK:artillery_folder } 
+		static_anti_air_damage_factor = 0.15
+		
+		path = {
+			leads_to_tech = static_antiair3
+			research_cost_coeff = 1
+		}	
+		research_cost = 1.2
+		start_year = 1940
+		folder = {
+			name = artillery_folder
+			position = { x = @FLAK y = @1940 }
+		}		special_project_specialization = { specialization_land }
+		ai_will_do = {
+			base = 0
+			modifier = {
+				add = ai_add 
+			
+				ai_anti_air_building_tech_need = yes 
+			}
+			modifier = {
+				factor = ai_factor
+				
+				set_temp_variable = { ai_factor = ai_artillery_tech_need }
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		
+		on_research_complete = {
+			set_temp_variable = { tech = token:static_antiair2 }
+			on_artillery_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = anti_air_tech_tt
+			custom_effect_tooltip = construction_tech_tt
+		}		
+		categories = {
+			anti_air_tech
+			construction_tech
+			
+		}
+	}
+	static_antiair3 = {
+		allow = { has_country_flag = UNLOCK:artillery_folder } 
+		static_anti_air_damage_factor = 0.15
+		
+		enable_building = {
+			building = anti_air_building
+			level = 5
+		}
+		path = {
+			leads_to_tech = static_antiair4
+			research_cost_coeff = 1
+		}		
+		research_cost = 1.2
+		start_year = 1942
+		folder = {
+			name = artillery_folder
+			position = { x = @FLAK y = @1942 }
+		}		special_project_specialization = { specialization_land }
+		ai_will_do = {
+			base = 0
+			modifier = {
+				add = ai_add 
+			
+				ai_anti_air_building_tech_need = yes 
+			}
+			modifier = {
+				factor = ai_factor
+				
+				set_temp_variable = { ai_factor = ai_artillery_tech_need }
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		
+		on_research_complete = {
+			set_temp_variable = { tech = token:static_antiair3 }
+			on_artillery_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = anti_air_tech_tt
+			custom_effect_tooltip = construction_tech_tt
+		}		
+		categories = {
+			anti_air_tech
+			construction_tech
+			
+		}
+	}
+	static_antiair4 = {
+		allow = { has_country_flag = UNLOCK:artillery_folder } 
+		static_anti_air_damage_factor = 0.15
+		
+		enable_building = {
+			building = anti_air_building
+			level = 6
+		}	
+		research_cost = 1.2
+		start_year = 1944
+		folder = {
+			name = artillery_folder
+			position = { x = @FLAK y = @1944 }
+		}		special_project_specialization = { specialization_land }
+		ai_will_do = {
+			base = 0
+			modifier = {
+				add = ai_add 
+			
+				ai_anti_air_building_tech_need = yes 
+			}
+			modifier = {
+				factor = ai_factor
+				
+				set_temp_variable = { ai_factor = ai_artillery_tech_need }
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		
+		on_research_complete = {
+			set_temp_variable = { tech = token:static_antiair4 }
+			on_artillery_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = anti_air_tech_tt
+			custom_effect_tooltip = construction_tech_tt
+		}		
+		categories = {
+			anti_air_tech
+			construction_tech		
+		}
+	}
+	antiair1 = {
+		allow = { has_country_flag = UNLOCK:artillery_folder } 
+
+		category_all_light_anti_air = {
+			air_attack = 0.05
+		}
+		category_all_heavy_anti_air = {
+			air_attack = 0.03
+		}
+		category_all_tank_anti_air = {
+		   air_attack = 0.02
+		}
+		
+		path = {
+			leads_to_tech = antiair2
+			research_cost_coeff = 1
+		}
+		
+		research_cost = 0.75
+		start_year = 1939
+		folder = {
+			name = artillery_folder
+			position = { x = @A_A y = @1939 }
+		}		special_project_specialization = { specialization_land }
+		ai_will_do = {
+			base = 0
+			modifier = {
+				add = ai_base
+				
+				set_temp_variable = { base = @ANTI_AIR_PRIORITY }
+				ai_anti_air_tech = yes 
+			}
+			modifier = {
+				factor = ai_factor
+				
+				set_temp_variable = { ai_factor = ai_artillery_tech_need }
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		
+		on_research_complete = {
+			set_temp_variable = { tech = token:antiair1 }
+			on_artillery_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = artillery_tt
+			custom_effect_tooltip = anti_air_tech_tt
+		}
+		categories = {
+			artillery
+			anti_air_tech
+		}
+	}
+	antiair2 = {
+		allow = { has_country_flag = UNLOCK:artillery_folder } 
+	
+		enable_equipments = {
+			anti_air_equipment_2
+		}
+
+		path = {
+			leads_to_tech = antiair3
+			research_cost_coeff = 1
+		}
+		
+		research_cost = 1
+		start_year = 1940
+		folder = {
+			name = artillery_folder
+			position = { x = @A_A y = @1940 }
+		}		special_project_specialization = { specialization_land }
+		ai_will_do = {
+			base = 0
+			modifier = {
+				add = ai_base
+				
+				set_temp_variable = { base = @ANTI_AIR_PRIORITY }
+				ai_anti_air_tech = yes 
+			}
+			modifier = {
+				factor = ai_factor
+				
+				set_temp_variable = { ai_factor = ai_artillery_tech_need }
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		
+		
+		on_research_complete = {
+			set_temp_variable = { tech = token:antiair2 }
+			on_artillery_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = artillery_tt
+			custom_effect_tooltip = anti_air_tech_tt
+			
+			if = {
+				limit = {
+					is_ai = yes 
+				}
+				
+				clear_variable = ai_variant_level@anti_air_equipment
+				clr_country_flag = ai_variant@anti_air_equipment
+			}
+		}		
+		categories = {
+			artillery
+			anti_air_tech
+		}
+	}
+	antiair3 = {
+		allow = { has_country_flag = UNLOCK:artillery_folder } 
+
+		category_all_light_anti_air = {
+			air_attack = 0.05
+		}
+		category_all_heavy_anti_air = {
+			air_attack = 0.03
+		}
+		category_all_tank_anti_air = {
+		   air_attack = 0.02
+		}
+		
+		path = {
+			leads_to_tech = antiair4
+			research_cost_coeff = 1
+		}
+		
+		research_cost = 0.6
+		start_year = 1941
+		folder = {
+			name = artillery_folder
+			position = { x = @A_A y = @1941 }
+		}		special_project_specialization = { specialization_land }
+		ai_will_do = {
+			base = 0
+			modifier = {
+				add = ai_base
+				
+				set_temp_variable = { base = @ANTI_AIR_PRIORITY }
+				ai_anti_air_tech = yes 
+			}
+			modifier = {
+				factor = ai_factor
+				
+				set_temp_variable = { ai_factor = ai_artillery_tech_need }
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		
+		on_research_complete = {
+			set_temp_variable = { tech = token:antiair3 }
+			on_artillery_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = artillery_tt
+			custom_effect_tooltip = anti_air_tech_tt
+		}		
+		categories = {
+			artillery
+			anti_air_tech
+		}
+	}
+	antiair4 = {
+		allow = { has_country_flag = UNLOCK:artillery_folder } 
+
+		category_all_light_anti_air = {
+			air_attack = 0.05
+		}
+		category_all_heavy_anti_air = {
+			air_attack = 0.03
+		}
+		category_all_tank_anti_air = {
+		   air_attack = 0.02
+		}
+		
+		path = {
+			leads_to_tech = antiair5
+			research_cost_coeff = 1
+		}
+		
+		research_cost = 1
+		start_year = 1942
+		folder = {
+			name = artillery_folder
+			position = { x = @A_A y = @1942 }
+		}		special_project_specialization = { specialization_land }
+		ai_will_do = {
+			base = 0
+			modifier = {
+				add = ai_base
+				
+				set_temp_variable = { base = @ANTI_AIR_PRIORITY }
+				ai_anti_air_tech = yes 
+			}
+			modifier = {
+				factor = ai_factor
+				
+				set_temp_variable = { ai_factor = ai_artillery_tech_need }
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		
+		on_research_complete = {
+			set_temp_variable = { tech = token:antiair4 }
+			on_artillery_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = artillery_tt
+			custom_effect_tooltip = anti_air_tech_tt
+		}		
+		categories = {
+			artillery
+			anti_air_tech
+		}
+	}
+	antiair5 = {
+		allow = { has_country_flag = UNLOCK:artillery_folder } 
+
+		enable_equipments = {
+			anti_air_equipment_3
+		}
+
+		research_cost = 1
+		start_year = 1943
+		folder = {
+			name = artillery_folder
+			position = { x = @A_A y = @1943 }
+		}		special_project_specialization = { specialization_land }
+		ai_will_do = {
+			base = 0
+			modifier = {
+				add = ai_base
+				
+				set_temp_variable = { base = @ANTI_AIR_PRIORITY }
+				ai_anti_air_tech = yes 
+			}
+			modifier = {
+				factor = ai_factor
+				
+				set_temp_variable = { ai_factor = ai_artillery_tech_need }
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		
+		on_research_complete = {
+			set_temp_variable = { tech = token:antiair5 }
+			on_artillery_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = artillery_tt
+			custom_effect_tooltip = anti_air_tech_tt
+			
+			if = {
+				limit = {
+					is_ai = yes 
+				}
+				
+				clear_variable = ai_variant_level@anti_air_equipment
+				clr_country_flag = ai_variant@anti_air_equipment
+			}
+		}		
+		categories = {
+			artillery
+			anti_air_tech
+		}
+	}
+	####### HV AA ###############
+	HVantiair2 = {
+		allow = { has_country_flag = UNLOCK:artillery_folder } 
+	
+		enable_equipments = {
+			HVanti_air_equipment_2
+		}
+		enable_subunits = {
+			anti_air_heavy
+		}
+		
+		#on_research_complete = {
+		#	limit = {
+		#		tag = GER
+		#	}
+		#	hidden_effect = {
+		#		set_technology = { ss_antiair_hvy_tech = 1 }
+		#	}
+		#	custom_effect_tooltip = ENABLE_SS_AA_HVY
+		#}
+		
+		path = {
+			leads_to_tech = HVantiair3
+			research_cost_coeff = 1
+		}
+		path = {
+			leads_to_tech = HVantiair_direct1
+			research_cost_coeff = 1
+		}
+		
+		research_cost = 1
+		start_year = 1937
+		folder = {
+			name = artillery_folder
+			position = { x = @HVY_AA y = @1937 }
+		}		special_project_specialization = { specialization_land }
+		ai_will_do = {
+			base = 0
+			modifier = {
+				add = ai_base
+				
+				set_temp_variable = { base = @ANTI_AIR_PRIORITY }
+				ai_heavy_anti_air_tech = yes 
+			}
+			modifier = {
+				factor = ai_tech_need/HVantiair2?1
+			}
+			modifier = {
+				factor = ai_factor
+				
+				set_temp_variable = { ai_factor = ai_artillery_tech_need }
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		
+		on_research_complete = {
+			set_temp_variable = { tech = token:HVantiair2 }
+			on_artillery_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = artillery_tt
+			custom_effect_tooltip = anti_air_tech_tt
+		}		
+		categories = {
+			artillery
+			anti_air_tech
+		}
+	}
+	HVantiair3 = {
+		allow = { has_country_flag = UNLOCK:artillery_folder } 
+
+		category_all_heavy_anti_air = {
+			air_attack = 0.05
+		}
+		
+		path = {
+			leads_to_tech = HVantiair4
+			research_cost_coeff = 1
+		}
+		
+		research_cost = 1
+		start_year = 1939
+		folder = {
+			name = artillery_folder
+			position = { x = @HVY_AA y = @1939 }
+		}		special_project_specialization = { specialization_land }
+		ai_will_do = {
+			base = 0
+			modifier = {
+				add = ai_base
+				
+				set_temp_variable = { base = @ANTI_AIR_PRIORITY }
+				ai_heavy_anti_air_tech = yes 
+			}
+			modifier = {
+				factor = ai_factor
+				
+				set_temp_variable = { ai_factor = ai_artillery_tech_need }
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		
+		on_research_complete = {
+			set_temp_variable = { tech = token:HVantiair3 }
+			on_artillery_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = artillery_tt
+			custom_effect_tooltip = anti_air_tech_tt
+		}		
+		categories = {
+			artillery
+			anti_air_tech
+		}
+	}
+	HVantiair4 = {
+		allow = { has_country_flag = UNLOCK:artillery_folder } 
+
+		category_all_heavy_anti_air = {
+			air_attack = 0.05
+		}
+		
+		path = {
+			leads_to_tech = HVantiair5
+			research_cost_coeff = 1
+		}
+		
+		research_cost = 1
+		start_year = 1941
+		folder = {
+			name = artillery_folder
+			position = { x = @HVY_AA y = @1941 }
+		}		special_project_specialization = { specialization_land }
+		ai_will_do = {
+			base = 0
+			modifier = {
+				add = ai_base
+				
+				set_temp_variable = { base = @ANTI_AIR_PRIORITY }
+				ai_heavy_anti_air_tech = yes 
+			}
+			modifier = {
+				factor = ai_factor
+				
+				set_temp_variable = { ai_factor = ai_artillery_tech_need }
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		
+		on_research_complete = {
+			set_temp_variable = { tech = token:HVantiair4 }
+			on_artillery_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = artillery_tt
+			custom_effect_tooltip = anti_air_tech_tt
+		}		
+		categories = {
+			artillery
+			anti_air_tech
+		}
+	}
+	HVantiair5 = {
+		allow = { has_country_flag = UNLOCK:artillery_folder } 
+
+		enable_equipments = {
+			HVanti_air_equipment_3
+		}
+		
+		research_cost = 1.5
+		start_year = 1943
+		folder = {
+			name = artillery_folder
+			position = { x = @HVY_AA y = @1943 }
+		}		special_project_specialization = { specialization_land }
+		ai_will_do = {
+			base = 0
+			modifier = {
+				add = ai_base
+				
+				set_temp_variable = { base = @ANTI_AIR_PRIORITY }
+				ai_heavy_anti_air_tech = yes 
+			}
+			modifier = {
+				factor = ai_factor
+				
+				set_temp_variable = { ai_factor = ai_artillery_tech_need }
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		
+		on_research_complete = {
+			set_temp_variable = { tech = token:HVantiair5 }
+			on_artillery_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = artillery_tt
+			custom_effect_tooltip = anti_air_tech_tt
+			
+			if = {
+				limit = {
+					is_ai = yes 
+				}
+				
+				clear_variable = ai_variant_level@HVanti_air_equipment
+				clr_country_flag = ai_variant@HVanti_air_equipment
+			}
+		}		
+		categories = {
+			artillery
+			anti_air_tech
+		}
+	}
+	HVantiair_direct1 = {
+		allow = { has_country_flag = UNLOCK:artillery_folder } 
+
+		category_all_heavy_anti_air = {
+			soft_attack = 0.20
+			hard_attack = 0.20
+			defense = 0.20
+			breakthrough = 0.20
+			ap_attack = 0.25
+		}
+		
+		anti_air_heavy = {
+			supply_consumption = 0.05
+			need = {
+				HVanti_air_equipment = 6
+				artyhorse_equipment = 6
+         	}
+		}
+		anti_air_heavy_mot = {
+			supply_consumption = 0.075
+			need = {
+				HVanti_air_equipment = 6
+				artytractor_equipment = 6
+         	}
+		}
+		
+		path = {
+			leads_to_tech = HVantiair_direct2
+			research_cost_coeff = 1
+		}
+		
+		research_cost = 1
+		start_year = 1940
+		folder = {
+			name = artillery_folder
+			position = { x = @HVY_AA2 y = @1940 }
+		}		special_project_specialization = { specialization_land }
+		ai_will_do = {
+			base = 0
+			modifier = {
+				add = ai_base
+				
+				set_temp_variable = { base = @ANTI_AIR_PRIORITY }
+				ai_heavy_anti_air_direct_tech = yes 
+			}
+			modifier = {
+				factor = ai_factor
+				
+				set_temp_variable = { ai_factor = ai_artillery_tech_need }
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		
+		on_research_complete = {
+			set_temp_variable = { tech = token:HVantiair_direct1 }
+			on_artillery_tech_research_complete = yes
+			custom_effect_tooltip = heavy_aa_new_equipment_tt
+			
+			set_temp_variable = { temp = 6 }
+			set_temp_variable = { total_heavy_aa = num_battalions_with_type@anti_air_heavy }
+			add_to_temp_variable = { total_heavy_aa = num_battalions_with_type@anti_air_heavy_mot }
+			multiply_temp_variable = { total_med_arty = temp }
+			
+			custom_effect_tooltip = heavy_antiair_tt
+			
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = artillery_tt
+		}		
+		categories = {
+			artillery
+		}
+	}
+	HVantiair_direct2 = {
+		allow = { has_country_flag = UNLOCK:artillery_folder } 
+
+		category_all_heavy_anti_air = {
+			soft_attack = 0.30
+			hard_attack = 0.30
+			defense = 0.30
+			breakthrough = 0.30
+			ap_attack = 0.45
+		}
+		
+		anti_air_heavy = {
+			supply_consumption = 0.05
+			need = {
+				HVanti_air_equipment = 6
+				artyhorse_equipment = 6
+         	}
+		}
+		anti_air_heavy_mot = {
+			supply_consumption = 0.075
+			need = {
+				HVanti_air_equipment = 6
+				artytractor_equipment = 6
+         	}
+		}
+		
+		research_cost = 1
+		start_year = 1942
+		folder = {
+			name = artillery_folder
+			position = { x = @HVY_AA2 y = @1942 }
+		}		special_project_specialization = { specialization_land }
+		ai_will_do = {
+			base = 0
+			modifier = {
+				add = ai_base
+				
+				set_temp_variable = { base = @ANTI_AIR_PRIORITY }
+				ai_heavy_anti_air_direct_tech = yes 
+			}
+			modifier = {
+				factor = ai_factor
+				
+				set_temp_variable = { ai_factor = ai_artillery_tech_need }
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		
+		on_research_complete = {
+			set_temp_variable = { tech = token:HVantiair_direct2 }
+			on_artillery_tech_research_complete = yes
+			custom_effect_tooltip = heavy_aa_new_equipment_tt
+			
+			set_temp_variable = { temp = 6 }
+			set_temp_variable = { total_heavy_aa = num_battalions_with_type@anti_air_heavy }
+			add_to_temp_variable = { total_heavy_aa = num_battalions_with_type@anti_air_heavy_mot }
+			multiply_temp_variable = { total_med_arty = temp }
+			
+			custom_effect_tooltip = heavy_antiair_tt
+			
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = artillery_tt
+		}		
+		categories = {
+			artillery
+		}
+	}
+	interwar_artillery = {
+		allow = { has_country_flag = UNLOCK:artillery_folder } 
+		
+		###################### Horse Towed Artillery 
+		enable_equipments = {
+			artyhorse_equipment_0
+		}
+		
+		path = {
+			leads_to_tech = artillery1
+			research_cost_coeff = 1
+		}
+		path = {
+			leads_to_tech = medartillery1
+			research_cost_coeff = 1
+		}
+		
+		research_cost = 0.5
+		start_year = 1930
+		folder = {
+			name = artillery_folder
+			position = { x = @L_ART y = @1930 }
+		}
+		on_research_complete = {
+			set_temp_variable = { tech = token:interwar_artillery }
+			on_artillery_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = artillery_tt
+			custom_effect_tooltip = horse_tech_tt
+		}		
+		categories = {
+			artillery
+			horse_tech
+		}		special_project_specialization = { specialization_land }
+		ai_will_do = {
+			base = 0
+			modifier = {
+				add = ai_base
+				
+				set_temp_variable = { base = @ARTILLERY_PRIORITY }
+				ai_light_artillery_tech = yes 
+			}
+			modifier = {
+				factor = ai_factor
+				
+				set_temp_variable = { ai_factor = ai_artillery_tech_need }
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		
+	}
+	artillery1 = {
+		allow = { has_country_flag = UNLOCK:artillery_folder } 
+	
+		enable_equipments = {
+			artillery_equipment_1
+		}
+
+		#enable_subunits = {
+		#	artillery_brigade_med
+		#}
+		
+		path = {
+			leads_to_tech = artillery3
+			research_cost_coeff = 1
+		}
+		path = {
+			leads_to_tech = mntartillery1
+			research_cost_coeff = 1
+		}
+		
+		research_cost = 1
+		start_year = 1936
+		folder = {
+			name = artillery_folder
+			position = { x = @L_ART y = @1936 }
+		}
+		on_research_complete = {
+			set_temp_variable = { tech = token:artillery1 }
+			on_artillery_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = artillery_tt
+			custom_effect_tooltip = light_artillery_tt
+			if = {
+				limit = {
+					is_ai = yes 
+				}
+				
+				clear_variable = ai_variant_level@artillery_equipment
+				clr_country_flag = ai_variant@artillery_equipment
+			}
+		}			
+		categories = {
+			artillery
+			light_artillery		
+		}		special_project_specialization = { specialization_land }
+		ai_will_do = {
+			base = 0
+			modifier = {
+				add = ai_base
+				
+				set_temp_variable = { base = @ARTILLERY_PRIORITY }
+				ai_light_artillery_tech = yes 
+			}
+			modifier = {
+				factor = ai_factor
+				
+				set_temp_variable = { ai_factor = ai_artillery_tech_need }
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		
+	}
+	###### Gun carriage
+	artillery3 = {
+		allow = { has_country_flag = UNLOCK:artillery_folder } 
+
+		category_all_light_artillery = {
+			soft_attack = 0.04
+		}
+		category_all_sp_artillery = {
+		   soft_attack = 0.02
+		}
+		
+		path = {
+			leads_to_tech = artillery2
+			research_cost_coeff = 1
+		}
+		
+		research_cost = 0.5
+		start_year = 1937
+		folder = {
+			name = artillery_folder
+			position = { x = @L_ART y = @1937 }
+		}
+		on_research_complete = {
+			set_temp_variable = { tech = token:artillery3 }
+			on_artillery_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = artillery_tt
+			custom_effect_tooltip = light_artillery_tt
+		}			
+		categories = {
+			artillery
+			light_artillery		
+		}		special_project_specialization = { specialization_land }
+		ai_will_do = {
+			base = 0
+			modifier = {
+				add = ai_base
+				
+				set_temp_variable = { base = @ARTILLERY_PRIORITY }
+				ai_light_artillery_tech = yes 
+			}
+			modifier = {
+				factor = ai_factor
+				
+				set_temp_variable = { ai_factor = ai_artillery_tech_need }
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		
+	}
+	mntartillery1 = {
+		allow = { has_country_flag = UNLOCK:artillery_folder } 
+	
+		enable_equipments = {
+			mountain_artillery_equipment_1
+		}
+		path = {
+			leads_to_tech = mntartillery2
+			research_cost_coeff = 1
+		}		
+		research_cost = 1.25
+		start_year = 1938
+		folder = {
+			name = artillery_folder
+			position = { x = @MNT_ART y = @1938 }
+		}
+		on_research_complete = {
+			set_temp_variable = { tech = token:mntartillery1 }
+			on_artillery_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = artillery_tt
+			custom_effect_tooltip = light_artillery_tt
+			if = {
+				limit = {
+					is_ai = yes 
+				}
+				
+				clear_variable = ai_variant_level@mountain_artillery_equipment
+				clr_country_flag = ai_variant@mountain_artillery_equipment
+			}
+		}
+		categories = {
+			artillery
+			light_artillery		
+		}		special_project_specialization = { specialization_land }
+		ai_will_do = {
+			base = 0
+			modifier = {
+				add = ai_base
+				
+				set_temp_variable = { base = @ARTILLERY_PRIORITY }
+				ai_pack_artillery_tech = yes 
+			}
+			modifier = {
+				factor = ai_factor
+				
+				set_temp_variable = { ai_factor = ai_artillery_tech_need }
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		
+	}
+	mntartillery2 = {
+		allow = { has_country_flag = UNLOCK:artillery_folder } 
+		mountain_artillery_brigade = {
+			soft_attack = 0.05
+			max_organisation = 1
+			default_morale = 0.1
+			maximum_speed = 0.02
+		}
+		mountain_artillery_brigade_mot = {	
+			soft_attack = 0.05
+			max_organisation = 1
+			default_morale = 0.1		
+			maximum_speed = 0.04
+		}
+		airborne_artillery_brigade = {
+			soft_attack = 0.05
+			max_organisation = 1
+			default_morale = 0.1
+			maximum_speed = 0.02
+		}
+		guards_mountain_artillery_brigade = {
+			soft_attack = 0.05
+			max_organisation = 1
+			default_morale = 0.1
+			maximum_speed = 0.02
+		}
+		guards_mountain_artillery_brigade_mot = {	
+			soft_attack = 0.05
+			max_organisation = 1
+			default_morale = 0.1		
+			maximum_speed = 0.04
+		}
+		ss_mountain_artillery_brigade = {
+			soft_attack = 0.05
+			max_organisation = 1
+			default_morale = 0.1
+			maximum_speed = 0.02
+		}
+		ss_mountain_artillery_brigade_mot = {	
+			soft_attack = 0.05
+			max_organisation = 1
+			default_morale = 0.1		
+			maximum_speed = 0.04
+		}
+		
+		research_cost = 1.0
+		start_year = 1943
+		folder = {
+			name = artillery_folder
+			position = { x = @MNT_ART y = @1943 }
+		}
+		on_research_complete = {
+			set_temp_variable = { tech = token:mntartillery2 }
+			on_artillery_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = artillery_tt
+			custom_effect_tooltip = light_artillery_tt
+		}			
+		categories = {
+			artillery
+			light_artillery	
+		}		special_project_specialization = { specialization_land }
+		ai_will_do = {
+			base = 0
+			modifier = {
+				add = ai_base
+				
+				set_temp_variable = { base = @ARTILLERY_PRIORITY }
+				ai_pack_artillery_tech = yes 
+			}
+			modifier = {
+				factor = ai_factor
+				
+				set_temp_variable = { ai_factor = ai_artillery_tech_need }
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		
+	}
+
+	artillery2 = {
+		allow = { has_country_flag = UNLOCK:artillery_folder } 
+	
+		enable_equipments = {
+			artillery_equipment_2
+		}
+		#enable_subunits = {
+		#	artillery_brigade_med
+		#}		
+
+		
+		path = {
+			leads_to_tech = artillery4
+			research_cost_coeff = 1
+		}
+		
+		research_cost = 1
+		start_year = 1939
+		folder = {
+			name = artillery_folder
+			position = { x = @L_ART y = @1939 }
+		}
+		on_research_complete = {
+			set_temp_variable = { tech = token:artillery2 }
+			on_artillery_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = artillery_tt
+			custom_effect_tooltip = light_artillery_tt
+			if = {
+				limit = {
+					is_ai = yes 
+				}
+				
+				clear_variable = ai_variant_level@artillery_equipment
+				clr_country_flag = ai_variant@artillery_equipment
+			}
+		}			
+		categories = {
+			artillery
+			light_artillery		
+		}		special_project_specialization = { specialization_land }
+		ai_will_do = {
+			base = 0
+			modifier = {
+				add = ai_base
+				
+				set_temp_variable = { base = @ARTILLERY_PRIORITY }
+				ai_light_artillery_tech = yes 
+			}
+			modifier = {
+				factor = ai_tech_need/artillery2?1
+			}
+			modifier = {
+				factor = ai_factor
+				
+				set_temp_variable = { ai_factor = ai_artillery_tech_need }
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		
+	}
+	########### Gun barrel
+	artillery4 = {
+		allow = { has_country_flag = UNLOCK:artillery_folder } 
+
+		category_all_light_artillery = {
+			soft_attack = 0.06
+			max_organisation = 1
+		}	
+		category_all_sp_artillery = {
+		   soft_attack = 0.03
+		}
+		###### need to add in other nations
+		path = {
+			leads_to_tech = artillery5
+			research_cost_coeff = 1
+		}
+		
+		research_cost = 0.5
+		start_year = 1941
+		folder = {
+			name = artillery_folder
+			position = { x = @L_ART y = @1941 }
+		}
+		on_research_complete = {
+			set_temp_variable = { tech = token:artillery4 }
+			on_artillery_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = artillery_tt
+			custom_effect_tooltip = light_artillery_tt
+		}			
+		categories = {
+			artillery
+			light_artillery		
+		}		special_project_specialization = { specialization_land }
+		ai_will_do = {
+			base = 0
+			modifier = {
+				add = ai_base
+				
+				set_temp_variable = { base = @ARTILLERY_PRIORITY }
+				ai_light_artillery_tech = yes 
+			}
+			modifier = {
+				factor = ai_factor
+				
+				set_temp_variable = { ai_factor = ai_artillery_tech_need }
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		
+	}
+	artillery5 = {
+		allow = { has_country_flag = UNLOCK:artillery_folder } 
+		
+		enable_equipments = {
+			artillery_equipment_3
+		}
+		
+		path = {
+			leads_to_tech = artillery6
+			research_cost_coeff = 1
+		}
+		
+		research_cost = 1
+		start_year = 1942
+		folder = {
+			name = artillery_folder
+			position = { x = @L_ART y = @1942 }
+		}
+		on_research_complete = {
+			set_temp_variable = { tech = token:artillery5 }
+			on_artillery_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = artillery_tt
+			custom_effect_tooltip = light_artillery_tt
+			if = {
+				limit = {
+					is_ai = yes 
+				}
+				
+				clear_variable = ai_variant_level@artillery_equipment
+				clr_country_flag = ai_variant@artillery_equipment
+			}
+		}			
+		categories = {
+			artillery
+			light_artillery		
+		}		special_project_specialization = { specialization_land }
+		ai_will_do = {
+			base = 0
+			modifier = {
+				add = ai_base
+				
+				set_temp_variable = { base = @ARTILLERY_PRIORITY }
+				ai_light_artillery_tech = yes 
+			}
+			modifier = {
+				factor = ai_factor
+				
+				set_temp_variable = { ai_factor = ai_artillery_tech_need }
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		
+	}
+	artillery6 = {
+		allow = { has_country_flag = UNLOCK:artillery_folder } 
+
+		enable_equipments = {
+			artillery_equipment_4
+		}
+		
+		research_cost = 1
+		start_year = 1944
+		folder = {
+			name = artillery_folder
+			position = { x = @L_ART y = @1944 }
+		}
+		on_research_complete = {
+			set_temp_variable = { tech = token:artillery6 }
+			on_artillery_tech_research_complete = yes
+			if = {
+				limit = {
+					is_ai = yes 
+				}
+				
+				clear_variable = ai_variant_level@artillery_equipment
+				clr_country_flag = ai_variant@artillery_equipment
+			}
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = artillery_tt
+			custom_effect_tooltip = light_artillery_tt
+		}			
+		categories = {
+			artillery
+			light_artillery
+		}		special_project_specialization = { specialization_land }
+		ai_will_do = {
+			base = 0
+			modifier = {
+				add = ai_base
+				
+				set_temp_variable = { base = @ARTILLERY_PRIORITY }
+				ai_light_artillery_tech = yes 
+			}
+			modifier = {
+				factor = ai_factor
+				
+				set_temp_variable = { ai_factor = ai_artillery_tech_need }
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		
+	}
+	################### Truck towed
+	interwar_medartillery = {
+		allow = { has_country_flag = UNLOCK:artillery_folder } 
+		
+		enable_equipments = {
+			artytruck_equipment_0
+		}
+		
+		enable_subunits = {
+			artillery_brigade_mot
+			artillery_brigade_mot_med
+		}
+		
+		research_cost = 1
+		start_year = 1930
+		folder = {
+			name = artillery_folder
+			position = { x = @M_ART y = @1930 }
+		}
+		on_research_complete = {
+			set_temp_variable = { tech = token:interwar_medartillery }
+			on_artillery_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = artillery_tt
+			custom_effect_tooltip = motorized_equipment_tt
+		}			
+		categories = {
+			artillery
+			motorized_equipment
+		}		special_project_specialization = { specialization_land }
+		ai_will_do = {
+			base = 0
+			modifier = {
+				add = @ARTILLERY_PRIORITY
+				
+				ai_mot_artillery_tech = yes 
+			}
+			modifier = {
+				factor = ai_factor
+				
+				set_temp_variable = { ai_factor = ai_artillery_tech_need }
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		
+	}
+	medartillery1 = {
+		allow = { has_country_flag = UNLOCK:artillery_folder } 
+	
+		enable_equipments = {
+			medartillery_equipment_1
+		}
+		
+		path = {
+			leads_to_tech = medartillery3
+			research_cost_coeff = 1
+		}
+		
+		research_cost = 1
+		start_year = 1936
+		folder = {
+			name = artillery_folder
+			position = { x = @M_ART y = @1936 }
+		}
+		on_research_complete = {
+			set_temp_variable = { tech = token:medartillery1 }
+			on_artillery_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = artillery_tt
+			custom_effect_tooltip = med_artillery_tt
+			if = {
+				limit = {
+					is_ai = yes 
+				}
+				
+				clear_variable = ai_variant_level@medartillery_equipment
+				clr_country_flag = ai_variant@medartillery_equipment
+			}
+		}		
+		categories = {
+			artillery
+			med_artillery
+		}		special_project_specialization = { specialization_land }
+		ai_will_do = {
+			base = 0
+			modifier = {
+				add = ai_base
+				
+				set_temp_variable = { base = @ARTILLERY_PRIORITY }
+				ai_medium_artillery_tech = yes 
+			}
+			modifier = {
+				factor = ai_factor
+				
+				set_temp_variable = { ai_factor = ai_artillery_tech_need }
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		
+	}
+	# Carriage upgrade
+	medartillery3 = {
+		allow = { has_country_flag = UNLOCK:artillery_folder } 
+		
+		category_all_medium_artillery = {
+			soft_attack = 0.04
+			max_organisation = 1
+		}
+		category_all_sp_artillery = {
+		   soft_attack = 0.02
+		}
+	
+	########## need to add in other nations
+		path = {
+			leads_to_tech = medartillery2
+			research_cost_coeff = 1
+		}
+		
+		research_cost = 0.5
+		start_year = 1937
+		folder = {
+			name = artillery_folder
+			position = { x = @M_ART y = @1937 }
+		}
+		on_research_complete = {
+			set_temp_variable = { tech = token:medartillery3 }
+			on_artillery_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = artillery_tt
+			custom_effect_tooltip = med_artillery_tt
+		}		
+		categories = {
+			artillery
+			med_artillery
+		}		special_project_specialization = { specialization_land }
+		ai_will_do = {
+			base = 0
+			modifier = {
+				add = ai_base
+				
+				set_temp_variable = { base = @ARTILLERY_PRIORITY }
+				ai_medium_artillery_tech = yes 
+			}
+			modifier = {
+				factor = ai_factor
+				
+				set_temp_variable = { ai_factor = ai_artillery_tech_need }
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		
+	}
+	#Early war medium artillery
+	medartillery2 = {
+		allow = { has_country_flag = UNLOCK:artillery_folder } 
+	
+		enable_equipments = {
+			medartillery_equipment_2
+		}
+		
+		path = {
+			leads_to_tech = medartillery4
+			research_cost_coeff = 1
+		}
+		
+		research_cost = 1
+		start_year = 1939
+		folder = {
+			name = artillery_folder
+			position = { x = @M_ART y = @1939 }
+		}
+		on_research_complete = {
+			set_temp_variable = { tech = token:medartillery2 }
+			on_artillery_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = artillery_tt
+			custom_effect_tooltip = med_artillery_tt
+			if = {
+				limit = {
+					is_ai = yes 
+				}
+				
+				clear_variable = ai_variant_level@medartillery_equipment
+				clr_country_flag = ai_variant@medartillery_equipment
+			}
+		}		
+		categories = {
+			artillery
+			med_artillery
+		}		special_project_specialization = { specialization_land }
+		ai_will_do = {
+			base = 0
+			modifier = {
+				add = ai_base
+				
+				set_temp_variable = { base = @ARTILLERY_PRIORITY }
+				ai_medium_artillery_tech = yes 
+			}
+			modifier = {
+				factor = ai_tech_need/medartillery2?1
+			}
+			modifier = {
+				factor = ai_factor
+				
+				set_temp_variable = { ai_factor = ai_artillery_tech_need }
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		
+	}
+	# Artillery Gun upgrade
+	medartillery4 = {
+		allow = { has_country_flag = UNLOCK:artillery_folder } 
+		
+		category_all_medium_artillery = {
+			soft_attack = 0.06
+			max_organisation = 1
+		}
+		category_all_sp_artillery = {
+		   soft_attack = 0.03
+		}
+		
+		path = {
+			leads_to_tech = medartillery5
+			research_cost_coeff = 1
+		}
+		
+		research_cost = 0.5
+		start_year = 1941
+		folder = {
+			name = artillery_folder
+			position = { x = @M_ART y = @1941 }
+		}
+		on_research_complete = {
+			set_temp_variable = { tech = token:medartillery4 }
+			on_artillery_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = artillery_tt
+			custom_effect_tooltip = med_artillery_tt
+		}		
+		categories = {
+			artillery
+			med_artillery
+		}		special_project_specialization = { specialization_land }
+		ai_will_do = {
+			base = 0
+			modifier = {
+				add = ai_base
+				
+				set_temp_variable = { base = @ARTILLERY_PRIORITY }
+				ai_medium_artillery_tech = yes 
+			}
+			modifier = {
+				factor = ai_factor
+				
+				set_temp_variable = { ai_factor = ai_artillery_tech_need }
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		
+	}
+	# Mid war equipment upgrade medium artillery
+	medartillery5 = {
+		allow = { has_country_flag = UNLOCK:artillery_folder } 
+	
+		enable_equipments = {
+			medartillery_equipment_3
+		}
+
+		path = {
+			leads_to_tech = medartillery6
+			research_cost_coeff = 1
+		}
+		
+		research_cost = 1
+		start_year = 1942
+		folder = {
+			name = artillery_folder
+			position = { x = @M_ART y = @1942 }
+		}
+		on_research_complete = {
+			set_temp_variable = { tech = token:medartillery5 }
+			on_artillery_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = artillery_tt
+			custom_effect_tooltip = med_artillery_tt
+			
+			if = {
+				limit = {
+					is_ai = yes 
+				}
+				
+				clear_variable = ai_variant_level@medartillery_equipment
+				clr_country_flag = ai_variant@medartillery_equipment
+			}
+		}		
+		categories = {
+			artillery
+			med_artillery
+		}		special_project_specialization = { specialization_land }
+		ai_will_do = {
+			base = 0
+			modifier = {
+				add = ai_base
+				
+				set_temp_variable = { base = @ARTILLERY_PRIORITY }
+				ai_medium_artillery_tech = yes 
+			}
+			modifier = {
+				factor = ai_factor
+				
+				set_temp_variable = { ai_factor = ai_artillery_tech_need }
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		
+	}
+	# Late war medium artillery
+	medartillery6 = {
+		allow = { has_country_flag = UNLOCK:artillery_folder } 
+
+		enable_equipments = {
+			medartillery_equipment_4
+		}
+		
+		research_cost = 1
+		start_year = 1944
+		folder = {
+			name = artillery_folder
+			position = { x = @M_ART y = @1944 }
+		}
+		on_research_complete = {
+			set_temp_variable = { tech = token:medartillery6 }
+			on_artillery_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = artillery_tt
+			custom_effect_tooltip = med_artillery_tt
+			
+			if = {
+				limit = {
+					is_ai = yes 
+				}
+				
+				clear_variable = ai_variant_level@medartillery_equipment
+				clr_country_flag = ai_variant@medartillery_equipment
+			}
+		}		
+		categories = {
+			artillery
+			med_artillery
+		}		special_project_specialization = { specialization_land }
+		ai_will_do = {
+			base = 0
+			modifier = {
+				add = ai_base
+				
+				set_temp_variable = { base = @ARTILLERY_PRIORITY }
+				ai_medium_artillery_tech = yes 
+			}
+			modifier = {
+				factor = ai_factor
+				
+				set_temp_variable = { ai_factor = ai_artillery_tech_need }
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		
+	}
+	########### Heavy Artillery ##############
+	interwar_Hvartillery = {
+		allow = { has_country_flag = UNLOCK:artillery_folder } 
+		
+		################ Hv Truck towed
+		enable_equipments = {
+			artytractor_equipment_0
+		}
+			
+		enable_subunits = {
+			artillery_heavy_mot
+		}
+		
+		path = {
+			leads_to_tech = Hvartillery1
+			research_cost_coeff = 1
+		}
+		
+		research_cost = 1
+		start_year = 1930
+		folder = {
+			name = artillery_folder
+			position = { x = @H_ART y = @1930 }
+		}
+		on_research_complete = {
+			set_temp_variable = { tech = token:interwar_Hvartillery }
+			on_artillery_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = artillery_tt
+			custom_effect_tooltip = motorized_equipment_tt
+		}		
+		categories = {
+			artillery
+			motorized_equipment
+		}		special_project_specialization = { specialization_land }
+		ai_will_do = {
+			base = 0
+			modifier = {
+				add = ai_base
+				
+				set_temp_variable = { base = @ARTILLERY_PRIORITY }
+				ai_heavy_artillery_tech = yes 
+			}
+			modifier = {
+				factor = ai_factor
+				
+				set_temp_variable = { ai_factor = ai_artillery_tech_need }
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		
+	}
+	Hvartillery1 = {
+		allow = { has_country_flag = UNLOCK:artillery_folder } 
+	
+		enable_equipments = {
+			Hvartillery_equipment_1
+		}
+		
+		path = {
+			leads_to_tech = Hvartillery3
+			research_cost_coeff = 1
+		}
+		
+		research_cost = 1
+		start_year = 1936
+		folder = {
+			name = artillery_folder
+			position = { x = @H_ART y = @1936 }
+		}
+		on_research_complete = {
+			set_temp_variable = { tech = token:Hvartillery1 }
+			on_artillery_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = artillery_tt
+			
+			if = {
+				limit = {
+					is_ai = yes 
+				}
+				
+				clear_variable = ai_variant_level@Hvartillery_equipment
+				clr_country_flag = ai_variant@Hvartillery_equipment
+			}
+		}		
+		categories = {
+			artillery
+		}		special_project_specialization = { specialization_land }
+		ai_will_do = {
+			base = 0
+			modifier = {
+				add = ai_base
+				
+				set_temp_variable = { base = @ARTILLERY_PRIORITY }
+				ai_heavy_artillery_tech = yes 
+			}
+			modifier = {
+				factor = ai_factor
+				
+				set_temp_variable = { ai_factor = ai_artillery_tech_need }
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		
+	}
+	Hvartillery3 = {
+		allow = { has_country_flag = UNLOCK:artillery_folder } 
+		
+		category_all_heavy_artillery = {
+			soft_attack = 0.04
+		}
+		
+		path = {
+			leads_to_tech = Hvartillery2
+			research_cost_coeff = 1
+		}
+		
+		research_cost = 0.5
+		start_year = 1937
+		folder = {
+			name = artillery_folder
+			position = { x = @H_ART y = @1937 }
+		}
+		on_research_complete = {
+			set_temp_variable = { tech = token:Hvartillery3 }
+			on_artillery_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = artillery_tt
+		}		
+		categories = {
+			artillery
+		}		special_project_specialization = { specialization_land }
+		ai_will_do = {
+			base = 0
+			modifier = {
+				add = ai_base
+				
+				set_temp_variable = { base = @ARTILLERY_PRIORITY }
+				ai_heavy_artillery_tech = yes 
+			}
+			modifier = {
+				factor = ai_factor
+				
+				set_temp_variable = { ai_factor = ai_artillery_tech_need }
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		
+	}
+	Hvartillery2 = {
+		allow = { has_country_flag = UNLOCK:artillery_folder } 
+	
+		enable_equipments = {
+			Hvartillery_equipment_2
+		}
+		
+		path = {
+			leads_to_tech = Hvartillery4
+			research_cost_coeff = 1
+		}
+		
+		research_cost = 1
+		start_year = 1939
+		folder = {
+			name = artillery_folder
+			position = { x = @H_ART y = @1939 }
+		}
+		on_research_complete = {
+			set_temp_variable = { tech = token:Hvartillery2 }
+			on_artillery_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = artillery_tt
+			if = {
+				limit = {
+					is_ai = yes 
+				}
+				
+				clear_variable = ai_variant_level@Hvartillery_equipment
+				clr_country_flag = ai_variant@Hvartillery_equipment
+			}
+		}		
+		categories = {
+			artillery
+		}		special_project_specialization = { specialization_land }
+		ai_will_do = {
+			base = 0
+			modifier = {
+				add = ai_base
+				
+				set_temp_variable = { base = @ARTILLERY_PRIORITY }
+				ai_heavy_artillery_tech = yes 
+			}
+			modifier = {
+				factor = ai_factor
+				
+				set_temp_variable = { ai_factor = ai_artillery_tech_need }
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		
+	}
+
+	Hvartillery4 = {
+		allow = { has_country_flag = UNLOCK:artillery_folder } 
+
+		category_all_heavy_artillery = {
+			soft_attack = 0.06
+		}
+		
+		path = {
+			leads_to_tech = Hvartillery5
+			research_cost_coeff = 1
+		}
+		
+		research_cost = 0.5
+		start_year = 1941
+		folder = {
+			name = artillery_folder
+			position = { x = @H_ART y = @1941 }
+		}
+		on_research_complete = {
+			set_temp_variable = { tech = token:Hvartillery4 }
+			on_artillery_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = artillery_tt
+		}		
+		categories = {
+			artillery
+		}		special_project_specialization = { specialization_land }
+		ai_will_do = {
+			base = 0
+			modifier = {
+				add = ai_base
+				
+				set_temp_variable = { base = @ARTILLERY_PRIORITY }
+				ai_heavy_artillery_tech = yes 
+			}
+			modifier = {
+				factor = ai_factor
+				
+				set_temp_variable = { ai_factor = ai_artillery_tech_need }
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		
+	}
+	Hvartillery5 = {
+		allow = { has_country_flag = UNLOCK:artillery_folder } 
+	
+		enable_equipments = {
+			Hvartillery_equipment_3
+		}
+		
+		path = {
+			leads_to_tech = Hvartillery6
+			research_cost_coeff = 1
+		}
+		
+		research_cost = 1
+		start_year = 1942
+		folder = {
+			name = artillery_folder
+			position = { x = @H_ART y = @1942 }
+		}
+		on_research_complete = {
+			set_temp_variable = { tech = token:Hvartillery5 }
+			on_artillery_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = artillery_tt
+			
+			if = {
+				limit = {
+					is_ai = yes 
+				}
+				
+				clear_variable = ai_variant_level@Hvartillery_equipment
+				clr_country_flag = ai_variant@Hvartillery_equipment
+			}
+		}		
+		categories = {
+			artillery
+		}		special_project_specialization = { specialization_land }
+		ai_will_do = {
+			base = 0
+			modifier = {
+				add = ai_base
+				
+				set_temp_variable = { base = @ARTILLERY_PRIORITY }
+				ai_heavy_artillery_tech = yes 
+			}
+			modifier = {
+				factor = ai_factor
+				
+				set_temp_variable = { ai_factor = ai_artillery_tech_need }
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		
+	}
+	Hvartillery6 = {
+		allow = { has_country_flag = UNLOCK:artillery_folder } 
+
+		enable_equipments = {
+			Hvartillery_equipment_4
+		}
+		
+		research_cost = 1
+		start_year = 1944
+		folder = {
+			name = artillery_folder
+			position = { x = @H_ART y = @1944 }
+		}
+		on_research_complete = {
+			set_temp_variable = { tech = token:Hvartillery6 }
+			on_artillery_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = artillery_tt
+			
+			if = {
+				limit = {
+					is_ai = yes 
+				}
+				
+				clear_variable = ai_variant_level@Hvartillery_equipment
+				clr_country_flag = ai_variant@Hvartillery_equipment
+			}
+		}	
+		categories = {
+			artillery
+		}		special_project_specialization = { specialization_land }
+		ai_will_do = {
+			base = 0
+			modifier = {
+				add = ai_base
+				
+				set_temp_variable = { base = @ARTILLERY_PRIORITY }
+				ai_heavy_artillery_tech = yes 
+			}
+			modifier = {
+				factor = ai_factor
+				
+				set_temp_variable = { ai_factor = ai_artillery_tech_need }
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		
+	}
+	superartillery2 = {
+		allow = { has_country_flag = UNLOCK:artillery_folder } 
+	
+		enable_equipments = {
+			railartillery_equipment_0
+			railway_gun_equipment_1
+		}
+		enable_subunits = {
+			artillery_rail
+			railway_gun
+		}
+
+		research_cost = 1
+		start_year = 1940
+		folder = {
+			name = artillery_folder
+			position = { x = @SH_ART y = @1940 }
+		}
+		on_research_complete = {
+			set_temp_variable = { tech = token:superartillery2 }
+			on_artillery_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = artillery_tt
+		}		
+		categories = {
+			artillery
+		}		special_project_specialization = { specialization_land }
+		ai_will_do = {
+			factor = 0
+		}
+		
+	}
+	########## Rocket artillery ############
+	rocket_artillery = {
+		allow = { has_country_flag = UNLOCK:artillery_folder } 
+
+		enable_equipments = {
+			rocket_artillery_equipment_1
+		}
+		enable_subunits = {
+			rocket_artillery_brigade
+		}
+		
+		dependencies = {
+			basic_land_launched_rockets = 1
+		}
+		
+		#on_research_complete = {
+		#	limit = {
+		#		tag = GER
+		#	}
+		#	hidden_effect = {
+		#		set_technology = { ss_rocketartillery_tech = 1 }
+		#	}
+		#	custom_effect_tooltip = ENABLE_SS_RCT_ART
+		#}
+		
+		path = {
+			leads_to_tech = rocket_artillery2
+			research_cost_coeff = 1
+		}
+		
+		research_cost = 1.5
+		start_year = 1940
+		folder = {
+			name = artillery_folder
+			position = { x = @RCT_ART y = @1940 }
+		}		special_project_specialization = { specialization_land }
+		ai_will_do = {
+			base = 0
+			modifier = {
+				add = ai_base
+				
+				set_temp_variable = { base = @ROCKET_PRIORITY }
+				ai_rocket_artillery_tech = yes 
+			}
+			modifier = {
+				factor = ai_tech_need/rocket_artillery?1
+			}
+			modifier = {
+				factor = ai_factor
+				
+				set_temp_variable = { ai_factor = ai_artillery_tech_need }
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		on_research_complete = {
+			set_temp_variable = { tech = token:rocket_artillery }
+			on_artillery_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = artillery_tt
+			custom_effect_tooltip = rocketry_tt
+		}		
+		categories = {
+			rocketry
+			artillery
+		}	
+		
+	}
+	rocket_artillery2 = {
+		allow = { has_country_flag = UNLOCK:artillery_folder } 
+
+		category_all_rocket = {
+			soft_attack = 0.05
+			breakthrough = 0.05
+		}
+		
+		path = {
+			leads_to_tech = rocket_artillery3
+			research_cost_coeff = 1
+		}
+		path = {
+			leads_to_tech = motorized_rocket_unit
+			research_cost_coeff = 1
+		}
+		
+		research_cost = 0.5
+		start_year = 1941
+		folder = {
+			name = artillery_folder
+			position = { x = @RCT_ART y = @1941 }
+		}		special_project_specialization = { specialization_land }
+		ai_will_do = {
+			base = 0
+			modifier = {
+				add = ai_base
+				
+				set_temp_variable = { base = @ROCKET_PRIORITY }
+				ai_rocket_artillery_tech = yes 
+			}
+			modifier = {
+				factor = ai_factor
+				
+				set_temp_variable = { ai_factor = ai_artillery_tech_need }
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		on_research_complete = {
+			set_temp_variable = { tech = token:rocket_artillery2 }
+			on_artillery_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = artillery_tt
+			custom_effect_tooltip = rocketry_tt
+		}		
+		categories = {
+			rocketry
+			artillery
+		}
+		
+	}
+	motorized_rocket_unit = {
+		allow = { has_country_flag = UNLOCK:artillery_folder }
+
+		enable_subunits = {
+			motorized_rocket_brigade
+		}
+		enable_equipments = {
+			motorized_rocket_equipment_1
+		}
+
+		folder = {
+			name = artillery_folder
+			position = { x = @MOT_RCT_ART y = @1941 }
+		}
+		
+		research_cost = 1
+		start_year = 1941		special_project_specialization = { specialization_land }
+		ai_will_do = {
+			factor = 0
+		}
+		
+		on_research_complete = {
+			set_temp_variable = { tech = token:motorized_rocket_unit }
+			on_artillery_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = mot_rockets_tt
+			custom_effect_tooltip = motorized_equipment_tt
+		}
+		categories = {
+			mot_rockets
+			motorized_equipment
+		}
+	}
+	rocket_artillery3 = {
+		allow = { has_country_flag = UNLOCK:artillery_folder } 
+
+		category_all_rocket = {
+			soft_attack = 0.05
+			breakthrough = 0.05
+		}
+		
+		path = {
+			leads_to_tech = rocket_artillery4
+			research_cost_coeff = 1
+		}
+		
+		research_cost = 0.5
+		start_year = 1942
+		folder = {
+			name = artillery_folder
+			position = { x = @RCT_ART y = @1942 }
+		}		special_project_specialization = { specialization_land }
+		ai_will_do = {
+			base = 0
+			modifier = {
+				add = ai_base
+				
+				set_temp_variable = { base = @ROCKET_PRIORITY }
+				ai_rocket_artillery_tech = yes 
+			}
+			modifier = {
+				factor = ai_factor
+				
+				set_temp_variable = { ai_factor = ai_artillery_tech_need }
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		on_research_complete = {
+			set_temp_variable = { tech = token:rocket_artillery3 }
+			on_artillery_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = artillery_tt
+			custom_effect_tooltip = rocketry_tt
+		}		
+		categories = {
+			rocketry
+			artillery
+		}
+		
+	}
+	rocket_artillery4 = {
+		allow = { has_country_flag = UNLOCK:artillery_folder } 
+	
+		enable_equipments = {
+			rocket_artillery_equipment_2
+		}
+		
+		motorized_rocket_brigade = {
+			soft_attack = 0.1
+			breakthrough = 0.1
+		}
+		ss_motorized_rocket_brigade = {
+			soft_attack = 0.1
+			breakthrough = 0.1
+		}
+		guards_motorized_rocket_brigade = {
+			soft_attack = 0.1
+			breakthrough = 0.1
+		}
+		
+		research_cost = 1
+		start_year = 1943
+		folder = {
+			name = artillery_folder
+			position = { x = @RCT_ART y = @1943 }
+		}		special_project_specialization = { specialization_land }
+		ai_will_do = {
+			base = 0
+			modifier = {
+				add = ai_base
+				
+				set_temp_variable = { base = @ROCKET_PRIORITY }
+				ai_rocket_artillery_tech = yes 
+			}
+			modifier = {
+				factor = ai_factor
+				
+				set_temp_variable = { ai_factor = ai_artillery_tech_need }
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		on_research_complete = {
+			set_temp_variable = { tech = token:rocket_artillery4 }
+			on_artillery_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = artillery_tt
+			custom_effect_tooltip = rocketry_tt
+		}		
+		categories = {
+			rocketry
+			artillery
+		}
+		
+	}
+	########## ANTI - TANK ############
+	interwar_antitank = {
+		allow = { has_country_flag = UNLOCK:artillery_folder } 
+
+		enable_equipments = {
+			anti_tank_equipment_1
+		}
+		
+		enable_subunits = {
+			anti_tank_brigade
+			anti_tank_brigade_mot
+		}
+		
+		#on_research_complete = {
+		#	limit = {
+		#		tag = GER
+		#	}
+		#	hidden_effect = {
+		#		set_technology = {
+		#			ss_antitank_tech = 1
+		#			ss_antitank_mot_tech = 1
+		#			ss_antitank_brig_tech = 1
+		#		}
+		#	}
+		#	custom_effect_tooltip = ENABLE_SS_AT
+		#}
+		
+		path = {
+			leads_to_tech = antitank1
+			research_cost_coeff = 1
+		}
+		
+		research_cost = 0.8
+		start_year = 1936
+		folder = {
+			name = artillery_folder
+			position = { x = @A_T y = @1936 }
+		}		special_project_specialization = { specialization_land }
+		ai_will_do = {
+			base = 0
+			modifier = {
+				add = ai_base
+				
+				set_temp_variable = { base = @ANTI_TANK_PRIORITY }
+				ai_light_anti_tank_tech = yes 
+			}
+			modifier = {
+				factor = ai_mult 
+				
+				ai_anti_tank_tech_need = yes 
+			}
+			modifier = {
+				factor = ai_tech_need/interwar_antitank?1
+			}
+			modifier = {
+				factor = ai_factor
+				
+				set_temp_variable = { ai_factor = ai_artillery_tech_need }
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		
+		on_research_complete = {
+			set_temp_variable = { tech = token:interwar_antitank }
+			on_artillery_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = artillery_tt
+			custom_effect_tooltip = cat_anti_tank_tt
+		}			
+		categories = {
+			artillery
+			cat_anti_tank
+		}
+	}
+	antitank1 = {
+		allow = { has_country_flag = UNLOCK:artillery_folder } 
+
+		category_all_light_anti_tank = {
+			hard_attack = 0.1
+			ap_attack = 0.05
+		}
+		category_all_tank_destroyer = {
+			hard_attack = 0.04
+		}
+		
+		path = {
+			leads_to_tech = antitank2
+			research_cost_coeff = 1
+		}
+		path = {
+			leads_to_tech = improved_antitank
+			research_cost_coeff = 1
+		}
+		
+		research_cost = 0.5
+		start_year = 1939
+		folder = {
+			name = artillery_folder
+			position = { x = @A_T y = @1939 }
+		}		special_project_specialization = { specialization_land }
+		ai_will_do = {
+			base = 0
+			modifier = {
+				add = ai_base
+				
+				set_temp_variable = { base = @ANTI_TANK_PRIORITY }
+				ai_light_anti_tank_tech = yes 
+			}
+			modifier = {
+				factor = ai_mult
+				
+				ai_anti_tank_tech_need = yes 
+			}
+			modifier = {
+				factor = ai_factor
+				
+				set_temp_variable = { ai_factor = ai_artillery_tech_need }
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		
+		on_research_complete = {
+			set_temp_variable = { tech = token:antitank1 }
+			on_artillery_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = artillery_tt
+			custom_effect_tooltip = cat_anti_tank_tt
+		}		
+		categories = {
+			artillery
+			cat_anti_tank
+		}
+	}
+	improved_antitank = {
+		allow = { has_country_flag = UNLOCK:artillery_folder } 
+		
+		enable_equipments = {
+			anti_tank_equipment_2
+		}
+		
+		research_cost = 1
+		start_year = 1941
+		folder = {
+			name = artillery_folder
+			position = { x = @A_T y = @1941 }
+		}		special_project_specialization = { specialization_land }
+		ai_will_do = {
+			base = 0
+			modifier = {
+				add = ai_base
+				
+				set_temp_variable = { base = @ANTI_TANK_PRIORITY }
+				ai_light_anti_tank_tech = yes 
+			}
+			modifier = {
+				factor = ai_mult
+				
+				ai_anti_tank_tech_need = yes 
+			}
+			modifier = {
+				factor = ai_factor
+				
+				set_temp_variable = { ai_factor = ai_artillery_tech_need }
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		
+		on_research_complete = {
+			set_temp_variable = { tech = token:improved_antitank }
+			on_artillery_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = artillery_tt
+			custom_effect_tooltip = cat_anti_tank_tt
+			
+			if = {
+				limit = {
+					is_ai = yes 
+				}
+				
+				clear_variable = ai_variant_level@anti_tank_equipment
+				clr_country_flag = ai_variant@anti_tank_equipment
+			}
+		}		
+		categories = {
+			artillery
+			cat_anti_tank
+		}
+	}
+	antitank2 = {
+		allow = { has_country_flag = UNLOCK:artillery_folder } 
+		
+		enable_equipments = {
+			medanti_tank_equipment_1
+		}
+		
+		enable_subunits = {
+			anti_tank_brigade_med
+			anti_tank_brigade_mot_med
+		}
+
+		path = {
+			leads_to_tech = antitank3
+			research_cost_coeff = 1
+		}
+		
+		research_cost = 1
+		start_year = 1940
+		folder = {
+			name = artillery_folder
+			position = { x = @MED_AT y = @1940 }
+		}		special_project_specialization = { specialization_land }
+		ai_will_do = {
+			base = 0
+			modifier = {
+				add = ai_base
+				
+				set_temp_variable = { base = @ANTI_TANK_PRIORITY }
+				multiply_temp_variable = { base = 2 }
+				ai_med_anti_tank_tech = yes 
+			}
+			modifier = {
+				factor = ai_mult
+				
+				ai_anti_tank_tech_need = yes 
+			}
+			modifier = {
+				factor = ai_tech_need/antitank2?1
+			}
+			modifier = {
+				factor = ai_factor
+				
+				set_temp_variable = { ai_factor = ai_artillery_tech_need }
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		
+		on_research_complete = {
+			set_temp_variable = { tech = token:antitank2 }
+			on_artillery_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = artillery_tt
+			custom_effect_tooltip = cat_anti_tank_tt
+			
+		}		
+		categories = {
+			artillery
+			cat_anti_tank
+		}
+	}
+	antitank3 = {
+		allow = { has_country_flag = UNLOCK:artillery_folder } 
+
+		category_all_light_anti_tank = {
+			hard_attack = 0.05
+			ap_attack = 0.05
+		}
+		category_all_tank_destroyer = {
+			hard_attack = 0.03
+		}
+		
+		path = {
+			leads_to_tech = antitank4
+			research_cost_coeff = 1
+		}
+		
+		research_cost = 0.5
+		start_year = 1941
+		folder = {
+			name = artillery_folder
+			position = { x = @MED_AT y = @1941 }
+		}		special_project_specialization = { specialization_land }
+		ai_will_do = {
+			base = 0
+			modifier = {
+				add = ai_base
+				
+				set_temp_variable = { base = @ANTI_TANK_PRIORITY }
+				ai_med_anti_tank_tech = yes 
+			}
+			modifier = {
+				factor = ai_mult
+				
+				ai_anti_tank_tech_need = yes 
+			}
+			modifier = {
+				factor = ai_factor
+				
+				set_temp_variable = { ai_factor = ai_artillery_tech_need }
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		
+		on_research_complete = {
+			set_temp_variable = { tech = token:antitank3 }
+			on_artillery_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = artillery_tt
+			custom_effect_tooltip = cat_anti_tank_tt
+		}		
+		categories = {
+			artillery
+			cat_anti_tank
+		}
+	}
+	antitank4 = {
+		allow = { has_country_flag = UNLOCK:artillery_folder } 
+
+		category_all_light_anti_tank = {
+			hard_attack = 0.05
+			ap_attack = 0.05
+		}
+		category_all_tank_destroyer = {
+			hard_attack = 0.03
+		}
+		
+		path = {
+			leads_to_tech = antitank5
+			research_cost_coeff = 1
+		}
+		path = {
+			leads_to_tech = HVantitank1
+			research_cost_coeff = 1
+		}
+
+		research_cost = 0.5
+		start_year = 1942
+		folder = {
+			name = artillery_folder
+			position = { x = @MED_AT y = @1942 }
+		}		special_project_specialization = { specialization_land }
+		ai_will_do = {
+			base = 0
+			modifier = {
+				add = ai_base
+				
+				set_temp_variable = { base = @ANTI_TANK_PRIORITY }
+				ai_med_anti_tank_tech = yes 
+			}
+			modifier = {
+				factor = ai_mult
+				
+				ai_anti_tank_tech_need = yes 
+			}
+			modifier = {
+				factor = ai_factor
+				
+				set_temp_variable = { ai_factor = ai_artillery_tech_need }
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		
+		on_research_complete = {
+			set_temp_variable = { tech = token:antitank4 }
+			on_artillery_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = artillery_tt
+			custom_effect_tooltip = cat_anti_tank_tt
+		}		
+		categories = {
+			artillery
+			cat_anti_tank
+		}
+	}
+	antitank5 = {
+		allow = { has_country_flag = UNLOCK:artillery_folder } 
+		
+		enable_equipments = {
+			medanti_tank_equipment_2
+		}	
+
+		research_cost = 1
+		start_year = 1943
+		folder = {
+			name = artillery_folder
+			position = { x = @MED_AT y = @1943 }
+		}		special_project_specialization = { specialization_land }
+		ai_will_do = {
+			base = 0
+			modifier = {
+				add = ai_base
+				
+				set_temp_variable = { base = @ANTI_TANK_PRIORITY }
+				ai_med_anti_tank_tech = yes 
+			}
+			modifier = {
+				factor = ai_mult
+				
+				ai_anti_tank_tech_need = yes 
+			}
+			modifier = {
+				factor = ai_factor
+				
+				set_temp_variable = { ai_factor = ai_artillery_tech_need }
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		
+		on_research_complete = {
+			set_temp_variable = { tech = token:antitank5 }
+			on_artillery_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = artillery_tt
+			custom_effect_tooltip = cat_anti_tank_tt
+			
+			if = {
+				limit = {
+					is_ai = yes 
+				}
+				
+				clear_variable = ai_variant_level@medanti_tank_equipment
+				clr_country_flag = ai_variant@medanti_tank_equipment
+			}
+		}		
+		categories = {
+			artillery
+			cat_anti_tank
+		}
+	}
+	########## Heavy ANTI - TANK ############
+	HVantitank1 = {
+		allow = { has_country_flag = UNLOCK:artillery_folder } 
+		
+		enable_equipments = {
+			HVanti_tank_equipment_1
+		}
+		enable_subunits = {
+			anti_tank_heavy
+		}
+		
+		#on_research_complete = {
+		#	limit = {
+		#		tag = GER
+		#	}
+		#	hidden_effect = {
+		#		set_technology = { ss_hv_antitank_tech = 1 }
+		#	}
+		#	custom_effect_tooltip = ENABLE_SS_AT_HVY
+		#}
+		
+		path = {
+			leads_to_tech = HVantitank2
+			research_cost_coeff = 1
+		}
+		
+		research_cost = 1.5
+		start_year = 1943
+		folder = {
+			name = artillery_folder
+			position = { x = @HVY_AT y = @1943 }
+		}		special_project_specialization = { specialization_land }
+		ai_will_do = {
+			base = 0
+			modifier = {
+				add = ai_base
+				
+				set_temp_variable = { base = @ANTI_TANK_PRIORITY }
+				ai_heavy_anti_tank_tech = yes 
+			}
+			modifier = {
+				factor = ai_mult
+				
+				ai_anti_tank_tech_need = yes 
+			}
+			modifier = {
+				factor = ai_tech_need/HVantitank1?1
+			}
+			modifier = {
+				factor = ai_factor
+				
+				set_temp_variable = { ai_factor = ai_artillery_tech_need }
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		
+		on_research_complete = {
+			set_temp_variable = { tech = token:HVantitank1 }
+			on_artillery_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = artillery_tt
+			custom_effect_tooltip = cat_anti_tank_tt
+		}		
+		categories = {
+			artillery
+			cat_anti_tank
+		}
+	}
+	HVantitank2 = {
+		allow = { has_country_flag = UNLOCK:artillery_folder } 
+
+		category_all_heavy_anti_tank = {
+			hard_attack = 0.05
+			ap_attack = 0.05
+		}
+		category_all_heavy_anti_air = {
+			hard_attack = 0.05
+			ap_attack = 0.05
+		}
+		category_all_tank_destroyer = {
+			hard_attack = 0.02
+		}
+		
+		path = {
+			leads_to_tech = HVantitank3
+			research_cost_coeff = 1
+		}
+		
+		research_cost = 0.75
+		start_year = 1943
+		folder = {
+			name = artillery_folder
+			position = { x = @HVY_AT_1 y = @1943 }
+		}		special_project_specialization = { specialization_land }
+		ai_will_do = {
+			base = 0
+			modifier = {
+				add = ai_base
+				
+				set_temp_variable = { base = @ANTI_TANK_PRIORITY }
+				ai_heavy_anti_tank_tech = yes 
+			}
+			modifier = {
+				factor = ai_mult
+				
+				ai_anti_tank_tech_need = yes 
+			}
+			modifier = {
+				factor = ai_factor
+				
+				set_temp_variable = { ai_factor = ai_artillery_tech_need }
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		
+		on_research_complete = {
+			set_temp_variable = { tech = token:HVantitank2 }
+			on_artillery_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = artillery_tt
+			custom_effect_tooltip = cat_anti_tank_tt
+		}		
+		categories = {
+			artillery
+			cat_anti_tank
+		}
+	}
+	HVantitank3 = {
+		allow = { has_country_flag = UNLOCK:artillery_folder } 
+
+		category_all_heavy_anti_tank = {
+			hard_attack = 0.05
+			ap_attack = 0.05
+		}
+		category_all_heavy_anti_air = {
+			hard_attack = 0.05
+			ap_attack = 0.05
+		}
+		category_all_tank_destroyer = {
+			hard_attack = 0.02
+		}
+		
+		path = {
+			leads_to_tech = HVantitank4
+			research_cost_coeff = 1
+		}
+		
+		research_cost = 0.75
+		start_year = 1944
+		folder = {
+			name = artillery_folder
+			position = { x = @HVY_AT_1 y = @1944 }
+		}		special_project_specialization = { specialization_land }
+		ai_will_do = {
+			base = 0
+			modifier = {
+				add = ai_base 
+				
+				set_temp_variable = { base = @ANTI_TANK_PRIORITY }
+				ai_heavy_anti_tank_tech = yes 
+			}
+			modifier = {
+				factor = ai_mult
+				
+				ai_anti_tank_tech_need = yes 
+			}
+			modifier = {
+				factor = ai_factor
+				
+				set_temp_variable = { ai_factor = ai_artillery_tech_need }
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		
+		on_research_complete = {
+			set_temp_variable = { tech = token:HVantitank3 }
+			on_artillery_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = artillery_tt
+			custom_effect_tooltip = cat_anti_tank_tt
+		}		
+		categories = {
+			artillery
+			cat_anti_tank
+		}
+	}
+	HVantitank4 = {
+		allow = { has_country_flag = UNLOCK:artillery_folder } 
+		
+		enable_equipments = {
+			HVanti_tank_equipment_2
+		}	
+
+		research_cost = 1.5
+		start_year = 1944
+		folder = {
+			name = artillery_folder
+			position = { x = @HVY_AT y = @1944 }
+		}		special_project_specialization = { specialization_land }
+		ai_will_do = {
+			base = 0
+			modifier = {
+				add = ai_base 
+				
+				set_temp_variable = { base = @ANTI_TANK_PRIORITY }
+				ai_heavy_anti_tank_tech = yes 
+			}
+			modifier = {
+				factor = ai_mult
+				
+				ai_anti_tank_tech_need = yes 
+			}
+			modifier = {
+				factor = ai_factor
+				
+				set_temp_variable = { ai_factor = ai_artillery_tech_need }
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		
+		on_research_complete = {
+			set_temp_variable = { tech = token:HVantitank4 }
+			on_artillery_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = artillery_tt
+			custom_effect_tooltip = cat_anti_tank_tt
+			
+			if = {
+				limit = {
+					is_ai = yes 
+				}
+				
+				clear_variable = ai_variant_level@HVanti_tank_equipment
+				clr_country_flag = ai_variant@HVanti_tank_equipment
+			}
+		}		
+		categories = {
+			artillery
+			cat_anti_tank
+		}
+	}
+	########### Artillery FOW - Spotter planes ##############
+	artillery_spotter_planes = {
+		allow = { has_country_flag = UNLOCK:artillery_folder } 
+		
+		enable_equipments = {
+			spotter_planes_equipment_0
+		}
+		
+		enable_subunits = {
+			spotter_air
+		}
+		
+		on_research_complete = {
+			set_temp_variable = { tech = token:artillery_spotter_planes }
+			on_artillery_tech_research_complete = yes
+		}
+		
+		research_cost = 1.2
+		start_year = 1938
+		folder = {
+			name = artillery_folder
+			position = { x = @SPT_PLN y = @1938 }
+		}
+	
+		categories = {
+			artillery
+			air_equipment
+		}		special_project_specialization = { specialization_land }
+		ai_will_do = {
+			base = 0
+			modifier = {
+				add = ai_base
+				
+				set_temp_variable = { base = @ARTILLERY_PRIORITY }
+				ai_artillery_spotter_tech = yes 
+			}
+			modifier = {
+				factor = ai_tech_need/artillery_spotter_planes?1
+			}
+			modifier = {
+				factor = ai_factor
+				
+				set_temp_variable = { ai_factor = ai_artillery_tech_need }
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		
+	}
+}

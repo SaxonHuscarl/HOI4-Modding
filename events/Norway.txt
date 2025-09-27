@@ -1,0 +1,341 @@
+﻿add_namespace = norway
+
+# Norway Miners
+country_event = {
+	id = norway.1
+	title = norway.1.t
+	desc = norway.1.d
+	picture = GFX_report_event_swedish_soldier
+	hidden = yes  #timeout
+    timeout_days = 1
+	is_triggered_only = yes
+	
+	option = { # Accept demands
+		name = norway.1.a
+		add_popularity = { ideology = communism popularity = 0.05 }	
+		#news_event = { id = news.900 hours = 6 }
+		country_event = { id = norway.2 days = 30 }
+	}
+}
+
+# Norway Unions are angry
+country_event = {
+	id = norway.2
+	title = norway.2.t
+	desc = norway.2.d
+	picture = GFX_report_event_worker_protests
+
+	is_triggered_only = yes
+	
+	option = { # Accept demands
+		name = norway.2.a
+		ai_chance = {
+			base = 45
+		}
+		add_popularity = { ideology = communism popularity = 0.1 }
+	}
+	option = { # Comm. politicalt advisor
+		name = norway.2.b
+		ai_chance = {
+			base = 45
+		}
+		add_ideas = generic_communist_revolutionary
+	}
+	option = { # Strikes
+		name = norway.2.c
+		ai_chance = {
+			base = 10
+		}
+		add_popularity = { ideology = communism popularity = 0.02 }
+		add_timed_idea = {
+			idea = FRA_factory_strikes
+			days = 90
+		}
+	}
+}
+
+# UK Demands Norway Aligns
+country_event = {
+	id = norway.3
+	title = norway.3.t
+	desc = norway.3.d
+	picture = GFX_report_event_swedish_soldier
+	
+	is_triggered_only = yes
+	
+	option = { # Accept demands
+		name = norway.3
+		ai_chance = {	
+			factor = 100	
+		}
+		ENG = {
+			add_to_faction = NOR
+		}
+		add_ideas = { NOR_british_bonus }
+	}
+
+	option = { # Refuse
+		name = norway.20.b
+		ai_chance = {	
+			factor = 0	
+		}
+		ENG = {
+			create_wargoal = {
+				type = puppet_wargoal_focus
+				target = NOR		
+			}
+		}			
+	}
+}
+#Altmark Incident
+news_event = { 
+    id = norway.4
+    title = norway.4.t
+    desc = {
+        text = norway.4.desc.GER
+        trigger = { tag = GER }
+    }
+    desc = {
+        text = norway.4.desc.ENG
+        trigger = { tag = ENG }
+    }
+    desc = {
+        text = norway.4.desc.NOR
+        trigger = { tag = NOR }
+    }
+    desc = {
+        text = norway.4.desc
+        trigger = { 
+            NOT = { tag = GER }
+            NOT = { tag = NOR }
+            NOT = { tag = ENG }
+        }
+    }
+    picture = GFX_news_event_hms_king_george
+	is_triggered_only = yes
+    #fire_only_once = yes
+    major = yes
+	#fire_for_sender = no
+
+	option = {
+		name = norway.4.a
+		trigger = {
+			NOT = {
+				tag = GER 
+				is_in_faction_with = GER
+			}
+		}
+	}
+	option = {
+		name = norway.4.b
+		trigger = {
+			OR = {
+				tag = GER 
+				is_in_faction_with = GER 
+			}
+		}
+		effect_tooltip = {
+			GER = {
+				add_equipment_to_stockpile = {
+					type = convoy_1
+					amount = -1
+				}
+			}
+		}
+	}
+}
+# kick out Trostky
+country_event = {
+	id = norway.5
+	title = norway.5.t
+	desc = norway.5.d
+	picture = GFX_report_event_norway_flag
+	major = yes
+	is_triggered_only = yes
+	
+	option = { # Off to Mexico you go
+		name = norway.5.a
+		trigger = {
+			tag = NOR
+		}
+		ai_chance = {	
+			factor = 100	
+		}
+		remove_ideas = { NOR_trotsky }
+	}
+	option = { # Off to Mexico you go
+		name = norway.5.b
+		trigger = {
+			NOT = {
+				OR = {
+					tag = NOR
+					tag = MEX
+				}
+			}
+		}
+		ai_chance = {	
+			factor = 100	
+		}
+	}
+	option = { # welcome
+		name = norway.5.c
+		trigger = {
+			tag = MEX
+		}
+		ai_chance = {	
+			factor = 100	
+		}
+		add_popularity = {
+			ideology = communism
+			popularity = 0.05
+		}	
+		add_ideas = {
+			MEX_trotsky
+		}
+	}
+}
+#Queen Maud Land
+country_event = {
+	id = norway.6
+	title = norway.6.t
+	desc = norway.6.d
+	picture = GFX_report_event_snowy_happiness
+	is_triggered_only = yes
+	trigger = {
+		has_war = no
+	}	
+	option = {
+		name = norway.6.a
+		add_stability = 0.02
+	}
+}
+#Oslo Report #todo make this a choice for NOR
+country_event = {
+	id = norway.7
+	title = norway.7.t
+	desc = norway.7.d
+	picture = GFX_report_event_confused_politicians_gfxaddon
+	is_triggered_only = yes
+	trigger = {
+		866 = {
+			is_controlled_by = NOR
+		}
+		NOT = {
+			NOR = {
+				is_in_faction_with = GER
+			}
+		}
+	}	
+	option = {
+		name = norway.7.a
+		if = {
+			limit = {
+				has_dlc = "La Resistance"
+			}
+			add_intel = {
+				target = GER
+				civilian_intel = 10
+				army_intel = 5
+				airforce_intel = 8
+			}			
+		}
+	}
+}
+#Large trade agreement
+country_event = {
+	id = norway.8
+	title = norway.8.t
+	desc = norway.8.d
+	picture = GFX_report_event_confused_politicians_gfxaddon
+	is_triggered_only = yes
+	major = yes
+	trigger = {
+		NOR = { has_war = no }
+		BEL = { has_war = no }
+		DEN = { has_war = no }
+		FIN = { has_war = no }
+		LUX = { has_war = no }
+		HOL = { has_war = no }
+		SWE = { has_war = no }
+	}	
+	option = {
+		name = norway.8.a
+		trigger = {
+			OR = {
+				tag = NOR
+				tag = BEL
+				tag = FIN
+				tag = DEN
+				tag = LUX
+				tag = HOL
+				tag = SWE
+			}
+		}
+		add_stability = 0.05
+		reverse_add_opinion_modifier = {
+			target = NOR
+			modifier = trade_treaty
+		}				
+		reverse_add_opinion_modifier = {
+			target = BEL
+			modifier = trade_treaty
+		}
+		reverse_add_opinion_modifier = {
+			target = FIN
+			modifier = trade_treaty
+		}
+		reverse_add_opinion_modifier = {
+			target = DEN
+			modifier = trade_treaty
+		}	
+		reverse_add_opinion_modifier = {
+			target = LUX
+			modifier = trade_treaty
+		}		
+		reverse_add_opinion_modifier = {
+			target = HOL
+			modifier = trade_treaty
+		}
+		reverse_add_opinion_modifier = {
+			target = SWE
+			modifier = trade_treaty
+		}
+	}
+	option = {
+		name = norway.8.b
+		trigger = {
+			NOT = {
+				tag = NOR
+				tag = BEL
+				tag = FIN
+				tag = DEN
+				tag = LUX
+				tag = HOL
+				tag = SWE
+			}
+		}
+	}
+}
+country_event = {
+	id = norway.30
+	title = norway.30.t
+	desc = norway.30.desc
+	picture = GFX_report_event_airbase_finnmark_banak
+	
+	fire_only_once = yes
+	is_triggered_only = yes
+	
+	option = { # Accept demands
+		name = norway.30.a
+		hidden_effect = {
+			930 = { # Kirkeness
+				add_building_construction = {
+					type = air_base
+					level = 1
+					instant_build = yes
+				}
+			}
+		}
+	}
+}
+### EOF ###

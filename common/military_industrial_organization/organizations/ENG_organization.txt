@@ -1,0 +1,1529 @@
+
+########    ###    ##    ## ##    ##  ######
+   ##      ## ##   ###   ## ##   ##  ##    ##
+   ##     ##   ##  ####  ## ##  ##   ##
+   ##    ##     ## ## ## ## #####     ######
+   ##    ######### ##  #### ##  ##         ##
+   ##    ##     ## ##   ### ##   ##  ##    ##
+   ##    ##     ## ##    ## ##    ##  ######
+
+ENG_vickers_armstrong_eng_organization = {
+	#include = generic_medium_tank_organization
+	icon = GFX_idea_vickers_armstrong_eng
+
+	allowed = {
+		OR = {
+			tag = ENG
+			tag = BEL
+		}
+	}
+
+	equipment_type = {
+		mio_cat_eq_all_medium_tank
+		mio_cat_eq_all_light_tank
+	}
+
+	research_categories = {
+		armor_tech_armor
+		armor_tech_armor_construction
+		armor_tech_component
+		armor_tech_special
+	}
+
+	available = {
+		# When in a Foreign MIO, countries need to be at peace with original country
+		IF = {
+			limit = {
+				FROM = { NOT = { original_tag = ENG } }
+			}
+			FROM = { NOT = { has_war_with = ENG } }
+		}
+
+	}
+
+	initial_trait = {
+		organization_modifier = {
+			military_industrial_organization_research_bonus = 0.05
+		}
+		equipment_bonus = {
+			armor_value = 0.02
+			maximum_speed = -0.02
+		}
+	}
+
+	trait = {
+		token = ENG_mio_vickers_decentralized_engine_production
+		name = ENG_mio_vickers_decentralized_engine_production
+		icon = GFX_generic_mio_trait_icon_build_cost_ic
+
+		position = { x=3 y=0 }
+		mutually_exclusive = {	ENG_mio_vickers_develop_our_own_engines	}
+		equipment_bonus = {
+			build_cost_ic = -0.04
+			reliability = -0.03
+		}
+	}
+
+	trait = {
+		token = ENG_mio_vickers_crew_comfort
+		name = ENG_mio_vickers_crew_comfort
+		icon = GFX_generic_mio_trait_icon_soft_attack
+		relative_position_id = ENG_mio_vickers_decentralized_engine_production
+		position = { x=-1 y=1 }
+		all_parents = {
+			ENG_mio_vickers_decentralized_engine_production
+		}
+		equipment_bonus = {
+			soft_attack = 0.02
+			hard_attack = 0.02
+			maximum_speed = -0.01
+
+		}
+	}
+
+
+	trait = {
+		token = ENG_mio_vickers_develop_our_own_engines
+		name = ENG_mio_vickers_develop_our_own_engines
+		icon = GFX_generic_mio_trait_icon_reliability
+
+		position = { x=5 y=0 }
+		mutually_exclusive = {	ENG_mio_vickers_decentralized_engine_production	}
+		equipment_bonus = {
+			reliability = 0.03
+			fuel_consumption = -0.03
+			maximum_speed = 0.01
+			build_cost_ic = 0.03
+		}
+
+		on_complete = {
+			FROM = {
+				random_owned_controlled_state = {
+					prioritize = { 130 }
+					add_extra_state_shared_building_slots = 1
+					add_building_construction = {
+						type = engine_assembly
+						level = 1
+						instant_build = yes
+					}
+				}
+			}
+		}
+		organization_modifier = {
+			military_industrial_organization_funds_gain = -0.20
+		}
+	}
+
+	trait = {
+		token = ENG_mio_vickers_expanded_tank_capacities
+		name = ENG_mio_vickers_expanded_tank_capacities
+		icon = GFX_generic_mio_trait_icon_production_capacity
+		special_trait_background = yes
+		relative_position_id = ENG_mio_vickers_decentralized_engine_production
+		position = { x=1 y=1 }
+		any_parent = {
+			ENG_mio_vickers_decentralized_engine_production
+			ENG_mio_vickers_develop_our_own_engines
+		}
+
+		production_bonus = {
+			production_capacity_factor = 0.02
+		}
+
+		on_complete = {
+			FROM = {
+				random_owned_controlled_state = {
+					prioritize = { 130 }
+					add_extra_state_shared_building_slots = 2
+					add_building_construction = {
+						type = tank_assembly
+						level = 1
+						instant_build = yes
+					}
+					add_building_construction = {
+						type = arms_factory
+						level = 1
+						instant_build = yes
+					}
+				}
+			}
+		}
+		#ai_will_do = {
+		#	base = 10
+		#}
+	}
+
+	trait = {
+		token = ENG_mio_vickers_welding_experiments
+		name = ENG_mio_vickers_welding_experiments
+		icon = GFX_generic_mio_trait_icon_research
+		relative_position_id = ENG_mio_vickers_expanded_tank_capacities
+
+		position = { x=-1 y=1 }
+		all_parents = {
+			ENG_mio_vickers_expanded_tank_capacities
+		}
+		mutually_exclusive = {
+			ENG_mio_vickers_casting_experiments
+		}
+
+		on_complete = {
+			FROM = {
+				add_tech_bonus = {
+					bonus = 0.35
+					uses = 1
+					technology =  tech_trm_armour_construction_welded_eng
+				}
+			}
+		}
+
+		organization_modifier = {
+			military_industrial_organization_size_up_requirement = 0.05
+		}
+	}
+
+	trait = {
+		token = ENG_mio_vickers_casting_experiments
+		name = ENG_mio_vickers_casting_experiments
+		icon = GFX_generic_mio_trait_icon_research
+		relative_position_id = ENG_mio_vickers_expanded_tank_capacities
+
+		position = { x=1 y=1 }
+		all_parents = {
+			ENG_mio_vickers_expanded_tank_capacities
+		}
+		mutually_exclusive = {
+			ENG_mio_vickers_welding_experiments
+		}
+
+		on_complete = {
+			FROM = {
+				add_tech_bonus = {
+					bonus = 0.35
+					uses = 1
+					technology =  tech_trm_armour_construction_cast_partial_eng
+				}
+			}
+		}
+
+		organization_modifier = {
+			military_industrial_organization_size_up_requirement = 0.05
+		}
+	}
+
+	trait = {
+		token = ENG_mio_vickers_lightweight_transmission
+		name = ENG_mio_vickers_lightweight_transmission
+		icon = GFX_generic_mio_trait_icon_reliability
+		relative_position_id = ENG_mio_vickers_develop_our_own_engines
+		position = { x=-5 y=1 }
+		any_parent = {
+			ENG_mio_vickers_develop_our_own_engines
+			ENG_mio_vickers_decentralized_engine_production
+		}
+
+		limit_to_equipment_type = { mio_cat_eq_all_light_tank }
+
+		equipment_bonus = {
+			reliability = 0.04
+		}
+	}
+	trait = {
+		token = ENG_mio_vickers_idle_reduction_technology
+		name = ENG_mio_vickers_idle_reduction_technology
+		icon = GFX_generic_mio_trait_icon_fuel_consumption
+		all_parents = {	ENG_mio_vickers_ricardo_expertise }
+		relative_position_id = ENG_mio_vickers_ricardo_expertise
+		position = { x=-1 y=1 }
+		limit_to_equipment_type = { mio_cat_eq_all_medium_tank }
+		mutually_exclusive = {
+			ENG_mio_vickers_alternative_propulsion_systems
+		}
+
+		equipment_bonus = {
+			fuel_consumption = -0.10
+			build_cost_ic = 0.05
+		}
+	}
+	trait = {
+		token = ENG_mio_vickers_field_modifications
+		name = ENG_mio_vickers_field_modifications
+		icon = GFX_generic_mio_trait_icon_breakthrough
+		any_parent = {	ENG_mio_vickers_idle_reduction_technology ENG_mio_vickers_alternative_propulsion_systems }
+		relative_position_id = ENG_mio_vickers_idle_reduction_technology
+		position = { x=1 y=2 }
+
+		equipment_bonus = {
+			breakthrough = 0.03
+		}
+	}
+
+	trait = {
+		token = ENG_mio_vickers_armor_metallurgic_theory
+		name = ENG_mio_vickers_armor_metallurgic_theory
+		icon = GFX_generic_mio_trait_icon_armor_value
+		any_parent = {	ENG_mio_vickers_casting_experiments ENG_mio_vickers_welding_experiments }
+		relative_position_id = ENG_mio_vickers_welding_experiments
+		position = { x=1 y=1 }
+
+		on_complete = {
+			FROM = {
+				add_equipment_bonus = {
+					name = ENG_mio_vickers_armor_metallurgic_theory
+					bonus = {
+						armor = {
+							armor_value = 0.02
+						}
+					}
+				}
+			}
+		}
+		organization_modifier = {
+			military_industrial_organization_size_up_requirement = 0.10
+		}
+		ai_will_do = {
+			base = 20
+		}
+	}
+
+	trait = {
+		token = ENG_mio_vickers_sectional_track_links
+		name = ENG_mio_vickers_sectional_track_links
+		icon = GFX_generic_mio_trait_icon_defense
+		any_parent = {
+			ENG_mio_vickers_develop_our_own_engines
+			ENG_mio_vickers_decentralized_engine_production
+		}
+		relative_position_id = ENG_mio_vickers_decentralized_engine_production
+		position = { x=4 y=1 }
+		limit_to_equipment_type = { mio_cat_eq_all_medium_tank }
+		equipment_bonus = {
+			defense = 0.04
+		}
+	}
+	trait = {
+		token = ENG_mio_vickers_compartmentalized_fuel_tanks
+		name = ENG_mio_vickers_compartmentalized_fuel_tanks
+		icon = GFX_generic_mio_trait_icon_reliability
+		all_parents = { ENG_mio_vickers_sectional_track_links	}
+		relative_position_id = ENG_mio_vickers_sectional_track_links
+		position = { x=0 y=1 }
+		limit_to_equipment_type = { mio_cat_eq_all_medium_tank }
+		equipment_bonus = {
+			reliability = 0.03
+		}
+	}
+	trait = {
+		token = ENG_mio_vickers_alternative_propulsion_systems
+		name = ENG_mio_vickers_alternative_propulsion_systems
+		icon = GFX_generic_mio_trait_icon_fuel_consumption
+		all_parents = { ENG_mio_vickers_ricardo_expertise }
+		relative_position_id = ENG_mio_vickers_ricardo_expertise
+		position = { x=0 y=1 }
+		limit_to_equipment_type = { mio_cat_eq_all_medium_tank }
+		mutually_exclusive = {
+			ENG_mio_vickers_idle_reduction_technology
+		}
+		equipment_bonus = {
+			reliability = -0.05
+			fuel_consumption = -0.05
+		}
+	}
+
+	trait = {
+		token = ENG_mio_vickers_low_profile_turrets
+		name = ENG_mio_vickers_low_profile_turrets
+		icon = GFX_generic_mio_trait_icon_armor_value
+		all_parents = { ENG_mio_vickers_compartmentalized_fuel_tanks	}
+		relative_position_id = ENG_mio_vickers_compartmentalized_fuel_tanks
+		mutually_exclusive = {
+			ENG_mio_vickers_high_profile_turrets
+		}
+		position = { x=0 y=1 }
+		limit_to_equipment_type = { mio_cat_eq_all_medium_tank }
+		equipment_bonus = {
+			armor_value = 0.03
+			breakthrough = 0.02
+			build_cost_ic = 0.02
+		}
+	}
+
+	trait = {
+		token = ENG_mio_vickers_high_profile_turrets
+		name = ENG_mio_vickers_high_profile_turrets
+		icon = GFX_generic_mio_trait_icon_soft_attack
+		all_parents = { ENG_mio_vickers_compartmentalized_fuel_tanks }
+		relative_position_id = ENG_mio_vickers_compartmentalized_fuel_tanks
+		position = { x=-1 y=1 }
+		mutually_exclusive = {
+			ENG_mio_vickers_low_profile_turrets
+		}
+		limit_to_equipment_type = { mio_cat_eq_all_medium_tank }
+		equipment_bonus = {
+			soft_attack = 0.03
+			hard_attack = 0.03
+			armor_value = -0.05
+		}
+	}
+
+	trait = {
+		token = ENG_mio_vickers_ricardo_expertise
+		name = ENG_mio_vickers_ricardo_expertise
+		icon = GFX_generic_mio_trait_icon_maximum_speed
+		all_parents = { ENG_mio_vickers_develop_our_own_engines }
+		relative_position_id = ENG_mio_vickers_develop_our_own_engines
+		position = { x=4 y=1 }
+
+		equipment_bonus = {
+			maximum_speed = 0.01
+			build_cost_ic = -0.03
+		}
+	}
+
+	trait = {
+		token = ENG_mio_vickers_advanced_targeting_systems
+		name = ENG_mio_vickers_advanced_targeting_systems
+		icon = GFX_generic_mio_trait_icon_ap_attack
+		all_parents = { ENG_mio_vickers_lightweight_transmission }
+		relative_position_id = ENG_mio_vickers_lightweight_transmission
+		position = { x=1 y=2 }
+		limit_to_equipment_type = {
+			mio_cat_eq_all_light_tank
+		}
+		equipment_bonus = {
+			ap_attack = 0.04
+			hard_attack = 0.04
+		}
+	}
+
+	trait = {
+		token = ENG_mio_vickers_steel_quality_control
+		name = ENG_mio_vickers_steel_quality_control
+		icon = GFX_generic_mio_trait_icon_hardness
+		all_parents = { ENG_mio_vickers_armor_metallurgic_theory ENG_mio_vickers_advanced_targeting_systems }
+		any_parent = {
+			ENG_mio_vickers_high_profile_turrets
+			ENG_mio_vickers_low_profile_turrets
+		}
+		relative_position_id = ENG_mio_vickers_armor_metallurgic_theory
+		position = { x=0 y=1 }
+
+		equipment_bonus = {
+			hardness = 0.02
+			armor_value = 0.05
+		}
+	}
+
+	trait = {
+		token = ENG_mio_vickers_Hydropneumatic_Suspension_System
+		name = ENG_mio_vickers_Hydropneumatic_Suspension_System
+		icon = GFX_generic_mio_trait_icon_max_strength
+		all_parents = { ENG_mio_vickers_steel_quality_control ENG_mio_vickers_field_modifications }
+		relative_position_id = ENG_mio_vickers_steel_quality_control
+		position = { x=2 y=1 }
+
+		equipment_bonus = {
+			defense = 0.1
+			soft_attack = 0.05
+			breakthrough = 0.03
+			build_cost_ic = 0.05
+		}
+	}
+}
+
+ENG_vauxhall_organization = {
+	#include = generic_infantry_tank_organization
+	icon = GFX_idea_vauxhall
+
+	equipment_type = {
+		mio_cat_eq_all_heavy_tank
+		#mio_cat_eq_all_mechanized
+		mio_cat_eq_transport
+	}
+	research_categories = {
+		#armor_tech_transmission
+		#armor_tech_suspension
+		armor_tech_engine
+	}
+
+	allowed = {
+		tag = ENG
+	}
+
+
+	initial_trait = {
+		organization_modifier = {
+			military_industrial_organization_research_bonus = 0.05
+		}
+		production_bonus = {
+			production_capacity_factor = 0.02
+		}
+	}
+
+	trait = {
+		name = ENG_vauxhall_production_lines
+		token = ENG_vauxhall_production_lines
+		icon = GFX_generic_mio_trait_icon_efficiency_cap
+		position = { x = 0 y = 0 }
+		production_bonus = {
+			production_efficiency_cap_factor = 0.03
+		}
+		organization_modifier = {
+			military_industrial_organization_size_up_requirement = 0.1
+		}
+	}
+	trait = {
+		name = ENG_vauxhall_specialized_factory_floor_rails
+		token = ENG_vauxhall_specialized_factory_floor_rails
+		icon = GFX_generic_mio_trait_icon_production_capacity
+		relative_position_id = ENG_vauxhall_production_lines
+		all_parents = {
+			ENG_vauxhall_production_lines
+			ENG_vauxhall_specialized_engines_for_heavy_tanks
+		}
+		position = { x = 2 y = 1 }
+		limit_to_equipment_type = {
+			mio_cat_eq_all_heavy_tank
+		}
+		production_bonus = {
+			production_capacity_factor = 0.04
+		}
+		organization_modifier = {
+			military_industrial_organization_size_up_requirement = 0.1
+		}
+	}
+
+	trait = {
+		name = ENG_vauxhall_specialized_engines_for_heavy_tanks
+		token = ENG_vauxhall_specialized_engines_for_heavy_tanks
+		icon = GFX_generic_mio_trait_icon_reliability
+		available = {
+			date > 1940.1.31
+		}
+		position = { x = 5 y = 0 }
+		limit_to_equipment_type = {
+			mio_cat_eq_all_heavy_tank
+		}
+		organization_modifier = {
+			military_industrial_organization_funds_gain = 0.15
+		}
+		equipment_bonus = {
+			reliability = 0.02
+		}
+ 	}
+	trait = {
+		name = ENG_vauxhall_redesign_airflow
+		token = ENG_vauxhall_redesign_airflow
+		icon = GFX_generic_mio_trait_icon_fuel_consumption
+		relative_position_id = ENG_vauxhall_specialized_engines_for_heavy_tanks
+		all_parents = { ENG_vauxhall_specialized_engines_for_heavy_tanks }
+		mutually_exclusive = { ENG_vauxhall_mudguards	}
+		position = { x = 1 y = 1 }
+		limit_to_equipment_type = {
+			mio_cat_eq_all_heavy_tank
+		}
+		equipment_bonus = {
+			fuel_consumption = -0.05
+		}
+ 	}
+	trait = {
+		name = ENG_vauxhall_mudguards
+		token = ENG_vauxhall_mudguards
+		icon = GFX_generic_mio_trait_icon_reliability
+		relative_position_id = ENG_vauxhall_specialized_engines_for_heavy_tanks
+		all_parents = { ENG_vauxhall_specialized_engines_for_heavy_tanks }
+		mutually_exclusive = { ENG_vauxhall_redesign_airflow }
+		position = { x = -1 y = 1 }
+		limit_to_equipment_type = {
+			mio_cat_eq_all_heavy_tank
+		}
+		equipment_bonus = {
+			reliability = 0.04
+		}
+ 	}
+
+	 trait = {
+		name = ENG_vauxhall_improved_engine_pumps
+		token = ENG_vauxhall_improved_engine_pumps
+		icon = GFX_generic_mio_trait_icon_maximum_speed
+		relative_position_id = ENG_vauxhall_specialized_engines_for_heavy_tanks
+		all_parents = { ENG_vauxhall_specialized_engines_for_heavy_tanks }
+		position = { x = 3 y = 2 }
+		limit_to_equipment_type = {
+			mio_cat_eq_all_heavy_tank
+		}
+		equipment_bonus = {
+			maximum_speed = 0.03
+			reliability = -0.03
+		}
+ 	}
+	trait = {
+		name = ENG_vauxhall_resource_saving_construction
+		token = ENG_vauxhall_resource_saving_construction
+		icon = GFX_generic_mio_trait_icon_resources
+		relative_position_id = ENG_vauxhall_redesign_airflow
+		any_parent = { ENG_vauxhall_redesign_airflow ENG_vauxhall_mudguards }
+		mutually_exclusive = {
+			ENG_vauxhall_manganese_steels
+		}
+		position = { x = -2 y = 1 }
+		limit_to_equipment_type = {
+			mio_cat_eq_all_heavy_tank
+		}
+		production_bonus = {
+			production_resource_need_factor = -0.1
+		}
+		equipment_bonus = {
+			reliability = -0.03
+		}
+ 	}
+	trait = {
+		name = ENG_vauxhall_manganese_steels
+		token = ENG_vauxhall_manganese_steels
+		icon = GFX_generic_mio_trait_icon_hardness
+		relative_position_id = ENG_vauxhall_redesign_airflow
+		any_parent = { ENG_vauxhall_redesign_airflow ENG_vauxhall_mudguards }
+		mutually_exclusive = {
+			ENG_vauxhall_resource_saving_construction
+		}
+		position = { x = 0 y = 1 }
+		limit_to_equipment_type = {
+			mio_cat_eq_all_heavy_tank
+		}
+		equipment_bonus = {
+			reliability = 0.02
+			hardness = 0.02
+			build_cost_ic = 0.02
+		}
+ 	}
+	trait = {
+		name = ENG_vauxhall_bostik_sealed_seams
+		token = ENG_vauxhall_bostik_sealed_seams
+		icon = GFX_generic_mio_trait_icon_armor_value
+		relative_position_id = ENG_vauxhall_manganese_steels
+		any_parent = { ENG_vauxhall_manganese_steels ENG_vauxhall_resource_saving_construction }
+
+		position = { x = -1 y = 1 }
+		limit_to_equipment_type = {
+			mio_cat_eq_all_heavy_tank
+		}
+		equipment_bonus = {
+			armor_value = 0.03
+		}
+ 	}
+	trait = {
+		name = ENG_vauxhall_state_of_the_art_carburators
+		token = ENG_vauxhall_state_of_the_art_carburators
+		icon = GFX_generic_mio_trait_icon_breakthrough
+		relative_position_id = ENG_vauxhall_manganese_steels
+		all_parents = { ENG_vauxhall_manganese_steels ENG_vauxhall_improved_engine_pumps  }
+		position = { x = 1 y = 1 }
+		limit_to_equipment_type = {
+			mio_cat_eq_all_heavy_tank
+		}
+		equipment_bonus = {
+			maximum_speed = 0.02
+			breakthrough = 0.05
+			build_cost_ic = 0.03
+		}
+ 	}
+	trait = {
+		name = ENG_vauxhall_improved_stowage
+		token = ENG_vauxhall_improved_stowage
+		icon = GFX_generic_mio_trait_icon_soft_attack
+		relative_position_id = ENG_vauxhall_specialized_engines_for_heavy_tanks
+		all_parents = { ENG_vauxhall_specialized_engines_for_heavy_tanks  }
+		position = { x = -2 y = 1 }
+		limit_to_equipment_type = {
+			mio_cat_eq_all_heavy_tank
+		}
+		equipment_bonus = {
+			soft_attack = 0.03
+		}
+
+ 	}
+	trait = {
+		name = ENG_vauxhall_up_gunning
+		token = ENG_vauxhall_up_gunning
+		icon = GFX_generic_mio_trait_icon_research
+		relative_position_id = ENG_vauxhall_improved_stowage
+		all_parents = { ENG_vauxhall_improved_stowage  }
+		position = { x = 0 y = 1 }
+		limit_to_equipment_type = {
+			mio_cat_eq_all_heavy_tank
+		}
+		on_complete = {
+			FROM = {
+				add_tech_bonus = {
+					bonus = 0.4
+					uses = 1
+					technology = tech_trm_weapon_c_eng_57_6pdr_mk3
+					technology = tech_trm_weapon_c_eng_57_6pdr_mk5
+				}
+			}
+		}
+		organization_modifier = {
+			military_industrial_organization_funds_gain = -0.05
+		}
+ 	}
+	trait = {
+		name = ENG_vauxhall_new_radio_technology
+		token = ENG_vauxhall_new_radio_technology
+		icon = GFX_generic_mio_trait_icon_research
+		relative_position_id = ENG_vauxhall_improved_stowage
+		all_parents = { ENG_vauxhall_specialized_factory_floor_rails  }
+		position = { x = -2 y = 2 }
+		mutually_exclusive = {
+			ENG_vauxhall_ballistic_testing_grounds
+		}
+		limit_to_equipment_type = {
+			mio_cat_eq_all_heavy_tank
+		}
+
+		on_complete = {
+			FROM = {
+				add_tech_bonus = {
+					ahead_reduction = 0.5
+					uses = 1
+					category = radio_tech
+				}
+			}
+			FROM = {
+				add_tech_bonus = {
+					bonus = 0.25
+					uses = 1
+					category = radio_tech
+				}
+			}
+		}
+ 	}
+	 trait = {
+		name = ENG_vauxhall_ballistic_testing_grounds
+		token = ENG_vauxhall_ballistic_testing_grounds
+		icon = GFX_generic_mio_trait_icon_ap_attack
+		relative_position_id = ENG_vauxhall_improved_stowage
+		mutually_exclusive = {
+			ENG_vauxhall_new_radio_technology
+		}
+		all_parents = { ENG_vauxhall_specialized_factory_floor_rails ENG_vauxhall_up_gunning  }
+		position = { x = -1 y = 2 }
+		limit_to_equipment_type = {
+			mio_cat_eq_all_heavy_tank
+		}
+		on_complete = {
+			FROM = {
+				add_tech_bonus = {
+					bonus =  0.2
+					uses = 1
+					category = armor_tech_armor
+				}
+			}
+		}
+		equipment_bonus = {
+			ap_attack = 0.03
+		}
+ 	}
+	trait = {
+		name = ENG_mio_vauxhall_duralumin_armor_panels
+		token = ENG_mio_vauxhall_duralumin_armor_panels
+		icon = GFX_generic_mio_trait_icon_resources
+		relative_position_id = ENG_vauxhall_production_lines
+		all_parents = { ENG_vauxhall_production_lines  }
+		position = { x = 0 y = 1 }
+		limit_to_equipment_type = {
+			mio_cat_eq_transport
+		}
+
+		production_bonus = {
+			production_resource_need_factor = -0.1
+		}
+ 	}
+	trait = {
+		name = ENG_mio_vauxhall_dual_fuel_system
+		token = ENG_mio_vauxhall_dual_fuel_system
+		icon = GFX_generic_mio_trait_icon_fuel_consumption
+		relative_position_id = ENG_mio_vauxhall_duralumin_armor_panels
+		all_parents = { ENG_mio_vauxhall_duralumin_armor_panels }
+		position = { x = 0 y = 1 }
+		limit_to_equipment_type = {
+			mio_cat_eq_transport
+		}
+
+		equipment_bonus = {
+			fuel_consumption = -0.05
+		}
+		organization_modifier = {
+			military_industrial_organization_size_up_requirement = 0.05
+		}
+ 	}
+	trait = {
+		name = ENG_mio_vauxhall_the_best_materials
+		token = ENG_mio_vauxhall_the_best_materials
+		icon = GFX_generic_mio_trait_icon_max_strength
+		relative_position_id = ENG_vauxhall_bostik_sealed_seams
+		available = {
+			has_mio_trait = ENG_vauxhall_manganese_steels
+		}
+		mutually_exclusive = {
+			ENG_mio_vauxhall_pratical_construction
+		}
+		all_parents = {
+			ENG_vauxhall_bostik_sealed_seams
+			ENG_vauxhall_state_of_the_art_carburators
+		}
+		any_parent = {
+			ENG_vauxhall_new_radio_technology
+			ENG_vauxhall_ballistic_testing_grounds
+		}
+		position = { x = 1 y = 1 }
+		limit_to_equipment_type = {
+			mio_cat_eq_all_heavy_tank
+		}
+		equipment_bonus = {
+			armor_value = 0.05
+			soft_attack = 0.03
+			hard_attack = 0.03
+			hardness = 0.01
+			ap_attack = 0.03
+			reliability = 0.02
+			build_cost_ic = 0.08
+		}
+ 	}
+
+	 trait = {
+		name = ENG_mio_vauxhall_pratical_construction
+		token = ENG_mio_vauxhall_pratical_construction
+		icon = GFX_generic_mio_trait_icon_build_cost_ic
+		relative_position_id = ENG_vauxhall_bostik_sealed_seams
+		available = {
+			has_mio_trait = ENG_vauxhall_resource_saving_construction
+		}
+		mutually_exclusive = {
+			ENG_mio_vauxhall_the_best_materials
+		}
+		all_parents = {
+			ENG_vauxhall_bostik_sealed_seams
+			ENG_vauxhall_state_of_the_art_carburators
+		}
+		any_parent = {
+			ENG_vauxhall_new_radio_technology
+			ENG_vauxhall_ballistic_testing_grounds
+		}
+		position = { x = -1 y = 1 }
+		limit_to_equipment_type = {
+			mio_cat_eq_all_heavy_tank
+		}
+		equipment_bonus = {
+			build_cost_ic = -0.05
+		}
+ 	}
+
+}
+
+ENG_nuffield_organization = {
+	icon = GFX_idea_nuffield
+
+	equipment_type = {
+		mio_cat_eq_all_light_tank
+		motorized_AC_equipment
+	}
+	research_categories = {
+		trm_cavalry_tank_chassis
+		armor_tech_transmission
+		armor_tech_suspension
+		armor_tech_engine
+		#motorized_AC_equipment
+	}
+
+	allowed = {
+		tag = ENG
+	}
+
+	tree_header_text = {
+		text = mio_header_engine_and_drive_system
+		x = 1
+	}
+
+	tree_header_text = {
+		text = mio_header_chassis
+		x = 5
+	}
+
+	tree_header_text = {
+		text = mio_header_guns_and_turret
+		x = 8
+	}
+
+	task_capacity = 2
+	
+	initial_trait = {
+		name = ENG_mio_nuffield
+
+		production_bonus = {
+			production_cost_factor = -0.01
+		}
+
+
+		organization_modifier = {
+			military_industrial_organization_funds_gain = 0.33
+			military_industrial_organization_size_up_requirement = 0.4
+		}
+	}
+
+	trait = {
+		name = ENG_mio_nuffield_flow_production
+		token = ENG_mio_nuffield_flow_production
+		icon = GFX_generic_mio_trait_icon_efficiency_cap
+		position = { x = 0 y = 0 }
+		production_bonus = {
+			production_efficiency_cap_factor = 0.03
+			production_efficiency_gain_factor = 0.03
+		}
+ 	}
+
+	trait = {
+		name = ENG_mio_nuffield_liberty_engines
+		token = ENG_mio_nuffield_liberty_engines
+		icon = GFX_generic_mio_trait_icon_building
+		relative_position_id = ENG_mio_nuffield_flow_production
+		position = { x = 2 y = 0 }
+		limit_to_equipment_type = {
+			trm_cavalry_tank_chassis
+			motorized_AC_equipment
+		}
+		organization_modifier = {
+			military_industrial_organization_task_capacity = 2
+		}
+
+		equipment_bonus = {
+			reliability = -0.05
+		}
+
+		on_complete = {
+			FROM = {
+				random_owned_controlled_state = {
+					prioritize = { 	128	}
+					add_building_construction = {
+						type = engine_assembly
+						level = 2
+						instant_build = yes
+					}
+				}
+			}
+			USA = {
+				add_cic = 600
+			}
+		}
+ 	}
+
+	 trait = {
+		name = ENG_mio_nuffield_solve_cooling_problems
+		token = ENG_mio_nuffield_solve_cooling_problems
+		icon = GFX_generic_mio_trait_icon_reliability
+		relative_position_id = ENG_mio_nuffield_liberty_engines
+		position = { x = 0 y = 1 }
+		all_parents = {
+			ENG_mio_nuffield_flow_production
+			ENG_mio_nuffield_liberty_engines
+		}
+		limit_to_equipment_type = {
+			trm_cavalry_tank_chassis
+			motorized_AC_equipment
+		}
+		equipment_bonus = {
+			reliability = 0.03
+		}
+ 	}
+
+	trait = {
+		name = ENG_mio_nuffield_lightweight_innovation
+		token = ENG_mio_nuffield_lightweight_innovation
+		icon = GFX_generic_mio_trait_icon_breakthrough
+		relative_position_id = ENG_mio_nuffield_solve_cooling_problems
+		mutually_exclusive = { ENG_mio_nuffield_advanced_engine_designs	}
+		all_parents = {
+			ENG_mio_nuffield_solve_cooling_problems
+		}
+		limit_to_equipment_type = {
+			trm_cavalry_tank_chassis
+		}
+		position = { x = 1 y = 1 }
+
+		equipment_bonus = {
+			reliability = 0.02
+			breakthrough = 0.03
+			build_cost_ic = -0.02
+		}
+	}
+
+	trait = {
+		name = ENG_mio_nuffield_advanced_engine_designs
+		token = ENG_mio_nuffield_advanced_engine_designs
+		icon = GFX_generic_mio_trait_icon_maximum_speed
+		relative_position_id = ENG_mio_nuffield_solve_cooling_problems
+		all_parents = {	ENG_mio_nuffield_solve_cooling_problems	}
+		mutually_exclusive = { ENG_mio_nuffield_lightweight_innovation	}
+		position = { x = -1 y = 1 }
+		limit_to_equipment_type = {
+			trm_cavalry_tank_chassis
+			motorized_AC_equipment
+		}
+
+		equipment_bonus = {
+			maximum_speed = 0.02
+		}
+	}
+
+	trait = {
+		name = ENG_mio_nuffield_reinforced_christie
+		token = ENG_mio_nuffield_reinforced_christie
+		icon = GFX_generic_mio_trait_icon_hardness
+		relative_position_id = ENG_mio_nuffield_liberty_engines
+		all_parents = {	ENG_mio_nuffield_liberty_engines	}
+		#mutually_exclusive = { ENG_mio_nuffield_lightweight_innovation	}
+		position = { x = 2 y = 1 }
+		limit_to_equipment_type = {
+			trm_cavalry_tank_chassis
+		}
+
+		equipment_bonus = {
+			breakthrough = 0.01
+			defense = 0.01
+			maximum_speed = 0.01
+			hardness = 0.01
+		}
+	}
+
+	trait = {
+		name = ENG_mio_nuffield_christie_licenses
+		token = ENG_mio_nuffield_christie_licenses
+		icon = GFX_generic_mio_trait_icon_research
+		position = { x = 5 y = 0 }
+		mutually_exclusive = {
+			ENG_mio_nuffield_on_our_own
+		}
+		on_complete = {
+			FROM = {
+				add_tech_bonus = {
+					bonus = 0.4
+					uses = 1
+					technology = tech_trm_suspension_christie_eng
+				}
+			}
+			USA = {
+				add_cic = 300
+			}
+		}
+	}
+	trait = {
+		name = ENG_mio_nuffield_on_our_own
+		token = ENG_mio_nuffield_on_our_own
+		icon = GFX_generic_mio_trait_icon_mio
+		position = { x = 7 y = 0 }
+		mutually_exclusive = {
+			ENG_mio_nuffield_christie_licenses
+		}
+		organization_modifier = {
+			military_industrial_organization_research_bonus = 0.05
+		}
+	}
+
+	trait = {
+		name = ENG_mio_nuffield_crew_compartment_layout
+		token = ENG_mio_nuffield_crew_compartment_layout
+		icon = GFX_generic_mio_trait_icon_defense
+		relative_position_id = ENG_mio_nuffield_reinforced_christie
+		position = { x = 2 y = 1 }
+		all_parents = {	ENG_mio_nuffield_reinforced_christie }
+		any_parent = {
+			ENG_mio_nuffield_on_our_own
+			ENG_mio_nuffield_christie_licenses
+		}
+		limit_to_equipment_type = {
+			trm_cavalry_tank_chassis
+		}
+		equipment_bonus = {
+			breakthrough = 0.02
+			defense = 0.02
+		}
+	}
+
+	trait = {
+		name = ENG_mio_nuffield_high_endurance_tracks
+		token = ENG_mio_nuffield_high_endurance_tracks
+		icon = GFX_generic_mio_trait_icon_reliability
+		relative_position_id = ENG_mio_nuffield_crew_compartment_layout
+		position = { x = -1 y = 1 }
+		all_parents = {	ENG_mio_nuffield_crew_compartment_layout }
+
+		limit_to_equipment_type = {
+			trm_cavalry_tank_chassis
+		}
+		equipment_bonus = {
+			reliability = 0.03
+			build_cost_ic = 0.02
+		}
+	}
+
+	trait = {
+		name = ENG_mio_nuffield_fire_suppression_systems
+		token = ENG_mio_nuffield_fire_suppression_systems
+		icon = GFX_generic_mio_trait_icon_reliability
+		relative_position_id = ENG_mio_nuffield_crew_compartment_layout
+		position = { x = 1 y = 1 }
+		all_parents = {	ENG_mio_nuffield_crew_compartment_layout }
+		mutually_exclusive = {
+			ENG_mio_nuffield_multi_turret_innovations
+		}
+		limit_to_equipment_type = {
+			trm_cavalry_tank_chassis
+		}
+		equipment_bonus = {
+			reliability = 0.04
+			build_cost_ic = 0.02
+		}
+	}
+	trait = {
+		name = ENG_mio_nuffield_multi_turret_innovations
+		token = ENG_mio_nuffield_multi_turret_innovations
+		icon = GFX_generic_mio_trait_icon_soft_attack
+		relative_position_id = ENG_mio_nuffield_crew_compartment_layout
+		position = { x = 2 y = 1 }
+		all_parents = {	ENG_mio_nuffield_crew_compartment_layout }
+		mutually_exclusive = {
+			ENG_mio_nuffield_fire_suppression_systems
+		}
+		limit_to_equipment_type = {
+			trm_cavalry_tank_chassis
+		}
+		equipment_bonus = {
+			soft_attack = 0.02
+			hard_attack = 0.02
+		}
+	}
+
+	trait = {
+		name = ENG_mio_nuffield_advanced_autoloader
+		token = ENG_mio_nuffield_advanced_autoloader
+		icon = GFX_generic_mio_trait_icon_soft_attack
+		relative_position_id = ENG_mio_nuffield_high_endurance_tracks
+		position = { x = -2 y = 1 }
+		mutually_exclusive = {	ENG_mio_nuffield_improved_shell_propellant	}
+		all_parents = {	ENG_mio_nuffield_high_endurance_tracks }
+		any_parent = {
+			ENG_mio_nuffield_lightweight_innovation
+			ENG_mio_nuffield_advanced_engine_designs
+		}
+		limit_to_equipment_type = {	trm_cavalry_tank_chassis }
+		equipment_bonus = {
+			soft_attack = 0.03
+		}
+	}
+	trait = {
+		name = ENG_mio_nuffield_improved_shell_propellant
+		token = ENG_mio_nuffield_improved_shell_propellant
+		icon = GFX_generic_mio_trait_icon_ap_attack
+		relative_position_id = ENG_mio_nuffield_high_endurance_tracks
+		position = { x = -3 y = 1 }
+		all_parents = {	ENG_mio_nuffield_high_endurance_tracks }
+		mutually_exclusive = {	ENG_mio_nuffield_advanced_autoloader	}
+		any_parent = {
+			ENG_mio_nuffield_lightweight_innovation
+			ENG_mio_nuffield_advanced_engine_designs
+		}
+		limit_to_equipment_type = {	trm_cavalry_tank_chassis }
+		equipment_bonus = {
+			ap_attack = 0.05
+		}
+	}
+
+	trait = {
+		name = ENG_mio_nuffield_ac_development
+		token = ENG_mio_nuffield_ac_development
+		icon = GFX_generic_mio_trait_icon_research
+		relative_position_id = ENG_mio_nuffield_flow_production
+		position = { x = 0 y = 1 }
+		all_parents = {	ENG_mio_nuffield_flow_production }
+
+		limit_to_equipment_type = {	motorized_AC_equipment }
+		equipment_bonus = {
+			reliability = 0.03
+			build_cost_ic = -0.02
+		}
+		on_complete = {
+			FROM = {
+				add_tech_bonus = {
+					ahead_reduction = 0.6
+					uses = 1
+					category = motorized_equipment
+				}
+			}
+		}
+	}
+
+}
+
+ ######  ##     ## #### ########   ######
+##    ## ##     ##  ##  ##     ## ##    ##
+##       ##     ##  ##  ##     ## ##
+ ######  #########  ##  ########   ######
+      ## ##     ##  ##  ##              ##
+##    ## ##     ##  ##  ##        ##    ##
+ ######  ##     ## #### ##         ######
+
+ENG_harland_wolff_organization = {
+	include = generic_task_force_ship_organization
+	icon = GFX_idea_harland_wolff
+
+	allowed = {
+		tag = ENG
+	}
+
+	override_trait = {
+		token = generic_mio_trait_underway_replenishment_equipment
+
+		position = { x=1 y=0 }
+		relative_position_id = generic_mio_trait_transom_stern
+	}
+
+	add_trait = {
+		token = ENG_mio_trait_flared_bow
+		name = ENG_mio_trait_flared_bow
+		icon = GFX_generic_mio_department_icon_ship_general_quality
+		special_trait_background = yes
+
+		position = { x=1 y=0 }
+		relative_position_id = generic_mio_trait_underway_replenishment_equipment
+
+		any_parent = { generic_mio_trait_splinter_protection }
+
+		equipment_bonus = {
+			naval_weather_penalty_factor = -0.05
+		}
+	}
+
+	add_trait = {
+		token = generic_mio_trait_semi_armor_piercing_shells
+		name = generic_mio_trait_semi_armor_piercing_shells
+		icon = GFX_generic_mio_trait_icon_lg_attack
+		special_trait_background = yes
+
+		any_parent = { generic_mio_trait_secondary_fire_director_control }
+		position = { x=0 y=1 }
+		relative_position_id = generic_mio_trait_secondary_fire_director_control
+
+		equipment_bonus = {
+			hg_attack = 0.03
+			hg_armor_piercing = -0.02
+			lg_attack = 0.03
+			lg_armor_piercing = -0.02
+		}
+	}
+}
+
+
+ENG_cammell_laird_organization = {
+	include = generic_battle_line_ship_organization
+	icon = GFX_idea_cammell_laird
+
+	allowed = {
+		tag = ENG
+	}
+
+	override_trait = {
+		token = generic_mio_trait_advanced_armor_design
+
+		position = { x=1 y=0 }
+		relative_position_id = generic_mio_trait_advanced_hydrodynamic_design
+	}
+
+	add_trait = {
+		token = ENG_mio_trait_flared_bow
+		name = ENG_mio_trait_flared_bow
+		icon = GFX_generic_mio_department_icon_ship_general_quality
+		special_trait_background = yes
+
+		position = { x=1 y=0 }
+		relative_position_id = generic_mio_trait_advanced_armor_design
+
+		any_parent = { generic_mio_trait_hardened_critical_components}
+
+		equipment_bonus = {
+			naval_weather_penalty_factor = -0.05
+		}
+	}
+
+	add_trait = {
+		token = ENG_mio_trait_super_charges
+		name = ENG_mio_trait_super_charges
+		icon = GFX_generic_mio_department_icon_ship_capital_ship_weapons
+		special_trait_background = yes
+
+		position = { x=0 y=2 }
+		relative_position_id = generic_mio_trait_semi_armor_piercing_shells
+
+		any_parent = { generic_mio_trait_super_heavy_shells generic_mio_trait_semi_armor_piercing_shells generic_mio_trait_high_velocity_guns }
+
+		limit_to_equipment_type = { mio_cat_eq_all_battleship }
+
+		equipment_bonus = {
+			hg_armor_piercing = 0.03
+			hg_attack = -0.01
+		}
+	}
+}
+
+ENG_yarrow_shipbuilders_organization = {
+	include = generic_escort_ship_organization
+	icon = GFX_idea_yarrow_shipbuilders
+
+	allowed = {
+		tag = ENG
+	}
+
+}
+
+ENG_john_brown_organization = {
+	include = generic_raider_ship_organization
+	icon = GFX_idea_john_brown_company
+
+	allowed = {
+		tag = ENG
+	}
+
+}
+
+########  ##          ###    ##    ## ########  ######
+##     ## ##         ## ##   ###   ## ##       ##    ##
+##     ## ##        ##   ##  ####  ## ##       ##
+########  ##       ##     ## ## ## ## ######    ######
+##        ##       ######### ##  #### ##             ##
+##        ##       ##     ## ##   ### ##       ##    ##
+##        ######## ##     ## ##    ## ########  ######
+
+
+ENG_supermarine_organization = {
+	include = generic_high_agility_fighter_aircraft_organization
+	icon = GFX_idea_supermarine
+
+	allowed = {
+		tag = ENG
+	}
+
+	equipment_type = {
+		mio_cat_eq_only_light_fighter
+		#mio_cat_supermarine_air
+	}
+
+	research_categories = {
+		supermarine_air
+		#mio_cat_all_light_fighter_and_modules
+		#mio_cat_all_naval_bomber_and_modules
+			#Could be used to allow Supermarine to research naval bombs, but this could overpower English fighter MIO trait gain early on.
+	}
+
+	override_trait = {
+		token = generic_mio_trait_fuel_injection_engines
+
+		position = { x=0 y=2 }
+		relative_position_id = generic_mio_trait_bigger_engines
+	}
+
+	override_trait = {
+		token = generic_mio_trait_high_octane_fuels
+
+		position = { x=1 y=1 }
+		relative_position_id = generic_mio_trait_bigger_engines
+	}
+
+	override_trait = {
+		token = generic_mio_trait_subsidiary_suppliers
+
+		position = { x=0 y=2 }
+		relative_position_id = generic_mio_trait_fuel_injection_engines
+	}
+
+	add_trait = {
+		token = ENG_mio_trait_seaplane_origins
+		name = ENG_mio_trait_seaplane_origins
+		icon = GFX_generic_mio_trait_icon_detection
+		special_trait_background = yes
+
+		position = { x=2 y=0 }
+		relative_position_id = generic_mio_trait_minimum_weapon_requirements
+
+		#any_parent = { generic_mio_trait_super_heavy_shells generic_mio_trait_semi_armor_piercing_shells generic_mio_trait_high_velocity_guns }
+
+		equipment_bonus = {
+			sub_detection = 0.03
+			surface_detection = 0.03
+			naval_strike_targetting = 0.02
+		}
+	}
+
+	add_trait = {
+		token = ENG_mio_trait_elliptical_wings
+		name = ENG_mio_trait_elliptical_wings
+		icon = GFX_generic_mio_trait_icon_defense
+		special_trait_background = yes
+
+		position = { x=0 y=1 }
+		relative_position_id = generic_mio_trait_cantilever_wing_structure
+
+		any_parent = { generic_mio_trait_cantilever_wing_structure }
+
+		equipment_bonus = {
+			air_defence = 0.01
+			air_agility = 0.01
+		}
+	}
+
+	add_trait = {
+		token = ENG_mio_trait_supercharger
+		name = ENG_mio_trait_supercharger
+		icon = GFX_generic_mio_trait_icon_defense
+		special_trait_background = yes
+
+		position = { x=1 y=1 }
+		relative_position_id = generic_mio_trait_fuel_injection_engines
+
+		all_parents = { generic_mio_trait_fuel_injection_engines generic_mio_trait_high_octane_fuels }
+
+		equipment_bonus = {
+			maximum_speed = 0.01
+		}
+	}
+}
+
+ENG_hawker_organization = {
+	include = generic_multi_role_aircraft_organization
+	icon = GFX_idea_hawker
+	allowed = {
+		tag = ENG
+	}
+	equipment_type = {
+		mio_cat_eq_all_small_plane
+		mio_cat_eq_all_medium_plane
+		transport_plane_equipment
+	}
+	research_categories = {
+		hawker_air
+	}
+}
+
+ENG_de_havilland_organization = {
+	include = generic_light_aircraft_organization
+	icon = GFX_idea_de_havilland
+	allowed = {
+		tag = ENG
+	}
+	equipment_type = {
+		mio_cat_eq_only_heavy_fighter
+		twin_cas_equipment
+		fast_bomber_equipment
+		#mio_cat_de_havilland_air
+	}
+	research_categories = {
+		de_havilland_air
+	}
+	
+	initial_trait = {
+		name = ENG_de_havilland_organization_initial
+		
+		organization_modifier = {
+			military_industrial_organization_research_bonus = 0.03
+		}
+		
+		equipment_bonus = {
+			air_agility = 0.01
+			maximum_speed = 0.01
+		}
+	}
+}
+
+ENG_fairey_aviation_organization = {
+	include = generic_naval_aircraft_organization
+	icon = GFX_idea_fairey_aviation
+
+	allowed = {
+		tag = ENG
+	}
+	research_categories = {
+		fairey_air
+	}
+	equipment_type = {
+		mio_cat_eq_all_cv_aircraft
+		mio_cat_eq_all_naval_aircraft	
+		#mio_cat_fairey_air
+	}
+}
+
+ENG_avro_organization = {
+	include = generic_heavy_aircraft_organization
+	icon = GFX_idea_avro
+	allowed = {
+		tag = ENG
+	}
+	research_categories = {
+		avro_air
+	}
+	equipment_type = {
+		mio_cat_eq_all_heavy_plane
+		transport_plane_equipment
+		#mio_cat_avro_air
+	}
+}
+
+
+ENG_vickers_armstrong_organization = {
+	include = generic_medium_aircraft_organization
+	icon = GFX_idea_vickers_armstrong
+	allowed = {
+		tag = ENG
+	}
+	research_categories = {
+		vickers_air
+	}
+}
+
+##     ##    ###    ######## ######## ########  #### ######## ##
+###   ###   ## ##      ##    ##       ##     ##  ##  ##       ##
+#### ####  ##   ##     ##    ##       ##     ##  ##  ##       ##
+## ### ## ##     ##    ##    ######   ########   ##  ######   ##
+##     ## #########    ##    ##       ##   ##    ##  ##       ##
+##     ## ##     ##    ##    ##       ##    ##   ##  ##       ##
+##     ## ##     ##    ##    ######## ##     ## #### ######## ########
+
+ENG_rsaf_enfield_organization = {
+	include = generic_infantry_equipment_organization
+	icon = GFX_idea_rsaf_enfield
+
+	allowed = {
+		tag = ENG
+	}
+
+	initial_trait = {
+		equipment_bonus = {
+			maximum_speed = 0.02
+		}
+	}
+}
+
+#ENG_vauxhall_automotive_organization = {
+#	include = generic_motorized_mechanized_organization
+#	icon = GFX_idea_vauxhall
+#	name = ENG_vauxhall_organization
+#
+#	allowed = {
+#		tag = ENG
+#	}
+#}
+
+ENG_royal_arsenal_organization = {
+	include = generic_artillery_organization
+	icon = GFX_idea_royal_arsenal
+	allowed = {
+		tag = ENG
+	}
+
+}

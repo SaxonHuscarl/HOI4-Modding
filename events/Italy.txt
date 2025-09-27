@@ -1,0 +1,1912 @@
+﻿###########################
+# Italian Events
+###########################
+
+add_namespace = italy
+add_namespace = italy_bice
+
+# Albania Yields
+country_event = {
+	id = italy.1
+	title = italy.1.t
+	desc = italy.1.d
+	picture = GFX_report_event_albania_falls
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = italy.1.a
+		annex_country = { target = ALB }
+		add_named_threat = { threat = 2 name = ITA_albania_war_goal }
+		hidden_effect = {
+			country_event = { days = 1 id = news.22 }
+		}
+	}
+}
+
+# Zog Rejects Ultimatum
+country_event = {
+	id = italy.2
+	title = italy.2.t
+	desc = italy.2.d
+	picture = GFX_report_event_albanian_partisans
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = italy.2.a
+		create_wargoal = {
+			type = take_state_focus
+			target = ALB
+			generator = { 44 }
+		}
+		hidden_effect = {
+			country_event = { days = 1 id = news.23 }
+		}
+	}
+}
+
+# Albania Receives Ultimatum
+country_event = {
+	id = italy.3
+	title = italy.3.t
+	desc = italy.3.d
+	picture = GFX_report_event_albanian_king_zog
+	
+	is_triggered_only = yes
+	
+	option = { # Yield
+		name = italy.3.a
+		ai_chance = {
+			base = 0
+			modifier = {
+				factor = 0
+				OR = {
+					any_other_country = {
+						OR = {
+							is_major = yes
+							tag = YUG
+						}
+						NOT = { tag = ITA }
+						OR = {
+							has_guaranteed = ALB
+							is_in_faction_with = ALB
+						}
+					}
+				is_in_faction_with = YUG
+				}
+			}
+			modifier = {
+				factor = 0.5
+				OR = {
+					has_government = communism
+					has_government = fascism #glorious Albania will never yield!
+				}
+			}
+		}
+		ITA = {
+			country_event = { days = 1 id = italy.1 }
+		}
+		if = {
+			limit = {
+				TAG = ALB
+			}	
+			custom_effect_tooltip = GAME_OVER_TT
+		}
+	}
+	option = { # Resist
+		name = italy.3.b
+		ai_chance = {
+			factor = 100
+			modifier = {
+				factor = 0
+				OR = {
+					AND = {
+						is_in_faction_with = ITA
+						ITA = { is_faction_leader = yes }
+					}
+					is_historical_focus_on = yes
+					AND = {
+						is_in_faction = no 
+						NOT = {
+							any_other_country = {
+								NOT = { tag = ITA }
+								has_guaranteed = ALB
+							} 
+						}
+					}
+				}
+			}
+		}
+		ITA = {
+			effect_tooltip = {
+				create_wargoal = {
+					type = take_state_focus
+					target = ALB
+					generator = { 44 }
+				}
+			}
+			country_event = { days = 1 id = italy.2 }
+		}
+	}
+}
+# Rome Protocols Renewed
+news_event = {
+	id = italy.4
+	title = italy.4.t
+	desc = italy.4.d
+	picture = GFX_report_event_generic_conference
+	
+	is_triggered_only = yes
+	major = yes
+	
+	option = {
+		name = italy.4.a
+		trigger = {
+			NOT = {
+				tag = ITA
+				tag = AUS
+				tag = HUN
+			}
+		}
+	}
+	option = {
+		name = italy.4.b
+		trigger = {
+			OR = {
+				tag = ITA
+				tag = AUS
+				tag = HUN
+			}
+		}
+		add_tech_bonus = {
+			bonus = 0.02
+			name = league_science
+			uses = 1
+			category = industry
+			category = electronics
+		}
+		add_political_power = 10
+		if = {
+			limit = {
+				tag = ITA
+			}
+			add_opinion_modifier = {
+				target = HUN
+				modifier = himalaya_trade_deal
+			}
+			add_opinion_modifier = {
+				target = AUS
+				modifier = himalaya_trade_deal
+			}
+			hidden_effect = {
+				news_event = { id = italy.8 days = 233 }
+			}
+		}
+		else_if = {
+			limit = {
+				tag = HUN
+			}
+			add_opinion_modifier = {
+				target = AUS
+				modifier = himalaya_trade_deal
+			}
+			add_opinion_modifier = {
+				target = ITA
+				modifier = himalaya_trade_deal
+			}
+		}
+		else_if = {
+			limit = {
+				tag = AUS
+			}
+			add_opinion_modifier = {
+				target = HUN
+				modifier = himalaya_trade_deal
+			}
+			add_opinion_modifier = {
+				target = ITA
+				modifier = himalaya_trade_deal
+			}
+		}		
+	}
+}
+
+# Italian-German Treaty (Germans)
+country_event = {
+	id = italy.5
+	title = italy.5.t
+	desc = italy.5.d
+	picture = GFX_report_event_german_italian_pact
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = italy.5.a	#sounds good
+		ITA = {
+			country_event = { days = 1 id = italy.6 }
+		}
+		# REVISIT Balance research bonus, also in event below
+		add_tech_bonus = {
+			name = ITA_german_treaty
+			bonus = 0.5
+			uses = 1
+			technology = tech_mountaineers2
+		}
+		add_tech_bonus = {
+			name = ITA_german_treaty
+			bonus = 0.5
+			uses = 2
+			category = naval_doctrine
+		}
+	}
+	
+	option = {
+		name = italy.5.b	#no way 
+		ai_chance = { factor = 0 }
+		add_political_power = -10
+		ITA = {
+			country_event = { days = 1 id = italy.7 }
+		}
+	}
+}
+
+# Germans Accept Italian-German Treaty
+country_event = {
+	id = italy.6
+	title = italy.6.t
+	desc = italy.6.d
+	picture = GFX_report_event_physics_lab_01
+
+	is_triggered_only = yes
+	
+	option = {
+		name = italy.6.a
+		# REVISIT Balance research bonus
+		add_tech_bonus = {
+			name = synth_bonus
+			bonus = 0.5
+			uses = 1
+			category = synth_resources
+		}
+		add_tech_bonus = {
+			name = armor_bonus
+			bonus = 0.5
+			uses = 2
+			category = armor_tech
+		}
+		add_research_slot = 1
+		52 = { state_add_research_centre = yes }
+		SLOT:tank_techs_folder = yes
+		SLOT:armor_folder = yes
+		SLOT:land_doctrine_folder = yes
+		ITA = {
+			add_opinion_modifier = { target = GER modifier = ger_ita_tech_treaty }
+		}
+	}
+}
+
+# Germans Reject Italian-German Treaty
+country_event = {
+	id = italy.7
+	title = italy.7.t
+	desc = italy.7.d
+	picture = GFX_report_event_physics_lab_01
+
+	is_triggered_only = yes
+	
+	option = {
+		name = italy.7.a
+		ITA = {
+			add_opinion_modifier = { target = GER modifier = ger_ita_tech_treaty_rejected }
+		}
+	}
+}
+# Austria and Hungary officially recognized the Italian Empire
+news_event = {
+	id = italy.8
+	title = italy.8.t
+	desc = italy.8.d
+	picture = GFX_report_event_generic_conference
+	
+	is_triggered_only = yes
+	major = yes
+	
+	option = {
+		name = italy.8.a
+		trigger = {
+			NOT = {
+				tag = ITA
+				tag = AUS
+				tag = HUN
+			}
+		}
+	}
+	option = {
+		name = italy.8.b
+		trigger = {
+			OR = {
+				tag = ITA
+				tag = AUS
+				tag = HUN
+			}
+		}
+
+		if = {
+			limit = {
+				tag = ITA
+			}
+			add_opinion_modifier = {
+				target = HUN
+				modifier = backed_our_cause
+			}
+			add_opinion_modifier = {
+				target = AUS
+				modifier = backed_our_cause
+			}
+			add_political_power = 5
+		}
+		else_if = {
+			limit = {
+				tag = HUN
+			}
+			add_opinion_modifier = {
+				target = ITA
+				modifier = nine_powers_investments
+			}
+		}
+		else_if = {
+			limit = {
+				tag = AUS
+			}
+			add_opinion_modifier = {
+				target = ITA
+				modifier = nine_powers_investments
+			}
+		}		
+	}
+}
+# Request Balearic Islands from Spain
+country_event = {
+	id = italy.9
+	title = italy.9.t
+	desc = italy.9.d
+	picture = GFX_report_event_balearic_islands
+
+	is_triggered_only = yes
+	
+	option = {
+		name = italy.9.a
+		country_event = { id = italy.10 }
+		effect_tooltip = {
+			ITA = { 
+				transfer_state = 177 
+				}
+			remove_opinion_modifier = { target = ITA modifier = ita_supported_spain_civil_war }
+		}
+
+		hidden_effect = {
+			news_event = { id = news.190 }
+			ITA = {
+				country_event = {
+					id = italy.34
+					days = 730			
+				}
+			}	
+		}
+	}
+	option = {
+		name = italy.9.b
+		ai_chance = { factor = 0 }
+		country_event = { id = italy.11 }
+		effect_tooltip = {
+			ITA = { add_state_claim = 177 }
+		}
+	}
+}
+
+# Spain Gives Up Balearic Islands
+country_event = {
+	id = italy.10
+	title = italy.10.t
+	desc = italy.10.d
+	picture = GFX_report_event_balearic_islands
+
+	is_triggered_only = yes
+	
+	option = {
+		name = italy.10.a
+		ITA = { transfer_state = 177 }
+		remove_opinion_modifier = { target = ITA modifier = ita_supported_spain_civil_war }
+	}
+}
+
+# Spain Refuses to Give Up Islands
+country_event = {
+	id = italy.11
+	title = italy.11.t
+	desc = italy.11.d
+	picture = GFX_report_event_spain_civil_war_franco_thank_you
+
+	is_triggered_only = yes
+	
+	option = {
+		name = italy.11.a
+		ITA = { add_state_claim = 177 }
+	}
+}
+
+# Italy Recognises MAN
+news_event = {
+	id = italy.12
+	title = italy.12.t
+	desc = italy.12.d
+	picture = GFX_report_event_japanese_parade
+
+	is_triggered_only = yes
+	
+	option = {
+		name = italy.12.a
+		trigger = {
+			tag = ITA
+		}
+		add_opinion_modifier = {
+			target = JAP
+			modifier = USA_special_relationship
+		}
+		add_opinion_modifier = {
+			target = MAN
+			modifier = USA_special_relationship
+		}		
+	}
+	option = {
+		name = italy.12.b
+		trigger = {
+			OR = {
+				tag = JAP
+				is_subject_of = JAP
+			}
+		}
+		add_political_power = 5
+		add_opinion_modifier = {
+			target = ITA
+			modifier = backed_our_cause
+		}
+	}
+	option = {
+		name = italy.12.c
+		trigger = {
+			NOT = {
+				tag = JAP
+				is_subject_of = JAP
+				tag = ITA
+				tag = CHI
+			}
+		}
+		if = {
+			limit = {
+				has_opinion = {
+					target = CHI
+					value > 0
+				}
+			}
+		}
+		add_opinion_modifier = {
+			target = ITA
+			modifier = kinda_angry
+		}	
+	}
+	option = {
+		name = italy.12.e
+		trigger = {
+			tag = CHI
+		}
+		add_opinion_modifier = {
+			target = ITA
+			modifier = betrayed_our_cause
+		}
+	}
+}
+
+country_event = { #we got all our YUG claims
+	id = italy.13
+	title = italy.13.t
+	desc = { 
+		text = italy.13.d_dalmatia_montenegro
+		trigger = {
+			has_global_flag = ITA_claims_on_yug_all
+		}
+	}
+	desc = { 
+		text = italy.13.d_montenegro
+		trigger = { 
+			has_global_flag = ITA_claims_on_montenegro
+		}
+	}
+	desc = { 
+		text = italy.13.d_dalmatia
+		trigger = {
+			has_global_flag = ITA_claims_on_dalmatia
+		}
+	}
+		
+	picture = GFX_report_event_vienna_award_negotiations
+	
+	is_triggered_only = yes
+	
+	option = { 
+		name = italy.13.a
+		effect_tooltip = { #effect done before this event has fired
+			if = {
+				limit = {
+					has_global_flag = ITA_claims_on_yug_all
+				}
+				set_state_controller = 900
+				set_state_controller = 904
+				set_state_controller = 913
+				set_state_controller = 916
+				set_state_controller = 105
+			}
+			else_if = {
+				limit = {
+					has_global_flag = ITA_claims_on_dalmatia
+				}
+				set_state_controller = 900
+				set_state_controller = 913
+				set_state_controller = 916
+			}
+			else_if = {
+				limit = {
+					has_global_flag = ITA_claims_on_montenegro
+				}
+				set_state_controller = 105
+				set_state_controller = 904
+			}
+		}
+	}
+}
+
+# Italy Germany rejects demands for Vichy territory
+country_event = {
+	id = italy.14
+	title = italy.14.t
+	desc = italy.14.d
+ 
+	picture = GFX_report_event_generic_rommel_inspecting_normandy
+	
+	is_triggered_only = yes
+	
+	option = {
+		ai_chance = { 
+			factor = 25 
+			modifier = {
+				factor = 0 
+				is_historical_focus_on = yes 
+			}
+		}
+		name = italy.14.a
+		GER = { 
+			remove_from_faction = ITA 
+			country_event = germany.105
+		}
+	}
+
+	option = {
+		ai_chance = { factor = 75 }
+		name = italy.14.b
+
+	}
+}
+
+
+# Italy Germany accepts demands for Vichy territory
+country_event = {
+	id = italy.15
+	title = italy.15.t
+	desc = { 
+		text = italy.15.d
+		trigger = {
+			has_global_flag = ITA_claims_on_france_735
+			has_global_flag = ITA_claims_on_france_1
+		}
+	}
+	desc = { 
+		text = italy.15.d_Corsica
+		trigger = {
+			NOT = { has_global_flag = ITA_claims_on_france_735 }
+			has_global_flag = ITA_claims_on_france_1
+		}
+	}
+ 
+	picture = GFX_report_event_hitler_and_mussolini
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = italy.15.a
+		if = {
+			limit = { has_global_flag = ITA_claims_on_france_735 }
+			ITA = { transfer_state = 735 }
+		}
+		if = {
+			limit = { has_global_flag = ITA_claims_on_france_1 }
+			ITA = { transfer_state = 1 }
+		}		
+	}
+}
+
+# Italy Germany accepts some of demands for Vichy territory
+country_event = {
+	id = italy.16
+	title = italy.16.t
+	desc = italy.16.d
+ 
+	picture = GFX_report_event_hitler_and_mussolini
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = italy.16.a
+
+		transfer_state = 735
+	}
+}
+country_event = {
+	id = italy.17
+	title = italy.17.t
+	desc = italy.17.d
+ 
+	picture = GFX_report_event_franco_at_parade_gfxaddon
+	
+	is_triggered_only = yes
+	fire_only_once = yes
+
+	trigger = {
+		#tag = ITA #EOA
+		SPR = { has_civil_war = yes }
+		NOT = { has_global_flag = scw_over }
+	}
+	
+	option = {
+		name = italy.17.a
+		add_timed_idea = {
+				idea = ITA_scw_intervention_nationalists
+				days = 550
+			}
+		hidden_effect = {
+			if = {
+				limit = {
+					ETH = { is_puppet_of = ITA }
+				}
+				ETH = {
+					add_timed_idea = {
+							idea = ITA_scw_intervention_nationalists
+							days = 550
+					}
+				}
+			}
+		}
+	}
+}
+
+#If ITA attacked YUG and CZE joined, white peace option for ITA with CZE once YUG is down
+country_event = {
+	id = italy.20
+	title = italy.20.t
+	desc = italy.20.desc
+	picture = GFX_report_event_albania_falls
+
+	fire_only_once = yes
+	is_triggered_only = yes
+	
+	trigger = {
+		#tag = ITA #EOA
+		has_war_with = CZE
+		has_war_with = YUG
+		OR = {
+			YUG = { has_capitulated = yes }
+			YUG = { surrender_progress > 0.75 }
+		}
+		GER = { NOT = { has_war_with = YUG is_in_faction_with = ITA is_in_faction_with = YUG } }
+	
+	}
+	
+	#Offer Peace
+	option = {
+		name = italy.20.a
+		CZE = { country_event = italy.21 }
+		ai_chance = {
+			base = 95
+			modifier = {
+				factor = 0.5
+				YUG = { surrender_progress > 0.25 }
+			}
+			modifier = {
+				factor = 0
+				YUG = { surrender_progress > 0.6 }
+			}
+		}
+	}
+	
+	#Keep Fighting
+	option = {
+		name = italy.20.b
+		if = { limit = {
+			surrender_progress > 0.15
+			CZE = { surrender_progress < 0.2 }
+			}
+			add_stability = -0.10
+			add_political_power = -50
+		}
+		if = { limit = {
+			surrender_progress < 0.1
+			CZE = { surrender_progress > 0.25 surrender_progress < 0.5 }
+			}
+			add_stability = -0.03
+			add_political_power = -15
+		}
+		if = { limit = {
+			surrender_progress < 0.1
+			CZE = { surrender_progress > 0.5 }
+			}
+			add_stability = -0.01
+			add_political_power = -5
+		}
+		ai_chance = {
+			base = 5
+			modifier = {
+				factor = 8
+				CZE = { surrender_progress > 0.25 surrender_progress < 0.5 }
+			}
+			modifier = {
+				factor = 20
+				CZE = { surrender_progress > 0.5 }
+			}
+			modifier = {
+				factor = 0
+				surrender_progress > 0.15
+			}
+		}
+	}
+}
+#CZE Response
+country_event = {
+	id = italy.21
+	title = italy.21.t
+	desc = italy.21.desc
+	picture = GFX_report_event_albania_falls
+
+	fire_only_once = yes
+	
+	is_triggered_only = yes 
+	
+	#Accept Offer
+	option = {
+		name = italy.21.a
+		ITA = { country_event = italy.22 }
+		ai_chance = {
+			base = 75
+			modifier = {
+				factor = 5
+				surrender_progress > 0.25
+			}
+			modifier = {
+				factor = 0
+				ITA = { surrender_progress > 0.75 }
+			}
+		}
+	}
+	
+	#Keep Fighting
+	option = {
+		name = italy.21.b
+		ITA = { country_event = italy.23 }
+		add_stability = -0.03
+		add_political_power = -25
+		ai_chance = {
+			base = 25
+			modifier = {
+				factor = 0
+				surrender_progress > 0.25
+			}
+			modifier = {
+				factor = 2
+				ITA = { surrender_progress > 0.75 }
+			}
+		}
+	}
+}
+
+#CZE Accepts
+country_event = {
+	id = italy.22
+	title = italy.22.t
+	desc = italy.22.desc
+	picture = GFX_report_generic_sign_treaty2
+	
+	is_triggered_only = yes 
+	
+	#Finally this pointless war ends
+	option = {
+		name = italy.22.a
+		white_peace = CZE
+		add_political_power = 25
+		add_stability = 0.02
+	}
+}
+
+#CZE Refuses
+country_event = {
+	id = italy.23
+	title = italy.23.t
+	desc = italy.23.desc
+	picture = GFX_report_event_mussolini_flag
+	
+	is_triggered_only = yes 
+	
+	#We must fight on
+	option = {
+		name = italy.23.a
+		add_political_power = -15
+		add_stability = -0.02
+	}
+}
+
+country_event = {
+	id = italy.30
+	title = italy.30.t
+	desc = italy.30.desc
+	picture = GFX_report_event_mussolini_flag
+	is_triggered_only = yes
+	#fire_only_once = yes
+	
+	trigger = {
+		#tag = ITA #EOA
+		271 = {
+			CONTROLLER = {
+				OR = {
+					tag = ITA
+					is_subject_of = ITA
+				}
+			}
+		}
+		not = { has_war_with = ETH }		
+	}
+	#mean_time_to_happen = {
+	#	days = 1
+	#}
+	immediate = {
+		hidden_effect = { 
+			country_event = { days = 0 id = news.3 } 
+			CHL = {
+				news_event = { days = 7 id = chile.1 } 
+			}
+		}
+	}
+	
+	option = {
+		name = italy.30.a
+		ai_chance = { factor = 100 }
+		
+		add_political_power = 100
+		hidden_effect = {
+			add_ideas = ITA_IEA_yay
+			release = ETH
+			if = {
+				limit = {
+					has_dlc = "Together for Victory"
+				}
+				set_autonomy = {
+					target = ETH
+					autonomous_state = autonomy_colony
+				}
+			}
+			else = {
+				puppet = ETH
+			}				
+			ETH = {
+				clr_country_flag = league_member
+				every_other_country = {
+					limit = {
+						has_country_flag = league_member
+					}
+					remove_opinion_modifier = {
+						target = ETH
+						modifier = league_of_nations_member
+					}
+					ETH = {
+						remove_opinion_modifier = {
+							target = PREV
+							modifier = league_of_nations_member
+						}
+					}
+				}			
+				inherit_technology = ITA
+				set_country_flag = ITA_armor
+				set_country_flag = ITA_air
+				set_temp_variable = { slots = ITA.amount_research_slots }
+				if = {
+					limit = { check_variable = { slots > 2 } }
+					subtract_from_temp_variable = { slots = 2 }
+					multiply_temp_variable = { slots = -1 }
+					meta_effect = {
+						text = {
+							ETH = { add_research_slot = [NUM] }
+						}
+						NUM = "[?slots]"
+					}
+				}
+				set_cosmetic_tag = ETH_IEA
+				271 = {
+					add_building_construction = {
+						type = industrial_complex
+						level = 2
+						instant_build = yes
+					}
+					add_building_construction = {
+						type = arms_factory
+						level = 1
+						instant_build = yes
+					}
+				}
+				if = {
+					limit = { 
+						ITA = { 
+							controls_state = 550		
+						}
+					}
+					transfer_state = 550	
+					550 = { add_core_of = ETH}
+				}
+				if = {
+					limit = { 
+						ITA = { 
+							controls_state = 559
+						}
+					}
+					transfer_state = 559		
+					559 = { add_core_of = ETH}
+				}
+				
+				add_ideas = foreign_warmonger
+				every_unit_leader = {
+					retire = yes
+				}
+					
+				add_popularity = {
+					ideology = monarchism
+					popularity = 0.20
+				}
+				load_focus_tree = IEA_focus
+				add_ideas =  {
+					ITA_industrial_disorganization_idea
+					IEA_kings_men
+					foreign_warmonger
+					bonds_peace
+					mountainous_country
+					cons_two
+					IEA_supply
+				}
+				load_oob = "ETH_puppet"
+				give_resource_rights = { receiver = ITA state = 271 resources = { rubber } }
+				add_opinion_modifier = {
+					target = YEM
+					modifier = backed_our_cause
+				}
+				reverse_add_opinion_modifier = {
+					target = YEM
+					modifier = fascism_leanings_good
+				}
+					
+			}
+			
+			ITA_badoglio_pietro = {
+				set_nationality = ETH
+			}
+			random_country = { 
+				limit = { has_character = ITA_badoglio_pietro }
+				add_country_leader_role = {
+					character = ITA_badoglio_pietro
+					country_leader = {
+						ideology = fascism_ideology 
+						expire = "1965.1.1.1" 
+						traits = { 
+							efficient_sociopath
+						} 
+					}
+					promote_leader = yes
+				}
+			}
+			
+			country_event = { days = 33 id = italy_bice.301 }
+		}
+		random_unit_leader = {
+			limit = { has_id = 1500 }
+			retire = yes
+		}
+		random_unit_leader = {
+			limit = { has_id = 1505 }
+			set_nationality = ETH
+			promote_leader = yes
+		}
+		random_unit_leader = {
+			limit = { has_id = 1510 }
+			set_nationality = ETH
+		}
+		ITA_guglielmo_nasi = {
+			add_corps_commander_role = { 		#the coolest guy with glasses during ww2 :) Become army general after the ethiopian war
+				traits = { East_Africa_Campaign_Medal For_Valor_Silver_Medal bearer_of_artillery Order_of_Military_Medal desert_3 }
+				skill = 3							#libian and ww1 hero with artillery units. All life served in A.O.I. viceroy and east zone
+				attack_skill = 3
+				defense_skill = 3
+				planning_skill = 2
+				logistics_skill = 2
+				#id = 1504
+			} #ALLIED
+			set_nationality = ETH
+		}
+		ITA_claudio_trezzani = {
+			add_corps_commander_role = {
+				traits = { East_Africa_Campaign_Medal For_Valor_Silver_Medal inflexible_strategist	}
+				skill = 2
+				attack_skill = 2
+				defense_skill = 2
+				planning_skill = 2
+				logistics_skill = 1
+			} #ALLIED
+			set_nationality = ETH
+		}
+		ITA_luigi_frusci = {
+			add_corps_commander_role = { 	#served in A.O.I. both the wars, did others things but mainly there. Eritrean zone
+				traits = { East_Africa_Campaign_Medal infantry_leader }	 
+				skill = 1
+				attack_skill = 1
+				defense_skill = 1
+				planning_skill = 1
+				logistics_skill = 1
+			} #ALLIED
+			set_nationality = ETH
+		}
+		ITA_gustavo_pesenti = {
+			add_corps_commander_role = {
+				traits = { mountain_3 East_Africa_Campaign_Medal Italian_War_Cross }
+				skill = 1
+				attack_skill = 1
+				defense_skill = 1
+				planning_skill = 1
+				logistics_skill = 1
+			} #ALLIED
+			set_nationality = ETH
+		}
+		hidden_effect = {
+			country_event = { id = britain.44 days = 423 }
+		}
+	}
+	option = {
+		name = italy.30.b
+		ai_chance = { factor = 0 }
+		ITA_guglielmo_nasi = {
+			add_corps_commander_role = { 		#the coolest guy with glasses during ww2 :) Become army general after the ethiopian war
+				traits = { East_Africa_Campaign_Medal For_Valor_Silver_Medal bearer_of_artillery Order_of_Military_Medal desert_3 }
+				skill = 3							#libian and ww1 hero with artillery units. All life served in A.O.I. viceroy and east zone
+				attack_skill = 3
+				defense_skill = 3
+				planning_skill = 2
+				logistics_skill = 2
+				#id = 1504
+			} #ALLIED
+		}
+		ITA_claudio_trezzani = {
+			add_corps_commander_role = {
+				traits = { East_Africa_Campaign_Medal For_Valor_Silver_Medal inflexible_strategist	}
+				skill = 2
+				attack_skill = 2
+				defense_skill = 2
+				planning_skill = 2
+				logistics_skill = 1
+			} #ALLIED
+		}
+		ITA_luigi_frusci = {
+			add_corps_commander_role = { 	#served in A.O.I. both the wars, did others things but mainly there. Eritrean zone
+				traits = { East_Africa_Campaign_Medal infantry_leader }	 
+				skill = 1
+				attack_skill = 1
+				defense_skill = 1
+				planning_skill = 1
+				logistics_skill = 1
+			} #ALLIED
+		}
+		ITA_gustavo_pesenti = {
+			add_corps_commander_role = {
+				traits = { mountain_3 East_Africa_Campaign_Medal Italian_War_Cross }
+				skill = 1
+				attack_skill = 1
+				defense_skill = 1
+				planning_skill = 1
+				logistics_skill = 1
+			} #ALLIED
+		}
+	}
+	option = {
+		name = italy.30.c
+		ai_chance = { factor = 0 }
+		
+		add_political_power = 100
+		hidden_effect = {
+			release = ETH
+			if = {
+				limit = {
+					has_dlc = "Together for Victory"
+				}
+				set_autonomy = {
+					target = ETH
+					autonomous_state = autonomy_colony
+				}
+			}
+			else = {
+				puppet = ETH
+			}	
+			ITA_badoglio_pietro = {
+				set_nationality = ETH
+			}
+			random_country = { 
+				limit = { has_character = ITA_badoglio_pietro }
+				add_country_leader_role = {
+					character = ITA_badoglio_pietro
+					country_leader = {
+						ideology = fascism_ideology 
+						expire = "1965.1.1.1" 
+						traits = { 
+							efficient_sociopath
+						} 
+					}
+					promote_leader = yes
+				}
+			}			
+			ETH = {
+				inherit_technology = ITA
+				set_country_flag = ITA_armor
+				set_country_flag = ITA_air
+				set_temp_variable = { slots = ITA.amount_research_slots }
+				if = {
+					limit = { check_variable = { slots > 2 } }
+					subtract_from_temp_variable = { slots = 2 }
+					multiply_temp_variable = { slots = -1 }
+					meta_effect = {
+						text = {
+							ETH = { add_research_slot = [NUM] }
+						}
+						NUM = "[?slots]"
+					}
+				}
+				add_ideas = foreign_warmonger
+				every_unit_leader = {
+					retire = yes
+				}
+				
+				set_cosmetic_tag = ETH_IEA
+				271 = {
+					add_building_construction = {
+						type = industrial_complex
+						level = 1
+						instant_build = yes
+					}
+					add_building_construction = {
+						type = arms_factory
+						level = 2
+						instant_build = yes
+					}
+				}
+				if = {
+					limit = { 
+						ITA = { 
+							controls_state = 550		
+						}
+					}
+					transfer_state = 550	
+					550 = { add_core_of = ETH}
+				}
+				if = {
+					limit = { 
+						ITA = { 
+							controls_state = 559
+						}
+					}
+					transfer_state = 559		
+					559 = { add_core_of = ETH}
+				}
+				add_popularity = {
+					ideology = monarchism
+					popularity = 0.20
+				}
+				load_focus_tree = IEA_focus
+				add_ideas =  {
+					ITA_industrial_disorganization_idea
+					IEA_kings_men
+					foreign_warmonger
+					bonds_peace
+					mountainous_country
+					cons_two
+					partial_economic_mobilisation
+					IEA_supply
+				}				
+				load_oob = "ETH_puppet"
+				change_tag_from = ITA
+				recalculate_tag_change = yes
+				add_opinion_modifier = {
+					target = YEM
+					modifier = backed_our_cause
+				}
+				reverse_add_opinion_modifier = {
+					target = YEM
+					modifier = fascism_leanings_good
+				}
+			}
+			country_event = { days = 33 id = italy_bice.301 }
+			country_event = { id = britain.44 days = 423 }
+
+		}
+		random_unit_leader = {
+			limit = { has_id = 1500 }
+			retire = yes
+		}
+		random_unit_leader = {
+			limit = { has_id = 1505 }
+			set_nationality = ETH
+			promote_leader = yes
+		}
+		random_unit_leader = {
+			limit = { has_id = 1510 }
+			set_nationality = ETH
+		}
+		#allowing the transfer if the player is swapping to IEA
+		ITA_guglielmo_nasi = {
+			add_corps_commander_role = { 		#the coolest guy with glasses during ww2 :) Become army general after the ethiopian war
+				traits = { East_Africa_Campaign_Medal For_Valor_Silver_Medal bearer_of_artillery Order_of_Military_Medal desert_3 }
+				skill = 3							#libian and ww1 hero with artillery units. All life served in A.O.I. viceroy and east zone
+				attack_skill = 3
+				defense_skill = 3
+				planning_skill = 2
+				logistics_skill = 2
+				#id = 1504
+			} #ALLIED
+			set_nationality = ETH
+		}
+		ITA_claudio_trezzani = {
+			add_corps_commander_role = {
+				traits = { East_Africa_Campaign_Medal For_Valor_Silver_Medal inflexible_strategist	}
+				skill = 2
+				attack_skill = 2
+				defense_skill = 2
+				planning_skill = 2
+				logistics_skill = 1
+			} #ALLIED
+			set_nationality = ETH
+		}
+		ITA_luigi_frusci = {
+			add_corps_commander_role = { 	#served in A.O.I. both the wars, did others things but mainly there. Eritrean zone
+				traits = { East_Africa_Campaign_Medal infantry_leader }	 
+				skill = 1
+				attack_skill = 1
+				defense_skill = 1
+				planning_skill = 1
+				logistics_skill = 1
+			} #ALLIED
+			set_nationality = ETH
+		}
+		ITA_gustavo_pesenti = {
+			add_corps_commander_role = {
+				traits = { mountain_3 East_Africa_Campaign_Medal Italian_War_Cross }
+				skill = 1
+				attack_skill = 1
+				defense_skill = 1
+				planning_skill = 1
+				logistics_skill = 1
+			} #ALLIED
+			set_nationality = ETH
+		}
+	}
+	#option = {
+	#	name = italy.30.e
+	#	ai_chance = { factor = 0 }
+	#	
+	#	add_political_power = -25
+	#	hidden_effect = {
+	#		add_ideas = ITA_IEA_yay
+	#		release = ETH
+	#		if = {
+	#			limit = {
+	#				has_dlc = "Together for Victory"
+	#			}
+	#			set_autonomy = {
+	#				target = ETH
+	#				autonomous_state = autonomy_colony
+	#			}
+	#		}
+	#		else = {
+	#			puppet = ETH
+	#		}				
+	#		ETH = {
+	#			clr_country_flag = league_member
+	#			every_other_country = {
+	#				limit = {
+	#					has_country_flag = league_member
+	#				}
+	#				remove_opinion_modifier = {
+	#					target = ETH
+	#					modifier = league_of_nations_member
+	#				}
+	#				ETH = {
+	#					remove_opinion_modifier = {
+	#						target = PREV
+	#						modifier = league_of_nations_member
+	#					}
+	#				}
+	#			}			
+	#			inherit_technology = ITA
+	#			set_country_flag = ITA_armor
+	#			set_country_flag = ITA_air
+	#			set_temp_variable = { slots = ITA.amount_research_slots }
+	#			if = {
+	#				limit = { check_variable = { slots > 2 } }
+	#				subtract_from_temp_variable = { slots = 2 }
+	#				multiply_temp_variable = { slots = -1 }
+	#				meta_effect = {
+	#					text = {
+	#						ETH = { add_research_slot = [NUM] }
+	#					}
+	#					NUM = "[?slots]"
+	#				}
+	#			}
+	#			set_cosmetic_tag = ETH_IEA
+	#			271 = {
+	#				add_building_construction = {
+	#					type = industrial_complex
+	#					level = 2
+	#					instant_build = yes
+	#				}
+	#				add_building_construction = {
+	#					type = arms_factory
+	#					level = 1
+	#					instant_build = yes
+	#				}
+	#			}
+	#			if = {
+	#				limit = { 
+	#					ITA = { 
+	#						controls_state = 550		
+	#					}
+	#				}
+	#				transfer_state = 550	
+	#				550 = { add_core_of = ETH}
+	#			}
+	#			if = {
+	#				limit = { 
+	#					ITA = { 
+	#						controls_state = 559
+	#					}
+	#				}
+	#				transfer_state = 559		
+	#				559 = { add_core_of = ETH}
+	#			}
+	#			
+	#			add_ideas = foreign_warmonger
+	#			every_unit_leader = {
+	#				retire = yes
+	#			}
+	#				
+	#			add_popularity = {
+	#				ideology = monarchism
+	#				popularity = 0.20
+	#			}
+	#			load_focus_tree = IEA_focus
+	#			add_ideas =  {
+	#				ITA_industrial_disorganization_idea
+	#				IEA_kings_men
+	#				foreign_warmonger
+	#				bonds_peace
+	#				mountainous_country
+	#				cons_two
+	#			}
+	#			load_oob = "ETH_puppet"
+	#			give_resource_rights = { receiver = ITA state = 271 resources = { rubber } }
+	#		}
+	#		
+	#		ITA_badoglio_pietro = {
+	#			set_nationality = ETH
+	#		}
+	#		random_country = { 
+	#			limit = { has_character = ITA_badoglio_pietro }
+	#			add_country_leader_role = {
+	#				character = ITA_badoglio_pietro
+	#				country_leader = {
+	#					ideology = fascism_ideology 
+	#					expire = "1965.1.1.1" 
+	#					traits = { 
+	#						efficient_sociopath
+	#					} 
+	#				}
+	#				promote_leader = yes
+	#			}
+	#		}
+	#		country_event = { days = 33 id = italy_bice.301 }
+	#	}
+	#}
+}
+
+country_event = {
+	id = italy_bice.301
+	title = italy_bice.301.t
+	desc = italy_bice.301.desc
+	picture = GFX_report_event_biceitaly301
+	
+	is_triggered_only = yes 
+	fire_only_once = yes
+	trigger = {
+		tag = ITA
+		not = { has_war_with = ETH }
+		ETH = { is_puppet_of = ITA }
+	}
+	
+	option = {
+		name = italy_bice.301.a
+		ai_chance = { factor = 100 }
+		random_country = {
+			limit = { has_character = ITA_rodolfo_graziani }
+			ITA_rodolfo_graziani = {
+				set_nationality = ETH
+			}
+		}
+		random_country = {
+			limit = { has_character = ITA_rodolfo_graziani }
+			add_country_leader_role = { 
+				character = ITA_rodolfo_graziani
+				
+				country_leader = {
+					ideology = fascism_ideology 
+					expire = "1965.1.1.1" 
+					traits = { 
+						prince_of_terror
+					} 
+				} 
+				promote_leader = yes 
+			}
+			ITA_badoglio_pietro = {
+				set_nationality = ITA
+			}
+		}
+		hidden_effect = {
+			country_event = { days = 559 id = italy_bice.302 }
+		}
+	}
+	option = {
+		name = italy_bice.301.b
+		ai_chance = { factor = 0 }
+	}
+}
+country_event = {
+	id = italy_bice.302
+	title = italy_bice.302.t
+	desc = italy_bice.302.desc
+	picture = GFX_report_event_biceitaly302
+	
+	is_triggered_only = yes 
+	fire_only_once = yes
+	trigger = {
+		tag = ITA
+		#controls_state = 271
+		not = { has_war_with = ETH }
+		ETH = { is_puppet_of = ITA }
+		#date > 1937.11.21
+	}
+	
+	option = {
+		name = italy_bice.302.a
+		ai_chance = { factor = 100 }
+		ITA_di_savoiaaosta_amedeo = {
+			set_nationality = ETH
+		}
+		random_country = {
+			limit = { has_character = ITA_di_savoiaaosta_amedeo }
+			add_country_leader_role = { 
+				character = ITA_di_savoiaaosta_amedeo
+				country_leader = {
+					ideology = fascism_ideology 
+					expire = "1965.1.1.1" 
+					traits = { 
+						charismatic
+					} 
+				} 
+			}
+			ITA_di_savoiaaosta_amedeo = {
+				promote_character = yes
+			}
+			ITA_rodolfo_graziani = {
+				set_nationality = ITA
+			}
+		}
+		hidden_effect = {
+			country_event = { days = 1248 id = italy_bice.303 }
+		}
+	}
+	option = {
+		name = italy_bice.302.b
+		ai_chance = { factor = 0 }
+	}
+}
+country_event = {
+	id = italy_bice.303
+	title = italy_bice.303.t
+	desc = italy_bice.303.desc
+	picture = GFX_report_event_mussolini_flag
+	
+	is_triggered_only = yes 
+	fire_only_once = yes
+	trigger = {
+		tag = ITA
+		#controls_state = 271
+		not = { has_war_with = ETH }
+		ETH = { is_puppet_of = ITA }
+		#date > 1941.5.23
+	}
+	
+	option = {
+		name = italy_bice.303.a
+		ai_chance = { factor = 100 }
+		ETH = {
+			if = {
+				limit = {
+					has_character = ITA_gazzera_pietro
+				}
+				add_country_leader_role = { 
+					character = ITA_gazzera_pietro
+					country_leader = {
+						ideology = fascism_ideology 
+						expire = "1965.1.1.1" 
+						traits = { 
+							army_regrouping_1
+						} 
+					} 
+				}
+				ITA_gazzera_pietro = {
+					promote_character = yes
+				}
+				ITA_di_savoiaaosta_amedeo = {
+					set_nationality = ITA
+				}
+			}
+		}
+		hidden_effect = {
+			country_event = { days = 44 id = italy_bice.304 }
+		}
+	}
+	option = {
+		name = italy_bice.303.b
+		ai_chance = { factor = 0 }
+	}
+}
+country_event = {
+	id = italy_bice.304
+	title = italy_bice.304.t
+	desc = italy_bice.304.desc
+	picture = GFX_report_event_mussolini_flag
+	
+	is_triggered_only = yes 
+	fire_only_once = yes
+	trigger = {
+		tag = ITA
+		#controls_state = 271
+		not = { has_war_with = ETH }
+		ETH = { is_puppet_of = ITA }
+		#date > 1941.7.6
+	}
+	
+	option = {
+		name = italy_bice.304.a
+		ai_chance = { factor = 100 }
+		ETH = {
+			if = {
+				limit = {
+					has_character = ITA_guglielmo_nasi
+				}
+				add_country_leader_role = { 
+					character = ITA_guglielmo_nasi
+					country_leader = {
+						ideology = fascism_ideology 
+						expire = "1965.1.1.1" 
+						traits = { 
+							army_entrenchment_1
+						} 
+					} 
+				}
+				ITA_guglielmo_nasi = {
+					promote_character = yes
+				}
+			}
+		}
+		#he was the last Viceroy
+
+	}
+	option = {
+		name = italy_bice.304.b
+		ai_chance = { factor = 0 }
+	}
+}
+#hand back the islands to spain
+country_event = {
+	id = italy.34
+	title = italy.34.t
+	desc = italy.34.desc
+	picture = GFX_report_event_mussolini_flag
+	
+	is_triggered_only = yes 
+	#todo maybe allow to refuse resulting in possibly DOW
+	option = {
+		name = italy.34.a
+		random_country = {
+			limit = {
+				original_tag = SPR 
+			}
+			transfer_state = 177
+		}
+	}
+}
+#Raid on GIB
+country_event = {
+	id = italy.35
+	#Spain wins
+	title = italy.35.t
+	desc = italy.35.desc
+	picture = GFX_report_event_mussolini_flag	
+	is_triggered_only = yes 
+
+	option = {
+		trigger = {
+			original_tag = SPR
+		}
+		name = italy.35.a
+		transfer_state = 118
+		add_threat = 1
+		reverse_add_opinion_modifier = {
+			target = ENG
+			modifier = condemn_aggression
+		}
+	}
+	option = {
+		trigger = {
+			original_tag = ENG
+		}
+		name = italy.35.b
+		army_experience = 35
+		
+		ai_chance = { factor = 80 }
+	}
+	option = {
+		trigger = {
+			original_tag = ENG
+		}
+		name = italy.35.c
+		random_country = {
+			limit = {
+				original_tag = SPR
+			}	
+			declare_war_on = {
+				target = ENG
+				type = annex_everything
+			}
+		}
+		ai_chance = { factor = 20 }
+	}
+}
+country_event = {
+	id = italy.36
+	#England wins
+	title = italy.36.t
+	desc = italy.36.desc
+	picture = GFX_report_event_mussolini_flag
+	
+	is_triggered_only = yes 
+	option = {
+		trigger = {
+			original_tag = SPR
+		}
+		name = italy.36.a
+		add_threat = 1
+		reverse_add_opinion_modifier = {
+			target = ENG
+			modifier = condemn_aggression
+		}
+		army_experience = 10
+	}
+	option = {
+		trigger = {
+			original_tag = ENG
+		}
+		name = italy.36.b
+		army_experience = 35
+		add_command_power = 30
+		ai_chance = { factor = 90 }
+	}
+	option = {
+		trigger = {
+			original_tag = ENG
+		}
+		name = italy.35.c
+		random_country = {
+			limit = {
+				original_tag = SPR
+			}
+			declare_war_on = {
+				target = ENG
+				type = annex_everything
+			}
+		}
+		ai_chance = { factor = 10 }
+	}
+}
+country_event = {
+	id = italy.37
+	#stalemate
+	title = italy.36.t
+	desc = italy.36.desc
+	picture = GFX_report_event_mussolini_flag
+	
+	is_triggered_only = yes 
+	option = {
+		trigger = {
+			original_tag = SPR
+		}
+		name = italy.36.a
+		add_threat = 1
+		reverse_add_opinion_modifier = {
+			target = ENG
+			modifier = condemn_aggression
+		}
+		army_experience = 20
+	}
+	option = {
+		trigger = {
+			original_tag = ENG
+		}
+		name = italy.36.b
+		army_experience = 25
+		add_command_power = 15
+		ai_chance = { factor = 95 }
+	}
+	option = {
+		trigger = {
+			original_tag = ENG
+		}
+		name = italy.35.c
+		random_country = {
+			limit = {
+				original_tag = SPR
+			}
+			declare_war_on = {
+				target = ENG
+				type = annex_everything
+			}
+		}
+		ai_chance = { factor = 5 }
+	}
+}
+
+country_event = {
+	id = italy.39
+	title = italy.39.t
+	desc = italy.39.d
+	picture = GFX_report_event_italian_fascist_children_gfxaddon
+	
+	fire_only_once = yes
+	is_triggered_only = yes	
+		
+	option = {
+		name = italy.39.a							
+		
+	}
+}
+country_event = {
+	id = italy.40
+	title = italy.40.t
+	desc = italy.40.d
+	picture = GFX_report_event_generic_conference
+
+	fire_only_once = yes
+	is_triggered_only = yes
+	
+	option = {
+	       name = italy.40.a
+	       add_popularity = { ideology = fascism popularity = -0.06 }
+		   set_country_flag = mafia_removed
+	}
+	option = {
+	    name = italy.40.b
+	    115 = {
+	        remove_building = {
+			type = industrial_complex
+			level = 1			
+		}
+	    }
+	}
+}
+news_event = {
+	id = italy.41
+	title = italy.41.t
+	desc = italy.41.d
+	picture = GFX_news_event_league_of_nations
+	
+	is_triggered_only = yes	
+	major = yes
+	
+	option = {
+		name = italy.41.a 	
+		trigger = { tag = ITA }
+		every_country = {
+			limit = {
+				not = { tag = ITA }
+				has_country_flag = league_member
+			}
+			add_opinion_modifier = { target = ITA modifier = protest_action_light }
+			add_political_power = -5
+		}
+		add_opinion_modifier = { target = ENG modifier = protest_action_light }
+		add_opinion_modifier = { target = FRA modifier = protest_action_light }				
+	}
+	option = {
+		name = italy.41.b 							
+		trigger = { NOT = { tag = ITA } }
+		effect_tooltip = {
+			ITA = {
+				every_country = {
+					limit = {
+						not = { tag = ITA }
+						has_country_flag = league_member
+					}
+					add_opinion_modifier = { target = ITA modifier = protest_action_light }
+					add_political_power = -5
+				}
+			}
+		}
+	}
+}
+country_event = {
+	id = italy.42
+	title = italy.42.t
+	desc = italy.42.d
+	picture = GFX_report_event_mussolini_flag
+	is_triggered_only = yes
+	
+	trigger = {
+		tag = ETH
+		has_government = fascism
+	}
+	
+	option = {
+	       name = italy.42.a
+			add_equipment_to_stockpile = {
+				type = infantry_equipment_0
+				amount = 50
+				producer = ETH
+			}
+			add_equipment_to_stockpile = {
+				type = infantry_uniforms_0
+				amount = 25
+				producer = ETH
+			}
+			add_equipment_to_stockpile = {
+				type = desert_equip
+				amount = 10
+				producer = ETH
+			}
+			add_equipment_to_stockpile = {
+				type = SMG_equipment
+				amount = 10
+				producer = ETH
+			}
+			add_equipment_to_stockpile = {
+				type = horse_equipment_0
+				amount = 10
+				producer = ETH
+			}		
+	}
+}

@@ -1,0 +1,1973 @@
+focus_tree = {
+	id = civilwar_focus
+	country = {
+		factor = 0
+		modifier = {
+			add = 500
+			original_tag = SPR
+			has_civil_war = yes
+		}
+	}
+	
+	continuous_focus_position = { x = 2050 y = 200 }
+	
+	focus = {
+		id = CIV_18
+		icon = GFX_goal_generic_occupy_states_ongoing_war #GFX_focus_generic_provoke_border_clashes
+		cost = 15 # Previously was: 28.0 
+		x = 7
+		y = 0
+
+        available = { }
+		bypass = { }
+		completion_reward = { 
+			add_command_power = 35
+		
+			set_temp_variable = { input_group = token:economy }
+			set_temp_variable = { input_lvl = 5 } #war_economy
+			set_temp_variable = { input_only_upgrade = 1 }
+			add_law = yes
+		}
+	}
+	focus = {
+		id = CIV_resistance
+		icon = GFX_goal_generic_partisans
+		cost = 13 # 
+		x = 5
+		y = 0
+
+        available = { }
+		bypass = { }
+		completion_reward = { 
+			every_state  = {
+				limit = {
+					is_core_of = ROOT
+					NOT = {
+						is_controlled_by = ROOT 
+						is_controlled_by = MOR
+					}
+				}
+				force_enable_resistance = yes 
+				start_resistance = yes
+				
+				add_compliance = 50
+			}
+		}
+	}
+	focus = {
+		id = SPR_Conversion
+		icon = GFX_goal_generic_production
+		prerequisite = {
+			focus = CIV_18
+		}
+		prerequisite = {
+			focus = CIV_resistance
+		}
+		continue_if_invalid = yes
+		x = 0
+		y = 1
+		relative_position_id = CIV_resistance
+		cost = 35 # Previously was: 35.0 
+
+		
+		completion_reward = {
+			add_ideas = SPR_Conv
+			random_owned_controlled_state = {
+				add_building_construction = { 
+					type = industrial_complex
+					level = 1 
+					instant_build = yes 
+				}
+			}
+		}
+	}
+	focus = {
+		id = SPR_seize
+		icon = GFX_goal_generic_forceful_treaty
+		prerequisite = {
+			focus = CIV_18
+		}
+		prerequisite = {
+			focus = CIV_resistance
+		}
+		
+		x = 0
+		y = 1
+		relative_position_id = CIV_18
+		cost = 63 # Previously was: 63.0 
+
+		completion_reward = {
+			country_event = { id = spain.73 } 
+		}
+	}
+
+	focus = {
+		id = CIV_republic
+		icon = GFX_focus_spr_maintain_the_republic
+		cost = 35 # Previously was: 35.0 
+
+		prerequisite = {
+			focus = CIV_18
+		}
+		prerequisite = {
+			focus = CIV_resistance
+		}
+		
+		mutually_exclusive = {
+			focus = CIV_spain
+		}
+		available = { 
+			OR = {
+				has_government = liberalism
+				has_government = conservatism
+				has_government = socialism
+				has_government = communism
+			}
+		}
+		x = -2
+		y = 2
+		relative_position_id = CIV_resistance
+		completion_reward = { 
+			add_political_power = 50
+		}
+	}
+	
+	focus = {
+		id = CIV_arm
+		icon = GFX_goal_generic_small_arms
+		cost = 7 # Previously was: 7.0 
+		prerequisite = {
+			focus = CIV_republic
+		}
+
+		completion_reward = { 
+			swap_ideas = { 
+				remove_idea = SPR_mutinies 
+				add_idea = SPR_militias 
+			} 
+		}
+		x = -1
+		y = 3
+		relative_position_id = CIV_resistance
+
+	}
+	
+	focus = {
+		id = CIV_navy
+		icon = GFX_goal_generic_navy_doctrines_tactics
+		cost = 56 # Previously was: 56.0 
+		prerequisite = {
+			focus = CIV_no_pasaran
+		}
+
+		completion_reward = { 
+			remove_ideas = SPR_bad_navy 
+		}
+		x = -4
+		y = 5
+		relative_position_id = CIV_resistance
+	}
+	
+	focus = {
+		id = CIV_france
+		icon = GFX_focus_chi_reach_out_to_france
+		cost = 14 # Previously was: 14.0 
+		prerequisite = {
+			focus = CIV_republic
+		}
+
+		completion_reward = { 
+			FRA = {
+		        country_event = { id = spain.32 days = 1 }  
+			}
+			add_equipment_to_stockpile = {
+				type = d_371_fighter_equipment_1
+				amount = 10
+				producer = FRA
+			}
+			add_equipment_to_stockpile = {
+				type = nid_42_fighter_equipment_1
+				amount = 30
+				producer = FRA
+			}
+			add_equipment_to_stockpile = {
+				type = nid_62_fighter_equipment_1
+				amount = 20
+				producer = FRA
+			}
+		}
+		x = -3
+		y = 3
+		relative_position_id = CIV_resistance
+
+	}
+	focus = {
+		id = CIV_no_pasaran
+		icon = GFX_goal_generic_construct_military
+		cost = 35 # Previously was: 35.0 
+
+		prerequisite = {
+			focus = CIV_arm
+			focus = CIV_france
+		}
+		completion_reward = {
+		    add_timed_idea = { idea = SPR_no_pasaran days = 650 }
+		}
+		x = -2
+		y = 4
+		relative_position_id = CIV_resistance
+
+	}
+	focus = {
+		id = CIV_moscow
+		icon = GFX_focus_chi_mission_to_the_soviet_union
+		cost = 70 # Previously was: 70.0 
+		prerequisite = {
+			focus = CIV_no_pasaran
+		}
+
+		completion_reward = {
+		    add_political_power = -50
+				add_equipment_to_stockpile = {
+					type = infantry_equipment_1
+					amount = 2000
+					producer = SOV
+				}
+				add_equipment_to_stockpile = {
+					type = i_15_equipment_2
+					amount = 120
+					producer = SOV
+				}
+			SOV = {
+				country_event = {
+					id = soviet.425
+					days = 1
+				} 
+			}
+		}
+		x = -2
+		y = 5
+		relative_position_id = CIV_resistance
+
+	}
+	focus = {
+		id = CIV_sov_planes
+		icon = GFX_goal_generic_air_fighter
+		cost = 70 # Previously was: 70.0 
+		prerequisite = {
+			focus = CIV_moscow
+		}
+		completion_reward = {
+			add_equipment_to_stockpile = {
+				type = i_16_equipment_2
+				amount = 200
+				producer = SOV
+			}
+			add_tech_bonus = {
+				name = fighter_bonus
+				bonus = 0.15
+				uses = 1
+				technology = early_fighter
+				technology = fighter1
+				technology = fighter2
+				technology = fighter3
+				technology = heavy_fighter2
+				technology = heavy_fighter3
+			}
+		}
+		x = -3
+		y = 6
+		relative_position_id = CIV_resistance
+
+	}
+	focus = {
+		id = CIV_sov_tanks
+		icon = GFX_goal_generic_army_tanks
+		cost = 70 # Previously was: 70.0 
+
+		prerequisite = {
+			focus = CIV_moscow
+		}
+		completion_reward = {
+		    add_equipment_to_stockpile = {
+				type = trm_light_tank_chassis_sov_t26_1
+				amount = 150
+				producer = SOV
+			}
+		    add_equipment_to_stockpile = {
+				type = trm_light_tank_chassis_sov_t26_2
+				amount = 125
+				producer = SOV
+			}
+		    add_equipment_to_stockpile = {
+				type = trm_cavalry_tank_chassis_sov_bt5_1
+				amount = 50
+				producer = SOV
+			}
+			add_tech_bonus = {
+				name = armor_bonus
+				bonus = 0.15
+				uses = 1
+				category = armor_tech
+			}
+		}
+		x = -1
+		y = 6
+		relative_position_id = CIV_resistance
+
+	}
+	focus = {
+		id = CIV_advisors
+		icon = GFX_goal_soviet_military_advisors #GFX_focus_generic_military_mission_red
+		cost = 70 # Previously was: 70.0 
+		prerequisite = {
+			focus = CIV_sov_planes
+		}
+		prerequisite = {
+			focus = CIV_sov_tanks
+		}
+		completion_reward = {
+			army_experience = 30
+			add_tech_bonus = {
+				name = land_doc_bonus
+				bonus = 0.2
+				uses = 3
+				category = land_doctrine
+			}
+			add_equipment_to_stockpile = {
+				type = i_16_equipment_2
+				amount = 200
+				producer = SOV
+			}
+		}
+		x = -2
+		y = 7
+		relative_position_id = CIV_resistance
+
+	}
+	focus = {
+		id = CIV_brigada
+		icon = GFX_focus_generic_little_entente #GFX_goal_focus_communist_army
+		cost = 70 # Previously was: 70.0 
+
+		prerequisite = {
+			focus = CIV_arm
+		}		
+		prerequisite = {
+			focus = CIV_no_pasaran
+		}
+		available = {
+			OR = {
+				controls_province = 3938
+				controls_province = 9764
+			}
+		}
+		completion_reward = {
+		    swap_ideas = { remove_idea = SPR_militias add_idea = SPR_militias2 }
+			hidden_effect = {
+				division_template = {
+					name = "Brigada Mixta"	# composed of four infantry battalions, a mixed sapper battalion and a Service Corps company. Certain brigades had also a cavalry section. A division was composed of two or three mixed brigades.
+					template_counter = 113
+					
+					regiments = {
+						infantry = { x = 0 y = 0 }
+						infantry = { x = 0 y = 1 }
+						infantry = { x = 0 y = 2 }
+						infantry = { x = 0 y = 3 }
+						
+						infantry = { x = 1 y = 0 }
+						infantry = { x = 1 y = 1 }
+						infantry = { x = 1 y = 2 }
+						infantry = { x = 1 y = 3 }
+					}
+					support = {
+						DIV_HQ = { x = 0 y = 0 }
+						engineer = { x = 0 y = 1 }
+						anti_tank = { x = 0 y = 2 }
+						logistics_company = { x = 0 y = 3 }
+					}	
+				}
+				
+				division_template = {
+					name = "Brigada Mixta I"	# composed of four infantry battalions, a mixed sapper battalion and a Service Corps company. Certain brigades had also a cavalry section. A division was composed of two or three mixed brigades.
+					template_counter = 117
+					
+					regiments = {
+						cavalry = { x = 0 y = 0 }
+						cavalry = { x = 0 y = 1 }
+						
+						infantry = { x = 1 y = 0 }
+						infantry = { x = 1 y = 1 }
+						infantry = { x = 1 y = 2 }
+						
+						infantry = { x = 2 y = 0 }
+						infantry = { x = 2 y = 1 }
+						infantry = { x = 2 y = 2 }
+					}
+					support = {
+						DIV_HQ = { x = 0 y = 0 }
+						engineer = { x = 0 y = 1 }
+						anti_tank = { x = 0 y = 2 }
+						logistics_company = { x = 0 y = 3 }
+					}	
+				}
+			}
+			if = { limit = { controls_province = 3938 }
+					876 = {
+						create_unit = {
+							division = "division_template = \"Brigada Mixta I\" start_experience_factor = 0.3 start_manpower_factor = 0.4 start_equipment_factor = 0.75"
+							owner = ROOT
+							count = 2
+							prioritize_location = 3938
+						} 
+						create_unit = {
+							division = "division_template = \"Brigada Mixta\" start_experience_factor = 0.3 start_manpower_factor = 0.4 start_equipment_factor = 0.75"
+							owner = ROOT
+							count = 1
+							prioritize_location = 3938
+						} 						
+					}
+			}
+			if = { limit = { controls_province = 9764 }
+					165 = {
+						create_unit = {
+							division = "division_template = \"Brigada Mixta\" start_experience_factor = 0.3 start_manpower_factor = 0.6 start_equipment_factor = 0.9"
+							owner = ROOT
+							count = 3
+							prioritize_location = 9764
+						} 	
+					}
+			}
+		}
+		bypass = {
+			NOT = { controls_province = 3938 }
+			NOT = { controls_province = 9764 }
+		}
+		x = 0
+		y = 5
+		relative_position_id = CIV_resistance
+
+	}
+	focus = {
+		id = CIV_unified
+		icon = GFX_reprofessionalize_the_military
+		cost = 70 # Previously was: 70.0 
+		prerequisite = {
+			focus = CIV_brigada
+		}
+		completion_reward = {
+		    remove_ideas = SPR_militias2			
+		}
+		x = 0
+		y = 7
+		relative_position_id = CIV_resistance
+
+	}
+	focus = {
+		id = CIV_political
+		icon = GFX_ensure_loyalty
+		cost = 70 # Previously was: 70.0 
+		prerequisite = {
+			focus = CIV_advisors
+			focus = CIV_unified
+		}
+		completion_reward = {
+		    add_war_support = 0.15
+            add_stability = 0.2			
+		}
+		x = -1
+		y = 8
+		relative_position_id = CIV_resistance
+
+	}
+	focus = {
+		id = CIV_anarchists
+		icon = GFX_popular_front
+		cost = 70 # Previously was: 70.0 
+		prerequisite = {
+			focus = CIV_political
+		}
+		mutually_exclusive = {
+			focus = CIV_moderates
+			focus = CIV_com_pwr
+		}
+		available = { 
+			has_country_flag = CNTFAI_take_power 
+			if = {
+				limit = {
+					is_ai = yes
+				}
+				is_historical_focus_on = no
+			}
+		}
+		completion_reward = {
+		    add_political_power = 100
+			set_cosmetic_tag = CNT
+		}
+		x = -1
+		y = 9
+		relative_position_id = CIV_resistance
+
+	}
+	focus = {
+		id = CIV_moderates
+		icon = GFX_reaffirm_the_popular_front_strategy
+		cost = 70 # Previously was: 70.0 
+		prerequisite = {
+			focus = CIV_political
+		}
+		mutually_exclusive = {
+			focus = CIV_anarchists
+			focus = CIV_com_pwr
+		}
+		available = { 
+			has_country_flag = libs_take_power 
+			if = {
+				limit = {
+					is_ai = yes
+				}
+				is_historical_focus_on = no
+			}
+		}
+		completion_reward = {
+		    add_political_power = 100
+			set_cosmetic_tag = SPR
+		}
+		x = 1
+		y = 9
+		relative_position_id = CIV_resistance
+
+	}
+	focus = {
+		id = CIV_com_pwr
+		icon = GFX_focus_generic_soviet_politics
+		cost = 70 # Previously was: 70.0 
+		prerequisite = {
+			focus = CIV_political
+		}
+		prerequisite = {
+			focus = CIV_advisors
+		}		
+		mutually_exclusive = {
+			focus = CIV_anarchists
+			focus = CIV_moderates
+		}
+		available = { 
+			has_country_flag = commie_take_power
+			if = {
+				limit = {
+					is_ai = yes
+				}
+				is_historical_focus_on = no
+			}			
+		}
+		completion_reward = {
+		    add_political_power = 100
+			set_cosmetic_tag = SPC
+		}
+		x = -3
+		y = 9
+		relative_position_id = CIV_resistance
+
+	}
+	focus = {
+		id = CIV_commissars
+		icon = GFX_goal_generic_forceful_treaty
+		prerequisite = { focus = CIV_com_pwr }
+		available = {
+		}
+		x = -3
+		y = 10
+		relative_position_id = CIV_resistance
+		cost = 70 # Previously was: 70.0 
+		available_if_capitulated = yes
+		completion_reward = {
+			add_ideas = political_commissars_focus
+			add_popularity = {
+				ideology = communism
+				popularity = 0.1
+			}		
+			add_political_power = 100
+		}
+	}
+	focus = {
+		id = CIV_supplies
+		icon = GFX_focus_prc_agrarian_socialism
+		prerequisite = { focus = CIV_commissars }
+		available = {
+		}
+		x = -3
+		y = 11
+		relative_position_id = CIV_resistance
+		cost = 70 # Previously was: 70.0 
+		available_if_capitulated = yes
+		completion_reward = {
+			add_ideas = political_commissars_focus
+			add_popularity = {
+				ideology = communism
+				popularity = 0.1
+			}		
+			add_offsite_building = { type = industrial_complex level = 4 }
+		}
+	}
+	focus = {
+		id = CIV_comintern
+		icon = GFX_focus_generic_join_comintern
+		prerequisite = { focus = CIV_supplies }
+		available = {
+			SOV = {
+			    has_war_with = GER
+			}				
+		}
+		x = -3
+		y = 12
+		relative_position_id = CIV_resistance
+		cost = 70 # Previously was: 70.0 
+		available_if_capitulated = yes
+		completion_reward = {
+		    SOV = {
+			    add_to_faction = ROOT
+			}
+		}
+	}
+	focus = {
+		id = CIV_order
+		icon = GFX_goal_generic_political_pressure
+		cost = 70 # Previously was: 70.0 
+		prerequisite = {
+			focus = CIV_moderates
+		}
+		completion_reward = {
+		    add_stability = 0.15
+		}
+		x = 1
+		y = 10
+		relative_position_id = CIV_resistance
+
+	}
+	focus = {
+		id = CIV_popular
+		icon = GFX_goal_generic_allies_build_infantry
+		cost = 70 # Previously was: 70.0 
+		prerequisite = {
+			focus = CIV_order
+		}
+		completion_reward = {
+		    add_ideas = SPR_ejercito1
+	    }
+		x = 1
+		y = 11
+		relative_position_id = CIV_resistance
+
+	}
+	focus = {
+		id = CIV_resistir
+		icon = GFX_goal_generic_defence
+		cost = 70 # Previously was: 70.0 
+		prerequisite = {
+			focus = CIV_popular
+		}
+		completion_reward = { 
+		swap_ideas = { remove_idea = SPR_ejercito1 add_idea = SPR_ejercito2 } 
+		}
+		x = 1
+		y = 12
+		relative_position_id = CIV_resistance
+
+	}
+	focus = {
+		id = CIV_spain
+		icon = GFX_focus_generic_strike_at_democracy1
+		cost = 34 # Previously was: 35.0 
+		prerequisite = {
+			focus = CIV_18
+		}
+		prerequisite = {
+			focus = CIV_resistance
+		}
+		mutually_exclusive = {
+			focus = CIV_republic
+		}
+
+		available = { 
+			OR = {
+				has_government = fascism 
+				has_government = monarchism
+				has_government = neutrality
+				has_government = conservatism
+			}
+		}
+		x = 3
+		y = 2
+		relative_position_id = CIV_18
+		completion_reward = { 
+			add_political_power = 25
+			add_command_power = 25
+			if = {
+				limit = {
+					is_ai = yes
+				}
+				add_equipment_to_stockpile = {
+					type = garrison_equipment_0
+					amount = 1000
+					producer = SPA
+				}
+			}
+		}
+
+	}
+	focus = {
+		id = CIV_italy
+		icon = GFX_goal_generic_navy_cruiser
+		cost = 20 # Previously was: 21.0 
+		prerequisite = {
+			focus = CIV_spain
+		}
+
+		completion_reward = {
+		    add_equipment_to_stockpile = {
+				type = convoy_1
+				amount = 30
+				producer = ITA
+			}
+			add_tech_bonus = {
+				name = cr_bonus
+				bonus = 0.2
+				uses = 1
+                category = cl_tech
+                category = ca_tech
+			}
+			add_equipment_to_stockpile = {
+				type = motorized_equipment_1
+				amount = 600
+				producer = ITA
+			}
+			add_equipment_to_stockpile = {
+				type = trm_tankette_tank_chassis_ita_l3_1
+				amount = 30
+				producer = ITA
+			}
+			add_equipment_to_stockpile = {
+				type = trm_tankette_tank_chassis_ita_l3_2
+				amount = 30
+				producer = ITA
+			}
+			add_opinion_modifier = {
+				target = ITA
+				modifier = aided_industry
+			}
+		}
+		x = -2
+		y = 1
+		relative_position_id = CIV_spain
+
+	}
+	focus = {
+		id = CIV_texaco
+		icon = GFX_focus_chi_mission_to_the_us
+		cost = 48 # Previously was: 49.0 
+
+		prerequisite = {
+			focus = CIV_spain
+		}
+		completion_reward = {
+		    add_ideas = SPR_texaco
+			add_opinion_modifier = {
+				target = USA
+				modifier = offered_support
+			}
+		}
+		x = 0
+		y = 1
+		relative_position_id = CIV_spain
+
+	}
+	focus = {
+		id = CIV_fire
+		icon = GFX_focus_chi_mission_to_germany
+		cost = 69 # Previously was: 70.0 
+
+		prerequisite = {
+			focus = CIV_spain
+		}
+		completion_reward = {
+			add_equipment_to_stockpile = {
+				type = ar_68_equipment_1
+				amount = 50
+				producer = GER
+			}
+		    add_equipment_to_stockpile = {
+				type = he_51_equipment_2
+				amount = 100
+				producer = GER
+			}
+			add_equipment_to_stockpile = {
+				type = he_46_equipment_1
+				amount = 50
+				producer = GER
+			}
+		    add_equipment_to_stockpile = {
+				type = infantry_equipment_1
+				amount = 1000
+				producer = GER
+			}
+			add_opinion_modifier = {
+				target = GER
+				modifier = funds_provided
+			}
+		}
+		x = 2
+		y = 1
+		relative_position_id = CIV_spain
+
+	}
+	focus = {
+		id = CIV_Sociedad
+		icon = GFX_focus_generic_industry_subsidies
+		cost = 25 
+		allow_branch = {
+			has_dlc = "Arms Against Tyranny"
+		}
+		prerequisite = {
+			focus = CIV_fire
+		}
+		completion_reward = {
+			GER = {
+				give_market_access = ROOT
+				add_opinion_modifier = {
+					target = ROOT
+					modifier = POR_bought_guns
+				}
+				
+			}
+			add_equipment_subsidy = {
+				cic = 500
+				equipment_type = support_equipment
+				seller_tags = { GER }
+			}
+			add_equipment_subsidy = {
+				cic = 1000
+				equipment_type = infantry_equipment
+				seller_tags = { GER }
+			}
+			add_equipment_subsidy = {
+				cic = 750
+				equipment_type = artillery_equipment
+				seller_tags = { GER }
+			}
+			if = {
+				limit = {
+					MOR = {
+						is_subject_of = ROOT
+					}
+				}
+				GER = {
+					give_market_access = MOR
+				}
+				MOR = {
+					add_offsite_building = { type = arms_factory level = 1 }
+					add_equipment_subsidy = {
+						cic = 100
+						equipment_type = infantry_equipment
+						seller_tags = { GER }
+					}
+					add_opinion_modifier = {
+						target = GER
+						modifier = aided_industry
+					}
+				}
+				
+			}
+			add_opinion_modifier = {
+				target = GER
+				modifier = POR_sold_guns
+			}
+		}
+		x = 0
+		y = 1
+		relative_position_id = CIV_fire
+
+	}
+	focus = {
+		id = CIV_mercenaries
+		icon = GFX_the_army_of_africa_model
+		cost = 69 # Previously was: 70.0 
+
+		prerequisite = {
+			focus = CIV_italy
+		}
+		prerequisite = {
+			focus = CIV_texaco
+		}
+		prerequisite = {
+			focus = CIV_fire
+		}
+		completion_reward = {
+			custom_effect_tooltip = SPA_morocco_forces
+			random_owned_controlled_state = {
+				limit = { is_on_continent = europe NOT = { state = 177 } }
+				prioritize = { 169 173 }
+				
+				create_unit = {
+					division = "name = \"1er Tabor de Regulares\" division_template = \"División de Infantería\" start_equipment_factor = 0.8"
+					OWNER = ROOT
+					allow_spawning_on_enemy_provs = no
+					count = 1
+				}
+				create_unit = {
+					division = "name = \"2o Tabor de Regulares\" division_template = \"División de Infantería\" start_equipment_factor = 0.8"
+					OWNER = ROOT
+					allow_spawning_on_enemy_provs = no
+					count = 1
+				}
+				create_unit = {
+					division = "name = \"3o Tabor de Regulares\" division_template = \"División de Infantería\" start_equipment_factor = 0.8"
+					OWNER = ROOT
+					allow_spawning_on_enemy_provs = no
+					count = 1
+				}
+				create_unit = {
+					division = "name = \"4o Tabor de Regulares\" division_template = \"División de Infantería\" start_equipment_factor = 0.8"
+					OWNER = ROOT
+					allow_spawning_on_enemy_provs = no
+					count = 1
+				}
+			}	
+			hidden_effect = {
+				MOR = {
+					load_oob = SPA_Moroccan_Army_Corps
+				}
+			}
+		}
+		x = 0
+		y = 2
+		relative_position_id = CIV_spain
+
+	}
+	focus = {
+		id = CIV_organize
+		icon = GFX_focus_generic_strike_at_democracy2
+		cost = 69 # Previously was: 70.0 
+		prerequisite = {
+			focus = CIV_mercenaries
+		}
+		completion_reward = {
+		    add_stability = 0.1
+		}
+		x = -1
+		y = 3
+		relative_position_id = CIV_spain
+
+	}
+	focus = {
+		id = CIV_falange
+		icon = GFX_goal_generic_propaganda
+		cost = 69 # Previously was: 70.0 
+		prerequisite = {
+			focus = CIV_organize
+		}
+		completion_reward = {
+		    add_popularity = {
+				   ideology = fascism
+				   popularity = 0.1
+			    }
+			add_political_power = 75
+			hidden_effect = {
+				random_owned_controlled_state = {
+					create_unit = {
+						division = "name = \"Fascist Volunteers\" division_template = \"Fascist Volunteers\" start_experience_factor = 0.5 start_equipment_factor = 0.5"
+						owner = ROOT
+					}
+				}
+			}
+		}
+		x = -1
+		y = 4
+		relative_position_id = CIV_spain
+
+	}
+	focus = {
+		id = CIV_church
+		icon = GFX_church #GFX_focus_generic_diplomatic_treaty
+		cost = 69 # Previously was: 70.0 
+		prerequisite = {
+			focus = CIV_falange
+		}
+		completion_reward = {
+			add_political_power = 150
+			hidden_effect = {
+				random_owned_controlled_state = {
+					create_unit = {
+						division = "name = \"Church Militia\" division_template = \"Militia\" start_experience_factor = 0.5 start_equipment_factor = 0.5"
+						owner = ROOT
+					}
+				}
+			}
+		}
+		x = 0
+		y = 5
+		relative_position_id = CIV_spain
+
+	}
+	focus = {
+		id = CIV_traditionalists
+		icon = GFX_focus_generic_home_defense
+		cost = 69 # Previously was: 70.0 
+		prerequisite = {
+			focus = CIV_falange
+		}
+		completion_reward = {
+		    add_popularity = {
+				   ideology = neutrality
+				   popularity = 0.1
+			    }
+			add_stability = 0.1
+			add_command_power = 25
+		}
+		x = -2
+		y = 5
+		relative_position_id = CIV_spain
+
+	}
+	focus = {
+		id = CIV_requetes
+		icon = GFX_integrate_the_requetes
+		cost = 69 # Previously was: 70.0 
+		prerequisite = {
+			focus = CIV_falange
+		}
+		completion_reward = {
+		    add_popularity = {
+			   ideology = monarchism
+			   popularity = 0.1
+			}
+			add_stability = 0.1
+			
+			random_owned_controlled_state = {
+				limit = { is_on_continent = europe NOT = { state = 177 } }
+				prioritize = { 176 }
+				
+				create_unit = {
+					division = "name = \"Tercio de Montserrat\" division_template = \"Militia\" start_experience_factor = 0.3"
+					OWNER = ROOT
+					allow_spawning_on_enemy_provs = no
+					count = 1
+				}
+				create_unit = {
+					division = "name = \"Tercio de San Miguel\" division_template = \"Militia\" start_experience_factor = 0.3"
+					OWNER = ROOT
+					allow_spawning_on_enemy_provs = no
+					count = 1
+				}
+				create_unit = {
+					division = "name = \"Tercio Navarro\" division_template = \"Militia\" start_experience_factor = 0.3"
+					OWNER = ROOT
+					allow_spawning_on_enemy_provs = no
+					count = 1
+				}
+				create_unit = {
+					division = "name = \"Tercio del Alcázar\" division_template = \"Militia\" start_experience_factor = 0.3"
+					OWNER = ROOT
+					allow_spawning_on_enemy_provs = no
+					count = 1
+				}
+				create_unit = {
+					division = "name = \"Tercio de Doña María\" division_template = \"Militia\" start_experience_factor = 0.3"
+					OWNER = ROOT
+					allow_spawning_on_enemy_provs = no
+					count = 1
+				}
+			}	
+		}
+		x = 2
+		y = 5
+		relative_position_id = CIV_spain
+
+	}
+	focus = {
+		id = CIV_state
+		icon = GFX_goal_anschluss
+		cost = 69 # Previously was: 70.0 
+		prerequisite = {
+			focus = CIV_traditionalists
+		}
+		prerequisite = {
+			focus = CIV_church
+		}
+		prerequisite = {
+			focus = CIV_requetes
+		}
+		completion_reward = {
+		    add_political_power = 200
+			
+			random_owned_controlled_state = {
+				limit = { is_on_continent = europe NOT = { state = 177 } }
+				prioritize = { 167 165 171 883 }
+				
+				create_unit = {
+					division = "name = \"Partisans\" division_template = \"Militia\" start_experience_factor = 0.2 start_equipment_factor = 0.5"
+					OWNER = ROOT
+					allow_spawning_on_enemy_provs = no
+					count = 2
+				}
+			}
+			random_owned_controlled_state = {
+				limit = { is_on_continent = europe NOT = { state = 177 } }
+				prioritize = { 167 165 171 883 }
+				
+				create_unit = {
+					division = "name = \"Partisans\" division_template = \"Militia\" start_experience_factor = 0.2 start_equipment_factor = 0.5"
+					OWNER = ROOT
+					allow_spawning_on_enemy_provs = no
+					count = 3
+				}
+			}			
+		}
+		x = 0
+		y = 6
+		relative_position_id = CIV_spain
+
+	}
+	focus = {
+		id = CIV_condor
+		icon = GFX_goal_generic_air_bomber
+		cost = 69 # Previously was: 70.0 
+
+		prerequisite = {
+			focus = CIV_trouppe
+		}
+		completion_reward = {
+		    add_equipment_to_stockpile = {
+				type = he_51_equipment_2
+				amount = 100
+				producer = GER
+			}
+			add_equipment_to_stockpile = {
+				type = hs_126_equipment_1
+				amount = 25
+				producer = GER
+			}
+			add_equipment_to_stockpile = {
+				type = he_46_equipment_1
+				amount = 50
+				producer = GER
+			}
+			add_equipment_to_stockpile = {
+				type = he_45_equipment_1
+				amount = 50
+				producer = GER
+			}
+			add_equipment_to_stockpile = {
+				type = he_50_equipment_1
+				amount = 25
+				producer = GER
+			}
+			air_experience = 70
+			random_enemy_country = {
+				 	every_owned_state = {
+						damage_building = {
+							type = infrastructure
+							damage = 1.5
+						}
+					}
+				}
+		}
+		x = 1
+		y = 4
+		relative_position_id = CIV_spain
+
+	}
+	focus = {
+		id = CIV_trouppe
+		#icon = GFX_focus_generic_italy_first
+		icon = GFX_focus_chi_reach_out_to_italy
+		cost = 69 # Previously was: 70.0 
+
+		prerequisite = {
+			focus = CIV_mercenaries
+		}
+		completion_reward = {
+		    add_equipment_to_stockpile = {
+				type = infantry_equipment_1
+				amount = 1000
+				producer = ITA
+			}
+			add_equipment_to_stockpile = {
+				type = cr_series_fighter_equipment_3
+				amount = 50
+				producer = ITA
+			}
+			add_equipment_to_stockpile = {
+				type = cr_32_fighter_equipment_1
+				amount = 50
+				producer = ITA
+			}
+			add_equipment_to_stockpile = {
+				type = cr_32_fighter_equipment_2
+				amount = 50
+				producer = ITA
+			}
+            add_tech_bonus = {
+				name = land_doc_bonus
+				bonus = 0.15
+				uses = 3
+				category = land_doctrine
+			}
+			army_experience = 50
+		}
+		x = 2
+		y = 3
+		relative_position_id = CIV_spain
+
+	}
+	focus = {
+		id = CIV_ita_navy
+		icon = GFX_focus_chi_reach_out_to_italy
+		cost = 83 # Previously was: 84.0 
+
+		prerequisite = {
+			focus = CIV_trouppe
+		}
+		completion_reward = {
+			custom_effect_tooltip = CIV_ita_navy_tooltip
+		    hidden_effect = {
+				if = {
+					limit = {
+						not = { has_dlc = "Man the Guns" }
+					}
+					load_oob = "italian_support_provided"
+				}
+				if = {
+					limit = {
+						has_dlc = "Man the Guns"
+					}
+					load_oob = "italian_support_provided_mtg"
+				}				
+			}
+		}
+		x = 1
+		y = 1
+		relative_position_id = CIV_trouppe
+
+	}
+	focus = {
+		id = CIV_decree
+		icon = GFX_national_regeneration
+		cost = 69 # Previously was: 70.0 
+		prerequisite = {
+			focus = CIV_state
+		}
+		available = { 
+			OR = {
+				has_government = fascism
+			}
+		}
+		mutually_exclusive = {
+			focus = CIV_monarchy
+		}
+		mutually_exclusive = {
+			focus = CIV_CEDA
+		}
+	completion_reward = {
+		    set_country_flag = SPR_decree
+		set_party_name = 
+		{ideology = fascism
+		long_name = SPR_fetjons_long 
+		name = SPR_fetjons }
+		
+		GER = { 
+			add_opinion_modifier = {
+				target = ROOT
+				modifier = large_increase
+			}
+		}
+	    add_political_power = 100
+		set_cosmetic_tag = SPA
+		hidden_effect = {
+		    add_popularity = {
+		        ideology = fascism
+			    popularity = 1
+		    }
+			add_popularity = {
+		        ideology = neutrality
+			    popularity = 0.1
+		    }
+		    add_popularity = {
+		        ideology = socialism
+			    popularity = 0.1
+		    }
+			add_popularity = {
+		        ideology = communism
+			    popularity = 0.2
+		    }
+			set_party_name = {  
+			    ideology = neutrality
+		        long_name = SPR_ade_long 
+		        name = SPR_ade 
+			}
+			set_party_name = {  
+			    ideology = socialism
+		        long_name = SPR_anfd_long 
+		        name = SPR_anfd
+			}
+			add_country_leader_role = { 
+    			character = SPR_segismundo_casado
+   				 country_leader = {
+     			   ideology = centrism 
+      			   expire = "1965.1.1.1" 
+        			traits = { } 
+    			} 
+			}
+			SPR_segismundo_casado = {
+				promote_character = yes
+			}
+			add_country_leader_role = { 
+    			character = SPR_indalecio_prieto_tuero
+   				country_leader = {
+     			   ideology = social_democracy 
+      			   expire = "1965.1.1.1" 
+        			traits = { public_order_keeper } 
+    			} 
+			}
+			SPR_indalecio_prieto_tuero = {
+				promote_character = yes
+			}
+		}
+	}
+		x = 0
+		y = 7
+		relative_position_id = CIV_spain
+
+	}
+	focus = {
+		id = CIV_cult
+		icon = GFX_goal_continuous_def_against_influence
+		cost = 69 # Previously was: 70.0 
+		prerequisite = {
+			focus = CIV_decree
+		}
+		x = 0
+		y = 8
+		relative_position_id = CIV_spain
+        completion_reward = {
+		    add_ideas = SPR_regime1
+	    }
+	}
+	focus = {
+		id = CIV_responsabilidades
+		icon = GFX_focus_CZE_german_puppet
+		cost = 69 # Previously was: 70.0 
+		prerequisite = {
+			focus = CIV_cult
+		}
+		completion_reward = { 
+		swap_ideas = { remove_idea = SPR_regime1 add_idea = SPR_regime2 } 
+		}
+		x = 0
+		y = 9
+		relative_position_id = CIV_spain
+
+	}
+	focus = {
+		id = CIV_communists
+		icon = GFX_oppose_the_communists
+		cost = 69 # Previously was: 70.0 
+		prerequisite = {
+			focus = CIV_responsabilidades
+		}
+		completion_reward = { 
+		swap_ideas = { remove_idea = SPR_regime2 add_idea = SPR_regime3 } 
+		}
+		x = 0
+		y = 10
+		relative_position_id = CIV_spain
+
+	}
+	focus = {
+		id = CIV_mass
+		icon = GFX_plant_the_seeds_of_revolution
+		cost = 70 # Previously was: 70.0 
+		prerequisite = {
+			focus = CIV_anarchists
+		}
+		completion_reward = {
+		    add_ideas = SPR_revolution
+	    }
+		x = -1
+		y = 10
+		relative_position_id = CIV_resistance
+
+	}
+	focus = {
+		id = CIV_revolucionario
+		icon = GFX_focus_generic_strike_at_democracy2
+		cost = 70 # Previously was: 70.0 
+		prerequisite = {
+			focus = CIV_mass
+		}
+		completion_reward = { 
+		swap_ideas = { remove_idea = SPR_revolution add_idea = SPR_revolution2 } 
+		}
+		x = -1
+		y = 11
+		relative_position_id = CIV_resistance
+
+	}
+	focus = {
+		id = CIV_break
+		icon = GFX_end_fascism_at_all_costs
+		cost = 70 # Previously was: 70.0 
+		prerequisite = {
+			focus = CIV_revolucionario
+		}
+		completion_reward = { 
+		swap_ideas = { remove_idea = SPR_revolution2 add_idea = SPR_revolution3 } 
+		}
+		x = -1
+		y = 12
+		relative_position_id = CIV_resistance
+
+	}
+	focus = {
+		id = CIV_monarchy
+		icon = GFX_monarchism_focus #GFX_focus_hun_elect_a_king
+		cost = 70 # Previously was: 70.0 
+		prerequisite = {
+			focus = CIV_state
+		}
+		mutually_exclusive = {
+			focus = CIV_decree
+		}
+		mutually_exclusive = {
+			focus = CIV_CEDA
+		}
+		available = { 
+			has_government = monarchism
+		}
+		completion_reward = {
+		    add_political_power = 100
+			set_country_flag = king_restored 
+			set_party_name = {
+				ideology = fascism
+				long_name = SPR_directorio_long 
+				name = SPR_directorio
+			}
+			add_ideas = juan_iii
+			set_cosmetic_tag = SPA_MONARCHY
+		}
+		x = -2
+		y = 7
+		relative_position_id = CIV_spain
+
+	}
+	focus = {
+		id = CIV_aristocrat
+		icon = GFX_goal_generic_cavalry
+		cost = 70 # Previously was: 70.0 
+		prerequisite = {
+			focus = CIV_monarchy
+		}
+		completion_reward = {
+		    add_ideas = SPR_royal1
+	    }
+		x = -2
+		y = 8
+		relative_position_id = CIV_spain
+
+	}
+	focus = {
+		id = CIV_british
+		icon = GFX_focus_chi_british_cooperation #GFX_goal_tfv_strengthen_commonwealth_ties
+		cost = 70 # Previously was: 70.0 
+		prerequisite = {
+			focus = CIV_aristocrat
+		}
+		completion_reward = {
+		    add_equipment_to_stockpile = {
+				type = trm_light_tank_chassis_eng_vickers_e_1
+				amount = 75
+				producer = ENG
+			}
+			add_tech_bonus = {
+				name = armor_bonus
+				bonus = 0.15
+				uses = 1
+				category = armor_tech
+			}
+		}
+		x = -2
+		y = 9
+		relative_position_id = CIV_spain
+
+	}
+	focus = {
+		id = CIV_resist
+		icon = GFX_focus_generic_coastal_fort
+		cost = 70 # Previously was: 70.0 
+		prerequisite = {
+			focus = CIV_british
+		}
+		completion_reward = { 
+		swap_ideas = { remove_idea = SPR_royal1 add_idea = SPR_royal2 } 
+		}
+		x = -2
+		y = 10
+		relative_position_id = CIV_spain
+
+	}
+	focus = {
+		id = CIV_allies
+		icon = GFX_goal_allies_support_democracy #GFX_focus_chi_british_cooperation
+		cost = 70 # Previously was: 70.0 
+		prerequisite = {
+			focus = CIV_resistir
+		}
+		available = {
+		    ENG = {
+			    has_war_with = GER
+			}
+		}
+		completion_reward = {
+		    ENG = {
+			    add_to_faction = ROOT
+			}
+		}
+		x = 1
+		y = 13
+		relative_position_id = CIV_resistance
+
+	}
+	focus = {
+		id = CIV_axis
+		icon = GFX_focus_chi_mission_to_germany
+		cost = 70 # Previously was: 70.0 
+		available = {
+		    ENG = {
+			    has_war_with = GER
+			}
+		}
+		prerequisite = {
+			focus = CIV_communists
+		}
+		completion_reward = {
+		    GER = {
+			    add_to_faction = ROOT
+			}
+		}
+		x = 0
+		y = 11
+		relative_position_id = CIV_spain
+
+	}
+	focus = {
+		id = CIV_recruit1
+		icon = GFX_goal_ger_augustprogram
+		
+		x = 12
+		y = 0
+		cost = 32 # Previously was: 31.5 
+
+
+		available = {
+		}
+
+		available_if_capitulated = yes
+
+		completion_reward = {
+			random_owned_controlled_state = {
+				add_extra_state_shared_building_slots = 1
+				add_building_construction = { 
+					type = recruitment_building
+					level = 1 
+					instant_build = yes 
+				}
+			}
+		}
+	}
+	focus = {
+		id = CIV_recruit2
+		icon = GFX_goal_ger_augustprogram
+		prerequisite = { focus = CIV_recruit1 }
+		x = 0
+		y = 1
+		relative_position_id = CIV_recruit1
+		cost = 32 # Previously was: 31.5 
+
+
+		available = {
+		}
+
+		available_if_capitulated = yes
+
+		completion_reward = {
+			random_owned_controlled_state = {
+				add_extra_state_shared_building_slots = 1
+				add_building_construction = { 
+					type = recruitment_building
+					level = 1 
+					instant_build = yes 
+				}
+			}
+		}
+	}
+		
+	focus = {
+		id = SPR_Mil
+		icon = GFX_goal_generic_build_tank
+		x = 16
+		y = 0
+		cost = 50 # Previously was: 70.0 
+
+		
+		completion_reward = {
+			add_tech_bonus = {
+				name = SPR_Doc_Bonus
+				bonus = 0.25
+				uses = 1
+				category = land_doctrine
+			}
+		}
+	}
+	focus = {
+		id = CIV_skies
+		icon = GFX_goal_generic_air_fighter
+		prerequisite = { focus = SPR_Mil }
+		x = 0
+		y = 1
+		relative_position_id = SPR_Mil
+		cost = 40
+
+		
+		completion_reward = {
+		air_experience = 5
+			add_tech_bonus = {
+				name = CIV_skies
+				uses = 1
+				bonus = 0.15
+				category = air_doctrine
+			}
+		}
+	}	
+	focus = {
+		id = SPR_Equipment
+		icon = GFX_goal_generic_small_arms
+		prerequisite = { focus = SPR_Mil }
+		x = 14
+		y = 1
+		cost = 50 # Previously was: 70.0 
+
+		
+		completion_reward = {
+		army_experience = 5
+			add_tech_bonus = {
+				name = SPR_eq_bonus
+				uses = 2
+				bonus = 0.15
+				category = infantry_weapons
+				category = artillery
+			}
+		}
+	}
+	
+	focus = {
+		id = SPR_Expand
+		icon = GFX_focus_generic_military_mission_red #GFX_goal_generic_army_doctrines
+		prerequisite = { focus = SPR_Mil }
+		x = 18
+		y = 1
+		cost = 50 # Previously was: 70.0 
+
+		
+		completion_reward = {
+		army_experience = 5
+			add_tech_bonus = {
+				name = SPR_Doc_Bonus
+				bonus = 0.2
+				uses = 1
+				category = land_doctrine
+			}
+		}
+	}
+	
+	focus = {
+		id = SPR_Mot
+		icon = GFX_goal_generic_army_motorized
+		prerequisite = { focus = SPR_Equipment }
+		bypass = { has_tech = motorised_infantry }
+		x = 14
+		y = 2
+		cost = 50 # Previously was: 70.0 
+
+		
+		completion_reward = {
+		army_experience = 5
+			add_tech_bonus = {
+				name = SPR_Mot
+				bonus = 0.2
+				uses = 1
+				technology = motorised_infantry
+			}
+		}
+	}
+	
+	focus = {
+		id = SPR_Mech
+		icon = GFX_goal_generic_army_motorized
+		prerequisite = { focus = SPR_Mot }
+		x = 14
+		y = 3
+		cost = 50 # Previously was: 70.0 
+
+		
+		completion_reward = {
+			add_tech_bonus = {
+				name = SPR_Mot
+				bonus = 0.2
+				uses = 1
+				technology = motorised_infantry
+			}
+		}
+	}
+	
+
+	
+	focus = {
+		id = SPR_Doctrine
+		icon = GFX_goal_generic_army_doctrines
+		prerequisite = { focus = SPR_Expand }
+		x = 18
+		y = 2
+		cost = 50 # Previously was: 70.0 
+
+		
+		completion_reward = {
+		army_experience = 5
+			add_tech_bonus = {
+				name = SPR_Doc_Bonus
+				bonus = 0.2
+				uses = 1
+				category = land_doctrine
+			}
+		}
+	}
+	
+	focus = {
+		id = SPR_Doc_Bonus_2
+		icon = GFX_goal_generic_army_artillery2 #GFX_goal_generic_army_artillery
+		prerequisite = { focus = SPR_Doctrine }
+		x = 18
+		y = 3
+		cost = 50 # Previously was: 70.0 
+
+		
+		completion_reward = {
+			add_tech_bonus = {
+				name = SPR_Art_bonus
+				bonus = 0.15
+				uses = 2
+				category = artillery
+				category = cat_anti_tank
+			}
+		}
+	}
+	focus = {
+		id = CIV_Doc_slot
+		icon = GFX_goal_generic_death_swords
+		prerequisite = { focus = SPR_Doctrine }
+		prerequisite = { focus = CIV_skies }
+		x = -1
+		y = 3
+		relative_position_id = SPR_Doctrine
+		cost = 65 # Previously was: 70.0 
+
+		
+		completion_reward = {
+			add_research_slot = 1
+			add_research_centre = yes
+			SLOT:ww1_land_doctrine_folder = yes
+			SLOT:air_techs_folder = yes
+		
+		}
+	}	
+	focus = {
+		id = SPR_Domestic_Tanks
+		icon = GFX_goal_generic_army_tanks
+		prerequisite = { focus = SPR_Mech }
+		mutually_exclusive = { focus = SPR_Foreign_Tanks }
+		x = 14
+		y = 4
+		cost = 50
+
+		
+		completion_reward = {
+			add_tech_bonus = {
+				name = SPR_Tanks
+				bonus = 0.15
+				uses = 1
+				category = armor_tech
+				}
+			}
+		}
+		
+	focus = {
+		id = SPR_Foreign_Tanks
+		icon = GFX_goal_generic_military_deal
+		prerequisite = { focus = SPR_Mech }
+		mutually_exclusive = { focus = SPR_Domestic_Tanks }
+		x = 16
+		y = 4
+		cost = 50 # Previously was: 70.0 
+
+		
+		available = {
+			OR = {
+				SOV_will_support = yes
+				ENG_will_support = yes
+				GER_will_support = yes
+				FRA_will_support = yes
+				ITA_will_support = yes
+			}
+		}
+		
+		completion_reward = {
+			if = {
+				limit = {
+					has_dlc = "Arms Against Tyranny"
+				}
+				if = {
+					limit = {
+						SOV_will_support = yes
+					}
+					add_equipment_subsidy = {
+						cic = 500
+						equipment_type = trm_light_tank_chassis
+						seller_tags = { SOV }
+					}
+				}
+				if = {
+					limit = {
+						ENG_will_support = yes
+					}
+					add_equipment_subsidy = {
+						cic = 500
+						equipment_type = trm_light_tank_chassis
+						seller_tags = { ENG }
+					}
+				}
+				if = {
+					limit = {
+						FRA_will_support = yes
+					}
+					add_equipment_subsidy = {
+						cic = 500
+						equipment_type = trm_light_tank_chassis
+						seller_tags = { FRA }
+					}
+				}
+				if = {
+					limit = {
+						GER_will_support = yes
+					}
+					add_equipment_subsidy = {
+						cic = 500
+						equipment_type = trm_light_tank_chassis
+						seller_tags = { GER }
+					}
+				}
+				if = {
+					limit = {
+						ITA_will_support = yes
+					}
+					add_equipment_subsidy = {
+						cic = 500
+						equipment_type = trm_light_tank_chassis
+						seller_tags = { ITA }
+					}
+				}
+			}
+			else = {
+				add_tech_bonus = {
+					name = SPR_Tanks
+					bonus = 0.15
+					uses = 2
+					category = armor_tech
+				}
+			}
+		}
+	}
+		
+	focus = {
+		id = SPR_Doc_Wep
+		icon = GFX_goal_generic_military_sphere
+		prerequisite = { focus = SPR_Doc_Bonus_2 }
+		x = 18
+		y = 4
+		cost = 50 # Previously was: 70.0 
+
+			
+			completion_reward = {
+			add_tech_bonus = {
+				name = SPR_Comb_Bonus
+				bonus = 0.2
+				uses = 1
+				category = infantry_weapons
+				category = artillery
+				}
+			add_tech_bonus = {
+				name = SPR_Doc_Bonus_3
+				bonus = 0.15
+				uses = 2
+				category = land_doctrine
+				}
+			}
+		}
+
+	focus = {
+		id = CIV_CEDA
+		icon = GFX_dictator_for_life
+		cost = 70 # Previously was: 70.0 
+		prerequisite = {
+			focus = CIV_state
+		}
+		mutually_exclusive = {
+			focus = CIV_monarchy
+		}
+		mutually_exclusive = {
+			focus = CIV_decree
+		}
+		available = { 
+				has_government = neutrality
+		}
+		completion_reward = {
+		    add_political_power = 100
+			set_party_name = {
+				ideology = conservatism
+				long_name = SPR_neutrality_party_long 
+				name = SPR_neutrality_party
+			}
+			add_popularity = {
+				ideology = conservatism
+				popularity = 0.15
+			}
+			#set_cosmetic_tag = SPA_CEDA
+		}
+		x = 2
+		y = 7
+		relative_position_id = CIV_spain
+	}
+	focus = {
+		id = CIV_port
+		icon = GFX_goal_generic_major_alliance
+		cost = 70 # Previously was: 70.0 
+		prerequisite = {
+			focus = CIV_CEDA
+		}
+		completion_reward = {
+		    add_to_faction = POR
+			#bad. should be an event
+		}
+		x = 2
+		y = 8
+		relative_position_id = CIV_spain
+	}
+}

@@ -1,0 +1,540 @@
+add_namespace = sia
+country_event = { #Diplomatic Envoy to USA to redraw unequal treaty
+	id = sia.1
+	title = sia.1.t
+	desc = sia.1.d
+
+	is_triggered_only = yes
+	immediate = {
+		hidden_effect = {
+			remove_opinion_modifier = {
+				target = SIA
+				modifier = sia_treaty
+			}
+			SIA = {
+				remove_opinion_modifier = {
+					target = USA
+					modifier = sia_treaty
+				}
+			}
+		}
+	}
+
+	option = {
+		ai_chance = {
+			factor = 5
+		}
+		name = sia.1.a
+		add_political_power = -5
+		USA_congress_small_opposition = yes
+		add_opinion_modifier = {
+			target = SIA
+			modifier = sia_treaty
+		}
+		SIA = {
+			country_event = sia.2
+		}
+	}
+	option = {
+		ai_chance = {
+			factor = 55
+		}
+		name = sia.1.b
+		SIA = {
+			country_event = sia.3
+		}
+	}
+}
+country_event = { #Diplomatic Envoy to USA, USA said Yes
+	id = sia.2
+	title = sia.2.t
+	desc = sia.2.d
+
+	is_triggered_only = yes
+	immediate = {
+	}
+
+	option = {
+		ai_chance = {
+			factor = 5
+		}
+		name = sia.2.a
+		add_political_power = 25
+		add_opinion_modifier = {
+			target = USA
+			modifier = friendship_treaty
+		}
+	}
+}
+country_event = { #Diplomatic Envoy to USA, USA said no
+	id = sia.3
+	title = sia.3.t
+	desc = sia.3.d
+
+	is_triggered_only = yes
+	immediate = {
+	}
+
+	option = {
+		ai_chance = {
+			factor = 5
+		}
+		name = sia.3.a
+		add_opinion_modifier = {
+			target = USA
+			modifier = anti_capitalist_diplomacy_capitalists_temp
+		}
+	}
+}
+country_event = { #Diplomatic Envoy to ENG for a NAP
+	id = sia.4
+	title = sia.4.t
+	desc = sia.4.d
+
+	is_triggered_only = yes
+
+	option = {
+		ai_chance = {
+			factor = 95
+		}
+		name = sia.4.a
+		add_political_power = 5
+		diplomatic_relation = {
+			country = SIA
+			relation = non_aggression_pact
+			active = yes
+		}			
+		SIA = {
+			country_event = sia.5
+		}
+	}
+	option = {
+		ai_chance = {
+			factor = 5
+		}
+		name = sia.1.b
+		add_war_support = -0.10
+		add_stability = -0.02
+		SIA = {
+			country_event = sia.6
+			effect_tooltip = {
+				add_war_support = 0.10
+				add_political_power = 5
+			}	
+		}
+	}
+}
+country_event = { #UK said yes
+	id = sia.5
+	title = sia.5.t
+	desc = sia.5.d
+
+	is_triggered_only = yes
+	immediate = {
+	}
+
+	option = {
+		name = sia.5.a
+		effect_tooltip = {
+			diplomatic_relation = {
+				country = ENG
+				relation = non_aggression_pact
+				active = yes
+			}	
+		}			
+	}
+}
+country_event = { #UK said no
+	id = sia.6
+	title = sia.6.t
+	desc = sia.6.d
+
+	is_triggered_only = yes
+	immediate = {
+	}
+
+	option = {
+		name = sia.6.a
+		add_war_support = 0.10
+		add_political_power = 5					
+	}
+}
+country_event = { #Franco Thai War, lets settle this
+	id = sia.7
+	title = sia.7.t
+	desc = sia.7.d
+
+	is_triggered_only = yes
+	immediate = {
+	}
+
+	option = { #It is time for this to end
+		name = sia.7.a
+		SIA = {
+			country_event = sia.8
+		}
+		effect_tooltip = {
+			VIC = {
+				country_event = sia.9
+			}
+			if = {
+				limit = {
+					has_full_control_of_state = 833
+				}
+				transfer_state = 833
+			}
+			if = {
+				limit = {
+					has_full_control_of_state = 947
+				}
+				transfer_state = 947
+				hidden_effect = {
+					remove_state_claim = 947
+				}
+				add_state_core = 947
+			}			
+			if = {	
+				limit = {
+					FRI = {
+						has_capitulated = yes
+					}
+				}
+				unlock_national_focus = SIA_request_territory
+				add_state_claim = 741
+				transfer_state = 741
+				add_state_claim = 670
+				transfer_state = 670				
+			}
+		}
+	}
+}
+country_event = { #Franco Thai War, japan demands we end this
+	id = sia.8
+	title = sia.8.t
+	desc = sia.8.d
+
+	is_triggered_only = yes
+	immediate = {
+	}
+
+	option = { #It is time for this to end
+		name = sia.7.a
+		ai_chance = {
+			factor = 100
+		}
+		if = {
+			limit = {
+				has_idea = SIA_neutrality_idea
+			}
+			remove_ideas = SIA_neutrality_idea
+		}
+		VIC = {
+			custom_effect_tooltip = needs_approval
+			country_event = sia.9
+		}
+		effect_tooltip = {
+			if = {
+				limit = {
+					has_full_control_of_state = 833
+				}
+				transfer_state = 833
+			}
+			if = {
+				limit = {
+					has_full_control_of_state = 947
+				}
+				transfer_state = 947
+				hidden_effect = {
+					remove_state_claim = 947
+				}
+				add_state_core = 947
+			}			
+			if = {	
+				limit = {
+					FRI = {
+						has_capitulated = yes
+					}
+				}
+				unlock_national_focus = SIA_request_territory
+				add_state_claim = 741
+				transfer_state = 741
+				add_state_claim = 670
+				transfer_state = 670
+			}
+		}
+		
+	}
+	option = { # We can fight on
+		name = sia.8.b
+		declare_war_on = {
+			target = JAP
+			type = annex_everything
+		}
+	}
+}
+country_event = { #Franco Thai War, japan demands we end this
+	id = sia.9
+	title = sia.8.t
+	desc = sia.9.d
+
+	is_triggered_only = yes
+	immediate = {
+	}
+
+	option = { #We must accept our defeat
+		name = sia.7.a
+		ai_chance = {
+			factor = 100
+		}
+		SIA = {
+			if = {
+				limit = {
+					OR = {
+						has_full_control_of_state = 833
+						AND = {
+							is_ai = yes
+							FRI = {
+								is_ai = yes
+							}
+							VIC = {
+								is_ai = yes
+							}
+						}
+					}
+				}
+				transfer_state = 833
+			}
+			if = {
+				limit = {
+					OR = {
+						has_full_control_of_state = 947
+						AND = {
+							is_ai = yes
+							FRI = {
+								is_ai = yes
+							}
+							VIC = {
+								is_ai = yes
+							}
+						}
+					}
+				}
+				transfer_state = 947
+				hidden_effect = {
+					remove_state_claim = 947
+				}
+				add_state_core = 947
+			}		
+			if = {	
+				limit = {
+					FRI = {
+						has_capitulated = yes
+					}
+				}
+					unlock_national_focus = SIA_request_territory
+					add_state_claim = 741
+					transfer_state = 741
+					add_state_claim = 670
+					transfer_state = 670
+			}	
+		}
+		white_peace = SIA
+	}
+	option = { # We can fight on
+		name = sia.9.b
+		set_autonomy = {
+			target = FRI
+			autonomous_state = autonomy_free
+			end_wars = no
+		}
+		white_peace = SIA
+	}
+}
+country_event = { #Royal Real Estate Scandal
+	id = sia.10 
+	title = sia.10.t
+	desc = sia.10.desc
+
+	is_triggered_only = yes
+	trigger = {
+
+	}
+
+	option = {
+		ai_chance = {
+			factor = 100
+		}
+		name = sia.10.a
+		
+		add_ideas = SIA_crown_lands_scandal
+	}
+}
+country_event = { #Ask Japan for land
+	id = sia.11
+	title = sia.11.t
+	desc = sia.11.d
+
+	is_triggered_only = yes
+	immediate = {
+	}
+
+	option = { # give it all
+		ai_chance = {
+			factor = 3
+		}
+		name = sia.11.a
+		SIA = {
+			transfer_state = 741
+			transfer_state = 640
+		}
+	}
+	option = { # just Loas
+		ai_chance = {
+			factor = 5
+		}
+		name = sia.11.b
+		SIA = {
+			transfer_state = 640
+		}
+	}
+	option = { # just Cambodia
+		ai_chance = {
+			factor = 5
+		}
+		name = sia.11.c
+		SIA = {
+			transfer_state = 741
+		}
+	}
+	option = { # No Thanks
+		ai_chance = {
+			factor = 1
+		}
+		name = sia.11.e
+	}
+}
+country_event = { #hidden event to start japan timer for Thai Franco war
+	id = sia.12
+	hidden = yes
+
+	is_triggered_only = yes
+	immediate = {
+		activate_mission = franco_thia-war	
+	}
+}
+country_event = { #1st Lot of Italian Trad class arrive
+	id = sia.13
+	title = sia.13.t
+	desc = sia.13.d
+	picture = GFX_report_event_mussolini_flag
+
+	is_triggered_only = yes
+	immediate = {
+		hidden_effect = {
+			ITA = {
+				meta_effect = {
+					text = {
+						create_equipment_variant = {
+							name = "Trad Class" 		
+							type = nrm_ship_hull_torpedo_boat_2
+							name_group = SIA_TB_HISTORICAL
+							parent_version = 0
+							allow_without_tech = yes
+							show_position = no
+							role_icon_index = 25
+							modules = {
+								fixed_ship_hullform_slot = nrm_ship_hullform_torpedo_boat_2
+								fixed_ship_engine_slot = nrm_destroyer_engine_S2_008
+								fixed_ship_sonar_slot = empty
+								fixed_ship_battery_slot = nrm_destroyer_battery_3_2_x3
+								fixed_ship_subdivision_slot = nrm_subdivision_2
+								fixed_ship_damagecontrol_slot = nrm_damagecontrol_2
+								fixed_ship_range_slot = nrm_range_torpedo_boat_1
+								fixed_ship_radar_slot = empty
+								fixed_ship_fire_control_system_slot = nrm_fire_control_2
+								fixed_ship_fire_control_system_aa_slot = empty
+								custom_slot_1 = nrm_support_destroyer_AA_1
+								custom_slot_2 = empty
+								custom_slot_4 = nrm_support_destroyer_TRP_21_C_1_x3
+								custom_slot_5 = nrm_support_destroyer_TRP_21_C_1_x3
+								custom_slot_6 = empty
+							}
+							[AI_OBSOLETE]
+						}
+					}
+					AI_OBSOLETE = "[GetAIObsolete]"
+				}
+			}
+			create_equipment_variant = {
+				name = "Trad Class" 		
+				type = nrm_ship_hull_torpedo_boat_2
+				name_group = SIA_TB_HISTORICAL
+				parent_version = 0
+				allow_without_tech = yes
+				show_position = no
+				role_icon_index = 25
+				modules = {
+					fixed_ship_hullform_slot = nrm_ship_hullform_torpedo_boat_2
+					fixed_ship_engine_slot = nrm_destroyer_engine_S2_008
+					fixed_ship_sonar_slot = empty
+					fixed_ship_battery_slot = nrm_destroyer_battery_3_2_x3
+					fixed_ship_subdivision_slot = nrm_subdivision_2
+					fixed_ship_damagecontrol_slot = nrm_damagecontrol_2
+					fixed_ship_range_slot = nrm_range_torpedo_boat_1
+					fixed_ship_radar_slot = empty
+					fixed_ship_fire_control_system_slot = nrm_fire_control_2
+					fixed_ship_fire_control_system_aa_slot = empty
+					custom_slot_1 = nrm_support_destroyer_AA_1
+					custom_slot_2 = empty
+					custom_slot_4 = nrm_support_destroyer_TRP_21_C_1_x3
+					custom_slot_5 = nrm_support_destroyer_TRP_21_C_1_x3
+					custom_slot_6 = empty
+				}
+			}
+			country_event = { id = sia.14 days = 94 }
+		}
+	}
+
+	option = {
+		name = sia.13.a
+		set_country_flag = trad_boats
+		mark_focus_tree_layout_dirty = yes
+		add_opinion_modifier = {
+			target = ITA
+			modifier = past_sale_1
+		}
+		ITA = {
+			add_opinion_modifier = {
+				target = SIA
+				modifier = past_sale_1
+			}
+		}
+		create_ship = { type = nrm_ship_hull_torpedo_boat_2 equipment_variant = "Trad Class" creator = ITA }
+		create_ship = { type = nrm_ship_hull_torpedo_boat_2 equipment_variant = "Trad Class" creator = ITA }
+	}
+}
+country_event = { #2nd Italian minelayer arrives
+	id = sia.14
+	title = sia.14.t
+	desc = sia.14.d
+	picture = GFX_report_event_mussolini_flag
+
+	is_triggered_only = yes
+	immediate = {
+	}
+
+	option = {
+		name = sia.14.a
+		add_opinion_modifier = {
+			target = ITA
+			modifier = past_sale_2
+		}
+		ITA = {
+			add_opinion_modifier = {
+				target = SIA
+				modifier = past_sale_2
+			}
+		}
+		create_ship = { type = nrm_ship_hull_light_2 equipment_variant = "Bangrachan Minelayers" creator = SIA name = "Nangsarai" }
+	}
+}

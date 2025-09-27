@@ -1,0 +1,118 @@
+﻿add_namespace = targeted_decisions
+
+country_event = { 
+	id = targeted_decisions.43 #public_support_for_from
+	hidden = yes  #timeout
+    timeout_days = 1
+	
+	trigger = {
+		is_ai = no
+		is_major = yes
+		has_war = yes
+		is_faction_leader = no 
+		num_faction_members > 1
+	}
+	
+	mean_time_to_happen = { days = 2 }
+	
+	immediate = {
+		faction_leader = {
+			random_scope_in_array = {
+				array = exiles
+				limit = {
+					has_legitimacy < 100
+					#var:Root.faction_leader  = {
+					#	is_hosting_exile = PREV 
+					#}
+				}
+				activate_targeted_decision = {
+					target = ROOT
+					decision = public_support_for_from
+				}
+			}
+		}
+	}
+		
+	option = {
+		
+	}
+}
+
+country_event = { 
+	id = targeted_decisions.44 #Military_Parade_targeted
+	hidden = yes  #timeout
+    timeout_days = 1
+	
+	trigger = { 
+		has_war = yes
+		has_capitulated = yes
+		NOT = { has_variable = pp_gain }
+		NOT = { has_country_flag = enemy_parade }
+		check_variable = { num_owned_states > 2 }
+	}
+	 
+	mean_time_to_happen = { days = 2 }
+	
+	option = {
+		clear_variable = pp_gain
+		var:original_capital = {
+			CONTROLLER = { 
+				set_temp_variable = { country_id = id }
+			}
+			set_temp_variable = { population = state_population_k }
+			if = { 	
+				limit = {
+					state = 896
+				}
+				add_to_temp_variable = { population = 841.state_population_k }
+			}
+			divide_temp_variable = { population = 100 }
+			
+			set_temp_variable = { state_value = state_strategic_value }
+				if = { 	
+					limit = {
+						state = 896
+					}
+					add_to_temp_variable = { state_value = 841.state_strategic_value }
+				}
+			multiply_temp_variable = { state_value = 0.15 }
+		}
+		every_owned_state = { 
+			limit = {
+				is_controlled_by = var:country_id
+			}
+			add_to_temp_variable = { lost_states = 1 }
+		}
+		set_temp_variable = { country_population = original_max_manpower_k }
+		divide_temp_variable = { country_population = 5000 }
+		
+		multiply_temp_variable = { lost_states = 2.0 }
+		
+		set_temp_variable = { divisions = From.num_divisions }
+		multiply_temp_variable = { divisions = 1.2 }
+		
+		clamp_temp_variable = { var = country_population min = 3 max = 15 }
+		clamp_temp_variable = { var = state_value min = 5 max = 30 }
+		clamp_temp_variable = { var = population min = 5 max = 25 }
+		clamp_temp_variable = { var = lost_states min = 0 max = 25 }
+		clamp_temp_variable = { var = divisions min = 0 max = 15 }
+		
+		add_to_variable = { pp_gain = state_value }
+		add_to_variable = { pp_gain = country_population }
+		add_to_variable = { pp_gain = population }
+		add_to_variable = { pp_gain = lost_states }
+		add_to_variable = { pp_gain = divisions }
+		
+		clamp_variable = { var = pp_gain min = 20 max = 90 }
+		var:country_id = {
+			activate_targeted_decision = {
+				target = ROOT
+				decision = Military_Parade_targeted
+			}
+		}
+	}
+		
+	option = {
+		
+	}
+}

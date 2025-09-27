@@ -1,0 +1,340 @@
+scripted_gui = {
+
+	usa_congress_decision_ui = {
+		context_type = decision_category
+		window_name = "usa_congress_decision_ui_window"
+
+		properties = {
+			senate_icon = {
+				frame = current_senate_icon_frame
+			}
+
+			house_icon = {
+				frame = current_house_icon_frame
+			}
+		}
+	}
+	
+	rom_internal_factions_decision_ui = {
+		context_type = decision_category
+		window_name = "rom_internal_factions_decision_ui_window"
+		visible = {
+            original_tag = ROM
+		}
+	}
+	
+	MTG_naval_treaties_gui = {  
+		context_type = decision_category
+		  
+		window_name = "MTG_treaty_container"
+ 
+		properties = {
+			flag = {
+				image = "[This.GetFlag]"
+			}
+		}
+		
+		dirty = global.num_days
+		
+		dynamic_lists = {
+			treaty_participants_list = {
+				array = global.MTG_naval_treaty
+				change_scope = yes
+				entry_container = "naval_treaty_participant_entry"
+			}
+		} 
+	}
+	CW_the_plan_window = {  
+		context_type = decision_category
+		  
+		window_name = "CW_the_plan_container"
+		
+		effects = {
+			cost_click = {
+				custom_effect_tooltip = CW_COST_TITLE
+				
+				custom_effect_tooltip = CW_COST_TOOLTIP
+			}
+			bonus_click = {
+				if = {
+					limit = {
+						has_idea = CW_british_commonwealth_air_training_plan
+					}
+					show_ideas_tooltip = CW_british_commonwealth_air_training_plan
+					
+					set_temp_variable = { plan_target = PLAN_level_2 }
+					custom_effect_tooltip = CW_NEXT_BONUS
+					effect_tooltip = {
+						swap_ideas = {
+							add_idea = CW_british_commonwealth_air_training_plan2
+							remove_idea = CW_british_commonwealth_air_training_plan
+						}
+					}
+				}
+				else_if = {
+					limit = {
+						has_idea = CW_british_commonwealth_air_training_plan2
+					}
+					show_ideas_tooltip = CW_british_commonwealth_air_training_plan2
+					
+					set_temp_variable = { plan_target = PLAN_level_3 }
+					custom_effect_tooltip = CW_NEXT_BONUS
+					effect_tooltip = {
+						swap_ideas = {
+							add_idea = CW_british_commonwealth_air_training_plan3
+							remove_idea = CW_british_commonwealth_air_training_plan2
+						}
+					}
+				}
+				else_if = {
+					limit = {
+						has_idea = CW_british_commonwealth_air_training_plan3
+					}
+					show_ideas_tooltip = CW_british_commonwealth_air_training_plan3
+					
+					set_temp_variable = { plan_target = PLAN_level_4 }
+					custom_effect_tooltip = CW_NEXT_BONUS
+					effect_tooltip = {
+						swap_ideas = {
+							add_idea = CW_british_commonwealth_air_training_plan4
+							remove_idea = CW_british_commonwealth_air_training_plan3
+						}
+					}
+				}
+				else_if = {
+					limit = {
+						has_idea = CW_british_commonwealth_air_training_plan4
+					}
+					show_ideas_tooltip = CW_british_commonwealth_air_training_plan4
+					
+					set_temp_variable = { plan_target = PLAN_level_5 }
+					custom_effect_tooltip = CW_NEXT_BONUS
+					effect_tooltip = {
+						swap_ideas = {
+							add_idea = CW_british_commonwealth_air_training_plan5
+							remove_idea = CW_british_commonwealth_air_training_plan4
+						}
+					}
+				}
+				else_if = {
+					limit = {
+						has_idea = CW_british_commonwealth_air_training_plan5
+					}
+					show_ideas_tooltip = CW_british_commonwealth_air_training_plan5
+					
+					set_temp_variable = { plan_target = PLAN_level_6 }
+					custom_effect_tooltip = CW_NEXT_BONUS
+					effect_tooltip = {
+						swap_ideas = {
+							add_idea = CW_british_commonwealth_air_training_plan6
+							remove_idea = CW_british_commonwealth_air_training_plan5
+						}
+					}
+				}
+				else_if = {
+					limit = {
+						has_idea = CW_british_commonwealth_air_training_plan6
+					}
+					show_ideas_tooltip = CW_british_commonwealth_air_training_plan6
+				}
+				else = {
+					custom_effect_tooltip = CW_INITIAL_UNLOCK
+					effect_tooltip = {
+						add_ideas = CW_british_commonwealth_air_training_plan
+					}
+				}
+			}
+		}
+	}
+	government_in_exiles_window = {  
+		context_type = decision_category
+		  
+		window_name = "government_in_exiles_decision_container"
+		
+		effects = {
+			
+		}
+		
+		properties = {
+			flag = {
+				image = "[This.GetFlag]" 
+			}
+		}
+		
+		triggers = {
+			icon_visible = {
+				check_variable = { ROOT.exile_decision_target = THIS }
+			}
+		}
+		
+		effects = {
+			flag_click = {
+				if = {
+					limit = {
+						check_variable = { ROOT.exile_decision_target = THIS }
+					}
+				}
+				else = {
+					var:ROOT.exile_decision_target = {
+						ROOT = {
+							if = { limit = { NOT = { has_country_flag = purge_infiltrators@PREV } }
+								remove_targeted_decision = {
+									target = PREV
+									decision = purge_infiltrators
+								}
+							}
+							if = { limit = { NOT = { has_country_flag = weapons_for_the_resistance@PREV } }
+								remove_targeted_decision = {
+									target = PREV
+									decision = weapons_for_the_resistance
+								}
+							}
+							if = { limit = { NOT = { has_country_flag = unity_parade@PREV } }
+								remove_targeted_decision = {
+									target = PREV
+									decision = unity_parade
+								}
+							}
+							if = { limit = { NOT = { has_country_flag = joint_training_exercise@PREV } }
+								remove_targeted_decision = {
+									target = PREV
+									decision = joint_training_exercise
+								}
+							}
+							if = { limit = { NOT = { has_country_flag = request_control_of_navy@PREV } }
+								remove_targeted_decision = {
+									target = PREV
+									decision = request_control_of_navy
+								}
+							}
+							if = { limit = { NOT = { has_country_flag = exile_extraction_campaign@PREV } }
+								remove_targeted_decision = {
+									target = PREV
+									decision = exile_extraction_campaign
+								}
+							}
+							if = { limit = { NOT = { has_country_flag = grant_parliamentary_audience@PREV } }
+								remove_targeted_decision = {
+									target = PREV
+									decision = grant_parliamentary_audience
+								}
+							}
+							if = { limit = { NOT = { has_country_flag = expatriate_donations@PREV } }
+								remove_targeted_decision = {
+									target = PREV
+									decision = expatriate_donations
+								}
+							}
+						}
+					}
+					set_variable = { ROOT.exile_decision_target = THIS }
+					ROOT = {
+						activate_targeted_decision = {
+							target = PREV
+							decision = purge_infiltrators
+						}
+						activate_targeted_decision = {
+							target = PREV
+							decision = weapons_for_the_resistance
+						}
+						activate_targeted_decision = {
+							target = PREV
+							decision = unity_parade
+						}
+						activate_targeted_decision = {
+							target = PREV
+							decision = joint_training_exercise
+						}
+						activate_targeted_decision = {
+							target = PREV
+							decision = exile_extraction_campaign
+						}
+						activate_targeted_decision = {
+							target = PREV
+							decision = grant_parliamentary_audience
+						}
+						activate_targeted_decision = {
+							target = PREV
+							decision = expatriate_donations
+						}
+						if = { limit = { NOT = { has_country_flag = request_control_of_navy@PREV } }
+							activate_targeted_decision = {
+								target = PREV
+								decision = request_control_of_navy
+							}
+						}
+					}
+				}
+			}
+		}
+		
+		dynamic_lists = {
+			exile_list = {
+				array = exiles
+				change_scope = yes
+				entry_container = "flag_medium_entry"
+			}
+		} 
+	}
+	spanish_civil_war = {  
+		context_type = decision_category
+		  
+		window_name = "spanish_civil_war_container"
+ 
+		properties = {
+			flag = {
+				image = "[This.GetFlag]"
+			}
+			spr_flag = {
+				image = "[SPR.GetFlag]"
+			}
+			spa_flag = {
+				image = "[SPA.GetFlag]"
+			}
+			progress = { frame = global.spanish_progress }
+		}
+		
+		dirty = global.num_days
+		
+		dynamic_lists = { 
+			treaty_participants_list = {
+				array = SPR.volunteers_send
+				change_scope = yes
+				entry_container = "naval_treaty_participant_entry"
+			}
+			nationalist_list = {
+				array = SPA.volunteers_send
+				change_scope = yes 
+				entry_container = "nationalist_entry"
+			} 
+		} 
+		
+		triggers = {
+		}
+	}
+	
+	ENG_league_of_nations_window = {  
+		context_type = decision_category
+		  
+		window_name = "ENG_league_of_nations_container"
+ 
+		properties = {
+			flag = {
+				image = "[This.GetFlag]"
+			}
+		}
+		
+		dirty = global.num_days
+		
+		dynamic_lists = {  
+			treaty_participants_list = {
+				array = global.league_member
+				change_scope = yes
+				entry_container = "naval_treaty_participant_entry"
+			}
+		} 
+		
+	}
+	
+}
+

@@ -1,0 +1,138 @@
+#
+#@AI_MAX_RESOURCE_DESIRE = 100 
+#@AI_MIN_RESOURCE_DESIRE = -100
+#
+#@AI_RUBBER_DESIRE_FROM_PRODUCTION = 1
+#@AI_RUBBER_DESIRE_FROM_CONSUMPTION = 1
+#@AI_RUBBER_DESIRE_FROM_IMPORT = 1 
+#@AI_RUBBER_DESIRE_FROM_DEFICIT = 1
+#
+#@AI_TUNGSTEN_DESIRE_FROM_PRODUCTION = 1
+#@AI_TUNGSTEN_DESIRE_FROM_CONSUMPTION = 1
+#@AI_TUNGSTEN_DESIRE_FROM_IMPORT = 1 
+#@AI_TUNGSTEN_DESIRE_FROM_DEFICIT = 1
+#
+#@AI_ALUMINIUM_DESIRE_FROM_PRODUCTION = 1
+#@AI_ALUMINIUM_DESIRE_FROM_CONSUMPTION = 1
+#@AI_ALUMINIUM_DESIRE_FROM_IMPORT = 1 
+#@AI_ALUMINIUM_DESIRE_FROM_DEFICIT = 1
+#
+#@AI_STEEL_DESIRE_FROM_PRODUCTION = 1
+#@AI_STEEL_DESIRE_FROM_CONSUMPTION = 1
+#@AI_STEEL_DESIRE_FROM_IMPORT = 1 
+#@AI_STEEL_DESIRE_FROM_DEFICIT = 1
+#
+#@AI_CHROMIUM_DESIRE_FROM_PRODUCTION = 1
+#@AI_CHROMIUM_DESIRE_FROM_CONSUMPTION = 1
+#@AI_CHROMIUM_DESIRE_FROM_IMPORT = 1 
+#@AI_CHROMIUM_DESIRE_FROM_DEFICIT = 1
+#
+#TODO_SOL NSB : ai resource desire increase regularly by the weights defined above. if AI checks for example what refinery to build, it will pick the one with highest desire, then reset all desire values to 0.
+#           ai trying to adress a resource problem needs to be centralised with this. building refineries, research, prospecting decisions etc
+#			create variables for potential import of specific resources
+
+
+@AI_RUBBER_DEFICIT_FROM_DEFICIT = 1.0 
+@AI_RUBBER_DEFICIT_FROM_IMPORT = 0.5
+
+@AI_RUBBER_DEFICIT_MAX_INCREASE = 0.2 #percentages
+@AI_RUBBER_DEFICIT_MAX_DECREASE = 0.1
+
+@AI_RUBBER_DEFICIT_DECAY_AT_SURPLUS = 2.0
+@AI_RUBBER_DEFICIT_DECAY_AT_SURPLUS_FROM_IMPORT = -0.02
+@AI_RUBBER_DEFICIT_DECAY_AT_SURPLUS_FROM_IMPORT_MAX = -0.5
+
+#TODO_AI: add this for the other resources
+
+
+d_ai_update_rubber_deficit = {
+	set_temp_variable = { ai_rubber_deficit_new = resource@rubber }
+	clamp_temp_variable = { var = ai_rubber_deficit_new max = 0 }
+	multiply_temp_variable = { ai_rubber_deficit_new = -1 }
+	multiply_temp_variable = { ai_rubber_deficit_new = @AI_RUBBER_DEFICIT_FROM_DEFICIT }
+	
+	set_temp_variable = { import = resource_imported@rubber }
+	multiply_temp_variable = { import = @AI_RUBBER_DEFICIT_FROM_IMPORT }
+	add_to_temp_variable = { ai_rubber_deficit_new = import }
+	
+	### decay at surplus
+	
+	if = {
+		limit = {
+			check_variable = { resource@rubber > 0 }
+		}
+		set_temp_variable = { decay_mult = @AI_RUBBER_DEFICIT_DECAY_AT_SURPLUS }
+		
+		set_temp_variable = { decay_import = resource_imported@rubber }
+		multiply_temp_variable = { decay_import = @AI_RUBBER_DEFICIT_DECAY_AT_SURPLUS_FROM_IMPORT }
+		set_temp_variable = { max_value = @AI_RUBBER_DEFICIT_DECAY_AT_SURPLUS_FROM_IMPORT_MAX }
+		clamp_temp_variable = { var = decay_import min = max_value }
+		
+		add_to_temp_variable = { decay_mult = decay_import }
+	}
+	else = {
+		set_temp_variable = { decay_mult = 1 }
+	}
+			
+	### increase 
+	
+	if = {
+		limit = {
+			check_variable = { ai_rubber_deficit_new > ai_rubber_deficit }
+		}
+		
+		set_temp_variable = { factor = @AI_RUBBER_DEFICIT_MAX_INCREASE }
+		
+		set_temp_variable = { increase = ai_rubber_deficit_new }
+		subtract_from_temp_variable = { increase = ai_rubber_deficit }
+		
+		if = {
+			limit = {
+				check_variable = { ai_rubber_deficit > 0 }
+			}
+			set_temp_variable = { max_increase = ai_rubber_deficit }
+			multiply_temp_variable = { max_increase = factor }
+			clamp_temp_variable = { var = increase max = max_increase }
+		}
+		
+		add_to_variable = { ai_rubber_deficit = increase }
+		
+		#clamp_variable = { var = ai_rubber_deficit max = max_from_current }
+	
+	}
+	
+	### decrease 
+	
+	else_if = {
+		limit = {
+			check_variable = { ai_rubber_deficit > ai_rubber_deficit_new }
+		}
+		set_temp_variable = { factor = @AI_RUBBER_DEFICIT_MAX_DECREASE }
+		
+		set_temp_variable = { decrease = ai_rubber_deficit }
+		subtract_from_temp_variable = { decrease = ai_rubber_deficit_new }
+		multiply_temp_variable = { decrease = decay_mult }
+		
+		if = {
+			limit = {
+				check_variable = { ai_rubber_deficit > 0 }
+			}
+			set_temp_variable = { max_decrease = ai_rubber_deficit }
+			multiply_temp_variable = { max_decrease = factor }
+			multiply_temp_variable = { max_decrease = decay_mult }
+			clamp_temp_variable = { var = decrease max = max_decrease }
+		}
+		
+		subtract_from_variable = { ai_rubber_deficit = decrease }
+	}
+	
+	if = {
+		limit = {
+			check_variable = { ai_rubber_deficit < 0.001 }
+		}
+		clear_variable = ai_rubber_deficit
+	}
+		
+	log = "[?ai_rubber_deficit] DEFICIT"
+	log = "[?ai_rubber_deficit_new] NEW DEFICIT"
+}

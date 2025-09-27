@@ -1,0 +1,408 @@
+continuous_focus_palette = {
+	id = generic_focus
+	
+	country = {
+		factor = 1
+	}
+	
+	default = yes
+	reset_on_civilwar = no
+	
+	position = { x = 50 y = 1000 }
+	
+	focus = {
+		id = continuous_naval_production
+		
+		icon = GFX_goal_continuous_naval_production
+		
+		available = {
+		}
+		
+		enabled = {
+			check_variable = { focus_progress > 699.9 }
+		}
+		
+		modifier = {
+			industrial_capacity_dockyard = 0.16
+			industrial_capacity_factory = -0.06
+			consumer_goods_expected_value = 0.02
+		}
+			
+		ai_will_do = {
+			factor = 0
+			modifier = {
+				add = 1
+				has_country_flag = coastal_state
+			}
+		}
+		
+		#supports_ai_strategy = ai_focus_naval #affects how many ships the AI wants. num_dockyards + (convoys_in_use + imported_resources)/5, capped at 100, reduced by 25% at peace. if no dockyards its -999
+		
+		#daily_cost = 1
+		
+		available_if_capitulated = yes
+	}
+	focus = {
+		id = continuous_air_production
+		
+		icon = GFX_goal_continuous_air_production
+		
+		available = {
+		}
+		
+		enabled = {
+			check_variable = { focus_progress > 699.9 }
+		}
+		idea = continuous_air_production
+		
+		ai_will_do = {
+			factor = 1
+			modifier = {
+				factor = 0 
+				
+				check_variable = { resource_consumed@air_production = 0 } #wow thank god bhutan used this in 45
+			}
+		}
+		
+		#supports_ai_strategy = ai_focus_aviation #affects how many planes AI wants. num_airports*10, capped at 100. reduced by 25% at peace. if no airports its -999
+		
+		#daily_cost = 1
+		
+		available_if_capitulated = yes
+	}
+	focus = {
+		id = continuous_armor_production
+		
+		icon = GFX_goal_continuous_armor_production
+		
+		available = {
+		}
+		
+		enabled = {
+			check_variable = { focus_progress > 699.9 }
+		}
+		idea = continuous_armor_production
+		 
+		ai_will_do = {
+			factor = 1
+			modifier = {
+				factor = 0 
+				
+				check_variable = { num_armor = 0 }
+			}
+		}
+		
+		#supports_ai_strategy = ai_focus_defense #affects PLAN_VALUE_TO_EXECUTE. 50 at peace, 100 in defensive war and 0 in aggressive war
+		
+		#daily_cost = 1
+		
+		available_if_capitulated = yes
+	}
+	focus = {
+		id = continuous_non_factory_construct
+		
+		icon = GFX_goal_continuous_non_factory_construct
+		
+		available = {
+		}
+		
+		enabled = {
+			check_variable = { focus_progress > 699.9 }
+		}
+		modifier = {
+			production_speed_infrastructure_factor = 0.10
+			production_speed_fuel_silo_factor = 0.12
+			production_speed_air_base_factor = 0.10
+			production_speed_naval_base_factor = 0.10
+			production_speed_synthetic_refinery_factor = 0.12
+			production_speed_synthetic_rubber_refinery_factor = 0.12
+			production_speed_rocket_site_factor = 0.10
+			production_speed_nuclear_reactor_factor = 0.10
+			production_speed_pillbox_factor = 0.06
+			production_speed_bunker_factor = 0.12
+			production_speed_coastal_bunker_factor = 0.12
+			production_speed_anti_air_building_factor = 0.12
+			production_speed_radar_station_factor = 0.12
+			production_speed_supply_node_factor = 0.06
+			production_speed_rail_way_factor = 0.06
+			production_speed_steel_refinery_factor = 0.06
+			production_speed_aluminium_refinery_factor = 0.06
+			consumer_goods_expected_value = 0.02
+			conscription_factor = -0.10
+		}
+		
+		ai_will_do = {
+			factor = 0
+		}
+		
+		#supports_ai_strategy = ai_focus_defense
+		
+		#daily_cost = 1
+		
+		available_if_capitulated = yes
+	}
+	focus = {
+		id = continuous_suppression
+		
+		icon = GFX_goal_continuous_suppression
+		
+		available = {
+		}
+		
+		enabled = {
+			check_variable = { focus_progress > 699.9 }
+		}
+		modifier = {
+			resistance_target = -0.05
+			
+		}
+		
+		ai_will_do = {
+			factor = 1
+			modifier = {
+				factor = 0
+				num_occupied_states < 1
+			}
+		}
+		
+		#supports_ai_strategy = ai_focus_military_advancements #this does nothing now. num_research_slots*25 capped at 100, reduced by 25% at peace
+		
+		#daily_cost = 1
+		
+		available_if_capitulated = yes
+	}
+	focus = {
+		id = continuous_repair
+		
+		icon = GFX_goal_continuous_repairments
+		
+		available = {
+		}
+		
+		enabled = {
+			check_variable = { focus_progress > 699.9 }
+		}
+		modifier = {
+			industry_repair_factor = 0.5
+			industry_free_repair_factor = 1.0
+		}
+		
+		ai_will_do = {
+			factor = 1
+			modifier = {
+				factor = 0
+				has_damaged_buildings = no
+			}
+			modifier = {
+				add = ai_add 
+				
+				set_temp_variable = { ai_add = num_damaged_buildings }
+				multiply_temp_variable = { ai_add = 0.2 }
+			}
+		}
+		
+		#supports_ai_strategy = ai_focus_military_advancements
+		
+		#daily_cost = 1
+		
+		available_if_capitulated = yes
+	}
+	focus = {
+		id = continuous_tech_share
+		
+		icon = GFX_goal_continuous_research
+		
+		available = {
+			hidden_trigger = { has_dlc = "Together for Victory" }
+		}
+		
+		modifier = {
+			consumer_goods_expected_value = 0.02
+			fuel_gain_factor = -0.02
+		}
+		
+		enabled = {
+			check_variable = { focus_progress > 699.9 }
+			is_in_faction = yes
+			num_faction_members > 1
+
+			custom_trigger_tooltip = {
+				tooltip = NO_OTHER_SHARING_GROUPS
+				OR = {
+					AND = {
+						is_in_tech_sharing_group = continuous_tech_share
+						num_tech_sharing_groups < 2
+					}
+					num_tech_sharing_groups < 1
+				}				
+			}
+		}
+		
+		select_effect = {
+			add_to_tech_sharing_group = continuous_tech_share
+		}
+		
+		cancel_effect = {
+			remove_from_tech_sharing_group = continuous_tech_share	
+		}
+
+		ai_will_do = {
+			factor = 0
+		}
+		
+		#supports_ai_strategy = ai_focus_military_advancements
+		
+		#daily_cost = 1
+		
+		available_if_capitulated = yes
+	}
+	focus = {
+		id = continuous_boost_freedom
+		
+		icon = GFX_goal_continuous_boost_freedom
+		
+		available = {
+			hidden_trigger = { has_dlc = "Together for Victory" }
+			is_subject = yes			
+		}
+		
+		enabled = {
+			check_variable = { focus_progress > 699.9 }
+		}
+		modifier = {
+			autonomy_gain = 0.3
+		}
+		
+		ai_will_do = {
+			factor = 0
+		}
+		
+		#supports_ai_strategy = ai_focus_military_advancements
+		
+		#daily_cost = 1
+		
+		available_if_capitulated = yes
+	}
+	focus = {
+		id = continuous_restrict_freedom
+		
+		icon = GFX_goal_continuous_restrict_freedom
+		
+		available = {
+			hidden_trigger = { has_dlc = "Together for Victory" }
+		}
+
+		enabled = {
+			check_variable = { focus_progress > 699.9 }
+			num_subjects > 0
+		}
+
+		modifier = {
+			subjects_autonomy_gain = -0.3
+		}
+		
+		ai_will_do = {
+			factor = 0
+		}
+		
+		#supports_ai_strategy = ai_focus_military_advancements
+		
+		#daily_cost = 1
+		
+		available_if_capitulated = yes
+	}
+	focus = {
+		id = continuous_promote_national_unity
+		
+		icon = GFX_goal_generic_national_unity
+		
+		available = {
+		}
+
+		enabled = {
+			check_variable = { focus_progress > 699.9 }
+			has_stability < 0.75
+		}
+
+		modifier = {
+			stability_weekly_factor = 0.25
+			consumer_goods_expected_value = 0.02
+			industrial_capacity_factory = -0.04
+			industrial_capacity_dockyard = -0.04
+		}
+		
+		ai_will_do = {
+			factor = 1
+			modifier = {
+				factor = 0
+				has_stability > 0.60
+			}
+			modifier = {
+				factor = 12
+				has_stability < 0.40
+			}
+		}
+		
+		#supports_ai_strategy = ai_focus_defense
+		
+		#daily_cost = 1
+		
+		available_if_capitulated = no
+	}
+	focus = {
+		id = continuous_invest_research
+		
+		icon = GFX_focus_research
+		
+		available = {
+		}
+
+		enabled = {
+			check_variable = { focus_progress > 699.9 }
+		}
+
+		modifier = {
+			research_speed_factor = 0.04
+			industrial_capacity_factory = -0.04
+			industrial_capacity_dockyard = -0.04
+			consumer_goods_expected_value = 0.02
+		}
+		
+		ai_will_do = {
+			factor = 1
+		}
+		
+		#supports_ai_strategy = ai_focus_defense
+	
+		#daily_cost = 1.15
+		
+		available_if_capitulated = no
+	}
+	focus = {
+		id = continuous_healthcare
+		
+		icon = GFX_goal_generic_scientific_exchange
+		
+		available = {
+		}
+
+		enabled = {
+			check_variable = { focus_progress > 699.9 }
+		}
+
+		modifier = {
+			research_speed_factor = 0.01
+			monthly_population = 0.15
+			consumer_goods_expected_value = 0.01
+			stability_weekly  = 0.0015
+			weekly_manpower = 100
+			army_org_factor = 0.03
+			navy_org_factor = 0.03
+		}
+		
+		#daily_cost = 1
+		
+		available_if_capitulated = no
+	}
+}
+### EOF ###

@@ -1,0 +1,446 @@
+scripted_gui = {
+	
+	BI_startup_ui = { 
+		context_type = player_context 
+		
+		window_name = "BI_main_menu_gui_window"
+		
+		visible = {
+			has_country_flag = ui_show_main_menu
+		}  
+		
+		properties = {
+			open_start = {
+				frame = open_start
+			}
+			open_performance = {
+				frame = open_performance
+			}
+			open_settings = {
+				frame = open_settings
+			}
+		}
+		
+		triggers = {
+			open_start_click_enabled = {
+				if = {
+					limit = {
+						has_country_flag = BI_startup_content
+					}
+					set_temp_variable = { open_start = 2 }
+				}
+			}
+			open_performance_click_enabled = {
+				if = {
+					limit = {
+						NOT = { has_country_flag = { flag = BI_startup_content value = 2 } }
+					}
+					set_temp_variable = { open_performance = 2 }
+				}
+			}
+			open_settings_click_enabled = {
+				if = {
+					limit = {
+						NOT = { has_country_flag = { flag = BI_startup_content value = 3 } }
+					}
+					set_temp_variable = { open_settings = 2 }
+				}
+			}
+		}
+		
+		effects = {
+			open_start_click = {
+				clr_country_flag = BI_startup_content
+			}
+			open_performance_click = { #difficulty
+				clr_country_flag = ui_show_main_menu
+				
+				if = {
+					limit = {
+						NOT = { has_global_flag = ui_ai_bonus_initialized }
+					}
+					ui_on_startup_difficulty_groups = yes 
+					set_global_flag = ui_ai_bonus_initialized
+				}
+				
+				clear_array = ai_setting_target
+				clear_array = ai_setting_target_countries
+				every_country = {
+					limit = {
+						has_country_flag = ai_difficulty_setting_target
+					}
+					add_to_array = { ROOT.ai_setting_target = THIS }
+				}
+				add_to_array = { ROOT.ai_setting_target = 1 }
+				set_country_flag = ui_show_ai_bonuses
+				
+				set_variable = { ROOT.selected_target = ROOT.ai_setting_target^0 }
+				
+				var:selected_target = {
+					clear_array = ROOT.ai_setting_target_countries
+					add_to_array = { ROOT.ai_setting_target_countries = THIS }
+					for_each_scope_loop = {
+						array = ai_difficulty_setting_targets
+						
+						add_to_array = { ROOT.ai_setting_target_countries = THIS }
+					} 
+				}
+				
+				if = {
+					limit = {
+						NOT = { has_global_flag = one_time_start_effect }
+					}
+					set_global_flag = one_time_start_effect
+					d_replace_ideology_traits_with_variables = yes
+				}
+			}
+			open_settings_click = {
+				set_country_flag = { 
+					flag = BI_startup_content
+					value = 3
+				}
+				create_settings = yes
+			}
+			
+			BI_exit_button_click = {
+				if = {
+					limit = {
+						NOT = { has_global_flag = one_time_start_effect }
+					}
+					set_global_flag = one_time_start_effect
+					d_replace_ideology_traits_with_variables = yes
+				}
+				clr_country_flag = ui_show_main_menu
+			}
+		}
+	}
+	
+	
+	startup_settings = { 
+		context_type = player_context 
+		
+		parent_scripted_gui = BI_startup_ui
+		window_name = "BI_main_menu_settings"
+		
+		visible = {
+			#is_debug = yes
+			has_country_flag = { flag = BI_startup_content value = 3 }
+		}
+		
+		dynamic_lists = { 
+			settings_list = { 
+				#array = global.settings
+				array = settings
+				change_scope = yes
+				entry_container = "[GetStartupSettingEntry]"
+				value = setting
+				index = setting_i
+			}  
+			settings_option_list = { 
+				array = setting_dropdown
+				change_scope = yes
+				entry_container = "startup_settings_option_entry"
+				value = option
+				index = option_i
+			}  
+		} 
+		
+		properties = {
+			option = {
+				y = option_yt
+			}
+			checkbox = {
+				frame = global.setting_status@var:setting
+			}
+			expand_button = {
+				frame = expand_frame
+			}
+		}
+		
+		triggers = {
+			expand_button_click_enabled = {
+				if = {
+					limit = {
+						check_variable = { ui_setting_dropdown = setting }
+					}
+					set_temp_variable = { expand_frame = 2 }
+					
+					set_temp_variable = { option_yt = setting_i }
+					multiply_temp_variable = { option_yt = 40 }
+					add_to_temp_variable = { option_yt = -10 }
+				}
+				else = {
+					set_temp_variable = { expand_frame = 1 }
+				}
+				
+				NOT = { 
+					AND = {
+						check_variable = { global.date > 60759.371 }
+						is_in_array = { global.settings_static = setting } 
+					}
+				}
+			}
+			
+			expand_button_large_click_enabled = {
+				NOT = { 
+					AND = {
+						check_variable = { global.date > 60759.371 }
+						is_in_array = { global.settings_static = setting } 
+					}
+				}
+			}
+			
+			checkbox_click_enabled = {
+				NOT = { 
+					AND = {
+						check_variable = { global.date > 60759.371 }
+						is_in_array = { global.settings_static = setting } 
+					}
+				}
+			}
+		}
+		
+		effects = {
+			expand_header_button_click = {
+				if = {
+					limit = {
+						set_temp_variable = { next_id = setting_i }
+						add_to_temp_variable = { next_id = 1 }
+						
+						set_temp_variable = { check = settings^next_id }
+						
+						NOT = { is_in_array = { global.settings_header = check } }
+						NOT = { check_variable = { next_id = settings^num } }
+						#log = "[?check.GetTokenKey] [?check] check"
+					}
+						
+					for_each_loop = {
+						array = global.settings_header
+						
+						if = {
+							limit = {
+								check_variable = { v = setting }
+							}
+							set_temp_variable = { header_index = i }
+							set_temp_variable = { break = 1 }
+						}
+					}
+					set_temp_variable = { hide_entries_until_this = header_index }
+					add_to_temp_variable = { hide_entries_until_this = 1 }
+					
+						#log = "[?hide_entries_until_this] hide_entries_until_this | [?global.settings_header^hide_entries_until_this.GetTokenKey]"
+					
+					######
+					
+					for_each_loop = {
+						array = settings
+						
+						if = {
+							limit = {
+								check_variable = { i > setting_i }
+							}
+							
+							if = {
+								limit = {
+									check_variable = { v = global.settings_header^hide_entries_until_this }
+								}
+								set_temp_variable = { break = 1 }
+							}
+							else = {
+								add_to_temp_array = { removal = v }
+							}
+							
+						}
+					}
+					
+					for_each_loop = {
+						array = removal
+						
+						remove_from_array = { settings = v }
+					}
+				}
+				
+				else = { #REGENERATE LIST
+					for_each_loop = {
+						array = global.settings
+						
+						if = {
+							limit = {
+								check_variable = { match = 1 }
+							}
+							#log = "[?v.GetTokenKey] iterate"
+							add_to_temp_variable = { index_temp = 1 }
+							if = {
+								limit = {
+									is_in_array = { global.settings_header = v }
+								}
+								set_temp_variable = { break = 1 }
+							}
+							else = {
+								add_to_array = { array = settings value = v index = index_temp }
+							}
+						}
+						if = {
+							limit = {
+								check_variable = { v = setting }
+							}
+							set_temp_variable = { match = 1 }
+							set_temp_variable = { index_temp = setting_i }
+							#log = "MATCHED"
+						}
+						
+					}
+				}
+			}
+			expand_button_click = {
+				if = {
+					limit = {
+						any_of = {
+							array = global.options@var:setting
+							
+							is_in_array = { setting_dropdown = v }
+						}
+					}
+					clear_array = setting_dropdown
+					clear_variable = ui_setting_dropdown
+				}
+				else = {
+					clear_array = setting_dropdown
+					for_each_loop = {
+						array = global.options@var:setting
+						
+						add_to_array = { setting_dropdown = v }
+					}
+					
+					set_variable = { ui_setting_dropdown = setting }
+	
+				}
+			}
+			expand_button_large_click = {
+				if = {
+					limit = {
+						any_of = {
+							array = global.options@var:setting
+							
+							is_in_array = { setting_dropdown = v }
+						}
+					}
+					clear_array = setting_dropdown
+					clear_variable = ui_setting_dropdown
+				}
+				else = {
+					clear_array = setting_dropdown
+					for_each_loop = {
+						array = global.options@var:setting
+						
+						add_to_array = { setting_dropdown = v }
+					}
+					
+					set_variable = { ui_setting_dropdown = setting }
+					
+				}
+				
+				effect_tooltip = {
+					set_temp_variable = { on_add = 1 }
+					meta_effect = {
+						text = {
+							[X] = yes
+						}
+						X = "[?global.setting_status@var:setting.GetTokenKey]"
+					}
+				}
+				if = {
+					limit = {
+						is_in_array = { global.settings_static = setting }
+					}
+					custom_effect_tooltip = SETTING_DAY_ONE
+				}
+			}
+			
+			###############
+			# boolean checkbox
+			
+			checkbox_click = {
+				if = {
+					limit = {
+						check_variable = { global.setting_status@var:setting = 2 }
+					}
+					clear_variable = global.setting_status@var:setting
+					set_temp_variable = { on_remove = 1 }
+					meta_effect = {
+						text = {
+							[X] = yes
+						}
+						X = "[?setting.GetTokenKey]"
+					}
+				}
+				else = {
+					set_variable = { global.setting_status@var:setting = 2 }
+					set_temp_variable = { on_add = 1 }
+					meta_effect = {
+						text = {
+							[X] = yes
+						}
+						X = "[?setting.GetTokenKey]"
+					}
+				}
+				if = {
+					limit = {
+						is_in_array = { global.settings_static = setting }
+					}
+					custom_effect_tooltip = SETTING_DAY_ONE
+				}
+			}
+			
+			###############
+			# dropdown options
+			
+			option_click = {
+				if = {
+					limit = {
+						NOT = { check_variable = { global.setting_status@var:ui_setting_dropdown = option } }
+					}
+					#custom_effect_tooltip = ON_REMOVE
+					set_temp_variable = { on_add = 0 }
+					set_temp_variable = { on_remove = 1 }
+					meta_effect = {
+						text = {
+							[X] = yes
+						}
+						X = "[?global.setting_status@var:ui_setting_dropdown.GetTokenKey]"
+					}
+					
+					set_variable = { global.setting_status@var:ui_setting_dropdown = option }
+					
+					#custom_effect_tooltip = ON_ADD
+					set_temp_variable = { on_remove = 0 }
+					set_temp_variable = { on_add = 1 }
+					meta_effect = {
+						text = {
+							[X] = yes
+						}
+						X = "[?option.GetTokenKey]"
+					}
+				}
+				else = {
+					set_temp_variable = { on_remove = 0 }
+					set_temp_variable = { on_add = 1 }
+					effect_tooltip = {
+						meta_effect = {
+							text = {
+								[X] = yes
+							}
+							X = "[?option.GetTokenKey]"
+						}
+					}
+				}
+				#log = "[?global.setting_status@var:ui_setting_dropdown.GetTokenKey] SELECTED"
+				#log = "[?option.GetTokenKey] OPTION"
+				clear_array = setting_dropdown
+				clear_variable = ui_setting_dropdown
+			}
+			
+		}
+	}
+	
+}

@@ -1,0 +1,122 @@
+############################################################################################################
+#	Expert AI mod - scripted volunteer/expeditionary AI triggers
+############################################################################################################
+
+# ROOT = SENDER, THIS = TARGET
+# conditions for sending volunteers to a country
+EAI_send_volunteers = {
+	THIS = { # target
+		
+		NOT = { has_war_with = ROOT }
+		
+		NOT = { tag = ROOT }
+
+		OR = {
+			has_same_government_as_root = yes
+			ROOT = { has_country_flag = bypass_volunteer_ideology@PREV }
+		}
+		###
+		
+		if = {
+			limit = {
+				is_historical_focus_on = yes 
+			}
+			EAI_historical_volunteers = yes
+		}
+		else = {
+			### Ahistorical mode
+
+			ROOT = { has_opinion = { target = PREV value > 25 } } # friendly countries
+
+			OR = {
+				AND = { ROOT = { EAI_democratic_nation = yes }
+					EAI_democratic_nation = yes
+				}
+
+				AND = { ROOT = { EAI_communist_nation = yes }
+					EAI_communist_nation = yes
+				}
+
+				AND = { ROOT = { EAI_fascist_nation = yes }
+					EAI_fascist_nation = yes
+				}
+
+				AND = { ROOT = { EAI_nonaligned_nation = yes }
+					EAI_nonaligned_nation = yes
+				}
+			}
+
+			OR = {
+				AND = {
+					any_enemy_country = { EAI_fascist_nation = yes }
+					ROOT = { NOT = { EAI_fascist_nation = yes } }
+				}
+				AND = {
+					any_enemy_country = { EAI_communist_nation = yes }
+					ROOT = { NOT = { EAI_communist_nation = yes } }
+				}
+				AND = {
+					any_enemy_country = { EAI_democratic_nation = yes }
+					ROOT = { NOT = { EAI_democratic_nation = yes } }
+				}
+			}
+		}
+
+		## # why should it NOT send volunteers
+		
+		NOT = { 
+			 # the enemy of this country has a NAP with ROOT or faction member
+			any_enemy_country = { 
+				OR = {
+					has_non_aggression_pact_with = ROOT
+					
+					if = { limit = { ROOT = { is_subject = yes } }
+						ROOT = { OVERLORD = { has_non_aggression_pact_with = PREV.PREV } }
+					}
+					else = { always = no }
+					any_of_scopes = {
+						array = Root.subjects 
+						
+						has_non_aggression_pact_with = PREV
+					}
+				}
+			}	
+		}
+	}
+}
+
+EAI_historical_volunteers = {
+	OR = {
+		AND = {
+			ROOT = { original_tag = SOV has_government = communism }
+
+			OR = {
+				AND = { original_tag = SPR NOT = { has_government = fascism } has_civil_war = yes }
+				AND = { original_tag = SIK has_government = communism has_civil_war = yes }
+			}
+		}
+
+		AND = {
+			ROOT = { OR = { original_tag = GER original_tag = ITA } has_government = fascism }
+
+			OR = {
+				AND = { original_tag = SPR has_government = fascism has_civil_war = yes }
+			}
+				
+		}
+
+		AND = {
+			ROOT = { OR = { original_tag = SPR original_tag = HUN } has_government = fascism }
+
+			OR = { original_tag = ITA original_tag = GER } has_government = fascism
+		}
+
+		AND = {
+			ROOT = { original_tag = USA democratic_govt = yes }
+
+			OR = { original_tag = ENG is_subject_of = ENG } democratic_govt = yes
+
+			date > 1941.1.1
+		}
+	}
+}

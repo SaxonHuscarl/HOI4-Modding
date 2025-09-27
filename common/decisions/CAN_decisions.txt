@@ -1,0 +1,137 @@
+propaganda_efforts = {
+	tommys_march = {	# Preliminary war propaganda, while threat is small, no war
+		icon = generic_prepare_civil_war
+		allowed = {
+			tag = CAN
+		}
+		available = {
+			has_war_support < 0.1
+		}
+
+		visible = {
+			threat < 0.3
+			has_war = no
+		}
+
+		fire_only_once = no
+		cost = 30
+		
+		days_remove = 70
+		days_re_enable = 100
+
+		modifier = {
+			war_support_weekly = 0.003
+			civilian_factory_use = 4
+			experience_gain_army = 0.01
+		}
+
+		complete_effect = {
+			#Update AI War Support logic
+			if = { limit = { is_ai = yes }
+				ai_check_war_support_need = yes 
+			}
+		}
+		remove_effect = {
+		}
+
+		ai_will_do = {
+			base = 0
+			modifier = {
+				add = war_support_score
+				set_temp_variable = { weight = 0.9 }
+				ai_check_war_support_need = yes
+			}
+		}
+	}
+}
+prospect_for_resources = {
+	develop_mazaruni_bauxite_deposits = { #934
+		
+		icon = bauxite
+
+		allowed = {
+			tag = CAN 
+		}
+		highlight_states = { 
+			highlight_state_targets = {
+				state = 934
+			}
+		}
+
+		available = {
+			has_completed_focus = CAN_bauxite
+			num_of_civilian_factories_available_for_projects > 16
+		}
+
+		visible = {
+			#has_completed_focus = CAN_mining_rights
+			934 = {
+				NOT = {
+					has_state_flag = { 
+						flag = guyana_aluminium_developed 
+						value = 8
+					}
+				}
+			}
+		}
+
+		cost = 25
+		days_remove = guyana_aluminium_duration_temp
+
+		modifier = {
+			civilian_factory_use = 17
+		}
+
+		ai_will_do = {
+			factor = 10
+		}
+
+		remove_effect = {
+			add_to_variable = { var = guyana_aluminium_duration value = 20 }
+			934 = {
+				if = {
+					limit = {
+						NOT = {
+							has_state_flag = guyana_aluminium_developed
+						}
+					}
+					set_state_flag = {
+						flag = guyana_aluminium_developed
+						value = 1
+					}
+				}
+				else = {
+					modify_state_flag = {
+						flag = guyana_aluminium_developed
+						value = 1
+					}
+				}
+				if = { limit = { has_state_flag = { flag = guyana_aluminium_developed value = 8 } }
+					clear_variable = Root.guyana_aluminium_duration
+				}
+			}
+			934 = {
+				add_resource = {
+					type = bauxite
+					amount = 40
+				}
+			}
+			custom_effect_tooltip = resource_prospecting_8_times_TT
+			clear_variable = Root.guyana_aluminium_duration_temp
+		}
+
+		complete_effect = {
+			if = {
+				limit = {
+					check_variable = { var = guyana_aluminium_duration value = 60 compare = less_than }
+				}
+				set_variable = { var = guyana_aluminium_duration value = 60 }
+			}
+			set_temp_variable = { guyana_aluminium_duration_temp = guyana_aluminium_duration }
+			if = { limit = { check_variable = { guyana_aluminium_duration_temp = 0 } }
+				set_temp_variable = { guyana_aluminium_duration_temp = 60 }
+			}
+			set_variable = { guyana_aluminium_duration_temp = guyana_aluminium_duration }
+		}
+	}
+}

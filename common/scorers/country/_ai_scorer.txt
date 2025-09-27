@@ -1,0 +1,293 @@
+
+ai_GetMainAirEnemy = {
+	targets = {
+		target_array = potential_and_current_enemies
+		target_array = neighbors
+		target_array = global.majors #lets be honest, 9/10 main air enemies will be majors lol
+
+		score = {
+			base = 100
+
+			modifier = {
+				factor = 0 
+				
+				OR = {
+					tag = FROM 
+					exists = no
+					has_capitulated = yes
+					is_ally_with = FROM
+					AND = {
+						has_war_together_with = FROM
+						NOT = { has_war_with = FROM }
+					}
+				}
+			}
+			modifier = {
+				add = ai_plane_evaluation 
+				
+				set_temp_variable = { ai_plane_evaluation = air_strength }
+				add_to_temp_variable = { ai_plane_evaluation = num_deployed_planes }
+				multiply_temp_variable = { ai_plane_evaluation = 0.05 }
+				
+				if = { limit = { tag = SOV } multiply_temp_variable = { ai_plane_evaluation = 0.7 } } #bro your planes suck
+			}
+			modifier = {
+				add = ai_industry_evaluation 
+				
+				set_temp_variable = { ai_industry_evaluation = num_of_factories }
+				multiply_temp_variable = { ai_industry_evaluation = 0.05 } 
+				clamp_temp_variable = { var = ai_industry_evaluation max = 10 }
+			}
+			modifier = {
+				factor = 0.8 
+				
+				democratic_govt = yes 
+				FROM = { democratic_govt = yes }
+			}
+			modifier = {
+				factor = 0.7
+				
+				democratic_govt = no 
+				has_government = ROOT 
+			}
+			modifier = {
+				factor = 1.2
+				
+				check_variable = { num_air_assembly > 5 }
+			}
+			modifier = {
+				factor = 1.2
+				
+				check_variable = { num_air_assembly > 10 }
+			}
+			modifier = {
+				factor = 1.2
+				
+				check_variable = { num_air_assembly > 15 }
+			}
+			modifier = {
+				factor = 4.0
+				
+				OR = {
+					has_war_with = FROM 
+					is_justifying_wargoal_against = FROM 
+					FROM = { is_justifying_wargoal_against = ROOT }
+				}
+			}
+			modifier = {
+				factor = 3.0
+				
+				is_in_array = { FROM.enemies_of_allies = this }
+			}
+			modifier = {
+				factor = 1.5
+				
+				is_neighbor_of = FROM 
+			}
+			modifier = {
+				factor = 1.2
+				
+				is_owner_neighbor_of = FROM 
+			}
+			modifier = {
+				factor = 1.2
+				
+				is_major = yes
+			}
+			modifier = {
+				factor = 1.2
+				
+				is_ai = no
+			}
+			modifier = {
+				factor = 1.2
+				
+				check_variable = { From.ai_main_air_enemy = This }
+			}
+			
+			modifier = {
+				factor = ai_distance_evaluation
+				
+				set_temp_variable = { average_distance = 0 }
+				set_temp_variable = { average_distance_num = 0 }
+				capital_scope = { #TODO
+					
+					FROM = {
+						capital_scope = {
+ 
+							set_temp_variable = { distance_temp = distance_to@PREV.PREV }
+							divide_temp_variable = { distance_temp = 1000 }
+							add_to_temp_variable = { average_distance = distance_temp }
+							add_to_temp_variable = { average_distance_num = 1 }
+							
+						}
+					}
+				}
+				
+				divide_temp_variable = { average_distance = average_distance_num }
+				multiply_temp_variable = { average_distance = 1000 } 
+				
+				set_temp_variable = { ai_distance_evaluation = 500 }
+				divide_temp_variable = { ai_distance_evaluation = average_distance }
+				add_to_temp_variable = { ai_distance_evaluation = 1 }
+				clamp_temp_variable = { var = ai_distance_evaluation min = 1 max = 3 }
+				#log = "[?ai_distance_evaluation] DIS [This.GetTag]"
+			
+			}
+		}
+	}
+} 
+ai_GetCountriesToDefend = {
+	targets = {
+		target_array = possible_target
+ 
+		score = {
+			base = 100
+
+			modifier = {
+				factor = 1.2 
+				
+				surrender_progress > 0
+			}
+			modifier = {
+				factor = 1.5
+				
+				FROM = { is_on_same_continent_as_ROOT = yes } 
+			}
+			modifier = { 
+				factor = 2.0 
+				
+				is_neighbor_of = FROM 
+			}
+			modifier = { 
+				factor = 1.2 
+				
+				is_owner_neighbor_of = FROM 
+			}
+			modifier = { 
+				factor = 1.2
+				
+				is_subject_of = FROM 
+			}
+			modifier = { 
+				factor = 1
+				 
+				check_variable = { num_divisions > 0 }
+				set_temp_variable = { ai_factor = num_owned_core_states }
+				divide_temp_variable = { ai_factor = num_divisions }
+			}
+			
+			modifier = { #distance
+				factor = 1.1
+				capital_scope = {
+					FROM = {
+						capital_scope = {
+							check_variable = { distance_to@PREV.PREV < 400 }
+						}
+					}
+				}
+			}
+			modifier = { #distance
+				factor = 1.1
+				capital_scope = {
+					FROM = {
+						capital_scope = {
+							check_variable = { distance_to@PREV.PREV < 500 }
+						}
+					}
+				}
+			}
+			modifier = { #distance
+				factor = 1.1
+				capital_scope = {
+					FROM = {
+						capital_scope = {
+							check_variable = { distance_to@PREV.PREV < 600 }
+						}
+					}
+				}
+			}
+			modifier = { #distance
+				factor = 1.1
+				capital_scope = {
+					FROM = {
+						capital_scope = {
+							check_variable = { distance_to@PREV.PREV < 800 }
+						}
+					}
+				}
+			}
+			modifier = { #distance
+				factor = 1.1
+				capital_scope = {
+					FROM = {
+						capital_scope = {
+							check_variable = { distance_to@PREV.PREV < 1000 }
+						}
+					}
+				}
+			}
+		}
+	}
+}
+	
+ai_GetCountriesToDefendUs = { #this scores the countries that are willing to defend us. only a certain amount of countries then are allowed to defend us
+	targets = {
+		target_array = possible_target
+		
+		score = {
+			base = 100
+
+			modifier = {
+				add = army_strength
+			}
+			
+			modifier = {
+				factor = 2
+				
+				is_subject_of = FROM
+			}
+			modifier = {
+				factor = 2
+				
+				is_neighbor_of = FROM
+			}
+			modifier = {
+				factor = 1.5
+				
+				FROM = { is_on_same_continent_as_ROOT = yes } 
+			}
+			modifier = { #distance
+				factor = score_mult
+				capital_scope = {
+					FROM = {
+						capital_scope = {
+							set_temp_variable = { capital_distance = distance_to@PREV.PREV }
+							clamp_temp_variable = { var = capital_distance max = 1000 }
+							
+							set_temp_variable = { score_mult = 1000 }
+							divide_temp_variable = { score_mult = capital_distance }
+							multiply_temp_variable = { score_mult = 1 }
+						}
+					}
+				}
+			}
+		}
+	}
+}
+
+	
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		

@@ -1,0 +1,1866 @@
+scripted_gui = {
+	
+	BI_agency_tab = {
+		context_type = player_context
+		    
+		window_name = "BI_intel_agency_container"
+		parent_window_name = countryintelligenceagencyview
+        
+		visible = {
+			has_country_flag = ui_show_agency
+		}
+		
+		dirty = ui_agency
+		
+		dynamic_lists = {
+			upgrade_list = {
+				array = global.agency_upgrades
+				change_scope = yes 
+				entry_container = "upgrade_entry_container"
+			}
+			current_upgrade_list = {
+				array = current_upgrade_array
+				change_scope = yes 
+				entry_container = "current_upgrade_entry_container"
+			}
+			modifier_list = {
+				array = upgrade_overview
+				change_scope = yes 
+				entry_container = "[GetAgencyModifierEntryContainer]"
+			}
+			modifier_token = {
+				array = modifier_token@var:v
+				change_scope = yes 
+				entry_container = "agency_modifier_token_entry_container"
+				value = modifier_entry
+			}
+		}
+		
+		properties = {
+			level = {
+				image = [GetAgencyUpgradeLevel]
+				x = upgrade_level_x
+				y = upgrade_level_y
+			}
+			level_progress = {
+				image = [GetAgencyUpgradeProgress]
+				x = upgrade_level_x
+				y = upgrade_level_y
+			}
+			upgrade_button = {
+				image = "[GetAgencyUpgradeButton]"
+				x = upgrade_x
+				y = upgrade_y
+			}
+			continuous_glow = {
+				x = continuous_glow_x
+				y = continuous_glow_y
+			}
+			upgrade_icon_frame = {
+				image = "[GetAgencyUpgradeFrame]"
+				x = upgrade_icon_frame_x
+				y = upgrade_icon_frame_y
+			}
+			upgrade_icon = {
+				image = GFX_[?v.GetTokenKey]
+				x = upgrade_icon_x
+				y = upgrade_icon_y
+			}
+			cancel_upgrade = {
+				x = cancel_upgrade_x
+				y = cancel_upgrade_y
+			}
+			upgrade_name = {
+				x = upgrade_name_x
+				y = upgrade_name_y
+			}
+			num_factories = {
+				x = num_factories_x
+				y = num_factories_y
+			}
+			civilian_factory_icon = {
+				x = civilian_factory_icon_x
+				y = civilian_factory_icon_y
+			}
+			cost_background = {
+				x = cost_background_x
+				y = cost_background_y
+			}
+			ai_score = {
+				x = ai_score_x
+				y = ai_score_y
+			}
+			
+			branch = {
+				image = GFX_[?upgrade_overview_branch^i.GetTokenKey]
+			}
+			
+			progressbar_content = {
+				frame = progress
+			}
+		}
+		
+		effects = { 
+			close_button_click = {
+				clr_country_flag = ui_show_agency
+				for_each_loop = {
+					array = global.agency_upgrades
+					
+					clear_array = modifier_token@var:v
+					clear_array = modifier_value@var:v
+				}
+				clear_array = upgrade_overview
+				clear_array = upgrade_overview_branch
+				add_to_variable = { ui_agency = 1 }
+			}
+			upgrade_button_click = {	
+				start_agency_upgrade = yes
+				add_to_variable = { ui_agency = 1 }
+			}
+			cancel_upgrade_click = {
+				subtract_from_variable = { agency_upgrade_cost = agency_cost@var:v }
+				remove_from_array = { current_upgrade_array = v }
+				clear_variable = agency_progress@var:v
+				clear_variable = agency_target_progress@var:v
+				clear_variable = agency_cost@var:v
+			
+				add_to_variable = { ui_agency = 1 }
+			}
+			abort_upgrade_click = {
+				subtract_from_variable = { agency_upgrade_cost = agency_cost@var:v }
+				remove_from_array = { current_upgrade_array = v }
+				clear_variable = agency_progress@var:v
+				clear_variable = agency_target_progress@var:v
+				clear_variable = agency_cost@var:v
+				
+				add_to_variable = { ui_agency = 1 }
+			}
+			
+			upgrade_queue_click = {
+				set_country_flag = ui_show_upgrade_queue
+				add_to_variable = { ui_agency = 1 }
+			}
+		} 
+		
+		triggers = {
+			upgrade_queue_click_enabled = {
+				ai_agency_upgrade_type_score = yes
+			}
+			ai_score_visible = {
+				is_debug = yes
+				check_variable = { ai_score > 0 }
+			}
+			continuous_glow_visible = {
+				set_temp_variable = { ai_score = 0 }
+				set_temp_variable = { ai_type = 0 }
+				if = {
+					limit = {
+						meta_trigger = {
+							text = {
+								NOT = { has_done_agency_upgrade = [V] }
+								[V] = yes 
+							}
+							V = "[?v.GetTokenKey]"
+						}
+						
+						if = {
+							limit = {
+								check_variable = { ai_score > 0 }
+							}
+							add_to_temp_variable = { ai_score = ai_type_weight@var:ai_type }
+						}
+						
+						set_temp_variable = { cost_weight = cost }
+						multiply_temp_variable = { cost_weight = 0.5 }
+						
+						set_temp_variable = { score_cost_mult = 1 }
+						subtract_from_temp_variable = { score_cost_mult = cost_weight }
+						divide_temp_variable = { ai_score = cost_weight }
+					}
+				}
+				is_in_array = { current_upgrade_array = v }
+			}
+			cancel_upgrade_visible = {
+				is_in_array = { current_upgrade_array = v }
+			}
+			level_visible = {
+				check_variable = { level > 1 }
+				NOT = {
+					meta_trigger = {
+						text = {
+							has_done_agency_upgrade = [V]
+						}
+						V = "[?v.GetTokenKey]"
+					}
+				}
+			}
+			level_progress_visible = {
+				check_variable = { level > 1 }
+				meta_trigger = {
+					text = {
+						has_country_flag = [X]
+					}
+					X = "[?v.GetTokenKey]"
+				}
+				NOT = {
+					meta_trigger = {
+						text = {
+							has_done_agency_upgrade = [V]
+						}
+						V = "[?v.GetTokenKey]"
+					}
+				}
+			}
+			upgrade_icon_frame_visible = {
+				check_variable = { is_major_upgrade = 1 }
+			}
+			upgrade_icon_visible = {
+				check_variable = { is_major_upgrade = 1 }
+			}
+			
+			cost_background_visible = {
+				NOT = {
+					meta_trigger = {
+						text = {
+							has_done_agency_upgrade = [V]
+						}
+						V = "[?v.GetTokenKey]"
+					}
+				}
+			}
+			civilian_factory_icon_visible = {
+				NOT = {
+					meta_trigger = {
+						text = {
+							has_done_agency_upgrade = [V]
+						}
+						V = "[?v.GetTokenKey]"
+					}
+				}
+			}
+			num_factories_visible = {
+				NOT = {
+					meta_trigger = {
+						text = {
+							has_done_agency_upgrade = [V]
+						}
+						V = "[?v.GetTokenKey]"
+					}
+				}
+			}
+			upgrade_button_click_enabled = {
+				set_temp_variable = { is_major_upgrade = 0 }
+				ui_agency_position = yes
+				
+				if = {
+					limit = { check_variable = { v = token:upgrade_agency_second_upgrade } }
+					set_temp_variable = { upgrade_x = -100 }
+					set_temp_variable = { upgrade_y = y0 }
+					#set_temp_variable = { is_major_upgrade = 1 }
+				}
+				else_if = {
+					limit = { check_variable = { v = token:upgrade_agency_third_upgrade } }
+					set_temp_variable = { upgrade_x = -100 }
+					set_temp_variable = { upgrade_y = y1 }
+					#set_temp_variable = { is_major_upgrade = 1 }
+				}
+			#### ARMY BRANCH DEPARTMENT ####
+				else_if = {
+					limit = { check_variable = { v = token:upgrade_army_department } }
+					set_temp_variable = { upgrade_x = x3 }
+					set_temp_variable = { upgrade_y = 0 }
+					set_temp_variable = { is_major_upgrade = 1 }
+				}
+				else_if = {
+					limit = { check_variable = { v = token:upgrade_army_no_token_use } }
+					set_temp_variable = { upgrade_x = x2 }
+					set_temp_variable = { upgrade_y = y1 }
+				}
+				else_if = {
+					limit = { check_variable = { v = token:upgrade_army_stackable } }
+					set_temp_variable = { upgrade_x = x4 }
+					set_temp_variable = { upgrade_y = y1 }
+				}
+				else_if = {
+					limit = { check_variable = { v = token:upgrade_army_enemy_intel_reduction } }
+					set_temp_variable = { upgrade_x = x3 }
+					set_temp_variable = { upgrade_y = y2 }
+				}
+				else_if = {
+					limit = { check_variable = { v = token:upgrade_army_defense_sweep } }
+					set_temp_variable = { upgrade_x = x2 }
+					set_temp_variable = { upgrade_y = y3 }
+				}
+				else_if = {
+					limit = { check_variable = { v = token:upgrade_army_enemy_counter_intel } }
+					set_temp_variable = { upgrade_x = x4 }
+					set_temp_variable = { upgrade_y = y3 }
+				}
+				
+			#### NAVY BRANCH DEPARTMENT ####
+				if = {
+					limit = { check_variable = { v = token:upgrade_naval_department } }
+					set_temp_variable = { upgrade_x = x8 }
+					set_temp_variable = { upgrade_y = 0 }
+					set_temp_variable = { is_major_upgrade = 1 }
+					set_temp_variable = { levels = 3 }
+				}
+				else_if = {
+					limit = { check_variable = { v = token:upgrade_navy_no_token_use } }
+					set_temp_variable = { upgrade_x = x7 }
+					set_temp_variable = { upgrade_y = y1 }
+					set_temp_variable = { levels = 3 }
+				}
+				else_if = {
+					limit = { check_variable = { v = token:upgrade_navy_stackable } }
+					set_temp_variable = { upgrade_x = x9 }
+					set_temp_variable = { upgrade_y = y1 }
+					set_temp_variable = { levels = 3 }
+				}
+				else_if = {
+					limit = { check_variable = { v = token:upgrade_navy_enemy_intel_reduction } }
+					set_temp_variable = { upgrade_x = x8 }
+					set_temp_variable = { upgrade_y = y2 }
+				}
+				else_if = {
+					limit = { check_variable = { v = token:upgrade_navy_defense_sweep } }
+					set_temp_variable = { upgrade_x = x7 }
+					set_temp_variable = { upgrade_y = y3 }
+				}
+				else_if = {
+					limit = { check_variable = { v = token:upgrade_navy_enemy_counter_intel } }
+					set_temp_variable = { upgrade_x = x9 }
+					set_temp_variable = { upgrade_y = y3 }
+				}
+				
+			#### AIR BRANCH DEPARTMENT ####
+				if = {
+					limit = { check_variable = { v = token:upgrade_airforce_department } }
+					set_temp_variable = { upgrade_x = x13 }
+					set_temp_variable = { upgrade_y = 0 }
+					set_temp_variable = { is_major_upgrade = 1 }
+					set_temp_variable = { levels = 3 }
+				}
+				else_if = {
+					limit = { check_variable = { v = token:upgrade_air_no_token_use } }
+					set_temp_variable = { upgrade_x = x12 }
+					set_temp_variable = { upgrade_y = y1 }
+					set_temp_variable = { levels = 3 }
+				}
+				else_if = {
+					limit = { check_variable = { v = token:upgrade_air_stackable } }
+					set_temp_variable = { upgrade_x = x14 }
+					set_temp_variable = { upgrade_y = y1 }
+					set_temp_variable = { levels = 3 }
+				}
+				else_if = {
+					limit = { check_variable = { v = token:upgrade_air_enemy_intel_reduction } }
+					set_temp_variable = { upgrade_x = x13 }
+					set_temp_variable = { upgrade_y = y2 }
+				}
+				else_if = {
+					limit = { check_variable = { v = token:upgrade_air_defense_sweep } }
+					set_temp_variable = { upgrade_x = x12 }
+					set_temp_variable = { upgrade_y = y3 }
+				}
+				else_if = {
+					limit = { check_variable = { v = token:upgrade_air_enemy_counter_intel } }
+					set_temp_variable = { upgrade_x = x14 }
+					set_temp_variable = { upgrade_y = y3 }
+				}
+				
+			#### ECONOMY BRANCH DEPARTMENT ####
+				if = {
+					limit = { check_variable = { v = token:upgrade_economy_civilian } }
+					set_temp_variable = { upgrade_x = x18 }
+					set_temp_variable = { upgrade_y = 0 }
+					set_temp_variable = { is_major_upgrade = 1 }
+					set_temp_variable = { levels = 3 }
+				}
+				else_if = {
+					limit = { check_variable = { v = token:upgrade_economy_no_token_use } }
+					set_temp_variable = { upgrade_x = x17 }
+					set_temp_variable = { upgrade_y = y1 }
+					set_temp_variable = { levels = 3 }
+				}
+				else_if = {
+					limit = { check_variable = { v = token:upgrade_economy_stackable } }
+					set_temp_variable = { upgrade_x = x19 }
+					set_temp_variable = { upgrade_y = y1 }
+					set_temp_variable = { levels = 3 }
+				}
+				else_if = {
+					limit = { check_variable = { v = token:upgrade_economy_enemy_intel_reduction } }
+					set_temp_variable = { upgrade_x = x18 }
+					set_temp_variable = { upgrade_y = y2 }
+				}
+				else_if = {
+					limit = { check_variable = { v = token:upgrade_civilian_defense_sweep } }
+					set_temp_variable = { upgrade_x = x17 }
+					set_temp_variable = { upgrade_y = y3 }
+				}
+				else_if = {
+					limit = { check_variable = { v = token:upgrade_economy_enemy_counter_intel } }
+					set_temp_variable = { upgrade_x = x19 }
+					set_temp_variable = { upgrade_y = y3 }
+				}
+				
+				else_if = {
+					limit = { check_variable = { v = token:upgrade_passive_defense } }
+					set_temp_variable = { upgrade_x = 0 }
+					set_temp_variable = { upgrade_y = y4 }
+					set_temp_variable = { is_major_upgrade = 1 }
+				}
+				else_if = {
+					limit = { check_variable = { v = token:upgrade_defense_harmed } }
+					set_temp_variable = { upgrade_x = 550 }
+					set_temp_variable = { upgrade_y = y5 }
+				}
+				else_if = {
+					limit = { check_variable = { v = token:upgrade_defense_intel_extraction } }
+					set_temp_variable = { upgrade_x = 1050 }
+					set_temp_variable = { upgrade_y = y5 }
+				}
+				else_if = {
+					limit = { check_variable = { v = token:upgrade_defense_critical_success } }
+					set_temp_variable = { upgrade_x = 1550 }
+					set_temp_variable = { upgrade_y = y5 }
+				}
+				else_if = {
+					limit = { check_variable = { v = token:upgrade_security_department } }
+					set_temp_variable = { upgrade_x = x22 }
+					set_temp_variable = { upgrade_y = y4 }
+					set_temp_variable = { is_major_upgrade = 1 }
+				}
+				
+			#### OPERATIONS BRANCH ####
+				else_if = {
+					limit = { check_variable = { v = token:upgrade_form_operations } }
+					set_temp_variable = { upgrade_x = 0 }
+					set_temp_variable = { upgrade_y = y7 }
+					set_temp_variable = { is_major_upgrade = 1 }
+				}
+				
+				else_if = {
+					limit = { check_variable = { v = token:upgrade_operation_infiltrate } }
+					set_temp_variable = { upgrade_x = x2 }
+					set_temp_variable = { upgrade_y = y8 }
+					set_temp_variable = { is_major_upgrade = 1 }
+				}
+				else_if = {
+					limit = { check_variable = { v = token:upgrade_operation_infiltrate_critical_success } }
+					set_temp_variable = { upgrade_x = x1 }
+					set_temp_variable = { upgrade_y = y9 }
+				}
+				else_if = {
+					limit = { check_variable = { v = token:upgrade_operation_infiltrate_risk } }
+					set_temp_variable = { upgrade_x = x3 }
+					set_temp_variable = { upgrade_y = y9 }
+				}
+				else_if = {
+					limit = { check_variable = { v = token:upgrade_operation_infiltrate_cost } }
+					set_temp_variable = { upgrade_x = x2 }
+					set_temp_variable = { upgrade_y = y10 }
+				}
+				
+				else_if = {
+					limit = { check_variable = { v = token:upgrade_operation_steal_tech } }
+					set_temp_variable = { upgrade_x = x7 }
+					set_temp_variable = { upgrade_y = y8 }
+					set_temp_variable = { is_major_upgrade = 1 }
+				}
+				else_if = {
+					limit = { check_variable = { v = token:upgrade_steal_tech_effect } }
+					set_temp_variable = { upgrade_x = x6 }
+					set_temp_variable = { upgrade_y = y9 }
+				}
+				else_if = {
+					limit = { check_variable = { v = token:upgrade_steal_tech_uses } }
+					set_temp_variable = { upgrade_x = x8 }
+					set_temp_variable = { upgrade_y = y9 }
+				}
+				else_if = {
+					limit = { check_variable = { v = token:upgrade_steal_tech_aot } }
+					set_temp_variable = { upgrade_x = x7 }
+					set_temp_variable = { upgrade_y = y10 }
+				}
+				
+				else_if = {
+					limit = { check_variable = { v = token:upgrade_operation_target_unit_leader } }
+					set_temp_variable = { upgrade_x = x2 }
+					set_temp_variable = { upgrade_y = y12 }
+					set_temp_variable = { is_major_upgrade = 1 }
+				}
+				else_if = {
+					limit = { check_variable = { v = token:upgrade_operation_target_army_leader_sick } }
+					set_temp_variable = { upgrade_x = x1 }
+					set_temp_variable = { upgrade_y = y13 }
+				}
+				else_if = {
+					limit = { check_variable = { v = token:upgrade_operation_target_army_leader_meeting } }
+					set_temp_variable = { upgrade_x = x3 }
+					set_temp_variable = { upgrade_y = y13 }
+				}
+				else_if = {
+					limit = { check_variable = { v = token:upgrade_operation_target_attache } }
+					set_temp_variable = { upgrade_x = x2 }
+					set_temp_variable = { upgrade_y = y14 }
+				}
+				
+				else_if = {
+					limit = { check_variable = { v = token:upgrade_operation_sabotage } }
+					set_temp_variable = { upgrade_x = x7 }
+					set_temp_variable = { upgrade_y = y12 }
+					set_temp_variable = { is_major_upgrade = 1 }
+				}
+				else_if = {
+					limit = { check_variable = { v = token:upgrade_operation_sabotage_damage } }
+					set_temp_variable = { upgrade_x = x6 }
+					set_temp_variable = { upgrade_y = y13 }
+				}
+				else_if = {
+					limit = { check_variable = { v = token:upgrade_operation_sabotage_uses } }
+					set_temp_variable = { upgrade_x = x8 }
+					set_temp_variable = { upgrade_y = y13 }
+				}
+				else_if = {
+					limit = { check_variable = { v = token:upgrade_operation_sabotage_repair } }
+					set_temp_variable = { upgrade_x = x7 }
+					set_temp_variable = { upgrade_y = y14 }
+				}
+				
+				else_if = {
+					limit = { check_variable = { v = token:upgrade_operation_strengthen_resistance } }
+					set_temp_variable = { upgrade_x = x2 }
+					set_temp_variable = { upgrade_y = y16 }
+					set_temp_variable = { is_major_upgrade = 1 }
+				}
+				else_if = {
+					limit = { check_variable = { v = token:upgrade_operation_strengthen_resistance_effect } }
+					set_temp_variable = { upgrade_x = x1 }
+					set_temp_variable = { upgrade_y = y17 }
+				}
+				else_if = {
+					limit = { check_variable = { v = token:upgrade_operation_strengthen_resistance_uses } }
+					set_temp_variable = { upgrade_x = x3 }
+					set_temp_variable = { upgrade_y = y17 }
+				}
+				
+				else_if = {
+					limit = { check_variable = { v = token:upgrade_operation_strengthen_society } }
+					set_temp_variable = { upgrade_x = x7 }
+					set_temp_variable = { upgrade_y = y16 }
+					set_temp_variable = { is_major_upgrade = 1 }
+				}
+				else_if = {
+					limit = { check_variable = { v = token:upgrade_operation_strengthen_society_effect } }
+					set_temp_variable = { upgrade_x = x6 }
+					set_temp_variable = { upgrade_y = y17 }
+				}
+				else_if = {
+					limit = { check_variable = { v = token:upgrade_operation_strengthen_society_uses } }
+					set_temp_variable = { upgrade_x = x8 }
+					set_temp_variable = { upgrade_y = y17 }
+				}
+				
+			## OPERATIVES
+				else_if = {
+					limit = { check_variable = { v = token:upgrade_expand_operations } }
+					set_temp_variable = { upgrade_x = x14 }
+					set_temp_variable = { upgrade_y = y7 }
+					set_temp_variable = { is_major_upgrade = 1 }
+				}
+				else_if = {
+					limit = { check_variable = { v = token:upgrade_underground_contacts } }
+					set_temp_variable = { upgrade_x = x13 }
+					set_temp_variable = { upgrade_y = y8 }
+				}
+				else_if = {
+					limit = { check_variable = { v = token:upgrade_training_centers } }
+					set_temp_variable = { upgrade_x = x15 }
+					set_temp_variable = { upgrade_y = y8 }
+				}
+				else_if = {
+					limit = { check_variable = { v = token:upgrade_commando_training } }
+					set_temp_variable = { upgrade_x = x12 }
+					set_temp_variable = { upgrade_y = y9 }
+				}
+				else_if = {
+					limit = { check_variable = { v = token:upgrade_diplo_training } }
+					set_temp_variable = { upgrade_x = x14 }
+					set_temp_variable = { upgrade_y = y9 }
+				}
+				else_if = {
+					limit = { check_variable = { v = token:upgrade_psycho_warfare } }
+					set_temp_variable = { upgrade_x = x16 }
+					set_temp_variable = { upgrade_y = y9 }
+				}
+				else_if = {
+					limit = { check_variable = { v = token:upgrade_invisible_ink } }
+					set_temp_variable = { upgrade_x = x13 }
+					set_temp_variable = { upgrade_y = y10 }
+				}
+				else_if = {
+					limit = { check_variable = { v = token:upgrade_suicide_pills } }
+					set_temp_variable = { upgrade_x = x15 }
+					set_temp_variable = { upgrade_y = y10 }
+				}
+				
+			#### CRYPTOLOGY BRANCH ####
+			
+				else_if = {
+					limit = { check_variable = { v = token:upgrade_form_department } }
+					set_temp_variable = { upgrade_x = x14 }
+					set_temp_variable = { upgrade_y = y12 }
+					set_temp_variable = { is_major_upgrade = 1 }
+				}
+				else_if = {
+					limit = { check_variable = { v = token:upgrade_decryption_boost } }
+					set_temp_variable = { upgrade_x = x15 }
+					set_temp_variable = { upgrade_y = y13 }
+				}
+				else_if = {
+					limit = { check_variable = { v = token:upgrade_decryption_boost_2 } }
+					set_temp_variable = { upgrade_x = x15 }
+					set_temp_variable = { upgrade_y = y14 }
+				}
+				else_if = {
+					limit = { check_variable = { v = token:upgrade_crypto_strength } }
+					set_temp_variable = { upgrade_x = x13 }
+					set_temp_variable = { upgrade_y = y13 }
+				}
+				else_if = {
+					limit = { check_variable = { v = token:upgrade_crypto_strength_2 } }
+					set_temp_variable = { upgrade_x = x13 }
+					set_temp_variable = { upgrade_y = y14 }
+				}
+				
+				ui_agency_position_adjust = yes
+				
+				############# trigger 
+				if = {
+					limit = {
+						NOT = { has_country_flag = ui_show_upgrade_queue }
+						NOT = {
+							meta_trigger = {
+								text = {
+									has_done_agency_upgrade = [V]
+								}
+								V = "[?v.GetTokenKey]"
+							}
+						}
+					}
+					meta_trigger = {
+						text = {
+							[X] = yes
+						}
+						X = "[?v.GetTokenKey]"
+					}
+				}
+			}
+			modifier_2_visible = {
+				NOT = { check_variable = { modifier_token@var:v^1 = 0 } }
+			}
+			modifier_3_visible = {
+				NOT = { check_variable = { modifier_token@var:v^2 = 0 } }
+			}
+			current_cost_click_enabled = {
+				set_temp_variable = { progress = agency_progress@var:v }
+				divide_temp_variable = { progress = agency_target_progress@var:v }
+				multiply_temp_variable = { progress = 100 }
+				
+				set_temp_variable = { days_remaining = agency_target_progress@var:v }
+				subtract_from_temp_variable = { days_remaining = agency_progress@var:v }
+			}
+		}
+	}
+	
+	BI_agency_upgrade_queue = {
+		context_type = player_context
+		    
+		window_name = "BI_intel_agency_queue_container"
+		parent_scripted_gui = BI_agency_tab
+        
+		visible = {
+			has_country_flag = ui_show_upgrade_queue
+		}
+		
+		dynamic_lists = {
+			queue_list = {
+				array = agency_queue
+				change_scope = yes 
+				entry_container = "queue_list_window"
+			}
+		}
+		
+		properties = {
+			skip_unavailable = { frame = skip_frame }
+			icon = { image = GFX_[?branch.GetTokenKey] }
+		}
+		
+		triggers = {
+			trigger_icon_visible = {
+				meta_trigger = {
+					text = { 
+						[X] = no 
+					}
+					X = "[?v.GetTokenKey]"
+				}
+			}
+			skip_unavailable_click_enabled = {
+				if = {
+					limit = {
+						has_country_flag = agency_skip_unavailable
+					}
+					set_temp_variable = { skip_frame = 2 }
+				}
+				else = {
+					set_temp_variable = { skip_frame = 1 }
+				}
+			}
+			queue_up_click_enabled = {
+				
+				check_variable = { i > 0 }
+			}
+			queue_down_click_enabled = {
+				set_temp_variable = { index = i }
+				add_to_temp_variable = { index = 1 }
+				check_variable = { index < agency_queue^num }
+			}
+		}
+		
+		effects = {
+			close_button_click = {
+				clr_country_flag = ui_show_upgrade_queue
+				add_to_variable = { ui_agency = 1 }
+			}
+			skip_unavailable_click = {
+				if = {
+					limit = {
+						has_country_flag = agency_skip_unavailable
+					}
+					clr_country_flag = agency_skip_unavailable
+				}
+				else = {
+					set_country_flag = agency_skip_unavailable
+				}
+				add_to_variable = { ui_agency = 1 }
+			}
+			remove_from_queue_button_click = {
+				remove_from_array = { agency_queue = v }
+				
+			}
+			
+			queue_up_click = {
+				set_temp_variable = { index_up = i }
+				add_to_temp_variable = { index_up = -1 }
+				
+				set_temp_variable = { index_down = i }
+				add_to_temp_variable = { index_down = 1 }
+				
+				set_temp_variable = { upgrade_switch = agency_queue^index_up }
+				add_to_array = { array = agency_queue value = v index = index_up }
+				remove_from_array = { array = agency_queue index = i }
+				add_to_array = { array = agency_queue value = upgrade_switch index = index_down }
+				remove_from_array = { array = agency_queue value = v }
+			}
+			queue_down_click = {
+				set_temp_variable = { index_down = i }
+				add_to_temp_variable = { index_down = 2 }
+				
+				add_to_array = { array = agency_queue value = v index = index_down }
+				remove_from_array = { array = agency_queue value = v }
+			}
+		}
+	}
+		
+	BI_intel_tab_window = {
+		context_type = player_context
+		     
+		window_name = "BI_intel_tab_container"
+		parent_window_name = countryintelligenceagencyview
+		
+		visible = {
+			NOT = { has_country_flag = ui_show_agency }
+		}
+		
+		dynamic_lists = {
+			operation_list = {
+				#array = global.countries
+				array = operation_array
+				change_scope = yes 
+				entry_container = "operation_entry_container"
+			}
+		}
+			
+		effects = {
+			
+			cancel_upgrade_click = {
+				set_temp_variable = { upgrade = current_upgrade_array^0 }
+				subtract_from_variable = { agency_upgrade_cost = agency_cost@var:upgrade }
+				remove_from_array = { current_upgrade_array = upgrade }
+				clear_variable = agency_progress@var:upgrade
+				clear_variable = agency_target_progress@var:upgrade
+				clear_variable = agency_cost@var:upgrade
+			
+			}
+			expand_button_click = {
+				clr_country_flag = ui_hide_foreign_assets
+			}
+			minimize_button_click = {
+				set_country_flag = ui_hide_foreign_assets
+			}
+			progressbar_content_click = {
+				clear_array = modifier_title
+				clear_array = modifier_token
+				clear_array = modifier_value
+				for_each_loop = {
+					array = global.agency_upgrades
+					
+					meta_effect = {
+						text = {
+							[V] = yes
+						}
+						V = "[?v.GetTokenKey]"
+					}
+				}
+				set_country_flag = ui_show_agency
+				add_to_variable = { ui_agency = 1 }
+				
+			}
+			open_agency_click = {
+				clear_array = modifier_title
+				clear_array = modifier_token
+				clear_array = modifier_value
+				for_each_loop = {
+					array = global.agency_upgrades
+					
+					meta_effect = {
+						text = {
+							[V] = yes
+						}
+						V = "[?v.GetTokenKey]"
+					}
+					
+					if = {
+						limit = {
+							meta_trigger = { 
+								text = {
+									has_done_agency_upgrade = [V]
+								}
+								V = "[?v.GetTokenKey]"
+							}
+						}
+						meta_effect = {
+							text = {
+								clr_country_flag = [V]
+							}
+							V = "[?v.GetTokenKey]"
+						}
+					}
+				}
+				set_country_flag = ui_show_agency
+				add_to_variable = { ui_agency = 1 }
+				
+			}
+		}
+		
+		triggers = {
+			cancel_upgrade_visible = {
+				NOT = { check_variable = { current_upgrade_array^num = 0 } }
+			}
+			expand_button_visible = {
+				has_country_flag = ui_hide_foreign_assets
+			}
+			minimize_button_visible = {
+				NOT = { has_country_flag = ui_hide_foreign_assets }
+			}
+			
+			open_agency_visible = {
+				has_intelligence_agency = yes
+			}
+			progressbar_frame_visible = {
+				has_intelligence_agency = yes
+			}
+			progressbar_desc_visible = {
+				has_intelligence_agency = yes
+			}
+			progressbar_content_visible = {
+				has_intelligence_agency = yes
+			}
+			
+			require_operation_department_visible = {
+				NOT = { has_done_agency_upgrade = upgrade_form_operations }
+			}
+		}
+	}
+         
+	BI_intel_assets_window = {
+		context_type = player_context
+		     
+		window_name = "BI_operation_token_container"
+		parent_scripted_gui = BI_intel_tab_window
+		
+		visible = { 
+			NOT = { 
+				has_country_flag = ui_show_agency
+				has_country_flag = ui_hide_foreign_assets
+			}
+		}
+         
+		dynamic_lists = {
+			BI_operation_token_country_list = {
+				array = build_intel_networks
+				change_scope = yes 
+				entry_container = [GetIntelNetworkEntryContainer]
+			}
+			intel_network_assets = {
+				array = intel_asset@var:v
+				change_scope = yes 
+				entry_container = [GetIntelAssetEntryContainer]
+				value = asset
+			}
+			resistance_areas = {
+				array = ROOT.intel_resistance_asset_area@var:v
+				change_scope = yes 
+				entry_container = resistance_area_entry
+				value = resistance_area
+			}
+			capture_asset_action = {
+				array = capture_asset_action@var:v
+				change_scope = yes 
+				entry_container = asset_action_entry
+				value = asset_action
+			}
+			civilian_asset_action = {
+				array = civilian_asset_action@var:v
+				change_scope = yes 
+				entry_container = asset_action_entry
+				value = asset_action
+			}
+			army_asset_action = {
+				array = army_asset_action@var:v
+				change_scope = yes 
+				entry_container = asset_action_entry
+				value = asset_action
+			}
+			air_asset_action = {
+				array = air_asset_action@var:v
+				change_scope = yes 
+				entry_container = asset_action_entry
+				value = asset_action
+			}
+			navy_asset_action = {
+				array = navy_asset_action@var:v
+				change_scope = yes 
+				entry_container = asset_action_entry
+				value = asset_action
+			}
+			resistance_asset_action = {
+				array = resistance_asset_action@var:v
+				change_scope = yes 
+				entry_container = asset_action_entry
+				value = asset_action
+			}
+		}
+		
+		properties = {
+			flag = { image = "[This.GetFlag]" }
+			checkbox = { frame = checkbox_frame }
+			expand = { frame = expand_frame }
+			civilian_checkbox = { frame = civilian_frame }
+			army_checkbox = { frame = army_frame }
+			air_checkbox = { frame = air_frame }
+			navy_checkbox = { frame = navy_frame }
+			resistance_checkbox = { frame = resistance_frame }
+			
+			asset = { image = "GFX_[?asset.GetTokenKey]" }
+			
+			asset_action = { image = "GFX_[?asset_action.GetTokenKey]" }
+			capture_progressbar = { frame = capture_progress }
+			civilian_progressbar = { frame = civilian_progress }
+			army_progressbar = { frame = army_progress }
+			air_progressbar = { frame = air_progress }
+			navy_progressbar = { frame = navy_progress }
+			resistance_progressbar = { frame = resistance_progress }
+			
+			asset_setting_resistance_sabotage_industry = { frame = industry_frame }
+			asset_setting_resistance_sabotage_resources = { frame = resource_frame }
+		}
+
+		effects = { 
+			close_button_click = {
+				set_country_flag = ui_hide_foreign_assets
+			}
+			checkbox_click = {
+				ROOT = {
+					if = {
+						limit = {
+							has_country_flag = ui_hide_operations@PREV
+						}
+						clr_country_flag = ui_hide_operations@PREV
+						
+						clr_country_flag = ui_hide_civilian_operations@PREV
+						clr_country_flag = ui_hide_army_operations@PREV
+						clr_country_flag = ui_hide_air_operations@PREV
+						clr_country_flag = ui_hide_navy_operations@PREV
+						clr_country_flag = ui_hide_resistance_operations@PREV
+					}
+					else = {
+						set_country_flag = ui_hide_operations@PREV
+						
+						set_country_flag = ui_hide_civilian_operations@PREV
+						set_country_flag = ui_hide_army_operations@PREV
+						set_country_flag = ui_hide_air_operations@PREV
+						set_country_flag = ui_hide_navy_operations@PREV
+						set_country_flag = ui_hide_resistance_operations@PREV
+					}
+				}
+			}
+			expand_click = {
+				ROOT = {
+					if = {
+						limit = {
+							has_country_flag = ui_hide_assets@PREV
+						}
+						clr_country_flag = ui_hide_assets@PREV
+					}
+					else = {
+						set_country_flag = ui_hide_assets@PREV
+					}
+				}
+			}
+			civilian_checkbox_click = {
+				ROOT = {
+					if = {
+						limit = {
+							has_country_flag = ui_hide_civilian_operations@PREV
+						}
+						clr_country_flag = ui_hide_civilian_operations@PREV
+					}
+					else = {
+						set_country_flag = ui_hide_civilian_operations@PREV
+					}
+				}
+			}
+			army_checkbox_click = {
+				ROOT = {
+					if = {
+						limit = {
+							has_country_flag = ui_hide_army_operations@PREV
+						}
+						clr_country_flag = ui_hide_army_operations@PREV
+					}
+					else = {
+						set_country_flag = ui_hide_army_operations@PREV
+					}
+				}
+			}
+			air_checkbox_click = {
+				ROOT = {
+					if = {
+						limit = {
+							has_country_flag = ui_hide_air_operations@PREV
+						}
+						clr_country_flag = ui_hide_air_operations@PREV
+					}
+					else = {
+						set_country_flag = ui_hide_air_operations@PREV
+					}
+				}
+			}
+			navy_checkbox_click = {
+				ROOT = {
+					if = {
+						limit = {
+							has_country_flag = ui_hide_navy_operations@PREV
+						}
+						clr_country_flag = ui_hide_navy_operations@PREV
+					}
+					else = {
+						set_country_flag = ui_hide_navy_operations@PREV
+					}
+				}
+			}
+			resistance_checkbox_click = {
+				ROOT = {
+					if = {
+						limit = {
+							has_country_flag = ui_hide_resistance_operations@PREV
+						}
+						clr_country_flag = ui_hide_resistance_operations@PREV
+					}
+					else = {
+						set_country_flag = ui_hide_resistance_operations@PREV
+					}
+				}
+			}
+			captive_click = {
+				var:v = {
+					every_operative = {
+						display_individual_scopes = yes
+						if = {
+							limit = {
+								check_variable = { operative_captor = ROOT }
+							}
+							custom_effect_tooltip = "[?id] ID"
+							custom_effect_tooltip = CAPTURED_OPERATIVE_TOOLTIP
+						}
+					}
+				}
+			}
+			operatives_icon_click = {
+				ROOT = {
+					every_operative = {
+						limit = {
+							check_variable = { operation_country = PREV.PREV }
+						}
+						display_individual_scopes = yes
+						
+						custom_effect_tooltip = "[?mtth:operative_mission.GetTokenLocalizedKey]"
+						custom_effect_tooltip = "[?operation_type.GetTokenLocalizedKey]"
+						custom_effect_tooltip = line_break
+					}
+				}
+			}
+			
+			asset_action_button_click = {
+				set_temp_variable = { cp_cost = 0 }
+				meta_effect = {
+					text = {
+						asset_[ASSET] = yes
+						custom_effect_tooltip = [ASSET]_desc
+					}
+					ASSET = "[?asset_action.GetTokenKey]"
+				}
+
+				if = {
+					limit = {
+						check_variable = { asset_days > 0 }
+					}
+					custom_effect_tooltip = asset_risk_days_tooltip
+				}
+			
+				if = {
+					limit = {
+						if = {
+							limit = {
+								check_variable = { cp_cost > 0 }
+							}
+							check_variable = { ROOT.command_power > cp_cost }
+						}
+						check_variable = { asset_days > 0 }
+						NOT = { 
+							meta_trigger = {
+								text = {
+									has_variable = ROOT.[TYPE]_current_asset_action@THIS
+								}
+								TYPE = "[?asset_type.GetTokenKey]"
+							}
+						}
+					}
+					set_temp_variable = { end_date = asset_days }
+					add_to_temp_variable = { end_date = global.num_days }
+					
+					ROOT = {
+							
+						if = {
+							limit = {
+								check_variable = { cp_cost > 0 }
+							}
+							multiply_temp_variable = { cp_cost = -1 }
+							hidden_effect = { add_command_power = cp_cost }
+						}
+						meta_effect = {
+							text = {
+								set_variable = { [TYPE]_current_asset_action@PREV = asset_action }
+								
+								set_variable = { [TYPE]_current_asset_action_start@PREV = global.num_days }
+								set_variable = { [TYPE]_current_asset_action_end@PREV = end_date }
+							}
+							TYPE = "[?asset_type.GetTokenKey]"
+						}
+					}
+				}
+			}
+			
+			resistance_area_button_click = {
+				set_variable = { ROOT.selected_resistance_area@var:v = resistance_area }
+			}
+			
+			asset_setting_resistance_sabotage_industry_click = {
+				if = {
+					limit = {
+						has_dynamic_modifier = {
+							modifier = asset_setting_resistance_sabotage_industry
+						}
+					}
+					remove_dynamic_modifier = {
+						modifier = asset_setting_resistance_sabotage_industry
+					}
+					every_neighbor_state = {
+						limit = {
+							is_controlled_by = PREV.controller
+							has_resistance = yes
+						}
+						remove_dynamic_modifier = {
+							modifier = asset_setting_resistance_sabotage_industry
+						}
+					}
+				}
+				else = {	
+					if = {
+						limit = {
+							has_dynamic_modifier = {
+								modifier = asset_setting_resistance_sabotage_resources
+							}
+						}
+						remove_dynamic_modifier = {
+							modifier = asset_setting_resistance_sabotage_resources
+						}
+						every_neighbor_state = {
+							limit = {
+								is_controlled_by = PREV.controller
+								has_resistance = yes
+							}
+							remove_dynamic_modifier = {
+								modifier = asset_setting_resistance_sabotage_resources
+							}
+						}
+					}
+					add_dynamic_modifier = {
+						modifier = asset_setting_resistance_sabotage_industry
+					}
+					every_neighbor_state = {
+						limit = {
+							is_controlled_by = PREV.controller
+							has_resistance = yes
+						}
+						add_dynamic_modifier = {
+							modifier = asset_setting_resistance_sabotage_industry
+						}
+					}
+				}
+			}
+			asset_setting_resistance_sabotage_resources_click = {
+				if = {
+					limit = {
+						has_dynamic_modifier = {
+							modifier = asset_setting_resistance_sabotage_resources
+						}
+					}
+					remove_dynamic_modifier = {
+						modifier = asset_setting_resistance_sabotage_resources
+					}
+					every_neighbor_state = {
+						limit = {
+							is_controlled_by = PREV.controller
+							has_resistance = yes
+						}
+						remove_dynamic_modifier = {
+							modifier = asset_setting_resistance_sabotage_resources
+						}
+					}
+				}
+				else = {	
+					if = {
+						limit = {
+							has_dynamic_modifier = {
+								modifier = asset_setting_resistance_sabotage_industry
+							}
+						}
+						remove_dynamic_modifier = {
+							modifier = asset_setting_resistance_sabotage_industry
+						}
+						every_neighbor_state = {
+							limit = {
+								is_controlled_by = PREV.controller
+								has_resistance = yes
+							}
+							remove_dynamic_modifier = {
+								modifier = asset_setting_resistance_sabotage_industry
+							}
+						}
+					}
+					add_dynamic_modifier = {
+						modifier = asset_setting_resistance_sabotage_resources
+					}
+					every_neighbor_state = {
+						limit = {
+							is_controlled_by = PREV.controller
+							has_resistance = yes
+						}
+						add_dynamic_modifier = {
+							modifier = asset_setting_resistance_sabotage_resources
+						}
+					}
+				}
+			}
+		}
+		
+		triggers = {
+			capture_progress_text_visible = {
+				has_variable = ROOT.capture_current_asset_action@THIS
+			}
+			capture_progressbar_visible = {
+				has_variable = ROOT.capture_current_asset_action@THIS
+				
+				set_temp_variable = { t = ROOT.capture_current_asset_action_end@PREV }
+				subtract_from_temp_variable = { t = ROOT.capture_current_asset_action_start@PREV }
+				
+				set_temp_variable = { capture_progress = global.num_days }
+				subtract_from_temp_variable = { capture_progress = ROOT.capture_current_asset_action_start@PREV }
+				
+				divide_temp_variable = { capture_progress = t }
+				multiply_temp_variable = { capture_progress = 100 }
+			}
+			capture_progressbar_frame_visible = {
+				has_variable = ROOT.capture_current_asset_action@THIS
+			}
+			captive_click_enabled = {
+				clear_temp_array = capture_asset_action@var:v
+				
+				if = {
+					limit = {
+						has_variable = ROOT.capture_current_asset_action@THIS
+					}
+					add_to_temp_array = { capture_asset_action@var:v = ROOT.capture_current_asset_action@THIS }
+					
+				}
+				else = {
+					add_to_temp_array = { capture_asset_action@var:v = token:interrogate_operative }
+					add_to_temp_array = { capture_asset_action@var:v = token:trade_operative }
+					#add_to_temp_array = { capture_asset_action@var:v = token:move_operative }
+					add_to_temp_array = { capture_asset_action@var:v = token:kill_operative }
+					#add_to_temp_array = { capture_asset_action@var:v = token:turn_operative }
+					
+				}
+				
+			}
+			
+			civilian_progress_text_visible = {
+				has_variable = ROOT.civilian_current_asset_action@THIS
+			}
+			civilian_progressbar_visible = {
+				has_variable = ROOT.civilian_current_asset_action@THIS
+				
+				set_temp_variable = { t = ROOT.civilian_current_asset_action_end@PREV }
+				subtract_from_temp_variable = { t = ROOT.civilian_current_asset_action_start@PREV }
+				
+				set_temp_variable = { civilian_progress = global.num_days }
+				subtract_from_temp_variable = { civilian_progress = ROOT.civilian_current_asset_action_start@PREV }
+				
+				divide_temp_variable = { civilian_progress = t }
+				multiply_temp_variable = { civilian_progress = 100 }
+			}
+			civilian_progressbar_frame_visible = {
+				has_variable = ROOT.civilian_current_asset_action@THIS
+			}
+			civilian_checkbox_click_enabled = {
+				if = {
+					limit = {
+						has_variable = ROOT.civilian_current_asset_action@THIS
+					}
+					add_to_temp_array = { civilian_asset_action@var:v = ROOT.civilian_current_asset_action@THIS }
+					
+				}
+				else = {
+					add_to_temp_array = { civilian_asset_action@var:v = token:civilian_request_most_built_area }
+					add_to_temp_array = { civilian_asset_action@var:v = token:civilian_request_current_research }
+					
+					if = {
+						limit = {
+							var:v = { is_in_array = { research_steal_civilian = ROOT } }
+						}
+						add_to_temp_array = { civilian_asset_action@var:v = token:subasset_civilian_research_steal }	
+					}
+				}
+				
+				ROOT = {
+					if = {
+						limit = {
+							has_country_flag = ui_hide_civilian_operations@PREV
+						}
+						set_temp_variable = { civilian_frame = 1 }
+					}
+					else = {
+						set_temp_variable = { civilian_frame = 2 }
+					}
+				}
+			}
+			
+			army_progress_text_visible = {
+				has_variable = ROOT.army_current_asset_action@THIS
+			}
+			army_progressbar_visible = {
+				has_variable = ROOT.army_current_asset_action@THIS
+				
+				set_temp_variable = { t = ROOT.army_current_asset_action_end@PREV }
+				subtract_from_temp_variable = { t = ROOT.army_current_asset_action_start@PREV }
+				
+				set_temp_variable = { army_progress = global.num_days }
+				subtract_from_temp_variable = { army_progress = ROOT.army_current_asset_action_start@PREV }
+				
+				divide_temp_variable = { army_progress = t }
+				multiply_temp_variable = { army_progress = 100 }
+			}
+			army_progressbar_frame_visible = {
+				has_variable = ROOT.army_current_asset_action@THIS
+			}
+			army_checkbox_click_enabled = {
+				if = {
+					limit = {
+						has_variable = ROOT.army_current_asset_action@THIS
+					}
+					add_to_temp_array = { army_asset_action@var:v = ROOT.army_current_asset_action@THIS }
+					
+				}
+				else = {
+					add_to_temp_array = { army_asset_action@var:v = token:army_request_doctrine }
+					add_to_temp_array = { army_asset_action@var:v = token:army_request_highest_armor }
+					add_to_temp_array = { army_asset_action@var:v = token:army_request_highest_pierce }
+					#add_to_temp_array = { army_asset_action@var:v = token:army_request_earned_traits }
+					#add_to_temp_array = { army_asset_action@var:v = token:army_request_earned_mio }
+					
+					if = {
+						limit = {
+							var:v = { is_in_array = { research_steal_army = ROOT } }
+						}
+						add_to_temp_array = { army_asset_action@var:v = token:subasset_army_research_steal }	
+					}
+				}
+				ROOT = {
+					if = {
+						limit = {
+							has_country_flag = ui_hide_army_operations@PREV
+						}
+						set_temp_variable = { army_frame = 1 }
+					}
+					else = {
+						set_temp_variable = { army_frame = 2 }
+					}
+				}
+			}
+			
+			air_progress_text_visible = {
+				has_variable = ROOT.air_current_asset_action@THIS
+			}
+			air_progressbar_visible = {
+				has_variable = ROOT.air_current_asset_action@THIS
+				
+				set_temp_variable = { t = ROOT.air_current_asset_action_end@PREV }
+				subtract_from_temp_variable = { t = ROOT.air_current_asset_action_start@PREV }
+				
+				set_temp_variable = { air_progress = global.num_days }
+				subtract_from_temp_variable = { air_progress = ROOT.air_current_asset_action_start@PREV }
+				
+				divide_temp_variable = { air_progress = t }
+				multiply_temp_variable = { air_progress = 100 }
+			}
+			air_progressbar_frame_visible = {
+				has_variable = ROOT.air_current_asset_action@THIS
+			}
+			
+			air_checkbox_click_enabled = {
+				if = {
+					limit = {
+						has_variable = ROOT.air_current_asset_action@THIS
+					}
+					add_to_temp_array = { air_asset_action@var:v = ROOT.air_current_asset_action@THIS }
+					
+				}
+				else = {
+					add_to_temp_array = { air_asset_action@var:v = token:air_request_doctrine }
+					#add_to_temp_array = { air_asset_action@var:v = token:air_request_recent_production }
+					add_to_temp_array = { air_asset_action@var:v = token:air_request_air_capacity }
+					#add_to_temp_array = { air_asset_action@var:v = token:air_request_earned_mio }
+					
+					if = {
+						limit = {
+							var:v = { is_in_array = { research_steal_air = ROOT } }
+						}
+						add_to_temp_array = { air_asset_action@var:v = token:subasset_air_research_steal }	
+					}
+				}
+				ROOT = {
+					if = {
+						limit = {
+							has_country_flag = ui_hide_air_operations@PREV
+						}
+						set_temp_variable = { air_frame = 1 }
+					}
+					else = {
+						set_temp_variable = { air_frame = 2 }
+					}
+				}
+			}
+			
+			navy_progress_text_visible = {
+				has_variable = ROOT.navy_current_asset_action@THIS
+			}
+			navy_progressbar_visible = {
+				has_variable = ROOT.navy_current_asset_action@THIS
+				
+				set_temp_variable = { t = ROOT.navy_current_asset_action_end@PREV }
+				subtract_from_temp_variable = { t = ROOT.navy_current_asset_action_start@PREV }
+				
+				set_temp_variable = { navy_progress = global.num_days }
+				subtract_from_temp_variable = { navy_progress = ROOT.navy_current_asset_action_start@PREV }
+				
+				divide_temp_variable = { navy_progress = t }
+				multiply_temp_variable = { navy_progress = 100 }
+			}
+			navy_progressbar_frame_visible = {
+				has_variable = ROOT.navy_current_asset_action@THIS
+			}
+			navy_checkbox_click_enabled = {
+				if = {
+					limit = {
+						has_variable = ROOT.navy_current_asset_action@THIS
+					}
+					add_to_temp_array = { navy_asset_action@var:v = ROOT.navy_current_asset_action@THIS }
+					
+				}
+				else = {
+					add_to_temp_array = { navy_asset_action@var:v = token:navy_request_doctrine }
+					add_to_temp_array = { navy_asset_action@var:v = token:navy_request_csy_production }
+					#add_to_temp_array = { navy_asset_action@var:v = token:navy_request_earned_traits }
+					#add_to_temp_array = { navy_asset_action@var:v = token:navy_request_earned_mio }
+					
+					if = {
+						limit = {
+							var:v = { is_in_array = { research_steal_navy = ROOT } }
+						}
+						add_to_temp_array = { navy_asset_action@var:v = token:subasset_navy_research_steal }	
+					}
+				}
+				ROOT = {
+					if = {
+						limit = {
+							has_country_flag = ui_hide_navy_operations@PREV
+						}
+						set_temp_variable = { navy_frame = 1 }
+					}
+					else = {
+						set_temp_variable = { navy_frame = 2 }
+					}
+				}
+			}
+			
+			resistance_progress_text_visible = {
+				has_variable = ROOT.resistance_current_asset_action@THIS
+			}
+			resistance_progressbar_visible = {
+				has_variable = ROOT.resistance_current_asset_action@THIS
+				
+				set_temp_variable = { t = ROOT.resistance_current_asset_action_end@PREV }
+				subtract_from_temp_variable = { t = ROOT.resistance_current_asset_action_start@PREV }
+				
+				set_temp_variable = { resistance_progress = global.num_days }
+				subtract_from_temp_variable = { resistance_progress = ROOT.resistance_current_asset_action_start@PREV }
+				
+				divide_temp_variable = { resistance_progress = t }
+				multiply_temp_variable = { resistance_progress = 100 }
+			}
+			resistance_progressbar_frame_visible = {
+				has_variable = ROOT.resistance_current_asset_action@THIS
+			}
+			resistance_checkbox_click_enabled = {
+				if = {
+					limit = {
+						has_variable = ROOT.resistance_current_asset_action@THIS
+					}
+					add_to_temp_array = { resistance_asset_action@var:v = ROOT.resistance_current_asset_action@THIS }
+					
+				}
+				else = {
+					add_to_temp_array = { resistance_asset_action@var:v = token:subasset_resistance_sabotage }
+					add_to_temp_array = { resistance_asset_action@var:v = token:subasset_resistance_offensive }
+					add_to_temp_array = { resistance_asset_action@var:v = token:subasset_resistance_defensive }
+					var:ROOT.intel_resistance_asset_area@var:v = {
+						all_of = {
+							array = resistance_actions@var:resistance_leader
+							value = action
+							
+							add_to_temp_array = { resistance_asset_action@var:v = action }
+						}
+					}
+				}
+				
+				ROOT = {
+					if = {
+						limit = {
+							has_country_flag = ui_hide_resistance_operations@PREV
+						}
+						set_temp_variable = { resistance_frame = 1 }
+					}
+					else = {
+						set_temp_variable = { resistance_frame = 2 }
+					}
+				}
+			}
+			asset_action_report_visible = {
+				NOT = {
+					check_variable = { asset_action = token:subasset_resistance_sabotage }
+					check_variable = { asset_action = token:subasset_resistance_offensive }
+					check_variable = { asset_action = token:subasset_resistance_defensive }
+					check_variable = { asset_action = token:subasset_resistance_fort }
+					check_variable = { asset_action = token:subasset_resistance_army }
+					check_variable = { asset_action = token:subasset_resistance_supply }
+					check_variable = { asset_action = token:subasset_civilian_research_steal }
+					check_variable = { asset_action = token:subasset_army_research_steal }
+					check_variable = { asset_action = token:subasset_air_research_steal }
+					check_variable = { asset_action = token:subasset_navy_research_steal }
+				}
+			}
+			asset_action_command_visible = {
+				OR = {
+					check_variable = { asset_action = token:subasset_resistance_sabotage }
+					check_variable = { asset_action = token:subasset_resistance_offensive }
+					check_variable = { asset_action = token:subasset_resistance_defensive }
+					
+				}
+			}
+			header_click_enabled = {
+				
+				all_of_scopes = {
+					array = intel_networks
+					
+					add_to_temp_array = { build_intel_networks = THIS }
+					
+					ROOT = {
+						if = {
+							limit = {
+								NOT = { has_country_flag = ui_hide_assets@PREV }
+							}
+							#PREV = {
+							#	all_operative_leader = {
+							#		if = {
+							#			limit = {
+							#				check_variable = { operative_captor = ROOT }
+							#			}
+							#			add_to_temp_array = { build_intel_networks = 0 }
+							#			add_to_temp_array = { intel_asset@PREV = token:capture_operative }
+							#		}
+							#	}
+							#}
+							
+							if = {
+								limit = {
+									OR = {
+										has_operation_token = {
+											tag = PREV
+											token = token_civilian
+										}
+										PREV = { is_in_array = { research_steal_civilian = ROOT } }
+									}
+								}
+								add_to_temp_array = { build_intel_networks = 0 }
+								add_to_temp_array = { intel_asset@PREV = token:token_civilian }
+							}
+							if = {
+								limit = {
+									OR = {
+										has_operation_token = {
+											tag = PREV
+											token = token_army
+										}
+										PREV = { is_in_array = { research_steal_army = ROOT } }
+									}
+								}
+								add_to_temp_array = { build_intel_networks = 0 }
+								add_to_temp_array = { intel_asset@PREV = token:token_army }
+							}
+							if = {
+								limit = {
+									OR = {
+										has_operation_token = {
+											tag = PREV
+											token = token_airforce
+										}
+										PREV = { is_in_array = { research_steal_air = ROOT } }
+									}
+								}
+								add_to_temp_array = { build_intel_networks = 0 }
+								add_to_temp_array = { intel_asset@PREV = token:token_airforce }
+							}
+							if = {
+								limit = {
+									OR = {
+										has_operation_token = {
+											tag = PREV
+											token = token_navy
+										}
+										PREV = { is_in_array = { research_steal_navy = ROOT } }
+									}
+								}
+								add_to_temp_array = { build_intel_networks = 0 }
+								add_to_temp_array = { intel_asset@PREV = token:token_navy }
+							}
+							if = {
+								limit = {
+									check_variable = { intel_resistance_asset_area@PREV^num > 0 }
+								}
+								add_to_temp_array = { build_intel_networks = 0 }
+								add_to_temp_array = { intel_asset@PREV = token:token_resistance_contacts }
+								all_of = {
+									array = ROOT.intel_resistance_asset_area@PREV
+									
+									add_to_temp_array = { build_intel_networks = 0 }
+								}
+							}
+						}
+					}
+				}
+				
+			}
+			empty_visible = {
+				check_variable = { intel_networks^num = 0 }
+			}
+			checkbox_click_enabled = {
+				
+				ROOT = {
+					if = {
+						limit = {
+							has_country_flag = ui_hide_operations@PREV
+						}
+						set_temp_variable = { checkbox_frame = 1 }
+					}
+					else = {
+						set_temp_variable = { checkbox_frame = 2 }
+					}
+				}
+			}
+			expand_click_enabled = {
+				
+				ROOT = {
+					if = {
+						limit = {
+							has_country_flag = ui_hide_assets@PREV
+						}
+						set_temp_variable = { expand_frame = 1 }
+					}
+					else = {
+						set_temp_variable = { expand_frame = 2 }
+					}
+				}
+			}
+			expand_visible = {
+				#check_variable = { intel_asset@PREV^num > 0 }
+			}
+			
+			asset_action_click_enabled = {
+				if = {
+					limit = {
+						OR = {
+							check_variable = { asset_action = token:subasset_resistance_sabotage }
+							check_variable = { asset_action = token:subasset_resistance_offensive }
+							check_variable = { asset_action = token:subasset_resistance_defensive }
+							
+						}
+					}
+					ROOT = { command_power > 15 }
+				}
+				else_if = {
+					limit = {
+						NOT = {
+							check_variable = { asset_action = token:subasset_civilian_research_steal }
+							check_variable = { asset_action = token:subasset_army_research_steal }
+							check_variable = { asset_action = token:subasset_air_research_steal }
+							check_variable = { asset_action = token:subasset_navy_research_steal }
+						}
+					}
+					ROOT = {
+						any_operative_leader = {
+							check_variable = { operation_country = v }
+						}
+					}
+				}
+			}
+			asset_action_button_click_enabled = {
+				if = {
+					limit = {
+						OR = {
+							check_variable = { asset_action = token:subasset_resistance_sabotage }
+							check_variable = { asset_action = token:subasset_resistance_offensive }
+							check_variable = { asset_action = token:subasset_resistance_defensive }
+							
+						}
+					}
+					ROOT = { command_power > 15 }
+				}
+				else_if = {
+					limit = {
+						NOT = {
+							check_variable = { asset_action = token:subasset_civilian_research_steal }
+							check_variable = { asset_action = token:subasset_army_research_steal }
+							check_variable = { asset_action = token:subasset_air_research_steal }
+							check_variable = { asset_action = token:subasset_navy_research_steal }
+						}
+					}
+					ROOT = {
+						custom_trigger_tooltip = {
+							tooltip = ASSET_NEED_OPERATIVE
+							
+							any_operative_leader = {
+								check_variable = { operation_country = v }
+							}
+						}
+					}
+				}
+			}
+			
+			asset_setting_resistance_sabotage_industry_click_enabled = {
+				if = {
+					limit = {
+						has_dynamic_modifier = {
+							modifier = asset_setting_resistance_sabotage_industry
+						}
+					}
+					set_temp_variable = { industry_frame = 2 }
+				}
+				else = {
+					set_temp_variable = { industry_frame = 1 }
+				}			
+			}
+			asset_setting_resistance_sabotage_resources_click_enabled = {
+				if = {
+					limit = {
+						has_dynamic_modifier = {
+							modifier = asset_setting_resistance_sabotage_resources
+						}
+					}
+					set_temp_variable = { resource_frame = 2 }
+				}
+				else = {
+					set_temp_variable = { resource_frame = 1 }
+				}
+			}
+			
+			area_highlight_visible = {
+				check_variable = { ROOT.selected_resistance_area@var:v = resistance_area }
+			}
+			
+			civilian_asset_click_enabled = {
+				set_temp_variable = { max_asset_civilian = modifier@operation_economy_max_asset }
+				add_to_temp_variable = { max_asset_civilian = 1 }
+				
+			}
+			army_asset_click_enabled = {
+				set_temp_variable = { max_asset_army = modifier@operation_army_max_asset }
+				add_to_temp_variable = { max_asset_army = 1 }
+				
+			}
+			air_asset_click_enabled = {
+				set_temp_variable = { max_asset_air = modifier@operation_air_max_asset }
+				add_to_temp_variable = { max_asset_air = 1 }
+				
+			}
+			navy_asset_click_enabled = {
+				set_temp_variable = { max_asset_navy = modifier@operation_navy_max_asset }
+				add_to_temp_variable = { max_asset_navy = 1 }
+				
+			}
+		}
+	}
+}

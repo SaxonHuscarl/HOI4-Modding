@@ -1,0 +1,1975 @@
+
+
+
+d_create_region_distance_arrays = { 
+	#Calculate global.region_states
+	for_loop_effect = {
+		end = 301
+		
+		if = {
+			limit = {
+				any_state = {
+					check_variable = { region = v }
+				}
+			}
+				
+			every_state = {
+				limit = {
+					check_variable = { region = v }
+				}
+				
+				add_to_array = { global.region_states@var:v = THIS }
+			}
+			
+		}
+	}
+	
+	#Calculate global.region_nearby@var:v
+	for_loop_effect = {
+		end = 301
+		
+		every_state = {
+			limit = {
+				#a region with any state that is less than 150pixels from any state in the original region gets added to this array
+				#this will also include states further away than 150pixels in a region!! keep it in mind when using this
+				any_of = { 
+					array = global.region_states@var:v
+					value = v2
+				
+					var:v2 = { check_variable = { distance_to@PREV < 150 } }
+				}
+			}
+			
+			if = {
+				limit = {
+					#NOT = { check_variable = { v = region } } #the original region ALSO is included in this array!!
+					NOT = { is_in_array = { global.region_nearby@var:v = region } }
+				}
+				add_to_array = { global.region_nearby@var:v = region }
+			}
+		}
+	}
+	
+	create_continent_regions = yes
+}
+
+create_continent_regions = {
+	clear_array = global.continent_states@europe
+	clear_array = global.continent_states@asia
+	clear_array = global.continent_states@africa
+	clear_array = global.continent_states@middle_east
+	clear_array = global.continent_states@north_america
+	clear_array = global.continent_states@south_america
+	every_state = {
+		if = {
+			limit = {
+				NOT = { is_in_array = { checked = region } }
+			}
+			set_temp_variable = { continent = mtth:continent }
+			
+			add_to_temp_array = { checked = region }
+			add_to_array = { global.continent_states@var:continent = region }
+			
+		}
+	}
+	
+	remove_from_array = { global.continent_states@asia = 270 }
+	remove_from_array = { global.continent_states@asia = 133 }
+	remove_from_array = { global.continent_states@asia = 137 }
+	remove_from_array = { global.continent_states@asia = 40 }
+	remove_from_array = { global.continent_states@asia = 150 }
+	add_to_array = { global.continent_states@europe = 270 }
+	add_to_array = { global.continent_states@europe = 133 }
+	add_to_array = { global.continent_states@europe = 137 }
+	add_to_array = { global.continent_states@europe = 40 }
+	add_to_array = { global.continent_states@europe = 150 }
+	
+	remove_from_array = { global.continent_states@asia = 162 }
+	add_to_array = { global.continent_states@middle_east = 162 }
+	
+	remove_from_array = { global.continent_states@middle_east = 134 }
+	add_to_array = { global.continent_states@europe = 134 }
+	
+	remove_from_array = { global.continent_states@south_america = 34 }
+	add_to_array = { global.continent_states@north_america = 34 }
+	
+	for_each_loop = {
+		array = global.continent_states@europe
+		
+		set_variable = { global.region_continent@var:v = token:europe }
+	}
+	for_each_loop = {
+		array = global.continent_states@asia
+		
+		set_variable = { global.region_continent@var:v = token:asia }
+	}
+	for_each_loop = {
+		array = global.continent_states@middle_east
+		
+		set_variable = { global.region_continent@var:v = token:middle_east }
+	}
+	for_each_loop = {
+		array = global.continent_states@africa
+		
+		set_variable = { global.region_continent@var:v = token:africa }
+	}
+	for_each_loop = {
+		array = global.continent_states@north_america
+		
+		set_variable = { global.region_continent@var:v = token:north_america }
+	}
+	for_each_loop = {
+		array = global.continent_states@south_america
+		
+		set_variable = { global.region_continent@var:v = token:south_america }
+	}
+}
+
+print_continent_region_ai_areas = {
+	log = "europe_region = {"
+	for_each_loop = {
+		array = global.continent_states@europe
+		log = "XXXX[?v]"
+	}
+	log = "}"
+	
+	log = "asia_region = {"
+	for_each_loop = {
+		array = global.continent_states@asia
+		log = "XXXX[?v]"
+	}
+	log = "}"
+	
+	log = "africa_region = {"
+	for_each_loop = {
+		array = global.continent_states@africa
+		log = "XXXX[?v]"
+	}
+	log = "}"
+	
+	log = "middle_east_region = {"
+	for_each_loop = {
+		array = global.continent_states@middle_east
+		log = "XXXX[?v]"
+	}
+	log = "}"
+	
+	log = "north_america_region = {"
+	for_each_loop = {
+		array = global.continent_states@north_america
+		log = "XXXX[?v]"
+	}
+	log = "}"
+	
+	log = "south_america_region = {"
+	for_each_loop = {
+		array = global.continent_states@south_america
+		log = "XXXX[?v]"
+	}
+	log = "}"
+	
+}
+	
+
+set_region_variables = {
+	if = {
+		limit = {
+			region = 1
+		}
+	set_variable = {region = 1}
+	}
+	else_if = {
+		limit = {
+			region = 2
+		}
+	set_variable = {region = 2}
+	}
+	else_if = {
+		limit = {
+			region = 3
+		}
+	set_variable = {region = 3}
+	}
+	else_if = {
+		limit = {
+			region = 4
+		}
+	set_variable = {region = 4}
+	}
+	else_if = {
+		limit = {
+			region = 5
+		}
+	set_variable = {region = 5}
+	}
+	else_if = {
+		limit = {
+			region = 6
+		}
+	set_variable = {region = 6}
+	}
+	else_if = {
+		limit = {
+			region = 7
+		}
+	set_variable = {region = 7}
+	}
+	else_if = {
+		limit = {
+			region = 8
+		}
+	set_variable = {region = 8}
+	}
+	else_if = {
+		limit = {
+			region = 9
+		}
+	set_variable = {region = 9}
+	}
+	else_if = {
+		limit = {
+			region = 10
+		}
+	set_variable = {region = 10}
+	}
+	else_if = {
+		limit = {
+			region = 11
+		}
+	set_variable = {region = 11}
+	}
+	else_if = {
+		limit = {
+			region = 12
+		}
+	set_variable = {region = 12}
+	}
+	else_if = {
+		limit = {
+			region = 13
+		}
+	set_variable = {region = 13}
+	}
+	else_if = {
+		limit = {
+			region = 14
+		}
+	set_variable = {region = 14}
+	}
+	else_if = {
+		limit = {
+			region = 15
+		}
+	set_variable = {region = 15}
+	}
+	else_if = {
+		limit = {
+			region = 16
+		}
+	set_variable = {region = 16}
+	}
+	else_if = {
+		limit = {
+			region = 17
+		}
+	set_variable = {region = 17}
+	}
+	else_if = {
+		limit = {
+			region = 18
+		}
+	set_variable = {region = 18}
+	}
+	else_if = {
+		limit = {
+			region = 19
+		}
+	set_variable = {region = 19}
+	}
+	else_if = {
+		limit = {
+			region = 20
+		}
+	set_variable = {region = 20}
+	}
+	else_if = {
+		limit = {
+			region = 21
+		}
+	set_variable = {region = 21}
+	}
+	else_if = {
+		limit = {
+			region = 22
+		}
+	set_variable = {region = 22}
+	}
+	else_if = {
+		limit = {
+			region = 23
+		}
+	set_variable = {region = 23}
+	}
+	else_if = {
+		limit = {
+			region = 24
+		}
+	set_variable = {region = 24}
+	}
+	else_if = {
+		limit = {
+			region = 25
+		}
+	set_variable = {region = 25}
+	}
+	else_if = {
+		limit = {
+			region = 26
+		}
+	set_variable = {region = 26}
+	}
+	else_if = {
+		limit = {
+			region = 27
+		}
+	set_variable = {region = 27}
+	}
+	else_if = {
+		limit = {
+			region = 28
+		}
+	set_variable = {region = 28}
+	}
+	else_if = {
+		limit = {
+			region = 29
+		}
+	set_variable = {region = 29}
+	}
+	else_if = {
+		limit = {
+			region = 30
+		}
+	set_variable = {region = 30}
+	}
+	else_if = {
+		limit = {
+			region = 31
+		}
+	set_variable = {region = 31}
+	}
+	else_if = {
+		limit = {
+			region = 32
+		}
+	set_variable = {region = 32}
+	}
+	else_if = {
+		limit = {
+			region = 33
+		}
+	set_variable = {region = 33}
+	}
+	else_if = {
+		limit = {
+			region = 34
+		}
+	set_variable = {region = 34}
+	}
+	else_if = {
+		limit = {
+			region = 35
+		}
+	set_variable = {region = 35}
+	}
+	else_if = {
+		limit = {
+			region = 36
+		}
+	set_variable = {region = 36}
+	}
+	else_if = {
+		limit = {
+			region = 37
+		}
+	set_variable = {region = 37}
+	}
+	else_if = {
+		limit = {
+			region = 38
+		}
+	set_variable = {region = 38}
+	}
+	else_if = {
+		limit = {
+			region = 39
+		}
+	set_variable = {region = 39}
+	}
+	else_if = {
+		limit = {
+			region = 40
+		}
+	set_variable = {region = 40}
+	}
+	else_if = {
+		limit = {
+			region = 41
+		}
+	set_variable = {region = 41}
+	}
+	else_if = {
+		limit = {
+			region = 42
+		}
+	set_variable = {region = 42}
+	}
+	else_if = {
+		limit = {
+			region = 43
+		}
+	set_variable = {region = 43}
+	}
+	else_if = {
+		limit = {
+			region = 44
+		}
+	set_variable = {region = 44}
+	}
+	else_if = {
+		limit = {
+			region = 45
+		}
+	set_variable = {region = 45}
+	}
+	else_if = {
+		limit = {
+			region = 46
+		}
+	set_variable = {region = 46}
+	}
+	else_if = {
+		limit = {
+			region = 47
+		}
+	set_variable = {region = 47}
+	}
+	else_if = {
+		limit = {
+			region = 48
+		}
+	set_variable = {region = 48}
+	}
+	else_if = {
+		limit = {
+			region = 49
+		}
+	set_variable = {region = 49}
+	}
+	else_if = {
+		limit = {
+			region = 50
+		}
+	set_variable = {region = 50}
+	}
+	else_if = {
+		limit = {
+			region = 51
+		}
+	set_variable = {region = 51}
+	}
+	else_if = {
+		limit = {
+			region = 52
+		}
+	set_variable = {region = 52}
+	}
+	else_if = {
+		limit = {
+			region = 53
+		}
+	set_variable = {region = 53}
+	}
+	else_if = {
+		limit = {
+			region = 54
+		}
+	set_variable = {region = 54}
+	}
+	else_if = {
+		limit = {
+			region = 55
+		}
+	set_variable = {region = 55}
+	}
+	else_if = {
+		limit = {
+			region = 56
+		}
+	set_variable = {region = 56}
+	}
+	else_if = {
+		limit = {
+			region = 57
+		}
+	set_variable = {region = 57}
+	}
+	else_if = {
+		limit = {
+			region = 58
+		}
+	set_variable = {region = 58}
+	}
+	else_if = {
+		limit = {
+			region = 59
+		}
+	set_variable = {region = 59}
+	}
+	else_if = {
+		limit = {
+			region = 60
+		}
+	set_variable = {region = 60}
+	}
+	else_if = {
+		limit = {
+			region = 61
+		}
+	set_variable = {region = 61}
+	}
+	else_if = {
+		limit = {
+			region = 62
+		}
+	set_variable = {region = 62}
+	}
+	else_if = {
+		limit = {
+			region = 63
+		}
+	set_variable = {region = 63}
+	}
+	else_if = {
+		limit = {
+			region = 64
+		}
+	set_variable = {region = 64}
+	}
+	else_if = {
+		limit = {
+			region = 65
+		}
+	set_variable = {region = 65}
+	}
+	else_if = {
+		limit = {
+			region = 66
+		}
+	set_variable = {region = 66}
+	}
+	else_if = {
+		limit = {
+			region = 67
+		}
+	set_variable = {region = 67}
+	}
+	else_if = {
+		limit = {
+			region = 68
+		}
+	set_variable = {region = 68}
+	}
+	else_if = {
+		limit = {
+			region = 69
+		}
+	set_variable = {region = 69}
+	}
+	else_if = {
+		limit = {
+			region = 70
+		}
+	set_variable = {region = 70}
+	}
+	else_if = {
+		limit = {
+			region = 71
+		}
+	set_variable = {region = 71}
+	}
+	else_if = {
+		limit = {
+			region = 72
+		}
+	set_variable = {region = 72}
+	}
+	else_if = {
+		limit = {
+			region = 73
+		}
+	set_variable = {region = 73}
+	}
+	else_if = {
+		limit = {
+			region = 74
+		}
+	set_variable = {region = 74}
+	}
+	else_if = {
+		limit = {
+			region = 75
+		}
+	set_variable = {region = 75}
+	}
+	else_if = {
+		limit = {
+			region = 76
+		}
+	set_variable = {region = 76}
+	}
+	else_if = {
+		limit = {
+			region = 77
+		}
+	set_variable = {region = 77}
+	}
+	else_if = {
+		limit = {
+			region = 78
+		}
+	set_variable = {region = 78}
+	}
+	else_if = {
+		limit = {
+			region = 79
+		}
+	set_variable = {region = 79}
+	}
+	else_if = {
+		limit = {
+			region = 80
+		}
+	set_variable = {region = 80}
+	}
+	else_if = {
+		limit = {
+			region = 81
+		}
+	set_variable = {region = 81}
+	}
+	else_if = {
+		limit = {
+			region = 82
+		}
+	set_variable = {region = 82}
+	}
+	else_if = {
+		limit = {
+			region = 83
+		}
+	set_variable = {region = 83}
+	}
+	else_if = {
+		limit = {
+			region = 84
+		}
+	set_variable = {region = 84}
+	}
+	else_if = {
+		limit = {
+			region = 85
+		}
+	set_variable = {region = 85}
+	}
+	else_if = {
+		limit = {
+			region = 86
+		}
+	set_variable = {region = 86}
+	}
+	else_if = {
+		limit = {
+			region = 87
+		}
+	set_variable = {region = 87}
+	}
+	else_if = {
+		limit = {
+			region = 88
+		}
+	set_variable = {region = 88}
+	}
+	else_if = {
+		limit = {
+			region = 89
+		}
+	set_variable = {region = 89}
+	}
+	else_if = {
+		limit = {
+			region = 90
+		}
+	set_variable = {region = 90}
+	}
+	else_if = {
+		limit = {
+			region = 91
+		}
+	set_variable = {region = 91}
+	}
+	else_if = {
+		limit = {
+			region = 92
+		}
+	set_variable = {region = 92}
+	}
+	else_if = {
+		limit = {
+			region = 93
+		}
+	set_variable = {region = 93}
+	}
+	else_if = {
+		limit = {
+			region = 94
+		}
+	set_variable = {region = 94}
+	}
+	else_if = {
+		limit = {
+			region = 95
+		}
+	set_variable = {region = 95}
+	}
+	else_if = {
+		limit = {
+			region = 96
+		}
+	set_variable = {region = 96}
+	}
+	else_if = {
+		limit = {
+			region = 97
+		}
+	set_variable = {region = 97}
+	}
+	else_if = {
+		limit = {
+			region = 98
+		}
+	set_variable = {region = 98}
+	}
+	else_if = {
+		limit = {
+			region = 99
+		}
+	set_variable = {region = 99}
+	}
+	else_if = {
+		limit = {
+			region = 100
+		}
+	set_variable = {region = 100}
+	}
+	else_if = {
+		limit = {
+			region = 101
+		}
+	set_variable = {region = 101}
+	}
+	else_if = {
+		limit = {
+			region = 102
+		}
+	set_variable = {region = 102}
+	}
+	else_if = {
+		limit = {
+			region = 103
+		}
+	set_variable = {region = 103}
+	}
+	else_if = {
+		limit = {
+			region = 104
+		}
+	set_variable = {region = 104}
+	}
+	else_if = {
+		limit = {
+			region = 105
+		}
+	set_variable = {region = 105}
+	}
+	else_if = {
+		limit = {
+			region = 106
+		}
+	set_variable = {region = 106}
+	}
+	else_if = {
+		limit = {
+			region = 107
+		}
+	set_variable = {region = 107}
+	}
+	else_if = {
+		limit = {
+			region = 108
+		}
+	set_variable = {region = 108}
+	}
+	else_if = {
+		limit = {
+			region = 109
+		}
+	set_variable = {region = 109}
+	}
+	else_if = {
+		limit = {
+			region = 110
+		}
+	set_variable = {region = 110}
+	}
+	else_if = {
+		limit = {
+			region = 111
+		}
+	set_variable = {region = 111}
+	}
+	else_if = {
+		limit = {
+			region = 112
+		}
+	set_variable = {region = 112}
+	}
+	else_if = {
+		limit = {
+			region = 113
+		}
+	set_variable = {region = 113}
+	}
+	else_if = {
+		limit = {
+			region = 114
+		}
+	set_variable = {region = 114}
+	}
+	else_if = {
+		limit = {
+			region = 115
+		}
+	set_variable = {region = 115}
+	}
+	else_if = {
+		limit = {
+			region = 116
+		}
+	set_variable = {region = 116}
+	}
+	else_if = {
+		limit = {
+			region = 117
+		}
+	set_variable = {region = 117}
+	}
+	else_if = {
+		limit = {
+			region = 118
+		}
+	set_variable = {region = 118}
+	}
+	else_if = {
+		limit = {
+			region = 119
+		}
+	set_variable = {region = 119}
+	}
+	else_if = {
+		limit = {
+			region = 120
+		}
+	set_variable = {region = 120}
+	}
+	else_if = {
+		limit = {
+			region = 121
+		}
+	set_variable = {region = 121}
+	}
+	else_if = {
+		limit = {
+			region = 122
+		}
+	set_variable = {region = 122}
+	}
+	else_if = {
+		limit = {
+			region = 123
+		}
+	set_variable = {region = 123}
+	}
+	else_if = {
+		limit = {
+			region = 124
+		}
+	set_variable = {region = 124}
+	}
+	else_if = {
+		limit = {
+			region = 125
+		}
+	set_variable = {region = 125}
+	}
+	else_if = {
+		limit = {
+			region = 126
+		}
+	set_variable = {region = 126}
+	}
+	else_if = {
+		limit = {
+			region = 127
+		}
+	set_variable = {region = 127}
+	}
+	else_if = {
+		limit = {
+			region = 128
+		}
+	set_variable = {region = 128}
+	}
+	else_if = {
+		limit = {
+			region = 129
+		}
+	set_variable = {region = 129}
+	}
+	else_if = {
+		limit = {
+			region = 130
+		}
+	set_variable = {region = 130}
+	}
+	else_if = {
+		limit = {
+			region = 131
+		}
+	set_variable = {region = 131}
+	}
+	else_if = {
+		limit = {
+			region = 132
+		}
+	set_variable = {region = 132}
+	}
+	else_if = {
+		limit = {
+			region = 133
+		}
+	set_variable = {region = 133}
+	}
+	else_if = {
+		limit = {
+			region = 134
+		}
+	set_variable = {region = 134}
+	}
+	else_if = {
+		limit = {
+			region = 135
+		}
+	set_variable = {region = 135}
+	}
+	else_if = {
+		limit = {
+			region = 136
+		}
+	set_variable = {region = 136}
+	}
+	else_if = {
+		limit = {
+			region = 137
+		}
+	set_variable = {region = 137}
+	}
+	else_if = {
+		limit = {
+			region = 138
+		}
+	set_variable = {region = 138}
+	}
+	else_if = {
+		limit = {
+			region = 139
+		}
+	set_variable = {region = 139}
+	}
+	else_if = {
+		limit = {
+			region = 140
+		}
+	set_variable = {region = 140}
+	}
+	else_if = {
+		limit = {
+			region = 141
+		}
+	set_variable = {region = 141}
+	}
+	else_if = {
+		limit = {
+			region = 142
+		}
+	set_variable = {region = 142}
+	}
+	else_if = {
+		limit = {
+			region = 143
+		}
+	set_variable = {region = 143}
+	}
+	else_if = {
+		limit = {
+			region = 144
+		}
+	set_variable = {region = 144}
+	}
+	else_if = {
+		limit = {
+			region = 145
+		}
+	set_variable = {region = 145}
+	}
+	else_if = {
+		limit = {
+			region = 146
+		}
+	set_variable = {region = 146}
+	}
+	else_if = {
+		limit = {
+			region = 147
+		}
+	set_variable = {region = 147}
+	}
+	else_if = {
+		limit = {
+			region = 148
+		}
+	set_variable = {region = 148}
+	}
+	else_if = {
+		limit = {
+			region = 149
+		}
+	set_variable = {region = 149}
+	}
+	else_if = {
+		limit = {
+			region = 150
+		}
+	set_variable = {region = 150}
+	}
+	else_if = {
+		limit = {
+			region = 151
+		}
+	set_variable = {region = 151}
+	}
+	else_if = {
+		limit = {
+			region = 152
+		}
+	set_variable = {region = 152}
+	}
+	else_if = {
+		limit = {
+			region = 153
+		}
+	set_variable = {region = 153}
+	}
+	else_if = {
+		limit = {
+			region = 154
+		}
+	set_variable = {region = 154}
+	}
+	else_if = {
+		limit = {
+			region = 155
+		}
+	set_variable = {region = 155}
+	}
+	else_if = {
+		limit = {
+			region = 156
+		}
+	set_variable = {region = 156}
+	}
+	else_if = {
+		limit = {
+			region = 157
+		}
+	set_variable = {region = 157}
+	}
+	else_if = {
+		limit = {
+			region = 158
+		}
+	set_variable = {region = 158}
+	}
+	else_if = {
+		limit = {
+			region = 159
+		}
+	set_variable = {region = 159}
+	}
+	else_if = {
+		limit = {
+			region = 160
+		}
+	set_variable = {region = 160}
+	}
+	else_if = {
+		limit = {
+			region = 161
+		}
+	set_variable = {region = 161}
+	}
+	else_if = {
+		limit = {
+			region = 162
+		}
+	set_variable = {region = 162}
+	}
+	else_if = {
+		limit = {
+			region = 163
+		}
+	set_variable = {region = 163}
+	}
+	else_if = {
+		limit = {
+			region = 164
+		}
+	set_variable = {region = 164}
+	}
+	else_if = {
+		limit = {
+			region = 165
+		}
+	set_variable = {region = 165}
+	}
+	else_if = {
+		limit = {
+			region = 166
+		}
+	set_variable = {region = 166}
+	}
+	else_if = {
+		limit = {
+			region = 167
+		}
+	set_variable = {region = 167}
+	}
+	else_if = {
+		limit = {
+			region = 168
+		}
+	set_variable = {region = 168}
+	}
+	else_if = {
+		limit = {
+			region = 169
+		}
+	set_variable = {region = 169}
+	}
+	else_if = {
+		limit = {
+			region = 170
+		}
+	set_variable = {region = 170}
+	}
+	else_if = {
+		limit = {
+			region = 171
+		}
+	set_variable = {region = 171}
+	}
+	else_if = {
+		limit = {
+			region = 172
+		}
+	set_variable = {region = 172}
+	}
+	else_if = {
+		limit = {
+			region = 173
+		}
+	set_variable = {region = 173}
+	}
+	else_if = {
+		limit = {
+			region = 174
+		}
+	set_variable = {region = 174}
+	}
+	else_if = {
+		limit = {
+			region = 175
+		}
+	set_variable = {region = 175}
+	}
+	else_if = {
+		limit = {
+			region = 176
+		}
+	set_variable = {region = 176}
+	}
+	else_if = {
+		limit = {
+			region = 177
+		}
+	set_variable = {region = 177}
+	}
+	else_if = {
+		limit = {
+			region = 178
+		}
+	set_variable = {region = 178}
+	}
+	else_if = {
+		limit = {
+			region = 179
+		}
+	set_variable = {region = 179}
+	}
+	else_if = {
+		limit = {
+			region = 180
+		}
+	set_variable = {region = 180}
+	}
+	else_if = {
+		limit = {
+			region = 181
+		}
+	set_variable = {region = 181}
+	}
+	else_if = {
+		limit = {
+			region = 182
+		}
+	set_variable = {region = 182}
+	}
+	else_if = {
+		limit = {
+			region = 183
+		}
+	set_variable = {region = 183}
+	}
+	else_if = {
+		limit = {
+			region = 184
+		}
+	set_variable = {region = 184}
+	}
+	else_if = {
+		limit = {
+			region = 185
+		}
+	set_variable = {region = 185}
+	}
+	else_if = {
+		limit = {
+			region = 186
+		}
+	set_variable = {region = 186}
+	}
+	else_if = {
+		limit = {
+			region = 187
+		}
+	set_variable = {region = 187}
+	}
+	else_if = {
+		limit = {
+			region = 188
+		}
+	set_variable = {region = 188}
+	}
+	else_if = {
+		limit = {
+			region = 189
+		}
+	set_variable = {region = 189}
+	}
+	else_if = {
+		limit = {
+			region = 190
+		}
+	set_variable = {region = 190}
+	}
+	else_if = {
+		limit = {
+			region = 191
+		}
+	set_variable = {region = 191}
+	}
+	else_if = {
+		limit = {
+			region = 192
+		}
+	set_variable = {region = 192}
+	}
+	else_if = {
+		limit = {
+			region = 193
+		}
+	set_variable = {region = 193}
+	}
+	else_if = {
+		limit = {
+			region = 194
+		}
+	set_variable = {region = 194}
+	}
+	else_if = {
+		limit = {
+			region = 195
+		}
+	set_variable = {region = 195}
+	}
+	else_if = {
+		limit = {
+			region = 196
+		}
+	set_variable = {region = 196}
+	}
+	else_if = {
+		limit = {
+			region = 197
+		}
+	set_variable = {region = 197}
+	}
+	else_if = {
+		limit = {
+			region = 198
+		}
+	set_variable = {region = 198}
+	}
+	else_if = {
+		limit = {
+			region = 199
+		}
+	set_variable = {region = 199}
+	}
+	else_if = {
+		limit = {
+			region = 200
+		}
+	set_variable = {region = 200}
+	}
+	else_if = {
+		limit = {
+			region = 201
+		}
+	set_variable = {region = 201}
+	}
+	else_if = {
+		limit = {
+			region = 202
+		}
+	set_variable = {region = 202}
+	}
+	else_if = {
+		limit = {
+			region = 203
+		}
+	set_variable = {region = 203}
+	}
+	else_if = {
+		limit = {
+			region = 204
+		}
+	set_variable = {region = 204}
+	}
+	else_if = {
+		limit = {
+			region = 205
+		}
+	set_variable = {region = 205}
+	}
+	else_if = {
+		limit = {
+			region = 206
+		}
+	set_variable = {region = 206}
+	}
+	else_if = {
+		limit = {
+			region = 207
+		}
+	set_variable = {region = 207}
+	}
+	else_if = {
+		limit = {
+			region = 208
+		}
+	set_variable = {region = 208}
+	}
+	else_if = {
+		limit = {
+			region = 209
+		}
+	set_variable = {region = 209}
+	}
+	else_if = {
+		limit = {
+			region = 210
+		}
+	set_variable = {region = 210}
+	}
+	else_if = {
+		limit = {
+			region = 211
+		}
+	set_variable = {region = 211}
+	}
+	else_if = {
+		limit = {
+			region = 212
+		}
+	set_variable = {region = 212}
+	}
+	else_if = {
+		limit = {
+			region = 213
+		}
+	set_variable = {region = 213}
+	}
+	else_if = {
+		limit = {
+			region = 214
+		}
+	set_variable = {region = 214}
+	}
+	else_if = {
+		limit = {
+			region = 215
+		}
+	set_variable = {region = 215}
+	}
+	else_if = {
+		limit = {
+			region = 216
+		}
+	set_variable = {region = 216}
+	}
+	else_if = {
+		limit = {
+			region = 217
+		}
+	set_variable = {region = 217}
+	}
+	else_if = {
+		limit = {
+			region = 218
+		}
+	set_variable = {region = 218}
+	}
+	else_if = {
+		limit = {
+			region = 219
+		}
+	set_variable = {region = 219}
+	}
+	else_if = {
+		limit = {
+			region = 220
+		}
+	set_variable = {region = 220}
+	}
+	else_if = {
+		limit = {
+			region = 221
+		}
+	set_variable = {region = 221}
+	}
+	else_if = {
+		limit = {
+			region = 222
+		}
+	set_variable = {region = 222}
+	}
+	else_if = {
+		limit = {
+			region = 223
+		}
+	set_variable = {region = 223}
+	}
+	else_if = {
+		limit = {
+			region = 224
+		}
+	set_variable = {region = 224}
+	}
+	else_if = {
+		limit = {
+			region = 225
+		}
+	set_variable = {region = 225}
+	}
+	else_if = {
+		limit = {
+			region = 226
+		}
+	set_variable = {region = 226}
+	}
+	else_if = {
+		limit = {
+			region = 227
+		}
+	set_variable = {region = 227}
+	}
+	else_if = {
+		limit = {
+			region = 228
+		}
+	set_variable = {region = 228}
+	}
+	else_if = {
+		limit = {
+			region = 229
+		}
+	set_variable = {region = 229}
+	}
+	else_if = {
+		limit = {
+			region = 230
+		}
+	set_variable = {region = 230}
+	}
+	else_if = {
+		limit = {
+			region = 231
+		}
+	set_variable = {region = 231}
+	}
+	else_if = {
+		limit = {
+			region = 232
+		}
+	set_variable = {region = 232}
+	}
+	else_if = {
+		limit = {
+			region = 233
+		}
+	set_variable = {region = 233}
+	}
+	else_if = {
+		limit = {
+			region = 234
+		}
+	set_variable = {region = 234}
+	}
+	else_if = {
+		limit = {
+			region = 235
+		}
+	set_variable = {region = 235}
+	}
+	else_if = {
+		limit = {
+			region = 236
+		}
+	set_variable = {region = 236}
+	}
+	else_if = {
+		limit = {
+			region = 237
+		}
+	set_variable = {region = 237}
+	}
+	else_if = {
+		limit = {
+			region = 238
+		}
+	set_variable = {region = 238}
+	}
+	else_if = {
+		limit = {
+			region = 239
+		}
+	set_variable = {region = 239}
+	}
+	else_if = {
+		limit = {
+			region = 240
+		}
+	set_variable = {region = 240}
+	}
+	else_if = {
+		limit = {
+			region = 241
+		}
+	set_variable = {region = 241}
+	}
+	else_if = {
+		limit = {
+			region = 242
+		}
+	set_variable = {region = 242}
+	}
+	else_if = {
+		limit = {
+			region = 243
+		}
+	set_variable = {region = 243}
+	}
+	else_if = {
+		limit = {
+			region = 244
+		}
+	set_variable = {region = 244}
+	}
+	else_if = {
+		limit = {
+			region = 245
+		}
+	set_variable = {region = 245}
+	}
+	else_if = {
+		limit = {
+			region = 246
+		}
+	set_variable = {region = 246}
+	}
+	else_if = {
+		limit = {
+			region = 247
+		}
+	set_variable = {region = 247}
+	}
+	else_if = {
+		limit = {
+			region = 248
+		}
+	set_variable = {region = 248}
+	}
+	else_if = {
+		limit = {
+			region = 249
+		}
+	set_variable = {region = 249}
+	}
+	else_if = {
+		limit = {
+			region = 250
+		}
+	set_variable = {region = 250}
+	}
+	else_if = {
+		limit = {
+			region = 251
+		}
+	set_variable = {region = 251}
+	}
+	else_if = {
+		limit = {
+			region = 252
+		}
+	set_variable = {region = 252}
+	}
+	else_if = {
+		limit = {
+			region = 253
+		}
+	set_variable = {region = 253}
+	}
+	else_if = {
+		limit = {
+			region = 254
+		}
+	set_variable = {region = 254}
+	}
+	else_if = {
+		limit = {
+			region = 255
+		}
+	set_variable = {region = 255}
+	}
+	else_if = {
+		limit = {
+			region = 256
+		}
+	set_variable = {region = 256}
+	}
+	else_if = {
+		limit = {
+			region = 257
+		}
+	set_variable = {region = 257}
+	}
+	else_if = {
+		limit = {
+			region = 258
+		}
+	set_variable = {region = 258}
+	}
+	else_if = {
+		limit = {
+			region = 259
+		}
+	set_variable = {region = 259}
+	}
+	else_if = {
+		limit = {
+			region = 260
+		}
+	set_variable = {region = 260}
+	}
+	else_if = {
+		limit = {
+			region = 261
+		}
+	set_variable = {region = 261}
+	}
+	else_if = {
+		limit = {
+			region = 262
+		}
+	set_variable = {region = 262}
+	}
+	else_if = {
+		limit = {
+			region = 263
+		}
+	set_variable = {region = 263}
+	}
+	else_if = {
+		limit = {
+			region = 264
+		}
+	set_variable = {region = 264}
+	}
+	else_if = {
+		limit = {
+			region = 265
+		}
+	set_variable = {region = 265}
+	}
+	else_if = {
+		limit = {
+			region = 266
+		}
+	set_variable = {region = 266}
+	}
+	else_if = {
+		limit = {
+			region = 267
+		}
+	set_variable = {region = 267}
+	}
+	else_if = {
+		limit = {
+			region = 268
+		}
+	set_variable = {region = 268}
+	}
+	else_if = {
+		limit = {
+			region = 269
+		}
+	set_variable = {region = 269}
+	}
+	else_if = {
+		limit = {
+			region = 270
+		}
+	set_variable = {region = 270}
+	}
+	else_if = {
+		limit = {
+			region = 271
+		}
+	set_variable = {region = 271}
+	}
+	else_if = {
+		limit = {
+			region = 272
+		}
+	set_variable = {region = 272}
+	}
+	else_if = {
+		limit = {
+			region = 273
+		}
+	set_variable = {region = 273}
+	}
+	else_if = {
+		limit = {
+			region = 274
+		}
+	set_variable = {region = 274}
+	}
+	else_if = {
+		limit = {
+			region = 275
+		}
+	set_variable = {region = 275}
+	}
+	else_if = {
+		limit = {
+			region = 276
+		}
+	set_variable = {region = 276}
+	}
+	else_if = {
+		limit = {
+			region = 277
+		}
+	set_variable = {region = 277}
+	}
+	else_if = {
+		limit = {
+			region = 278
+		}
+	set_variable = {region = 278}
+	}
+	else_if = {
+		limit = {
+			region = 279
+		}
+	set_variable = {region = 279}
+	}
+	else_if = {
+		limit = {
+			region = 280
+		}
+	set_variable = {region = 280}
+	}
+	else_if = {
+		limit = {
+			region = 281
+		}
+	set_variable = {region = 281}
+	}
+	else_if = {
+		limit = {
+			region = 282
+		}
+	set_variable = {region = 282}
+	}
+	else_if = {
+		limit = {
+			region = 283
+		}
+	set_variable = {region = 283}
+	}
+	else_if = {
+		limit = {
+			region = 284
+		}
+	set_variable = {region = 284}
+	}
+	else_if = {
+		limit = {
+			region = 285
+		}
+	set_variable = {region = 285}
+	}
+	else_if = {
+		limit = {
+			region = 286
+		}
+	set_variable = {region = 286}
+	}
+	else_if = {
+		limit = {
+			region = 287
+		}
+	set_variable = {region = 287}
+	}
+	else_if = {
+		limit = {
+			region = 288
+		}
+	set_variable = {region = 288}
+	}
+	else_if = {
+		limit = {
+			region = 289
+		}
+	set_variable = {region = 289}
+	}
+	else_if = {
+		limit = {
+			region = 290
+		}
+	set_variable = {region = 290}
+	}
+	else_if = {
+		limit = {
+			region = 291
+		}
+	set_variable = {region = 291}
+	}
+	else_if = {
+		limit = {
+			region = 292
+		}
+	set_variable = {region = 292}
+	}
+	else_if = {
+		limit = {
+			region = 293
+		}
+	set_variable = {region = 293}
+	}
+	else_if = {
+		limit = {
+			region = 294
+		}
+	set_variable = {region = 294}
+	}
+	else_if = {
+		limit = {
+			region = 295
+		}
+	set_variable = {region = 295}
+	}
+	else_if = {
+		limit = {
+			region = 296
+		}
+	set_variable = {region = 296}
+	}
+	else_if = {
+		limit = {
+			region = 297
+		}
+	set_variable = {region = 297}
+	}
+	else_if = {
+		limit = {
+			region = 298
+		}
+	set_variable = {region = 298}
+	}
+	else_if = {
+		limit = {
+			region = 299
+		}
+	set_variable = {region = 299}
+	}
+	else_if = {
+		limit = {
+			region = 300
+		}
+	set_variable = {region = 300}
+	}
+}

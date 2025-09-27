@@ -1,0 +1,2061 @@
+	
+monarchism_on_the_rise = {
+		
+	ignite_the_monarch_civil_war = {
+		icon = generic_ignite_civil_war
+		
+		allowed = { always = no }
+		on_map_mode = decision_view_only state_target = yes
+
+		available = {
+			has_stability < 0.5
+		}
+
+		visible = {
+			has_idea_with_trait = royalist_reformer
+			NOT = { has_government = monarchism }
+		}
+	
+		fire_only_once = yes
+	
+		cost = 50
+		
+		complete_effect = {	
+			if = {
+				limit = {
+					democratic_govt = yes
+				}
+				set_variable = {
+					var = civil_war_size_var
+					value = party_popularity@conservatism
+				}
+				add_to_variable = {
+					var = civil_war_size_var
+					value = party_popularity@liberalism
+				}
+				add_to_variable = {
+					var = civil_war_size_var
+					value = party_popularity@socialism
+				}
+			}
+			if = {
+				limit = {
+					has_government = communism
+				}
+				set_variable = {
+					var = civil_war_size_var
+					value = party_popularity@communism
+				}
+			}
+			if = {
+				limit = {
+					has_government = neutrality
+				}
+				set_variable = {
+					var = civil_war_size_var
+					value = party_popularity@neutrality
+				}
+			}
+			if = {
+				limit = {
+					has_government = fascism
+				}
+				set_variable = {
+					var = civil_war_size_var
+					value = party_popularity@fascism
+				}
+				subtract_from_variable = {
+					var = civil_war_size_var
+					value = army_support_var
+				}
+			}
+			if = {
+				limit = {
+					check_variable = {
+						var = civil_war_size_var
+						value = 0.3
+						compare = less_than
+					}
+				}
+				set_variable = {
+					var = civil_war_size_var
+					value = 0.3
+				}
+			}
+			start_civil_war = {
+				ruling_party = monarchism
+				ideology = ROOT
+				size = civil_war_size_var
+			}
+			set_country_flag = ideology_civil_war
+		}
+		
+		ai_will_do = {
+			factor = 0
+		}
+	}
+	open_up_political_discourse_monarchism = {
+
+		icon = generic_political_discourse
+
+		allowed = { always = no }
+		on_map_mode = decision_view_only state_target = yes
+		
+		available = {
+			fascism < 0.9
+			conservatism < 0.9
+			liberalism < 0.9
+			socialism < 0.9
+			communism < 0.9
+			neutrality < 0.9
+		}
+
+		visible = {
+			has_idea_with_trait = royalist_reformer
+			NOT = { has_country_flag = open_up_political_discourse_monarchism }
+			NOT = { has_government = monarchism }
+		}
+		
+		remove_trigger = {
+			has_government = monarchism
+		}
+		
+		fire_only_once = yes
+		
+		cost = 75
+		
+		complete_effect = {
+			set_country_flag = open_up_political_discourse_monarchism
+		}
+		
+		ai_will_do = {
+			factor = 1
+		}
+	}
+	
+	discredit_government_monarchism = {
+
+		icon = generic_political_discourse
+
+		allowed = { always = no }
+		on_map_mode = decision_view_only state_target = yes
+		
+		available = {
+			fascism < 0.8
+			conservatism < 0.8
+			liberalism < 0.8
+			socialism < 0.8
+			communism < 0.8
+			neutrality < 0.8
+			has_idea_with_trait = royalist_reformer
+		}
+
+		visible = {
+			has_country_flag = open_up_political_discourse_monarchism
+			NOT = { has_government = monarchism }
+		}
+		
+		remove_trigger = {
+			has_government = monarchism
+		}
+		
+		fire_only_once = yes
+		
+		cost = 50
+		
+		complete_effect = {
+			add_stability = -0.010
+			if = {
+				limit = {
+					has_government = conservatism
+				}
+				add_popularity = {
+					ideology = conservatism
+					popularity = -0.1
+				}
+			}
+			if = {
+				limit = {
+					has_government = liberalism
+				}
+				add_popularity = {
+					ideology = liberalism
+					popularity = -0.1
+				}
+			}
+			if = {
+				limit = {
+					has_government = socialism
+				}
+				add_popularity = {
+					ideology = socialism
+					popularity = -0.1
+				}
+			}
+			if = {
+				limit = {
+					has_government = communism
+				}
+				add_popularity = {
+					ideology = communism
+					popularity = -0.1
+				}
+			}
+			if = {
+				limit = {
+					has_government = fascism
+				}
+				add_popularity = {
+					ideology = fascism
+					popularity = -0.1
+				}
+			}
+			if = {
+				limit = {
+					has_government = neutrality
+				}
+				add_popularity = {
+					ideology = neutrality
+					popularity = -0.1
+				}
+			}
+		}
+		
+		ai_will_do = {
+			factor = 1
+		}
+	}
+	
+	hold_the_monarch_national_referendum = {
+
+		icon = generic_political_discourse
+
+		allowed = { always = no }
+		on_map_mode = decision_view_only state_target = yes
+		
+		available = {
+			monarchism > 0.5
+		}
+
+		visible = {
+			NOT = { has_government = monarchism }
+			OR = {
+				monarchism > 0.6
+				has_country_flag = open_up_political_discourse_monarchism
+			}
+		}
+		
+		remove_trigger = {
+			has_government = monarchism
+		}
+		
+		fire_only_once = yes
+		
+		cost = 100
+		
+		complete_effect = {
+			country_event = { id = political.36 }
+		}
+		
+		ai_will_do = {
+			factor = 210
+			modifier = {
+				monarchism > 0.6
+				factor = 10
+			}
+		}
+	}
+}
+fascism_on_the_rise = {
+	ignite_the_fascist_civil_war = {
+
+		icon = generic_ignite_civil_war
+		
+		allowed = { always = no }
+		on_map_mode = decision_view_only state_target = yes
+		
+		available = {
+			has_stability < 0.5
+		}
+
+		visible = {
+			is_ai = no
+			has_idea_with_trait = fascist_demagogue
+			NOT = { has_government = fascism }
+		}
+	
+		fire_only_once = yes
+	
+		cost = 50
+		
+		complete_effect = {
+			if = {
+				limit = {
+					democratic_govt = yes
+				}
+				set_variable = {
+					var = civil_war_size_var
+					value = party_popularity@conservatism
+				}
+				add_to_variable = {
+					var = civil_war_size_var
+					value = party_popularity@liberalism
+				}
+				add_to_variable = {
+					var = civil_war_size_var
+					value = party_popularity@socialism
+				}
+			}
+			if = {
+				limit = {
+					has_government = communism
+				}
+				set_variable = {
+					var = civil_war_size_var
+					value = party_popularity@communism
+				}
+			}
+			if = {
+				limit = {
+					has_government = neutrality
+				}
+				set_variable = {
+					var = civil_war_size_var
+					value = party_popularity@neutrality
+				}
+			}
+			if = {
+				limit = {
+					has_government = monarchism
+				}
+				set_variable = {
+					var = civil_war_size_var
+					value = party_popularity@monarchism
+				}
+			}
+			subtract_from_variable = {
+				var = civil_war_size_var
+				value = army_support_var
+			}
+			if = {
+				limit = {
+					check_variable = {
+						var = civil_war_size_var
+						value = 0.3
+						compare = less_than
+					}
+				}
+				set_variable = {
+					var = civil_war_size_var
+					value = 0.3
+				}
+			}
+			start_civil_war = {
+				ruling_party = fascism
+				ideology = ROOT
+				size = civil_war_size_var
+				keep_unit_leaders_trigger = {
+					has_trait = trait_fascist_sympathizer
+				}
+			}
+			clr_country_flag = preparation_for_fascism_civil_war
+			clr_country_flag = military_support_for_fascism_civil_war
+			clr_country_flag = civil_support_for_fascism_civil_war
+			set_country_flag = ideology_civil_war
+		}
+		
+		ai_will_do = {
+			factor = 0
+		}
+	}
+	open_up_political_discourse_fascism = {
+
+		icon = generic_political_discourse
+
+		allowed = { always = no }
+		on_map_mode = decision_view_only state_target = yes
+		
+		available = {
+			fascism < 0.9
+			conservatism < 0.9
+			liberalism < 0.9
+			socialism < 0.9
+			communism < 0.9
+			neutrality < 0.9
+		}
+
+		visible = {
+			has_idea_with_trait = fascist_demagogue
+			NOT = { has_country_flag = open_up_political_discourse_fascism }
+			NOT = { has_government = fascism }
+			NOT = { original_tag = ROM }
+		}
+		
+		remove_trigger = {
+			has_government = fascism
+		}
+		
+		fire_only_once = yes
+		
+		cost = 75
+		
+		complete_effect = {
+			set_country_flag = open_up_political_discourse_fascism
+		}
+		
+		ai_will_do = {
+			factor = 1
+		}
+	}
+	
+	discredit_government_fascism = {
+
+		icon = generic_political_discourse
+
+		allowed = { always = no }
+		on_map_mode = decision_view_only state_target = yes
+		
+		available = {
+			fascism < 0.8
+			conservatism < 0.8
+			liberalism < 0.8
+			socialism < 0.8
+			communism < 0.8
+			neutrality < 0.8
+			monarchism < 0.8
+			has_idea_with_trait = fascist_demagogue
+		}
+
+		visible = {
+			has_country_flag = open_up_political_discourse_fascism
+			NOT = { has_government = fascism }
+		}
+		
+		remove_trigger = {
+			has_government = fascism
+		}
+		
+		fire_only_once = yes
+		
+		cost = 50
+		
+		complete_effect = {
+			add_stability = -0.010
+			if = {
+				limit = {
+					has_government = conservatism
+				}
+				add_popularity = {
+					ideology = conservatism
+					popularity = -0.1
+				}
+			}
+			if = {
+				limit = {
+					has_government = liberalism
+				}
+				add_popularity = {
+					ideology = liberalism
+					popularity = -0.1
+				}
+			}
+			if = {
+				limit = {
+					has_government = socialism
+				}
+				add_popularity = {
+					ideology = socialism
+					popularity = -0.1
+				}
+			}
+			if = {
+				limit = {
+					has_government = communism
+				}
+				add_popularity = {
+					ideology = communism
+					popularity = -0.1
+				}
+			}
+			if = {
+				limit = {
+					has_government = monarchism
+				}
+				add_popularity = {
+					ideology = monarchism
+					popularity = -0.1
+				}
+			}
+			if = {
+				limit = {
+					has_government = neutrality
+				}
+				add_popularity = {
+					ideology = neutrality
+					popularity = -0.1
+				}
+			}
+		}
+		
+		ai_will_do = {
+			factor = 1
+		}
+	}
+	
+	hold_the_fascist_national_referendum = {
+
+		icon = generic_political_discourse
+
+		allowed = { always = no }
+		on_map_mode = decision_view_only state_target = yes
+		
+		available = {
+			fascism > 0.5
+		}
+
+		visible = {
+			NOT = { has_government = fascism }
+			OR = {
+				fascism > 0.6
+				has_country_flag = open_up_political_discourse_fascism
+			}
+		}
+		
+		remove_trigger = {
+			has_government = fascism
+		}
+		
+		fire_only_once = yes
+		
+		cost = 100
+		
+		complete_effect = {
+			country_event = { id = political.18 }
+		}
+		
+		ai_will_do = {
+			factor = 210
+			modifier = {
+				fascism > 0.6
+				factor = 10
+			}
+		}
+	}
+
+}
+
+democratic_on_the_rise = {
+	ignite_the_democratic_civil_war = {
+		icon = generic_ignite_civil_war
+		
+		allowed = { always = no }
+		on_map_mode = decision_view_only state_target = yes
+		
+		available = {
+			has_stability < 0.5
+		}
+
+		visible = {
+			is_ai = no
+			has_idea_with_trait = democratic_reformer
+			NOT = { democratic_govt = yes }
+		}
+	
+		fire_only_once = yes
+	
+		cost = 50
+		
+		complete_effect = {
+			if = {
+				limit = {
+					has_government = fascism
+				}
+				set_variable = {
+					var = civil_war_size_var
+					value = party_popularity@fascism
+				}
+			}
+			if = {
+				limit = {
+					has_government = communism
+				}
+				set_variable = {
+					var = civil_war_size_var
+					value = party_popularity@communism
+				}
+			}
+			if = {
+				limit = {
+					has_government = neutrality
+				}
+				set_variable = {
+					var = civil_war_size_var
+					value = party_popularity@neutrality
+				}
+			}
+			if = {
+				limit = {
+					has_government = monarchism
+				}
+				set_variable = {
+					var = civil_war_size_var
+					value = party_popularity@monarchism
+				}
+			}
+			subtract_from_variable = {
+				var = civil_war_size_var
+				value = army_support_var
+			}
+			
+			if = {
+				limit = {
+					check_variable = {
+						var = civil_war_size_var
+						value = 0.3
+						compare = less_than
+					}
+				}
+				set_variable = {
+					var = civil_war_size_var
+					value = 0.3
+				}
+			}
+			
+			start_civil_war = {
+				ruling_party = conservatism
+				ideology = ROOT
+
+				size = civil_war_size_var
+				keep_unit_leaders_trigger = {
+					has_trait = hidden_sympathies
+				}
+			}
+			
+			start_civil_war = {
+				ruling_party = liberalism
+				ideology = ROOT
+
+				size = civil_war_size_var
+				keep_unit_leaders_trigger = {
+					has_trait = hidden_sympathies
+				}
+			}
+			clr_country_flag = preparation_for_democratic_civil_war
+			clr_country_flag = military_support_for_democratic_civil_war
+			clr_country_flag = civil_support_for_democratic_civil_war
+		}
+		
+		ai_will_do = {
+			factor = 0
+		}
+	}
+	open_up_political_discourse_democratic = {
+
+		icon = generic_political_discourse
+
+		allowed = { always = no }
+		on_map_mode = decision_view_only state_target = yes
+		
+		available = {
+			fascism < 0.9
+			OR = {
+				conservatism < 0.9
+				liberalism < 0.9
+				socialism < 0.9
+			}
+			communism < 0.9
+			neutrality < 0.9
+			monarchism < 0.9
+		}
+
+		visible = {
+			has_idea_with_trait = democratic_reformer
+			NOT = { democratic_govt = yes }
+		}
+		
+		remove_trigger = {
+			democratic_govt = yes
+		}
+		
+		fire_only_once = yes
+		
+		cost = 75
+		
+		complete_effect = {
+			set_country_flag = open_up_political_discourse_democratic
+		}
+		
+		ai_will_do = {
+			factor = 1
+		}
+	}
+	
+	discredit_government_democratic = {
+
+		icon = generic_political_discourse
+
+		allowed = { always = no }
+		on_map_mode = decision_view_only state_target = yes
+		
+		available = {
+			fascism < 0.8
+			OR = {
+				conservatism < 0.8
+				liberalism < 0.8
+				socialism < 0.8
+			}
+			communism < 0.8
+			monarchism < 0.8
+			neutrality < 0.8
+			has_idea_with_trait = democratic_reformer
+		}
+
+		visible = {
+			has_country_flag = open_up_political_discourse_democratic
+			NOT = { democratic_govt = yes }
+		}
+		
+		remove_trigger = {
+			democratic_govt = yes
+		}
+		
+		fire_only_once = yes
+		
+		cost = 50
+		
+		complete_effect = {
+			add_stability = -0.010
+			if = {
+				limit = {
+					has_government = fascism
+				}
+				add_popularity = {
+					ideology = fascism
+					popularity = -0.1
+				}
+			}
+			if = {
+				limit = {
+					has_government = communism
+				}
+				add_popularity = {
+					ideology = communism
+					popularity = -0.1
+				}
+			}
+			if = {
+				limit = {
+					has_government = monarchism
+				}
+				add_popularity = {
+					ideology = monarchism
+					popularity = -0.1
+				}
+			}
+			if = {
+				limit = {
+					has_government = neutrality
+				}
+				add_popularity = {
+					ideology = neutrality
+					popularity = -0.1
+				}
+			}
+		}
+		
+		ai_will_do = {
+			factor = 1
+		}
+	}
+	
+	hold_the_democratic_national_referendum = {
+
+		icon = generic_political_discourse
+
+		allowed = { always = no }
+		on_map_mode = decision_view_only state_target = yes
+		
+		available = {
+			OR = {
+				conservatism > 0.5
+				liberalism > 0.5
+				socialism > 0.5
+			}
+		}
+
+		visible = {
+			NOT = { democratic_govt = yes }
+			OR = {
+				conservatism > 0.6
+				liberalism > 0.6
+				socialism > 0.6
+				has_country_flag = open_up_political_discourse_democratic
+			}
+		}
+		
+		remove_trigger = {
+			democratic_govt = yes
+		}
+		
+		fire_only_once = yes
+		
+		cost = 100
+		
+		complete_effect = {
+			country_event = { id = political.20 }
+		}
+		
+		ai_will_do = {
+			factor = 210
+			modifier = {
+				OR = {
+					conservatism > 0.6
+					liberalism > 0.6
+					socialism > 0.6
+				}
+				factor = 10
+			}
+		}
+	}
+}
+
+communism_on_the_rise = {
+	ignite_the_communist_civil_war = {
+
+		icon = generic_ignite_civil_war
+		
+		allowed = { always = no }
+		on_map_mode = decision_view_only state_target = yes
+		
+		available = {
+			has_stability < 0.5
+		}
+
+		visible = {
+			is_ai = no
+			has_idea_with_trait = communist_revolutionary
+			NOT = { has_government = communism }
+		}
+	
+		fire_only_once = yes
+	
+		cost = 50
+		
+		complete_effect = {
+			if = {
+				limit = {
+					has_government = fascism
+				}
+				set_variable = {
+					var = civil_war_size_var
+					value = party_popularity@fascism
+				}
+			}
+			if = {
+				limit = {
+					democratic_govt = yes
+				}
+				set_variable = {
+					var = civil_war_size_var
+					value = party_popularity@conservatism
+				}
+				add_to_variable = {
+					var = civil_war_size_var
+					value = party_popularity@liberalism
+				}
+				add_to_variable = {
+					var = civil_war_size_var
+					value = party_popularity@socialism
+				}
+			}
+			if = {
+				limit = {
+					has_government = neutrality
+				}
+				set_variable = {
+					var = civil_war_size_var
+					value = party_popularity@neutrality
+				}
+			}
+			if = {
+				limit = {
+					has_government = monarchism
+				}
+				set_variable = {
+					var = civil_war_size_var
+					value = party_popularity@monarchism
+				}
+			}			
+			subtract_from_variable = {
+				var = civil_war_size_var
+				value = army_support_var
+			}
+			if = {
+				limit = {
+					check_variable = {
+						var = civil_war_size_var
+						value = 0.3
+						compare = less_than
+					}
+				}
+				set_variable = {
+					var = civil_war_size_var
+					value = 0.3
+				}
+			}
+			start_civil_war = {
+				ruling_party = communism
+				ideology = ROOT
+				size = civil_war_size_var
+				keep_unit_leaders_trigger = {
+					has_trait = hidden_sympathies
+				}				
+			}
+			clr_country_flag = preparation_for_communist_civil_war
+			clr_country_flag = military_support_for_communist_civil_war
+			clr_country_flag = civil_support_for_communist_civil_war
+		}
+		
+		ai_will_do = {
+			factor = 0
+		}
+	}
+	open_up_political_discourse_communist = {
+
+		icon = generic_political_discourse
+
+		allowed = { always = no }
+		on_map_mode = decision_view_only state_target = yes
+		
+		available = {
+			fascism < 0.9
+			OR = {
+				conservatism < 0.9
+				liberalism < 0.9
+				socialism < 0.9
+			}
+			communism < 0.9
+			neutrality < 0.9
+			monarchism < 0.9
+		}
+
+		visible = {
+			has_idea_with_trait = communist_revolutionary
+			NOT = { has_government = communism }
+		}
+		
+		remove_trigger = {
+			has_government = communism
+		}
+		
+		fire_only_once = yes
+		
+		cost = 75
+		
+		complete_effect = {
+			set_country_flag = open_up_political_discourse_communist
+		}
+		
+		ai_will_do = {
+			factor = 1
+		}
+	}
+	
+	discredit_government_communism = {
+
+		icon = generic_political_discourse
+
+		allowed = { always = no }
+		on_map_mode = decision_view_only state_target = yes
+		
+		available = {
+			fascism < 0.8
+			OR = {
+				conservatism < 0.8
+				liberalism < 0.8
+				socialism < 0.8
+			}
+			communism < 0.8
+			neutrality < 0.8
+			monarchism < 0.8
+			has_idea_with_trait = communist_revolutionary
+		}
+
+		visible = {
+			has_country_flag = open_up_political_discourse_communist
+			NOT = { has_government = communism }
+		}
+		
+		remove_trigger = {
+			has_government = communism
+		}
+		
+		fire_only_once = yes
+		
+		cost = 50
+		
+		complete_effect = {
+			add_stability = -0.010
+			if = {
+				limit = {
+					has_government = fascism
+				}
+				add_popularity = {
+					ideology = fascism
+					popularity = -0.1
+				}
+			}
+			if = {
+				limit = {
+					has_government = conservatism
+				}
+				add_popularity = {
+					ideology = conservatism
+					popularity = -0.1
+				}
+			}
+			if = {
+				limit = {
+					has_government = liberalism
+				}
+				add_popularity = {
+					ideology = liberalism
+					popularity = -0.1
+				}
+			}
+			if = {
+				limit = {
+					has_government = monarchism
+				}
+				add_popularity = {
+					ideology = monarchism
+					popularity = -0.1
+				}
+			}
+			if = {
+				limit = {
+					has_government = socialism
+				}
+				add_popularity = {
+					ideology = socialism
+					popularity = -0.1
+				}
+			}
+			if = {
+				limit = {
+					has_government = neutrality
+				}
+				add_popularity = {
+					ideology = neutrality
+					popularity = -0.1
+				}
+			}
+		}
+		
+		ai_will_do = {
+			factor = 1
+		}
+	}
+	
+	hold_the_communist_national_referendum = {
+
+		icon = generic_political_discourse
+
+		allowed = { always = no }
+		on_map_mode = decision_view_only state_target = yes
+		
+		available = {
+			communism > 0.5
+		}
+
+		visible = {
+			NOT = { has_government = communism }
+			OR = {
+				communism > 0.6
+				has_country_flag = open_up_political_discourse_communist
+			}
+		}
+		
+		remove_trigger = {
+			has_government = communism
+		}
+		
+		fire_only_once = yes
+		
+		cost = 100
+		
+		complete_effect = {
+			country_event = { id = political.19 }
+		}
+		
+		ai_will_do = {
+			factor = 210
+			modifier = {
+				communism > 0.6
+				factor = 10
+			}
+		}
+	}
+}
+
+political_actions = {
+	goverment_support_democracy = {
+		icon = generic_speech
+		cost = 20
+		allowed = { always = no }
+		on_map_mode = decision_view_only state_target = yes
+		
+		priority = -1
+
+		#visible = {
+        #    democratic_govt = yes
+		#}
+		days_remove = 90
+		days_re_enable = 53
+        modifier = {
+			conservatism_drift = 0.02
+			liberalism_drift = 0.02
+			socialism_drift = 0.02	
+			ruling_party_drift = 0.02
+			consumer_goods_expected_value = 0.015
+        }
+		ai_will_do = {
+			factor = 0.4
+			modifier = {
+				factor = 0.01
+				set_temp_variable = { dem_parties = party_popularity@conservatism }
+				add_to_temp_variable = { dem_parties = party_popularity@liberalism }
+				add_to_temp_variable = { dem_parties = party_popularity@socialism }
+				check_variable = { dem_parties > 0.5 }
+			}
+			modifier = {
+				add = 2
+				
+				tag = FRA
+				check_variable = { party_popularity@communism > 0.25 }
+			}
+		}
+		remove_effect = {
+			add_stability = 0.02
+			if = {
+				limit = {
+					is_subject = yes
+				}
+				add_autonomy_ratio = {
+					value = 0.05
+					localization = goverment_support_democracy
+				}
+			}
+		}
+	}
+	goverment_support_communism = {
+		icon = generic_civil_support
+		fixed_random_seed = no
+		cost = 20
+		allowed = { always = no }
+		on_map_mode = decision_view_only state_target = yes
+		
+		priority = -1
+
+		#visible = {
+		#	or = {
+		#		has_government = communism
+		#		has_government = monarchism
+		#	}
+        #}
+		days_remove = 90
+		days_re_enable = 65
+        modifier = {	
+			ruling_party_drift = 0.04
+			civilian_factory_use = 2
+        }
+		ai_will_do = {
+			factor = 0.4
+			modifier = {
+				factor = 0
+				check_variable = { party_popularity@ruling_party > 0.4 }
+			}
+		}
+		complete_effect = {
+			if = {
+				limit = {
+					tag = SOV
+				}
+				subtract_from_variable = { tractor_stockpile = stab_tractors tooltip = tractor_removed_tt}
+				add_offsite_building = { type = industrial_complex level = 2 }
+			}
+		}
+		remove_effect = {
+			if = {
+				limit = {
+					tag = SOV
+				}
+				add_offsite_building = { type = industrial_complex level = -2 }
+				random_list = {
+					15 = {
+						random_owned_controlled_state = {
+							add_extra_state_shared_building_slots = 1
+						}	
+					}
+					37 = {
+						random_owned_controlled_state = {
+							add_building_construction = {
+								type = infrastructure
+								level = 1
+								instant_build = yes
+							}
+						}
+					}
+					5 = {
+						random_owned_controlled_state = {
+							add_building_construction = {
+								type = air_base
+								level = 1
+								instant_build = yes
+							}
+						}
+					}
+					4 = {
+						random_owned_controlled_state = {
+							add_building_construction = {
+								type = steel_refinery
+								level = 1
+								instant_build = yes
+							}
+						}
+					}
+					3 = {
+						random_owned_controlled_state = {
+							add_building_construction = {
+								type = aluminium_refinery
+								level = 1
+								instant_build = yes
+							}
+						}
+					}
+					3 = {
+						random_owned_controlled_state = {
+							add_building_construction = {
+								type = power_plant
+								level = 1
+								instant_build = yes
+							}
+						}
+					}
+					2 = {
+						random_owned_controlled_state = {
+							add_building_construction = {
+								type = industrial_complex
+								level = 1
+								instant_build = yes
+							}
+						}
+					}
+					2 = {
+						random_owned_controlled_state = {
+							add_building_construction = {
+								type = arms_factory
+								level = 1
+								instant_build = yes
+							}
+						}
+					}
+					1 = {
+						random_owned_controlled_state = {
+							add_building_construction = {
+								type = recruitment_building
+								level = 1
+								instant_build = yes
+							}
+						}
+					}
+					1 = {
+						random_owned_controlled_state = {
+							add_building_construction = {
+								type = storage
+								level = 1
+								instant_build = yes
+							}
+						}
+					}
+					5 = {				
+						custom_effect_tooltip = extra_tractor_plant_tt
+						add_to_variable = { tractor_plants = 1 }
+					}
+				}
+			}
+			else = {
+				random_list = {
+					42 = {
+						random_owned_controlled_state = {
+							add_extra_state_shared_building_slots = 1
+						}	
+					}
+					37 = {
+						random_owned_controlled_state = {
+							add_building_construction = {
+								type = infrastructure
+								level = 1
+								instant_build = yes
+							}
+						}
+					}
+					5 = {
+						random_owned_controlled_state = {
+							add_building_construction = {
+								type = air_base
+								level = 1
+								instant_build = yes
+							}
+						}
+					}
+					4 = {
+						random_owned_controlled_state = {
+							add_building_construction = {
+								type = steel_refinery
+								level = 1
+								instant_build = yes
+							}
+						}
+					}
+					3 = {
+						random_owned_controlled_state = {
+							add_building_construction = {
+								type = aluminium_refinery
+								level = 1
+								instant_build = yes
+							}
+						}
+					}
+					3 = {
+						random_owned_controlled_state = {
+							add_building_construction = {
+								type = power_plant
+								level = 1
+								instant_build = yes
+							}
+						}
+					}
+					2 = {
+						random_owned_controlled_state = {
+							add_building_construction = {
+								type = industrial_complex
+								level = 1
+								instant_build = yes
+							}
+						}
+					}
+					2 = {
+						random_owned_controlled_state = {
+							add_building_construction = {
+								type = arms_factory
+								level = 1
+								instant_build = yes
+							}
+						}
+					}
+					1 = {
+						random_owned_controlled_state = {
+							add_building_construction = {
+								type = recruitment_building
+								level = 1
+								instant_build = yes
+							}
+						}
+					}
+					1 = {
+						random_owned_controlled_state = {
+							add_building_construction = {
+								type = storage
+								level = 1
+								instant_build = yes
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+	goverment_support_fascist = {
+		icon = generic_civil_support
+		allowed = { always = no }
+		on_map_mode = decision_view_only state_target = yes
+		
+		priority = -1
+
+		available = {
+			hidden_trigger = {
+				command_power > 24.9		
+			}	
+		}
+		#visible = {
+		#	or = {
+		#		has_government = fascism
+		#		has_government = monarchism
+		#		has_government = neutrality
+		#	}		
+        #}
+		custom_cost_trigger = {
+			command_power > 24.9
+		}
+		custom_cost_text = cp_atleast_25
+		days_remove = 90
+		days_re_enable = 45
+        modifier = {	
+			ruling_party_drift = 0.04
+			consumer_goods_expected_value = 0.015
+        }
+		ai_will_do = {
+			factor = 0.4
+			modifier = {
+				factor = 0.01 
+				check_variable = { party_popularity@fascism > 0.5 }
+			}
+			modifier = {
+				factor = 0 
+				command_power < 50
+			}
+		}
+		complete_effect = {
+			hidden_effect = {
+				add_command_power = -25 
+			}
+		}
+		remove_effect = {
+			add_war_support = 0.02
+		}
+	}
+
+    anti_fascist_raids = {
+
+		priority = -2
+
+    	icon = generic_arrest
+		
+		allowed = { always = no }
+		on_map_mode = decision_view_only state_target = yes
+
+    	visible = {
+			fascism > 0.05
+		}
+
+		available = {
+            fascism > 0.1
+        }
+	
+		modifier = {
+			fascism_drift = -0.05
+			stability_weekly = 0.007
+		}
+	
+		days_remove = 120
+		cost = 50
+
+		complete_effect = {
+			add_stability = -0.1
+		}
+		
+		remove_effect = {
+			if = {
+				limit = {
+					tag = ROM
+				}
+				ROM_iron_guard_low_loyalty_decrease = yes
+			}
+		}
+		
+		ai_will_do = {
+			base = 0
+			modifier = {
+				add = 1
+				tag = AUS
+				fascism > 0.45
+				is_historical_focus_on = no
+			}
+			modifier = {
+				add = 10
+				tag = AUS
+				fascism > 0.45
+				has_completed_focus = liberty_ethos
+			}
+			modifier = {
+				factor = 0
+				original_tag = SPR
+				NOT = { has_global_flag = spanish_civil_war }
+			}
+			modifier = {
+				add = 10
+				fascism > 0.25
+				has_completed_focus = liberty_ethos
+			}
+		}
+    }
+ 	anti_communist_raids = {
+
+		priority = -2
+
+    	icon = generic_arrest
+		allowed = { always = no }
+		on_map_mode = decision_view_only state_target = yes
+
+    	visible = {
+            communism > 0.05
+		}
+
+		available = {
+            communism > 0.1
+        }
+	
+		modifier = {
+			communism_drift = -0.05
+			stability_weekly = 0.007
+		}
+	
+		days_remove = 120
+		cost = 50
+
+		complete_effect = {
+			add_stability = -0.1
+		}
+		
+		ai_will_do = {
+			base = 0
+			modifier = {
+				add = 10
+				communism > 0.45
+			}
+			modifier = {
+				add = 10
+				communism > 0.25
+				has_completed_focus = liberty_ethos
+			}
+		}
+    }
+	anti_monarchist_raids = {
+
+		priority = -2
+
+    	icon = generic_arrest
+		allowed = { always = no }
+		on_map_mode = decision_view_only state_target = yes
+
+    	visible = {
+            monarchism > 0.05
+		}
+
+		available = {
+            monarchism > 0.1
+        }
+	
+		modifier = {
+			monarchism_drift = -0.05
+			stability_weekly = 0.007
+		}
+	
+		days_remove = 120
+		cost = 50
+
+		complete_effect = {
+			add_stability = -0.1
+		}
+		
+		ai_will_do = {
+			base = 0
+			modifier = {
+				add = 10
+				monarchism > 0.45
+			}
+			modifier = {
+				add = 10
+				monarchism > 0.25
+				has_completed_focus = liberty_ethos
+			}
+		}
+    }
+	anti_neutrality_raids = {
+
+		priority = -2
+
+    	icon = generic_arrest
+		allowed = { always = no }
+		on_map_mode = decision_view_only state_target = yes
+
+    	visible = {
+            neutrality > 0.05
+		}
+
+		available = {
+            neutrality > 0.1
+        }
+	
+		modifier = {
+			neutrality_drift = -0.05
+			stability_weekly = 0.007
+		}
+	
+		days_remove = 120
+		cost = 50
+
+		complete_effect = {
+			add_stability = -0.1
+		}
+		
+		ai_will_do = {
+			base = 0
+			modifier = {
+				add = 10
+				neutrality > 0.45
+			}
+			modifier = {
+				add = 10
+				neutrality > 0.25
+				has_completed_focus = liberty_ethos
+			}
+		}
+    }
+	anti_democratic_raids = {
+
+		priority = -2
+
+    	icon = generic_arrest
+		allowed = { always = no }
+		on_map_mode = decision_view_only state_target = yes
+
+    	visible = {
+			OR = {
+				agrarianism > 0.05
+				socialism > 0.05
+				liberalism > 0.05
+				conservatism > 0.05
+			}
+		}
+
+		available = {
+			OR = {
+				agrarianism > 0.1
+				socialism > 0.1
+				liberalism > 0.1
+				conservatism > 0.1
+			}			
+        }
+	
+		modifier = {
+			agrarianism_drift = -0.03
+			socialism_drift = -0.03
+			liberalism_drift = -0.03
+			conservatism_drift = -0.03
+			stability_weekly = 0.007
+		}
+	
+		days_remove = 120
+		cost = 50
+
+		complete_effect = {
+			add_stability = -0.15
+		}
+		
+		ai_will_do = {
+			base = 0
+			modifier = {
+				add = 10
+				agrarianism > 0.45
+			}
+			modifier = {
+				add = 10
+				socialism > 0.45
+			}
+			modifier = {
+				add = 10
+				liberalism > 0.45
+			}
+			modifier = {
+				add = 10
+				conservatism > 0.45
+			}
+		}
+    }
+	
+################ PARTY ACTIONS
+	ban_fascism_party = {
+
+		priority = -3
+
+		icon = oppression
+		allowed = { always = no }
+		on_map_mode = decision_view_only state_target = yes
+
+		available = {
+			fascism < 0.2
+		}
+
+		visible = {
+			fascism > 0.05
+		}
+
+		modifier = {
+			fascism_drift = -0.05
+		}
+	
+		days_remove = 90
+		cost = 100
+		
+		complete_effect = {
+			set_country_flag = party_banned@fascism
+		
+			custom_effect_tooltip = party_banned_tt
+			
+			set_temp_variable = { ban_ideology_var = party_popularity@fascism }
+			multiply_temp_variable = { ban_ideology_var = -0.66 }
+			
+			add_popularity = {
+				ideology = fascism
+				popularity = ban_ideology_var
+			}
+			
+			add_stability = ban_ideology_var
+			add_to_array = { party_banned = token:fascism }
+		}
+		
+		remove_effect = {
+			hidden_effect = { remove_targeted_decision = { decision = ban_fascism_party target = var:original_capital } }
+		}
+
+		ai_will_do = {
+			factor = 0
+		}
+	}
+
+	ban_democratic_party = {
+	
+		priority = -3
+
+		icon = oppression
+		allowed = { always = no }
+		on_map_mode = decision_view_only state_target = yes
+
+		available = {
+			set_temp_variable = { t = party_popularity@liberalism }
+			add_to_temp_variable = { t = party_popularity@conservatism }
+			add_to_temp_variable = { t = party_popularity@socialism }
+			add_to_temp_variable = { t = party_popularity@agrarianism }
+			
+			custom_trigger_tooltip = {
+				tooltip = "Less than [?0.2|Y0%] for Democratic Parties ([?t|0%])"
+				check_variable = { t < 0.2 }
+			}
+		}
+
+		visible = {
+			set_temp_variable = { t = party_popularity@liberalism }
+			add_to_temp_variable = { t = party_popularity@conservatism }
+			add_to_temp_variable = { t = party_popularity@socialism }
+			add_to_temp_variable = { t = party_popularity@agrarianism }
+			check_variable = { t > 0.05 }
+		}
+
+		modifier = {
+			liberalism_drift = -0.01
+			socialism_drift = -0.01
+			conservatism_drift = -0.01
+			agrarianism_drift = -0.01
+		}
+	
+		days_remove = 90
+		cost = 100
+		
+		complete_effect = { 
+			set_country_flag = party_banned@conservatism
+			set_country_flag = party_banned@liberalism
+			set_country_flag = party_banned@socialism
+			set_country_flag = party_banned@agrarianism
+			
+			custom_effect_tooltip = party_banned_tt
+			
+			set_temp_variable = { ban_ideology_conservatism_var = party_popularity@conservatism }
+			multiply_temp_variable = { ban_ideology_conservatism_var = -0.66 }
+			
+			set_temp_variable = { ban_ideology_liberalism_var = party_popularity@liberalism }
+			multiply_temp_variable = { ban_ideology_liberalism_var = -0.66 }
+			
+			set_temp_variable = { ban_ideology_socialism_var = party_popularity@socialism }
+			multiply_temp_variable = { ban_ideology_socialism_var = -0.66 }
+			
+			set_temp_variable = { ban_ideology_agrarianism_var = party_popularity@agrarianism }
+			multiply_temp_variable = { ban_ideology_agrarianism_var = -0.66 }
+				
+			add_popularity = {
+				ideology = conservatism
+				popularity = ban_ideology_conservatism_var
+			}
+			add_popularity = {
+				ideology = liberalism
+				popularity = ban_ideology_liberalism_var
+			}
+			add_popularity = {
+				ideology = socialism
+				popularity = ban_ideology_socialism_var
+			}
+			add_popularity = {
+				ideology = agrarianism
+				popularity = ban_ideology_agrarianism_var
+			}	
+			
+			add_to_temp_variable = { total = ban_ideology_liberalism_var }
+			add_to_temp_variable = { total = ban_ideology_socialism_var }
+			add_to_temp_variable = { total = ban_ideology_conservatism_var }
+			add_to_temp_variable = { total = ban_ideology_agrarianism_var }
+			add_stability = total
+			add_to_array = { party_banned = token:conservatism }
+			add_to_array = { party_banned = token:liberalism }
+			add_to_array = { party_banned = token:socialism }
+			add_to_array = { party_banned = token:agrarianism }
+		}
+
+		remove_effect = {
+			hidden_effect = { remove_targeted_decision = { decision = ban_democratic_party target = var:original_capital } }
+		}
+
+		ai_will_do = {
+			factor = 0
+		}
+	}
+	
+	ban_communist_party = {
+
+		icon = oppression
+		allowed = { always = no }
+		on_map_mode = decision_view_only state_target = yes
+
+		priority = -3
+
+		available = {
+			communism < 0.2
+		}
+
+		visible = {
+			communism > 0.05
+		}
+
+		modifier = {
+			communism_drift = -0.05
+		}
+	
+		days_remove = 90
+		cost = 100
+		
+		complete_effect = {
+			
+			set_country_flag = party_banned@communism
+		
+			custom_effect_tooltip = party_banned_tt
+			
+			set_temp_variable = { ban_ideology_var = party_popularity@communism }
+			multiply_temp_variable = { ban_ideology_var = -0.66 }
+			
+			add_popularity = {
+				ideology = communism
+				popularity = ban_ideology_var
+			}
+			
+			add_stability = ban_ideology_var
+			add_to_array = { party_banned = token:communism }
+		}
+		
+		remove_effect = {
+			hidden_effect = { remove_targeted_decision = { decision = ban_communist_party target = var:original_capital } }
+		}
+
+		ai_will_do = {
+			factor = 0
+		}
+	}
+	
+	ban_monarchist_party = {
+
+		icon = oppression
+		allowed = { always = no }
+		on_map_mode = decision_view_only state_target = yes
+
+		priority = -3
+
+		available = {
+			monarchism < 0.2
+		}
+
+		visible = {
+			monarchism > 0.05
+		}
+
+		modifier = {
+			monarchism_drift = -0.05
+		}
+	
+		days_remove = 90
+		cost = 100
+		
+		complete_effect = {
+			
+			set_country_flag = party_banned@monarchism
+		
+			custom_effect_tooltip = party_banned_tt
+			
+			set_temp_variable = { ban_ideology_var = party_popularity@monarchism }
+			multiply_temp_variable = { ban_ideology_var = -0.66 }
+			
+			add_popularity = {
+				ideology = monarchism
+				popularity = ban_ideology_var
+			}
+			
+			add_stability = ban_ideology_var
+			add_to_array = { party_banned = token:monarchism }
+		}
+		
+		remove_effect = {
+			hidden_effect = { remove_targeted_decision = { decision = ban_monarchist_party target = var:original_capital } }
+		}
+
+		ai_will_do = {
+			factor = 0
+		}
+	}
+	
+	ban_neutrality_party = {
+
+		icon = oppression
+		allowed = { always = no }
+		on_map_mode = decision_view_only state_target = yes
+
+		priority = -3
+
+		available = {
+			neutrality < 0.2
+		}
+
+		visible = {
+			neutrality > 0.05
+		}
+
+		modifier = {
+			neutrality_drift = -0.05
+		}
+	
+		days_remove = 90
+		cost = 100
+		
+		complete_effect = {
+			
+			set_country_flag = party_banned@neutrality
+		
+			custom_effect_tooltip = party_banned_tt
+			
+			set_temp_variable = { ban_ideology_var = party_popularity@neutrality }
+			multiply_temp_variable = { ban_ideology_var = -0.66 }
+			
+			add_popularity = {
+				ideology = neutrality
+				popularity = ban_ideology_var
+			}
+			
+			add_stability = ban_ideology_var
+			add_to_array = { party_banned = token:neutrality }
+		}
+		
+		remove_effect = {
+			hidden_effect = { remove_targeted_decision = { decision = ban_neutrality_party target = var:original_capital } }
+		}
+
+		ai_will_do = {
+			factor = 0
+		}
+	}
+	
+	legalize_communism_party = {
+
+		icon = generic_civil_support
+
+		allowed = { tag = ROM }
+		
+		available = {
+			
+		}
+
+		visible = {
+			has_country_flag = party_banned@communism
+			communism > 0
+		}
+
+		remove_trigger = {
+			hidden_trigger = {
+				has_government = communism
+			}
+		}
+	
+		modifier = {
+			communism_drift = 0.05
+		}
+	
+		days_remove = -1
+		cost = 100
+		
+		complete_effect = {
+			clr_country_flag = party_banned@communism
+			hidden_effect = {
+				set_temp_variable = {
+					var = legalize_ideology_var
+					value = party_popularity@communism
+				}
+				add_popularity = {
+					ideology = communism
+					popularity = legalize_ideology_var
+				}
+				multiply_temp_variable = {
+					var = legalize_ideology_var
+					value = 0.50
+				}				
+			}
+			add_stability = legalize_ideology_var
+		}
+
+		ai_will_do = {
+			factor = 0
+		}
+	}
+	
+	#Censorship
+	institute_press_censorship = {
+		icon = hol_radio_oranje
+		allowed = { always = no }
+		on_map_mode = decision_view_only state_target = yes
+
+		priority = -1
+
+		available = {
+			has_war = yes
+		}
+		
+		visible = {
+			OR = {
+				has_idea = press_censored 
+				has_idea = press_state
+			}
+		}
+	
+		modifier = {
+			ruling_party_drift = 0.03
+			opposition_party_drift = -0.01
+		}
+	
+		days_remove = 360
+		cost = 150
+	
+		ai_will_do = {
+			factor = 1
+			modifier = {
+				factor = 0
+				check_variable = { party_popularity@ruling_party > 0.5 }
+			}
+		}
+	}
+}
+### EOF ###

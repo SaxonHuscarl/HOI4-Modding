@@ -1,0 +1,843 @@
+############################################
+##### SCRIPTED EFFECTS USED BY AI CODE #####
+############################################
+
+initiate_player_from_ai_country = {
+	every_army_leader = {
+		set_variable = { player = 1 }
+		remove_unit_leader_trait = basic_hq
+	}
+	
+	set_technology = { BICE_airrange_balance = 0 }
+	
+	if = {
+		limit = {
+			check_variable = { ai_saved_slots > 0 }
+		}
+		subtract_from_variable = { global.slots_saved = ai_saved_slots }
+		add_research_slot = ai_saved_slots
+		clear_variable = ai_saved_slots
+	}
+	
+	if = {
+		limit = {
+			check_variable = { ai_slot_offset > 0 }
+		}
+		add_research_slot = var:ai_slot_offset
+	}
+	
+	add_dynamic_modifier = { #player only
+		modifier = min_consumer_goods
+	}
+	
+	add_ideas = {
+		player_country
+	}
+	
+	remove_ideas = {
+		BI_difficulty_ai_modifier/static
+		
+		BI_difficulty_ai_modifier/0
+		BI_difficulty_ai_modifier/1
+		BI_difficulty_ai_modifier/2
+		BI_difficulty_ai_modifier/3
+		BI_difficulty_ai_modifier/4
+		
+		BI_difficulty_ai_modifier/enemy_player/0
+		BI_difficulty_ai_modifier/enemy_player/1
+		BI_difficulty_ai_modifier/enemy_player/2
+		BI_difficulty_ai_modifier/enemy_player/3
+		BI_difficulty_ai_modifier/enemy_player/4
+		
+		BI_difficulty_ai_modifier/majors/0
+		BI_difficulty_ai_modifier/majors/1
+		BI_difficulty_ai_modifier/majors/2
+		BI_difficulty_ai_modifier/majors/3
+		BI_difficulty_ai_modifier/majors/4
+		
+		ai_training_1
+		ai_training_2
+		ai_training_3
+		
+		ai_supply_build_1
+		ai_supply_build_2
+		ai_supply_build_3
+		
+		ai_supply_1
+		ai_supply_2
+		ai_supply_3
+		ai_supply_4
+		ai_supply_5
+		
+		ai_useless_country
+		ai_no_unit_leader
+	}
+	
+	if = {
+		limit = {
+			check_variable = { global.setting_status@difficulty_player = 2 }
+		}
+		meta_effect = {
+			text = {
+				add_dynamic_modifier = {
+					modifier = player_offset_[X]
+				}
+			}
+			X = "[?global.difficulty]"
+		}
+	}
+}
+
+d_print_ai_intel_network_target = {
+	get_sorted_scored_countries_temp = {
+		scorer = ai_generic_operation_target_scorer
+		array = intel_targets
+		scores = intel_targets_score
+	}
+	
+	for_each_loop = {
+		array = intel_targets
+		
+		var:v = { log = "[This.GetTag] | [?intel_targets_score^i]" }
+	}
+}
+
+ai_update_intelligence_agency = {
+	update_current_agency_upgrades = yes 
+	
+	if = {
+		limit = {
+			ai_can_upgrade_agency = yes
+			ai_agency_upgrade_type_score = yes 
+		}
+		
+		for_each_loop = {
+			array = global.agency_upgrades
+			break = no_break
+			
+			if = {
+				limit = {
+					NOT = { is_in_array = { current_upgrade_array = v } }
+					meta_trigger = {
+						text = {
+							NOT = { has_done_agency_upgrade = [V] }
+							[V] = yes 
+						}
+						V = "[?v.GetTokenKey]"
+					}
+					
+				}
+				## calculate score for best upgrades
+				
+				if = {
+					limit = {
+						check_variable = { ai_score > 0 }
+					}
+					add_to_temp_variable = { ai_score = ai_type_weight@var:ai_type }
+				}
+				
+				set_temp_variable = { cost_weight = cost }
+				multiply_temp_variable = { cost_weight = 0.01 }
+				
+				set_temp_variable = { score_cost_mult = 1 }
+				subtract_from_temp_variable = { score_cost_mult = cost_weight }
+				multiply_temp_variable = { ai_score = score_cost_mult }
+				
+				for_each_loop = { array = agency_upgrade_score value = s
+
+					if = { limit = { check_variable = { ai_score > s } }
+
+						add_to_temp_array = { array = agency_upgrade index = i value = v }
+						add_to_temp_array = { array = agency_upgrade_score index = i value = ai_score }
+						set_temp_variable = { break = 1 }
+					}
+				}
+
+				if = { limit = { check_variable = { break = 0 } }
+					
+					add_to_temp_array = { array = agency_upgrade value = v }
+					add_to_temp_array = { array = agency_upgrade_score value = ai_score }
+				}
+				else = { set_temp_variable = { break = 0 } }
+						
+			}
+		}
+		
+		for_each_loop = {
+			array = agency_upgrade
+			
+			if = {
+				limit = {
+					check_variable = { modifier@agency_upgrades > current_upgrade_array^num }
+				}
+				
+				log = "BEST UPGRADE: [?v.GetTokenKey] | [?agency_upgrade_score^i] score"
+				add_agency_upgrade_to_queue = yes
+			}
+			
+		}
+			
+			
+	}
+}
+
+fake_intel_test = {
+	if = {
+		limit = {
+			is_debug = yes
+			GER = { is_ai = no }
+		}
+		add_to_array = { GER.intel_networks = FRA }
+		set_variable = { intel_army_asset_level@FRA = 1 }
+		set_variable = { intel_air_asset_level@FRA = 1 }
+		set_variable = { intel_navy_asset_level@FRA = 1 }
+		set_variable = { intel_civilian_asset_level@FRA = 1 }
+
+		clear_array = intel_resistance_asset_area@FRA
+		add_to_array = { intel_resistance_asset_area@FRA = 459 }
+		add_to_array = { intel_resistance_asset_area@FRA = 556 }
+		
+		459 = {
+			set_variable = { resistance_leader = GER }
+			clear_array = resistance_actions@var:resistance_leader
+		}
+		556 = {
+			set_variable = { resistance_leader = GER }
+			clear_array = resistance_actions@var:resistance_leader
+		}
+		
+		add_operation_token = {
+			tag = FRA
+			token = token_resistance_contacts
+		}
+		add_operation_token = {
+			tag = FRA
+			token = token_army
+		}
+		add_operation_token = {
+			tag = FRA
+			token = token_airforce
+		}
+		add_operation_token = {
+			tag = FRA
+			token = token_navy
+		}
+		add_operation_token = {
+			tag = FRA
+			token = token_civilian
+		}
+	}
+}
+	
+initiate_ai_from_player_country = {
+	every_army_leader = {
+		clear_variable = player 
+	}
+
+	set_technology = { BICE_airrange_balance = 1 }
+	
+	set_country_flag = UNLOCK:infantry_folder
+	set_country_flag = UNLOCK:support_folder
+	set_country_flag = UNLOCK:artillery_folder
+	set_country_flag = UNLOCK:tank_techs_folder
+	#set_country_flag = UNLOCK:armor_folder
+	#set_country_flag = UNLOCK:air_techs_folder
+	#set_country_flag = UNLOCK:air_techs_folder_army
+	#set_country_flag = UNLOCK:air_techs_folder_navy
+	set_country_flag = UNLOCK:naval_folder
+	set_country_flag = UNLOCK:naval_techs_folder
+	set_country_flag = UNLOCK:industry_folder
+	set_country_flag = UNLOCK:raw_materials_folder
+	set_country_flag = UNLOCK:ww1_land_doctrine_folder
+	set_country_flag = UNLOCK:land_doctrine_folder
+	set_country_flag = UNLOCK:naval_doctrine_folder
+	set_country_flag = UNLOCK:air_doctrine_folder
+	set_country_flag = UNLOCK:electronics_folder
+	if = {
+		limit = { major_country = yes }
+		set_country_flag = UNLOCK:nuclear_folder
+	}
+	
+	remove_ideas = {
+		player_country
+	}
+	
+	if = {
+		limit = {
+			has_dynamic_modifier = {
+				modifier = min_consumer_goods 
+			}
+		}
+		remove_dynamic_modifier = {
+			modifier = min_consumer_goods
+		}
+		clear_variable = min_cons_goods_value
+	}
+	if = {
+		limit = {
+			has_dynamic_modifier = {
+				modifier = export_offset 
+			}
+		}
+		remove_dynamic_modifier = {
+			modifier = export_offset
+		}
+	}
+	if = {
+		limit = {
+			has_dynamic_modifier = {
+				modifier = energy_production 
+			}
+		}
+		remove_dynamic_modifier = {
+			modifier = energy_production
+		}
+	}
+	if = {
+		limit = {
+			has_dynamic_modifier = {
+				modifier = player_offset_3 
+			}
+		}
+		remove_dynamic_modifier = {
+			modifier = player_offset_3
+		}
+	}
+	if = {
+		limit = {
+			has_dynamic_modifier = {
+				modifier = player_offset_4 
+			}
+		}
+		remove_dynamic_modifier = {
+			modifier = player_offset_4
+		}
+	}
+}
+
+## do stuff to set a consider_weak ai startegy towards enemy countries
+# doctrines, unit composition, techs, industry, losses, surrender ratio, player or ai, etc
+@AI_FRONT_COMPARISON_DOCTRINE_LVL = 1.5
+
+@AI_FRONT_COMPARISON_UNIT_STRENGTH_MAX = 2.5
+@AI_FRONT_COMPARISON_UNIT_STRENGTH_MIN = 0.0
+@AI_FRONT_COMPARISON_STRENGTH_PER_UNIT = 2.0 #army_strength/num_divisions*this
+
+@AI_FRONT_COMPARISON_MILITARY_FACTORY_MAX = 1.2
+@AI_FRONT_COMPARISON_MILITARY_FACTORY_MIN = 0.4
+@AI_FRONT_COMPARISON_MILITARY_FACTORY = 1.0
+
+@AI_MAX_CONSIDER_WEAK_VALUE = 50
+@AI_MIN_CONSIDER_WEAK_VALUE = -50
+@AI_COMPARE_SCORE_TO_STRATEGY_MULT = -50
+
+d_ai_update_front_comparison = {
+	every_enemy_country = {
+		limit = { tag = CHI }
+		set_temp_variable = { unit_quality = 0 }
+	
+	### MILITARY FACTORIES
+		set_temp_variable = { ratio = ROOT.num_of_military_factories }
+		log = "[?ratio] ratio BEFORE. OWN: [?ROOT.num_of_military_factories]"
+		divide_temp_variable = { ratio = num_of_military_factories }
+		log = "[?ratio] ratio AFTER. THEIR: [?num_of_military_factories]"
+		
+		set_temp_variable = { max_value = @AI_FRONT_COMPARISON_MILITARY_FACTORY_MAX }
+		set_temp_variable = { min_value = @AI_FRONT_COMPARISON_MILITARY_FACTORY_MIN }
+		clamp_temp_variable = { var = ratio min = min_value max = max_value }
+		
+		set_temp_variable = { weight = 1 }
+		subtract_from_temp_variable = { weight = ratio }
+		divide_temp_variable = { weight = max_value }
+		multiply_temp_variable = { weight = @AI_FRONT_COMPARISON_MILITARY_FACTORY }
+		
+		add_to_temp_variable = { unit_quality = weight }
+		#multiply_temp_variable = { unit_quality = -1 }
+		log = "[?unit_quality] unit_quality [This.GetTag]"
+		log = " "
+		
+	### ARMY STRENGTH PER UNIT
+		set_temp_variable = { strength = ROOT.army_strength }
+		divide_temp_variable = { strength = ROOT.num_divisions }
+		log = "[?strength] strength [This.GetTag]"
+		
+		set_temp_variable = { their_strength = army_strength }
+		divide_temp_variable = { their_strength = num_divisions }
+		log = "[?their_strength] their_strength [This.GetTag]"
+		
+		divide_temp_variable = { strength = their_strength }
+		
+		set_temp_variable = { max_value = @AI_FRONT_COMPARISON_UNIT_STRENGTH_MAX }
+		set_temp_variable = { min_value = @AI_FRONT_COMPARISON_UNIT_STRENGTH_MIN }
+		clamp_temp_variable = { var = strength min = min_value max = max_value }
+		
+		set_temp_variable = { weight = 1 }
+		subtract_from_temp_variable = { weight = strength }
+		divide_temp_variable = { weight = max_value }
+		multiply_temp_variable = { weight = @AI_FRONT_COMPARISON_STRENGTH_PER_UNIT }
+		
+		log = "[?strength] strength AFTERWARDS [This.GetTag]"
+		add_to_temp_variable = { unit_quality = weight }
+		#multiply_temp_variable = { unit_quality = -1 }
+		log = "[?unit_quality] unit_quality [This.GetTag]"
+		divide_temp_variable = { unit_quality = 2 }
+		log = "[?unit_quality] unit_quality FINAL"
+		log = " "
+		
+		multiply_temp_variable = { unit_quality = @AI_COMPARE_SCORE_TO_STRATEGY_MULT }
+		round_temp_variable = unit_quality
+		
+		if = { 
+			limit = { 
+				NOT = { check_variable = { unit_quality = ROOT.ai_unit_quality_@THIS } } 
+			}
+			
+			if = { limit = { check_variable = { ROOT.ai_unit_quality_@THIS = 0 } }
+				clear_variable = ROOT.ai_unit_quality_@THIS
+			}
+			
+			if = {
+				limit = {
+					has_variable = ROOT.ai_unit_quality_@THIS
+				}
+				multiply_variable = { ROOT.ai_unit_quality_@THIS = -1 }
+				ROOT = {
+					meta_effect = {
+						text = {
+							add_ai_strategy = {
+								type = consider_weak
+								id = [X]
+								value = [V]
+							}
+						}
+						X = "[Prev.GetTag]"
+						V = "[?ROOT.ai_unit_quality_@THIS]"
+					}
+				}
+			}
+			
+			set_variable = { ROOT.ai_unit_quality_@THIS = unit_quality }
+			
+			if = { limit = { check_variable = { ROOT.ai_unit_quality_@THIS = 0 } }
+				clear_variable = ROOT.ai_unit_quality_@THIS
+			}
+
+			log = "ADDED [?unit_quality] consider weak towards [This.GetTag]"
+			if = {
+				limit = {
+					has_variable = ROOT.ai_unit_quality_@THIS
+				}
+				#Apply new value
+				ROOT = {
+					meta_effect = {
+						text = {
+							add_ai_strategy = {
+								type = consider_weak
+								id = [X]
+								value = [V]
+							}
+						}
+						X = "[Prev.GetTag]"
+						V = "[?ROOT.ai_unit_quality_@THIS]"
+					}
+				}
+			}
+		}
+	}
+}
+
+update_all_subunits = {
+	
+}
+
+ai_tech_unlock_inf_at = {
+	if = {
+		limit = { check_variable = { global.ai_difficulty = 2 } }
+		set_temp_variable = { total = total_need_ai }
+		multiply_temp_variable = { total = 300 }
+		divide_temp_variable = { total = 1000 }
+		round_temp_variable = total
+		add_equipment_to_stockpile = { type = handheld_at_equipment_0 amount = total }
+	}
+	else_if = {
+		limit = { check_variable = { global.ai_difficulty = 3 } }
+		set_temp_variable = { total = total_need_ai }
+		multiply_temp_variable = { total = 600 }
+		divide_temp_variable = { total = 1000 }
+		round_temp_variable = total
+		add_equipment_to_stockpile = { type = handheld_at_equipment_0 amount = total }
+	}
+	else_if = {
+		limit = { check_variable = { global.ai_difficulty = 4 } }
+		set_temp_variable = { total = total_need_ai }
+		multiply_temp_variable = { total = 900 }
+		divide_temp_variable = { total = 1000 }
+		round_temp_variable = total
+		add_equipment_to_stockpile = { type = handheld_at_equipment_0 amount = total }
+	}
+}
+
+ai_tech_unlock_mortar = {
+	if = {
+		limit = { check_variable = { global.ai_difficulty = 2 } }
+		set_temp_variable = { total = total_need_ai }
+		multiply_temp_variable = { total = 300 }
+		divide_temp_variable = { total = 1000 }
+		round_temp_variable = total
+		add_equipment_to_stockpile = { type = mortar_equipment_0 amount = total }
+	}
+	else_if = {
+		limit = { check_variable = { global.ai_difficulty = 3 } }
+		set_temp_variable = { total = total_need_ai }
+		multiply_temp_variable = { total = 600 }
+		divide_temp_variable = { total = 1000 }
+		round_temp_variable = total
+		add_equipment_to_stockpile = { type = mortar_equipment_0 amount = total }
+	}
+	else_if = {
+		limit = { check_variable = { global.ai_difficulty = 4 } }
+		set_temp_variable = { total = total_need_ai }
+		multiply_temp_variable = { total = 900 }
+		divide_temp_variable = { total = 1000 }
+		round_temp_variable = total
+		add_equipment_to_stockpile = { type = mortar_equipment_0 amount = total }
+	}
+}
+
+ai_tech_unlock_hmg = {
+	if = {
+		limit = { check_variable = { global.ai_difficulty = 2 } }
+		set_temp_variable = { total = total_need_ai }
+		multiply_temp_variable = { total = 300 }
+		divide_temp_variable = { total = 1000 }
+		round_temp_variable = total
+		add_equipment_to_stockpile = { type = HMG_equipment_0 amount = total }
+	}
+	else_if = {
+		limit = { check_variable = { global.ai_difficulty = 3 } }
+		set_temp_variable = { total = total_need_ai }
+		multiply_temp_variable = { total = 600 }
+		divide_temp_variable = { total = 1000 }
+		round_temp_variable = total
+		add_equipment_to_stockpile = { type = HMG_equipment_0 amount = total }
+	}
+	else_if = {
+		limit = { check_variable = { global.ai_difficulty = 4 } }
+		set_temp_variable = { total = total_need_ai }
+		multiply_temp_variable = { total = 900 }
+		divide_temp_variable = { total = 1000 }
+		round_temp_variable = total
+		add_equipment_to_stockpile = { type = HMG_equipment_0 amount = total }
+	}
+}
+
+ai_tech_unlock_inf_gun = {
+	if = {
+		limit = { check_variable = { global.ai_difficulty = 2 } }
+		set_temp_variable = { total = total_need_ai }
+		multiply_temp_variable = { total = 300 }
+		divide_temp_variable = { total = 1000 }
+		round_temp_variable = total
+		add_equipment_to_stockpile = { type = infantrygun_equipment_0 amount = total }
+	}
+	else_if = {
+		limit = { check_variable = { global.ai_difficulty = 3 } }
+		set_temp_variable = { total = total_need_ai }
+		multiply_temp_variable = { total = 600 }
+		divide_temp_variable = { total = 1000 }
+		round_temp_variable = total
+		add_equipment_to_stockpile = { type = infantrygun_equipment_0 amount = total }
+	}
+	else_if = {
+		limit = { check_variable = { global.ai_difficulty = 4 } }
+		set_temp_variable = { total = total_need_ai }
+		multiply_temp_variable = { total = 900 }
+		divide_temp_variable = { total = 1000 }
+		round_temp_variable = total
+		add_equipment_to_stockpile = { type = infantrygun_equipment_0 amount = total }
+	}
+}
+
+ai_tech_unlock_radio = {
+	if = {
+		limit = { check_variable = { global.ai_difficulty = 2 } }
+		set_temp_variable = { total = total_need_ai }
+		multiply_temp_variable = { total = 300 }
+		divide_temp_variable = { total = 1000 }
+		round_temp_variable = total
+		add_equipment_to_stockpile = { type = radio_equipment_0 amount = total }
+	}
+	else_if = {
+		limit = { check_variable = { global.ai_difficulty = 3 } }
+		set_temp_variable = { total = total_need_ai }
+		multiply_temp_variable = { total = 600 }
+		divide_temp_variable = { total = 1000 }
+		round_temp_variable = total
+		add_equipment_to_stockpile = { type = radio_equipment_0 amount = total }
+	}
+	else_if = {
+		limit = { check_variable = { global.ai_difficulty = 4 } }
+		set_temp_variable = { total = total_need_ai }
+		multiply_temp_variable = { total = 900 }
+		divide_temp_variable = { total = 1000 }
+		round_temp_variable = total
+		add_equipment_to_stockpile = { type = radio_equipment_0 amount = total }
+	}
+}
+
+ai_tech_unlock_command_tank = {
+	if = {
+		limit = { check_variable = { global.ai_difficulty = 2 } }
+		set_temp_variable = { total = total_need_ai }
+		multiply_temp_variable = { total = 300 }
+		divide_temp_variable = { total = 1000 }
+		round_temp_variable = total
+		add_equipment_to_stockpile = { type = command_tank_equipment_0 amount = total }
+	}
+	else_if = {
+		limit = { check_variable = { global.ai_difficulty = 3 } }
+		set_temp_variable = { total = total_need_ai }
+		multiply_temp_variable = { total = 600 }
+		divide_temp_variable = { total = 1000 }
+		round_temp_variable = total
+		add_equipment_to_stockpile = { type = command_tank_equipment_0 amount = total }
+	}
+	else_if = {
+		limit = { check_variable = { global.ai_difficulty = 4 } }
+		set_temp_variable = { total = total_need_ai }
+		multiply_temp_variable = { total = 900 }
+		divide_temp_variable = { total = 1000 }
+		round_temp_variable = total
+		add_equipment_to_stockpile = { type = command_tank_equipment_0 amount = total }
+	}
+}
+
+##### Focus list Adherence
+
+d_ai_check_focus_list_adherence = {
+
+}
+
+d_print_real_focus_list = {
+    for_each_loop = {
+        array = ai_real_focus_list
+        
+        log = "FOCUS: [?v.GetTokenKey] | ORDER: [?i] | DATE COMPLETED: [?ai_real_focus_list_date^i.GetDateStringNoHour]"
+    }
+}
+
+ai_check_bonuses = {
+	if = {
+		limit = {
+			is_major = yes
+		}
+		
+		add_to_temp_variable = { supply_bonus = 1 }
+		add_to_temp_variable = { training_bonus = 1 }
+		add_to_temp_variable = { supply_build_bonus = 1 }
+		
+		if = {
+			limit = {
+				has_war = no
+			}
+			add_to_temp_variable = { training_bonus = 1 }
+		}
+			
+		
+		if = {
+			limit = {
+				tag = GER
+			}
+			
+			if = {
+				limit = {
+					has_war_with = FRA
+				}
+				
+				add_to_temp_variable = { supply_bonus = 1 }
+			}
+			if = {
+				limit = {
+					has_war_with = SOV
+				}
+				
+				add_to_temp_variable = { supply_bonus = 1 }
+			}
+		}
+		else_if = {
+			limit = {
+				tag = SOV
+			}
+			add_to_temp_variable = { supply_bonus = 1 }
+			add_to_temp_variable = { supply_build_bonus = 1 }
+			
+			if = {
+				limit = {
+					has_war = no
+					date < 1940.6.1
+				}
+				set_temp_variable = { supply_bonus = 5 }
+			}
+			
+			if = {
+				limit = {
+					has_war_with = GER
+				}
+				
+				add_to_temp_variable = { supply_bonus = 1 }
+				add_to_temp_variable = { supply_build_bonus = 1 }
+			}
+			if = {
+				limit = {
+					OR = {
+						surrender_progress > 0.5
+						check_variable = { casualties_k > 1500 }
+					}
+				}
+				
+				add_to_temp_variable = { supply_bonus = 1 }
+			}
+			
+		}
+		else_if = {
+			limit = {
+				tag = JAP
+			}
+			
+			if = {
+				limit = {
+					has_war_with = CHI
+				}
+				
+				add_to_temp_variable = { training_bonus = 1 }
+				add_to_temp_variable = { supply_bonus = 1 }
+				add_to_temp_variable = { supply_build_bonus = 1 }
+			}
+			if = {
+				limit = {
+					OR = {
+						has_war_with = ENG
+						has_war_with = USA
+					}
+				}
+				
+				add_to_temp_variable = { supply_bonus = 1 }
+				add_to_temp_variable = { supply_build_bonus = 1 }
+			}
+		}
+		else_if = {
+			limit = {
+				tag = CHI
+			}
+			
+			if = {
+				limit = {
+					has_war_with = JAP
+				}
+				
+				add_to_temp_variable = { supply_bonus = 1 }
+				add_to_temp_variable = { training_bonus = 1 }
+			}
+			if = {
+				limit = {
+					OR = {
+						check_variable = { casualties_k > 1000 }
+						date > 1938.6.1
+						PRC = { has_capitulated = yes }
+					}
+				}
+				
+				add_to_temp_variable = { supply_bonus = 1 }
+				add_to_temp_variable = { supply_build_bonus = 1 }
+			}
+		}
+		else_if = {
+			limit = {
+				tag = USA
+			}
+			
+			if = {
+				limit = {
+					has_war = yes
+				}
+				
+				add_to_temp_variable = { supply_bonus = 2 }
+				add_to_temp_variable = { supply_build_bonus = 1 }
+			}
+		}
+		
+		if = {
+			limit = {
+				NOT = {
+					meta_trigger = {
+						text = {
+							has_idea = ai_supply_[X]
+						}
+						X = "[?supply_bonus]"
+					}
+				}
+			}
+			remove_ideas = {
+				ai_supply_1
+				ai_supply_2
+				ai_supply_3
+				ai_supply_4
+				ai_supply_5
+			}
+			meta_effect = {
+				text = {
+					add_ideas = ai_supply_[X]
+				}
+				X = "[?supply_bonus]"
+			}
+		}
+		
+		if = {
+			limit = {
+				NOT = {
+					meta_trigger = {
+						text = {
+							has_idea = ai_training_[X]
+						}
+						X = "[?training_bonus]"
+					}
+				}
+			}
+			remove_ideas = {
+				ai_training_1
+				ai_training_2
+				ai_training_3
+			}
+			meta_effect = {
+				text = {
+					add_ideas = ai_training_[X]
+				}
+				X = "[?training_bonus]"
+			}
+		}
+		
+		if = {
+			limit = {
+				NOT = {
+					meta_trigger = {
+						text = {
+							has_idea = ai_supply_build_[X]
+						}
+						X = "[?supply_build_bonus]"
+					}
+				}
+			}
+			remove_ideas = {
+				ai_supply_build_1
+				ai_supply_build_2
+				ai_supply_build_3
+			}
+			meta_effect = {
+				text = {
+					add_ideas = ai_supply_build_[X]
+				}
+				X = "[?supply_build_bonus]"
+			}
+		}
+	}
+}

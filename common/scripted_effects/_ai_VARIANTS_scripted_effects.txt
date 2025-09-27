@@ -1,0 +1,1210 @@
+
+@AI_XP_TO_CREATE_LAND_VARIANT = 100 
+
+@AI_UPGRADE_LAND_XP_COST = 15 
+@AI_UPGRADE_LAND_XP_RAMP_COST = 10 
+@AI_UPGRADE_AIR_XP_COST = 15 
+@AI_UPGRADE_AIR_XP_RAMP_COST = 10 
+
+@AI_FIELD_STRENGTH_TRIGGER = 0.95 #how much field strength the equipment needs before designing a variant of it
+
+@AI_MIN_SCORE_FOR_VARIANT = 100 #how much score an equipment needs to create a variant of it
+
+################################################################
+
+@AI_ARTILLERY_EQUIPMENT_BASE = 40
+@AI_ARTILLERY_EQUIPMENT_WEIGHT = 0.4
+
+@AI_MED_ARTILLERY_EQUIPMENT_BASE = 50 
+@AI_MED_ARTILLERY_EQUIPMENT_WEIGHT = 0.6
+
+@AI_HV_ARTILLERY_EQUIPMENT_BASE = 60
+@AI_HV_ARTILLERY_EQUIPMENT_WEIGHT = 0.8
+
+@AI_PACK_ARTILLERY_EQUIPMENT_BASE = 50
+@AI_PACK_ARTILLERY_EQUIPMENT_WEIGHT = 0.3
+
+@AI_ANTI_TANK_EQUIPMENT_BASE = 10
+@AI_ANTI_TANK_EQUIPMENT_WEIGHT = 0.6
+
+@AI_MED_ANTI_TANK_EQUIPMENT_BASE = 20 
+@AI_MED_ANTI_TANK_EQUIPMENT_WEIGHT = 0.8 
+
+@AI_HV_ANTI_TANK_EQUIPMENT_BASE = 40 
+@AI_HV_ANTI_TANK_EQUIPMENT_WEIGHT = 0.10
+
+@AI_ANTI_TANK_SUPERIOR_NEIGHBOR_ARMOR = 50 #adds this if enemy armor is higher than our piercing
+@AI_ANTI_TANK_SUPERIOR_ENEMY_ARMOR = 100 #adds this if enemy armor is higher than our piercing
+
+@AI_ANTI_AIR_EQUIPMENT_BASE = 10 
+@AI_ANTI_AIR_EQUIPMENT_WEIGHT = 0.4
+
+@AI_HV_ANTI_AIR_EQUIPMENT_BASE = 10 
+@AI_HV_ANTI_AIR_EQUIPMENT_WEIGHT = 0.8 
+
+################################################################
+
+ai_update_equipment_variants = {
+	if = {
+		limit = {
+			check_variable = { army_experience > @AI_XP_TO_CREATE_LAND_VARIANT }
+		}
+			
+		if = {
+			limit = {
+				NOT = { has_country_flag = ai_variant@artillery_equipment }
+				
+				### CONDITIONS 
+				has_tech = artillery1
+				
+				check_variable = { num_target_equipment_in_armies@artillery_equipment > 0 }
+				set_temp_variable = { equipment_supplied = num_equipment_in_armies@artillery_equipment }
+				divide_temp_variable = { equipment_supplied = num_target_equipment_in_armies@artillery_equipment }
+				check_variable = { equipment_supplied > @AI_FIELD_STRENGTH_TRIGGER }
+			}
+				
+			set_temp_variable = { score = num_equipment@artillery_equipment }
+			add_to_temp_variable = { score = num_equipment_in_armies@artillery_equipment }
+			multiply_temp_variable = { score = @AI_ARTILLERY_EQUIPMENT_WEIGHT }
+			add_to_temp_variable = { score = @AI_ARTILLERY_EQUIPMENT_BASE }
+			multiply_temp_variable = { score = equipment_supplied }
+			
+			add_to_temp_array = { variant_equipment = token:artillery_equipment }
+			add_to_temp_array = { variant_score = score }
+		}
+		if = {
+			limit = {
+				NOT = { has_country_flag = ai_variant@medartillery_equipment }
+				
+				### CONDITIONS 
+				has_tech = medartillery1
+				
+				check_variable = { num_target_equipment_in_armies@medartillery_equipment > 0 }
+				set_temp_variable = { equipment_supplied = num_equipment_in_armies@medartillery_equipment }
+				divide_temp_variable = { equipment_supplied = num_target_equipment_in_armies@medartillery_equipment }
+				check_variable = { equipment_supplied > @AI_FIELD_STRENGTH_TRIGGER }
+			}
+				
+			set_temp_variable = { score = num_equipment@medartillery_equipment }
+			add_to_temp_variable = { score = num_equipment_in_armies@medartillery_equipment }
+			multiply_temp_variable = { score = @AI_MED_ARTILLERY_EQUIPMENT_WEIGHT }
+			add_to_temp_variable = { score = @AI_MED_ARTILLERY_EQUIPMENT_BASE }
+			multiply_temp_variable = { score = equipment_supplied }
+			
+			add_to_temp_array = { variant_equipment = token:medartillery_equipment }
+			add_to_temp_array = { variant_score = score }
+		}
+		if = {
+			limit = {
+				NOT = { has_country_flag = ai_variant@Hvartillery_equipment }
+				
+				### CONDITIONS 
+				has_tech = Hvartillery1
+				
+				check_variable = { num_target_equipment_in_armies@Hvartillery_equipment > 0 }
+				set_temp_variable = { equipment_supplied = num_equipment_in_armies@Hvartillery_equipment }
+				divide_temp_variable = { equipment_supplied = num_target_equipment_in_armies@Hvartillery_equipment }
+				check_variable = { equipment_supplied > @AI_FIELD_STRENGTH_TRIGGER }
+			}
+				
+			set_temp_variable = { score = num_equipment@Hvartillery_equipment }
+			add_to_temp_variable = { score = num_equipment_in_armies@Hvartillery_equipment }
+			multiply_temp_variable = { score = @AI_HV_ARTILLERY_EQUIPMENT_WEIGHT }
+			add_to_temp_variable = { score = @AI_HV_ARTILLERY_EQUIPMENT_BASE }
+			multiply_temp_variable = { score = equipment_supplied }
+			
+			add_to_temp_array = { variant_equipment = token:Hvartillery_equipment }
+			add_to_temp_array = { variant_score = score }
+		}
+		if = {
+			limit = {
+				NOT = { has_country_flag = ai_variant@mountain_artillery_equipment }
+				
+				### CONDITIONS 
+				has_tech = gw_artillery
+				
+				check_variable = { num_target_equipment_in_armies@mountain_artillery_equipment > 0 }
+				set_temp_variable = { equipment_supplied = num_equipment_in_armies@mountain_artillery_equipment }
+				divide_temp_variable = { equipment_supplied = num_target_equipment_in_armies@mountain_artillery_equipment }
+				check_variable = { equipment_supplied > @AI_FIELD_STRENGTH_TRIGGER }
+			}
+				
+			set_temp_variable = { score = num_equipment@mountain_artillery_equipment }
+			add_to_temp_variable = { score = num_equipment_in_armies@mountain_artillery_equipment }
+			multiply_temp_variable = { score = @AI_PACK_ARTILLERY_EQUIPMENT_WEIGHT }
+			add_to_temp_variable = { score = @AI_PACK_ARTILLERY_EQUIPMENT_BASE }
+			multiply_temp_variable = { score = equipment_supplied }
+			
+			add_to_temp_array = { variant_equipment = token:mountain_artillery_equipment }
+			add_to_temp_array = { variant_score = score }
+		}
+		if = {
+			limit = {
+				NOT = { has_country_flag = ai_variant@anti_tank_equipment }
+				
+				### CONDITIONS 
+				has_tech = interwar_antitank
+				
+				check_variable = { num_target_equipment_in_armies@anti_tank_equipment > 0 }
+				set_temp_variable = { equipment_supplied = num_equipment_in_armies@anti_tank_equipment }
+				divide_temp_variable = { equipment_supplied = num_target_equipment_in_armies@anti_tank_equipment }
+				check_variable = { equipment_supplied > @AI_FIELD_STRENGTH_TRIGGER }
+			}
+				
+			set_temp_variable = { score = num_equipment@anti_tank_equipment }
+			add_to_temp_variable = { score = num_equipment_in_armies@anti_tank_equipment }
+			multiply_temp_variable = { score = @AI_ANTI_TANK_EQUIPMENT_WEIGHT }
+			add_to_temp_variable = { score = @AI_ANTI_TANK_EQUIPMENT_BASE }
+			multiply_temp_variable = { score = equipment_supplied }
+			if = { limit = { has_country_flag = ai_superior_enemy_armor }
+				add_to_temp_variable = { score = @AI_ANTI_TANK_SUPERIOR_ENEMY_ARMOR }
+			}
+			if = { limit = { has_country_flag = ai_superior_neighbor_armor }
+				add_to_temp_variable = { score = @AI_ANTI_TANK_SUPERIOR_NEIGHBOR_ARMOR }
+			}
+			
+			add_to_temp_array = { variant_equipment = token:anti_tank_equipment }
+			add_to_temp_array = { variant_score = score }
+		}
+		if = {
+			limit = {
+				NOT = { has_country_flag = ai_variant@medanti_tank_equipment }
+				
+				### CONDITIONS 
+				has_tech = antitank2
+				
+				check_variable = { num_target_equipment_in_armies@medanti_tank_equipment > 0 }
+				set_temp_variable = { equipment_supplied = num_equipment_in_armies@medanti_tank_equipment }
+				divide_temp_variable = { equipment_supplied = num_target_equipment_in_armies@medanti_tank_equipment }
+				check_variable = { equipment_supplied > @AI_FIELD_STRENGTH_TRIGGER }
+			}
+				
+			set_temp_variable = { score = num_equipment@medanti_tank_equipment }
+			add_to_temp_variable = { score = num_equipment_in_armies@medanti_tank_equipment }
+			multiply_temp_variable = { score = @AI_MED_ANTI_TANK_EQUIPMENT_WEIGHT }
+			add_to_temp_variable = { score = @AI_MED_ANTI_TANK_EQUIPMENT_BASE }
+			multiply_temp_variable = { score = equipment_supplied }
+			if = { limit = { has_country_flag = ai_superior_enemy_armor }
+				add_to_temp_variable = { score = @AI_ANTI_TANK_SUPERIOR_ENEMY_ARMOR }
+			}
+			if = { limit = { has_country_flag = ai_superior_neighbor_armor }
+				add_to_temp_variable = { score = @AI_ANTI_TANK_SUPERIOR_NEIGHBOR_ARMOR }
+			}
+			
+			add_to_temp_array = { variant_equipment = token:medanti_tank_equipment }
+			add_to_temp_array = { variant_score = score }
+		}
+		if = {
+			limit = {
+				NOT = { has_country_flag = ai_variant@HVanti_tank_equipment }
+				
+				### CONDITIONS 
+				has_tech = HVantitank1
+				
+				check_variable = { num_target_equipment_in_armies@HVanti_tank_equipment > 0 }
+				set_temp_variable = { equipment_supplied = num_equipment_in_armies@HVanti_tank_equipment }
+				divide_temp_variable = { equipment_supplied = num_target_equipment_in_armies@HVanti_tank_equipment }
+				check_variable = { equipment_supplied > @AI_FIELD_STRENGTH_TRIGGER }
+			}
+				
+			set_temp_variable = { score = num_equipment@HVanti_tank_equipment }
+			add_to_temp_variable = { score = num_equipment_in_armies@HVanti_tank_equipment }
+			multiply_temp_variable = { score = @AI_HV_ANTI_TANK_EQUIPMENT_WEIGHT }
+			add_to_temp_variable = { score = @AI_HV_ANTI_TANK_EQUIPMENT_BASE }
+			multiply_temp_variable = { score = equipment_supplied }
+			if = { limit = { has_country_flag = ai_superior_enemy_armor }
+				add_to_temp_variable = { score = @AI_ANTI_TANK_SUPERIOR_ENEMY_ARMOR }
+			}
+			if = { limit = { has_country_flag = ai_superior_neighbor_armor }
+				add_to_temp_variable = { score = @AI_ANTI_TANK_SUPERIOR_NEIGHBOR_ARMOR }
+			}
+			
+			add_to_temp_array = { variant_equipment = token:HVanti_tank_equipment }
+			add_to_temp_array = { variant_score = score }
+		}
+		if = {
+			limit = {
+				NOT = { has_country_flag = ai_variant@anti_air_equipment }
+				
+				### CONDITIONS 
+				has_tech = interwar_antiair
+				
+				check_variable = { num_target_equipment_in_armies@anti_air_equipment > 0 }
+				set_temp_variable = { equipment_supplied = num_equipment_in_armies@anti_air_equipment }
+				divide_temp_variable = { equipment_supplied = num_target_equipment_in_armies@anti_air_equipment }
+				check_variable = { equipment_supplied > @AI_FIELD_STRENGTH_TRIGGER }
+			}
+				
+			set_temp_variable = { score = num_equipment@anti_air_equipment }
+			add_to_temp_variable = { score = num_equipment_in_armies@anti_air_equipment }
+			multiply_temp_variable = { score = @AI_ANTI_AIR_EQUIPMENT_WEIGHT }
+			add_to_temp_variable = { score = @AI_ANTI_AIR_EQUIPMENT_BASE }
+			multiply_temp_variable = { score = equipment_supplied }
+			
+			add_to_temp_array = { variant_equipment = token:anti_air_equipment }
+			add_to_temp_array = { variant_score = score }
+		}
+		if = {
+			limit = {
+				NOT = { has_country_flag = ai_variant@HVanti_air_equipment }
+				
+				### CONDITIONS
+				has_tech = HVantiair2 
+				
+				check_variable = { num_target_equipment_in_armies@HVanti_air_equipment > 0 }
+				set_temp_variable = { equipment_supplied = num_equipment_in_armies@HVanti_air_equipment }
+				divide_temp_variable = { equipment_supplied = num_target_equipment_in_armies@HVanti_air_equipment }
+				check_variable = { equipment_supplied > @AI_FIELD_STRENGTH_TRIGGER }
+			}
+				
+			set_temp_variable = { score = num_equipment@HVanti_air_equipment }
+			add_to_temp_variable = { score = num_equipment_in_armies@HVanti_air_equipment }
+			multiply_temp_variable = { score = @AI_HV_ANTI_AIR_EQUIPMENT_WEIGHT }
+			add_to_temp_variable = { score = @AI_HV_ANTI_AIR_EQUIPMENT_BASE }
+			multiply_temp_variable = { score = equipment_supplied }
+			
+			add_to_temp_array = { variant_equipment = token:HVanti_air_equipment }
+			add_to_temp_array = { variant_score = score }
+		}
+		
+		#for_each_loop = {
+		#	array = variant_equipment
+		#	
+		#	log = "[?v.GetTokenKey] | [?variant_score^i] SCORE"
+		#}
+		
+		find_highest_in_array = {
+			array = variant_score 
+			index = position
+		}
+		
+		if = {
+			limit = {
+				check_variable = { variant_score^position > @AI_MIN_SCORE_FOR_VARIANT }
+			}
+			
+			meta_effect = {
+				text = {
+					ai_create_variant/[X] = yes
+				}
+				X = "[?variant_equipment^position.GetTokenKey]"
+			}
+		}
+	}
+}
+ai_create_variant/artillery_equipment = { #variant_target^num = 5
+	if = { limit = { has_tech = artillery6 }
+		set_temp_variable = { selected_variant = token:artillery_equipment_4 }
+	}
+	else_if = { limit = { has_tech = artillery5 }
+		set_temp_variable = { selected_variant = token:artillery_equipment_3 }
+	}
+	else_if = { limit = { has_tech = artillery2 }
+		set_temp_variable = { selected_variant = token:artillery_equipment_2 }
+	}
+	else_if = { limit = { has_tech = artillery1 }
+		set_temp_variable = { selected_variant = token:artillery_equipment_1 }
+	}
+	else = {
+		set_temp_variable = { selected_variant = token:artillery_equipment_0 }
+	}
+	
+	set_temp_variable = { variant_archetype = token:artillery_equipment }
+
+	### target variant - order matters
+	clear_temp_array = variant_target
+	add_to_temp_array = { variant_target = token:artillery_carriage_upgrade }
+	add_to_temp_array = { variant_target = token:artillery_carriage_upgrade }
+	add_to_temp_array = { variant_target = token:artillery_carriage_upgrade }
+	
+	add_to_temp_array = { variant_target = token:range_finder }
+	add_to_temp_array = { variant_target = token:range_finder }
+	
+	ai_get_army_variant_cost = yes 
+	ai_design_equipment_variant = yes	
+	ai_create_equipment_variant = yes 
+}
+ai_create_variant/mountain_artillery_equipment = { #variant_target^num = 6
+	if = { limit = { has_tech = mntartillery1 }
+		set_temp_variable = { selected_variant = token:mountain_artillery_equipment_1 }
+	}
+	else = {
+		set_temp_variable = { selected_variant = token:mountain_artillery_equipment_0 }
+	}
+	
+	set_temp_variable = { variant_archetype = token:mountain_artillery_equipment }
+
+	### target variant - order matters
+	clear_temp_array = variant_target
+	add_to_temp_array = { variant_target = token:artillery_carriage_upgrade }
+	add_to_temp_array = { variant_target = token:artillery_carriage_upgrade }
+	add_to_temp_array = { variant_target = token:artillery_carriage_upgrade }
+	
+	add_to_temp_array = { variant_target = token:range_finder }
+	add_to_temp_array = { variant_target = token:range_finder }
+	add_to_temp_array = { variant_target = token:range_finder }
+	
+	ai_get_army_variant_cost = yes 
+	ai_design_equipment_variant = yes
+	ai_create_equipment_variant = yes 
+}
+ai_create_variant/medartillery_equipment = { #variant_target^num = 4
+	if = { limit = { has_tech = medartillery6 }
+		set_temp_variable = { selected_variant = token:medartillery_equipment_4 }
+	}
+	else_if = { limit = { has_tech = medartillery5 }
+		set_temp_variable = { selected_variant = token:medartillery_equipment_3 }
+	}
+	else_if = { limit = { has_tech = medartillery2 }
+		set_temp_variable = { selected_variant = token:medartillery_equipment_2 }
+	}
+	else_if = { limit = { has_tech = medartillery1 }
+		set_temp_variable = { selected_variant = token:medartillery_equipment_1 }
+	}
+	else = {
+		set_temp_variable = { selected_variant = token:medartillery_equipment_0 }
+	}
+	
+	set_temp_variable = { variant_archetype = token:medartillery_equipment }
+
+	### target variant - order matters
+	clear_temp_array = variant_target
+	add_to_temp_array = { variant_target = token:artillery_carriage_upgrade_hv }
+	add_to_temp_array = { variant_target = token:artillery_carriage_upgrade_hv }
+	add_to_temp_array = { variant_target = token:artillery_carriage_upgrade_hv }
+	
+	add_to_temp_array = { variant_target = token:range_finder_hv }
+	
+	ai_get_army_variant_cost = yes 
+	ai_design_equipment_variant = yes
+	ai_create_equipment_variant = yes 
+}
+ai_create_variant/Hvartillery_equipment = { #variant_target^num = 3
+	if = { limit = { has_tech = Hvartillery6 }
+		set_temp_variable = { selected_variant = token:Hvartillery_equipment_4 }
+	}
+	else_if = { limit = { has_tech = Hvartillery5 }
+		set_temp_variable = { selected_variant = token:Hvartillery_equipment_3 }
+	}
+	else_if = { limit = { has_tech = Hvartillery2 }
+		set_temp_variable = { selected_variant = token:Hvartillery_equipment_2 }
+	}
+	else_if = { limit = { has_tech = Hvartillery1 }
+		set_temp_variable = { selected_variant = token:Hvartillery_equipment_1 }
+	}
+	else = {
+		set_temp_variable = { selected_variant = token:Hvartillery_equipment_0 }
+	}
+	
+	set_temp_variable = { variant_archetype = token:Hvartillery_equipment }
+
+	### target variant - order matters
+	clear_temp_array = variant_target
+	add_to_temp_array = { variant_target = token:artillery_carriage_upgrade_hv }
+	add_to_temp_array = { variant_target = token:artillery_carriage_upgrade_hv }
+	add_to_temp_array = { variant_target = token:artillery_carriage_upgrade_hv }
+	
+	ai_get_army_variant_cost = yes 
+	ai_design_equipment_variant = yes	
+	ai_create_equipment_variant = yes 
+}
+ai_create_variant/anti_tank_equipment = { #variant_target^num = 3
+	if = { limit = { has_tech = improved_antitank }
+		set_temp_variable = { selected_variant = token:anti_tank_equipment_2 }
+	}
+	else_if = { limit = { has_tech = interwar_antitank }
+		set_temp_variable = { selected_variant = token:anti_tank_equipment_1 }
+	}
+	
+	set_temp_variable = { variant_archetype = token:anti_tank_equipment }
+
+	### target variant - order matters
+	clear_temp_array = variant_target
+	add_to_temp_array = { variant_target = token:AT_gun_sights }
+	add_to_temp_array = { variant_target = token:AT_gun_sights }
+	add_to_temp_array = { variant_target = token:AT_gun_sights }
+	
+	ai_get_army_variant_cost = yes 
+	ai_design_equipment_variant = yes	
+	ai_create_equipment_variant = yes 
+}
+ai_create_variant/medanti_tank_equipment = { #variant_target^num = 3
+	if = { limit = { has_tech = antitank5 }
+		set_temp_variable = { selected_variant = token:medanti_tank_equipment_2 }
+	}
+	else_if = { limit = { has_tech = antitank2 }
+		set_temp_variable = { selected_variant = token:medanti_tank_equipment_1 }
+	}
+	
+	set_temp_variable = { variant_archetype = token:medanti_tank_equipment }
+
+	### target variant - order matters
+	clear_temp_array = variant_target
+	add_to_temp_array = { variant_target = token:AT_gun_sights }
+	add_to_temp_array = { variant_target = token:AT_gun_sights }
+	add_to_temp_array = { variant_target = token:AT_gun_sights }
+	
+	ai_get_army_variant_cost = yes 
+	ai_design_equipment_variant = yes
+	ai_create_equipment_variant = yes 
+}
+ai_create_variant/HVanti_tank_equipment = { #variant_target^num = 3
+	if = { limit = { has_tech = HVantitank4 }
+		set_temp_variable = { selected_variant = token:HVanti_tank_equipment_2 }
+	}
+	else_if = { limit = { has_tech = HVantitank1 }
+		set_temp_variable = { selected_variant = token:HVanti_tank_equipment_1 }
+	}
+	
+	set_temp_variable = { variant_archetype = token:HVanti_tank_equipment }
+
+	### target variant - order matters
+	clear_temp_array = variant_target
+	add_to_temp_array = { variant_target = token:AT_gun_sights }
+	add_to_temp_array = { variant_target = token:AT_gun_sights }
+	add_to_temp_array = { variant_target = token:AT_gun_sights }
+	
+	ai_get_army_variant_cost = yes 
+	ai_design_equipment_variant = yes
+	ai_create_equipment_variant = yes 
+}
+ai_create_variant/anti_air_equipment = { #variant_target^num = 4
+	if = { limit = { has_tech = antiair5 }
+		set_temp_variable = { selected_variant = token:anti_air_equipment_3 }
+	}
+	else_if = { limit = { has_tech = antiair2 }
+		set_temp_variable = { selected_variant = token:anti_air_equipment_2 }
+	}
+	else_if = { limit = { has_tech = interwar_antiair }
+		set_temp_variable = { selected_variant = token:anti_air_equipment_1 }
+	}
+	
+	set_temp_variable = { variant_archetype = token:anti_air_equipment }
+
+	### target variant - order matters
+	clear_temp_array = variant_target
+	add_to_temp_array = { variant_target = token:AA_shell_fuse }
+	
+	add_to_temp_array = { variant_target = token:AA_gun_sights }
+	add_to_temp_array = { variant_target = token:AA_gun_sights }
+	add_to_temp_array = { variant_target = token:AA_gun_sights }
+	
+	ai_get_army_variant_cost = yes 
+	ai_design_equipment_variant = yes
+	ai_create_equipment_variant = yes 
+}
+ai_create_variant/HVanti_air_equipment = { #variant_target^num = 4
+	if = { limit = { has_tech = HVantiair5 }
+		set_temp_variable = { selected_variant = token:HVanti_air_equipment_3 }
+	}
+	else_if = { limit = { has_tech = HVantiair2 }
+		set_temp_variable = { selected_variant = token:HVanti_air_equipment_2 }
+	}
+	
+	set_temp_variable = { variant_archetype = token:HVanti_air_equipment }
+
+	### target variant - order matters
+	clear_temp_array = variant_target
+	add_to_temp_array = { variant_target = token:AA_shell_fuse }
+	
+	add_to_temp_array = { variant_target = token:AA_gun_sights }
+	add_to_temp_array = { variant_target = token:AA_gun_sights }
+	add_to_temp_array = { variant_target = token:AA_gun_sights }
+	
+	ai_get_army_variant_cost = yes 
+	ai_design_equipment_variant = yes
+	ai_create_equipment_variant = yes 
+}
+
+##########################################################################################
+
+ai_create_variant/fighter_equipment = { #variant_target^num = 8
+	
+	set_temp_variable = { variant_archetype = token:fighter_equipment }
+
+	### target variant - order matters
+	clear_temp_array = variant_target
+	add_to_temp_array = { variant_target = token:plane_bubble_canopy_upgrade }
+	
+	add_to_temp_array = { variant_target = token:plane_engine_upgrade }
+	add_to_temp_array = { variant_target = token:plane_engine_upgrade }
+	add_to_temp_array = { variant_target = token:plane_engine_upgrade }
+	
+	add_to_temp_array = { variant_target = token:plane_drop_tank_upgrade }
+	
+	add_to_temp_array = { variant_target = token:plane_gun_upgrade }
+	add_to_temp_array = { variant_target = token:plane_gun_upgrade }
+	add_to_temp_array = { variant_target = token:plane_gun_upgrade }
+	
+	ai_get_air_variant_cost = yes 
+	ai_design_equipment_variant = yes
+	ai_create_equipment_variant = yes 
+}
+ai_create_variant/interceptor_equipment = { #variant_target^num = 8
+	
+	set_temp_variable = { variant_archetype = token:interceptor_equipment }
+
+	### target variant - order matters
+	clear_temp_array = variant_target
+	add_to_temp_array = { variant_target = token:plane_bubble_canopy_upgrade }
+	
+	add_to_temp_array = { variant_target = token:plane_engine_upgrade }
+	add_to_temp_array = { variant_target = token:plane_engine_upgrade }
+	add_to_temp_array = { variant_target = token:plane_engine_upgrade }
+	
+	add_to_temp_array = { variant_target = token:plane_drop_tank_upgrade }
+	
+	add_to_temp_array = { variant_target = token:plane_gun_upgrade }
+	add_to_temp_array = { variant_target = token:plane_gun_upgrade }
+	add_to_temp_array = { variant_target = token:plane_gun_upgrade }
+	
+	ai_get_air_variant_cost = yes 
+	ai_design_equipment_variant = yes
+	ai_create_equipment_variant = yes 
+}
+ai_create_variant/mr_fighter_equipment = { #variant_target^num = 8
+
+	set_temp_variable = { variant_archetype = token:mr_fighter_equipment }
+
+	### target variant - order matters
+	clear_temp_array = variant_target
+	add_to_temp_array = { variant_target = token:plane_bubble_canopy_upgrade }
+	
+	add_to_temp_array = { variant_target = token:plane_engine_upgrade }
+	add_to_temp_array = { variant_target = token:plane_engine_upgrade }
+	add_to_temp_array = { variant_target = token:plane_engine_upgrade }
+	
+	add_to_temp_array = { variant_target = token:plane_drop_tank_upgrade }
+	
+	add_to_temp_array = { variant_target = token:plane_gun_upgrade }
+	add_to_temp_array = { variant_target = token:plane_gun_upgrade }
+	add_to_temp_array = { variant_target = token:plane_gun_upgrade }
+	
+	ai_get_air_variant_cost = yes 
+	ai_design_equipment_variant = yes
+	ai_create_equipment_variant = yes 
+}
+ai_create_variant/fighter_alt_equipment = { #variant_target^num = 8
+
+	set_temp_variable = { variant_archetype = token:fighter_alt_equipment }
+
+	### target variant - order matters
+	clear_temp_array = variant_target
+	add_to_temp_array = { variant_target = token:plane_bubble_canopy_upgrade }
+	
+	add_to_temp_array = { variant_target = token:plane_engine_upgrade }
+	add_to_temp_array = { variant_target = token:plane_engine_upgrade }
+	add_to_temp_array = { variant_target = token:plane_engine_upgrade }
+	
+	add_to_temp_array = { variant_target = token:plane_drop_tank_upgrade }
+	
+	add_to_temp_array = { variant_target = token:plane_gun_upgrade }
+	add_to_temp_array = { variant_target = token:plane_gun_upgrade }
+	add_to_temp_array = { variant_target = token:plane_gun_upgrade }
+	
+	ai_get_air_variant_cost = yes 
+	ai_design_equipment_variant = yes
+	ai_create_equipment_variant = yes 
+}
+ai_create_variant/heavy_fighter_equipment = { #variant_target^num = 8
+	
+	set_temp_variable = { variant_archetype = token:heavy_fighter_equipment }
+
+	### target variant - order matters
+	clear_temp_array = variant_target
+	add_to_temp_array = { variant_target = token:plane_engine_upgrade }
+	add_to_temp_array = { variant_target = token:plane_engine_upgrade }
+	add_to_temp_array = { variant_target = token:plane_engine_upgrade }
+	
+	add_to_temp_array = { variant_target = token:plane_drop_tank_upgrade }
+	
+	add_to_temp_array = { variant_target = token:plane_gun_upgrade }
+	add_to_temp_array = { variant_target = token:plane_gun_upgrade }
+	add_to_temp_array = { variant_target = token:plane_gun_upgrade }
+	
+	ai_get_air_variant_cost = yes 
+	ai_design_equipment_variant = yes
+	ai_create_equipment_variant = yes 
+}
+ai_create_variant/CAS_equipment = { #variant_target^num = 8
+
+	set_temp_variable = { variant_archetype = token:CAS_equipment }
+
+	### target variant - order matters
+	clear_temp_array = variant_target
+	add_to_temp_array = { variant_target = token:plane_drop_tank_upgrade }
+	
+	add_to_temp_array = { variant_target = token:plane_fighter_bomb_upgrade }
+	add_to_temp_array = { variant_target = token:plane_fighter_bomb_upgrade }
+	
+	ai_get_air_variant_cost = yes 
+	ai_design_equipment_variant = yes
+	ai_create_equipment_variant = yes 
+}
+ai_create_variant/twin_CAS_equipment = { #variant_target^num = 8
+
+	set_temp_variable = { variant_archetype = token:twin_CAS_equipment }
+
+	### target variant - order matters
+	clear_temp_array = variant_target
+	
+	add_to_temp_array = { variant_target = token:plane_fighter_bomb_upgrade }
+	add_to_temp_array = { variant_target = token:plane_fighter_bomb_upgrade }
+	
+	ai_get_air_variant_cost = yes 
+	ai_design_equipment_variant = yes
+	ai_create_equipment_variant = yes 
+}
+ai_create_variant/light_bomber_equipment = { #variant_target^num = 8
+
+	set_temp_variable = { variant_archetype = token:light_bomber_equipment }
+
+	### target variant - order matters
+	clear_temp_array = variant_target
+	
+	#ai_get_air_variant_cost = yes 
+	#ai_design_equipment_variant = yes
+	#ai_create_equipment_variant = yes 
+}
+ai_create_variant/tac_bomber_equipment = { #variant_target^num = 8
+
+	set_temp_variable = { variant_archetype = token:tac_bomber_equipment }
+
+	### target variant - order matters
+	clear_temp_array = variant_target
+	
+	#ai_get_air_variant_cost = yes 
+	#ai_design_equipment_variant = yes
+	#ai_create_equipment_variant = yes 
+}
+ai_create_variant/quad_engine_bomber_equipment = { #variant_target^num = 8
+
+	set_temp_variable = { variant_archetype = token:quad_engine_bomber_equipment }
+
+	### target variant - order matters
+	clear_temp_array = variant_target
+	add_to_temp_array = { variant_target = token:plane_turret_defence_upgrade }
+	add_to_temp_array = { variant_target = token:plane_turret_defence_upgrade }
+	add_to_temp_array = { variant_target = token:plane_turret_defence_upgrade }
+	
+	add_to_temp_array = { variant_target = token:plane_airframe_upgrade }
+	add_to_temp_array = { variant_target = token:plane_airframe_upgrade }
+	
+	ai_get_air_variant_cost = yes 
+	ai_design_equipment_variant = yes
+	ai_create_equipment_variant = yes 
+}
+ai_create_variant/nav_bomber_equipment = { #variant_target^num = 8
+
+	set_temp_variable = { variant_archetype = token:nav_bomber_equipment }
+
+	### target variant - order matters
+	clear_temp_array = variant_target
+	add_to_temp_array = { variant_target = token:plane_naval_upgrade }
+	add_to_temp_array = { variant_target = token:plane_naval_upgrade }
+	
+	add_to_temp_array = { variant_target = token:plane_radar_upgrade }
+	add_to_temp_array = { variant_target = token:plane_radar_upgrade }
+	
+	ai_get_air_variant_cost = yes 
+	ai_design_equipment_variant = yes
+	ai_create_equipment_variant = yes 
+}
+ai_create_variant/flying_boat_equipment = { #variant_target^num = 8
+
+	set_temp_variable = { variant_archetype = token:flying_boat_equipment }
+
+	### target variant - order matters
+	clear_temp_array = variant_target
+	add_to_temp_array = { variant_target = token:plane_naval_upgrade }
+	add_to_temp_array = { variant_target = token:plane_naval_upgrade }
+	
+	add_to_temp_array = { variant_target = token:plane_radar_upgrade }
+	add_to_temp_array = { variant_target = token:plane_radar_upgrade }
+	
+	ai_get_air_variant_cost = yes 
+	ai_design_equipment_variant = yes
+	ai_create_equipment_variant = yes 
+}
+ai_create_variant/cv_fighter_equipment = { #variant_target^num = 8
+
+	set_temp_variable = { variant_archetype = token:cv_fighter_equipment }
+
+	### target variant - order matters
+	clear_temp_array = variant_target
+	add_to_temp_array = { variant_target = token:plane_bubble_canopy_upgrade }
+	
+	add_to_temp_array = { variant_target = token:plane_engine_upgrade }
+	add_to_temp_array = { variant_target = token:plane_engine_upgrade }
+	add_to_temp_array = { variant_target = token:plane_engine_upgrade }
+	
+	add_to_temp_array = { variant_target = token:plane_drop_tank_upgrade }
+	
+	add_to_temp_array = { variant_target = token:cv_plane_gun_upgrade }
+	add_to_temp_array = { variant_target = token:cv_plane_gun_upgrade }
+	add_to_temp_array = { variant_target = token:cv_plane_gun_upgrade }
+	
+	ai_get_air_variant_cost = yes 
+	ai_design_equipment_variant = yes
+	ai_create_equipment_variant = yes 
+}
+ai_create_variant/cv_nav_bomber_equipment = { #variant_target^num = 8
+
+	set_temp_variable = { variant_archetype = token:cv_nav_bomber_equipment }
+
+	### target variant - order matters
+	clear_temp_array = variant_target
+	add_to_temp_array = { variant_target = token:cv_plane_range_upgrade }
+	add_to_temp_array = { variant_target = token:cv_plane_range_upgrade }
+	
+	add_to_temp_array = { variant_target = token:plane_radar_upgrade }
+	add_to_temp_array = { variant_target = token:plane_radar_upgrade }
+	
+	ai_get_air_variant_cost = yes 
+	ai_design_equipment_variant = yes
+	ai_create_equipment_variant = yes 
+}
+###########################################################################
+
+ai_design_equipment_variant = {
+	clear_temp_array = variant_upgrade
+	clear_temp_array = variant_upgrade_level
+	
+	set_temp_variable = { target_upgrade = variant_target^num }
+	
+	# variant finished flag
+	meta_effect = {
+		text = {
+			set_country_flag = ai_variant@[X]
+		}
+		X = "[?variant_archetype.GetTokenKey]"
+	}
+	
+	for_each_loop = {
+		array = variant_target
+		
+		#log= "========== NEW ITERATION ======="
+		if = {
+			limit = {
+				NOT = { is_in_array = { variant_upgrade = v } }
+			}
+			#log= "ADDING NEW UPGRADE"
+			#log= "[?v.GetTokenKey] Value for Iteration [?iteration]"
+			
+			set_temp_variable = { variant_index = variant_upgrade^num }
+			
+			#log= "[?variant_index] variant_index"
+			
+			add_to_temp_array = { variant_upgrade = v }
+			add_to_temp_array = { variant_upgrade_level = 1 }
+			
+		}
+		else = {
+			#log= "IMPROVING UPGRADE"
+			set_temp_variable = { t1 = v }
+			for_each_loop = {
+				array = variant_upgrade 
+				break = small_break
+				
+				if = {
+					limit = {
+						check_variable = { t1 = v }
+					}
+					#log= "[?v.GetTokenKey] UPRGADE IMPROVE"
+					
+					add_to_temp_variable = { variant_upgrade_level^i = 1 }
+					#log= "IMPROVED [?variant_upgrade_level^i] variant_upgrade_level^i by ONE"
+					set_temp_variable = { small_break = 1 }
+				}
+			}
+		}
+				
+		add_to_temp_variable = { iteration = 1 }
+		#log= "[?iteration] ITERATION"
+		
+		if = {
+			limit = {
+				check_variable = { var = iteration value = target_upgrade compare = greater_than_or_equals }
+			}
+			#log= "[?iteration] ITERATION BREAK"
+			set_temp_variable = { break = 1 }
+		}
+	}
+	#log= "==========================="
+	#log= "Final Variant Upgrade for [?target_upgrade] Target Upgrades"
+	#for_each_loop = {
+	#	array = variant_upgrade
+	#	 
+	#	#log= "UPGRADE: [?v.GetTokenKey] LEVEL: [?variant_upgrade_level^i]"
+	#}
+	
+}
+
+ai_get_army_variant_cost = { #sets ai_allowed_upgrades temp variable
+	
+	clear_temp_array = individual_upgrades
+	
+	set_temp_variable = { cost = @AI_UPGRADE_LAND_XP_COST }
+	set_temp_variable = { cost_per_step = @AI_UPGRADE_LAND_XP_RAMP_COST }
+	
+	for_each_loop = {
+		array = variant_target
+
+		if = {
+			limit = {
+				NOT = { is_in_array = { individual_upgrades = v } }
+			}
+			add_to_temp_array = { individual_upgrades = v }
+		}
+		add_to_temp_variable = { cost_per_upgrade@var:v = 1 }
+		
+	}
+	
+	for_each_loop = {
+		array = individual_upgrades
+		
+		for_loop_effect = {
+			end = cost_per_upgrade@var:v
+			value = instance
+			
+			set_temp_variable = { upgrade_cost = cost }
+			set_temp_variable = { ramp = instance }
+			multiply_temp_variable = { ramp = cost_per_step }
+			add_to_temp_variable = { upgrade_cost = ramp }
+			add_to_temp_variable = { final_cost = upgrade_cost }
+		}
+		
+	}
+	
+	add_to_variable = { ai_land_experience = final_cost }
+}
+
+ai_get_air_variant_cost = { #sets ai_allowed_upgrades temp variable
+	
+	clear_temp_array = individual_upgrades
+	
+	set_temp_variable = { cost = @AI_UPGRADE_AIR_XP_COST }
+	set_temp_variable = { cost_per_step = @AI_UPGRADE_AIR_XP_RAMP_COST }
+	
+	for_each_loop = {
+		array = variant_target
+
+		if = {
+			limit = {
+				NOT = { is_in_array = { individual_upgrades = v } }
+			}
+			add_to_temp_array = { individual_upgrades = v }
+		}
+		add_to_temp_variable = { cost_per_upgrade@var:v = 1 }
+		
+	}
+	
+	for_each_loop = {
+		array = individual_upgrades
+		
+		for_loop_effect = {
+			end = cost_per_upgrade@var:v
+			value = instance
+			
+			set_temp_variable = { upgrade_cost = cost }
+			set_temp_variable = { ramp = instance }
+			multiply_temp_variable = { ramp = cost_per_step }
+			add_to_temp_variable = { upgrade_cost = ramp }
+			add_to_temp_variable = { final_cost = upgrade_cost }
+		}
+		
+	}
+	
+	add_to_variable = { ai_air_experience = final_cost }
+}
+
+ai_create_equipment_variant = {
+	# find mio 
+	if = {
+		limit = {
+			has_dlc = "Arms Against Tyranny"
+		}
+		score_military_industrial_organisations_variant = yes
+	}
+
+	if = { limit = { check_variable = { variant_upgrade^num = 0 } }
+		meta_effect = {
+			text = {
+				create_equipment_variant = { 
+					type = [EQUIPMENT]
+					mark_older_equipment_obsolete = yes
+					[DESIGNER]
+				}
+			}
+			EQUIPMENT = "[?selected_variant.GetTokenKey]"
+			DESIGNER = "[GetAIDesignTeamVariant]"
+		}
+	}
+	else_if = { limit = { check_variable = { variant_upgrade^num = 1 } }
+		meta_effect = {
+			text = {
+				create_equipment_variant = { 
+					type = [EQUIPMENT]
+					upgrades = { 
+						[UPGRADE_1] = [LEVEL_1]
+					}
+					mark_older_equipment_obsolete = yes
+					[DESIGNER]
+				}
+			}
+			UPGRADE_1 = "[?variant_upgrade^0.GetTokenKey]"
+			LEVEL_1 = "[?variant_upgrade_level^0]"
+			
+			EQUIPMENT = "[?selected_variant.GetTokenKey]"
+			DESIGNER = "[GetAIDesignTeamVariant]"
+		}
+	}
+	else_if = { limit = { check_variable = { variant_upgrade^num = 2 } }
+		meta_effect = {
+			text = {
+				create_equipment_variant = { 
+					type = [EQUIPMENT]
+					upgrades = { 
+						[UPGRADE_1] = [LEVEL_1]
+						[UPGRADE_2] = [LEVEL_2]
+					}
+					mark_older_equipment_obsolete = yes
+					[DESIGNER]
+				}
+			}
+			UPGRADE_1 = "[?variant_upgrade^0.GetTokenKey]"
+			LEVEL_1 = "[?variant_upgrade_level^0]"
+			
+			UPGRADE_2 = "[?variant_upgrade^1.GetTokenKey]"
+			LEVEL_2 = "[?variant_upgrade_level^1]"
+			
+			EQUIPMENT = "[?selected_variant.GetTokenKey]"
+			DESIGNER = "[GetAIDesignTeamVariant]"
+		}
+	}
+	else_if = { limit = { check_variable = { variant_upgrade^num = 3 } }
+		meta_effect = {
+			text = {
+				create_equipment_variant = { 
+					type = [EQUIPMENT]
+					upgrades = { 
+						[UPGRADE_1] = [LEVEL_1]
+						[UPGRADE_2] = [LEVEL_2]
+						[UPGRADE_3] = [LEVEL_3]
+					}
+					mark_older_equipment_obsolete = yes
+					[DESIGNER]
+				}
+			}
+			UPGRADE_1 = "[?variant_upgrade^0.GetTokenKey]"
+			LEVEL_1 = "[?variant_upgrade_level^0]"
+			
+			UPGRADE_2 = "[?variant_upgrade^1.GetTokenKey]"
+			LEVEL_2 = "[?variant_upgrade_level^1]"
+			
+			UPGRADE_3 = "[?variant_upgrade^2.GetTokenKey]"
+			LEVEL_3 = "[?variant_upgrade_level^2]"
+			
+			EQUIPMENT = "[?selected_variant.GetTokenKey]"
+			DESIGNER = "[GetAIDesignTeamVariant]"
+		}
+	}
+	else_if = { limit = { check_variable = { variant_upgrade^num = 4 } }
+		meta_effect = {
+			text = {
+				create_equipment_variant = { 
+					type = [EQUIPMENT]
+					upgrades = { 
+						[UPGRADE_1] = [LEVEL_1]
+						[UPGRADE_2] = [LEVEL_2]
+						[UPGRADE_3] = [LEVEL_3]
+						[UPGRADE_4] = [LEVEL_4]
+					}
+					mark_older_equipment_obsolete = yes
+					[DESIGNER]
+				}
+			}
+			UPGRADE_1 = "[?variant_upgrade^0.GetTokenKey]"
+			LEVEL_1 = "[?variant_upgrade_level^0]"
+			
+			UPGRADE_2 = "[?variant_upgrade^1.GetTokenKey]"
+			LEVEL_2 = "[?variant_upgrade_level^1]"
+			
+			UPGRADE_3 = "[?variant_upgrade^2.GetTokenKey]"
+			LEVEL_3 = "[?variant_upgrade_level^2]"
+			
+			UPGRADE_4 = "[?variant_upgrade^3.GetTokenKey]"
+			LEVEL_4 = "[?variant_upgrade_level^3]"
+			
+			EQUIPMENT = "[?selected_variant.GetTokenKey]"
+			DESIGNER = "[GetAIDesignTeamVariant]"
+		}
+	}
+	else_if = { limit = { check_variable = { variant_upgrade^num = 5 } }
+		meta_effect = {
+			text = {
+				create_equipment_variant = { 
+					type = [EQUIPMENT]
+					upgrades = { 
+						[UPGRADE_1] = [LEVEL_1]
+						[UPGRADE_2] = [LEVEL_2]
+						[UPGRADE_3] = [LEVEL_3]
+						[UPGRADE_4] = [LEVEL_4]
+						[UPGRADE_5] = [LEVEL_5]
+					}
+					mark_older_equipment_obsolete = yes
+					[DESIGNER]
+				}
+			}
+			UPGRADE_1 = "[?variant_upgrade^0.GetTokenKey]"
+			LEVEL_1 = "[?variant_upgrade_level^0]"
+			
+			UPGRADE_2 = "[?variant_upgrade^1.GetTokenKey]"
+			LEVEL_2 = "[?variant_upgrade_level^1]"
+			
+			UPGRADE_3 = "[?variant_upgrade^2.GetTokenKey]"
+			LEVEL_3 = "[?variant_upgrade_level^2]"
+			
+			UPGRADE_4 = "[?variant_upgrade^3.GetTokenKey]"
+			LEVEL_4 = "[?variant_upgrade_level^3]"
+			
+			UPGRADE_5 = "[?variant_upgrade^4.GetTokenKey]"
+			LEVEL_5 = "[?variant_upgrade_level^4]"
+			
+			EQUIPMENT = "[?selected_variant.GetTokenKey]"
+			DESIGNER = "[GetAIDesignTeamVariant]"
+		}
+	}
+	else_if = { limit = { check_variable = { variant_upgrade^num = 6 } }
+		meta_effect = {
+			text = {
+				create_equipment_variant = { 
+					type = [EQUIPMENT]
+					upgrades = { 
+						[UPGRADE_1] = [LEVEL_1]
+						[UPGRADE_2] = [LEVEL_2]
+						[UPGRADE_3] = [LEVEL_3]
+						[UPGRADE_4] = [LEVEL_4]
+						[UPGRADE_5] = [LEVEL_5]
+						[UPGRADE_6] = [LEVEL_6]
+					}
+					mark_older_equipment_obsolete = yes
+					[DESIGNER]
+				}
+			}
+			UPGRADE_1 = "[?variant_upgrade^0.GetTokenKey]"
+			LEVEL_1 = "[?variant_upgrade_level^0]"
+			
+			UPGRADE_2 = "[?variant_upgrade^1.GetTokenKey]"
+			LEVEL_2 = "[?variant_upgrade_level^1]"
+			
+			UPGRADE_3 = "[?variant_upgrade^2.GetTokenKey]"
+			LEVEL_3 = "[?variant_upgrade_level^2]"
+			
+			UPGRADE_4 = "[?variant_upgrade^3.GetTokenKey]"
+			LEVEL_4 = "[?variant_upgrade_level^3]"
+			
+			UPGRADE_5 = "[?variant_upgrade^4.GetTokenKey]"
+			LEVEL_5 = "[?variant_upgrade_level^4]"
+			
+			UPGRADE_6 = "[?variant_upgrade^5.GetTokenKey]"
+			LEVEL_6 = "[?variant_upgrade_level^5]"
+			
+			EQUIPMENT = "[?selected_variant.GetTokenKey]"
+			DESIGNER = "[GetAIDesignTeamVariant]"
+		}
+	}
+}
+
+ai_pay_xp_debt = {
+	if = {
+		limit = {
+			check_variable = { ai_land_experience > 0 }
+		}
+		
+		if = { limit = { check_variable = { army_experience > ai_land_experience } }
+			multiply_variable = { ai_land_experience = -1 }
+			army_experience = ai_land_experience
+			clear_variable = ai_land_experience
+		}
+		else_if = {
+			limit = { check_variable = { army_experience > 0 } }
+			set_temp_variable = { pay = army_experience }
+			multiply_temp_variable = { pay = -1 }
+			army_experience = pay 
+			add_to_variable = { ai_land_experience = pay }
+		}
+	}
+	if = {
+		limit = {
+			check_variable = { ai_air_experience > 0 }
+		}
+		
+		if = { limit = { check_variable = { air_experience > ai_air_experience } }
+			multiply_variable = { ai_air_experience = -1 }
+			air_experience = ai_air_experience
+			clear_variable = ai_air_experience
+		}
+		else_if = {
+			limit = { check_variable = { air_experience > 0 } }
+			set_temp_variable = { pay = air_experience }
+			multiply_temp_variable = { pay = -1 }
+			air_experience = pay 
+			add_to_variable = { ai_air_experience = pay }
+		}
+	}
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

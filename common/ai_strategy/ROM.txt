@@ -1,0 +1,317 @@
+# befriend
+# conquer
+# antagonize
+# build_ship
+# build_army
+# unit_ratio
+# build_building
+# research_tech
+# garrison
+# protect
+# influence
+
+ROM_do_not_help_poland = {
+	allowed = { tag = ROM }
+	enable = {
+		is_historical_focus_on = yes
+		country_exists = POL
+	}
+	abort = {
+		OR = {
+			NOT = { country_exists = POL }
+			date > 1942.1.1
+		}
+	}
+	ai_strategy = { type = befriend id = "POL" value = -500 }
+	ai_strategy = { type = alliance id = "POL" value = -500 }
+}
+
+rom_dont_loose_army_defending_cze = {
+	allowed = { tag = ROM }
+	enable = {
+		has_war_with = GER
+		is_in_faction_with = CZE
+		NOT = { is_in_faction_with = POL }
+		NOT = { is_in_faction_with = HUN }
+	}
+	abort = {
+		OR = {
+			has_capitulated = yes
+			GER = { has_capitulated = yes }
+			CZE = { has_capitulated = yes }
+			is_in_faction_with = POL
+			is_in_faction_with = HUN
+		}
+	}
+	
+	ai_strategy = {
+		type = dont_defend_ally_borders
+		id = "CZE"
+		value = 50
+	}
+	#ai_strategy = {
+	#	type = put_unit_buffers
+	#	order_id = 1
+	#	states = { 664 73 77 70 } #Slovakia
+	#	ratio = 0.50
+	#	subtract_invasions_from_need = no
+	#}
+}
+
+rom_front_against_ger = {
+	allowed = { tag = ROM }
+	enable = {
+		has_war_with = GER
+		OR = {
+			AND = {
+				is_in_faction_with = CZE
+				CZE = { has_capitulated = yes }
+				NOT = { has_war_with = HUN }
+				NOT = { has_war_with = SOV }
+			}
+			AND = {
+				SLO = { is_in_faction_with = GER }
+				NOT = { has_war_with = HUN }
+				NOT = { has_war_with = SOV }
+			}
+		}
+	}
+	abort = {
+		OR = {
+			has_capitulated = yes
+			is_in_faction_with = POL
+			is_in_faction_with = HUN
+			is_in_faction_with = YUG
+			has_war_with = HUN
+			has_war_with = SOV
+			has_war_with = BUL
+			has_war_with = YUG
+		}
+	}
+	
+	ai_strategy = {
+		type = front_unit_request
+		tag = GER
+		value = 50
+	}
+}
+
+
+ROM_wait_for_bessarabia_to_join_axis = {
+	allowed = { tag = ROM }
+	enable = {
+		NOT= { 
+			SOV = { 
+				has_country_flag = SOV_added_claimed_bessarabia 
+			} 
+		}
+	}
+	abort = {
+		OR = {
+			is_in_faction_with = GER
+			SOV = { 
+				has_country_flag = SOV_added_claimed_bessarabia 
+			}
+			date > 1942.1.1
+		}
+	}
+	
+	ai_strategy = { type = befriend id = "GER" value = -500 }
+	ai_strategy = { type = alliance id = "GER" value = -500 }
+	ai_strategy = { type = befriend id = "JAP" value = -500 }
+	ai_strategy = { type = alliance id = "JAP" value = -500 }
+}
+ROM_do_not_join_allies = {
+    allowed = {
+        tag = ROM
+    }
+    enable = {
+        GER = {
+            has_government = fascism
+        }
+    }
+    abort = {
+        OR = {
+            date > 1942.1.1
+			is_in_faction_with = GER
+            GER = { has_capitulated = yes }
+        }
+    }
+    
+    ai_strategy = { type = befriend id = "FRA" value = -2000 }
+    ai_strategy = { type = alliance id = "FRA" value = -2000 }
+    ai_strategy = { type = befriend id = "ENG" value = -2000 }
+    ai_strategy = { type = alliance id = "ENG" value = -2000 }
+    ai_strategy = { type = befriend id = "USA" value = -2000 }
+    ai_strategy = { type = alliance id = "USA" value = -2000 }
+} 
+ROM_do_not_dow = {
+    allowed = {
+        tag = ROM
+    }
+    enable = {
+        GER = {
+            has_government = fascism
+        }
+    }
+    abort = {
+        OR = {
+            date > 1942.1.1
+            GER = { has_capitulated = yes }
+        }
+    }
+    
+    ai_strategy = { type = befriend id = "FRA" value = -2000 }
+    ai_strategy = { type = alliance id = "FRA" value = -2000 }
+    ai_strategy = { type = befriend id = "ENG" value = -2000 }
+    ai_strategy = { type = alliance id = "ENG" value = -2000 }
+    ai_strategy = { type = befriend id = "USA" value = -2000 }
+    ai_strategy = { type = alliance id = "USA" value = -2000 }
+} 
+
+keep_balkan_pact_together = {
+	allowed = {
+        OR = {
+		    original_tag = YUG
+		    original_tag = TUR
+		    original_tag = GRE
+		    original_tag = ROM
+        }
+	}
+	enable = {
+		country_exists = ROM
+		country_exists = TUR
+		country_exists = CZE
+		country_exists = GRE
+        has_opinion = {
+			target = ROM
+			value > -50			# not if we hate ROM
+		}
+        has_opinion = {
+			target = TUR
+			value > -50			# not if we hate TUR
+		}
+        has_opinion = {
+			target = YUG
+			value > -50			# not if we hate CZE
+		}
+        has_opinion = {
+			target = GRE
+			value > -50			# not if we hate GRE
+		}
+	}
+	abort = {   #Is at war with a BP member, or is in a faction and faction leader is at war with a BP member
+		OR = {
+			has_global_flag = end_of_the_balkan_pact
+			has_war_with = ROM
+			has_war_with = TUR
+			has_war_with = GRE
+			has_war_with = YUG
+			AND = {
+				is_in_faction = yes 
+				faction_leader = { 
+                    OR = {
+					    has_war_with = ROM 
+					    has_war_with = TUR 
+					    has_war_with = GRE 
+					    has_war_with = YUG 
+                    }
+				}
+			}
+		}
+	}
+	ai_strategy = {
+		type = protect
+		id = "ROM"
+		value = 2000
+	}
+	ai_strategy = {
+		type = protect
+		id = "YUG"
+		value = 2000
+	}
+	ai_strategy = {
+		type = protect
+		id = "GRE"
+		value = 2000
+	}
+	ai_strategy = {
+		type = protect
+		id = "TUR"
+		value = 2000
+	}
+}
+keep_little_entente_together = {
+	allowed = {
+        OR = {
+		    tag = YUG
+		    tag = CZE
+		    tag = ROM
+        }
+	}
+	enable = {
+		or = {
+			country_exists = ROM
+			country_exists = YUG
+			country_exists = CZE
+		}
+	}
+	abort = { #Is at war with a LE member, or is in a faction and faction leader is at war with a LE member, or any LE member no longer exists
+		OR = {
+			has_war_with = ROM 
+			has_war_with = YUG 
+			has_war_with = CZE 
+			AND = {
+				is_in_faction = yes 
+				faction_leader = { 
+                    OR = {
+					    has_war_with = ROM 
+					    has_war_with = YUG 
+					    has_war_with = CZE 
+                    }
+				}
+			}
+			NOT = {
+				OR = {
+					country_exists = ROM
+					country_exists = CZE
+					country_exists = YUG
+				}
+			}
+			has_global_flag = end_of_the_little_entente_flag
+		}
+	}
+	ai_strategy = {
+		type = protect
+		id = "ROM"
+		value = 2000
+	}
+	ai_strategy = {
+		type = protect
+		id = "YUG"
+		value = 2000
+	}
+	ai_strategy = {
+		type = protect
+		id = "CZE"
+		value = 2000
+	}
+}
+ROM_fascists_ally_GER = {
+	allowed = {
+		original_tag = ROM
+	}
+	enable = {
+		has_government = fascism
+	}
+	abort = {
+		NOT = {
+			has_government = fascism
+		}
+	}
+	ai_strategy = {
+		type = alliance
+		id = GER
+		value = 2000
+	}
+}

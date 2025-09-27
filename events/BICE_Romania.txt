@@ -1,0 +1,5906 @@
+﻿###########################
+# Romanian Events
+###########################
+add_namespace = BICE_romania
+add_namespace = BICE_romania_factions
+add_namespace = BICE_romania_factions
+add_namespace = romania_equipment_purchases
+
+#Romanian 1937 election stalemate
+#Hung Parliament
+country_event = {
+	id = BICE_romania.01
+	title = BICE_romania.01.t
+	desc = BICE_romania.01.desc
+	picture = GFX_report_event_election_vote
+	is_triggered_only = yes
+	fire_only_once = yes
+	
+	
+	trigger = {
+		tag = ROM
+		date > 1937.12.20
+	}
+	immediate = {
+		set_country_flag = ROM_1937_hung_parliament
+	}
+	
+	option = { # Goga Government
+		name = BICE_romania.01.a
+		ai_chance = {
+			factor = 20
+			modifier = {
+				factor = 10
+				is_historical_focus_on = yes
+			}
+		}
+		add_popularity = {
+			popularity = 0.02
+			ideology = fascism
+		}	
+		set_politics = {
+			ruling_party = neutrality
+			elections_allowed = yes
+		}
+		ROM_octavian_goga = {
+			add_country_leader_role = {
+				promote_leader = yes 
+				country_leader = { 
+					ideology = absolutism 
+					expire = "1965.1.1.1" 
+					traits = { 
+						ineffective_politician3
+						monarchist_puppet 
+					}	 
+				} 
+			}
+		}
+		ROM_corneliu_codreanu = {
+			add_country_leader_role = {
+				country_leader = {
+					expire = "1965.1.1"
+					ideology = legionnairism
+					traits = { fascist_demagogue popular_figurehead }
+				}
+			}
+		}
+		hidden_effect = {
+			set_country_flag = ROM_goga_gov
+			country_event = {
+				id = BICE_romania.02
+				days = 1
+			}
+		}
+		#add_ideas = ROM_istrate_micescu_foreign_minister
+		#add_ideas = ROM_constantin_bratianu_economic_minister
+		#add_ideas = ROM_armand_calinescu_interior_minister
+		#add_ideas = ROM_mihail_moruzov_intel_minister
+		#add_ideas = ROM_ion_antonescu_supreme_commander
+	}
+	option = { # PNL Government
+		name = BICE_romania.01.b
+		ai_chance = {
+			factor = 0
+		}
+		add_popularity = {
+			popularity = 0.10
+			ideology = fascism
+		}	
+		add_popularity = {
+			popularity = 0.10
+			ideology = liberalism
+		}
+		add_popularity = {
+			popularity = 0.10
+			ideology = communism
+		}
+		add_stability = 0.05
+		set_country_flag = ROM_PNL_gov
+		hidden_effect = {
+			set_cosmetic_tag = ROM
+			set_politics = {
+				ruling_party = liberalism
+				elections_allowed = yes
+			}
+		}
+		ROM_corneliu_codreanu = {
+			add_country_leader_role = {
+				country_leader = {
+					expire = "1965.1.1"
+					ideology = legionnairism
+					traits = { fascist_demagogue popular_figurehead }
+				}
+			}
+		}
+	}
+	option = { # PNT Government
+		name = BICE_romania.01.c
+		ai_chance = {
+			factor = 0
+		}
+		add_popularity = {
+			popularity = 0.10
+			ideology = fascism
+		}	
+		add_popularity = {
+			popularity = 0.10
+			ideology = socialism
+		}
+		add_popularity = {
+			popularity = 0.10
+			ideology = communism
+		}
+		add_stability = 0.05
+		set_country_flag = ROM_PNT_gov
+		hidden_effect = {
+			set_cosmetic_tag = ROM
+			set_politics = {
+				ruling_party = socialism
+				elections_allowed = yes
+			}
+		}
+		ROM_corneliu_codreanu = {
+			add_country_leader_role = {
+				country_leader = {
+					expire = "1965.1.1"
+					ideology = legionnairism
+					traits = { fascist_demagogue popular_figurehead }
+				}
+			}
+		}
+	}
+	option = { # Clime Government
+		name = BICE_romania.01.d
+		trigger = {
+			check_variable = { ROM_iron_guard_loyalty = 80 compare = greater_than_or_equals }
+		}
+		ai_chance = {
+			factor = 0
+		}
+		add_popularity = {
+			popularity = 0.05
+			ideology = fascism
+		}	
+		add_stability = -0.05
+		set_politics = {
+			ruling_party = fascism
+			elections_allowed = yes
+		}
+	}
+}
+#Fascist victory in 1937 election
+news_event = {
+	id = BICE_romania.92
+	title = BICE_romania.92.t
+	desc = BICE_romania.92.desc
+	picture = GFX_report_event_ROM_iron_guard_gathering_huge
+	is_triggered_only = yes
+	
+	option = {
+		name = BICE_romania.92.a
+		add_ideas = ROM_goga_election_violence
+		activate_mission_tooltip = goga_new_election
+		custom_effect_tooltip = ROM_institute_royal_dictatorship_tt
+	}
+}
+#Legionary Rebellion Begins
+country_event = {
+	id = BICE_romania_factions.17
+	title = BICE_romania_factions.17.t
+	desc = BICE_romania_factions.17.desc
+	picture = GFX_report_event_riot_1
+	is_triggered_only = yes
+	
+	option = {
+		name = BICE_romania_factions.17.a
+		add_stability = -0.07
+		add_ideas = ROM_legionary_rebellion_1
+
+		hidden_effect = {
+			country_event = { id = BICE_romania_factions.18 hours = 3 }
+		}
+	}
+}
+#Bucharest Pogrom
+country_event = {
+	id = BICE_romania_factions.18
+	title = BICE_romania_factions.18.t
+	desc = BICE_romania_factions.18.desc
+	picture = GFX_report_event_riot_1
+	is_triggered_only = yes
+	
+	option = {
+		name = BICE_romania_factions.18.a
+		add_stability = -0.07
+		swap_ideas = {
+			remove_idea = ROM_legionary_rebellion_1
+			add_idea = ROM_legionary_rebellion_2
+		}
+		hidden_effect = {
+			country_event = { id = BICE_romania_factions.19 days = 14 }
+		}
+	}
+}
+#Rebellion Supressed
+country_event = {
+	id = BICE_romania_factions.19
+	title = BICE_romania_factions.19.t
+	desc = BICE_romania_factions.19.desc
+	picture = GFX_report_event_police_barricade_1_gfxaddon
+	is_triggered_only = yes
+	
+	option = {
+		name = BICE_romania_factions.19.a
+		custom_effect_tooltip = BICE_romania_factions.19.tt
+		hidden_effect = {
+			set_country_flag = iron_guard_destroyed_flag
+			remove_ideas = {
+				ROM_legionary_rebellion_1
+				ROM_legionary_rebellion_2
+			}
+			add_timed_idea = { idea = ROM_legionary_rebellion_1 days = 100 }
+		}
+		clr_country_flag = national_legionary_state_flag
+	}
+}
+#Rebellion Begins During Abdication Crisis
+country_event = {
+	id = BICE_romania_factions.20
+	title = BICE_romania_factions.20.t
+	desc = BICE_romania_factions.20.desc
+	picture = GFX_report_event_police_barricade_1_gfxaddon
+	is_triggered_only = yes
+	
+	option = {
+		name = BICE_romania_factions.20.a
+		add_stability = -0.07
+		add_ideas = ROM_legionary_rebellion_1
+		hidden_effect = {
+			random_list = {
+				seed = global.event_random
+				10 = { #Soldiers refuse to fight the Iron Guard
+					modifier = {
+						add = 10
+						fascism > 0.15
+					}
+					modifier = {
+						add = 20
+						fascism > 0.25
+					}
+					modifier = {
+						add = 30
+						fascism > 0.40
+					}
+					country_event = { id = BICE_romania_factions.21 hours = 3 }
+				}
+				90 = { #Rebellion Supressed
+					country_event = { id = BICE_romania_factions.19 hours = 3 }
+				}
+			}
+		}
+	}
+}
+#Soldiers refuse to fight the Iron Guard - Just abdicate already >:(
+country_event = {
+	id = BICE_romania_factions.21
+	title = BICE_romania_factions.21.t
+	desc = BICE_romania_factions.21.desc
+	picture = GFX_report_event_police_barricade_1_gfxaddon
+	is_triggered_only = yes
+	
+	option = {
+		name = BICE_romania_factions.21.a
+		add_stability = -0.07
+		swap_ideas = {
+			remove_idea = ROM_legionary_rebellion_1
+			add_idea = ROM_legionary_rebellion_2
+		}
+		country_event = { id = BICE_romania_factions.22 hours = 3 random_hours = 10 }
+	}
+}
+#Parliament toppled, King flees
+country_event = {
+	id = BICE_romania_factions.22
+	title = BICE_romania_factions.22.t
+	desc = BICE_romania_factions.22.desc
+	picture = GFX_report_event_police_barricade_1_gfxaddon
+	is_triggered_only = yes
+	
+	option = {
+		name = BICE_romania_factions.22.a
+		add_stability = -0.07
+		if = {
+			limit ={ has_idea = ROM_legionary_rebellion_1 }
+			remove_ideas = ROM_legionary_rebellion_1
+		}
+		else_if = {
+			limit ={ has_idea = ROM_legionary_rebellion_2 }
+			remove_ideas = ROM_legionary_rebellion_2
+		}
+		set_politics = {
+			ruling_party = fascism
+			elections_allowed = no
+		}
+		set_country_flag = iron_guard_integrated_flag
+		ROM_carol_ii = {
+			kill_character = yes
+		}
+	}
+}
+
+#Goga Announces New Election
+news_event = {
+	id = BICE_romania.02
+	title = BICE_romania.02.t
+	desc = BICE_romania.02.desc
+	picture = GFX_report_event_minor_parliament
+	is_triggered_only = yes
+	
+	option = {
+		name = BICE_romania.02.a
+		add_ideas = ROM_goga_election_violence
+		activate_mission_tooltip = goga_new_election
+		custom_effect_tooltip = ROM_institute_royal_dictatorship_tt
+	}
+}
+#Goga-Codreanu election pact
+news_event = {
+	id = BICE_romania.05
+	title = BICE_romania.05.t
+	desc = BICE_romania.05.desc
+	picture = GFX_report_event_minor_parliament
+	is_triggered_only = yes
+	
+	option = {
+		name = BICE_romania.05.a
+		add_ideas = ROM_goga_election_violence
+		unlock_decision_tooltip = goga_new_election
+	}
+}
+
+#Appointing Clime as Prime Minister (Legionary front-man)
+news_event = {
+	id = BICE_romania.06
+	title = BICE_romania.06.t
+	desc = BICE_romania.06.desc
+	picture = GFX_news_event_iron_guard_march
+	is_triggered_only = yes
+	
+	option = {
+		name = BICE_romania.06.a
+		set_politics = {
+			ruling_party = fascism
+			elections_allowed = no
+		}
+	}
+}
+
+#Establishment of the royal dictatorship
+news_event = {
+	id = BICE_romania.07
+	title = BICE_romania.07.t
+	desc = BICE_romania.07.desc
+	picture = GFX_news_event_ROM_michael_carol_bad
+	is_triggered_only = yes
+	
+	option = {
+		name = BICE_romania.07.a
+		ai_chance = {
+			base = 100
+		}
+		if = {
+			limit = {
+				has_idea = civil_strife2
+			}
+			remove_ideas = civil_strife2
+		}
+		add_country_leader_role = { 
+			character = ROM_miron_cristea
+			promote_leader = yes 
+			country_leader = {
+				ideology = absolutism 
+				expire = "1965.1.1.1" 
+				traits = { monarchist_puppet elder_statesman } 
+			} 
+		}
+		#add_ideas = ROM_gheorghe_tatarescu_foreign_minister
+	}
+}
+
+#Foundation of the National Renaissance Front
+news_event = {
+	id = BICE_romania.08
+	title = BICE_romania.08.t
+	desc = BICE_romania.08.desc
+	picture = GFX_news_national_renaissance_front
+	is_triggered_only = yes
+	immediate = {
+		set_country_flag = Dissolution_of_political_parties
+	}
+	option = {
+		ai_chance = {
+			base = 100
+		}
+		name = BICE_romania.08.a
+		add_popularity = { ideology = monarchism popularity = 0.06 }
+		add_timed_idea = { idea = idea_monarchism_drift days = 100 }
+	}
+}
+
+#Codreanu visits the King
+news_event = {
+	id = BICE_romania.11
+	title = BICE_romania.11.t
+	desc = BICE_romania.11.desc
+	picture = GFX_news_national_renaissance_front
+	is_triggered_only = yes
+	option = {
+		name = BICE_romania.11.a
+	}
+}
+
+#Iron Guard Leaders Arrested
+news_event = {
+	id = BICE_romania.12
+	title = BICE_romania.12.t
+	desc = BICE_romania.12.desc
+	picture = GFX_report_event_ROM_codreanu_sad
+	is_triggered_only = yes
+	option = {
+		ai_chance = {
+			base = 100
+		}
+		name = BICE_romania.12.a
+	}
+}
+
+#Night of Vampires (Assassinate IG leaders)
+news_event = {
+	id = BICE_romania.13
+	title = BICE_romania.13.t
+	desc = BICE_romania.13.desc
+	picture = GFX_report_event_ROM_codreanu_funeral
+	is_triggered_only = yes
+	option = {
+		ai_chance = {
+			base = 100
+		}
+		name = BICE_romania.13.a
+	}
+}
+
+#Guard is tamed, bring them into the government as a popular base
+news_event = {
+	id = BICE_romania.14
+	title = BICE_romania.14.t
+	desc = BICE_romania.14.desc
+	picture = GFX_news_national_renaissance_front
+	is_triggered_only = yes
+	option = {
+		ai_chance = {
+			base = 100
+		}
+		name = BICE_romania.14.a
+	}
+	option = {
+		name = BICE_romania.14.b
+	}
+}
+
+#Iron Guard Integrated into the government peacefully
+news_event = {
+	id = BICE_romania.15
+	title = BICE_romania.15.t
+	desc = BICE_romania.15.desc
+	picture = GFX_news_national_renaissance_front
+	is_triggered_only = yes
+	option = {
+		name = BICE_romania.15.a
+	}
+}
+
+#Iron Guard Overthrows Antonescu
+news_event = {
+	id = BICE_romania.17
+	title = BICE_romania.17.t
+	desc = BICE_romania.17.desc
+	picture = GFX_news_national_renaissance_front
+	is_triggered_only = yes
+	option = {
+		name = BICE_romania.17.a
+	}
+}
+
+#Found the National Legionary State
+news_event = {
+	id = BICE_romania.18
+	title = BICE_romania.18.t
+	desc = BICE_romania.18.desc
+	picture = GFX_news_national_renaissance_front
+	is_triggered_only = yes
+	option = {
+		name = BICE_romania.18.a
+	}
+}
+
+#Iron Guard SCW Expedition Funerals
+country_event = {
+	id = BICE_romania.19
+	title = BICE_romania.19.t
+	desc = BICE_romania.19.desc
+	picture = GFX_report_event_ROM_ion_mota_funeral
+	is_triggered_only = yes
+	fire_only_once = yes
+	trigger = {
+		SPR = {
+			has_civil_war = yes
+		}
+		date > 1937.1.7
+		NOT = { has_country_flag = ROM_scw_expedition }
+	}
+	option = {
+		name = BICE_romania.19.a
+		ai_chance = {
+			base = 100
+		}
+		add_timed_idea = {
+			idea = nationalism
+			days = 70
+		}
+		set_country_flag = ROM_scw_expedition
+		add_popularity = {
+			ideology = fascism
+			popularity = 0.03
+		}
+	}
+}
+
+#Iron Guard's SCW Expedition Lives
+country_event = {
+	id = BICE_romania.20
+	title = BICE_romania.20.t
+	desc = BICE_romania.20.desc
+	picture = GFX_report_event_iron_guard_march_1
+	is_triggered_only = yes
+	fire_only_once = yes
+	timeout_days = 5
+	trigger = {
+		SPR = {
+			has_civil_war = yes
+		}
+		date > 1937.1.7
+		NOT = { has_country_flag = ROM_scw_expedition }
+	}
+	option = {
+		name = BICE_romania.20.a
+		ai_chance = {
+			base = 100
+		}
+		add_timed_idea = {
+			idea = nationalism
+			days = 130
+		}
+		set_country_flag = ROM_scw_expedition
+	}
+}
+
+#The king feels that parliament has been rehabilitated
+news_event = {
+	id = BICE_romania.21
+	title = BICE_romania.21.t
+	desc = BICE_romania.21.desc
+	picture = GFX_news_national_renaissance_front
+	is_triggered_only = yes
+	option = {
+		name = BICE_romania.21.a
+	}
+}
+
+#Victory of Caorl's Absolute Monarchy
+news_event = {
+	id = BICE_romania.22
+	title = BICE_romania.22.t
+	desc = BICE_romania.22.desc
+	picture = GFX_news_national_renaissance_front
+	is_triggered_only = yes
+	option = {
+		name = BICE_romania.22.a
+	}
+}
+
+#Michael's coups against Antonescu
+news_event = {
+	id = BICE_romania.23
+	title = BICE_romania.23.t
+	desc = BICE_romania.23.desc
+	picture = GFX_news_national_renaissance_front
+	is_triggered_only = yes
+	option = {
+		ai_chance = {
+			base = 100
+		}
+		name = BICE_romania.23.a
+	}
+}
+
+#Restoration Day
+news_event = {
+	id = BICE_romania.24
+	title = BICE_romania.24.t
+	desc = BICE_romania.24.desc
+	picture = GFX_report_event_ROM_carol_and_michael
+	is_triggered_only = yes
+	
+	immediate = {
+		hidden_effect = {
+			if = {
+				limit = {
+					ROM = {
+						has_country_leader = {
+							character = ROM_carol_ii
+							ruling_only = yes
+						}
+					}
+				}
+				news_event = {
+					id = BICE_romania.24
+					days = 365
+				}
+			}
+		}
+	}
+	option = {
+		name = BICE_romania.24.a
+		ai_chance = {
+			base = 100
+		}
+		add_stability = 0.02
+		add_popularity = {
+			ideology = monarchism
+			popularity = 0.02
+		}
+	}
+}
+
+#Michael I restored
+news_event = {
+	id = BICE_romania.27
+	title = BICE_romania.27.t
+	desc = BICE_romania.27.desc
+	picture = GFX_news_national_renaissance_front
+	is_triggered_only = yes
+	option = {
+		name = BICE_romania.27.a
+	}
+}
+
+#Rehabilitation of Parliament
+news_event = {
+	id = BICE_romania.29
+	title = BICE_romania.29.t
+	desc = BICE_romania.29.desc
+	picture = GFX_news_national_renaissance_front
+	is_triggered_only = yes
+	option = {
+		name = BICE_romania.29.a
+		set_politics = {
+			ruling_party = liberalism
+		}
+	}
+	option = {
+		name = BICE_romania.29.b
+		set_politics = {
+			ruling_party = socialism
+		}
+	}
+}
+
+#Removal of Nicolae Titulescu
+country_event = {
+
+	id = BICE_romania.30
+	title = BICE_romania.30.t
+	desc = BICE_romania.30.desc
+	picture = GFX_report_event_league_of_nations
+	
+
+	trigger = {
+		tag = ROM
+		date > 1936.6.2
+		NOT = {
+			has_country_flag = ROM_nicolae_titulescu_removed_flag
+		}
+		has_idea = ROM_nicolae_titulescu_foreign_minister
+	}
+	immediate = {
+		set_country_flag = ROM_nicolae_titulescu_removed_flag
+	}
+	
+	is_triggered_only = yes
+	fire_only_once = yes
+
+	#Remove him
+	option = {
+		name = BICE_romania.30.a
+		deactivate_advisor = ROM_nicolae_titulescu_foreign_minister
+		add_political_power = 50
+		set_country_flag = titulescu_removed_flag
+		reverse_add_opinion_modifier = {
+			target = GER
+			modifier = small_increase
+		}
+		set_country_flag = nicolae_titulescu_fired
+		remove_advisor_role = { 
+			character = "ROM_nicolae_titulescu" 
+			slot = foreign_minister
+		}
+		ai_chance = { factor = 100 }
+	}
+	#Keep him
+	option = {
+		name = BICE_romania.30.b
+		reverse_add_opinion_modifier = {
+			target = GER
+			modifier = small_decrease
+		}
+		ai_chance = { factor = 1 }
+	}
+}
+
+#Appointment of Armand Calinescu as Prime Minister
+country_event = {
+
+	id = BICE_romania.31
+	trigger = {
+		tag = ROM
+		date > 1939.3.2 #1939.3.7
+		has_war = no
+		NOT = {
+			has_country_leader = {
+				character = ROM_armand_calinescu
+				ruling_only = yes
+			}
+			has_country_flag = ROM_armand_calinescu_appointment_flag
+			date > 1940.1.1
+		}
+	}
+	immediate = {
+		set_country_flag = ROM_armand_calinescu_appointment_flag
+	}
+	
+	is_triggered_only = yes
+	fire_only_once = yes
+	
+	title = BICE_romania.31.t
+	desc = BICE_romania.31.desc
+	picture = GFX_report_event_rom_armand_calinescu
+
+	option = {
+		name = BICE_romania.31.a
+		add_country_leader_role = {
+			character = ROM_armand_calinescu
+			country_leader = {
+				ideology = absolutism
+				traits = { anti_fascist }
+				expire = "1965.1.1"
+			}
+			promote_leader = yes 
+		}
+		ROM_iron_guard_medium_loyalty_decrease = yes
+		ai_chance = { factor = 100 }
+	}
+	option = {
+		name = BICE_romania.31.b
+	}
+}
+#Calinescu's plan for the Legionaries
+country_event = {
+
+	id = BICE_romania.67
+	
+		
+	trigger = {
+		tag = ROM
+		date > 1939.4.1 #Legionaries arrested 1939.4.16
+		OR = {
+			ROM_armand_calinescu = {
+				is_hired = yes
+			}
+			has_country_leader = {
+				character = ROM_armand_calinescu
+				ruling_only = yes
+			}
+		}
+		NOT = {
+			has_country_flag = ROM_armand_calinescu_plan_flag
+			date > 1940.1.1
+		}
+		has_war = no
+	}
+	immediate = {
+		set_country_flag = ROM_armand_calinescu_plan_flag
+	}
+	
+	is_triggered_only = yes
+	fire_only_once = yes
+	
+	title = BICE_romania.67.t
+	desc = BICE_romania.67.desc
+	picture = GFX_report_event_rom_armand_calinescu
+
+	option = {
+		name = BICE_romania.67.a
+		ai_chance = { factor = 100 }
+		unlock_decision_tooltip = imprison_iron_guard_leaders
+	}
+	option = {
+		name = BICE_romania.67.b
+	}
+}
+#Arrest of Legionary leaders
+country_event = {
+
+	id = BICE_romania.50
+	
+		
+	trigger = {
+		tag = ROM
+		date > 1939.4.16
+		NOT = {
+			date > 1940.1.1
+			has_country_flag = ROM_iron_guard_leaders_imprisoned_flag
+		}
+	}
+	
+	is_triggered_only = yes
+	
+	title = BICE_romania.50.t
+	desc = BICE_romania.50.desc
+	picture = GFX_news_rom_codreanu_sad_gfxnews
+
+	option = {
+		name = BICE_romania.50.a
+		set_country_flag = ROM_iron_guard_leaders_imprisoned_flag
+		ROM_iron_guard_medium_loyalty_decrease = yes
+		unlock_decision_tooltip = ROM_execute_iron_guard_leaders
+		ROM_corneliu_codreanu = {
+			set_character_flag = character_imprisoned_flag
+			set_portraits = {
+				army = { small = GFX_idea_ROM_corneliu_zelea_codreanu_imprisoned }
+			}
+		}
+	}
+	option = {
+		name = BICE_romania.50.b
+	}
+}
+#Night of Vampires
+country_event = {
+	id = BICE_romania.51
+	
+		
+	trigger = {
+		original_tag = ROM
+	}
+	
+	is_triggered_only = yes
+	
+	title = BICE_romania.51.t
+	desc = BICE_romania.51.desc
+	picture = GFX_report_event_jilava_massacre_gfxaddon
+
+	option = {
+		name = BICE_romania.51.a
+		set_country_flag = iron_guard_leaders_executed_flag
+		ROM_iron_guard_high_loyalty_decrease = yes
+		ROM_corneliu_codreanu = { kill_character = yes }
+		add_country_leader_role = {
+			Character =  ROM_vasilie_noveanu
+			Country_leader = {
+			  ideology = legionnairism
+			  expire = "1965.1.1.1"
+			  traits = { monarchist_puppet }		
+			}
+			promote_leader = yes
+	    }
+	}
+}
+#### Armand Calinescu assassinated
+news_event = {
+
+	id = BICE_romania.32
+	
+		
+	trigger = {
+		tag = ROM
+		date > 1939.9.21
+		has_war = no
+		OR = {
+			has_country_leader = {
+				character = ROM_armand_calinescu
+				ruling_only = yes
+			}
+			ROM_armand_calinescu = {
+				is_hired = yes
+			}
+		}
+		NOT = { 
+			has_country_flag = armand_calinescu_assassinated_flag 
+			date > 1941.1.1
+		}
+		has_country_flag = iron_guard_leaders_executed_flag
+		NOT = { has_country_flag = iron_guard_destroyed_flag }
+	}
+	immediate = { set_country_flag = armand_calinescu_assassinated_flag }
+
+	is_triggered_only = yes
+	fire_only_once = yes
+	
+	title = BICE_romania.32.t
+	desc = BICE_romania.32.desc
+	picture = GFX_news_rom_armand_calinescu_assasinated
+
+	option = {
+		name = BICE_romania.32.a
+		ROM_armand_calinescu = { kill_character = yes }
+		set_country_flag = armand_calinescu_assassinated_flag
+		add_stability = -0.10
+		add_timed_idea = { idea = prime_minister_assasinated days = 60 }
+		ai_chance = { factor = 95}
+		news_event = { id = BICE_romania.90 days = 1 }
+	}
+}
+#### Gheorghe Argeșanu appointed prime minster
+news_event = {
+
+	id = BICE_romania.90
+	
+	trigger = {
+		tag = ROM
+		date > 1939.9.21
+		has_war = no
+		has_country_flag = armand_calinescu_assassinated_flag 
+			NOT = {
+			date > 1941.1.1
+		}
+	}
+	immediate = { set_country_flag = gheorghe_argesanu_prime_minister_flag }
+
+	is_triggered_only = yes
+	fire_only_once = yes
+	
+	title = BICE_romania.90.t
+	desc = BICE_romania.90.desc
+	picture = GFX_news_gheorghe_argesanu
+
+	option = {
+		name = BICE_romania.90.a
+		promote_character = {
+			character = ROM_gheorghe_argeseanu
+			ideology = absolutism
+		}
+		add_popularity = {
+			ideology = fascism
+			popularity = -0.07
+		}
+	}
+}
+#### Constantin Argetoianu appointed prime minster
+news_event = {
+
+	id = BICE_romania.91
+	
+	trigger = {
+		tag = ROM
+		date > 1939.9.28
+		has_war = no
+		has_country_flag = gheorghe_argesanu_prime_minister_flag 
+			NOT = {
+			date > 1941.1.1
+		}
+	}
+	immediate = { set_country_flag = constantin_argetoianu_prime_minister_flag }
+
+	is_triggered_only = yes
+	fire_only_once = yes
+	
+	title = BICE_romania.91.t
+	desc = BICE_romania.91.desc
+	picture = GFX_news_event_constantin_argetoianu
+
+	option = {
+		name = BICE_romania.91.a
+		promote_character = {
+			character = ROM_constantin_argetoianu
+			ideology = absolutism
+		}
+	}
+}
+#### Tatarescu appointed Prime Minister...again
+country_event = {
+
+	id = BICE_romania.33
+	
+	trigger = {
+		has_country_flag = armand_calinescu_assassinated_flag
+		has_country_leader = {
+			character = ROM_constantin_argetoianu
+			ruling_only = yes
+		}
+		NOT = { 
+			has_country_leader = {
+				character = ROM_gheorghe_tatarescu
+				ruling_only = yes
+			}
+			date > 1940.5.10
+		}
+		tag = ROM
+		date > 1939.11.24
+		has_war = no
+	}
+	
+	is_triggered_only = yes
+	fire_only_once = yes
+	
+	title = BICE_romania.33.t
+	desc = BICE_romania.33.desc
+	picture = GFX_report_event_rom_gheroghe_tatarescu
+
+	option = {
+		name = BICE_romania.33.a
+		promote_character = {
+			character = ROM_gheorghe_tatarescu
+			ideology = absolutism
+		}
+		promote_character = {
+			character = ROM_dinu_bratianu
+			ideology = national_liberalism
+		}
+		ai_chance = { factor = 100 }
+	}
+}
+#### Soviet Union Claims Bessarabia and North Bukovina
+country_event = {
+
+	id = BICE_romania.34
+	
+	
+	trigger = {
+		owns_state = 78
+	}
+	is_triggered_only = yes
+
+	title = BICE_romania.34.t
+	desc = BICE_romania.34.desc
+	picture = GFX_report_soviet_flag_gfxaddon
+
+	option = {
+		#Conceed
+		name = BICE_romania.34.a
+		ai_chance = { factor = 100 }
+		SOV = { country_event = BICE_romania.35 }
+		set_temp_variable = { pop = -0.15 }
+		add_ruling_pop = yes 
+		ROM_crown_council_high_loyalty_decrease = yes
+		set_country_flag = bessarabia_ceded
+	}
+	option = {
+		#Reject
+		name = BICE_romania.34.b
+		ai_chance = { factor = 0 }
+		SOV = { country_event = BICE_romania.36 }
+	}
+}
+#### Conceed to Soviet Demands
+country_event = {
+
+	id = BICE_romania.35
+	
+	
+	trigger = {
+
+	}
+	is_triggered_only = yes
+
+	title = BICE_romania.35.t
+	desc = BICE_romania.35.desc
+	picture = GFX_report_soviet_flag_gfxaddon
+
+	option = {
+		#Conceed
+		name = BICE_romania.35.a
+		SOV = {
+			transfer_state = 78
+			transfer_state = 80
+		}
+		ai_chance = { factor = 100 }
+	}
+}
+#### Reject to Soviet Demands
+country_event = {
+
+	id = BICE_romania.36
+	
+	
+	trigger = {
+
+	}
+	is_triggered_only = yes
+
+	title = BICE_romania.36.t
+	desc = BICE_romania.36.desc
+	picture = GFX_report_soviet_flag_gfxaddon
+
+	option = {
+		#Resist
+		name = BICE_romania.36.b
+		ai_chance = { factor = 1 }
+	}
+}
+#### Carol's Abdication
+news_event = {
+
+	id = BICE_romania.37
+	title = BICE_romania.37.t
+	desc = BICE_romania.37.desc
+	picture = GFX_report_event_ROM_carol_abdication
+	
+	
+	trigger = {
+		
+	}
+	is_triggered_only = yes
+
+	option = {
+		name = BICE_romania.37.a
+		ROM_iron_guard_massive_loyalty_increase = yes
+		clr_country_flag = lock_out_iron_guard_oppression
+		ROM_carol_ii = { kill_character = yes }
+	}
+}
+#### Iron guard retaliation
+country_event = {
+
+	id = BICE_romania.38
+		
+	trigger = {
+		tag = ROM
+		exists = yes
+		date > 1940.10.1
+		has_war = no
+		ROM_in_iron_guard_chaos_period = yes
+		not = { 
+			has_country_flag = Iron_guard_retaliation
+			date > 1942.1.1
+		}
+	}
+	fire_only_once = yes
+	immediate = {
+		set_country_flag = iron_guard_retaliation_flag
+	}
+	
+	is_triggered_only = yes
+	
+	title = BICE_romania.38.t
+	desc = BICE_romania.38.desc
+	picture = GFX_report_event_sima_and_legionaries_gfxaddon
+
+	option = {
+		name = BICE_romania.38.a
+		add_ideas = ROM_constantin_petrovicescu_intel_minister
+		add_ideas = ROM_iron_guard_excesses_1
+		ai_chance = { factor = 100 }
+	}
+	option = {
+		name = BICE_romania.38.b
+		add_ideas = ROM_iron_guard_excesses_1
+		ai_chance = { factor = 100 }
+	}
+}
+#### Codreanu's Reburial
+news_event = {
+
+	id = BICE_romania.54
+		
+	trigger = {
+		date > 1940.11.23
+		has_country_flag = national_legionary_state_flag
+		NOT = {
+			has_country_flag = ROM_codreanu_reburial_flag
+			has_country_flag = iron_guard_destroyed_flag
+		}
+	}
+	immediate = {
+		set_country_flag = ROM_codreanu_reburial_flag
+	}
+	
+	is_triggered_only = yes
+	fire_only_once = yes
+	
+	title = BICE_romania.54.t
+	desc = BICE_romania.54.desc
+	picture = GFX_news_event_ROM_codreanu_reburial
+
+	option = {
+		name = BICE_romania.54.a
+	}
+}	
+#### Political opponents eliminated
+country_event = {
+
+	id = BICE_romania.39
+	
+	trigger = {
+		tag = ROM
+		exists = yes
+		date > 1940.11.26
+		has_war = no
+		has_country_flag = Iron_guard_retaliation 
+		not = { has_country_flag = Political_opponents_eliminated_flag }
+		not = { date > 1942.1.1 }
+	}
+	
+	is_triggered_only = yes
+	fire_only_once = yes
+	
+	title = BICE_romania.39.t
+	desc = BICE_romania.39.desc
+	picture = GFX_report_event_jilava_massacre_gfxaddon
+
+	option = {
+		name = BICE_romania.39.a
+		set_country_flag = Political_opponents_eliminated_flag
+		if = { limit = { has_idea = ROM_gheorghe_argeseanu_high_command } remove_ideas = ROM_gheorghe_argeseanu_high_command }
+		if = { limit = { has_idea = ROM_damian_rascu_high_command } remove_ideas = ROM_damian_rascu_high_command }
+		if = { limit = { has_idea = ROM_mihail_moruzov_intel_minister } remove_ideas = ROM_mihail_moruzov_intel_minister }
+		if = { limit = { has_idea = ROM_virgil_madgearu_economic_minister } remove_ideas = ROM_virgil_madgearu_economic_minister }
+		ai_chance = { factor = 100 }
+	}
+}
+#### The conflict is imminent
+country_event = {
+
+	id = BICE_romania.40
+	
+	trigger = {
+		tag = ROM
+		exists = yes
+		date > 1940.12.23
+		has_war = no
+		has_country_flag = Political_opponents_eliminated_flag 
+		NOT = { 
+			has_country_flag = impending_iron_guard_coup_flag
+			has_country_flag = iron_guard_destroyed_flag
+			has_country_flag = iron_guard_integrated_flag
+		}
+		NOT = { date > 1942.1.1 }
+		has_country_leader = {
+			character = ROM_ion_antonescu
+			ruling_only = yes
+		}
+	}
+	immediate = {
+		set_country_flag = impending_iron_guard_coup_flag
+	}
+	
+	is_triggered_only = yes
+	fire_only_once = yes
+	
+	title = BICE_romania.40.t
+	desc = BICE_romania.40.desc
+	picture = GFX_report_event_ROM_imminent_conflict_gfxaddon
+
+	option = {
+		name = BICE_romania.40.a	
+		add_stability = 0.05
+		ai_chance = { factor = 99 }
+	}
+	option = {
+		name = BICE_romania.40.b
+		add_stability = 0.15
+		ai_chance = { factor = 1 }
+	}
+}
+#### Antonescu strikes back
+country_event = {
+
+	id = BICE_romania.41
+	
+	trigger = {
+		tag = ROM
+		date > 1941.1.18
+		has_war = no
+		has_country_flag = impending_iron_guard_coup_flag 
+		not = { has_country_flag = Antonescu_strikes_back }
+		not = { date > 1942.1.1 }
+		has_country_leader = {
+			character = ROM_ion_antonescu
+			ruling_only = yes
+		}
+	}
+	immediate = {
+		set_country_flag = Antonescu_strikes_back
+	}
+	
+	
+	is_triggered_only = yes
+	fire_only_once = yes
+	
+	title = BICE_romania.41.t
+	desc = BICE_romania.41.desc
+	picture = GFX_report_event_ROM_Antonescu_strikes_back_gfxaddon
+
+	option = {
+		name = "I've had enough of their abuses."
+		if = { limit = { has_idea = ROM_gheorghe_argeseanu_high_command } remove_ideas = ROM_gheorghe_argeseanu_high_command }	
+		add_stability = -0.06
+		ai_chance = { factor = 99 }
+	}
+	option = {
+		name = "Romania's interest is above all."
+		add_stability = -0.10
+		ai_chance = { factor = 1 }
+	}
+}
+#### The Legionnaires' Rebellion
+country_event = {
+
+	id = BICE_romania.42
+	
+	trigger = {
+		
+	}
+	
+	is_triggered_only = yes
+	
+	
+	title = BICE_romania.42.t
+	desc = BICE_romania.42.desc
+	picture = GFX_report_event_legionary_rebellion_gfxaddon
+
+	option = {
+		name = BICE_romania.42.a
+		set_country_flag = Legionnaires_Rebellion
+		if = {
+			limit = {
+				check_variable = { fascim_party_loyalty < 20 }
+			}
+			add_timed_idea = {
+				idea = civil_strife5
+				days = 90
+			}
+		}
+		else_if = {
+			limit = {
+				check_variable = { var = fascim_party_loyalty value = 20 compare = greater_than_or_equals }
+				check_variable = { var = fascim_party_loyalty value = 35 compare = less_than }
+			}
+			add_timed_idea = {
+				idea = civil_strife4
+				days = 90
+			}
+		}
+		else_if = {
+			limit = {
+				check_variable = { var = fascim_party_loyalty value = 35 compare = greater_than_or_equals }
+				check_variable = { var = fascim_party_loyalty value = 50 compare = less_than }
+			}
+			add_timed_idea = {
+				idea = civil_strife3
+				days = 90
+			}
+		}
+		else_if = {
+			limit = {
+				check_variable = { var = fascim_party_loyalty value = 50 compare = greater_than_or_equals }
+				check_variable = { var = fascim_party_loyalty value = 65 compare = less_than }
+			}
+			add_timed_idea = {
+				idea = civil_strife2
+				days = 90
+			}
+		}
+		else_if = {
+			limit = {
+				check_variable = { var = fascim_party_loyalty value = 65 compare = greater_than_or_equals }
+				check_variable = { var = fascim_party_loyalty value = 80 compare = less_than }
+			}
+			add_timed_idea = {
+				idea = civil_strife
+				days = 90
+			}
+		}
+		set_country_flag = iron_guard_destroyed_flag
+		clr_country_flag = national_legionary_state_flag
+		ROM = {
+			set_party_name = {
+				ideology = fascism
+				long_name = ROM_fascism_party_antonescu_long
+				name = ROM_fascism_party_antonescu
+			}
+		}
+		ai_chance = { factor = 100 }
+	}
+}
+#### Superior School of War
+news_event = {
+
+	id = BICE_romania.43
+	
+	trigger = {
+
+	}
+	
+	is_triggered_only = yes
+	
+	title = BICE_romania.43.t
+	desc = BICE_romania.43.desc
+	picture = GFX_news_event_ROM_school_of_war
+
+	option = {
+		name = "Let's put them to good use."
+		set_country_flag = Superior_School_of_War
+		add_timed_idea = {
+			idea = ROM_superior_school_of_war
+			days = 3000
+		}	
+		add_research_slot = 1
+		random_owned_controlled_state = {
+			limit = {
+				NOT = { 
+					state = 80
+					state = 939
+					state = 938
+					state = 855
+					state = 78
+					state = 77
+					state = 76
+				}
+				research_centre < 1
+			}
+			state_add_research_centre = yes
+		}
+		SLOT:ww1_land_doctrine_folder = yes
+		SLOT:land_doctrine_folder = yes
+		SLOT:air_doctrine_folder = yes				
+		ai_chance = { factor = 100}
+	}
+}
+#### 1940 Army reorganization
+country_event = {
+
+	id = BICE_romania.44
+	
+	trigger = {
+
+	}
+	
+	is_triggered_only = yes
+	fire_only_once = yes
+	
+	title = BICE_romania.44.t
+	desc = BICE_romania.44.desc
+	picture = GFX_report_event_romanian_soldiers_gfxaddon
+
+	option = {
+		name = BICE_romania.44.a
+		add_timed_idea = {
+			idea = ROM_antonescu_military
+			days = 400
+		}
+		ai_chance = { factor = 99 }
+		if = {
+			limit = {
+				has_idea = army_corruption
+			}
+			swap_ideas = {
+				remove_idea = army_corruption
+				add_idea = army_corruption_2
+			}
+		}
+		else_if = {
+			limit = {
+				has_idea = army_corruption_2
+			}
+			remove_ideas = army_corruption_2
+		}
+		ROM_phleps_artur = {
+			remove_unit_leader_role = yes
+			add_corps_commander_role = {
+				traits = { waffen_ss_officer infantry_officer mountain_3 }
+				skill = 2
+				attack_skill = 2
+				defense_skill = 2
+				planning_skill = 2
+				logistics_skill = 1
+			}
+			set_nationality = GER
+		}
+	}
+	option = {
+		name = BICE_romania.44.b
+		ai_chance = { factor = 1 }
+	}
+	
+}
+#### Romania joins Barbarossa
+country_event = {
+
+	id = BICE_romania.45
+	
+	trigger = {
+		
+	}
+	
+	
+	is_triggered_only = yes
+	
+	title = BICE_romania.45
+	desc = BICE_romania.45
+	picture = GFX_report_event_ROM_joins_barbarossa
+
+	option = {
+		name = "Proceed."
+		add_timed_idea = {
+			idea = full_national_support
+			days = 300
+		}
+		set_country_flag = Romania_joins_Barbarossa
+		ai_chance = { factor = 100 }
+	}
+
+}
+
+###################################
+# INDUSTRIAL EVENTS
+###################################
+#### Romanian Aeronautical Industry - I.A.R.
+news_event = {
+
+	id = BICE_romania.46
+
+	trigger = {
+	}
+	
+	is_triggered_only = yes
+	
+	
+	title = BICE_romania.46.t
+	desc = BICE_romania.46.desc
+	picture = GFX_news_event_ROM_iar
+
+	option = {
+		name = BICE_romania.46.a
+		set_country_flag = Romanian_Aeronautical_Industry
+		84 = { 
+			add_building_construction = {
+				type = air_base
+				level = 2
+				instant_build = yes
+			} 
+		}			
+		air_experience = 10		
+		ai_chance = { factor = 100 }
+	}
+}
+#### Ilva Mica-Vatra Dornei Railway
+news_event = {
+
+	id = BICE_romania.47
+	
+	trigger = {
+
+	}
+	
+	is_triggered_only = yes
+	
+	
+	title = BICE_romania.47.t
+	desc = BICE_romania.47.desc
+	picture = GFX_news_event_ROM_railway
+	
+	option = {
+		name = BICE_romania.47.a
+		set_country_flag = Ilva_MicaVatra_Dornei_Railway
+		# Ilva_Mica-Vatra Dornei railway
+		938 = { 
+			add_building_construction = {
+				type = infrastructure
+				level = 1
+				instant_build = yes
+			}  
+		}
+		937 = { 
+			add_building_construction = {
+				type = infrastructure
+				level = 1
+				instant_build = yes
+			}  
+		}
+		76 = { 
+			add_building_construction = {
+				type = infrastructure
+				level = 1
+				instant_build = yes
+			}  
+		}
+		80 = { 
+			add_building_construction = {
+				type = infrastructure
+				level = 1
+				instant_build = yes
+			}  
+		}
+		ai_chance = { factor = 100 }
+	}
+}
+#### November 1940 earthquake
+news_event = {
+
+	id = BICE_romania.48
+	
+	trigger = {
+	}
+	
+	is_triggered_only = yes
+	
+	
+	title = BICE_romania.48.t
+	desc = BICE_romania.48.desc
+	picture = GFX_news_event_ROM_earthquake
+	
+	option = {
+		name = BICE_romania.48.a
+		add_timed_idea = {
+			idea = natural_disaster
+			days = 90
+		}
+		79 = {
+			damage_building = {
+				type = infrastructure
+				damage = 3
+			}
+		}
+		ai_chance = { factor = 100 }
+	}
+}
+
+###################################
+# ESPIONAGE EVENTS
+###################################
+#### SSI finally subordinated to the Royal Palace
+country_event = {
+
+	id = BICE_romania.49
+	
+	trigger = {
+
+	}
+	
+	is_triggered_only = yes
+	
+	
+	title = BICE_romania.49.t
+	desc = BICE_romania.49.desc
+	picture = GFX_news_event_ROM_SSI
+
+	option = {
+		name = BICE_romania.49.a
+		set_country_flag = Royal_SSI
+		add_timed_idea = {
+			idea = ROM_ssi_efficiency
+			days = 750
+		}
+		ai_chance = { factor = 100 }
+	}
+}
+
+#Romania's about to switch sides
+country_event = {
+	id = BICE_romania.52
+	
+		
+	trigger = {
+		tag = ROM
+	}
+	
+	is_triggered_only = yes
+	
+	title = BICE_romania.52.t
+	desc = BICE_romania.52.desc
+	picture = GFX_report_event_jilava_massacre_gfxaddon
+
+	option = {
+		name = BICE_romania.52.a
+	}
+}
+#Codreanu publishes 'For My Legionaries'
+news_event = {
+	id = BICE_romania.53
+	
+		
+	trigger = {
+		tag = ROM
+		date > 1936.3.17 
+	}
+	
+	is_triggered_only = yes
+	fire_only_once = yes
+	
+	title = BICE_romania.53.t
+	desc = BICE_romania.53.desc
+	picture = GFX_news_rom_codreanu_sad_gfxnews
+
+	option = {
+		name = BICE_romania.53.a
+		add_timed_idea = {
+			idea = nationalism
+			days = 30
+		}
+	}
+}
+
+###################################
+# Co-Conducator Power Struggle
+###################################
+#Local government packed
+country_event = {
+	id = BICE_romania.55
+	
+		
+	trigger = {
+		tag = ROM
+		has_country_flag = Political_opponents_eliminated_flag
+	}
+	
+	is_triggered_only = yes
+	
+	title = BICE_romania.55.t
+	desc = BICE_romania.55.desc
+	picture = GFX_report_event_parliamentary_scandal_gfxaddon
+
+	option = {
+		name = BICE_romania.55.a
+		ROM_iron_guard_low_loyalty_decrease = yes
+		if = {
+			limit = {
+				has_idea = ROM_iron_guard_pack_government
+			}
+			remove_ideas = ROM_iron_guard_pack_government
+		}
+	}
+	option = {
+		name = BICE_romania.55.b
+		add_ideas = ROM_iron_guard_pack_government
+		set_country_flag = ROM_packed_government_pending
+		unlock_decision_tooltip = ROM_dismiss_packed_assemblies
+	}
+}
+#Looting opposition shops
+country_event = {
+	id = BICE_romania.56
+	
+		
+	trigger = {
+		tag = ROM
+		has_country_flag = Iron_guard_retaliation
+	}
+	
+	is_triggered_only = yes
+	
+	title = BICE_romania.56.t
+	desc = BICE_romania.56.desc
+	picture = GFX_report_event_burning_bus
+
+	option = {
+		name = BICE_romania.56.a
+		ROM_iron_guard_low_loyalty_decrease = yes
+		if = {
+			limit = {
+				has_idea = ROM_iron_guard_loot_shops
+			}
+			remove_ideas = ROM_iron_guard_loot_shops
+		}
+	}
+	option = {
+		name = BICE_romania.56.b
+		add_ideas = ROM_iron_guard_loot_shops
+		set_country_flag = ROM_shop_looting_pending
+		unlock_decision_tooltip = ROM_send_security_to_supress_assaults
+	}
+}
+#hunting political enemies
+country_event = {
+	id = BICE_romania.57
+	
+		
+	trigger = {
+		tag = ROM
+		has_country_flag = Iron_guard_retaliation
+	}
+	
+	is_triggered_only = yes
+	
+	title = BICE_romania.57.t
+	desc = BICE_romania.57.desc
+	picture = GFX_report_event_jilava_massacre_gfxaddon
+
+	option = {
+		name = BICE_romania.57.a
+		ROM_iron_guard_low_loyalty_decrease = yes
+		if = {
+			limit = {
+				has_idea = ROM_iron_guard_hunt_opponents
+			}
+			remove_ideas = ROM_iron_guard_hunt_opponents
+		}
+		clr_country_flag = ROM_opposition_hunt_pending
+	}
+	option = {
+		name = BICE_romania.57.b
+		add_ideas = ROM_iron_guard_hunt_opponents
+		set_country_flag = ROM_opposition_hunt_pending
+		unlock_decision_tooltip = ROM_military_protection_of_political_prisoners
+	}
+}
+#Asking  Germany to Increase Economic Cooperation
+country_event = {
+	id = BICE_romania.58
+	
+		
+	trigger = {
+		
+	}
+	
+	is_triggered_only = yes
+	
+	title = BICE_romania.58.t
+	desc = BICE_romania.58.desc
+	picture = GFX_report_event_rom_ger_cooperation
+
+	option = {
+		name = BICE_romania.58.a
+		GER = { 
+			set_country_flag = ROM_GER_cooperation 
+		}
+		ROM = {
+			country_event = BICE_romania.59
+		}
+		ai_chance = {
+			factor = 100
+		}
+	}
+	option = {
+		name = BICE_romania.58.b
+		ROM = {
+			country_event = BICE_romania.60
+		}
+	}
+}
+#GER Accepts Cooperation
+country_event = {
+	id = BICE_romania.59
+	
+		
+	trigger = {
+		tag = ROM
+	}
+	
+	is_triggered_only = yes
+	
+	title = BICE_romania.59.t
+	desc = BICE_romania.59.desc
+	picture = GFX_report_event_rom_ger_cooperation
+
+	option = {
+		name = BICE_romania.59.a
+		ROM = {
+			if = {
+				limit = {
+					has_idea =  ROM_astra_romana
+				}
+				swap_ideas = {
+					remove_idea = ROM_astra_romana
+					add_idea = ROM_kontinentale_ol
+				}
+			}
+			else = {
+				add_ideas = ROM_kontinentale_ol
+			}
+		}
+	}
+}
+#GER sends Kontinentale Öl to aid in oil exploitation
+country_event = {
+	id = BICE_romania.87
+	
+	trigger = {
+		tag = ROM
+	}
+	
+	is_triggered_only = yes
+	
+	title = BICE_romania.87.t
+	desc = BICE_romania.87.desc
+	picture = GFX_report_event_heavy_industrialization
+
+	option = {#Accept cooperation
+		name = BICE_romania.87.a
+
+		ai_chance = {
+			factor = 100
+		}
+
+		add_opinion_modifier = {
+			target = GER
+			modifier = ROM_axis_oil
+		}
+		reverse_add_opinion_modifier = {
+			target = GER
+			modifier = ROM_axis_oil
+		}
+		add_resource = {
+			type = oil
+			amount = 2
+			state = 46
+		}
+		ROM = {
+			if = {
+				limit = {
+					has_idea =  ROM_astra_romana
+				}
+				swap_ideas = {
+					remove_idea = ROM_astra_romana
+					add_idea = ROM_kontinentale_ol
+				}
+			}
+			else_if = {
+				limit = {
+					has_idea =  ROM_astra_romana_improved
+				}
+				swap_ideas = {
+					remove_idea = ROM_astra_romana_improved
+					add_idea = ROM_kontinentale_ol
+				}
+			}
+			else = {
+				add_ideas = ROM_kontinentale_ol
+			}
+		}
+		give_resource_rights = { receiver = GER state = 46 resources = { oil } }
+		GER = { country_event = BICE_romania.88 }
+	}
+	option = {#Reject cooperation
+		name = BICE_romania.87.b
+		GER = { country_event = BICE_romania.89 }
+	}
+}
+#ROM accepted kontinentale
+country_event = {
+	id = BICE_romania.88
+		
+	trigger = {
+		original_tag = GER
+	}
+	
+	is_triggered_only = yes
+	
+	title = BICE_romania.88.t
+	desc = BICE_romania.88.desc
+	picture = GFX_report_event_rom_ger_cooperation
+
+	option = {
+		name = BICE_romania.88.a
+	}
+}
+#ROM Refused kontinentale
+country_event = {
+	id = BICE_romania.89
+		
+	trigger = {
+		original_tag = GER
+	}
+	
+	is_triggered_only = yes
+	
+	title = BICE_romania.89.t
+	desc = BICE_romania.89.desc
+	picture = GFX_report_event_rom_ger_cooperation
+
+	option = {
+		name = BICE_romania.89.a
+	}
+}
+#GER Refuses Cooperation
+country_event = {
+	id = BICE_romania.60
+	
+		
+	trigger = {
+		tag = ROM
+	}
+	
+	is_triggered_only = yes
+	
+	title = BICE_romania.60.t
+	desc = BICE_romania.60.desc
+	picture = GFX_report_event_rom_ger_cooperation
+
+	option = {
+		name = BICE_romania.60.a
+	}
+}
+#Asking France for Tank license
+country_event = {
+	id = BICE_romania.61
+	
+		
+	trigger = {
+		
+	}
+	
+	is_triggered_only = yes
+	
+	title = BICE_romania.61.t
+	desc = BICE_romania.61.desc
+	picture = GFX_report_event_french_romanian_cooperation
+
+	option = {
+		name = BICE_romania.61.a
+		ROM = {
+			country_event = BICE_romania.62
+		}
+		ai_chance = {
+			factor = 100
+		}
+	}
+	option = {
+		name = BICE_romania.61.b
+		ROM = {
+			country_event = BICE_romania.63
+		}
+	}
+}
+#France approves the license
+country_event = {
+	id = BICE_romania.62
+	
+		
+	trigger = {
+		
+	}
+	
+	is_triggered_only = yes
+	
+	title = BICE_romania.62.t
+	desc = BICE_romania.62.desc
+	picture = GFX_report_event_french_romanian_cooperation
+
+	option = {
+		name = BICE_romania.62.a
+		add_tech_bonus = {
+			name = light_tank_bonus
+			bonus = 1.0
+			uses = 1
+			technology  = basic_light_tank_axis
+		}
+		add_tech_bonus = {
+			name = light_tank_bonus
+			bonus = 1.0
+			uses = 1
+			technology  = improved_light_tank_axis
+		}
+		if = {
+			limit = {
+				FRA = {
+					has_tech = tech_trm_infantry_tank_chassis_fra_r40_1
+					has_equipment = {
+						trm_infantry_tank_chassis_fra_r40_1 > 0
+					}
+				}
+			}
+			FRA = {
+				create_production_license = {
+					target = ROM
+					equipment = {
+						type = trm_infantry_tank_chassis_fra_r40_1
+					}
+					cost_factor = 0
+				}
+			}
+		}
+		if = {
+			limit = {
+				FRA = {
+					has_tech = tech_trm_infantry_tank_chassis_fra_r35_1
+					has_equipment = {
+						trm_infantry_tank_chassis_fra_r35_1 > 0
+					}
+				}
+			}
+			FRA = {
+				create_production_license = {
+					target = ROM
+					equipment = {
+						type = trm_infantry_tank_chassis_fra_r35_1
+					}
+					cost_factor = 0
+				}
+			}
+		}
+		add_relation_modifier = {
+			target = FRA
+			modifier = ROM_foreign_built_army
+		}
+		ROM = {
+			add_opinion_modifier = {
+				target = FRA
+				modifier = license_cooperation
+			}
+		}
+		FRA = { 
+			add_opinion_modifier = {
+				target = ROM
+				modifier = license_cooperation
+			}
+		}
+	}
+}
+#France Refuses the license
+country_event = {
+	id = BICE_romania.63
+	
+		
+	trigger = {
+		
+	}
+	
+	is_triggered_only = yes
+	
+	title = BICE_romania.63.t
+	desc = BICE_romania.63.desc
+	picture = GFX_report_event_french_romanian_cooperation
+
+	option = {
+		name = BICE_romania.63.a
+	}
+}
+#Asking Czechs for Tank license
+country_event = {
+	id = BICE_romania.64
+	
+		
+	trigger = {
+		
+	}
+	
+	is_triggered_only = yes
+	
+	title = BICE_romania.64.t
+	desc = BICE_romania.64.desc
+	picture = GFX_report_event_generic_sign_treaty1
+
+	option = {
+		name = BICE_romania.64.a
+		ROM = {
+			country_event = BICE_romania.65
+		}
+		ai_chance = {
+			factor = 100
+		}
+	}
+	option = {
+		name = BICE_romania.64.b
+		ROM = {
+			country_event = BICE_romania.66
+		}
+	}
+}
+#Czechs approves the license
+country_event = {
+	id = BICE_romania.65
+	
+		
+	trigger = {
+		
+	}
+	
+	is_triggered_only = yes
+	
+	title = BICE_romania.65.t
+	desc = BICE_romania.65.desc
+	picture = GFX_report_event_generic_sign_treaty1
+
+	option = {
+		name = BICE_romania.65.a
+		if = {
+			limit = {
+				CZE = {
+					has_tech = tech_cav_tanks3_axis
+				}
+			}
+			CZE = {
+				create_production_license = {
+					target = ROM
+					equipment = {
+						type = cavalry_tank_equipment_axis_2
+					}
+					cost_factor = 0
+				}
+			}
+		}
+		if = {
+			limit = {
+				CZE = {
+					has_tech = tech_cav_tanks2_axis
+				}
+			}
+			CZE = {
+				create_production_license = {
+					target = ROM
+					equipment = {
+						type = cavalry_tank_equipment_axis_1
+					}
+					cost_factor = 0
+				}
+			}
+		}
+		add_relation_modifier = {
+			target = CZE
+			modifier = ROM_foreign_built_army
+		}
+		ROM = { 
+			add_opinion_modifier = {
+				target = CZE
+				modifier = license_cooperation
+			}
+		}
+		CZE = { 
+			add_opinion_modifier = {
+				target = ROM
+				modifier = license_cooperation
+			}
+		}
+	}
+}
+#Czechs Refuses the license
+country_event = {
+	id = BICE_romania.66
+	
+		
+	trigger = {
+		
+	}
+	
+	is_triggered_only = yes
+	
+	title = BICE_romania.66.t
+	desc = BICE_romania.66.desc
+	picture = GFX_report_event_generic_sign_treaty1
+
+	option = {
+		name = BICE_romania.66.a
+	}
+}
+#Proposal to replace Clime with Codreanu
+country_event = {
+	id = BICE_romania.68
+	
+		
+	trigger = {
+		has_government = fascism
+		has_completed_focus = ROM_nationalist_government
+		NOT = {
+			has_country_flag = ROM_codreanu_replacement_flag
+		}
+	}
+	immediate = {
+		set_country_flag = ROM_codreanu_replacement_flag
+	}
+	
+	fire_only_once = yes
+	is_triggered_only = yes
+	
+	title = BICE_romania.68.t
+	desc = BICE_romania.68.desc
+	picture = GFX_report_event_generic_sign_treaty1
+
+	option = {
+		name = BICE_romania.68.a
+		ROM = {
+			set_party_name = {
+				ideology = fascism
+				long_name = ROM_fascism_party_revealed_long
+				name = ROM_fascism_party_revealed
+			}
+		}
+		ROM_iron_guard_medium_loyalty_increase = yes
+		promote_character = {
+			character = ROM_corneliu_codreanu
+			ideology = legionnairism
+		}
+		#add_ideas = ROM_corneliu_codreanu
+		set_country_flag = carol_legion_power_struggle_flag
+	}
+	option = {
+		ROM_iron_guard_low_loyalty_increase = yes
+		name = BICE_romania.68.b
+	}
+}
+#Carol Legalizes the Legionaries
+country_event = {
+	id = BICE_romania.69
+	
+		
+	trigger = {
+		has_government = fascism
+		has_completed_focus = ROM_nationalist_government
+		NOT = {
+			has_country_flag = ROM_codreanu_replacement_flag
+		}
+	}
+	immediate = {
+		set_country_flag = ROM_codreanu_replacement_flag
+	}
+	
+	fire_only_once = yes
+	is_triggered_only = yes
+	
+	title = BICE_romania.69.t
+	desc = BICE_romania.69.desc
+	picture = GFX_news_king_carol_sinister
+
+	option = {
+		name = BICE_romania.69.a
+		clr_country_flag = party_banned@fascism
+	}
+}
+#### Warsaw falls, Romania isolated
+country_event = {
+
+	id = BICE_romania.70
+	
+	trigger = {
+		tag = ROM
+		has_war = no
+		NOT = { has_country_flag = Warsaw_falls }
+		NOT = { date > 1941.1.1 }
+		POL = { has_capitulated = yes }
+		862 = { NOT = { is_controlled_by = POL }} #Warszawa
+	}
+	
+	title = BICE_romania.70.t
+	desc = BICE_romania.70.desc
+	picture = GFX_report_event_ger_conquers_warsaw
+	fire_only_once = yes
+	is_triggered_only = yes 
+	immediate = {
+		set_country_flag = Warsaw_falls
+	}
+
+	option = {
+		name = BICE_romania.70.a
+		set_temp_variable = { pop = 0.07 }
+		add_ruling_pop = yes 
+		ai_chance = { factor = 100 }
+	}		
+}
+#### The 'Neutral Countries' initiative fails
+country_event = {
+
+	id = BICE_romania.71
+
+	trigger = {
+		tag = ROM
+		date > 1939.10.20 #1939.10.30
+		has_war = no
+		country_exists = YUG
+		country_exists = GRE
+		country_exists = TUR
+		has_country_flag = Warsaw_falls
+		not = { has_country_flag = Neutral_Countries }
+		not = { date > 1940.1.1 }
+	}
+	
+	fire_only_once = yes
+	is_triggered_only = yes 
+	
+	title = BICE_romania.71.t
+	desc = BICE_romania.71.desc
+	picture = GFX_report_event_romanian_neutrality
+
+	option = {
+		name = BICE_romania.71.a
+		set_country_flag = Neutral_Countries
+		add_opinion_modifier = { target = GRE modifier = tiny_decrease }
+		add_opinion_modifier = { target = YUG modifier = tiny_decrease }
+		add_opinion_modifier = { target = TUR modifier = tiny_decrease }
+		ai_chance = { factor = 100 }
+	}
+}
+
+#### Last meeting of the 'Balkan Pact'
+country_event = {
+
+	id = BICE_romania.72
+
+	trigger = {
+		tag = ROM
+		exists = yes
+		date > 1940.1.1
+		#war = no
+		or = {
+			country_exists = YUG
+			country_exists = GRE
+			country_exists = TUR
+		}
+		#has_country_flag = Balkan_Pact
+		not = { has_country_flag = Last_Balkan_Pact }
+		#not = { year = 1941 }
+	}
+	is_triggered_only = yes
+	
+	title = BICE_romania.72.t
+	desc = BICE_romania.72.desc
+	picture = GFX_report_event_balkan_pact_gfxaddon
+
+	option = {
+		name = BICE_romania.72.a
+		set_country_flag = Last_Balkan_Pact
+		add_popularity = { ideology = neutrality popularity = -0.08 }
+		
+		add_opinion_modifier = { target = GRE modifier = small_decrease }
+		add_opinion_modifier = { target = YUG modifier = small_decrease }
+		add_opinion_modifier = { target = TUR modifier = small_decrease }
+		YUG = { country_event = { id = BICE_romania.73 days = 2 }}
+		GRE = { country_event = { id = BICE_romania.73 days = 2 }}
+		TUR = { country_event = { id = BICE_romania.73 days = 2 }}
+		ROM = { country_event = { id = BICE_romania.73 days = 2 }}
+		ai_chance = { factor = 100 }
+		
+	}
+	option = {
+		name = BICE_romania.72.b
+		set_country_flag = Last_Balkan_Pact
+		set_temp_variable = { pop = 0.02 }
+		add_ruling_pop = yes 
+		add_opinion_modifier = { target = GRE modifier = tiny_increase }
+		add_opinion_modifier = { target = YUG modifier = tiny_increase }
+		add_opinion_modifier = { target = TUR modifier = tiny_increase }
+		ai_chance = { factor = 0 }
+	}
+}
+### END OF THE BALKAN PACT - GRE-YUG-ROM-TUR ###
+country_event = {
+
+	id = BICE_romania.73
+	
+	is_triggered_only = yes #called by event BICE_romania.72
+	
+	title = BICE_romania.73.t
+	desc = BICE_romania.73.desc
+	picture = GFX_report_event_balkan_pact_gfxaddon
+
+	option = {
+		name = BICE_romania.73.a
+		set_global_flag = end_of_the_balkan_pact
+		trigger = {
+			OR = {
+				tag = ROM
+				tag = YUG
+				tag = GRE
+				tag = TUR
+			}
+		}
+		ROM = {
+			diplomatic_relation = { country = YUG relation = guarantee active = no }
+			diplomatic_relation = { country = GRE relation = guarantee active = no }
+			diplomatic_relation = { country = TUR relation = guarantee active = no }
+		}
+		YUG = {
+			diplomatic_relation = { country = ROM relation = guarantee active = no }
+			diplomatic_relation = { country = GRE relation = guarantee active = no }
+			diplomatic_relation = { country = TUR relation = guarantee active = no }
+		}
+		TUR = {
+			diplomatic_relation = { country = YUG relation = guarantee active = no }
+			diplomatic_relation = { country = GRE relation = guarantee active = no }
+			diplomatic_relation = { country = ROM relation = guarantee active = no }
+		}
+		GRE = {
+			diplomatic_relation = { country = YUG relation = guarantee active = no }
+			diplomatic_relation = { country = ROM relation = guarantee active = no }
+			diplomatic_relation = { country = TUR relation = guarantee active = no }
+		}
+		ai_chance = { factor = 100 }
+	}
+	option = {
+		name = BICE_romania.73.b
+		trigger = {
+			NOT = {
+				tag = ROM
+				tag = YUG
+				tag = GRE
+				tag = TUR
+			}
+		}
+	}
+}
+#### Giving up neutral status
+country_event = {
+
+	id = BICE_romania.74
+
+	trigger = {
+		tag = ROM
+		date > 1940.5.28
+		has_war = no
+		has_country_flag = Last_Balkan_Pact
+		not = { has_country_flag = Giving_up_neutral_status }
+		not = { date > 1941.1.1 }
+	}
+	
+	is_triggered_only = yes
+	
+	title = BICE_romania.74.t
+	desc = BICE_romania.74.desc
+	picture = GFX_report_event_romanian_neutrality_lost
+	
+	option = {
+		name = BICE_romania.74.a
+		set_country_flag = Giving_up_neutral_status
+		set_temp_variable = { pop = -0.02 }
+		add_ruling_pop = yes 
+		add_opinion_modifier = { target = GER modifier = medium_increase }
+		add_opinion_modifier = { target = ITA modifier = medium_increase }
+		add_timed_idea = {
+			idea = ROM_axis_trade_revenues
+			days = 1100
+		}
+		ai_chance = { factor = 90 }
+	}
+	option = {
+		name = BICE_romania.74.b
+		set_country_flag = Giving_up_neutral_status
+		set_temp_variable = { pop = 0.05 }
+		add_ruling_pop = yes 
+		add_opinion_modifier = { target = GER modifier = tiny_decrease }
+		add_opinion_modifier = { target = ITA modifier = tiny_decrease }
+		ai_chance = { factor = 10 }
+	}		
+}
+
+#### Storm clouds gather
+country_event = {
+
+	id = BICE_romania.75
+	
+	trigger = {
+		tag = ROM
+		exists = yes
+		date > 1940.6.2
+		has_war = no
+		has_country_flag = Giving_up_neutral_status
+		not = { has_country_flag = Storm_clouds_gather }
+		not = { date > 1941.1.1 }
+	}
+	is_triggered_only = yes
+	
+	title = BICE_romania.75.t
+	desc = BICE_romania.75.desc
+	picture = GFX_report_event_german_stormclouds_gfxaddon
+	
+	option = {
+		name = BICE_romania.75.a
+		set_country_flag = Storm_clouds_gather
+		set_country_flag = Storm_clouds_gather_OK
+		ai_chance = { factor = 90 }
+	}
+	option = {
+		name = BICE_romania.75.b
+		set_country_flag = Storm_clouds_gather
+		ai_chance = { factor = 10 }
+	}		
+}
+#### Days of national mourning
+country_event = {
+
+	id = BICE_romania.76
+	
+	trigger = {
+		tag = ROM
+		exists = yes
+		date > 1940.6.28
+		has_war = no
+		has_country_flag = bessarabia_ceded
+		not = { has_country_flag = Days_of_national_mourning }
+		not = { date > 1941.1.1 }
+	}
+	
+	is_triggered_only = yes
+	
+	title = BICE_romania.76.t
+	desc = BICE_romania.76.desc
+	picture = GFX_report_event_day_of_mourning_gfxaddon
+	
+	option = {
+		name = BICE_romania.76.a
+		set_country_flag = Days_of_national_mourning
+		add_timed_idea = {
+			idea = full_national_support
+			days = 90
+		}
+		ai_chance = { factor = 100 }
+	}		
+}
+
+#### New ambassador in Moscow
+country_event = {
+
+	id = BICE_romania.77
+	
+	trigger = {
+		tag = ROM
+		exists = yes
+		date > 1940.7.8
+		has_war = no
+		has_country_flag = Days_of_national_mourning
+		NOT = { has_country_flag = New_ambassador_in_Moscow }
+		NOT = { date > 1941.1.1 }
+	}
+	
+	is_triggered_only = yes
+	
+	title = BICE_romania.77.t
+	desc = BICE_romania.77.desc
+	picture = GFX_report_event_rom_new_ambassador_gfxaddon
+	
+	option = {
+		name = BICE_romania.77.a
+		set_country_flag = New_ambassador_in_Moscow
+		add_opinion_modifier = { target = GER modifier = tiny_decrease }
+		add_opinion_modifier = { target = SOV modifier = tiny_increase }
+		ai_chance = { factor = 100 }
+
+	}		
+}
+
+#### Pro-German Ion Gigurtu government
+country_event = {
+
+	id = BICE_romania.78
+	
+	trigger = {
+		original_tag = ROM
+		exists = yes
+		date > 1940.7.1 #1940.7.4
+		has_war = no
+		has_country_flag = Giving_up_neutral_status
+		NOT = { has_country_flag = pro_german_government_flag }
+		NOT = { date > 1941.1.1 }
+		if = {
+			limit = {
+				has_character = ROM_ion_antonescu
+				ROM_ion_antonescu = {
+					is_character_slot = head_of_state
+				}
+			}
+			NOT = { 
+				has_idea = ROM_ion_antonescu_head_of_state 
+			}
+		}
+	}
+	
+	is_triggered_only = yes
+	fire_only_once = yes
+	
+	title = BICE_romania.78.t
+	desc = BICE_romania.78.desc
+	picture = GFX_report_event_gigurtu_government_gfxaddon
+
+	option = {
+		name = BICE_romania.78.a
+		set_country_flag = pro_german_government_flag
+		if = {
+			limit = {
+				has_idea = ROM_german_price_hike
+			}
+			remove_ideas = ROM_german_price_hike
+		}
+		add_opinion_modifier = { target = GER modifier = tiny_increase }
+		add_opinion_modifier = { target = ENG modifier = small_decrease }
+		add_opinion_modifier = { target = FRA modifier = small_decrease }
+		ai_chance = { factor = 100 }
+		add_country_leader_role = { 
+			character = ROM_ion_gigurtu # optional if inside character scope 
+			promote_leader = yes 
+			country_leader = { 
+				ideology = absolutism 
+				expire = "1965.1.1.1" 
+				traits = { monarchist }
+			} 
+		}
+	}
+	option = {
+		name = BICE_romania.78.b
+	}
+}
+#### Magda Lupescu Leaves
+country_event = {
+
+	id = BICE_romania.79
+	
+	trigger = {
+		tag = ROM
+		exists = yes
+		date > 1940.7.1 #1940.7.4
+		has_war = no
+		has_country_flag = Giving_up_neutral_status
+		NOT = { has_country_flag = pro_german_government_flag }
+		#NOT = { date > 1941.1.1 }
+	}
+	
+	is_triggered_only = yes
+	
+	title = BICE_romania.79.t
+	desc = BICE_romania.79.desc
+	picture = GFX_report_event_magda_lupescu_gfxaddon
+
+	option = {
+		name = BICE_romania.79.a
+		
+	}
+}
+#Death of Miron Cristea
+news_event = {
+	id = BICE_romania.80
+	title = BICE_romania.80.t
+	desc = BICE_romania.80.desc
+	picture = GFX_news_event_miron_cristea
+	is_triggered_only = yes
+	
+	fire_only_once = yes
+	trigger = {
+		date > 1939.3.1
+		tag = ROM
+		has_country_leader = {
+			character = ROM_miron_cristea
+			ruling_only = yes
+		}
+	}
+
+	option = {
+		name = BICE_romania.80.a
+		ai_chance = {
+			base = 100
+		}
+		ROM_miron_cristea = { kill_character = yes }
+		set_country_flag = ROM_miron_cristea_dead
+		hidden_effect = { #Nomination of Armand Calinescu
+			country_event = { id = BICE_romania.31 days = 1 }
+		}
+	}
+}
+#### Suppression of the Legionary Movement
+country_event = {
+
+	id = BICE_romania.81
+	is_triggered_only = yes
+	
+	trigger = {
+		tag = ROM
+		date > 1938.11.30
+		has_war = no
+		has_character = ROM_carol_ii
+		has_idea = ROM_carol_ii_head_of_state
+		has_country_flag = Dissolution_of_political_parties
+		not = { has_country_flag = Suppression_of_the_Legionary_Movement }
+		not = { date > 1939.2.1 }
+	}
+	
+	title = BICE_romania.81.t
+	desc = BICE_romania.81.desc
+	picture = GFX_report_event_iron_guard_march
+
+	option = {
+		name = BICE_romania.81.a
+		set_country_flag = Suppression_of_the_Legionary_Movement
+		add_popularity = {
+			ideology = fascism
+			popularity = -0.06
+		}
+		ROM_iron_guard_medium_loyalty_decrease = yes
+		add_stability = -0.03
+		ai_chance = { factor = 100 }
+	}
+	option = {
+		name = BICE_romania.81.b
+		set_country_flag = Suppression_of_the_Legionary_Movement
+	}
+}
+#### Post-Bessarabia Abdication Crisis
+country_event = {
+
+	id = BICE_romania.82
+	
+	trigger = {
+		original_tag = ROM
+		exists = yes
+		has_war = no
+		has_country_flag = bessarabia_ceded
+		NOT = {
+			has_country_flag = iron_guard_destroyed_flag
+			has_country_flag = iron_guard_integrated_flag
+			has_government = fascism
+		}
+	}
+	immediate = { 
+		set_country_flag = impending_iron_guard_coup_flag
+		set_country_flag = ROM_abdication_crisis
+	}
+	
+	is_triggered_only = yes
+	fire_only_once = yes
+	
+	title = BICE_romania.82.t
+	desc = BICE_romania.82.desc
+	picture = GFX_report_event_ROM_iron_guard_gathering_huge
+
+	option = {
+		name = BICE_romania.82.a
+		activate_mission_tooltip = impending_iron_guard_coup
+		add_ideas = ROM_legionary_uprising
+	}
+}
+#### Appoint Antonescu as Prime Minister to salvage support?
+country_event = {
+
+	id = BICE_romania.83
+	
+	trigger = {
+		original_tag = ROM
+		exists = yes
+		has_war = no
+		has_country_flag = bessarabia_ceded
+		has_country_flag = ROM_abdication_crisis
+		has_country_flag = { #We've been in the abdication crisis for a bit
+			flag = ROM_abdication_crisis
+			days > 20
+		}
+		has_country_flag = impending_iron_guard_coup_flag
+		NOT = {
+			has_country_flag = iron_guard_destroyed_flag
+			has_country_flag = iron_guard_coup_flag
+			has_country_flag = iron_guard_integrated_flag
+		}
+		any_unit_leader = { has_trait = antonescu_red_dog }
+		
+	}
+	immediate = { 
+		set_country_flag = antonescu_relevant
+	}
+	
+	is_triggered_only = yes
+	fire_only_once = yes
+	
+	title = BICE_romania.83.t
+	desc = BICE_romania.83.desc
+	picture = GFX_report_event_antonescu
+
+	option = {
+		name = BICE_romania.83.a
+		ai_chance = {
+			base = 90
+			modifier = {
+				factor = 10
+				is_historical_focus_on = yes
+			}
+		}
+		add_country_leader_role = {
+			Character = ROM_ion_antonescu
+			promote_leader = yes
+			Country_leader = {
+		 		ideology = absolutism
+			  	expire = "1965.1.1.1"
+			  	traits = {
+					dictator
+					emergency_powers
+			  	}
+			}
+		}
+		add_advisor_role = {
+			Character = ROM_ion_antonescu
+			advisor = {
+			  	slot = head_of_state
+			  	idea_token = ROM_ion_antonescu_head_of_state
+			  	traits = {
+					
+			  	}
+			}
+		}
+		if = {
+			limit = { has_idea = ROM_1938_constitution }
+			remove_ideas = ROM_1938_constitution
+		}
+		ROM_iron_guard_medium_loyalty_increase = yes
+		add_days_mission_timeout = {
+			mission = impending_iron_guard_coup
+			days = 15
+		}
+		hidden_effect = {
+			random_list = {
+				seed = global.event_random
+				90 = { #He switches to the Legionaries
+					country_event = { id = BICE_romania.84 days = 2 random_days = 10 }
+					set_country_flag = antonescu_sides_with_legionaries
+				}
+				10 = {
+					#he stays loyal to the king
+				}
+			}
+		}	
+		activate_advisor = ROM_ion_antonescu_head_of_state
+	}
+	option = {
+		ai_chance = {
+			base = 10
+			modifier = {
+				factor = 0
+				is_historical_focus_on = yes
+			}
+		}
+		name = BICE_romania.83.b
+	}
+}
+#### Antonescu falls in with the Legionaries
+country_event = {
+
+	id = BICE_romania.84
+	
+	trigger = {
+		tag = ROM
+		exists = yes
+		has_war = no
+		has_country_flag = bessarabia_ceded
+		has_country_flag = impending_iron_guard_coup_flag
+		NOT = {
+			has_country_flag = iron_guard_destroyed_flag
+			has_country_flag = iron_guard_coup_flag
+			has_country_flag = iron_guard_integrated_flag
+		}
+		has_country_leader = {
+			character = ROM_ion_antonescu
+			ruling_only = yes
+		}
+	}
+	immediate = { 
+		
+	}
+	
+	is_triggered_only = yes
+	fire_only_once = yes
+	
+	title = BICE_romania.84.t
+	desc = BICE_romania.84.desc
+	picture = GFX_report_event_antonescu
+
+	option = {
+		name = BICE_romania.84.a
+		set_country_flag = carol_abdicates_flag
+		if = {
+			limit = {
+				has_government = monarchism
+				has_country_leader = {
+					character =  ROM_ion_antonescu
+					ruling_only = yes
+				}
+				has_country_leader_ideology = absolutism #if Antonescu is absolutist monarchist
+			}
+			remove_country_leader_role = {
+				character = ROM_ion_antonescu
+  				ideology = absolutism
+			}
+			add_country_leader_role = {
+				Character = ROM_ion_antonescu
+				promote_leader = yes
+				Country_leader = {
+		 			ideology = legionnairism
+				  	expire = "1965.1.1.1"
+				  	traits = {
+						dictator
+						emergency_powers
+				  	}
+				}
+			}
+		}
+		ROM_crown_council_high_loyalty_decrease = yes
+		add_days_mission_timeout = {
+			mission = impending_iron_guard_coup
+			days = -60
+		}
+		custom_effect_tooltip = ROM_force_abdication_tt
+	}
+	option = {
+		name = BICE_romania.84.b
+		if = {
+			limit = {
+				has_government = monarchism
+				has_country_leader = {
+					character =  ROM_ion_antonescu
+					ruling_only = yes
+				}
+				has_country_leader_ideology = absolutism #if Antonescu is absolutist monarchist
+			}
+			remove_country_leader_role = {
+				character = ROM_ion_antonescu
+  				ideology = absolutism
+			}
+			add_country_leader_role = {
+				Character = ROM_ion_antonescu
+				promote_leader = yes
+				Country_leader = {
+		 			ideology = legionnairism
+				  	expire = "1965.1.1.1"
+				  	traits = {
+						dictator
+						emergency_powers
+				  	}
+				}
+			}
+		}
+		ROM_crown_council_high_loyalty_decrease = yes
+		add_days_mission_timeout = {
+			mission = impending_iron_guard_coup
+			days = -60
+		}
+	}
+}
+#### Poland Releases Romania from Alliance obligations
+country_event = {
+
+	id = BICE_romania.85
+
+	timeout_days = 3
+	
+	trigger = {
+		OR = {
+			tag = ROM
+			tag = POL
+		}
+		POL = {
+			is_ai = yes
+		}
+		ROM = {
+			has_war = no
+		}
+	}
+	immediate = { 
+
+	}
+	
+	is_triggered_only = yes
+	fire_only_once = yes
+	
+	title = BICE_romania.85.t
+	desc = BICE_romania.85.desc
+	picture = GFX_report_event_romanian_polish_alliance_event
+
+	option = { #break guarantees
+		name = BICE_romania.85.a
+		ai_chance = {
+			base = 1
+			modifier = {
+				add = 100
+				is_historical_focus_on = yes
+			}
+		}
+		ROM = {
+			diplomatic_relation = { country = POL relation = guarantee active = no }
+		}
+		POL = {
+			diplomatic_relation = { country = ROM relation = guarantee active = no }
+		}
+	}
+
+	option = { #stand with poland
+		ai_chance = {
+			base = 1
+			modifier = {
+				factor = 0
+				is_historical_focus_on = yes
+			}
+		}
+		name = BICE_romania.85.b
+	}
+}
+#Legionary Movement Splits
+country_event = {
+	id = BICE_romania.86
+	title = BICE_romania.86.t
+	desc = BICE_romania.86.desc
+	picture = GFX_report_generic_protest 
+
+	trigger = {
+		original_tag = ROM
+		has_country_flag = iron_guard_leaders_executed_flag
+		NOT = {	has_country_flag = iron_guard_destroyed_flag }
+		NOT = { has_country_flag = iron_guard_integrated_flag }
+		OR = {
+			fascism < 0.15
+			fascism > 0.35
+		}
+	}
+	is_triggered_only = yes
+
+	fire_only_once = yes
+	
+	option = {
+		name = BICE_romania.86.a
+
+		add_popularity = { ideology = fascism popularity = -0.10 }
+
+		ROM_iron_guard_high_loyalty_increase = yes
+
+		add_political_power = 50
+		add_popularity = {
+			ideology = monarchism
+			popularity = 0.05
+		}
+		set_country_flag = iron_guard_legalized_flag
+		clr_country_flag = party_banned@fascism
+	}
+	option = {
+		name = BICE_romania.86.b
+		add_popularity = { ideology = fascism popularity = -0.10 }
+	}
+}
+
+########    ###     ######  ######## ####  #######  ##    ##    ######## ##     ## ######## ##    ## ########  ######  
+##         ## ##   ##    ##    ##     ##  ##     ## ###   ##    ##       ##     ## ##       ###   ##    ##    ##    ## 
+##        ##   ##  ##          ##     ##  ##     ## ####  ##    ##       ##     ## ##       ####  ##    ##    ##       
+######   ##     ## ##          ##     ##  ##     ## ## ## ##    ######   ##     ## ######   ## ## ##    ##     ######  
+##       ######### ##          ##     ##  ##     ## ##  ####    ##        ##   ##  ##       ##  ####    ##          ## 
+##       ##     ## ##    ##    ##     ##  ##     ## ##   ###    ##         ## ##   ##       ##   ###    ##    ##    ## 
+##       ##     ##  ######     ##    ####  #######  ##    ##    ########    ###    ######## ##    ##    ##     ######  
+#Faction Events Dispatcher
+country_event = {
+	id = BICE_romania_factions.01
+	hidden = yes
+	is_triggered_only = yes
+	trigger = {
+	}
+	immediate = {
+		#Iron Guard Conspiring
+		random_list = {
+			seed = global.event_random
+			10 = {
+				modifier = {
+					add = 30
+					NOT = { has_country_flag = iron_guard_dissident_event_flag }
+				}
+				modifier = {
+					add = 30
+					has_country_flag = iron_guard_leaders_executed_flag
+				}
+				modifier = {
+					add = 10
+					fascism > 0.25
+					NOT = { has_government = fascism }
+				}
+				modifier = {
+					add = 20
+					fascism > 0.35
+					NOT = { has_government = fascism }
+				}
+				modifier = {
+					add = 30
+					fascism > 0.45
+					NOT = { has_government = fascism }
+				}
+				modifier = {
+					add = 10
+					has_stability < 0.5
+				}
+				modifier = {
+					add = 10
+					has_stability < 0.25
+				}
+				modifier = {
+					add = 10
+					has_stability < 0.15
+				}
+				modifier = {
+					add = -30
+					check_variable = { ROM_iron_guard_loyalty = 75 compare = greater_than_or_equals }	
+				}
+				modifier = {
+					add = -20
+					check_variable = { ROM_iron_guard_loyalty = 50 compare = greater_than_or_equals }	
+				}
+				modifier = {
+					add = -10
+					check_variable = { ROM_iron_guard_loyalty = 25 compare = greater_than_or_equals }	
+				}
+				modifier = {
+					add = -30
+					has_country_flag = { flag = iron_guard_dissident_event_flag value > 2 }
+				}
+				modifier = {
+					add = -10
+					has_country_flag = ROM_iron_guard_repressed_flag
+				}
+				modifier = {
+					add = -20
+					has_country_flag = ROM_iron_guard_leaders_imprisoned_flag
+				}
+				modifier = {
+					add = -20
+					has_country_flag = ROM_raided_iron_guard_supporters_flag
+				}
+				modifier = {
+					add = -15
+					OR = {
+						ROM_corneliu_codreanu = { is_hired = yes }
+						has_idea = ROM_horia_sima_influence_minister
+					}
+				}
+				ROM = {
+					country_event = { id = BICE_romania_factions.06 days = 15 random_days = 10 }
+				}
+			}
+			90 = {
+				#Do nothing
+			}
+		}
+		#Iron Guard-Backed Worker Strike
+		random_list = {
+			seed = global.event_random
+			10 = {
+				modifier = {
+					add = 30
+					NOT = { has_country_flag = iron_guard_dissident_event_flag }
+				}
+				modifier = {
+					add = 30
+					has_country_flag = iron_guard_leaders_executed_flag
+				}
+				modifier = {
+					add = 15
+					fascism > 0.20
+				}
+				modifier = {
+					add = 20
+					fascism > 0.30
+				}
+				modifier = {
+					add = 30
+					fascism > 0.40
+				}
+				modifier = {
+					add = 10
+					has_stability < 0.5
+				}
+				modifier = {
+					add = 10
+					has_stability < 0.25
+				}
+				modifier = {
+					add = 10
+					has_stability < 0.15
+				}
+				modifier = {
+					add = -30
+					check_variable = { ROM_iron_guard_loyalty = 75 compare = greater_than_or_equals }	
+				}
+				modifier = {
+					add = -20
+					check_variable = { ROM_iron_guard_loyalty = 50 compare = greater_than_or_equals }	
+				}
+				modifier = {
+					add = -10
+					check_variable = { ROM_iron_guard_loyalty = 25 compare = greater_than_or_equals }	
+				}
+				modifier = {
+					add = -10
+					has_completed_focus = ROM_back_legionary_businesses
+				}
+				
+				modifier = {
+					add = -30
+					has_country_flag = { flag = iron_guard_dissident_event_flag value > 2 }
+				}
+				modifier = {
+					add = -10
+					OR = {
+						has_completed_focus = ROM_guarantee_business_investments
+					}
+				}
+				modifier = {
+					add = -10
+					has_country_flag = ROM_iron_guard_repressed_flag
+				}
+				modifier = {
+					add = -20
+					has_country_flag = ROM_iron_guard_leaders_imprisoned_flag
+				}
+				modifier = {
+					add = -20
+					has_country_flag = ROM_raided_iron_guard_supporters_flag
+				}
+				
+				country_event = { id = BICE_romania_factions.13 days = 15 random_days = 10 } 
+			} 
+			90 = { 		
+				#Do nothing
+			}
+		}
+		#Iron Guard becoming popular among rural peasants
+		random_list = {
+			seed = global.event_random
+			10 = {
+				modifier = {
+					add = 30
+					NOT = { has_country_flag = iron_guard_dissident_event_flag }
+				}
+				modifier = {
+					add = 30
+					NOT = { has_country_flag = iron_guard_leaders_executed_flag }
+				}
+				modifier = {
+					add = 20
+					fascism > 0.20
+				}
+				modifier = {
+					add = 20
+					fascism > 0.30
+				}
+				modifier = {
+					add = 30
+					fascism > 0.40
+				}
+				modifier = {
+					add = 10
+					has_stability < 0.5
+				}
+				modifier = {
+					add = 10
+					has_stability < 0.25
+				}
+				modifier = {
+					add = 10
+					has_stability < 0.15
+				}
+				modifier = {
+					add = 20
+					check_variable = { ROM_iron_guard_loyalty = 40 compare = less_than_or_equals }	
+				}
+				modifier = {
+					add = 30
+					check_variable = { ROM_iron_guard_loyalty = 25 compare = less_than_or_equals }	
+				}
+				modifier = {
+					add = -30
+					check_variable = { ROM_iron_guard_loyalty = 60 compare = greater_than_or_equals }	
+				}
+				modifier = {
+					add = -30
+					has_country_flag = { flag = iron_guard_dissident_event_flag value > 2 }
+				}
+				modifier = {
+					add = -10
+					OR = {
+						has_completed_focus = ROM_nationalist_government
+						has_completed_focus = ROM_rural_outreach
+						has_completed_focus = ROM_student_groups
+					}
+				}
+				modifier = {
+					add = -10
+					has_country_flag = ROM_iron_guard_repressed_flag
+				}
+				modifier = {
+					add = -20
+					has_country_flag = ROM_iron_guard_leaders_imprisoned_flag
+				}
+				modifier = {
+					add = -20
+					has_country_flag = ROM_raided_iron_guard_supporters_flag
+				}
+				
+				country_event = { id = BICE_romania_factions.15 days = 15 random_days = 10 } 
+			} 
+			90 = { 		
+				#Do nothing
+			}
+		}
+	}
+}
+
+#IRON GUARD COUP DISPATCHER EVENT
+country_event = {
+	id = BICE_romania_factions.02
+
+	hidden = yes
+
+	is_triggered_only = yes
+
+	immediate = {
+		random_list = {
+			seed = global.event_random
+			10 = {
+				modifier = {
+					add = 30
+					has_country_flag = iron_guard_dissident_event_flag
+				}
+				modifier = {
+					add = 30
+					has_country_flag = { flag = iron_guard_dissident_event_flag value > 1 }
+				}
+				modifier = {
+					add = 40
+					has_country_flag = { flag = iron_guard_dissident_event_flag value > 2 }
+				}
+				modifier = {
+					add = 80
+					has_country_flag = { flag = iron_guard_dissident_event_flag value > 3 }
+				}
+				modifier = {
+					add = 20
+					fascism > 0.15
+				}
+				modifier = {
+					add = 30
+					fascism > 0.25
+				}
+				modifier = {
+					add = 40
+					fascism > 0.35
+				}
+				modifier = {
+					add = 20
+					has_country_flag = iron_guard_leaders_executed_flag
+				}
+				modifier = {
+					add = 20
+					has_stability < 0.5
+				}
+				modifier = {
+					add = 25
+					has_stability < 0.25
+				}
+				modifier = {
+					add = 30
+					has_stability < 0.15
+				}
+				modifier = {
+					add = -30
+					check_variable = { ROM_iron_guard_loyalty = 75 compare = greater_than_or_equals }	
+				}
+				modifier = {
+					add = -15
+					check_variable = { ROM_iron_guard_loyalty = 50 compare = greater_than_or_equals }	
+				}
+				modifier = {
+					add = -5
+					check_variable = { ROM_iron_guard_loyalty = 25 compare = greater_than_or_equals }	
+				}			
+				modifier = {
+					add = -10
+					OR = {
+						has_completed_focus = ROM_nationalist_government
+						has_completed_focus = ROM_appoint_captain_minister
+					}
+				}
+				modifier = {
+					add = -10
+					has_country_flag = ROM_iron_guard_repressed_flag
+				}
+				modifier = {
+					add = -10
+					has_country_flag = ROM_disposed_of_iron_guard_generals_flag
+				}
+				modifier = {
+					add = -20
+					has_country_flag = ROM_iron_guard_leaders_imprisoned_flag
+				}
+				modifier = {
+					add = -20
+					has_country_flag = ROM_raided_iron_guard_supporters_flag
+				}
+				country_event = { id = BICE_romania_factions.12 days = 15 random_days = 10 } 
+			} 
+			90 = { 		
+				#Do nothing
+			}
+		}
+	}	
+}
+
+#National Legionary State Excesses Dispatcher
+country_event = {
+	id = BICE_romania_factions.16
+	hidden = yes
+	is_triggered_only = yes
+	trigger = {
+		original_tag = ROM
+		ROM_in_iron_guard_chaos_period = yes
+	}
+	immediate = {
+		random_list = {
+			seed = global.event_random
+			50 = { #Increase excesses
+				modifier = {
+					add = 10
+					check_variable = { ROM_iron_guard_loyalty = 25 compare = less_than_or_equals }
+				}
+				modifier = {
+					add = 10
+					check_variable = { ROM_iron_guard_loyalty = 50 compare = less_than }
+				}
+				modifier = {
+					add = -10
+					check_variable = { ROM_iron_guard_loyalty = 50 compare = greater_than_or_equals }
+				}
+				modifier = {
+					add = -10
+					check_variable = { ROM_iron_guard_loyalty = 75 compare = greater_than_or_equals }
+				}
+				modifier = {
+					add = -10
+					#Iron Guard has been repressed recently
+					has_country_flag = { flag = ROM_iron_guard_repressed_flag days < 20 }
+				}
+				modifier = {
+					add = -10
+					#Iron Guard has been raided recently
+					has_country_flag = { flag = ROM_raided_iron_guard_supporters_flag days < 20 }
+				}
+				modifier = {
+					add = -10
+					#Iron Guard has been guided in governance recently
+					has_country_flag = { flag = iron_guard_joint_act_flag days < 20 }
+				}
+				ROM_increase_iron_guard_excesses = yes
+				set_country_flag = iron_guard_dissident_event_flag #This faction has triggered a dissident event
+				set_country_flag = iron_guard_dissident_event_not_addressed_flag
+				random_list = {
+					seed = global.event_random
+					50 = {
+						country_event = BICE_romania_factions.13
+					}
+					50 = {
+						#Do nothing
+					}
+				}
+			}
+			50 = { 
+				#Do nothing
+			}
+		}
+	}
+}
+
+# Fascism Imprison Leaders - Success
+country_event = {
+	id = BICE_romania_factions.03
+	title = BICE_romania_factions.03.t
+	desc = BICE_romania_factions.03.desc
+	picture = GFX_report_event_arrest_1_gfxnews 
+
+	is_triggered_only = yes
+	
+	option = {
+		name = BICE_romania_factions.03.a
+		ROM_iron_guard_medium_loyalty_decrease = yes
+
+		add_popularity = {
+			ideology = fascism
+			popularity = -0.05
+		}
+
+		add_political_power = 50
+
+		#Add days to Iron Guard Coup timer if active
+		if = {
+			limit = {
+				has_active_mission = impending_iron_guard_coup
+			}
+			add_days_mission_timeout = {
+				mission = impending_iron_guard_coup
+				days = 30
+			}
+		}
+		unlock_decision_tooltip = ROM_execute_iron_guard_leaders
+	}
+}
+# Fascism Imprison Leaders - Failure
+country_event = {
+	id = BICE_romania_factions.04
+	title = BICE_romania_factions.04.t
+	desc = BICE_romania_factions.04.desc
+	picture = GFX_news_event_generic_riot 
+
+	is_triggered_only = yes
+	
+	option = {
+		name = BICE_romania_factions.04.a
+
+		ROM_iron_guard_medium_loyalty_decrease = yes
+		add_popularity = { ideology = fascism popularity = -0.1 }
+
+		#Add days to Iron Guard Coup timer if active
+		if = {
+			limit = {
+				has_active_mission = impending_iron_guard_coup
+			}
+			add_days_mission_timeout = {
+				mission = impending_iron_guard_coup
+				days = 15
+			}
+		}
+	}
+}
+
+# Fascism Imprison Leaders - Backfired
+country_event = {
+	id = BICE_romania_factions.05
+	title = BICE_romania_factions.05.t
+	desc = BICE_romania_factions.05.desc
+	picture = GFX_report_event_generic_riot
+
+	is_triggered_only = yes
+	
+	option = {
+		name = BICE_romania_factions.05.a
+
+		ROM_iron_guard_low_loyalty_decrease = yes
+		
+		add_stability = -0.1
+
+		#Add days to Fascist Coup timer if active
+		if = {
+			limit = {
+				has_active_mission = impending_iron_guard_coup
+			}
+			add_days_mission_timeout = {
+				mission = impending_iron_guard_coup
+				days = 7
+			}
+		}
+	}
+}
+
+#Dissident Event Iron Guard - Iron Guard conspiring
+country_event = {
+	id = BICE_romania_factions.06
+	title = BICE_romania_factions.06.t
+	desc = BICE_romania_factions.06.desc
+	picture = GFX_report_event_iron_guard_march
+
+	is_triggered_only = yes
+
+	trigger = {
+		original_tag = ROM
+		NOT = {	has_country_flag = iron_guard_destroyed_flag } 								#Fascists is not destroyed
+		has_country_flag = party_banned@fascism								    			#Fascism is not legalized
+		if = {
+			limit = {
+				ROM_in_iron_guard_chaos_period = no
+			}
+			ROM_iron_guard_not_triggered_dissident_event_recently_long = yes
+			ROM_iron_guard_not_repressed_recently_long = yes
+		}
+		else_if = {
+			limit = {
+				ROM_in_iron_guard_chaos_period = yes
+			}
+			ROM_iron_guard_not_repressed_recently_short = yes
+			ROM_iron_guard_not_triggered_dissident_event_recently_short = yes
+		}
+		NOT = { has_active_mission = impending_iron_guard_coup }								#Iron Guard coup mission is not ongoing
+		NOT = { has_country_flag = iron_guard_coup_flag }										#Iron Guard CW has not started
+		fascism > 0.05																		#Iron Guard has some popularity
+		check_variable = { ROM_iron_guard_loyalty = 50 compare = less_than_or_equals }		#Iron Guard has low loyalty
+	}
+
+	immediate = {
+		hidden_effect = {
+			if = {
+				limit = {
+					has_country_flag = iron_guard_dissident_event_flag
+				}
+				modify_country_flag = { flag = iron_guard_dissident_event_flag value = 1 }
+			}
+			else = {
+				set_country_flag = iron_guard_dissident_event_flag
+			}
+			set_country_flag = iron_guard_dissident_event_not_addressed_flag
+		}
+		random_unit_leader = {
+			limit = {
+				NOT = { has_trait = trait_crown_loyalist }
+			}
+			add_unit_leader_trait = trait_fascist_sympathizer
+		}
+	}
+	option = { #Investigate further
+		name = BICE_romania_factions.06.a
+
+		ai_chance = {
+			base = 5
+			modifier = {
+				factor = 5
+				is_historical_focus_on = yes
+			}
+		}
+
+		add_war_support = -0.05
+		add_political_power = -50
+		country_event = { id = BICE_romania_factions.07 days = 30 random_days = 15 } #Event leading to discovering the conspirators and removing a Fascist general/adv
+
+		if = {
+			limit = {
+				NOT = { has_decision = repress_iron_guard }
+			}
+			unlock_decision_tooltip = repress_iron_guard
+		}
+		custom_effect_tooltip = fascism_dissidents_tt
+	}
+
+	option = { #Do nothing
+		name = BICE_romania_factions.06.b
+
+		ai_chance = {
+			base = 1
+			modifier = {
+				factor = 0
+				is_historical_focus_on = yes #Don't want a CW on historical
+			}
+		}
+		if = {
+			limit = {
+				NOT = { has_decision = repress_iron_guard }
+			}
+			unlock_decision_tooltip = repress_iron_guard
+		}
+		custom_effect_tooltip = fascism_dissidents_tt
+	}		
+}
+#Dissident Event Iron Guard - Conspirators exposed
+country_event = {
+	id = BICE_romania_factions.07
+	title = BICE_romania_factions.07.t
+	desc = BICE_romania_factions.07.desc
+	picture = GFX_report_event_arrest_1_gfxnews
+
+	is_triggered_only = yes
+
+	immediate = {
+		hidden_effect = {
+			if = {
+				limit = {
+					has_country_flag = fascist_conspirators_exposed_flag
+				}
+				modify_country_flag = { flag = fascist_conspirators_exposed_flag value = 1 }
+			}
+			else = {
+				set_country_flag = fascist_conspirators_exposed_flag
+			}
+			random_unit_leader = {
+				limit = {
+					has_trait = trait_fascist_sympathizer
+					NOT = { has_trait = antonescu_red_dog }
+				}
+				set_unit_leader_flag = fascist_conspirator_flag
+				ROOT = { set_variable = { fascist_conspirator = PREV } }
+			}
+		}
+	}
+	
+	option = { #Imprison Conspirator
+		name = BICE_romania_factions.07.a
+
+		#A general is removed
+		random_unit_leader = {
+			limit = {
+				has_unit_leader_flag = fascist_conspirator_flag
+			}
+			retire = yes
+		}
+		custom_effect_tooltip = exposed_fascist_conspirator_tt
+	}
+
+	option = { #Do nothing
+		name = BICE_romania_factions.07.b
+
+		hidden_effect = {
+			#A general is removed
+			random_unit_leader = {
+				limit = {
+					has_unit_leader_flag = fascist_conspirator_flag
+				}
+				clr_unit_leader_flag = fascist_conspirator_flag
+			}
+		}
+	}
+}
+
+# Fascism Repression - Success
+country_event = {
+	id = BICE_romania_factions.08
+	title = BICE_romania_factions.08.t
+	desc = BICE_romania_factions.08.desc
+	picture = GFX_report_event_arrest_1_gfxnews 
+
+	is_triggered_only = yes
+	
+	option = {
+		name = BICE_romania_factions.08.a
+
+		ROM_iron_guard_low_loyalty_decrease = yes
+		add_popularity = { ideology = fascism popularity = -0.05 }
+		add_stability = -0.05
+
+		#Add days to Fascist Coup timer if active
+		if = {
+			limit = {
+				has_active_mission = impending_iron_guard_coup
+			}
+			add_days_mission_timeout = {
+				mission = impending_iron_guard_coup
+				days = 30
+			}
+		}
+		ROM_decrease_iron_guard_excesses = yes
+	}
+}
+# Fascism Repression - Extra Success
+country_event = {
+	id = BICE_romania_factions.09
+	title = BICE_romania_factions.09.t
+	desc = BICE_romania_factions.09.desc
+	picture = GFX_report_event_arrest_1_gfxnews  
+
+	is_triggered_only = yes
+	
+	option = {
+		name = BICE_romania_factions.09.a
+
+		ROM_iron_guard_medium_loyalty_decrease = yes
+		add_popularity = { ideology = fascism popularity = -0.08 }
+
+		add_stability = -0.05
+		add_political_power = 50
+
+		#Add days to Fascist Coup timer if active
+		if = {
+			limit = {
+				has_active_mission = impending_iron_guard_coup
+			}
+			add_days_mission_timeout = {
+				mission = impending_iron_guard_coup
+				days = 30
+			}
+		}
+		ROM_decrease_iron_guard_excesses = yes
+	}
+}
+# Fascism Repression - Failure
+country_event = {
+	id = BICE_romania_factions.10
+	title = BICE_romania_factions.10.t
+	desc = BICE_romania_factions.10.desc
+	picture = GFX_report_event_riot_1
+
+	is_triggered_only = yes
+	
+	option = {
+		name = BICE_romania_factions.10.a
+
+		ROM_iron_guard_medium_loyalty_decrease = yes
+
+		add_stability = -0.1
+	}
+}
+# Destroyed Faction - Iron Guard
+country_event = {
+	id = BICE_romania_factions.11
+	title = BICE_romania_factions.11.t
+	desc = BICE_romania_factions.11.desc
+	picture = GFX_news_event_arrest
+
+	is_triggered_only = yes
+	
+	option = {
+		name = BICE_romania_factions.11.a
+
+		add_political_power = 120
+		add_stability = 0.1
+	}
+}
+#Dissident Event Iron Guard - Impending coup
+country_event = {
+	id = BICE_romania_factions.12
+	title = BICE_romania_factions.12.t
+	desc = BICE_romania_factions.12.desc
+	picture = GFX_report_event_military_planning_1
+
+	is_triggered_only = yes
+
+	trigger = {
+		tag = ROM
+		NOT = {	has_country_flag = iron_guard_destroyed_flag }
+		NOT = {	has_country_flag = iron_guard_legalized_flag } 
+		if = {
+			limit = {
+				ROM_in_iron_guard_chaos_period = no
+			}
+			ROM_iron_guard_not_repressed_recently_long = yes
+			ROM_iron_guard_not_triggered_dissident_event_recently_short = yes #stop coup from happening same day as another dissident event
+		}
+		else_if = {
+			limit = {
+				ROM_in_iron_guard_chaos_period = yes
+			}
+			ROM_iron_guard_not_repressed_recently_short = yes
+		}
+		NOT = { has_active_mission = impending_iron_guard_coup }								#Iron Guard coup mission is not ongoing
+		NOT = { has_country_flag = iron_guard_coup_flag }										#Iron Guard CW has not started
+		fascism > 0.05																		#Iron Guard has some popularity
+		check_variable = { ROM_iron_guard_loyalty = 50 compare = less_than_or_equals }		#Iron Guard have low loyalty
+	}
+
+	immediate = {
+		hidden_effect = {
+			set_country_flag = impending_iron_guard_coup_flag
+		}
+	}
+	
+	option = {
+		name = BICE_romania_factions.12.a
+
+		effect_tooltip = {
+			activate_mission = impending_iron_guard_coup
+		}
+	}		
+}
+#Dissident Event Iron Guard-Backed Worker Strike
+country_event = {
+	id = BICE_romania_factions.13
+	title = BICE_romania_factions.13.t
+	desc = BICE_romania_factions.13.desc
+	picture = GFX_report_event_industrial_worker_strike_gfxaddon
+
+	is_triggered_only = yes
+
+	trigger = {
+		original_tag = ROM
+		NOT = {	has_country_flag = iron_guard_destroyed_flag }
+		NOT = { has_country_flag = iron_guard_legalized_flag }
+		fascism > 0.05
+		check_variable = { ROM_iron_guard_loyalty = 50 compare = less_than_or_equals }
+		if = {
+			limit = {
+				ROM_in_iron_guard_chaos_period = no
+			}
+			ROM_iron_guard_not_triggered_dissident_event_recently_long = yes
+			ROM_iron_guard_not_repressed_recently_long = yes
+		}
+		else_if = {
+			limit = {
+				ROM_in_iron_guard_chaos_period = yes
+			}
+			ROM_iron_guard_not_repressed_recently_short = yes
+			ROM_iron_guard_not_triggered_dissident_event_recently_short = yes
+		}
+	}
+
+	immediate = {
+		set_country_flag = iron_guard_dissident_event_flag
+		set_country_flag = iron_guard_dissident_event_not_addressed_flag
+	}
+	
+	option = { #Do not employ violence
+		name = BICE_romania_factions.13.a
+
+		ai_chance = {
+			base = 5
+			modifier = {
+				factor = 5
+				is_historical_focus_on = yes
+			}
+		}
+
+		add_popularity = { ideology = fascism popularity = 0.06 }
+		add_timed_idea = { idea = fascist_worker_strikes days = 120 }
+
+		if = {
+			limit = {
+				NOT = { has_decision = repress_iron_guard }
+			}
+			unlock_decision_tooltip = repress_iron_guard
+		}
+	}
+	option = { #Employ violence
+		name = BICE_romania_factions.13.b
+
+		add_popularity = { ideology = fascism popularity = 0.03 }
+		add_stability = -0.05
+		add_timed_idea = { idea = fascist_worker_strikes days = 15 }
+
+		custom_effect_tooltip = fascism_strikes_no_violence_tt
+
+		country_event = { id = BICE_romania_factions.14 hours = 8 random_hours = 4 }
+
+		hidden_effect = {
+			random_list = {
+				20 = {
+					random_owned_state = {
+						limit = {
+							industrial_complex > 0
+						}
+						set_state_flag = { flag = damaged_civ_factory_flag value = 1 }
+						ROOT = { set_variable = { damaged_civs_state = PREV } }
+					}
+				}
+				20 = {
+					random_owned_state = {
+						limit = {
+							industrial_complex > 1
+						}
+						set_state_flag = { flag = damaged_civ_factory_flag value = 2 }
+						ROOT = { set_variable = { damaged_civs_state = PREV } }
+					}
+				}
+				20 = {
+					random_owned_state = {
+						limit = {
+							industrial_complex > 2
+						}
+						set_state_flag = { flag = damaged_civ_factory_flag value = 3 }
+						ROOT = { set_variable = { damaged_civs_state = PREV } }
+					}
+				}
+			}
+			if = {
+				limit = {
+					communism > 0.3
+				}
+				if = {
+					limit = {
+						any_owned_state = {
+							arms_factory > 1
+						}
+					}
+					random_owned_state = {
+						limit = {
+							arms_factory > 1
+						}
+						set_state_flag = { flag = damaged_military_factory_flag value = 2 }
+						ROOT = { set_variable = { damaged_mils_state = PREV } }
+					}
+				}
+				else = {
+					random_owned_state = {
+						limit = {
+							arms_factory > 0
+						}
+						set_state_flag = { flag = damaged_military_factory_flag value = 1 }
+						ROOT = { set_variable = { damaged_mils_state = PREV } }
+					}
+				}
+			}
+			if = {
+				limit = {
+					fascism > 0.40
+				}
+				random_owned_state = {
+					limit = {
+						OR = {
+							has_state_flag = damaged_civ_factory_flag
+							has_state_flag = damaged_military_factory_flag
+						}
+					}
+					set_state_flag = damaged_infrastructre_flag
+					ROOT = { set_variable = { damaged_infrastructure_state = PREV } }
+				}
+			}
+		}
+		
+		if = {
+			limit = {
+				NOT = { has_decision = repress_iron_guard }
+			}
+			unlock_decision_tooltip = repress_iron_guard
+		}
+	}
+}
+#Dissident Event Iron Guard - Workers Strikes Outcome
+country_event = {
+	id = BICE_romania_factions.14
+	title = BICE_romania_factions.14.t
+	desc = BICE_romania_factions.14.desc
+	picture = GFX_report_event_generic_riot
+
+	is_triggered_only = yes
+
+	immediate = {
+		hidden_effect = {
+			random_owned_state = {
+				limit = {
+					has_state_flag = damaged_civ_factory_flag
+				}
+				if = {
+					limit = {
+						has_state_flag = { flag = damaged_civ_factory_flag value = 1 }
+					}
+					damage_building = {
+						type = industrial_complex
+						damage = 1
+					}
+				}
+				else_if = {
+					limit = {
+						has_state_flag = { flag = damaged_civ_factory_flag value = 2 }
+					}
+					damage_building = {
+						type = industrial_complex
+						damage = 1
+					}
+					damage_building = {
+						type = industrial_complex
+						damage = 1
+					}
+				}
+				else = {
+					damage_building = {
+						type = industrial_complex
+						damage = 1
+					}
+					damage_building = {
+						type = industrial_complex
+						damage = 1
+					}
+					damage_building = {
+						type = industrial_complex
+						damage = 1
+					}
+				}
+			}
+			
+			if = {
+				limit = {
+					any_owned_state = {
+						has_state_flag = { flag = damaged_military_factory_flag value = 1 }
+					}
+				}
+				random_owned_state = {
+					limit = {
+						has_state_flag = damaged_military_factory_flag
+					}
+					damage_building = {
+						type = arms_factory
+						damage = 1
+					}
+				}
+			}
+			else_if = {
+				limit = {
+					any_owned_state = {
+						has_state_flag = { flag = damaged_military_factory_flag value = 2 }
+					}
+				}
+				random_owned_state = {
+					limit = {
+						has_state_flag = damaged_military_factory_flag
+					}
+					damage_building = {
+						type = arms_factory
+						damage = 0.75
+					}
+					damage_building = {
+						type = arms_factory
+						damage = 0.5
+					}
+				}
+			}
+			if = {
+				limit = {
+					any_owned_state = {
+						has_state_flag = damaged_infrastructre_flag
+					}
+				}
+				random_owned_state = {
+					limit = {
+						has_state_flag = damaged_infrastructre_flag
+					}
+					damage_building = {
+						type = infrastructure
+						damage = 2
+					}
+				}
+			}
+		}
+	}
+
+	option = {
+		name = BICE_romania_factions.14.a
+
+		effect_tooltip = {
+			random_owned_state = {
+				limit = {
+					has_state_flag = damaged_civ_factory_flag
+				}
+				if = {
+					limit = {
+						has_state_flag = { flag = damaged_civ_factory_flag value = 1 }
+					}
+					damage_building = {
+						type = industrial_complex
+						damage = 1
+					}
+				}
+				else_if = {
+					limit = {
+						has_state_flag = { flag = damaged_civ_factory_flag value = 2 }
+					}
+					damage_building = {
+						type = industrial_complex
+						damage = 1
+					}
+					damage_building = {
+						type = industrial_complex
+						damage = 1
+					}
+				}
+				else = {
+					damage_building = {
+						type = industrial_complex
+						damage = 1
+					}
+					damage_building = {
+						type = industrial_complex
+						damage = 1
+					}
+					damage_building = {
+						type = industrial_complex
+						damage = 1
+					}
+				}
+			}
+			
+			if = {
+				limit = {
+					any_owned_state = {
+						has_state_flag = { flag = military_factory_damaged_flag value = 1 }
+					}
+				}
+				random_owned_state = {
+					limit = {
+						has_state_flag = military_factory_damaged_flag
+					}
+					damage_building = {
+						type = arms_factory
+						damage = 1
+					}
+				}
+			}
+			else_if = {
+				limit = {
+					any_owned_state = {
+						has_state_flag = { flag = military_factory_damaged_flag value = 2 }
+					}
+				}
+				random_owned_state = {
+					limit = {
+						has_state_flag = military_factory_damaged_flag
+					}
+					damage_building = {
+						type = arms_factory
+						damage = 0.75
+					}
+					damage_building = {
+						type = arms_factory
+						damage = 0.5
+					}
+				}
+			}
+			if = {
+				limit = {
+					any_owned_state = {
+						has_state_flag = damaged_infrastructre_flag
+					}
+				}
+				random_owned_state = {
+					limit = {
+						has_state_flag = damaged_infrastructre_flag
+					}
+					damage_building = {
+						type = infrastructure
+						damage = 2
+					}
+				}
+			}
+		}
+	}
+}
+#Dissident Event Iron Guard Support Rising in the Countryside
+country_event = {
+	id = BICE_romania_factions.15
+	title = BICE_romania_factions.15.t
+	desc = BICE_romania_factions.15.desc
+	picture = GFX_report_event_farmer_strike
+
+	is_triggered_only = yes
+
+	trigger = {
+		original_tag = ROM
+		NOT = {	has_country_flag = iron_guard_destroyed_flag }
+		NOT = { has_country_flag = fascismlegalized_flag }
+		fascism > 0.05
+		check_variable = { ROM_iron_guard_loyalty = 50 compare = less_than_or_equals }
+		if = {
+			limit = {
+				ROM_in_iron_guard_chaos_period = no
+			}
+			ROM_iron_guard_not_triggered_dissident_event_recently_long = yes
+			ROM_iron_guard_not_repressed_recently_long = yes
+		}
+		else_if = {
+			limit = {
+				ROM_in_iron_guard_chaos_period = yes
+			}
+			ROM_iron_guard_not_repressed_recently_short = yes
+			ROM_iron_guard_not_triggered_dissident_event_recently_short = yes
+		}
+	}
+	
+	immediate = {
+		hidden_effect = {
+			if = {
+				limit = { has_country_flag = iron_guard_dissident_event_flag }
+				clr_country_flag = iron_guard_dissident_event_flag
+			}
+			set_country_flag = iron_guard_dissident_event_flag
+			set_country_flag = iron_guard_dissident_event_not_addressed_flag
+		}
+	}
+
+	option = {
+		name = BICE_romania_factions.15.a
+
+		add_stability = -0.03
+		add_war_support = -0.06
+		add_popularity = {
+			ideology = fascism
+			popularity = 0.03
+		}
+
+		if = {
+			limit = {
+				NOT = { has_decision = repress_iron_guard }
+			}
+			unlock_decision_tooltip = repress_iron_guard
+		}
+	}
+}
+
+
+########  ##     ## ########   ######  ##     ##    ###     ######  ########    ########  #######  ##     ## #### ########  ##     ## ######## ##    ## ######## 
+##     ## ##     ## ##     ## ##    ## ##     ##   ## ##   ##    ## ##          ##       ##     ## ##     ##  ##  ##     ## ###   ### ##       ###   ##    ##    
+##     ## ##     ## ##     ## ##       ##     ##  ##   ##  ##       ##          ##       ##     ## ##     ##  ##  ##     ## #### #### ##       ####  ##    ##    
+########  ##     ## ########  ##       ######### ##     ##  ######  ######      ######   ##     ## ##     ##  ##  ########  ## ### ## ######   ## ## ##    ##    
+##        ##     ## ##   ##   ##       ##     ## #########       ## ##          ##       ##  ## ## ##     ##  ##  ##        ##     ## ##       ##  ####    ##    
+##        ##     ## ##    ##  ##    ## ##     ## ##     ## ##    ## ##          ##       ##    ##  ##     ##  ##  ##        ##     ## ##       ##   ###    ##    
+##         #######  ##     ##  ######  ##     ## ##     ##  ######  ########    ########  ##### ##  #######  #### ##        ##     ## ######## ##    ##    ##    
+
+
+#Purchase Infantry Equipment
+country_event = {
+	id = romania_equipment_purchases.11
+	title = romania_equipment_purchases.11.t
+	desc = romania_equipment_purchases.11.desc
+	picture = GFX_report_event_lots_of_rifles_gfxaddon 
+
+	is_triggered_only = yes
+
+	option = { #Rifles
+		name = romania_equipment_purchases.11.a
+
+		ai_chance = {
+			base = 15
+			modifier = {
+				factor = 2
+				stockpile_ratio = { 
+	  				archetype = infantry_equipment
+	  				ratio < 0.76
+	  			}
+			}
+		}
+		set_variable = { ROM_infantry_type = token:infantry_equipment }
+		custom_effect_tooltip = romania_equipment_purchases.11.a_tt
+	}
+	option = { #Handheld AT
+		name = romania_equipment_purchases.11.b
+
+		ai_chance = {
+			base = 15
+			modifier = {
+				factor = 2
+				stockpile_ratio = { 
+	  				archetype = handheld_at_equipment
+	  				ratio < 0.76
+	  			}
+			}
+		}
+		set_variable = { ROM_infantry_type = token:handheld_at_equipment }
+		custom_effect_tooltip = romania_equipment_purchases.11.b_tt
+		trigger = {
+			var:ROM_infantry_seller = {
+				has_tech = infantry_at
+			}
+		}
+	}
+	option = { #Sub Machine Guns
+		name = romania_equipment_purchases.11.c
+
+		ai_chance = {
+			base = 15
+			modifier = {
+				factor = 2
+				stockpile_ratio = { 
+	  				archetype = SMG_equipment
+	  				ratio < 0.76
+	  			}
+			}
+		}
+		set_variable = { ROM_infantry_type = token:SMG_equipment }
+		custom_effect_tooltip = romania_equipment_purchases.11.c_tt
+		trigger = {
+			var:ROM_infantry_seller = {
+				has_tech = SMG_team
+			}
+		}
+	}
+	option = { #Machine Guns
+		name = romania_equipment_purchases.11.d
+
+		ai_chance = {
+			base = 15
+			modifier = {
+				factor = 2
+				stockpile_ratio = { 
+	  				archetype = HMG_equipment
+	  				ratio < 0.76
+	  			}
+			}
+		}
+		set_variable = { ROM_infantry_type = token:HMG_equipment }
+		custom_effect_tooltip = romania_equipment_purchases.11.d_tt
+		trigger = {
+			var:ROM_infantry_seller = {
+				has_tech = hmg
+			}
+		}
+	}
+	option = { #Mortars
+		name = romania_equipment_purchases.11.e
+
+		ai_chance = {
+			base = 15
+			modifier = {
+				factor = 2
+				stockpile_ratio = { 
+	  				archetype = mortar_equipment
+	  				ratio < 0.76
+	  			}
+			}
+		}
+		set_variable = { ROM_infantry_type = token:mortar_equipment }
+		custom_effect_tooltip = romania_equipment_purchases.11.e_tt
+		trigger = {
+			var:ROM_infantry_seller = {
+				has_tech = mortars
+			}
+		}
+	}
+	option = { #Infantry Guns
+		name = romania_equipment_purchases.11.f
+
+		ai_chance = {
+			base = 15
+			modifier = {
+				factor = 2
+				stockpile_ratio = { 
+	  				archetype = infantrygun_equipment
+	  				ratio < 0.76
+	  			}
+			}
+		}
+		set_variable = { ROM_infantry_type = token:infantrygun_equipment }
+		custom_effect_tooltip = romania_equipment_purchases.11.f_tt
+		trigger = {
+			var:ROM_infantry_seller = {
+				has_tech = infantry_guns
+			}
+		}
+	}
+}
+#Purchase Support Equipment
+country_event = {
+	id = romania_equipment_purchases.12
+	title = romania_equipment_purchases.12.t
+	desc = romania_equipment_purchases.12.desc
+	picture = GFX_report_event_lots_of_rifles_gfxaddon 
+
+	is_triggered_only = yes
+
+	option = { #Support Equipment
+		name = romania_equipment_purchases.12.a
+
+		ai_chance = {
+			base = 15
+			modifier = {
+				factor = 2
+				stockpile_ratio = { 
+	  				archetype = support_equipment
+	  				ratio < 0.76
+	  			}
+			}
+		}
+		set_variable = { ROM_support_type = token:support_equipment }
+		custom_effect_tooltip = romania_equipment_purchases.12.a_tt
+	}
+	option = { #Uniforms
+		name = romania_equipment_purchases.12.b
+
+		ai_chance = {
+			base = 15
+			modifier = {
+				factor = 2
+				stockpile_ratio = { 
+	  				archetype = infantry_uniforms
+	  				ratio < 0.76
+	  			}
+			}
+		}
+		set_variable = { ROM_support_type = token:infantry_uniforms }
+		custom_effect_tooltip = romania_equipment_purchases.12.b_tt
+	}
+}
+
+#Purchase Artillery
+country_event = {
+	id = romania_equipment_purchases.1
+	title = romania_equipment_purchases.1.t
+	desc = romania_equipment_purchases.1.desc
+	picture = GFX_event_artillery_producer 
+
+	is_triggered_only = yes
+
+	option = { #Light Artillery
+		name = romania_equipment_purchases.1.a
+
+		ai_chance = {
+			base = 15
+			modifier = {
+				factor = 2
+				stockpile_ratio = { 
+	  				archetype = artillery_equipment
+	  				ratio < 0.76
+	  			}
+			}
+		}
+
+		set_variable = { ROM_artillery_type = token:artillery_equipment }
+		custom_effect_tooltip = romania_equipment_purchases.1.a_tt
+		trigger = {
+			var:ROM_artillery_seller = {
+				has_tech = gw_artillery
+			}
+		}
+	}
+	option = { #Medium Artillery
+		name = romania_equipment_purchases.1.b
+
+		ai_chance = {
+			base = 15
+			modifier = {
+				factor = 2
+				stockpile_ratio = { 
+	  				archetype = medartillery_equipment
+	  				ratio < 0.76
+	  			}
+			}
+		}
+		
+		set_variable = { ROM_artillery_type = token:medartillery_equipment }
+		custom_effect_tooltip = romania_equipment_purchases.1.b_tt
+		trigger = {
+			var:ROM_artillery_seller = {
+				has_tech = interwar_medartillery
+			}
+		}
+	}
+	option = { #Heavy Artillery
+		name = romania_equipment_purchases.1.c
+
+		ai_chance = {
+			base = 15
+			modifier = {
+				factor = 2
+				stockpile_ratio = { 
+	  				archetype = Hvartillery_equipment
+	  				ratio < 0.76
+	  			}
+			}
+		}
+
+		set_variable = { ROM_artillery_type = token:Hvartillery_equipment }
+		custom_effect_tooltip = romania_equipment_purchases.1.c_tt
+		trigger = {
+			var:ROM_artillery_seller = {
+				has_tech = interwar_Hvartillery
+			}
+		}
+	}
+	option = { #Anti-Air
+		name = romania_equipment_purchases.1.d
+
+		ai_chance = {
+			base = 10
+			modifier = {
+				factor = 2
+				stockpile_ratio = { 
+	  				archetype = anti_air_equipment
+	  				ratio < 0.76
+	  			}
+			}
+		}
+
+		trigger = {
+			var:ROM_artillery_seller = {
+				has_tech = interwar_antiair
+			}
+		}
+
+		set_variable = { ROM_artillery_type = token:anti_air_equipment }
+		custom_effect_tooltip = romania_equipment_purchases.1.d_tt
+	}
+	option = { #Heavy Anti-Air
+		name = romania_equipment_purchases.1.e
+
+		ai_chance = {
+			base = 10
+			modifier = {
+				factor = 2
+				stockpile_ratio = { 
+	  				archetype = HVanti_air_equipment
+	  				ratio < 0.76
+	  			}
+			}
+		}
+
+		trigger = {
+			var:ROM_artillery_seller = {
+				has_tech = HVantiair2
+			}
+		}
+
+		set_variable = { ROM_artillery_type = token:HVanti_air_equipment }
+		custom_effect_tooltip = romania_equipment_purchases.1.e_tt
+		
+	}
+	option = { #Anti-Tank
+		name = romania_equipment_purchases.1.f
+
+		ai_chance = {
+			base = 10
+			modifier = {
+				factor = 2
+				stockpile_ratio = { 
+	  				archetype = anti_tank_equipment
+	  				ratio < 0.76
+	  			}
+			}
+		}
+
+		trigger = {
+			var:ROM_artillery_seller = {
+				has_tech = interwar_antitank
+			}
+		}
+
+		set_variable = { ROM_artillery_type = token:anti_tank_equipment }
+		custom_effect_tooltip = romania_equipment_purchases.1.f_tt
+	}
+}
+
+#Purchase Military Vehicles
+country_event = {
+	id = romania_equipment_purchases.2
+	title = romania_equipment_purchases.2.t
+	desc = romania_equipment_purchases.2.desc
+	picture = GFX_report_event_lots_of_trucks 
+
+	is_triggered_only = yes
+
+	option = { #Motorized
+		name = romania_equipment_purchases.2.a
+
+		ai_chance = {
+			base = 15
+			modifier = {
+				factor = 2
+				stockpile_ratio = { 
+	  				archetype = motorized_equipment
+	  				ratio < 0.76
+	  			}
+			}
+		}
+		
+		trigger = {
+			var:ROM_military_vehicles_seller = {
+				has_tech = semi_motorised_infantry
+			}
+		}
+
+		set_variable = { ROM_vehicle_type = token:motorized_equipment }
+		custom_effect_tooltip = romania_equipment_purchases.2.a_tt
+	}
+
+	option = { #Mechanized
+		name = romania_equipment_purchases.2.b
+
+		ai_chance = {
+			base = 10
+			modifier = {
+				factor = 2
+				stockpile_ratio = { 
+	  				archetype = mechanized_equipment
+	  				ratio < 0.76
+	  			}
+			}
+		}
+
+		trigger = {
+			var:ROM_military_vehicles_seller = {
+				has_tech = mechanised_infantry
+			}
+		}
+
+		set_variable = { ROM_vehicle_type = token:mechanized_equipment }
+		custom_effect_tooltip = romania_equipment_purchases.2.b_tt
+	}
+
+	option = { #Armored Cars
+		name = romania_equipment_purchases.2.c
+
+		ai_chance = {
+			base = 10
+			modifier = {
+				factor = 2
+				stockpile_ratio = { 
+	  				archetype = motorized_AC_equipment
+	  				ratio < 0.76
+	  			}
+			}
+		}
+
+		trigger = {
+			var:ROM_military_vehicles_seller = {
+				has_tech = tech_ac_recon
+			}
+		}
+
+		set_variable = { ROM_vehicle_type = token:motorized_AC_equipment }
+		custom_effect_tooltip = romania_equipment_purchases.2.c_tt
+	}
+	
+	option = { #Liaison Car
+		name = romania_equipment_purchases.2.d
+
+		ai_chance = {
+			base = 10
+			modifier = {
+				factor = 2
+				stockpile_ratio = { 
+	  				archetype = motorized_lia_equipment
+	  				ratio < 0.76
+	  			}
+			}
+		}
+
+		trigger = {
+			var:ROM_military_vehicles_seller = {
+				has_tech = tech_ac_recon
+			}
+		}
+
+		set_variable = { ROM_vehicle_type = token:motorized_lia_equipment }
+		custom_effect_tooltip = romania_equipment_purchases.2.d_tt
+	}	
+
+	option = { #Artillery Truck
+		name = romania_equipment_purchases.2.e
+
+		ai_chance = {
+			base = 10
+			modifier = {
+				factor = 2
+				stockpile_ratio = { 
+	  				archetype = artytruck_equipment
+	  				ratio < 0.76
+	  			}
+			}
+		}
+
+		trigger = {
+			var:ROM_artillery_seller = {
+				has_tech = interwar_medartillery
+			}
+		}
+
+		set_variable = { ROM_vehicle_type = token:artytruck_equipment }
+		custom_effect_tooltip = romania_equipment_purchases.2.e_tt
+	}
+
+	option = { #Artillery Tractor
+		name = romania_equipment_purchases.2.f
+
+		ai_chance = {
+			base = 10
+			modifier = {
+				factor = 2
+				stockpile_ratio = { 
+	  				archetype = artytractor_equipment
+	  				ratio < 0.76
+	  			}
+			}
+		}
+
+		trigger = {
+			var:ROM_artillery_seller = {
+				has_tech = interwar_Hvartillery
+			}
+		}
+
+		set_variable = { ROM_vehicle_type = token:artytractor_equipment }
+		custom_effect_tooltip = romania_equipment_purchases.2.f_tt
+	}
+}
+
+#Purchase Armor
+#country_event = {
+#	id = romania_equipment_purchases.3
+#	title = romania_equipment_purchases.3.t
+#	desc = romania_equipment_purchases.3.desc
+#	picture = GFX_event_tank_factory 
+#
+#	is_triggered_only = yes
+#
+#	option = { #StuG
+#		name = romania_equipment_purchases.3.a
+#
+#		ai_chance = {
+#			base = 15
+#			modifier = {
+#				factor = 2
+#				stockpile_ratio = { 
+#	  				archetype = panzer_iii_td_equipment
+#	  				ratio < 0.76
+#	  			}
+#			}
+#		}
+#		trigger = {
+#			var:ROM_armor_seller = {
+#				has_tech = subtech_panzer_iii_td_equipment_1
+#			}
+#		}
+#
+#
+#		set_variable = { ROM_armor_type = token:panzer_iii_td_equipment }
+#		var:ROM_armor_seller = { set_country_flag = ROM_producing_stug3_for_romania_flag }
+#		custom_effect_tooltip = romania_equipment_purchases.3.a_tt
+#	}
+#	option = { #Panzer III
+#		name = romania_equipment_purchases.3.b
+#
+#		ai_chance = {
+#			base = 15
+#			modifier = {
+#				factor = 2
+#				stockpile_ratio = { 
+#	  				archetype = panzer_iii_equipment
+#	  				ratio < 0.76
+#	  			}
+#			}
+#		}
+#		trigger = {
+#			var:ROM_armor_seller = {
+#				has_tech = tech_panzer_iii_equipment_1
+#			}
+#		}
+#
+#
+#		set_variable = { ROM_armor_type = token:panzer_iii_equipment }
+#		var:ROM_armor_seller = { set_country_flag = ROM_producing_panzer3_for_romania_flag }
+#		custom_effect_tooltip = romania_equipment_purchases.3.b_tt
+#	}
+#	option = { #Panzer IV
+#		name = romania_equipment_purchases.3.c
+#
+#		ai_chance = {
+#			base = 15
+#			modifier = {
+#				factor = 2
+#				stockpile_ratio = { 
+#	  				archetype = panzer_iv_equipment
+#	  				ratio < 0.76
+#	  			}
+#			}
+#		}
+#		trigger = {
+#			var:ROM_armor_seller = {
+#				has_tech = tech_panzer_iv_equipment_1
+#			}
+#		}
+#
+#
+#		set_variable = { ROM_armor_type = token:panzer_iv_equipment }
+#		var:ROM_armor_seller = { set_country_flag = ROM_producing_panzer4_for_romania_flag }
+#		custom_effect_tooltip = romania_equipment_purchases.3.c_tt
+#	}
+#	option = { #R35
+#		name = romania_equipment_purchases.3.d
+#
+#		ai_chance = {
+#			base = 15
+#			modifier = {
+#				factor = 2
+#				stockpile_ratio = { 
+#	  				archetype = french_infantry_tank_equipment
+#	  				ratio < 0.76
+#	  			}
+#			}
+#		}
+#		trigger = {
+#			var:ROM_armor_seller = {
+#				has_tech = tech_french_infantry_tank_equipment_2
+#			}
+#		}
+#
+#
+#		set_variable = { ROM_armor_type = token:french_infantry_tank_equipment }
+#		var:ROM_armor_seller = { set_country_flag = ROM_producing_r35_for_romania_flag }
+#		custom_effect_tooltip = romania_equipment_purchases.3.d_tt
+#	}
+#	option = { #vz.35/38
+#		name = romania_equipment_purchases.3.e
+#
+#		ai_chance = {
+#			base = 15
+#			modifier = {
+#				factor = 2
+#				OR = {
+#					stockpile_ratio = { 
+#	  					archetype = czech_panzer_equipment
+#	  					ratio < 0.76
+#	  				}
+#					stockpile_ratio = { 
+#	  					archetype = czech_panzer_equipment38
+#	  					ratio < 0.76
+#	  				}
+#				}
+#			}
+#		}
+#		trigger = {
+#			var:ROM_armor_seller = {
+#				has_tech = tech_czech_panzer_1
+#			}
+#		}
+#
+#		if = {
+#			limit = {
+#				var:ROM_armor_seller = {
+#					OR = {
+#						has_tech = tech_czech_panzer_1
+#					}
+#				}
+#			}
+#			set_variable = { ROM_armor_type = token:czech_panzer_equipment }
+#		}
+#		else_if = {
+#			limit = {
+#				var:ROM_armor_seller = {
+#					OR = {
+#						has_tech = tech_czech_panzer_2
+#					}
+#				}
+#			}
+#			set_variable = { ROM_armor_type = token:czech_panzer_equipment38 }
+#		}
+#		var:ROM_armor_seller = { set_country_flag = ROM_producing_vz35_38_for_romania_flag }
+#		custom_effect_tooltip = romania_equipment_purchases.3.e_tt
+#	}
+#	
+#}
+
+#Purchase Aircraft
+country_event = {
+	id = romania_equipment_purchases.4
+	title = romania_equipment_purchases.4.t
+	desc = romania_equipment_purchases.4.desc
+	picture = GFX_event_aircraft_producer
+
+	is_triggered_only = yes
+
+	option = { #Fighters
+		name = romania_equipment_purchases.4.a
+
+		ai_chance = {
+			base = 15
+			modifier = {
+				factor = 2
+				stockpile_ratio = { 
+	  				archetype = fighter_equipment
+	  				ratio < 0.76
+	  			}
+			}
+		}
+
+		trigger = {
+			var:ROM_aircraft_seller = {
+				OR = {
+					has_tech = tech_me_109_fighter_equipment_1
+				}
+			}
+		}
+
+		set_variable = { ROM_aircraft_type = token:fighter_equipment }
+		var:ROM_aircraft_seller = { set_country_flag = ROM_producing_fighters_for_romania_flag }
+		custom_effect_tooltip = romania_equipment_purchases.4.a_tt
+	}
+
+	option = { #Multirole
+		name = romania_equipment_purchases.4.b
+
+		ai_chance = {
+			base = 15
+			modifier = {
+				factor = 2
+				stockpile_ratio = { 
+	  				archetype = fighter_equipment
+	  				ratio < 0.76
+	  			}
+			}
+		}
+
+		trigger = {
+			var:ROM_aircraft_seller = {
+				OR = {
+					has_tech = tech_fw_190_fighter_equipment_1
+				}
+			}
+		}
+
+		set_variable = { ROM_aircraft_type = token:mr_fighter_equipment }
+		var:ROM_aircraft_seller = { set_country_flag = ROM_producing_multirole_fighters_for_romania_flag }
+		custom_effect_tooltip = romania_equipment_purchases.4.b_tt
+	}
+
+	option = { #CAS
+		name = romania_equipment_purchases.4.c
+
+		ai_chance = {
+			base = 10
+			modifier = {
+				factor = 2
+				stockpile_ratio = { 
+	  				archetype = CAS_equipment
+	  				ratio < 0.76
+	  			}
+			}
+		}
+
+		trigger = {
+			var:ROM_aircraft_seller = {
+				has_tech = tech_ju_87_equipment_1
+			}
+		}
+
+		set_variable = { ROM_aircraft_type = token:CAS_equipment }
+		var:ROM_aircraft_seller = { set_country_flag = ROM_producing_cas_for_romania_flag }
+		custom_effect_tooltip = romania_equipment_purchases.4.c_tt
+	}	
+
+	option = { #Heavy Fighter
+		name = romania_equipment_purchases.4.d
+
+		ai_chance = {
+			base = 10
+			modifier = {
+				factor = 2
+				stockpile_ratio = { 
+	  				archetype = heavy_fighter_equipment
+	  				ratio < 0.76
+	  			}
+			}
+		}
+
+		trigger = {
+			var:ROM_aircraft_seller = {
+				OR = {
+					has_tech = tech_bf_110_fighter_equipment_1
+					has_tech = tech_me_210_fighter_equipment_1
+				}
+			}
+		}
+
+		set_variable = { ROM_aircraft_type = token:heavy_fighter_equipment }
+		var:ROM_aircraft_seller = { set_country_flag = ROM_producing_heavy_fighters_for_romania_flag }
+		custom_effect_tooltip = romania_equipment_purchases.4.d_tt
+	}
+
+	option = { #Tactical Bombers
+		name = romania_equipment_purchases.4.e
+
+		ai_chance = {
+			base = 10
+			modifier = {
+				factor = 2
+				stockpile_ratio = { 
+	  				archetype = tac_bomber_equipment
+	  				ratio < 0.76
+	  			}
+			}
+		}
+
+		trigger = {
+			var:ROM_aircraft_seller = {
+				OR = {
+					has_tech = tech_he_111_bomber_equipment_1
+					has_tech = tech_sm79_light_bomber_equipment_1
+					has_tech = tech_z1007_bomber_equipment_1
+					has_tech = tech_bloch_210_bomber_equipment_1
+					has_tech = tech_ju_88_bomber_equipment_1
+				}
+			}
+		}
+
+		if = {
+			limit = {
+				var:ROM_aircraft_seller = {
+					OR = {
+						has_tech = tech_sm79_light_bomber_equipment_1
+						has_tech = tech_z1007_bomber_equipment_1
+					}
+				}
+			}
+			set_variable = { ROM_aircraft_type = token:light_bomber_equipment }
+		}
+		else_if = {
+			limit = {
+				var:ROM_aircraft_seller = {
+					OR = {
+						has_tech = tech_he_111_bomber_equipment_1
+						has_tech = tech_bloch_210_bomber_equipment_1
+					}
+				}
+			}
+			set_variable = { ROM_aircraft_type = token:tac_bomber_equipment }
+		}
+		else_if = {
+			limit = {
+				var:ROM_aircraft_seller = {
+					has_tech = tech_ju_88_bomber_equipment_1
+				}
+			}
+			set_variable = { ROM_aircraft_type = token:fast_bomber_equipment }
+		}
+
+		var:ROM_aircraft_seller = { set_country_flag = ROM_producing_tactical_bombers_for_romania_flag }
+		custom_effect_tooltip = romania_equipment_purchases.4.e_tt
+	}
+}
+
+#ROM wants to purchase our ships - Event for Majors influencing ROM
+country_event = {
+	id = romania_equipment_purchases.5
+	title = romania_equipment_purchases.5.t
+	desc = lar_portugal_purchase_ships.1.desc
+	picture = GFX_report_event_sailors_in_working_rig
+
+	is_triggered_only = yes
+
+	option = { #Accept
+		name = lar_portugal_purchase_ships.1.a
+
+		ai_chance = {
+			base = 99
+			modifier = {
+				factor = 0
+				OR = {
+					has_opinion = { target = ROM value < 0 }
+					has_civil_war = yes
+					has_capitulated = yes
+					is_subject = yes
+					surrender_progress > 0.4
+					any_other_country = {
+						is_major = yes
+						has_war_with = PREV
+					}
+				}
+			}
+		}
+
+		custom_effect_tooltip = romania_equipment_purchases.5.a_tt
+		ROM = {
+			country_event = { id = romania_equipment_purchases.6 hours = 1 }
+		}
+	}
+	option = { #Reject
+		name = lar_portugal_purchase_ships.1.b
+
+		ai_chance = {
+			base = 1
+			modifier = {
+				factor = 99
+				has_war = yes
+			}
+		}
+
+		ROM = {
+			country_event = { id = romania_equipment_purchases.7 hours = 1 }
+			set_country_flag = {
+					flag = ROM_ships_purchase_rejected_flag
+					value = 1
+					days = 180
+			}
+		}
+	}
+}
+
+#Purchase Ships - FROM has accepted - Event for ROM (Choose type of ships)
+country_event = {
+	id = romania_equipment_purchases.6
+	title = lar_portugal_purchase_ships.2.t
+	desc = lar_portugal_purchase_ships.2.desc
+	picture = GFX_report_event_sailors_in_working_rig
+
+	is_triggered_only = yes
+
+	option = { #3 Submarines
+		name = lar_portugal_purchase_ships.2.a
+
+		ai_chance = {
+			base = 15
+		}
+
+		trigger = {
+			OR = {
+				AND = {
+					has_dlc = "Man the Guns"
+					FROM = { has_tech = early_ship_hull_submarine }
+				}
+				AND = {
+					NOT = { has_dlc = "Man the Guns" }
+					FROM = { has_tech = early_submarine }
+				}
+			}
+		}
+
+		FROM = { set_country_flag = ROM_building_submarines_flag }
+		custom_effect_tooltip = romania_equipment_purchases.6.a_tt
+	}
+
+	option = { #2 Destroyers
+		name = lar_portugal_purchase_ships.2.b
+
+		ai_chance = {
+			base = 10
+		}
+
+		trigger = {
+			OR = {
+				AND = {
+					has_dlc = "Man the Guns"
+					FROM = { has_tech = early_ship_hull_light }
+				}
+				AND = {
+					NOT = { has_dlc = "Man the Guns" }
+					FROM = { has_tech = early_destroyer }
+				}
+			}
+		}
+
+		FROM = { set_country_flag = ROM_building_destroyers_flag }
+		custom_effect_tooltip = romania_equipment_purchases.6.b_tt
+	}
+
+	option = { #1 Light Cruiser
+		name = lar_portugal_purchase_ships.2.c
+
+		ai_chance = {
+			base = 5
+		}
+
+		trigger = {
+			OR = {
+				AND = {
+					has_dlc = "Man the Guns"
+					FROM = { has_tech = early_ship_hull_cruiser }
+				}
+				AND = {
+					NOT = { has_dlc = "Man the Guns" }
+					FROM = { has_tech = early_light_cruiser }
+				}
+			}
+		}
+
+		FROM = { set_country_flag = ROM_building_light_cruiser_flag }
+		custom_effect_tooltip = romania_equipment_purchases.6.c_tt
+	}
+}
+
+#Purchase Ships - FROM has declined our offer - Event for ROM
+country_event = {
+	id = romania_equipment_purchases.7
+	title = lar_portugal_purchase_ships.3.t
+	desc = lar_portugal_purchase_ships.3.desc
+	picture = GFX_report_event_sailors_in_working_rig
+
+	is_triggered_only = yes
+
+	option = { #Ok
+		name = lar_portugal_purchase_ships.3.a
+
+	}
+}
+
+#Purchase Ships - Submarines ready - Event for ROM
+country_event = {
+	id = romania_equipment_purchases.8
+	title = romania_equipment_purchases.8.t
+	desc = romania_equipment_purchases.8.desc
+	picture = GFX_report_event_ast_navy
+
+	is_triggered_only = yes
+
+	option = { #Ok
+		name = lar_portugal_purchase_ships.4.a
+
+		custom_effect_tooltip = lar_portugal_purchase_ships.4.a_tt
+		hidden_effect = {
+			hidden_effect = { add_manpower = 600 } # 3 x 200MP/SS
+			if = {
+				limit = { has_dlc = "Man the Guns" }
+				if = {
+					limit = {
+						FROM.FROM = { has_tech = advanced_ship_hull_submarine }
+					}
+					FROM.FROM = { #LVL4
+						create_equipment_variant = {
+							name = "Marsuinul Class"				
+							type = nrm_ship_hull_submarine_4
+							name_group = ROM_SS_HISTORICAL
+							parent_version = 0
+							show_position = no
+							role_icon_index = 122
+							modules = {
+								fixed_ship_sub_hull_slot = nrm_submarine_hull_4
+								fixed_ship_engine_slot = nrm_submarine_engine_D1_030
+								fixed_ship_sonar_slot = nrm_submarine_sonar_2
+								fixed_ship_noise_slot = nrm_submarine_noise_2
+								fixed_ship_subdivision_slot = nrm_subdivision_2
+								fixed_ship_damagecontrol_slot = nrm_damagecontrol_2
+								fixed_ship_range_slot = nrm_range_submarine_2h
+								fixed_ship_radar_slot = empty
+								fixed_ship_battery_slot = nrm_submarine_deckgun_4
+								fixed_ship_anti_air_slot = nrm_submarine_AA_1
+								fixed_ship_torpedo_slot = nrm_submarine_TRP_21_2_x4
+								fixed_ship_torpedo_2_slot = nrm_submarine_TRP_21_2_x2
+								custom_slot_1 = empty
+								custom_slot_2 = empty
+							}
+						}
+					}
+					create_ship = { type = nrm_ship_hull_submarine_4 equipment_variant = "Marsuinul Class" creator = FROM.FROM }
+					create_ship = { type = nrm_ship_hull_submarine_4 equipment_variant = "Marsuinul Class" creator = FROM.FROM }
+					create_ship = { type = nrm_ship_hull_submarine_4 equipment_variant = "Marsuinul Class" creator = FROM.FROM }
+				}
+				else_if = { #LVL3
+					limit = {
+						FROM.FROM = { has_tech = improved_ship_hull_submarine }
+					}
+					FROM.FROM = {
+						create_equipment_variant = {
+							name = "Marsuinul Class"				
+							type = nrm_ship_hull_submarine_3
+							name_group = ROM_SS_HISTORICAL
+							parent_version = 0
+							show_position = no
+							role_icon_index = 122
+							modules = {
+								fixed_ship_sub_hull_slot = nrm_submarine_hull_3
+								fixed_ship_engine_slot = nrm_submarine_engine_D1_025
+								fixed_ship_sonar_slot = nrm_submarine_sonar_2
+								fixed_ship_noise_slot = nrm_submarine_noise_1
+								fixed_ship_subdivision_slot = nrm_subdivision_2
+								fixed_ship_damagecontrol_slot = nrm_damagecontrol_2
+								fixed_ship_range_slot = nrm_range_submarine_2h
+								fixed_ship_radar_slot = empty
+								fixed_ship_battery_slot = nrm_submarine_deckgun_3
+								fixed_ship_anti_air_slot = nrm_submarine_AA_1
+								fixed_ship_torpedo_slot = nrm_submarine_TRP_21_2_x4
+								fixed_ship_torpedo_2_slot = nrm_submarine_TRP_21_2_x2
+								custom_slot_1 = empty
+								custom_slot_2 = empty
+							}
+						}
+					}
+					create_ship = { type = nrm_ship_hull_submarine_3 equipment_variant = "Marsuinul Class" creator = FROM.FROM }
+					create_ship = { type = nrm_ship_hull_submarine_3 equipment_variant = "Marsuinul Class" creator = FROM.FROM }
+					create_ship = { type = nrm_ship_hull_submarine_3 equipment_variant = "Marsuinul Class" creator = FROM.FROM }
+				}
+				else_if = { #LVL2
+					limit = {
+						FROM.FROM = { has_tech = basic_ship_hull_submarine }
+					}
+					FROM.FROM = {
+						create_equipment_variant = {
+							name = "Marsuinul Class"				
+							type = nrm_ship_hull_submarine_2
+							name_group = ROM_SS_HISTORICAL
+							parent_version = 0
+							show_position = no
+							role_icon_index = 122
+							modules = {
+								fixed_ship_sub_hull_slot = nrm_submarine_hull_2
+								fixed_ship_engine_slot = nrm_submarine_engine_D1_020
+								fixed_ship_sonar_slot = nrm_submarine_sonar_2
+								fixed_ship_noise_slot = nrm_submarine_noise_0
+								fixed_ship_subdivision_slot = nrm_subdivision_2
+								fixed_ship_damagecontrol_slot = nrm_damagecontrol_2
+								fixed_ship_range_slot = nrm_range_submarine_2h
+								fixed_ship_radar_slot = empty
+								fixed_ship_battery_slot = nrm_submarine_deckgun_3
+								fixed_ship_anti_air_slot = empty
+								fixed_ship_torpedo_slot = nrm_submarine_TRP_21_2_x4
+								fixed_ship_torpedo_2_slot = nrm_submarine_TRP_21_2_x2
+								custom_slot_1 = empty
+								custom_slot_2 = empty
+							}
+						}
+					}
+					create_ship = { type = nrm_ship_hull_submarine_2 equipment_variant = "Marsuinul Class" creator = FROM.FROM }
+					create_ship = { type = nrm_ship_hull_submarine_2 equipment_variant = "Marsuinul Class" creator = FROM.FROM }
+					create_ship = { type = nrm_ship_hull_submarine_2 equipment_variant = "Marsuinul Class" creator = FROM.FROM }
+				}
+				else_if = { #LVL1
+					limit = {
+						FROM.FROM = { has_tech = early_ship_hull_submarine }
+					}
+					FROM.FROM = {
+						create_equipment_variant = {
+							name = "Marsuinul Class"				
+							type = nrm_ship_hull_submarine_1
+							name_group = ROM_SS_HISTORICAL
+							parent_version = 0
+							show_position = no
+							role_icon_index = 122
+							modules = {
+								fixed_ship_sub_hull_slot = nrm_submarine_hull_1
+								fixed_ship_engine_slot = nrm_submarine_engine_D1_020
+								fixed_ship_sonar_slot = nrm_submarine_sonar_1
+								fixed_ship_noise_slot = nrm_submarine_noise_0
+								fixed_ship_subdivision_slot = nrm_subdivision_1
+								fixed_ship_damagecontrol_slot = nrm_damagecontrol_1
+								fixed_ship_range_slot = nrm_range_submarine_2
+								fixed_ship_radar_slot = empty
+								fixed_ship_battery_slot = nrm_submarine_deckgun_3
+								fixed_ship_anti_air_slot = empty
+								fixed_ship_torpedo_slot = nrm_submarine_TRP_21_1_x4
+								fixed_ship_torpedo_2_slot = nrm_submarine_TRP_21_1_x2
+								custom_slot_1 = empty
+								custom_slot_2 = empty
+							}
+						}
+					}
+					create_ship = { type = nrm_ship_hull_submarine_1 equipment_variant = "Marsuinul Class" creator = FROM.FROM }
+					create_ship = { type = nrm_ship_hull_submarine_1 equipment_variant = "Marsuinul Class" creator = FROM.FROM }
+					create_ship = { type = nrm_ship_hull_submarine_1 equipment_variant = "Marsuinul Class" creator = FROM.FROM }
+				}
+				else = { #Fallback
+					create_equipment_variant = {
+						name = "Marsuinul Class"				
+						type = nrm_ship_hull_submarine_1
+						name_group = ROM_SS_HISTORICAL
+						parent_version = 0
+						show_position = no
+						role_icon_index = 122
+						modules = {
+							fixed_ship_sub_hull_slot = nrm_submarine_hull_1
+							fixed_ship_engine_slot = nrm_submarine_engine_D1_016
+							fixed_ship_sonar_slot = nrm_submarine_sonar_1
+							fixed_ship_noise_slot = nrm_submarine_noise_0
+							fixed_ship_subdivision_slot = nrm_subdivision_1
+							fixed_ship_damagecontrol_slot = nrm_damagecontrol_1
+							fixed_ship_range_slot = nrm_range_submarine_2
+							fixed_ship_radar_slot = empty
+							fixed_ship_battery_slot = nrm_submarine_deckgun_3
+							fixed_ship_anti_air_slot = empty
+							fixed_ship_torpedo_slot = nrm_submarine_TRP_21_1_x4
+							fixed_ship_torpedo_2_slot = nrm_submarine_TRP_21_1_x2
+							custom_slot_1 = empty
+							custom_slot_2 = empty
+						}
+					}
+					create_ship = { type = nrm_ship_hull_submarine_1 equipment_variant = "Marsuinul Class" creator = ROOT }
+					create_ship = { type = nrm_ship_hull_submarine_1 equipment_variant = "Marsuinul Class" creator = ROOT }
+					create_ship = { type = nrm_ship_hull_submarine_1 equipment_variant = "Marsuinul Class" creator = ROOT }
+				}
+			}
+		}
+	}
+}
+
+#Purchase Ships - Destroyers ready - Event for ROM
+country_event = {
+	id = romania_equipment_purchases.9
+	title = romania_equipment_purchases.9.t
+	desc = romania_equipment_purchases.9.desc
+	picture = GFX_report_event_ast_navy
+
+	is_triggered_only = yes
+
+	option = { #Ok
+		name = lar_portugal_purchase_ships.4.a
+
+		custom_effect_tooltip = lar_portugal_purchase_ships.5.a_tt
+
+		if = {
+			limit = { has_dlc = "Man the Guns" }
+			if = { #LVL 3
+				limit = {
+					FROM.FROM = { has_tech = improved_ship_hull_light }
+				}
+				hidden_effect = { add_manpower = 1000 } # 2 x 500MP/DD
+				FROM.FROM = {
+					create_equipment_variant = {
+						name = "Amiral Barbuneanu Class"	
+						type = nrm_ship_hull_destroyer_3
+						name_group = ROM_DD_HISTORICAL
+						parent_version = 0
+						show_position = no
+						role_icon_index = 39
+						modules = {
+							fixed_ship_hullform_slot = nrm_ship_hullform_destroyer_3
+							fixed_ship_engine_slot = nrm_destroyer_engine_S2_050
+							fixed_ship_sonar_slot = nrm_sonar_2
+							fixed_ship_battery_slot = nrm_destroyer_battery_5_2_x6
+							fixed_ship_subdivision_slot = nrm_subdivision_2
+							fixed_ship_damagecontrol_slot = nrm_damagecontrol_2
+							fixed_ship_range_slot = nrm_range_destroyer_2
+							fixed_ship_radar_slot = empty
+							fixed_ship_fire_control_system_slot = nrm_fire_control_4
+							fixed_ship_fire_control_system_aa_slot = empty
+							custom_slot_1 = nrm_support_destroyer_ML_1
+							custom_slot_2 = nrm_support_destroyer_ASW_2
+							custom_slot_3 = nrm_support_destroyer_TRP_21_C_2_x4
+							custom_slot_4 = nrm_support_destroyer_TRP_21_C_2_x4
+							custom_slot_5 = nrm_support_destroyer_AA_1
+							custom_slot_6 = nrm_support_destroyer_AA_1
+						}
+					}
+				}
+				create_ship = { type = nrm_ship_hull_destroyer_3 equipment_variant = "Amiral Barbuneanu Class" creator = FROM.FROM }
+				create_ship = { type = nrm_ship_hull_destroyer_3 equipment_variant = "Amiral Barbuneanu Class" creator = FROM.FROM }
+			}
+			else_if = { #LVL 2
+				limit = {
+					FROM.FROM = { has_tech = basic_ship_hull_light }
+				}
+				hidden_effect = { add_manpower = 800 } # 2 x 400MP/DD
+				FROM.FROM = {
+					create_equipment_variant = {
+						name = "Amiral Barbuneanu Class"	
+						type = nrm_ship_hull_destroyer_2
+						name_group = ROM_DD_HISTORICAL
+						parent_version = 0
+						show_position = no
+						role_icon_index = 39
+						modules = {
+							fixed_ship_hullform_slot = nrm_ship_hullform_destroyer_2
+							fixed_ship_engine_slot = nrm_destroyer_engine_S2_040
+							fixed_ship_sonar_slot = nrm_sonar_2
+							fixed_ship_battery_slot = nrm_destroyer_battery_5_2_x6
+							fixed_ship_subdivision_slot = nrm_subdivision_2
+							fixed_ship_damagecontrol_slot = nrm_damagecontrol_2
+							fixed_ship_range_slot = nrm_range_destroyer_2
+							fixed_ship_radar_slot = empty
+							fixed_ship_fire_control_system_slot = nrm_fire_control_4
+							fixed_ship_fire_control_system_aa_slot = empty
+							custom_slot_1 = nrm_support_destroyer_ML_1
+							custom_slot_2 = nrm_support_destroyer_ASW_2
+							custom_slot_3 = nrm_support_destroyer_TRP_21_C_2_x3
+							custom_slot_4 = nrm_support_destroyer_TRP_21_C_2_x3
+							custom_slot_5 = nrm_support_destroyer_AA_1
+							custom_slot_6 = empty
+						}
+					}
+				}
+				create_ship = { type = nrm_ship_hull_destroyer_2 equipment_variant = "Amiral Barbuneanu Class" creator = FROM.FROM }
+				create_ship = { type = nrm_ship_hull_destroyer_2 equipment_variant = "Amiral Barbuneanu Class" creator = FROM.FROM }
+			}
+			else_if = { #LVL 1
+				limit = {
+					FROM.FROM = { has_tech = early_ship_hull_light }
+				}
+				hidden_effect = { add_manpower = 650 } # 2 x 325MP/DD
+				FROM.FROM = {
+					create_equipment_variant = {
+						name = "Amiral Barbuneanu Class"	
+						type = nrm_ship_hull_destroyer_1
+						name_group = ROM_DD_HISTORICAL
+						parent_version = 0
+						show_position = no
+						role_icon_index = 39
+						modules = {
+							fixed_ship_hullform_slot = nrm_ship_hullform_destroyer_1
+							fixed_ship_engine_slot = nrm_destroyer_engine_S1_030
+							fixed_ship_sonar_slot = nrm_sonar_1
+							fixed_ship_battery_slot = nrm_destroyer_battery_5_1_x4
+							fixed_ship_subdivision_slot = nrm_subdivision_1
+							fixed_ship_damagecontrol_slot = nrm_damagecontrol_1
+							fixed_ship_range_slot = nrm_range_destroyer_2
+							fixed_ship_radar_slot = empty
+							fixed_ship_fire_control_system_slot = nrm_fire_control_3
+							fixed_ship_fire_control_system_aa_slot = empty
+							custom_slot_1 = nrm_support_destroyer_ML_1
+							custom_slot_2 = nrm_support_destroyer_ASW_1
+							custom_slot_3 = nrm_support_destroyer_TRP_21_C_1_x3
+							custom_slot_4 = nrm_support_destroyer_TRP_21_C_1_x3
+							custom_slot_5 = nrm_support_destroyer_AA_1
+							custom_slot_6 = empty
+						}
+					}
+				}
+				create_ship = { type = nrm_ship_hull_destroyer_1 equipment_variant = "Amiral Barbuneanu Class" creator = FROM.FROM }
+				create_ship = { type = nrm_ship_hull_destroyer_1 equipment_variant = "Amiral Barbuneanu Class" creator = FROM.FROM }
+			}
+			else = { #Fallback (assuming ROM has at least early tech)
+				hidden_effect = { add_manpower = 500 } # 2 x 250MP/DD
+				create_equipment_variant = {
+					name = "Amiral Barbuneanu Class"	
+					type = nrm_ship_hull_destroyer_1
+					name_group = ROM_DD_HISTORICAL
+					parent_version = 0
+					show_position = no
+					role_icon_index = 39
+					modules = {
+						fixed_ship_hullform_slot = nrm_ship_hullform_destroyer_1
+						fixed_ship_engine_slot = nrm_destroyer_engine_S1_025
+						fixed_ship_sonar_slot = nrm_sonar_1
+						fixed_ship_battery_slot = nrm_destroyer_battery_5_1_x3
+						fixed_ship_subdivision_slot = nrm_subdivision_1
+						fixed_ship_damagecontrol_slot = nrm_damagecontrol_1
+						fixed_ship_range_slot = nrm_range_destroyer_1h
+						fixed_ship_radar_slot = empty
+						fixed_ship_fire_control_system_slot = nrm_fire_control_2
+						fixed_ship_fire_control_system_aa_slot = empty
+						custom_slot_1 = nrm_support_destroyer_ML_1
+						custom_slot_2 = nrm_support_destroyer_ASW_1
+						custom_slot_3 = nrm_support_destroyer_TRP_21_C_1_x2
+						custom_slot_4 = nrm_support_destroyer_TRP_21_C_1_x2
+						custom_slot_5 = nrm_support_destroyer_AA_1
+						custom_slot_6 = empty
+					}
+				}
+				create_ship = { type = nrm_ship_hull_destroyer_1 equipment_variant = "Amiral Barbuneanu Class" creator = ROOT }
+				create_ship = { type = nrm_ship_hull_destroyer_1 equipment_variant = "Amiral Barbuneanu Class" creator = ROOT }
+			}
+		}
+	}
+}
+
+#Purchase Ships - Light Cruiser ready - Event for ROM
+country_event = {
+	id = romania_equipment_purchases.10
+	title = romania_equipment_purchases.10.t
+	desc = romania_equipment_purchases.10.desc
+	picture = GFX_report_event_ast_navy
+
+	is_triggered_only = yes
+
+	option = { #Ok
+		name = lar_portugal_purchase_ships.4.a
+
+		custom_effect_tooltip = lar_portugal_purchase_ships.6.a_tt
+		
+		if = {
+			limit = { has_dlc = "Man the Guns" }
+			if = { #LVL 4
+				limit = {
+					FROM.FROM = { has_tech = advanced_ship_hull_cruiser }
+				}
+				hidden_effect = { add_manpower = 1400 }
+				FROM.FROM = {
+					create_equipment_variant = {
+						name = "Timosoara Class"	
+						type = nrm_ship_hull_cruiser_4
+						name_group = ROM_CL_HISTORICAL
+						parent_version = 0
+						show_position = no
+						role_icon_index = 41
+						modules = {
+							fixed_ship_hullform_slot = nrm_ship_hullform_cruiser_4
+							fixed_ship_engine_slot = nrm_cruiser_engine_S2_080
+							fixed_ship_armor_layout_slot = nrm_armour_layout_3
+							fixed_ship_armor_slot = nrm_cruiser_armour_03_3
+							fixed_ship_subdivision_slot = nrm_subdivision_2
+							fixed_ship_damagecontrol_slot = nrm_damagecontrol_2
+							fixed_ship_range_slot = nrm_range_cruiser_2
+							fixed_ship_radar_slot = empty
+							fixed_ship_fire_control_system_slot = nrm_fire_control_4
+							fixed_ship_fire_control_system_aa_slot = empty
+							fixed_ship_battery_slot = nrm_cruiser_battery_6_2_x09
+							fixed_ship_tertiary_slot = nrm_cruiser_tertiary_HA_4_2_x08
+							custom_slot_1 = nrm_support_cruiser_AA_1
+							custom_slot_2 = nrm_support_cruiser_TRP_21_2_x06
+							custom_slot_3 = nrm_support_cruiser_FP_1
+							custom_slot_4 = nrm_support_cruiser_AA_1
+							custom_slot_5 = nrm_support_cruiser_AA_1
+							custom_slot_6 = nrm_support_cruiser_AA_1
+						}
+					}
+				}
+				create_ship = { type = nrm_ship_hull_cruiser_4 equipment_variant = "Timosoara Class" creator = FROM.FROM }
+			}
+			else_if = { #LVL 3
+				limit = {
+					FROM.FROM = { has_tech = improved_ship_hull_cruiser }
+				}
+				hidden_effect = { add_manpower = 1200 }
+				FROM.FROM = {
+					create_equipment_variant = {
+						name = "Timosoara Class"	
+						type = nrm_ship_hull_cruiser_3
+						name_group = ROM_CL_HISTORICAL
+						parent_version = 0
+						show_position = no
+						role_icon_index = 41
+						modules = {
+							fixed_ship_hullform_slot = nrm_ship_hullform_cruiser_3
+							fixed_ship_engine_slot = nrm_cruiser_engine_S2_075
+							fixed_ship_armor_layout_slot = nrm_armour_layout_2
+							fixed_ship_armor_slot = nrm_cruiser_armour_03_2
+							fixed_ship_subdivision_slot = nrm_subdivision_2
+							fixed_ship_damagecontrol_slot = nrm_damagecontrol_2
+							fixed_ship_range_slot = nrm_range_cruiser_2
+							fixed_ship_radar_slot = empty
+							fixed_ship_fire_control_system_slot = nrm_fire_control_4
+							fixed_ship_fire_control_system_aa_slot = empty
+							fixed_ship_battery_slot = nrm_cruiser_battery_6_2_x08
+							fixed_ship_tertiary_slot = nrm_cruiser_tertiary_HA_3_2_x08
+							custom_slot_1 = empty
+							custom_slot_2 = nrm_support_cruiser_TRP_21_2_x06
+							custom_slot_3 = nrm_support_cruiser_FP_1
+							custom_slot_4 = nrm_support_cruiser_AA_1
+							custom_slot_5 = nrm_support_cruiser_AA_1
+							custom_slot_6 = empty
+						}
+					}
+				}
+				create_ship = { type = nrm_ship_hull_cruiser_3 equipment_variant = "Timosoara Class" creator = FROM.FROM }
+			}
+			else_if = { #LVL 2
+				limit = {
+					FROM.FROM = { has_tech = basic_ship_hull_cruiser }
+				}
+				hidden_effect = { add_manpower = 800 }
+				FROM.FROM = {
+					create_equipment_variant = {
+						name = "Timosoara Class"	
+						type = nrm_ship_hull_cruiser_2
+						name_group = ROM_CL_HISTORICAL
+						parent_version = 0
+						show_position = no
+						role_icon_index = 41
+						modules = {
+							fixed_ship_hullform_slot = nrm_ship_hullform_cruiser_2
+							fixed_ship_engine_slot = nrm_cruiser_engine_S2_070
+							fixed_ship_armor_layout_slot = nrm_armour_layout_2
+							fixed_ship_armor_slot = nrm_cruiser_armour_03_2
+							fixed_ship_subdivision_slot = nrm_subdivision_2
+							fixed_ship_damagecontrol_slot = nrm_damagecontrol_2
+							fixed_ship_range_slot = nrm_range_cruiser_2
+							fixed_ship_radar_slot = empty
+							fixed_ship_fire_control_system_slot = nrm_fire_control_3
+							fixed_ship_fire_control_system_aa_slot = empty
+							fixed_ship_battery_slot = nrm_cruiser_battery_6_2_x08
+							fixed_ship_tertiary_slot = nrm_cruiser_tertiary_HA_3_2_x08
+							custom_slot_1 = empty
+							custom_slot_2 = nrm_support_cruiser_TRP_21_2_x06
+							custom_slot_3 = nrm_support_cruiser_FP_1
+							custom_slot_4 = nrm_support_cruiser_AA_1
+							custom_slot_5 = empty
+							custom_slot_6 = empty
+						}
+					}
+				}
+				create_ship = { type = nrm_ship_hull_cruiser_2 equipment_variant = "Timosoara Class" creator = FROM.FROM }
+			}
+			else_if = { #LVL 1
+				limit = {
+					FROM.FROM = { has_tech = early_ship_hull_cruiser }
+				}
+				hidden_effect = { add_manpower = 600 }
+				FROM.FROM = {
+					create_equipment_variant = {
+						name = "Timosoara Class"	
+						type = nrm_ship_hull_cruiser_1
+						name_group = ROM_CL_HISTORICAL
+						parent_version = 0
+						show_position = no
+						role_icon_index = 41
+						modules = {
+							fixed_ship_hullform_slot = nrm_ship_hullform_cruiser_1
+							fixed_ship_engine_slot = nrm_cruiser_engine_S1_060
+							fixed_ship_armor_layout_slot = nrm_armour_layout_1
+							fixed_ship_armor_slot = nrm_cruiser_armour_03_1
+							fixed_ship_subdivision_slot = nrm_subdivision_1
+							fixed_ship_damagecontrol_slot = nrm_damagecontrol_1
+							fixed_ship_range_slot = nrm_range_cruiser_2
+							fixed_ship_radar_slot = empty
+							fixed_ship_fire_control_system_slot = nrm_fire_control_2
+							fixed_ship_fire_control_system_aa_slot = empty
+							fixed_ship_battery_slot = nrm_cruiser_battery_6_1_x08
+							fixed_ship_tertiary_slot = nrm_cruiser_tertiary_HA_3_1_x04
+							custom_slot_1 = empty
+							custom_slot_2 = nrm_support_cruiser_TRP_21_1_x06
+							custom_slot_3 = nrm_support_cruiser_FP_1
+							custom_slot_4 = nrm_support_cruiser_AA_1
+							custom_slot_5 = empty
+							custom_slot_6 = empty
+						}
+					}
+				}
+				create_ship = { type = nrm_ship_hull_cruiser_1 equipment_variant = "Timosoara Class" creator = FROM.FROM }
+			}
+			else = { #Fallback (assuming ROM has at least early tech)
+				hidden_effect = { add_manpower = 600 }
+				create_equipment_variant = {
+					name = "Timosoara Class"	
+					type = nrm_ship_hull_cruiser_1
+					name_group = ROM_CL_HISTORICAL
+					parent_version = 0
+					show_position = no
+					role_icon_index = 41
+					modules = {
+						fixed_ship_hullform_slot = nrm_ship_hullform_cruiser_1
+						fixed_ship_engine_slot = nrm_cruiser_engine_S1_050
+						fixed_ship_armor_layout_slot = nrm_armour_layout_1
+						fixed_ship_armor_slot = nrm_cruiser_armour_02_1
+						fixed_ship_subdivision_slot = nrm_subdivision_1
+						fixed_ship_damagecontrol_slot = nrm_damagecontrol_1
+						fixed_ship_range_slot = nrm_range_cruiser_2
+						fixed_ship_radar_slot = empty
+						fixed_ship_fire_control_system_slot = nrm_fire_control_2
+						fixed_ship_fire_control_system_aa_slot = empty
+						fixed_ship_battery_slot = nrm_cruiser_battery_6_1_x06
+						fixed_ship_tertiary_slot = nrm_cruiser_tertiary_HA_3_1_x04
+						custom_slot_1 = empty
+						custom_slot_2 = nrm_support_cruiser_TRP_21_1_x04
+						custom_slot_3 = empty
+						custom_slot_4 = nrm_support_cruiser_AA_1
+						custom_slot_5 = empty
+						custom_slot_6 = empty
+					}
+				}
+				create_ship = { type = nrm_ship_hull_cruiser_1 equipment_variant = "Timosoara Class" creator = FROM.FROM }
+			}
+		}
+	}
+}
+### EOF ###

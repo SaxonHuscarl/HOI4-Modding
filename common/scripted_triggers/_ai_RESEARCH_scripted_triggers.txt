@@ -1,0 +1,2454 @@
+
+@SUPPORT_UNIT_WEIGHT = 20 #units *THIS
+@RESISTANCE_WEIGHT = 2 #occupied states *THIS
+@ARTILLERY_UNIT_WEIGHT = 2 #units *THIS
+@ARMOR_UNIT_WEIGHT = 4 #units *THIS
+
+@WW1_AIR_WEIGHT = 0.7 #num planes *THIS
+@WW1_CAVALRY_WEIGHT = 2 #num cav *THIS
+
+@FUEL_LACK_WEIGHT = 1000 #inverted fuel ratio *THIS
+
+@EXCAVATION_RESOURCE_PRODUCED_DIVISOR = 35 #THIS / num total resources
+@EXCAVATION_RESOURCE_PRODUCED_MAX_WEIGHT = 3 #max value of factor to base 
+
+@EXCAVATION_RESOURCE_GAIN_WEIGHT = 10 
+@EXCAVATION_RESOURCE_GAIN_MAX_WEIGHT = 1000 #acts inverted, gets subtracted from score
+@EXCAVATION_RESOURCE_GAIN_MIN_WEIGHT = -10000 #acts inverted, gets subtracted from score
+
+##################################################
+####### MUTUALLY EXCLUSIVE TECH TRIGGERS
+##################################################
+
+############################################ Tank Techs 
+
+ai_gasoline_engines_pick = {
+	always = no 
+}
+
+ai_diesel_engines_pick = {
+	always = yes
+}
+
+############################################ Land Doctrine 
+
+ai_mobile_warfare_pick = { #DOCTRINE
+
+	OR = {
+		tag = GER 
+		
+		#AND = { is_subject = yes OVERLORD = { ai_mobile_warfare_pick = yes } }
+	}
+	
+}
+ai_mobile_infantry_pick = {
+	NOT = { tag = GER }
+}
+ai_armored_spearhead_pick = {
+	OR = {
+		tag = GER
+		check_variable = { global.daily_random > 0.5 }
+	}
+}
+
+##################################
+ai_superior_firepower_pick = { #DOCTRINE
+
+	OR = {
+		tag = USA 
+		
+		#AND = { is_subject = yes OVERLORD = { ai_superior_firepower_pick = yes } }
+	}
+	
+}
+ai_breakthrough_priority_pick = {
+
+}
+ai_shock_and_awe_pick = {
+	tag = USA
+}
+
+##################################
+ai_mass_assault_pick = { #DOCTRINE
+
+	OR = {
+		tag = SOV 
+		tag = RAJ
+		
+		#AND = { is_subject = yes OVERLORD = { ai_mass_assault_pick = yes } }
+	}
+	
+}
+ai_large_front_offensive_pick = {
+	NOT = { tag = RAJ }
+}
+ai_human_infantry_offensive_pick = {
+	NOT = { tag = SOV }
+}
+
+ai_operational_concentration_pick = {
+	NOT = { tag = SOV tag = RAJ }
+}
+ai_flood_the_gap_pick = {
+
+}
+
+##################################
+ai_methodical_battle_pick = { #DOCTRINE
+
+	OR = {
+		tag = FRA 
+		tag = ITA
+		tag = POL
+		tag = ROM
+		tag = YUG
+		tag = GRE  
+		tag = NOR
+		
+		#AND = { is_subject = yes OVERLORD = { ai_methodical_battle_pick = yes } }
+	}
+	
+}
+ai_mechanized_wave_pick = {
+	always = no
+}
+ai_strategic_counterattack_pick = {
+
+}
+
+ai_dispersed_support_pick = {
+
+}
+ai_assault_concentration_pick = {
+	always = no
+}
+
+##################################
+ai_assault_operations_pick = {
+
+	OR = {
+		tag = ENG
+		tag = JAP
+		
+		#AND = { is_subject = yes OVERLORD = { ai_assault_operations_pick = yes } }
+	}
+	
+}
+ai_branch_interoperation_pick = {
+	always = no
+}
+ai_infiltration_in_depth_pick = {
+
+}
+
+##################################
+ai_guerilla_warfare_pick = { #DOCTRINE
+
+	OR = {
+		tag = FIN
+		tag = CHI 
+		tag = PRC
+		tag = YUN
+		tag = GXC
+		tag = XSM
+		tag = SHK
+		tag = SIK
+		
+		#AND = { is_subject = yes OVERLORD = { ai_guerilla_warfare_pick = yes } } #uhm ok
+	}
+	
+}
+
+##################################
+ai_defence_in_depth_pick = { #DOCTRINE
+
+	OR = {
+		tag = ENG
+		tag = FRA
+		tag = ITA
+		tag = POL
+		
+		#AND = { is_subject = yes OVERLORD = { ai_defence_in_depth_pick = yes } }
+	}
+	
+}
+ai_prepared_defense_pick = { #DOCTRINE
+
+	OR = {
+		tag = USA
+		
+		#AND = { is_subject = yes OVERLORD = { ai_prepared_defense_pick = yes } }
+	}
+	
+}
+ai_elastic_defence_pick = { #DOCTRINE
+
+	OR = {
+		tag = GER 
+		tag = HUN
+		
+		#AND = { is_subject = yes OVERLORD = { ai_elastic_defence_pick = yes } }
+	}
+	
+}
+ai_attritional_containment_pick = { #DOCTRINE
+
+	OR = {
+		tag = SOV
+		tag = JAP
+		tag = ROM
+		tag = YUG
+		tag = GRE
+		tag = FIN
+		tag = NOR
+		tag = CHI
+		tag = PRC
+		tag = SHX
+		tag = XSM
+		tag = GXC
+		tag = YUN
+		tag = SIK
+		
+		#AND = { is_subject = yes OVERLORD = { ai_attritional_containment_pick = yes } }
+	}
+	
+}
+
+##################################
+ai_advanced_special_forces_pick = {
+	always = no
+}
+ai_improved_special_forces_pick = {
+	always = yes
+}
+############################################ Air Doctrine 
+ai_strategic_destruction_pick = { #DOCTRINE
+
+	OR = {
+		original_tag = USA
+	}
+	
+}
+ai_figher_sweeps_pick = {
+
+}
+ai_dogfighting_experience_pick = {
+
+}
+ai_night_bombing_pick = {
+
+}
+ai_day_bombing_pick = {
+
+}
+
+##################################
+ai_battlefield_support_pick = { #DOCTRINE
+
+	OR = {
+		original_tag = GER
+		original_tag = FRA
+		original_tag = ITA
+		original_tag = JAP
+		
+		AND = { #fallback doctrine
+			has_country_flag = ai_has_air_production
+			check_variable = { modifier@air_doctrine_level = 0 }
+			NOT = {
+				#original_tag = GER
+				#original_tag = FRA
+				#original_tag = ITA
+				#original_tag = JAP
+				#original_tag = ENG
+				#original_tag = SOV
+				#original_tag = USA
+				
+				major_country = yes
+			}
+		}
+			
+	}
+
+}
+ai_formation_flying_pick = {
+	always = yes
+}
+ai_fighter_ace_initiative_pick = {
+	always = no
+}
+
+
+##################################
+ai_operational_integrity_pick = { #DOCTRINE
+
+	OR = {
+		original_tag = ENG
+		original_tag = SOV
+	}
+
+}
+############################################ Naval Doctrine 
+ai_decisive_battle_pick = { #DOCTRINE
+    OR = {
+        tag = JAP
+    }
+}
+
+ai_fleet_in_being_pick = { #DOCTRINE
+    OR = {
+        tag = USA
+        tag = ENG
+        tag = ITA
+        tag = FRA
+        tag = SOV
+    }
+}
+ai_nrm_fib_sealane_defence_pick = { 
+    OR = {
+        tag = ENG
+        tag = ITA
+        tag = SOV
+    }
+}
+ai_nrm_fib_power_projection_pick = { 
+    OR = {
+        tag = USA
+        tag = FRA
+    }
+}
+
+ai_trade_interdiction_pick = { #DOCTRINE
+    OR = {
+        tag = GER
+        tag = HOL
+    }
+}
+
+ai_submarine_offensive_operations_pick = { 
+    OR = {
+        tag = USA
+        tag = GER
+        tag = HOL
+        tag = SOV
+    }
+}
+ai_nrm_submarine_fleet_operations_pick = { 
+    OR = {
+        tag = ENG
+        tag = ITA
+        tag = JAP
+        tag = FRA
+    }
+}
+
+ai_nrm_carrier_independent_pick = {
+    OR = {
+        tag = USA
+        tag = JAP
+    }
+}
+ai_nrm_carrier_integrated_pick = {
+    OR = {
+        tag = ENG
+        tag = FRA
+        tag = ITA
+        tag = GER
+    }
+}
+
+ai_nrm_carrier_offensive_pick = { #add to tech
+    OR = {
+        tag = JAP
+    }
+}
+ai_nrm_carrier_scouting_pick = {  #add to tech
+    OR = {
+        tag = USA
+        tag = GER
+        tag = ITA
+    }
+}
+ai_nrm_carrier_defensive_pick = { #add to tech
+    OR = {
+        tag = ENG
+        tag = FRA
+    }
+}
+
+ai_nrm_carrier_support_pick = {
+    OR = {
+        tag = ENG
+        tag = FRA
+        tag = ITA
+        tag = GER
+    }
+}
+ai_nrm_carrier_taskforce_pick = {
+    OR = {
+        tag = USA
+        tag = JAP
+    }
+}
+
+ai_nrm_destroyer_fleet_operations_pick = {
+    OR = {
+        tag = USA
+        tag = JAP
+        tag = ITA
+        tag = FRA
+    }
+}
+ai_nrm_destroyer_patrol_operations_pick = {
+    OR = {
+        tag = ENG
+        tag = CAN
+        tag = AST
+        tag = HOL
+    }
+}
+################################## Industry
+ai_concentrated_industry_pick = {
+
+	NOT = {
+		tag = GER 
+		tag = ITA 
+		tag = JAP 
+	}
+	
+}
+
+ai_dispersed_industry_pick = {
+
+	OR = {
+		tag = GER 
+		tag = ITA 
+		tag = JAP 
+	}
+	
+}
+
+##################################################
+####### SPECIFIC TECH TRIGGERS
+##################################################
+# ai_<example>_tech = { #<trigger/base>
+# if "#base", then "base" temp var returns base priority score. only applied when triggers are true
+# #ai_base*ai_<category>_tech_need #only if "#base", ai_base temp var will be added to tech score, then multiplied by ai tech category score
+# }
+
+############################################ Infantry 
+
+ai_headquarter_tech = { #base
+
+	
+	if = { 
+		limit = { 
+			major_country = yes 
+		} 
+		multiply_temp_variable = { base = 2 } 
+	}
+	else = { #TODO_AI have this increase based on how many support units we want to research
+		
+		if = {
+			limit = {
+				date > 1941.1.1
+				NOT = { has_tech = tech_Headquarters2 }
+			}
+			multiply_temp_variable = { base = 2 }
+		}
+	}
+	
+	#ai_base*ai_infantry_tech_need
+	set_temp_variable = { ai_base = base }
+}
+
+ai_submachine_gun_tech = { #trigger
+	
+	OR = {
+		tag = GER 
+		tag = SOV 
+		tag = USA 
+		tag = ENG
+		tag = ITA
+		tag = FRA
+		tag = JAP
+		
+		check_variable = { ai_tech_need/SMG_team > 0 }
+		check_variable = { num_equipment_in_armies@SMG_equipment > 100 } 
+	}
+	
+}
+
+ai_handheld_anti_tank_tech = { #trigger, only for first tech
+
+	check_variable = { field_strength > 0.9 }
+	OR = {
+		check_variable = { mtth:ai_num_of_military_factories > 60 }
+		AND = {
+			check_variable = { stock_ratio > 0.1 }
+			check_variable = { field_strength > 0.98 }
+		}
+	}
+	
+	if = {
+		limit = {
+			tag = CHI 
+		}
+		check_variable = { mtth:ai_num_of_military_factories > 80 }
+	}
+	if = {
+		limit = {
+			tag = FRA 
+		}
+		check_variable = { FRA.deployed_army_manpower_k > 2000 }
+	}
+}
+
+ai_machine_gun_tech = { #trigger, only for first tech
+	
+	check_variable = { field_strength > 0.90 }
+	check_variable = { mtth:ai_num_of_military_factories > 24 }
+
+	if = {
+		limit = {
+			tag = CHI 
+		}
+		check_variable = { mtth:ai_num_of_military_factories > 60 }
+	}
+}
+
+ai_mortar_tech = { #trigger, only for first tech
+
+	check_variable = { field_strength > 0.90 }
+	check_variable = { mtth:ai_num_of_military_factories > 30 }
+	
+	if = {
+		limit = {
+			tag = CHI 
+		}
+		check_variable = { mtth:ai_num_of_military_factories > 50 }
+	}
+}
+
+ai_infantry_gun_tech = { #trigger, only for first tech 
+	OR = {
+		AND = {
+			check_variable = { field_strength > 0.90 }
+			check_variable = { mtth:ai_num_of_military_factories > 36 }
+		}
+		tag = POL
+	}
+	
+	if = {
+		limit = {
+			tag = CHI 
+		}
+		OR = {
+			check_variable = { num_battalions_with_type@infantry > 30 }
+			has_country_flag = { flag = ai_heavy_infantry_template value > 1 }
+			check_variable = { mtth:ai_num_of_military_factories > 60 }
+		}
+	}
+}
+
+ai_garrison_tech = { #base
+
+	OR = {
+		check_variable = { ai_tech_need/tech_Garrison > 0 }
+		check_variable = { occupied_countries^num > 0 }
+		check_variable = { num_occupied_states > 0 }
+	}
+	
+	set_temp_variable = { resistance_score = num_occupied_states }
+	#add_to_temp_variable = { resistance_score = occupied_countries^num } #these also count countries that dont have resistance
+	multiply_temp_variable = { resistance_score = @RESISTANCE_WEIGHT }
+	
+	add_to_temp_variable = { base = resistance_score }
+	
+	#ai_base*ai_infantry_tech_need
+	set_temp_variable = { ai_base = base }
+}
+
+ai_motorcycle_tech = { #base
+
+	OR = {
+		tag = ITA 
+		
+		check_variable = { ai_tech_need/motorcycle_infantry_unit > 0 }
+		check_variable = { num_battalions_with_type@motorcycle_infantry > 0 }
+	}
+	
+	#ai_base*ai_infantry_tech_need
+	set_temp_variable = { ai_base = base }
+}
+
+ai_motorized_tech = { #base
+
+	OR = {
+		tag = CAN
+		tag = FRA
+		tag = GER
+		tag = HUN
+		tag = ITA
+		tag = JAP
+		tag = ROM
+		tag = SOV
+		tag = USA
+		
+		check_variable = { ai_tech_need/semi_motorised_infantry > 0 }
+		check_variable = { ai_tech_need/motorised_infantry > 0 }
+		check_variable = { ai_tech_need/mechanised_infantry > 0 }
+		check_variable = { ai_tech_need/tech_maintenance_company > 0 }
+		check_variable = { ai_tech_need/tech_logistics_company2 > 0 }
+		check_variable = { num_battalions_with_type@semi_motorized > 0 }
+		check_variable = { num_battalions_with_type@semi_motorized_assault > 0 }
+		check_variable = { num_battalions_with_type@motorized > 0 }
+		check_variable = { num_battalions_with_type@motorized_assault > 0 }
+	}
+	
+	#ai_base*ai_infantry_tech_need
+	set_temp_variable = { ai_base = base }
+}
+
+ai_mechanized_tech = { #base
+
+	OR = {
+		tag = CAN
+		tag = ENG
+		tag = FRA
+		tag = GER 
+		tag = JAP
+		tag = SOV 
+		tag = USA 
+		
+		check_variable = { ai_tech_need/mechanised_infantry > 0 }
+		check_variable = { num_battalions_with_type@mechanized > 0 }
+		check_variable = { num_battalions_with_type@mechanized_assault > 0 }
+	}
+	
+	#ai_base*ai_infantry_tech_need
+	set_temp_variable = { ai_base = base }
+}
+
+ai_amphibious_mechanized_tech = { #base
+
+	OR = {
+		tag = ENG
+		tag = GER 
+		tag = JAP
+		tag = USA 
+		
+		check_variable = { ai_tech_need/amphibious_mechanized_infantry > 0 }
+		check_variable = { num_battalions_with_type@amphibious_mechanized > 0 }
+		check_variable = { num_battalions_with_type@amphibious_mechanized_assault > 0 }
+	}
+	
+	#ai_base*ai_infantry_tech_need
+	set_temp_variable = { ai_base = base }
+}
+
+ai_marine_tech = { #trigger
+	
+	OR = {
+		tag = JAP 
+		tag = ITA 
+		tag = USA
+		tag = ENG 
+		
+		check_variable = { ai_tech_need/marines > 0 }
+		check_variable = { ai_tech_need/amphibious_equipment > 0 }
+		has_country_flag = ai_marines_template
+		check_variable = { num_battalions_with_type@marine > 0 }
+		check_variable = { num_battalions_with_type@marine_assault > 0 }
+	}
+	
+}
+
+ai_marine_SMG_tech = { #trigger 
+
+	OR = {
+		tag = USA 
+		
+		check_variable = { ai_tech_need/marine_smg > 0 }
+	}
+
+}
+
+ai_mountaineer_tech = { #trigger
+
+	OR = {
+		tag = GER 
+		tag = FRA
+		tag = SOV
+		tag = GRE
+		tag = ITA 
+		tag = POL 
+		tag = ROM 
+		tag = TUR 
+		
+		check_variable = { ai_tech_need/tech_mountaineers > 0 }
+		check_variable = { ai_tech_need/mountain_equipment > 0 }
+		has_country_flag = ai_mountaineers_template
+		check_variable = { num_battalions_with_type@mountaineers > 0 }
+	}
+	
+}
+
+ai_arctic_equipment_tech = { #trigger 
+	tag = FIN
+}
+ai_desert_equipment_tech = { #trigger 
+	tag = ITA
+}
+ai_jungle_equipment_tech = { #trigger 
+	OR = {
+		has_template_containing_unit = jungle_support 
+		check_variable = { ai_tech_need/jungle_equipment > 0 }
+		check_variable = { num_battalions_with_type@jungle_support > 0 }
+	}
+}
+ai_commando_tech = { #trigger 
+	OR = {
+		has_template_containing_unit = commando 
+		check_variable = { num_battalions_with_type@commando > 0 }
+		check_variable = { ai_tech_need/commando_team > 0 }
+	}
+}
+
+
+############################################ Support
+
+ai_support_equipment_tech = { #ai_add
+
+	#ai_add*ai_support_tech_need
+}
+ai_recon_tech = { #base
+
+	#ai_base*ai_support_tech_need
+	set_temp_variable = { ai_base = base }
+}
+
+ai_recon_cav_tech = { #base
+
+	OR = {
+		tag = ITA
+		tag = POL
+		
+		check_variable = { ai_tech_need/subtech_recon_cav_1 > 0 }
+		check_variable = { num_battalions_with_type@recon_cav > 0 }
+	}
+	
+	#ai_base*ai_support_tech_need
+	set_temp_variable = { ai_base = base }
+}
+
+ai_recon_mot_tech = { #base
+
+	OR = {
+		tag = CAN
+		tag = FRA
+		tag = GER
+		tag = ITA
+		tag = USA
+		
+		check_variable = { ai_tech_need/subtech_recon_mot_1 > 0 }
+		check_variable = { num_battalions_with_type@recon_mot > 0 }
+	}
+	
+	#ai_base*ai_support_tech_need
+	set_temp_variable = { ai_base = base }
+}
+
+ai_recon_mech_tech = { #base
+	
+	OR = {
+		check_variable = { ai_tech_need/subtech_recon_mech_1 > 0 }
+		check_variable = { num_battalions_with_type@recon_mech > 0 }
+	}
+	
+	#ai_base*ai_support_tech_need
+	set_temp_variable = { ai_base = base }
+}
+
+ai_engineer_tech = { #base
+
+	OR = {
+		major_country = yes 
+		
+		tag = CAN
+		tag = CHI
+		tag = EGY
+		tag = FIN
+		tag = GRE
+		tag = HUN
+		tag = ROM
+		tag = TUR
+		tag = POL
+		tag = SPR
+		
+		check_variable = { ai_tech_need/tech_engineers > 0 }
+		check_variable = { num_battalions_with_type@engineer > 0 }
+		check_variable = { num_battalions_with_type@engineer_mot > 0 }
+		check_variable = { num_battalions_with_type@engineer_mech > 0 }
+		check_variable = { num_battalions_with_type@engineer_arm > 0 }
+	}
+	
+	set_temp_variable = { support = num_battalions_with_type@engineer }
+	add_to_temp_variable = { support = num_battalions_with_type@engineer_mot }
+	add_to_temp_variable = { support = num_battalions_with_type@engineer_mech }
+	add_to_temp_variable = { support = num_battalions_with_type@engineer_arm }
+	multiply_temp_variable = { support = @SUPPORT_UNIT_WEIGHT }
+	
+	add_to_temp_variable = { base = support }
+	
+	#ai_base*ai_support_tech_need
+	set_temp_variable = { ai_base = base }
+}
+
+ai_combat_engineer_tech = { #base
+
+	OR = {
+		tag = CAN
+		tag = ENG
+		tag = FRA
+		tag = GER
+		tag = GRE
+		tag = HUN
+		tag = ITA
+		tag = JAP
+		tag = SOV
+		tag = TUR
+		tag = SPR
+		tag = USA
+		tag = FIN
+		
+		check_variable = { ai_tech_need/tech_combat_engineers > 0 }
+		check_variable = { num_battalions_with_type@combat_engineer > 0 }
+		check_variable = { num_battalions_with_type@combat_engineer_mot > 0 }
+		check_variable = { num_battalions_with_type@combat_engineer_mech > 0 }
+		check_variable = { num_battalions_with_type@combat_engineer_arm > 0 }
+	}
+	
+	set_temp_variable = { support = num_battalions_with_type@combat_engineer }
+	add_to_temp_variable = { support = num_battalions_with_type@combat_engineer_mot }
+	add_to_temp_variable = { support = num_battalions_with_type@combat_engineer_mech }
+	add_to_temp_variable = { support = num_battalions_with_type@combat_engineer_arm }
+	multiply_temp_variable = { support = @SUPPORT_UNIT_WEIGHT }
+	
+	add_to_temp_variable = { base = support }
+	
+	#ai_base*ai_support_tech_need
+	set_temp_variable = { ai_base = base }
+}
+
+ai_military_police_tech = { #base 
+
+	OR = {
+		check_variable = { occupied_countries^num > 0 }
+		check_variable = { num_occupied_states > 0 }
+	}
+	
+	set_temp_variable = { resistance_score = num_occupied_states }
+	#add_to_temp_variable = { resistance_score = occupied_countries^num } #these also count countries that dont have resistance
+	multiply_temp_variable = { resistance_score = @RESISTANCE_WEIGHT }
+	
+	add_to_temp_variable = { base = resistance_score }
+	
+	#ai_base*ai_support_tech_need
+	set_temp_variable = { ai_base = base }
+}
+
+ai_maintenance_tech = { #base
+
+	OR = {
+		tag = CAN
+		tag = FRA
+		tag = GER
+		tag = ITA
+		tag = JAP
+		tag = SOV
+		tag = USA
+		tag = ITA
+		
+		check_variable = { ai_tech_need/tech_maintenance_company > 0 }
+		check_variable = { num_battalions_with_type@maintenance_company > 0 }
+		check_variable = { num_battalions_with_type@maintenance_company_arm > 0 }
+	}
+	
+	set_temp_variable = { support = num_battalions_with_type@maintenance_company }
+	add_to_temp_variable = { support = num_battalions_with_type@maintenance_company_arm }
+	multiply_temp_variable = { support = @SUPPORT_UNIT_WEIGHT }
+	
+	add_to_temp_variable = { base = support }
+	
+	#ai_base*ai_support_tech_need
+	set_temp_variable = { ai_base = base }
+}
+
+ai_field_hospital_tech = { #base 
+
+	OR = {
+		tag = CAN
+		tag = ENG
+		tag = FRA
+		tag = GER
+		tag = GRE
+		tag = HUN
+		tag = ITA
+		tag = JAP
+		tag = ROM
+		tag = SOV
+		tag = SPR
+		tag = TUR
+		tag = USA
+		
+		check_variable = { ai_tech_need/tech_field_hospital > 0 }
+		check_variable = { num_battalions_with_type@field_hospital_cav > 0 }
+		check_variable = { num_battalions_with_type@field_hospital > 0 }
+	}
+	
+	set_temp_variable = { support = num_battalions_with_type@field_hospital_cav }
+	add_to_temp_variable = { support = num_battalions_with_type@field_hospital }
+	multiply_temp_variable = { support = @SUPPORT_UNIT_WEIGHT }
+	
+	add_to_temp_variable = { base = support }
+	
+	#ai_base*ai_support_tech_need
+	set_temp_variable = { ai_base = base }
+}
+
+ai_logistics_tech = { #base
+
+	OR = {
+		tag = CAN
+		tag = CHI
+		tag = ENG
+		tag = FRA
+		tag = GER
+		tag = GRE
+		tag = HUN
+		tag = ITA
+		tag = JAP
+		tag = ROM
+		tag = SOV
+		tag = SPR
+		tag = TUR
+		tag = USA
+		
+		check_variable = { ai_tech_need/tech_logistics_company > 0 }
+		check_variable = { num_battalions_with_type@logistics_company > 0 }
+		check_variable = { num_battalions_with_type@logistics_company_car > 0 }
+		check_variable = { num_battalions_with_type@logistics_company_mot > 0 }
+		check_variable = { num_battalions_with_type@logistics_company_mech > 0 }
+	}
+	
+	set_temp_variable = { support = num_battalions_with_type@logistics_company }
+	add_to_temp_variable = { support = num_battalions_with_type@logistics_company_car }
+	add_to_temp_variable = { support = num_battalions_with_type@logistics_company_mot }
+	add_to_temp_variable = { support = num_battalions_with_type@logistics_company_mech }
+	multiply_temp_variable = { support = @SUPPORT_UNIT_WEIGHT }
+	
+	add_to_temp_variable = { base = support }
+	
+	#ai_base*ai_support_tech_need
+	set_temp_variable = { ai_base = base }
+}
+
+ai_signal_tech = { #base 
+
+	OR = {
+		tag = CAN
+		tag = ENG
+		tag = FRA
+		tag = GER
+		tag = ITA
+		tag = JAP
+		tag = SOV
+		tag = USA
+		tag = AST
+		tag = POL
+		
+		check_variable = { ai_tech_need/tech_signal_company > 0 }
+		check_variable = { num_battalions_with_type@signal_company > 0 }
+		check_variable = { num_battalions_with_type@signal_company_mot > 0 }
+	}
+	
+	set_temp_variable = { support = num_battalions_with_type@signal_company }
+	add_to_temp_variable = { support = num_battalions_with_type@signal_company_mot }
+	multiply_temp_variable = { support = @SUPPORT_UNIT_WEIGHT }
+	
+	add_to_temp_variable = { base = support }
+	
+	#prioritize first signal tech 
+	if = { limit = { NOT = { has_tech = tech_signal_company } }
+		multiply_temp_variable = { base = 2.0 }
+	}
+	
+	#ai_base*ai_support_tech_need
+	set_temp_variable = { ai_base = base }
+}
+
+ai_train_tech = {
+	num_of_civilian_factories > 25
+	
+	set_temp_variable = { trains = train_use@coal }
+	multiply_temp_variable = { trains = 50 }
+	
+	add_to_temp_variable = { base = trains }
+	
+	#ai_base*ai_support_tech_need
+	set_temp_variable = { ai_base = base }
+}
+
+############################################ Artillery
+
+ai_artillery_spotter_tech = { #base
+
+	OR = {
+		check_variable = { num_battalions_with_type@artillery_brigade_med > 0 }
+		check_variable = { num_battalions_with_type@artillery_brigade_mot_med > 0 } 
+	}
+	
+	check_variable = { mtth:ai_num_of_military_factories > 60 } 
+	
+	set_temp_variable = { support = num_battalions_with_type@artillery_brigade_med }
+	add_to_temp_variable = { support = num_battalions_with_type@artillery_brigade_mot_med }
+	multiply_temp_variable = { support = 5 }
+	
+	add_to_temp_variable = { base = support }
+	
+	#ai_base*ai_artillery_tech_need
+	set_temp_variable = { ai_base = base }
+}
+
+ai_light_artillery_tech = { #base
+
+	OR = {
+		major_country = no 
+		
+		check_variable = { num_battalions_with_type@artillery_brigade > 0 }
+		check_variable = { num_battalions_with_type@artillery_brigade_mot > 0 } 
+	}
+	if = {
+		limit = {
+			tag = CHI
+		}
+		date < 1938.6.1
+	}
+	
+	set_temp_variable = { artillery = num_battalions_with_type@artillery_brigade }
+	add_to_temp_variable = { artillery = num_battalions_with_type@artillery_brigade_mot }
+	multiply_temp_variable = { artillery = 10 }
+	
+	add_to_temp_variable = { base = artillery }
+	
+	#ai_base*ai_artillery_tech_need
+	set_temp_variable = { ai_base = base }
+}
+
+ai_medium_artillery_tech = { #base
+
+	OR = {
+		tag = CAN 
+		tag = ENG
+		tag = GER
+		tag = ITA 
+		tag = SOV 
+		tag = USA
+		
+		check_variable = { num_battalions_with_type@artillery_brigade_med > 0 }
+		check_variable = { num_battalions_with_type@artillery_brigade_mot_med > 0 } 
+	}
+	
+	set_temp_variable = { artillery = num_battalions_with_type@artillery_brigade_med }
+	add_to_temp_variable = { artillery = num_battalions_with_type@artillery_brigade_mot_med }
+	multiply_temp_variable = { artillery = 30 }
+	
+	add_to_temp_variable = { base = artillery }
+	
+	#ai_base*ai_artillery_tech_need
+	set_temp_variable = { ai_base = base }
+}
+
+ai_heavy_artillery_tech = { #base
+
+	OR = {
+		tag = CAN
+		tag = ENG 
+		tag = FRA
+		tag = GER
+		tag = ITA
+		tag = POL 
+		
+		check_variable = { num_battalions_with_type@artillery_heavy > 0 }
+		check_variable = { num_battalions_with_type@artillery_heavy_mot > 0 }
+	}
+	
+	set_temp_variable = { artillery = num_battalions_with_type@artillery_heavy }
+	add_to_temp_variable = { artillery = num_battalions_with_type@artillery_heavy_mot }
+	multiply_temp_variable = { artillery = 50 }
+	
+	add_to_temp_variable = { base = artillery }
+	
+	#ai_base*ai_artillery_tech_need
+	set_temp_variable = { ai_base = base }
+}
+
+ai_pack_artillery_tech = { #base
+
+	OR = {
+		tag = CHI 
+		tag = FRA
+		tag = GER 
+		tag = GRE 
+		tag = ITA
+		tag = JAP
+		tag = RAJ
+		tag = ROM
+		tag = TUR
+		
+		check_variable = { num_battalions_with_type@mountain_artillery_brigade > 0 }
+		check_variable = { num_battalions_with_type@mountain_artillery_brigade_mot > 0 }
+	}
+	
+	set_temp_variable = { artillery = num_battalions_with_type@mountain_artillery_brigade }
+	add_to_temp_variable = { artillery = num_battalions_with_type@mountain_artillery_brigade_mot }
+	multiply_temp_variable = { artillery = 20 } 
+	
+	add_to_temp_variable = { base = artillery }
+	
+	#ai_base*ai_artillery_tech_need
+	set_temp_variable = { ai_base = base }
+}
+
+ai_rocket_artillery_tech = { #base	
+
+	#always = no 
+	OR = {
+		tag = SOV
+	}
+	
+	#ai_base*ai_artillery_tech_need
+	set_temp_variable = { ai_base = base }
+}
+
+ai_mot_artillery_tech = { #trigger
+
+	OR = {
+		date > 1940.1.1
+		num_of_military_factories > 20
+		tag = CAN 
+		tag = FRA
+		tag = GER
+		tag = HUN
+		tag = ROM
+		tag = JAP
+		tag = SOV
+		tag = USA
+	}
+	
+}
+
+ai_anti_air_tech = { #base
+
+	OR = {
+		tag = ENG 
+		tag = GER
+		tag = HUN 
+		tag = ROM 
+		tag = SOV
+		tag = TUR
+		tag = USA
+		tag = CAN 
+		tag = JAP
+		
+		check_variable = { ai_tech_need/interwar_antiair > 0 }
+		check_variable = { num_battalions_with_type@anti_air > 0 }
+		check_variable = { num_battalions_with_type@anti_air_car > 0 }
+	}
+	
+	set_temp_variable = { units = num_battalions_with_type@anti_air }
+	add_to_temp_variable = { units = num_battalions_with_type@anti_air_car }
+	multiply_temp_variable = { units = 40 }
+	
+	add_to_temp_variable = { base = units }
+	
+	#ai_base*ai_artillery_tech_need
+	set_temp_variable = { ai_base = base }
+}
+
+ai_heavy_anti_air_tech = { #base
+
+	OR = {
+		tag = GER
+		tag = USA 
+		tag = CAN 
+		tag = ENG
+		tag = SOV
+		
+		check_variable = { ai_tech_need/HVantiair2 > 0 }
+		check_variable = { num_battalions_with_type@anti_air_heavy > 0 }
+		check_variable = { num_battalions_with_type@anti_air_heavy_mot > 0 }
+	}
+	
+	set_temp_variable = { units = num_battalions_with_type@anti_air_heavy }
+	add_to_temp_variable = { units = num_battalions_with_type@anti_air_heavy_mot }
+	multiply_temp_variable = { units = 80 }
+	
+	add_to_temp_variable = { base = units }
+	
+	#ai_base*ai_artillery_tech_need
+	set_temp_variable = { ai_base = base }
+}
+
+ai_heavy_anti_air_direct_tech = { #base
+
+	OR = {
+		tag = GER
+		tag = USA 
+		tag = CAN 
+		tag = ENG
+		tag = SOV
+		
+		check_variable = { num_battalions_with_type@anti_air_heavy > 0 }
+		check_variable = { num_battalions_with_type@anti_air_heavy_mot > 0 }
+	}
+	
+	set_temp_variable = { units = num_battalions_with_type@anti_air_heavy }
+	add_to_temp_variable = { units = num_battalions_with_type@anti_air_heavy_mot }
+	multiply_temp_variable = { units = 80 }
+	
+	add_to_temp_variable = { base = units }
+	
+	#ai_base*ai_artillery_tech_need
+	set_temp_variable = { ai_base = base }
+}
+
+ai_light_anti_tank_tech = { #base
+
+	OR = {
+		tag = GER 
+		tag = ITA 
+		tag = SOV 
+		tag = ENG 
+		tag = FRA 
+		tag = USA 
+		tag = CAN
+		tag = EGY
+		tag = FIN
+		tag = HUN
+		tag = ROM
+		tag = SPR
+		tag = TUR
+		
+		check_variable = { ai_tech_need/interwar_antitank > 0 }
+		check_variable = { num_battalions_with_type@anti_tank_brigade > 0 }
+		check_variable = { num_battalions_with_type@anti_tank_brigade_mot > 0 }
+	}
+	
+	set_temp_variable = { units = num_battalions_with_type@anti_tank_brigade }
+	add_to_temp_variable = { units = num_battalions_with_type@anti_tank_brigade_mot }
+	multiply_temp_variable = { units = 40 }
+	
+	add_to_temp_variable = { base = units }
+	
+	#ai_base*ai_artillery_tech_need
+	set_temp_variable = { ai_base = base }
+}
+ai_med_anti_tank_tech = { #base
+
+	OR = {
+		tag = GER 
+		tag = ITA 
+		tag = SOV 
+		tag = ENG 
+		tag = FRA 
+		tag = USA 
+		tag = CAN
+		tag = EGY
+		tag = FIN
+		tag = HUN
+		tag = ROM
+		tag = SPR
+		tag = TUR
+		
+		check_variable = { ai_tech_need/antitank2 > 0 }
+		check_variable = { num_battalions_with_type@anti_tank_brigade_med > 0 }
+		check_variable = { num_battalions_with_type@anti_tank_brigade_mot_med > 0 }
+	}
+
+	set_temp_variable = { units = num_battalions_with_type@anti_tank_brigade_med }
+	add_to_temp_variable = { units = num_battalions_with_type@anti_tank_brigade_mot_med }
+	multiply_temp_variable = { units = 60 }
+	
+	add_to_temp_variable = { base = units }
+	
+	if = {
+		limit = {
+			NOT = { has_tech = antitank2 }
+		}
+		multiply_temp_variable = { base = 3.0 }
+	}
+	
+	
+	#ai_base*ai_artillery_tech_need
+	set_temp_variable = { ai_base = base }
+}
+
+ai_heavy_anti_tank_tech = { #base
+
+	OR = {
+		tag = USA 
+		tag = GER 
+		
+		check_variable = { ai_tech_need/HVantitank1 > 0 }
+		check_variable = { num_battalions_with_type@anti_air_heavy > 0 }
+		check_variable = { num_battalions_with_type@anti_air_heavy_mot > 0 }
+	}
+	
+	set_temp_variable = { units = num_battalions_with_type@anti_tank_brigade_med }
+	add_to_temp_variable = { units = num_battalions_with_type@anti_tank_brigade_mot_med }
+	multiply_temp_variable = { units = 80 }
+	
+	add_to_temp_variable = { base = units }
+	
+	if = {
+		limit = {
+			NOT = { has_tech = HVantitank1 }
+		}
+		multiply_temp_variable = { base = 3.0 }
+	}
+	
+	#ai_base*ai_artillery_tech_need
+	set_temp_variable = { ai_base = base }
+}
+
+############################################ Tank Techs
+
+ai_light_car_tech = { #trigger
+
+	OR = {
+		check_variable = { ai_tech_need/tech_Headquarters_cars > 0 }
+		check_variable = { ai_tech_need/tech_field_hospital > 0 }
+		check_variable = { ai_tech_need/tech_logistics_company > 0 }
+		
+		check_variable = { mtth:ai_num_of_military_factories > 49 }
+	}
+	
+}
+
+ai_armored_car_tech = { #trigger
+
+	OR = {
+		tag = FRA
+		tag = GER
+		
+		check_variable = { ai_tech_need/tech_ac_recon > 0 }
+	}
+	
+}
+
+ai_tankette_tech = { #trigger
+
+	always = no 
+	
+}
+
+ai_tank_techs_tech = { #base
+	
+	OR = {
+		tag = GER 
+		tag = SOV 
+		tag = USA 
+		tag = FRA 
+	}
+	
+	set_temp_variable = { armor = num_armor }
+	multiply_temp_variable = { armor = @ARMOR_UNIT_WEIGHT }
+	add_to_temp_variable = { base = armor }
+	
+	if = { 
+		limit = {
+			OR = { 
+				date > 1939.1.1
+				has_war = yes 
+			}
+		}
+		multiply_temp_variable = { base = 1.5 }
+	}
+	
+	#ai_base*ai_tank_tech_need
+	set_temp_variable = { ai_base = base }
+}
+
+ai_recovery_tank_tech = { #trigger 
+
+	OR = {
+		tag = GER 
+		tag = USA 
+		tag = SOV
+		
+		check_variable = { ai_tech_need/tech_recovery_tanks > 0 }
+		check_variable = { ai_tech_need/tech_recovery_tanks_II > 0 }
+	}
+	
+}
+
+ai_command_tank_tech = { #trigger 
+
+	OR = {
+		tag = GER 
+		tag = SOV 
+		tag = USA 
+		tag = FRA 
+	}
+	
+}
+
+
+############################################ Naval
+
+ai_invasion_tech = { #base
+	
+	OR = {
+		tag = ENG 
+		tag = USA 
+		tag = JAP 
+		tag = GER 
+		tag = ITA 
+		tag = CAN 
+		tag = AST 
+	}
+	
+	if = { limit = { tag = GER } multiply_temp_variable = { base = 0.5 } }
+	else_if = { limit = { tag = ITA } multiply_temp_variable = { base = 0.75 } }
+	
+	#ai_base*ai_naval_tech_need
+	set_temp_variable = { ai_base = base }
+}
+
+ai_submarine_hull_tech = { #base
+	
+	OR = {
+		tag = GER 
+		
+	}
+	
+	#ai_base*ai_naval_tech_need
+	set_temp_variable = { ai_base = base }
+}
+
+ai_cruiser_hull_tech = { #base
+	
+	#ai_base*ai_naval_tech_need
+	set_temp_variable = { ai_base = base }
+}
+ai_large_cruiser_hull_tech = { #trigger
+	
+}
+
+ai_destroyer_hull_tech = { #base
+	
+	#ai_base*ai_naval_tech_need
+	set_temp_variable = { ai_base = base }
+}
+ai_escort_hull_tech = { #trigger
+	
+}
+
+ai_capital_hull_tech = { #base
+	
+	#ai_base*ai_naval_tech_need
+	set_temp_variable = { ai_base = base }
+}
+ai_capital_super_heavy_armor = { #trigger 
+
+	OR = {
+		tag = USA 
+		tag = JAP 
+	}
+	
+}
+
+ai_carrier_hull_tech = { #base
+	
+	OR = {
+		tag = ENG 
+		tag = USA 
+		tag = JAP 
+		tag = ITA 
+	}
+	
+	#ai_base*ai_naval_tech_need
+	set_temp_variable = { ai_base = base }
+}
+ai_escort_carrier_hull_tech = { #base
+	
+	OR = {
+		tag = ENG 
+		tag = USA 
+		tag = JAP 
+		tag = ITA 
+	}
+	
+	#ai_base*ai_naval_tech_need
+	set_temp_variable = { ai_base = base }
+}
+
+ai_carrier_hull_conversion_tech = { #trigger 
+
+	OR = {
+		tag = ENG 
+		tag = USA 
+		tag = JAP 
+		tag = ITA 
+	}
+	
+}
+
+############################################ Naval Techs
+
+ai_engine_tech = { #trigger
+	
+}
+ai_torpedo_tech = { #trigger
+
+	OR = {
+		tag = GER 
+		
+		check_variable = { num_ships_with_type@submarine > 0 }
+	}
+	
+}
+ai_naval_radar_tech = { #trigger
+	
+}
+ai_damage_control_tech = { #trigger
+	
+}
+ai_fire_control_method_tech = { #trigger
+	
+}
+ai_naval_mines_tech = { #trigger
+	
+}
+
+############################################ WW1 Doctrine
+
+ai_ww1_cavalry_tech = { #base
+
+	set_temp_variable = { cavalry_weight = num_battalions_with_type@cavalry }
+	multiply_temp_variable = { cavalry_weight = @WW1_CAVALRY_WEIGHT }
+	add_to_temp_variable = { base = cavalry_weight }
+	
+	#ai_base*ai_ww1_doctrine_tech_need
+	set_temp_variable = { ai_base = base }
+}
+
+ai_ww1_air_tech = { #base
+
+	set_temp_variable = { plane_weight = num_deployed_planes }
+	multiply_temp_variable = { plane_weight = @WW1_AIR_WEIGHT }
+	add_to_temp_variable = { base = plane_weight }
+	
+	#ai_base*ai_ww1_doctrine_tech_need
+	set_temp_variable = { ai_base = base }
+}
+
+############################################ WW2 Doctrine
+
+ai_offensive_doctrine_tech = { #DOCTRINE
+
+	#ai_add*ai_land_doctrine_tech_need
+}
+
+ai_defensive_doctrine_tech = { #DOCTRINE
+
+	#ai_add*ai_land_doctrine_tech_need
+}
+
+ai_guerilla_warfare_doctrine_tech = { #DOCTRINE
+	if = { limit = { is_researching_technology = ambush_tactics } add_to_temp_variable = { num_doctrine_research = 1 } }
+	if = { limit = { is_researching_technology = nd_conscription } add_to_temp_variable = { num_doctrine_research = 1 } }
+	if = { limit = { is_researching_technology = unconventional_warfare } add_to_temp_variable = { num_doctrine_research = 1 } }
+	if = { limit = { is_researching_technology = human_wave_offensive } add_to_temp_variable = { num_doctrine_research = 1 } }
+	if = { limit = { is_researching_technology = werwolf_guerillas } add_to_temp_variable = { num_doctrine_research = 1 } }
+	if = { limit = { is_researching_technology = local_knowledge } add_to_temp_variable = { num_doctrine_research = 1 } }
+	
+	if = {
+		limit = {
+			check_variable = { num_doctrine_research = 1 }
+		}
+		multiply_temp_variable = { base = 0.5 }
+	}
+	else_if = {
+		limit = {
+			check_variable = { num_doctrine_research = 2 }
+		}
+		multiply_temp_variable = { base = 0.25 }
+	}
+	else_if = {
+		limit = {
+			check_variable = { num_doctrine_research > 2 }
+		}
+		multiply_temp_variable = { base = 0.1 }
+	}
+	
+	set_temp_variable = { ai_base = base }
+	#ai_add*ai_land_doctrine_tech_need
+}
+ai_command_doctrine_tech = { #DOCTRINE
+	
+	#ai_add*ai_land_doctrine_tech_need
+}
+
+ai_special_doctrine_tech = { #DOCTRINE
+
+	OR = {
+		has_country_flag = ai_mountaineers_template
+		has_country_flag = ai_marines_template
+	}
+
+	set_temp_variable = { ai_add = num_specialised }
+	multiply_temp_variable = { ai_add = 0.2 }
+
+	#ai_add*ai_land_doctrine_tech_need
+}
+
+ai_operational_doctrine_tech = { #DOCTRINE
+
+	#ai_add*ai_land_doctrine_tech_need
+}
+
+ai_regimental_doctrine_tech = { #DOCTRINE
+
+	#ai_add*ai_land_doctrine_tech_need
+}
+
+############################################ Naval Doctrine
+
+ai_base_naval_doctrine_tech = { #trigger
+	
+	OR = {
+		check_variable = { num_ships > 20 }
+		num_of_naval_factories > 4 
+	}
+	
+}
+
+ai_submarine_doctrine_tech = { #base
+
+	OR = {
+		tag = GER 
+		check_variable = { num_ships_with_type@submarine > 20 }
+	}
+	
+	if = {
+		limit = {
+			tag = GER 
+		}
+		multiply_temp_variable = { base = 1.5 }
+	}
+	
+	#ai_base*ai_naval_doctrine_tech_need
+	set_temp_variable = { ai_base = base }
+}
+ai_destroyer_doctrine_tech = { #base
+	
+	#ai_base*ai_naval_doctrine_tech_need
+	set_temp_variable = { ai_base = base }
+}
+ai_convoy_doctrine_tech = { #base
+
+	if = {
+		limit = {
+			OR = {
+				tag = FRA 
+				tag = ITA 
+				tag = JAP 
+			}
+		}
+		multiply_temp_variable = { base = 1.5 }
+	}
+	else_if = {
+		limit = {
+			OR = {
+				tag = ENG 
+				tag = USA 
+			}
+		}
+		multiply_temp_variable = { base = 2.0 }
+	}
+	
+	#ai_base*ai_naval_doctrine_tech_need
+	set_temp_variable = { ai_base = base }
+}
+ai_carrier_doctrine_tech = { #base
+	
+	OR = {
+		tag = ENG 
+		tag = JAP 
+		tag = USA 
+		tag = FRA 
+		
+		tag = ITA 
+	}
+	
+	if = {
+		limit = {
+			tag = ITA 
+		}
+		multiply_temp_variable = { base = 0.6 }
+	}
+	else_if = {
+		limit = {
+			tag = FRA 
+		}
+		multiply_temp_variable = { base = 0.8 }
+	}
+	
+	#ai_base*ai_naval_doctrine_tech_need
+	set_temp_variable = { ai_base = base }
+}
+ai_capital_doctrine_tech = { #base
+
+	OR = {
+		check_variable = { navy_strength > 100 }
+		num_of_naval_factories > 19 
+	}
+	
+	#ai_base*ai_naval_doctrine_tech_need
+	set_temp_variable = { ai_base = base }
+}
+ai_cruiser_doctrine_tech = { #base
+
+	OR = {
+		check_variable = { navy_strength > 75 }
+		num_of_naval_factories > 14
+	}
+	
+	#ai_base*ai_naval_doctrine_tech_need
+	set_temp_variable = { ai_base = base }
+}
+ai_mine_warfare_tech = { #trigger
+	
+}
+ai_fleet_logistics_tech = { #trigger
+
+}
+
+ai_decisive_battle_tech = { #base
+
+	#ai_base*ai_naval_doctrine_tech_need
+	set_temp_variable = { ai_base = base }
+}
+ai_fleet_in_being_tech = { #base
+
+	#ai_base*ai_naval_doctrine_tech_need
+	set_temp_variable = { ai_base = base }
+}
+ai_trade_interdiction_tech = { #base
+
+	#ai_base*ai_naval_doctrine_tech_need
+	set_temp_variable = { ai_base = base }
+}
+
+
+############################################ Electronics 
+
+ai_radio_motorized_tech = { #trigger
+
+	check_variable = { field_strength > 0.95 }
+	
+	OR = {
+		check_variable = { num_battalions_with_type@semi_motorized > 0 }
+		check_variable = { num_battalions_with_type@semi_motorized_assault > 0 }
+		check_variable = { num_battalions_with_type@motorcycle_infantry > 0 }
+		check_variable = { num_battalions_with_type@motorized > 0 }
+		check_variable = { num_battalions_with_type@motorized_assault > 0 }
+		check_variable = { num_battalions_with_type@mechanized > 0 }
+		check_variable = { num_battalions_with_type@mechanized_assault > 0 }
+	}
+	
+	check_variable = { mtth:ai_num_of_military_factories > 40 } 
+	
+}
+
+ai_radio_tank_tech = { #trigger
+
+	check_variable = { num_armor > 0 }
+	check_variable = { field_strength > 0.95 }
+	
+	check_variable = { mtth:ai_num_of_military_factories > 49 } 
+	
+}
+
+ai_radar_tech = { #base
+
+	OR = {
+		major_country = yes 
+		AND = {
+			is_subject = yes 
+			OVERLORD = { 
+				has_tech = radio_detection
+			}
+		}
+	}
+	
+	if = { limit = { tag = SOV } multiply_temp_variable = { base = 0.75 } }
+	else_if = { limit = { tag = FRA } multiply_temp_variable = { base = 0.5 } }
+	else_if = { limit = { OR = { tag = ENG tag = USA tag = JAP } } multiply_temp_variable = { base = 1.5 } }
+	
+	else_if = {
+		limit = {
+			is_subject = yes 
+			OVERLORD = { 
+				has_tech = radio_detection
+			}
+		}
+		multiply_temp_variable = { base = 10 }
+	}
+	
+	
+	#ai_base*ai_aircraft_tech_need
+	set_temp_variable = { ai_base = base }
+}
+
+ai_jet_tech = { #base 
+
+	#ai_base*ai_electronic_tech_need
+	set_temp_variable = { ai_base = base }
+}
+
+ai_nuke_tech = { #base 
+
+	#ai_base*ai_electronic_tech_need
+	set_temp_variable = { ai_base = base }
+	
+	major_country = yes
+			
+	if = {
+		limit = {
+			tag = USA
+			date > 1939.1.1
+		}
+		add_to_temp_variable = { ai_base = 90000 }
+	}
+	else_if = {
+		limit = {
+			tag = ENG
+			date > 1941.1.1
+		}
+		add_to_temp_variable = { ai_base = 30000 }
+	}
+	
+	if = {
+		limit = {
+			any_enemy_country = {
+				check_variable = { nuclear_tech_level > ROOT.nuclear_tech_level }
+			}
+		}
+		set_temp_variable = { catch_up_nuclear = nuclear_tech_level }
+		subtract_from_temp_variable = { catch_up_nuclear = ROOT.nuclear_tech_level }
+		clamp_temp_variable = { var = catch_up_nuclear min = 1 max = 5 }
+		multiply_temp_variable = { ai_base = catch_up_nuclear }
+	}
+}
+
+############################################ Industry 
+
+ai_air_base_tech = { #base
+	multiply_temp_variable = { base = ai_air_doctrine_tech_need }
+	
+	if = {
+		limit = {
+			OR = {
+				tag = ENG
+				tag = USA
+			}
+		}
+		multiply_temp_variable = { base = 2 }
+	}
+	else_if = {
+		limit = {
+			OR = {
+				tag = GER
+				tag = ITA
+				tag = FRA
+				tag = JAP
+				tag = SOV
+			}
+		}
+		multiply_temp_variable = { base = 1.5 }
+	}
+	
+	#ai_base*ai_aircraft_tech_need
+	set_temp_variable = { ai_base = base }
+}
+
+ai_port_infra_tech = {
+	multiply_temp_variable = { base = ai_naval_doctrine_tech_need }
+	
+	if = {
+		limit = {
+			OR = {
+				tag = ENG
+				tag = USA
+				tag = JAP
+			}
+		}
+		multiply_temp_variable = { base = 2 }
+	}
+	else_if = {
+		limit = {
+			OR = {
+				tag = ITA
+				tag = FRA
+			}
+		}
+		multiply_temp_variable = { base = 1.5 }
+	}
+	
+	#ai_base*ai_naval_tech_need
+	set_temp_variable = { ai_base = base }
+}
+
+############################################ Resources
+ 
+ai_excavation_tech = { #base
+
+	if = {
+		limit = {
+			OR = {
+				major_country = yes 
+				tag = ROM 
+			}
+		}
+		add_to_temp_variable = { base = 12000 }
+		
+		if = {
+			limit = {
+				tag = JAP
+			}
+			multiply_temp_variable = { base = 1.5 }
+		}
+	}
+	else = {
+		set_temp_variable = { resources = resource_produced@oil }
+		add_to_temp_variable = { resources = resource_produced@rubber }
+		add_to_temp_variable = { resources = resource_produced@steel }
+		add_to_temp_variable = { resources = resource_produced@tungsten }
+		add_to_temp_variable = { resources = resource_produced@aluminium }
+		add_to_temp_variable = { resources = resource_produced@chromium }
+		
+		check_variable = { resources > 25 }
+				
+		divide_temp_variable = { resources = @EXCAVATION_RESOURCE_PRODUCED_DIVISOR }
+		set_temp_variable = { max_weight = @EXCAVATION_RESOURCE_PRODUCED_MAX_WEIGHT }
+		clamp_temp_variable = { var = resources max = max_weight }
+		multiply_temp_variable = { base = resources }
+		
+		if = {
+			limit = {
+				check_variable = { resource_produced@rubber > 10 }
+			}
+			set_temp_variable = { total = resource_produced@rubber }
+			add_to_temp_variable = { total = resource_imported@rubber }
+			set_temp_variable =  { used = total }
+			subtract_from_temp_variable = { used = resource@rubber }
+			set_temp_variable = { produced = resource_produced@rubber }
+			subtract_from_temp_variable = { produced = used }
+			multiply_temp_variable = { produced = resource_produced@rubber }
+			multiply_temp_variable = { produced = @EXCAVATION_RESOURCE_GAIN_WEIGHT }
+				
+			set_temp_variable = { max_weight = @EXCAVATION_RESOURCE_GAIN_MAX_WEIGHT	}
+			set_temp_variable = { min_value = @EXCAVATION_RESOURCE_GAIN_MIN_WEIGHT	}
+			clamp_temp_variable = { var = produced min = min_value max = max_weight }
+			subtract_from_temp_variable = { base = produced }
+		}
+		if = {
+			limit = {
+				check_variable = { resource_produced@tungsten > 10 }
+			}
+			set_temp_variable = { total = resource_produced@tungsten }
+			add_to_temp_variable = { total = resource_imported@tungsten }
+			set_temp_variable =  { used = total }
+			subtract_from_temp_variable = { used = resource@tungsten }
+			set_temp_variable = { produced = resource_produced@tungsten }
+			subtract_from_temp_variable = { produced = used }
+			multiply_temp_variable = { produced = resource_produced@tungsten }
+			multiply_temp_variable = { produced = @EXCAVATION_RESOURCE_GAIN_WEIGHT }
+				
+			set_temp_variable = { max_weight = @EXCAVATION_RESOURCE_GAIN_MAX_WEIGHT	}
+			set_temp_variable = { min_value = @EXCAVATION_RESOURCE_GAIN_MIN_WEIGHT	}
+			clamp_temp_variable = { var = produced min = min_value max = max_weight }
+			subtract_from_temp_variable = { base = produced }
+		}
+		if = {
+			limit = {
+				check_variable = { resource_produced@chromium > 10 }
+			}
+			set_temp_variable = { total = resource_produced@chromium }
+			add_to_temp_variable = { total = resource_imported@chromium }
+			set_temp_variable =  { used = total }
+			subtract_from_temp_variable = { used = resource@chromium }
+			set_temp_variable = { produced = resource_produced@chromium }
+			subtract_from_temp_variable = { produced = used }
+			multiply_temp_variable = { produced = resource_produced@chromium }
+			multiply_temp_variable = { produced = @EXCAVATION_RESOURCE_GAIN_WEIGHT }
+				
+			set_temp_variable = { max_weight = @EXCAVATION_RESOURCE_GAIN_MAX_WEIGHT	}
+			set_temp_variable = { min_value = @EXCAVATION_RESOURCE_GAIN_MIN_WEIGHT	}
+			clamp_temp_variable = { var = produced min = min_value max = max_weight }
+			subtract_from_temp_variable = { base = produced }
+		}
+		if = {
+			limit = {
+				check_variable = { resource_produced@bauxite > 10 }
+			}
+			set_temp_variable = { total = resource_produced@bauxite }
+			add_to_temp_variable = { total = resource_imported@bauxite }
+			set_temp_variable =  { used = total }
+			subtract_from_temp_variable = { used = resource@bauxite }
+			set_temp_variable = { produced = resource_produced@bauxite }
+			subtract_from_temp_variable = { produced = used }
+			multiply_temp_variable = { produced = resource_produced@bauxite }
+			multiply_temp_variable = { produced = @EXCAVATION_RESOURCE_GAIN_WEIGHT }
+				
+			set_temp_variable = { max_weight = @EXCAVATION_RESOURCE_GAIN_MAX_WEIGHT	}
+			set_temp_variable = { min_value = @EXCAVATION_RESOURCE_GAIN_MIN_WEIGHT	}
+			clamp_temp_variable = { var = produced min = min_value max = max_weight }
+			subtract_from_temp_variable = { base = produced }
+		}
+		if = {
+			limit = {
+				check_variable = { resource_produced@coal > 10 }
+			}
+			set_temp_variable = { total = resource_produced@coal }
+			add_to_temp_variable = { total = resource_imported@coal }
+			set_temp_variable =  { used = total }
+			subtract_from_temp_variable = { used = resource@coal }
+			set_temp_variable = { produced = resource_produced@coal }
+			subtract_from_temp_variable = { produced = used }
+			multiply_temp_variable = { produced = resource_produced@coal }
+			multiply_temp_variable = { produced = @EXCAVATION_RESOURCE_GAIN_WEIGHT }
+				
+			set_temp_variable = { max_weight = @EXCAVATION_RESOURCE_GAIN_MAX_WEIGHT	}
+			set_temp_variable = { min_value = @EXCAVATION_RESOURCE_GAIN_MIN_WEIGHT	}
+			clamp_temp_variable = { var = produced min = min_value max = max_weight }
+			subtract_from_temp_variable = { base = produced }
+		}
+		if = {
+			limit = {
+				check_variable = { resource_produced@iron > 10 }
+			}
+			set_temp_variable = { total = resource_produced@iron }
+			add_to_temp_variable = { total = resource_imported@iron }
+			set_temp_variable =  { used = total }
+			subtract_from_temp_variable = { used = resource@iron }
+			set_temp_variable = { produced = resource_produced@iron }
+			subtract_from_temp_variable = { produced = used }
+			multiply_temp_variable = { produced = resource_produced@iron }
+			multiply_temp_variable = { produced = @EXCAVATION_RESOURCE_GAIN_WEIGHT }
+				
+			set_temp_variable = { max_weight = @EXCAVATION_RESOURCE_GAIN_MAX_WEIGHT	}
+			set_temp_variable = { min_value = @EXCAVATION_RESOURCE_GAIN_MIN_WEIGHT	}
+			clamp_temp_variable = { var = produced min = min_value max = max_weight }
+			subtract_from_temp_variable = { base = produced }
+		}
+		
+	}
+	
+	#ai_base*ai_industry_tech_need
+	set_temp_variable = { ai_base = base }
+}
+ai_fuel_refining_tech = { #base
+
+	OR = {
+		major_country = yes 
+		
+		AND = { date > 1936.6.1 fuel_ratio < 0.5 }
+		AND = { has_war = yes fuel_ratio < 0.7 }
+	}
+	
+	set_temp_variable = { fuel_score_mult = 1 }
+	subtract_from_temp_variable = { fuel_score_mult = fuel_ratio }
+	if = {
+		limit = {
+			major_country = yes
+		}
+		multiply_temp_variable = { fuel_score_mult = 4 }
+	}
+	else = {
+		multiply_temp_variable = { fuel_score_mult = 2 }
+	}
+	
+	multiply_temp_variable = { base = fuel_score_mult }
+	
+	#ai_base*ai_industry_tech_need
+	set_temp_variable = { ai_base = base }
+}
+ai_catalytic_cracking_tech = { #base
+
+	OR = {
+		check_variable = { resource_produced@oil > 40 }
+		AND = {
+			tag = ROM
+			controls_state = 46
+		}
+	}
+	
+	set_temp_variable = { t = resource_produced@oil }
+	multiply_temp_variable = { t = 2 }
+	add_to_temp_variable = { base = t }
+	
+	#ai_base*ai_industry_tech_need
+	set_temp_variable = { ai_base = base }
+}
+ai_fuel_silo_tech = { #base
+
+	major_country = yes 
+	
+	#ai_base*ai_industry_tech_need
+	set_temp_variable = { ai_base = base }
+}
+
+ai_synthetic_oil_refinery_tech = { #base
+
+	OR = {
+		tag = GER 
+		
+		AND = { #this tech is needed to research rubber refineries
+			NOT = { has_tech = improved_oil_plant }
+			ai_synthetic_rubber_refinery_tech = yes 
+		}
+	}
+	
+	#ai_base*ai_industry_tech_need
+	set_temp_variable = { ai_base = base }
+}
+
+ai_synthetic_rubber_refinery_tech = { #base
+
+	OR = {
+		tag = GER 
+		tag = USA
+		tag = SOV
+	}
+	
+	if = { limit = { tag = GER } multiply_temp_variable = { base = 0.5 } }
+	
+	#ai_base*ai_industry_tech_need
+	set_temp_variable = { ai_base = base }
+}
+
+ai_industrial_farming_tech = { #base
+
+	#ai_base*ai_material_tech_need
+	set_temp_variable = { ai_base = base }
+}
+ai_cropping_focus_pick = { #trigger
+	always = yes
+}
+ai_livestock_focus_pick = { #trigger
+	always = no
+}
+
+ai_refridgeration_tech = { #base
+
+	#ai_base*ai_material_tech_need
+	set_temp_variable = { ai_base = base }
+}
+
+ai_plastic_tech = { #base
+
+	#ai_base*ai_material_tech_need
+	set_temp_variable = { ai_base = base }
+}
+
+ai_power_plant_tech = { #base
+
+	#ai_base*ai_material_tech_need
+	set_temp_variable = { ai_base = base }
+}
+ai_new_power_plant_pick = { #trigger
+	always = yes
+}
+
+ai_energy_grid_tech = { #base
+
+	#ai_base*ai_material_tech_need
+	set_temp_variable = { ai_base = base }
+}
+ai_high_voltage_pick = { #trigger
+	always = yes
+}
+
+ai_steel_refinery_tech = { #base
+
+	check_variable = { num_active_refinery@steel > 1 }
+	
+	if = {
+		limit = {
+			check_variable = { num_active_refinery@steel < 10 }
+		}
+		
+		set_temp_variable = { div = 10 }
+		subtract_from_temp_variable = { div = num_active_refinery@steel }
+		multiply_temp_variable = { div = 0.5 }
+		divide_temp_variable = { base = div }
+	}
+
+	#ai_base*ai_material_tech_need
+	set_temp_variable = { ai_base = base }
+}
+ai_new_steel_mills_pick = { #trigger
+	check_variable = { num_refinery@steel < 30 }
+}
+ai_high_carbon_steel_pick = { #trigger
+	always = yes
+}
+
+ai_aluminium_refinery_tech = { #base
+
+	OR = {
+		has_country_flag = ai_has_air_production
+		check_variable = { num_active_refinery@aluminium > 0 }
+	}
+	
+	if = {
+		limit = {
+			check_variable = { num_active_refinery@aluminium < 5 }
+		}
+		
+		set_temp_variable = { div = 5 }
+		subtract_from_temp_variable = { div = num_active_refinery@aluminium }
+		multiply_temp_variable = { div = 0.5 }
+		divide_temp_variable = { base = div }
+	}
+
+	if = {
+		limit = {
+			OR = {
+				AND = {
+					major_country = no
+					check_variable = { num_active_refinery@aluminium < 4 }
+				}
+				tag = ENG
+			}
+		}
+		multiply_temp_variable = { base = 0.5 }
+	}
+	
+	#ai_base*ai_material_tech_need
+	set_temp_variable = { ai_base = base }
+}
+ai_efficient_alumina_pick = {
+	always = yes
+}
+
+##################################################
+####### MISC TRIGGERS & EXTRA AI CATEGORIES
+##################################################
+
+ai_anti_tank_tech_need = { #applied after existing "**_tech" triggers, ai_mult for techs that are effective against tanks (RPGs, AT, hard attack) outside of doctrines
+	set_temp_variable = { ai_mult = 1 }
+	
+	if = {
+		limit = {
+			OR = {
+				tag = USA 
+				tag = GER 
+				tag = SOV 
+			}
+		}
+		add_to_temp_variable = { ai_mult = 0.25 }
+	}
+	if = {
+		limit = {
+			has_country_flag = ai_superior_enemy_armor
+		}
+		add_to_temp_variable = { ai_mult = 0.2 }
+	}
+	if = {
+		limit = {
+			has_country_flag = ai_superior_neighbor_armor
+		}
+		add_to_temp_variable = { ai_mult = 0.1 }
+	}
+	#ai_add*ai_mult*ai_<category>_tech_need
+}
+
+ai_marine_tech_need = { #applied after existing "**_tech" triggers, ai_mult for techs that affect marines outside of doctrines
+	set_temp_variable = { ai_mult = 1 }
+	
+	if = {
+		limit = {
+			OR = {
+				tag = JAP
+				tag = ENG
+				tag = USA
+			}
+		}
+		add_to_temp_variable = { ai_mult = 0.15 }
+	}
+	
+	#ai_add*ai_mult*ai_<category>_tech_need
+}
+
+ai_mountaineer_tech_need = { #applied after existing "**_tech" triggers, ai_mult for techs that affect mountaineers outside of doctrines
+	set_temp_variable = { ai_mult = 1 }
+	
+	if = {
+		limit = {
+			OR = {
+				tag = ITA
+				tag = FRA
+			}
+		}
+		add_to_temp_variable = { ai_mult = 0.15 }
+	}
+	
+	#ai_add*ai_mult*ai_<category>_tech_need
+}
+
+ai_intelligence_tech_need = { #applied after existing "**_tech" triggers, ai_mult for techs that improves agency, intelligence and operations
+	set_temp_variable = { ai_mult = 1 }
+	
+	set_temp_variable = { t1 = agency_upgrade_number }
+	multiply_temp_variable = { t1 = 0.05 }
+	add_to_temp_variable = { ai_mult = t1 }
+	
+	#ai_add*ai_mult*ai_<category>_tech_need
+}
+
+ai_stability_tech_need = { #applied after existing "**_tech" triggers, ai_mult for techs that boost our stability
+	set_temp_variable = { ai_mult = 1 }
+	
+	#ai_add*ai_mult*ai_<category>_tech_need
+}
+
+ai_stability_factor_tech_need = { #applied after existing "**_tech" triggers, ai_mult for techs that boost our stability
+	set_temp_variable = { ai_mult = 1 }
+	
+	set_temp_variable = { score = 1 }
+	subtract_from_temp_variable = { score = mtth:max_stability }
+	
+	if = {
+		limit = {
+			set_temp_variable = { current = stability }
+			add_to_temp_variable = { current = 0.1 }
+			
+			check_variable = { current > mtth:max_stability }
+		}
+		multiply_temp_variable = { score = 2 }
+	}
+	if = {
+		limit = {
+			check_variable = { score > 0.7 }
+		}
+		multiply_temp_variable = { score = 20 }
+	}
+	else_if = {
+		limit = {
+			check_variable = { score > 0.6 }
+		}
+		multiply_temp_variable = { score = 15 }
+	}
+	else_if = {
+		limit = {
+			check_variable = { score > 0.5 }
+		}
+		multiply_temp_variable = { score = 10 }
+	}
+			
+	add_to_temp_variable = { ai_mult = score }
+	
+	#ai_add*ai_mult*ai_<category>_tech_need
+}
+
+ai_anti_air_building_tech_need = { #applied after existing "**_tech" triggers, ai_add for techs that improves static anti air
+
+	#ai_add*ai_<category>_tech_need
+}
+
+
+ai_upgrade_equipment_tech_need = {
+
+}
+
+# DIV_HQ 
+# DIV_HQ_car
+# DIV_HQ_mech
+# DIV_HQ_arm
+# DIV_HQ_airborne
+# engineer 
+# engineer_mot 
+# engineer_mech 
+# engineer_arm 
+# combat_engineer 
+# combat_engineer_mot 
+# combat_engineer_mech 
+# combat_engineer_arm 
+# airborne_engineer
+# logistics_company
+# logistics_company_car
+# logistics_company_mot 
+# logistics_company_mech
+# field_hospital 
+# field_hospital_cav 
+# recon 
+# recon_cav 
+# recon_mot
+# recon_mech 
+# recon_ac 
+# signal_company
+# signal_company_mot
+# artillery_heavy
+# artillery_heavy_mot
+# rocket_artillery
+# maintenance_company
+# maintenance_company_arm
+# anti_air 
+# anti_air_car
+# anti_air_heavy 
+# anti_air_heavy_mot
+# commando
+# amph_support
+# mount_support
+# urban_support
+# para_support
+# jungle_support
+# arctic_support
+# military_police
+
+# infantry
+# light_infantry
+# garrison
+# militia
+# irregulars_unit
+
+# marine
+# gurkha
+# mountaineers
+# paratrooper
+
+# cavalry
+# semi_motorized
+# motorized 
+# mechanized 
+# amphibious_mechanized
+# armored_car
+
+# anti_tank_brigade
+# anti_tank_brigade_mot
+# artillery_brigade
+# artillery_brigade_med
+# artillery_brigade_mot
+# artillery_brigade_mot_med
+# mountain_artillery_brigade
+# mountain_artillery_brigade_mot
+# airborne_artillery_brigade
+# rocket_artillery_brigade
+# motorized_rocket_brigade
+
+########## EOF ##########

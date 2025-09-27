@@ -1,0 +1,238 @@
+
+# ROOT = country doing the operation
+# THIS = country targeted for the operation
+
+resistance_area_score = { #civ
+	base = 1
+	
+	modifier = {
+		add = resistance_weight
+		
+		set_temp_variable = { resistance_weight = resistance }
+		multiply_temp_variable = { resistance_weight = 0.5 }
+	}
+	modifier = {
+		add = compliance_weight
+		
+		set_temp_variable = { compliance_weight = compliance }
+		multiply_temp_variable = { compliance_weight = 0.5 }
+	}
+	modifier = {
+		add = size
+		
+		set_temp_variable = { size = 0 }
+		all_neighbor_state = {
+			if = {
+				limit = {
+					has_resistance = yes
+				}
+				add_to_temp_variable = { size = 5 }
+			}
+		}
+	}
+}
+
+operation_sabotage_fuel = { #civ
+	base = 1
+	
+	modifier = {
+		factor = 0
+		
+		fuel_silo < 1
+	}
+	modifier = { #reduce score if country has large oil production
+		add = var:produced
+		
+		set_temp_variable = { produced = resource_produced@oil }
+		multiply_temp_variable = { produced = -0.01 }
+	}
+	modifier = { #increase score if country has oil imports
+		add = var:imported
+		
+		set_temp_variable = { imported = resource_imported@oil }
+		multiply_temp_variable = { imported = 0.01 }
+	}
+	modifier = {
+		add = custom_score
+		
+		set_temp_variable = { custom_score = operation_sabotage_fuel@THIS }
+	}
+}
+
+operation_steal_tech_civilian = { #civ
+	base = 1.1
+	
+	modifier = {
+		factor = 0
+		
+		amount_research_slots < 5
+	}
+}
+
+operation_sabotage_oil = { #civ
+	base = 1
+	
+	modifier = {
+		factor = 0
+		
+		check_variable = { resource_produced@oil < 20 }
+	}
+	modifier = { #increase score if country has large oil production
+		add = var:produced
+		
+		set_temp_variable = { produced = resource_produced@oil }
+		multiply_temp_variable = { produced = 0.01 }
+	}
+	modifier = {
+		add = custom_score
+		
+		set_temp_variable = { custom_score = operation_sabotage_oil@THIS }
+	}
+}
+
+operation_target_attache = { #army
+	base = 0
+	
+	modifier = {
+		add = 1.5
+		
+		has_country_flag = sent_attache
+		any_other_country = {
+			has_attache_from = ROOT
+		}
+	}
+	modifier = {
+		add = custom_score
+		
+		set_temp_variable = { custom_score = operation_target_attache@THIS }
+	}
+}
+
+operation_sabotage_radar = { #air
+	base = 1
+	
+	modifier = {
+		factor = 0
+		
+		radar_station < 1
+	}
+	modifier = {
+		add = 1
+		radar_station > 0
+		
+		any_controlled_state = {
+			radar_station > 0
+			is_in_array = { global.front_states = THIS }
+		}
+	}
+	modifier = {
+		add = custom_score
+		
+		set_temp_variable = { custom_score = operation_sabotage_radar@THIS }
+	}
+}
+
+operation_sabotage_port = { #navy
+	base = 1
+	
+	modifier = {
+		factor = 0
+		
+		has_war = no
+	}
+	modifier = {
+		factor = 0
+		
+		has_navy_size = {
+			size < 20
+		}
+	}
+	modifier = {
+		add = var:navy
+		
+		set_temp_variable = { navy = navy_strength }
+		multiply_temp_variable = { navy_strength = 0.005 }
+	}
+	modifier = {
+		add = custom_score
+		
+		set_temp_variable = { custom_score = operation_sabotage_port@THIS }
+	}
+}
+
+
+operation_strengthen_resistance = { #resistance
+	base = 1
+	
+	modifier = {
+		factor = 0
+		
+		check_variable = { num_occupied_states < 5 }
+	}
+	modifier = {
+		add = var:resistance_states
+		
+		set_temp_variable = { resistance_states = num_occupied_states }
+		multiply_temp_variable = { resistance_states = 0.01 }
+	}
+	modifier = {
+		add = var:average_resistance
+		
+		set_temp_variable = { average_resistance = 0 }
+		all_of = {
+			array = occupied_countries
+			
+			add_to_temp_variable = { average_resistance = core_resistance@var:v }
+		}
+		check_variable = { average_resistance > 0 }
+		divide_temp_variable = { average_resistance = occupied_countries^num }
+		multiply_temp_variable = { average_resistance = 0.01 }
+	}
+	modifier = {
+		add = custom_score
+		
+		set_temp_variable = { custom_score = operation_strengthen_resistance@THIS }
+	}
+}
+
+operation_strengthen_society = { #resistance
+	base = 1
+	
+	modifier = {
+		factor = 0
+		
+		check_variable = { num_occupied_states < 5 }
+	}
+	modifier = {
+		add = var:resistance_states
+		
+		set_temp_variable = { resistance_states = num_occupied_states }
+		multiply_temp_variable = { resistance_states = 0.01 }
+	}
+	modifier = {
+		add = var:average_compliance
+		
+		set_temp_variable = { average_compliance = 0 }
+		all_of = {
+			array = occupied_countries
+			
+			add_to_temp_variable = { average_compliance = core_compliance@var:v }
+		}
+		check_variable = { average_compliance > 0 }
+		divide_temp_variable = { average_compliance = occupied_countries^num }
+		multiply_temp_variable = { average_compliance = 0.01 }
+	}
+	modifier = {
+		add = custom_score
+		
+		set_temp_variable = { custom_score = operation_strengthen_society@THIS }
+	}
+}
+
+
+
+
+
+
+
+

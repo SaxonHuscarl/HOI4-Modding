@@ -1,0 +1,1285 @@
+﻿#Black I.C.E. Politics by Energico
+###################################################
+add_namespace = politics
+#Minister Switch following Coup/Election
+country_event = {
+	id = politics.40
+	title = politics.40.t
+	desc  = politics.40.desc
+	picture = event_HQcommandIV
+	
+	is_triggered_only = yes
+	
+	option = { 
+		name = politics.40.a
+		
+		#add_political_power = 300
+		if = {
+			limit = { has_government = socialism }
+			remove_ideas_with_trait = conservative
+			remove_ideas_with_trait = fascist
+			if = {
+				limit = {
+					NOT = { has_country_flag = const_monarchy }
+				}
+				remove_ideas_with_trait = monarchist
+			}
+			remove_ideas_with_trait = neutral
+		}
+		if = {
+			limit = { has_government = monarchism }
+			remove_ideas_with_trait = communist
+			remove_ideas_with_trait = fascist
+			remove_ideas_with_trait = liberal
+			remove_ideas_with_trait = socialist
+			#country_event = politics.920
+		}
+		if = {
+			limit = { has_government = conservatism }
+			remove_ideas_with_trait = socialist
+			remove_ideas_with_trait = fascist
+			if = {
+				limit = {
+					NOT = { has_country_flag = const_monarchy }
+				}
+				remove_ideas_with_trait = monarchist
+			}
+			remove_ideas_with_trait = neutral
+		}
+		if = {
+			limit = { has_government = liberalism }
+			remove_ideas_with_trait = communist
+			remove_ideas_with_trait = fascist
+			if = {
+				limit = {
+					NOT = { has_country_flag = const_monarchy }
+				}
+			remove_ideas_with_trait = monarchist
+			}
+			remove_ideas_with_trait = neutral
+		}
+		if = { limit = { has_government = fascism }
+			remove_ideas_with_trait = communist
+			remove_ideas_with_trait = monarchist
+			remove_ideas_with_trait = neutral
+			remove_ideas_with_trait = socialist
+			remove_ideas_with_trait = liberal
+		}
+		if = { limit = { has_government = communism }
+			remove_ideas_with_trait = conservative
+			remove_ideas_with_trait = fascist
+			remove_ideas_with_trait = monarchist
+			remove_ideas_with_trait = neutral
+			remove_ideas_with_trait = liberal
+		}
+		if = { limit = { has_government = neutrality }
+			remove_ideas_with_trait = conservative
+			remove_ideas_with_trait = socialist
+			remove_ideas_with_trait = liberal
+		}
+	}
+}
+#Set correct monarchs
+#country_event = {
+#	id = politics.920
+#	title = politics.920.t
+#	desc  = politics.920.desc
+#	picture = event_HQcommandIV
+#	hidden = yes
+#	
+#	trigger = {
+#		has_government = monarchism
+#		OR = {
+#			AND = {
+#				tag = GER
+#				NOT = { has_idea = wilhelm_iii }
+#			}
+#			AND = {
+#				tag = SOV check_variable = { global.days_passed < 1028 } #date < 1938.10.25
+#				NOT = { has_idea = kirill_v_romanov }
+#			}
+#			AND = {
+#				tag = SOV check_variable = { global.days_passed > 1028 } #date > 1938.10.25
+#				NOT = { has_idea = vladimir_k_romanov }
+#			}
+#			AND = {
+#				tag = TUR check_variable = { global.days_passed < 3081 } #date < 1944.6.10
+#				NOT = { has_idea = abdulmejid_ii }
+#			}
+#			AND = {
+#				tag = TUR check_variable = { global.days_passed > 3081 } #date > 1944.6.10
+#				NOT = { has_idea = ahmed_iv }
+#			}
+#		}
+#	}
+#	
+#	mean_time_to_happen = {
+#		days = 2
+#	}
+#	
+#	option = { 
+#		name = politics.920.a
+#		if = { limit = { tag = GER }
+#			add_ideas = wilhelm_iii
+#		}
+#		if = { limit = { tag = SOV date < 1938.10.25 }
+#			add_ideas = kirill_v_romanov
+#		}
+#		if = { limit = { tag = SOV date > 1938.10.25 }
+#			add_ideas = vladimir_k_romanov
+#		}
+#		if = { limit = { tag = TUR date < 1944.6.10 }
+#			add_ideas = abdulmejid_ii
+#		}
+#		if = { limit = { tag = TUR date > 1944.6.10 }
+#			add_ideas = ahmed_iv
+#		}
+#	}
+#}
+######GERMANY#######
+#Wever Crash
+#country_event = {
+#	id = politics.200
+#	title = politics.200.t
+#	desc  = politics.200.desc
+#	picture = GFX_report_event_death_of_general_wever
+#	
+#	trigger = {
+#		tag = GER
+#		date > 1936.5.10
+#		NOT = { has_country_flag = wever_dead has_country_flag = wever_survived }
+#	}
+#
+#	mean_time_to_happen = {
+#		days = 30
+#	}
+#	option = { 
+#		name = politics.200.a
+#		trigger = {
+#			NOT = { is_historical_focus_on = yes }
+#		}
+#		set_country_flag = wever_dead
+#		remove_ideas = GER_walther_wever_theorist
+#	}
+#	option = { 
+#		name = politics.214.a
+#		trigger = {
+#			is_historical_focus_on = yes
+#		}
+#		set_country_flag = wever_dead
+#		remove_ideas = GER_walther_wever_theorist
+#	}
+#}
+#Todt Crash
+country_event = {
+	id = politics.201
+	title = politics.201.t
+	desc  = politics.201.desc
+	picture = GFX_news_event_002
+	is_triggered_only = yes
+	trigger = {
+		tag = GER
+	}
+	
+	option = { 
+		name = politics.200.a
+		if = {
+			limit = {
+				check_variable = { global.event_random < 85 }
+			}		
+			if = {
+				limit = {
+					has_idea = GER_fritz_todt_economic_minister
+				}
+				add_political_power = 75
+			}
+			GER_fritz_todt = { kill_character = yes }
+		}
+	}
+	
+	option = { 
+		name = politics.214.a
+		
+		trigger = { 
+			is_historical_focus_on = yes
+		}		
+		if = {
+			limit = {
+				has_idea = GER_fritz_todt_economic_minister
+			}
+			add_political_power = 75
+		}
+		GER_fritz_todt = { kill_character = yes }
+	}
+}
+#Beck Fired
+country_event = {
+	id = politics.202
+	title = politics.202.t
+	desc  = politics.202.desc
+	picture = GFX_report_event_dealmaking
+	is_triggered_only = yes
+	trigger = {
+		tag = GER
+	}
+	
+	option = { 
+		name = politics.202.a
+		GER_ludwig_beck = { kill_character = yes }
+	}
+	
+	option = { 
+		name = politics.202.b
+		
+		trigger = {
+			is_ai = yes
+		}
+		
+		# kill before assigning a new one. otherwise the killed will reset flags from the new one
+		GER_ludwig_beck = { kill_character = yes }
+		activate_advisor = GER_franz_halder_army_chief
+		ai_chance = {
+			factor = 1000
+		}
+	}
+	
+	option = { 
+		name = politics.202.c
+		add_political_power = -50
+	}
+}
+#Halder Fired
+country_event = {
+	id = politics.203
+	title = politics.203.t
+	desc  = politics.203.desc
+	picture = GFX_report_event_dealmaking
+	is_triggered_only = yes
+	trigger = {
+		tag = GER
+	}
+	
+	
+
+	
+	option = { 
+		name = politics.203.a
+		if = {
+			limit = {
+				has_idea = GER_franz_halder_army_chief
+			}
+			add_political_power = 50
+		}
+		GER_franz_halder = { kill_character = yes }
+		ai_chance = {
+			factor = 0
+		}
+	}
+	
+	option = { 
+		name = politics.203.b
+		
+		trigger = {
+			is_ai = yes
+		}
+		
+		GER_franz_halder = { kill_character = yes }
+		if = {
+			limit = {
+				has_character = GER_kurt_zeitzler
+			}
+			
+			add_ideas = GER_kurt_zeitzler_army_chief
+		}
+		ai_chance = {
+			factor = 100
+		}
+	}
+	
+	option = { 
+		name = politics.203.c
+		add_political_power = -50
+		ai_chance = {
+			factor = 0
+		}
+	}
+}
+#Zeitzler Fired
+country_event = {
+	id = politics.204
+	title = politics.204.t
+	desc  = politics.204.desc
+	picture = GFX_report_event_dealmaking
+	is_triggered_only = yes
+	trigger = {
+		tag = GER
+		has_war_with = SOV
+	}
+	
+	option = { 
+		name = politics.204.a
+		if = {
+			limit = {
+				has_idea = GER_kurt_zeitzler_army_chief
+			}
+			add_political_power = 50
+		}
+		GER_kurt_zeitzler = { kill_character = yes }
+	}
+	
+	option = { 
+		name = politics.204.b
+		
+		trigger = {
+			is_ai = yes
+		}
+		
+		GER_kurt_zeitzler = { kill_character = yes }
+		activate_advisor = GER_heinz_guderian_army_chief
+		ai_chance = {
+			factor = 1000
+		}
+	}
+	
+	option = { 
+		name = politics.204.c
+		add_political_power = -50
+	}
+}
+#Raeder Fired
+country_event = {
+	id = politics.205
+	title = politics.205.t
+	desc  = politics.205.desc
+	picture = GFX_report_event_dealmaking
+	is_triggered_only = yes
+	fire_only_once = yes
+	
+	trigger = {
+		tag = GER
+	}
+
+	
+	option = { 
+		name = politics.205.a
+		if = {
+			limit = {
+				has_idea = GER_erich_raeder_navy_chief
+			}
+			add_political_power = 50
+		}
+		GER_erich_raeder = { kill_character = yes }
+	}
+	
+	option = { 
+		name = politics.205.b
+		
+		trigger = {
+			is_ai = yes
+		}
+		GER_erich_raeder = { kill_character = yes }
+		activate_advisor = GER_karl_donitz_navy_chief
+		ai_chance = {
+			factor = 1000
+		}
+	}
+	
+	option = { 
+		name = politics.205.c
+		add_political_power = -50
+	}
+}
+#Schacht Fired
+country_event = {
+	id = politics.227
+	title = politics.227.t
+	desc  = politics.227.desc
+	picture = GFX_report_event_dealmaking
+	is_triggered_only = yes
+	
+	trigger = {
+		tag = GER
+	}
+
+	option = { 
+		name = politics.227.a		
+		if = {
+			limit = {
+				has_idea = GER_hjalmar_schacht_economic_minister
+			}
+			add_political_power = 50
+		}
+		GER_hjalmar_schacht = { kill_character = yes }
+	}
+	
+	option = { 
+		name = politics.227.b
+		
+		trigger = {
+			is_ai = yes
+		}
+		
+		GER_hjalmar_schacht = { kill_character = yes }
+		activate_advisor = GER_hermann_goering_economic_minister
+		ai_chance = {
+			factor = 1000
+		}
+	}
+	
+	option = { 
+		name = politics.227.c
+		add_political_power = -50
+	}
+}
+#Heydrich Assassination
+country_event = {
+	id = politics.50
+	title = politics.50.t
+	desc  = politics.50.desc
+	picture = GFX_report_event_generic_funeral
+	hidden = yes  #timeout
+    timeout_days = 1
+	is_triggered_only = yes
+	trigger = {
+		tag = GER
+	}
+	
+	fire_only_once = yes
+	
+	option = { #Does he survive?
+		name = politics.50.a
+		
+		trigger = {
+		}		
+		
+		if = { 
+			limit = { is_historical_focus_on = yes }
+			if = {
+				limit = {
+					check_variable = { global.event_random < 95 }
+				}
+				country_event = politics.51
+			}
+			else = {
+				country_event = politics.52
+			}
+		}
+		if = { 
+			limit = {  is_historical_focus_on = no  }
+			if = {
+				limit = {
+					check_variable = { global.event_random < 60 }
+				}
+				country_event = politics.51
+			}
+			else = {
+				country_event = politics.52
+			}
+		}
+	}
+}
+
+country_event = {
+	id = politics.51
+	title = politics.51.t
+	desc  = politics.51.desc
+	picture = GFX_report_event_assassination_attempt_car_gfxaddon
+	
+	is_triggered_only = yes
+	
+	option = { #Heydrich Dies
+		name = politics.51.a
+		
+		GER_reinhard_heydrich = { kill_character = yes }
+		add_political_power = 75 
+		add_stability = -0.02
+	}
+}
+
+country_event = {
+	id = politics.52
+	title = politics.52.t
+	desc  = politics.52.desc
+	picture = GFX_report_event_dead_soldiers
+	
+	is_triggered_only = yes
+	
+	option = { #Heydrich Survives
+		name = politics.52.a
+		
+	}
+}
+country_event = {
+	id = politics.207
+	title = politics.207.t
+	desc  = politics.207.desc
+	picture = GFX_report_event_dealmaking
+	is_triggered_only = yes
+	trigger = {
+		tag = GER
+	}
+	
+	immediate = { set_country_flag = neurath_dismissal }
+	
+	option = { 
+		name = politics.207.a
+		trigger = { is_ai = no }
+		GER_konstantin_von_neurath = { kill_character = yes }
+		activate_advisor = GER_joachim_von_ribbentrop_foreign_minister
+	}
+	
+	option = { 
+		name = politics.207.b
+		
+		trigger = { is_ai = yes }	
+		GER_konstantin_von_neurath = { kill_character = yes }	
+		activate_advisor = GER_joachim_von_ribbentrop_foreign_minister
+		ai_chance = {
+			factor = 1000
+		}
+	}
+	
+	option = { 
+		name = politics.207.c
+		ai_chance = {
+			factor = 0
+		}
+		add_political_power = -50
+	}
+}
+######USA#######
+#Craig Retires
+country_event = {
+	id = politics.213
+	title = politics.213.t
+	desc  = politics.213.desc
+	picture = GFX_report_event_general_craig_retires
+	is_triggered_only = yes
+	trigger = {
+		tag = USA
+	}
+	
+	immediate = { 
+		#country_event = { id = politics.213 days = 31 }
+	}
+
+	
+	option = { 
+		name = politics.213.a
+		ai_chance = {
+			factor = 0
+		}
+		add_political_power = -50
+	}
+	option = { 
+		name = politics.213.b
+		ai_chance = {
+			factor = 100
+		}
+		if = {
+			limit = {
+				has_idea = USA_malin_craig_army_chief
+			}
+			add_political_power = 50
+		}
+		USA_malin_craig = { kill_character = yes }
+
+	}
+	
+}
+#Westover Crashes
+country_event = {
+	id = politics.214
+	title = politics.214.t
+	desc  = politics.214.desc
+	picture = GFX_report_event_general_westover_crashes
+	is_triggered_only = yes
+	trigger = {
+		tag = USA
+	}
+	
+	immediate = { 
+		country_event = { id = politics.216 days = 315 }
+	}
+	
+	option = { 
+		name = politics.214.a
+		if = {
+			limit = {
+				has_idea = USA_oscar_westover_air_chief
+			}
+			add_political_power = 75
+		}
+		USA_oscar_westover = { kill_character = yes }
+	}
+	
+}
+#Arnold Retires
+country_event = {
+	id = politics.215
+	title = politics.215.t
+	desc  = politics.215.desc
+	picture = GFX_report_event_general_arnold_retires
+	is_triggered_only = yes
+	trigger = {
+		tag = USA
+	}
+	
+	immediate = {  }
+	
+	option = { 
+		name = politics.215.a
+		ai_chance = {
+			factor = 0
+		}
+		add_political_power = -50
+	}
+	
+	option = { 
+		name = politics.215.b
+		ai_chance = {
+			factor = 100
+		}
+		if = {
+			limit = {
+				has_idea = USA_henry_arnold_air_chief
+			}
+			add_political_power = 50
+		}
+		USA_henry_arnold = { kill_character = yes }
+	}
+}
+#Leahy Retires
+country_event = {
+	id = politics.216
+	title = politics.216.t
+	desc  = politics.216.desc
+	picture = GFX_report_event_admiral_leahy_retires
+	is_triggered_only = yes
+	trigger = {
+		tag = USA
+	}
+	immediate = {
+		hidden_effect = { country_event = { id = politics.217 days = 914 } }
+	}
+	
+	option = { 
+		name = politics.216.a
+		ai_chance = {
+			factor = 0
+		}
+		add_political_power = -50
+	}
+	option = { 
+		name = politics.216.b
+		ai_chance = {
+			factor = 100
+		}
+		if = {
+			limit = {
+				has_idea = USA_william_leahy_navy_chief
+			}
+			add_political_power = 50
+		}
+		USA_william_leahy = { kill_character = yes }
+	}
+}
+#Stark Fired
+country_event = {
+	id = politics.217
+	title = politics.217.t
+	desc  = politics.217.desc
+	picture = GFX_report_event_admiral_stark_fired
+	is_triggered_only = yes
+	trigger = {
+		tag = USA
+	}
+	immediate = { 
+		country_event = { id = politics.215 days = 1519 }
+	}
+	
+	option = { 
+		name = politics.216.a
+		ai_chance = {
+			factor = 0
+		}
+		add_political_power = -50
+	}
+	
+	option = { 
+		name = politics.217.a
+		if = {
+			limit = {
+				has_idea = USA_harold_stark_navy_chief
+			}
+			add_political_power = 50
+		}
+		USA_harold_stark = { kill_character = yes }
+	}
+}
+######UK#######
+#Ellington Replaced
+country_event = {
+	id = politics.218
+	title = politics.218.t
+	desc  = politics.218.desc
+	picture = GFX_report_event_general_ellington_replaced
+	is_triggered_only = yes
+	trigger = {
+		tag = ENG
+	}
+	
+	immediate = { country_event = { id = politics.223 days = 122 random = 240 } }
+	
+
+	
+	option = { 
+		name = politics.218.a
+		if = {
+			limit = {
+				has_idea = ENG_edward_ellington_air_chief
+			}
+			add_political_power = 50
+		}
+		ENG_edward_ellington = { kill_character = yes }
+	}
+	
+	option = { 
+		name = politics.218.b
+		add_political_power = -50
+	}
+}
+#Newall Retires
+country_event = {
+	id = politics.219
+	title = politics.219.t
+	desc  = politics.219.desc
+	picture = GFX_report_event_generall_newall_retires
+	is_triggered_only = yes
+	trigger = {
+		tag = ENG
+	}
+	
+	immediate = { country_event = { id = politics.226 days = 61 random = 240 } }
+	
+
+	option = { 
+		name = politics.219.b
+		add_political_power = -50
+	}	
+	option = { 
+		name = politics.219.a
+		if = {
+			limit = {
+				has_idea = ENG_cyril_newall_air_chief
+			}
+			add_political_power = 50
+		}
+		ENG_cyril_newall = { kill_character = yes }
+	}
+}
+#Chatfield Retires
+country_event = {
+	id = politics.221
+	title = politics.221.t
+	desc  = politics.213.desc
+	picture = GFX_report_event_admiral_chatfield_retires
+	is_triggered_only = yes
+	trigger = {
+		tag = ENG
+
+	}
+	
+	immediate = { country_event = { id = politics.224 days = 335 random = 240 } }
+	
+	
+	option = { 
+		name = politics.221.a
+		ai_chance = {
+			factor = 0
+		}
+		add_political_power = -50
+	}
+	
+	option = { 
+		name = politics.221.b
+		ai_chance = {
+			factor = 100
+		}
+		if = {
+			limit = {
+				has_idea = ENG_ernle_chatfield_navy_chief
+			}
+			add_political_power = 50
+		}
+		ENG_ernle_chatfield = { kill_character = yes }
+	}
+}
+#Pound Retires
+country_event = {
+	id = politics.222
+	title = politics.222.t
+	desc  = politics.213.desc
+	picture = GFX_report_event_admiral_pound_retires
+	is_triggered_only = yes
+	
+	trigger = {
+		tag = ENG
+	}
+	
+	immediate = { }
+	
+	option = { 
+		name = politics.222.a
+		ai_chance = {
+			factor = 0
+		}
+		add_political_power = -50
+	}
+	
+	option = { 
+		name = politics.222.b
+		ai_chance = {
+			factor = 100
+		}
+		if = {
+			limit = {
+				has_idea = ENG_dudley_pound_navy_chief
+			}
+			add_political_power = 50
+		}
+		ENG_dudley_pound = { kill_character = yes }
+	}
+}
+#Deverell Retires
+country_event = {
+	id = politics.223
+	title = politics.223.t
+	desc  = politics.213.desc
+	picture = GFX_report_event_general_deverell_retires
+	is_triggered_only = yes
+	trigger = {
+		tag = ENG
+	}
+	
+	immediate = { country_event = { id = politics.221 days = 304 random = 240 } }
+	
+	
+	option = { 
+		name = politics.223.a
+		ai_chance = {
+			factor = 0
+		}
+		add_political_power = -50
+	}
+	
+	option = { 
+		name = politics.223.b
+		ai_chance = {
+			factor = 100
+		}
+		if = {
+			limit = {
+				has_idea = ENG_cyril_deverell_army_chief
+			}
+			add_political_power = 50
+		}
+		ENG_cyril_deverell = { kill_character = yes }
+	}
+}
+#Vereker Fired
+country_event = { 
+	id = politics.224
+	title = politics.224.t
+	desc  = politics.224.desc
+	picture = GFX_report_event_general_vereker_fired
+	is_triggered_only = yes
+	trigger = {
+		tag = ENG
+	}
+	
+	immediate = { country_event = { id = politics.225 days = 273 random = 240 } }
+	
+
+	option = { 
+		name = politics.224.a
+		ai_chance = {
+			factor = 0
+		}
+		add_political_power = -50
+	}
+	
+	option = { 
+		name = politics.224.b
+		ai_chance = {
+			factor = 100
+		}
+		if = {
+			limit = {
+				has_idea = ENG_lord_gort_john_vereker_army_chief
+			}
+			add_political_power = 50
+		}
+		ENG_lord_gort_john_vereker = { kill_character = yes }
+	}
+}
+#Ironside Replaced
+country_event = {
+	id = politics.225
+	title = politics.225.t
+	desc  = politics.225.desc
+	picture = GFX_report_event_general_ironside_retires
+	is_triggered_only = yes
+	trigger = {
+		tag = ENG
+	}
+	
+	immediate = { country_event = { id = politics.219 days = 487 random = 240 } }
+	
+
+	option = { 
+		name = politics.225.a
+		ai_chance = {
+			factor = 0
+		}
+		add_political_power = -50
+	}
+	
+	option = { 
+		name = politics.225.b
+		ai_chance = {
+			factor = 100
+		}
+		if = {
+			limit = {
+				has_idea = ENG_edmund_ironside_army_chief
+			}
+			add_political_power = 50
+		}
+		ENG_edmund_ironside = { kill_character = yes }
+	}
+}
+#Dill Replaced
+country_event = {
+	id = politics.226
+	title = politics.226.t
+	desc  = politics.224.desc
+	picture = GFX_report_event_general_dill_retires
+	is_triggered_only = yes
+	trigger = {
+		tag = ENG
+	}
+	
+	immediate = { country_event = { id = politics.222 days = 669 random = 240 }  }
+	
+
+	
+	option = { 
+		name = politics.226.a
+		ai_chance = {
+			factor = 0
+		}
+		add_political_power = -50
+	}
+	
+	option = { 
+		name = politics.226.b
+		ai_chance = {
+			factor = 100
+		}
+		if = {
+			limit = {
+				has_idea = ENG_john_dill_army_chief
+			}
+			add_political_power = 50
+		}
+		ENG_john_dill = { kill_character = yes }
+	}
+}
+######ITALY#######
+#Balbo Dies
+country_event = {
+	id = politics.68
+	title = politics.68.t
+	desc  = politics.68.desc
+	picture = GFX_report_event_balbo_crash
+	hidden = yes  #timeout
+    timeout_days = 1
+	is_triggered_only = yes
+	trigger = {
+		tag = ITA
+		has_war_with = ENG
+	}
+	
+	fire_only_once = yes
+	
+	option = { #Does he survive?
+		name = politics.68.a
+		
+		trigger = {
+		}
+		
+		if = { 
+			limit = { is_historical_focus_on = yes }
+			if = {
+				limit = {
+					check_variable = { global.event_random < 95 }
+				}
+				country_event = politics.69
+			}
+			else = {
+				country_event = politics.75
+			}
+		}
+		if = { 
+			limit = {  is_historical_focus_on = no  }
+			if = {
+				limit = {
+					check_variable = { global.event_random < 60 }
+				}
+				country_event = politics.69
+			}
+			else = {
+				country_event = politics.75
+			}
+		}
+	}
+}
+
+country_event = {
+	id = politics.69
+	title = politics.69.t
+	desc  = politics.69.desc
+	picture = GFX_report_event_state_funeral_gfxaddon
+	
+	is_triggered_only = yes
+	
+	option = { #Balbo dies
+		name = politics.69.a
+		
+		ITA_balbo_italo = { kill_character = yes }
+		add_political_power = 75 
+		add_stability = -0.02
+	}
+}
+
+country_event = {
+	id = politics.75
+	title = politics.75.t
+	desc  = politics.75.desc
+	picture = GFX_report_event_dead_soldiers
+	
+	is_triggered_only = yes
+	
+	option = { #Balbo Survives
+		name = politics.75.a
+	}
+}
+
+######JAPAN#######
+#Kotohito Retires
+country_event = {
+	id = politics.228
+	title = politics.228.t
+	desc  = politics.213.desc
+	picture = GFX_report_event_dealmaking
+	is_triggered_only = yes
+	trigger = {
+		tag = JAP
+	}
+	
+	immediate = { country_event = { id = politics.229 days = 121 }}
+	
+
+
+	option = { 
+		name = politics.228.b
+		ai_chance = {
+			factor = 100
+		}
+		add_political_power = -50
+
+	}
+	
+	option = { 
+		name = politics.228.a
+		ai_chance = {
+			factor = 100
+		}
+		if = {
+			limit = {
+				has_idea = JAP_kanin_kotohito_army_chief
+			}
+			add_political_power = 50
+		}
+		JAP_kanin_kotohito = { kill_character = yes }
+	}
+	
+}
+#Hiroyasu Leaves
+country_event = {
+	id = politics.229
+	title = politics.229.t
+	desc  = politics.213.desc
+	picture = GFX_report_event_dealmaking
+	is_triggered_only = yes
+	trigger = {
+		tag = JAP
+	}
+	immediate = { country_event = { id = politics.230 days = 1036  } }
+	
+	option = { 
+		name = politics.229.b
+		ai_chance = {
+			factor = 100
+		}
+		add_political_power = -50
+
+	}
+	
+	option = { 
+		name = politics.229.a
+		ai_chance = {
+			factor = 100
+		}
+		if = {
+			limit = {
+				has_idea = JAP_fushimi_hiroyasu_navy_chief
+			}
+			add_political_power = 50
+		}
+		JAP_fushimi_hiroyasu = { kill_character = yes }
+	}
+	
+}
+#Nagano Fired
+country_event = {
+	id = politics.230
+	title = politics.230.t
+	desc  = politics.224.desc
+	picture = GFX_report_event_dealmaking
+	is_triggered_only = yes
+	trigger = {
+		tag = JAP
+	}
+	
+	immediate = {  }
+	
+
+	option = { 
+		name = politics.230.b
+		ai_chance = {
+			factor = 100
+		}
+		add_political_power = -50
+
+	}	
+	option = { 
+		name = politics.230.a
+		if = {
+			limit = {
+				has_idea = JAP_nagano_osami_navy_chief
+			}
+			remove_ideas = JAP_nagano_osami_navy_chief
+			add_political_power = 50
+		}		
+		JAP_nagano_osami = { kill_character = yes }
+	}
+}
+#Yamamoto Assassination
+country_event = {
+	id = politics.53
+	title = politics.53.t
+	desc  = politics.53.desc
+	picture = GFX_news_event_002
+	hidden = yes  #timeout
+    timeout_days = 1
+	is_triggered_only = yes
+	
+	trigger = {
+		tag = JAP
+		#date > 1942.5.1		
+		has_idea = JAP_yamamoto_isoroku_theorist
+		has_war_with = USA
+		#NOT = { has_tech = advanced_encryption }
+		USA = {
+			exists = yes
+			is_puppet = no
+			NOT = { has_government = fascism }
+			OR = {
+				has_tech = advanced_decryption
+				has_tech = advanced_decryption_lar
+			}
+			if = {
+				limit = { has_dlc = "La Resistance" }
+				USA = { is_fully_decrypted = JAP }
+			}
+		}
+	}
+	
+	fire_only_once = yes
+	
+	option = { #Does he survive?
+		name = politics.53.a
+		
+		if = { 
+			limit = { is_historical_focus_on = yes }
+			if = {
+				limit = {
+					check_variable = { global.event_random < 95 }
+				}
+				country_event = politics.54
+			}
+			else = {
+				country_event = politics.55
+			}
+		}
+		if = { 
+			limit = { is_historical_focus_on = no }
+			if = {
+				limit = {
+					check_variable = { global.event_random < 70 }
+				}
+				country_event = politics.54
+			}
+			else = {
+				country_event = politics.55
+			}
+		}
+	}
+}
+
+country_event = {
+	id = politics.54
+	title = politics.54.t
+	desc  = politics.54.desc
+	picture = event_generic_funeral
+	
+	is_triggered_only = yes
+	
+	option = { #Yamamoto Dies
+		name = politics.54.a
+		
+		remove_ideas = JAP_yamamoto_isoroku_theorist 
+		JAP_yamamoto_isoroku = { kill_character = yes }
+		add_political_power = -25 
+		add_stability = -0.02
+	}
+}
+
+country_event = {
+	id = politics.55
+	title = politics.55.t
+	desc  = politics.55.desc
+	picture = GFX_report_event_japanese_officers
+	
+	is_triggered_only = yes
+	
+	option = { #Yamamoto Survives
+		name = politics.55.a
+		add_political_power = 15
+	}
+}
+######FRANCE#######
+
+### EOF ###

@@ -1,0 +1,2233 @@
+SWI_federal_council_decisions_category = {
+
+	SWI_oust_confederation_president = { #kicks out the current president 
+		
+		icon = GFX_decision_SWI_dismiss_council
+
+		priority = 60
+		allowed = { original_tag = SWI }
+
+		visible = { 
+			has_variable = SWI_confederation_president 
+		}
+
+		available = {
+			NOT = {
+				has_country_flag = SWI_ongoing_president_initiative
+				hidden_trigger = { has_country_flag = SWI_elected_centralized_president } 
+			}
+		}
+
+		cost = 300
+
+		complete_effect = {
+			custom_effect_tooltip = SWI_oust_the_conferedation_president
+			hidden_effect = {
+				set_variable = { SWI_ousted_president = SWI_confederation_president }
+				clear_variable = SWI_confederation_president 
+				set_country_flag = SWI_vacant_confederation_president_position
+				SWI_outgoing_president_cleanup = yes
+				SWI_update_councilors = yes
+			}
+			add_power_balance_value = {
+				id = SWI_centralization_bop
+				value = 0.2
+			}
+			add_ideas = { SWI_no_confederation_president_idea }
+		}
+
+		ai_will_do = { #shouldn't do it in historical
+			factor = 0 
+		}
+	}
+
+	SWI_no_elected_president = { #Activates when there's no president. heavy penalties
+		icon = GFX_decision_SWI_no_elected_president
+		priority = 103
+
+		allowed = { original_tag = SWI }
+
+		visible = {
+			has_country_flag = SWI_vacant_confederation_president_position
+			#has_completed_focus = SWI_swiss_guiding_principles 
+		}
+
+		available = {
+			NOT = { has_country_flag = SWI_vacant_confederation_president_position } 
+			has_completed_focus = SWI_swiss_guiding_principles 
+		}
+
+		days_mission_timeout = 30
+
+		is_good = no 
+
+		activation = {
+			has_country_flag = SWI_vacant_confederation_president_position
+			#has_completed_focus = SWI_swiss_guiding_principles 
+
+		}
+
+		timeout_effect = {
+			activate_mission = SWI_no_elected_president
+			add_power_balance_value = {
+				id = SWI_centralization_bop
+				value = 0.2
+			}		
+		}
+	}
+
+	SWI_elect_a_new_confederation_president = { #Allows you to elect a new president
+		icon = GFX_decision_SWI_elect_confederation_president
+		priority = 102
+
+		allowed = { original_tag = SWI }
+
+		visible = {
+			has_active_mission = SWI_no_elected_president
+		}
+
+		available = {
+			has_active_mission = SWI_no_elected_president
+			#has_country_flag = SWI_vacant_confederation_president_position
+		}
+
+		cost = 250 
+
+		days_remove = 15
+
+		remove_effect = {
+			country_event = {
+				id = BBA_SWI_annual_election.2
+				hours = 2
+			}
+		}
+
+		ai_will_do = { #As soon as it shows up it should be used 
+			base = 100 
+		}
+
+	}
+
+	SWI_case_north_decision = {
+		
+		icon = GFX_decision_hol_draw_up_staff_plans	
+
+		priority = 90
+
+		allowed = { original_tag = SWI }
+
+		visible = {
+			has_completed_focus = SWI_case_north
+		}
+
+		available = {
+			ROOT = {
+				has_war_with = GER 
+			} 
+		}
+
+		fire_only_once = no 
+
+		days_remove = 120 
+
+		cosmetic_tag = GER 
+		
+		targeted_modifier = {
+			tag = GER
+			defense_bonus_against = 0.25
+		}
+
+		ai_will_do = { #As soon as it shows up it should be used 
+			base = 100 
+		}
+
+	}
+	SWI_decision_remove_councilor_1 = {
+
+		icon = GFX_decision_SWI_dismiss_council
+
+		priority = 50 
+
+		allowed = { original_tag = SWI }
+
+		visible = {
+			has_variable = SWI_councilor_1
+			has_completed_focus = SWI_swiss_guiding_principles
+		}
+
+		cost = 200
+
+		days_remove = 20
+
+		available = {
+			NOT = {
+				is_power_balance_in_range = {
+					id = SWI_centralization_bop
+					range < SWI_centralization_bop_balanced
+				}
+			}
+		}
+
+		complete_effect = {
+			var:SWI_councilor_1 = {
+				SWI_remove_councilor = yes
+			}
+			clear_variable = SWI_councilor_1
+		}
+
+		remove_effect = {
+			SWI_allow_hiring_councilor_again = yes
+		}
+
+		ai_will_do = {
+			base = 0
+			modifier = {
+				add = 20
+				has_political_power > 600  
+			}
+		}
+	}
+
+	SWI_decision_remove_councilor_2 = {
+		
+		icon = GFX_decision_SWI_dismiss_council
+
+		priority = 50 
+
+		allowed = { original_tag = SWI }
+
+		visible = {
+			has_variable = SWI_councilor_2
+			has_completed_focus = SWI_swiss_guiding_principles
+		}
+
+		cost = 200
+
+		days_remove = 20
+
+		available = {
+			NOT = {
+				is_power_balance_in_range = {
+					id = SWI_centralization_bop
+					range < SWI_centralization_bop_balanced
+				}
+			}
+		}
+
+		complete_effect = {
+			var:SWI_councilor_2 = {
+				SWI_remove_councilor = yes
+			}
+			clear_variable = SWI_councilor_2
+		}
+
+		remove_effect = {
+			SWI_allow_hiring_councilor_again = yes
+		}
+
+		ai_will_do = {
+			base = 0
+			modifier = {
+				add = 20
+				has_political_power > 600  
+			}
+		}
+	}
+
+
+	SWI_decision_remove_councilor_3 = {
+		
+		icon = GFX_decision_SWI_dismiss_council
+
+		priority = 50 
+
+		allowed = { original_tag = SWI }
+
+		visible = {
+			has_variable = SWI_councilor_3
+			has_completed_focus = SWI_swiss_guiding_principles
+		}
+
+		cost = 200
+
+		days_remove = 20
+
+		available = {
+			NOT = {
+				is_power_balance_in_range = {
+					id = SWI_centralization_bop
+					range < SWI_centralization_bop_balanced
+				}
+			}
+		}
+
+		complete_effect = {
+			var:SWI_councilor_3 = {
+				SWI_remove_councilor = yes
+			}
+			clear_variable = SWI_councilor_3
+		}
+
+		remove_effect = {
+			SWI_allow_hiring_councilor_again = yes 
+		}
+
+		ai_will_do = {
+			base = 0
+			modifier = {
+				add = 20
+				has_political_power > 600  
+			}
+		}
+	}
+########################################################################
+######################## COUNCIL PRESIDENT INITIATIVES ################# 	
+########################################################################
+
+
+	SWI_recently_finished_president_initiative_mission = {
+
+		icon = GFX_decision_SWI_elect_confederation_president
+
+		priority = 100
+
+		allowed = { original_tag = SWI }
+
+		visible = {
+			NOT = { has_country_flag = SWI_ongoing_president_initiative }
+		}
+
+		cancel_trigger = {
+
+		}
+
+		available = {
+			NOT = { has_country_flag = SWI_recently_finished_president_initiative }
+		}
+
+		days_mission_timeout = SWI_president_initiative_cooldown
+
+		is_good = yes 
+
+		activation = {
+			hidden_trigger = { always = no }
+		}
+
+		timeout_effect = {
+			clr_country_flag = SWI_recently_finished_president_initiative
+		}
+
+	}
+
+	SWI_defense_fund_drive = { #For Pragmatic Democrat and Democratic Capitalist Presidents
+
+		icon = GFX_decision_generic_fundraising
+
+		priority = 99
+		
+		visible = {
+			if = {
+				limit = {
+					has_variable = SWI_confederation_president  
+				}
+				var:SWI_confederation_president = {
+					OR = {
+						has_trait = staunch_democrat
+						has_trait = capitalist
+						has_trait = military_entrepreneur
+					}
+				}
+			}
+			else = {
+				always = no 
+			}
+		}
+
+		available = {
+			SWI_president_initiative_available_trigger = yes
+		}	
+		
+		days_remove = 90
+
+		cost = SWI_president_initiative_cost
+		
+		modifier = {
+			consumer_goods_expected_value = -0.03
+			production_speed_buildings_factor = 0.1
+			production_speed_industrial_complex_factor = 0.05
+		}
+
+		complete_effect = {
+			SWI_president_initiative_complete_effect = yes
+		}
+
+		remove_effect = {
+			SWI_president_initiative_remove_effect = yes
+		}
+
+		cancel_trigger = {
+			SWI_president_initiative_cancel_trigger = yes
+		}
+		ai_will_do = {
+			base = 100 
+			modifier = {
+				add = 50 
+				has_war = no 
+			}
+			modifier = {
+				add = 400 
+				has_political_power > 500
+			}
+		}
+	}
+
+
+	SWI_swiss_democratic_tradition_campaign = {
+
+		icon = GFX_decision_SWI_swiss_democratic_tradition_campaign
+
+		priority = 99
+
+		visible = {
+			if = {
+				limit = {
+					has_variable = SWI_confederation_president  
+				}
+				var:SWI_confederation_president = {
+					OR = {
+						has_trait = conservative_reformer
+						has_trait = liberal_reformer
+					}
+				}
+			}
+			else = {
+				always = no 
+			}
+
+		}
+
+		available = {
+			SWI_president_initiative_available_trigger = yes
+
+		}	
+	
+		days_remove = 90 
+
+		cost = SWI_president_initiative_cost
+		
+		modifier = {
+			socialism_drift = 0.02
+			conservatism_drift = 0.02
+			liberalism_drift = 0.02
+			agrarianism_drift = 0.02
+			stability_weekly_factor = 0.02
+			war_support_weekly_factor = -0.01 
+		}
+
+		complete_effect = {
+			SWI_president_initiative_complete_effect = yes
+		}
+
+		remove_effect = {
+			SWI_president_initiative_remove_effect = yes
+		}
+
+		cancel_trigger = {
+			SWI_president_initiative_cancel_trigger = yes
+		}
+
+		ai_will_do = {
+			base = 100 
+			modifier = {
+				add = 400 
+				has_political_power > 500
+			}
+		}
+	}
+
+	SWI_rally_workers = { #for Trade Unionist and Corporatist Presidents
+
+		icon = GFX_decision_eng_propaganda_campaigns
+
+		priority = 99
+				
+		visible = {
+			if = {
+				limit = {
+					has_variable = SWI_confederation_president  
+				}
+				var:SWI_confederation_president = {
+					OR = {
+						has_trait = union_leader
+						has_trait = military_entrepreneur
+					}
+				}
+			}
+			else = {
+				always = no 
+			}
+		}
+
+		available = {
+			SWI_president_initiative_available_trigger = yes
+		}	
+	
+		days_remove = 90 
+
+		cost = SWI_president_initiative_cost
+		
+		modifier = {
+			socialism_drift = 0.02
+			conservatism_drift = -0.02
+			liberalism_drift = -0.02
+			agrarianism_drift = -0.02
+			stability_weekly = 0.005
+			industrial_capacity_factory = 0.2
+			communism_drift = 0.05
+		}
+
+		complete_effect = {
+			SWI_president_initiative_complete_effect = yes
+		}
+
+		remove_effect = {
+			SWI_president_initiative_remove_effect = yes
+		}
+
+		cancel_trigger = {
+			SWI_president_initiative_cancel_trigger = yes
+		}
+
+		ai_will_do = {
+			base = 100 
+			modifier = {
+				add = 400 
+				has_political_power > 500
+			}
+		}
+	}
+
+	SWI_focus_on_swiss_unity = { #For Social Democrats and Socialist Pacifist Presidents 
+
+		icon = GFX_decision_SWI_focus_on_swiss_unity
+
+		priority = 99
+				
+		visible = {
+			if = {
+				limit = {
+					has_variable = SWI_confederation_president  
+				}
+				var:SWI_confederation_president = {
+					OR = {
+						has_trait = SWI_social_democrat
+						has_trait = committed_pacifist
+					}
+				}
+			}
+			else = {
+				always = no 
+			}
+
+		}
+
+		available = {
+			SWI_president_initiative_available_trigger = yes
+		}	
+	
+		days_remove = 90 
+
+		cost = SWI_president_initiative_cost
+		
+		modifier = {
+			communism_drift = 0.3
+			socialism_drift = 0.03
+			conservatism_drift = 0.02
+			liberalism_drift = 0.02
+			agrarianism_drift = 0.02
+			stability_weekly = 0.02
+			war_support_weekly_factor = -0.05 
+		}
+
+		complete_effect = {
+			SWI_president_initiative_complete_effect = yes
+		}
+
+		remove_effect = {
+			SWI_president_initiative_remove_effect = yes
+		}
+
+		cancel_trigger = {
+			SWI_president_initiative_cancel_trigger = yes
+		}
+		ai_will_do = {
+			base = 100 
+			modifier = {
+				add = 400 
+				has_political_power > 500
+			}
+		}
+	}
+
+	SWI_isolate_switzerland = { #For Conservative Democrats
+
+		icon = GFX_decision_SWI_isolate_switzerland
+		
+		priority = 99
+				
+		visible = {
+			if = {
+				limit = {
+					has_variable = SWI_confederation_president  
+				}
+				var:SWI_confederation_president = {
+					has_trait = staunch_constitutionalist
+				}
+			}
+			else = {
+				always = no 
+			}
+		}
+
+		available = {
+			SWI_president_initiative_available_trigger = yes
+		}	
+	
+		days_remove = 90 
+
+		cost = SWI_president_initiative_cost
+		
+		modifier = {
+			socialism_drift = -0.02
+			conservatism_drift = 0.02
+			liberalism_drift = -0.02
+			agrarianism_drift = -0.02
+			stability_weekly = 0.01
+			production_speed_bunker_factor = 0.5
+			war_support_weekly_factor = -0.05
+			industrial_capacity_factory = -0.2
+			opinion_gain_monthly_factor = -0.3
+
+		}
+
+		complete_effect = {
+			SWI_president_initiative_complete_effect = yes
+		}
+
+		remove_effect = {
+			SWI_president_initiative_remove_effect = yes
+		}
+
+		cancel_trigger = {
+			SWI_president_initiative_cancel_trigger = yes
+		}
+		ai_will_do = {
+			base = 100 
+			modifier = {
+				add = 400 
+				has_political_power > 500
+			}
+		}
+	}
+
+	SWI_militarization_drive = { #For Militaristic Democrats and Militaristic Nationalists
+
+		icon = GFX_decision_generic_military
+
+		priority = 99
+				
+		visible = {
+			if = {
+				limit = {
+					has_variable = SWI_confederation_president  
+				}
+				var:SWI_confederation_president = {
+					has_trait = warmonger_pol
+					has_trait = angry_warrior
+				}
+			}
+			else = {
+				always = no 
+			}
+		}
+
+		available = {
+			SWI_president_initiative_available_trigger = yes
+		}	
+	
+		days_remove = 90 
+
+		cost = SWI_president_initiative_cost
+		
+		modifier = {
+			war_support_weekly_factor = 0.05
+			industrial_capacity_factory = 0.5
+			socialism_drift = -0.02
+			conservatism_drift = -0.01
+			liberalism_drift = -0.03
+			agrarianism_drift = -0.04
+			opinion_gain_monthly_factor = -0.2
+			production_speed_industrial_complex_factor = 0.3 
+		}
+
+		complete_effect = {
+			SWI_president_initiative_complete_effect = yes
+		}
+
+		remove_effect = {
+			SWI_president_initiative_remove_effect = yes
+		}
+
+		cancel_trigger = {
+			SWI_president_initiative_cancel_trigger = yes
+		}
+		ai_will_do = {
+			base = 0 
+			modifier = {
+				add = 400 
+				has_political_power > 500
+			}
+		}
+	}	
+
+	SWI_expand_covert_operations = { #For Intelligence Officers 
+	
+		icon = GFX_decision_SWI_expand_covert_operations
+
+		priority = 99
+			
+		visible = {
+			if = {
+				limit = {
+					has_variable = SWI_confederation_president  
+				}
+				var:SWI_confederation_president = {
+					has_trait = SWI_intelligence_officer
+				}
+			}
+			else = {
+				always = no 
+			}
+		}
+
+		available = {
+			SWI_president_initiative_available_trigger = yes
+		}	
+	
+		days_remove = 90 
+
+		cost = SWI_president_initiative_cost
+		
+		modifier = {
+			agency_upgrade_time = -0.3
+			decryption_factor = 0.5
+			encryption_factor = 0.5
+			foreign_subversive_activites = -0.5
+
+		}
+
+		complete_effect = {
+			SWI_president_initiative_complete_effect = yes
+		}
+
+		remove_effect = {
+			SWI_president_initiative_remove_effect = yes
+		}
+
+		cancel_trigger = {
+			SWI_president_initiative_cancel_trigger = yes
+		}
+		ai_will_do = {
+			base = 150 
+			modifier = {
+				add = 400 
+				has_political_power > 500
+			}
+		}
+	}
+
+	SWI_expand_arms_industry = { #For Weapons Designers 
+
+		icon = GFX_decision_generic_industry	
+
+		priority = 99
+				
+		fire_only_once = yes
+
+		visible = {
+			if = {
+				limit = {
+					has_variable = SWI_confederation_president  
+				}
+				var:SWI_confederation_president = {
+					has_trait = military_entrepreneur
+				}
+			}
+			else = {
+				always = no 
+			}
+		}
+
+		available = {
+			SWI_president_initiative_available_trigger = yes
+		}	
+	
+		days_remove = 90 
+
+		cost = SWI_president_initiative_cost
+		
+		modifier = {
+			research_speed_factor = 0.3
+			production_speed_arms_factory_factor = 0.5	
+		}
+
+		complete_effect = {
+			SWI_president_initiative_complete_effect = yes
+		}
+
+		remove_effect = {
+			add_research_slot = 1 
+			add_research_centre = yes
+			SLOT:infantry_folder = yes
+			SLOT:artillery_folder = yes
+			SLOT:tank_techs_folder = yes
+			SLOT:ww1_land_doctrine_folder = yes
+			SLOT:special_forces = yes
+
+			SWI_president_initiative_remove_effect = yes
+		}
+
+		cancel_trigger = {
+			SWI_president_initiative_cancel_trigger = yes
+		}
+		ai_will_do = {
+			base = 0 
+			modifier = {
+				add = 500 
+				has_political_power > 500
+			}
+		}
+	}
+
+	SWI_support_humanitarian_efforts = { #For Humanitarians
+
+		icon = GFX_decision_SWI_support_humanitarian_efforts
+
+		priority = 99
+				
+		visible = {
+			if = {
+				limit = {
+					has_variable = SWI_confederation_president  
+				}
+				var:SWI_confederation_president = {
+					has_trait = SWI_humanitarian
+				}
+			}
+			else = {
+				always = no 
+			}
+		}
+
+		available = {
+			SWI_president_initiative_available_trigger = yes
+		}	
+	
+		days_remove = 90 
+
+		cost = SWI_president_initiative_cost
+		
+		modifier = {
+			fascism_drift = -0.05
+			monthly_population = 0.3
+		}
+
+		complete_effect = {
+			
+			hidden_effect = {
+				every_other_country = {
+					limit = {
+						capital_scope = { is_on_continent = europe }
+						OR = {
+							has_government = fascism
+							has_government = neutrality  
+						}
+						num_occupied_states > 0
+					}
+					ROOT = {
+						add_to_array = {
+							array = SWI_humanitarian_support_countries
+							value = PREV
+						}
+					}
+				}
+			}
+
+			for_each_scope_loop = {
+				array = SWI_humanitarian_support_countries
+
+				add_ideas = { SWI_humanitarian_effort }
+			}
+
+			SWI_president_initiative_complete_effect = yes
+		}
+
+		remove_effect = {
+			
+			for_each_scope_loop = {
+				array = SWI_humanitarian_support_countries
+
+				remove_ideas = { SWI_humanitarian_effort }
+			}
+			clear_array = SWI_humanitarian_support_countries
+			SWI_president_initiative_remove_effect = yes
+		}
+		cancel_effect = {
+			for_each_scope_loop = {
+				array = SWI_humanitarian_support_countries
+
+				remove_ideas = { SWI_humanitarian_effort }
+			}
+			clear_array = SWI_humanitarian_support_countries
+		}
+		cancel_trigger = {
+			SWI_president_initiative_cancel_trigger = yes
+		}
+		ai_will_do = {
+			base = 100 
+			modifier = {
+				add = 400 
+				has_political_power > 500
+			}
+		}
+	}
+
+	SWI_diplomatic_mission = { #For Diplomat Presidents
+
+		icon = GFX_decision_hol_exchange_intelligence_data
+
+		priority = 99
+				
+		visible = {
+			if = {
+				limit = {
+					has_variable = SWI_confederation_president  
+				}
+				var:SWI_confederation_president = {
+					has_trait = SWI_diplomat
+				}
+			}
+			else = {
+				always = no 
+			}
+		}
+
+		available = {
+			SWI_president_initiative_available_trigger = yes
+		}	
+	
+		days_remove = 90 
+
+		cost = SWI_president_initiative_cost
+		
+		modifier = {
+			war_support_weekly_factor = -0.05
+			opinion_gain_monthly_factor = 0.2
+		}
+
+		complete_effect = {
+			every_other_country = {
+				limit = {
+					SWI_is_country_to_balance = yes 
+				}
+				add_opinion_modifier = {
+					target = ROOT 
+					modifier = SWI_diplomatic_visit
+				}
+			}
+			SWI_president_initiative_complete_effect = yes
+		}
+
+		remove_effect = {
+			SWI_president_initiative_remove_effect = yes
+		}
+
+		cancel_trigger = {
+			SWI_president_initiative_cancel_trigger = yes
+		}
+		ai_will_do = {
+			base = 100 
+			modifier = {
+				add = 400 
+				has_political_power > 500
+			}
+			modifier = {
+				factor = 3
+ 				SWI_someone_is_about_to_be_angry = yes 
+				 
+			}
+		}	
+	}
+
+	SWI_spouse_fascism = { #For Fascist Propagandist and fascist recruiters 
+	
+		icon = GFX_decision_hol_radio_oranje
+
+		priority = 99
+			
+		visible = {
+			if = {
+				limit = {
+					has_variable = SWI_confederation_president  
+				}
+				var:SWI_confederation_president = {
+					OR = {
+						has_trait = propaganda_expert_recruiter
+						has_trait = propaganda_expert_propagandist
+					}
+				}
+			}
+			else = {
+				always = no 
+			}
+
+		}
+
+		available = {
+			SWI_president_initiative_available_trigger = yes
+		}	
+	
+		days_remove = 90 
+
+		cost = SWI_president_initiative_cost
+		
+		modifier = {
+			fascism_drift = 0.05
+			stability_weekly = -0.01
+		}
+
+		complete_effect = {
+			add_manpower = 10000
+			SWI_president_initiative_complete_effect = yes
+		}
+
+		remove_effect = {
+			SWI_president_initiative_remove_effect = yes
+		}
+
+		cancel_trigger = {
+			SWI_president_initiative_cancel_trigger = yes
+		}
+		ai_will_do = {
+			base = 0 
+		}	
+	}
+	SWI_renounce_guiding_principles = {
+
+		icon = GFX_decision_generic_break_treaty
+
+		priority = 5
+
+		visible = {
+			OR = {
+				has_power_balance_modifier = {
+					id = SWI_centralization_bop 
+					modifier = SWI_guiding_principles_cantons
+				}
+				has_power_balance_modifier = {
+					id = SWI_centralization_bop 
+					modifier = SWI_guiding_principles_council
+				}
+			}
+		}
+
+		cost = 100
+
+		complete_effect = {
+			if = {
+				limit = {
+					has_power_balance_modifier = {
+						id = SWI_centralization_bop 
+						modifier = SWI_guiding_principles_cantons
+					}			
+				}
+				remove_power_balance_modifier = {
+					id = SWI_centralization_bop
+					modifier = SWI_guiding_principles_cantons
+				}		
+			}
+			if = {
+				limit = {
+					has_power_balance_modifier = {
+						id = SWI_centralization_bop 
+						modifier = SWI_guiding_principles_council
+					}			
+				}
+				remove_power_balance_modifier = {
+					id = SWI_centralization_bop
+					modifier = SWI_guiding_principles_council
+				}		
+			}
+		}
+		ai_will_do = {
+			base = 0
+		}
+	}
+}
+
+SWI_centralization_power_balance_decisions = {
+
+	SWI_compromise_with_cantons = {
+		
+		icon = GFX_decision_SWI_focus_on_swiss_unity
+
+		priority = 99 
+
+		allowed = { original_tag = SWI }
+
+		visible = {
+			always = yes
+		}
+
+		available = {
+			is_power_balance_in_range = {
+				id = SWI_centralization_bop
+				range = SWI_centralization_bop_balanced
+			}
+		}
+
+		days_remove = 30 	
+
+		complete_effect = {
+			add_power_balance_value = {
+				id = SWI_centralization_bop
+				value = 0.2
+			}		
+		}
+
+		remove_effect = {
+			add_political_power = 150
+		}
+
+		ai_will_do = {
+			base = 0
+			modifier = {
+				add = 150
+				NOT = {
+					is_power_balance_in_range  = {
+						id = SWI_centralization_bop
+						range = SWI_centralization_bop_fully_cantons
+					}
+				}
+			}
+			modifier = {
+				factor = 5 
+				is_power_balance_side_active = {
+					id = SWI_centralization_bop
+					side = SWI_centralization_bop_council
+				}	
+			}
+		}
+	}
+
+	SWI_consolidate_council_power = {
+
+		icon = GFX_decision_SWI_consolidate_council_power
+
+		priority = 98 
+
+		allowed = { original_tag = SWI }
+
+		visible = {
+			always = yes
+		}
+
+		available = {
+			is_power_balance_in_range = {
+				id = SWI_centralization_bop
+				range = SWI_centralization_bop_very_council
+			}
+		}
+
+		days_remove = 30 	
+
+		cost = 200
+
+		complete_effect = {
+		
+		}
+
+		remove_effect = {
+			add_power_balance_value = {
+				id = SWI_centralization_bop
+				value = -0.2
+			}			
+		}
+
+		ai_will_do = {
+			base = 0
+			modifier = {
+				add = 50
+				NOT = {
+					is_power_balance_in_range  = {
+						id = SWI_centralization_bop
+						range = SWI_centralization_bop_fully_council
+					}
+				}
+			}
+			modifier = {
+				add = 100 
+				is_power_balance_in_range  = {
+					id = SWI_centralization_bop
+					range = SWI_centralization_bop_fully_cantons
+				}	
+			}
+			modifier = {
+				add = 200 
+				has_political_power > 700
+			}
+		}	
+	}
+
+	SWI_push_for_centralization = {
+	
+		icon = GFX_decision_SWI_elect_confederation_president
+
+		priority = 97
+		
+		days_remove = 45 
+
+		cost = 100
+
+		available = {
+			is_power_balance_in_range = {
+				id = SWI_centralization_bop
+				range = SWI_centralization_bop_balanced
+			}
+		}
+
+		complete_effect = {
+			add_stability = -0.3
+		}
+
+		remove_Effect = {
+			add_power_balance_value = {
+				id = SWI_centralization_bop
+				value = -0.4
+			}
+		}		
+	}
+
+	SWI_strengthen_military_high_command = {
+
+		icon = GFX_decision_SWI_guisan_speech
+
+		priority = 96 
+
+		days_remove = 30
+
+		cost = 150
+
+		remove_effect = {	
+			add_power_balance_value = {
+				id = SWI_centralization_bop
+				value = -0.25
+			}
+			add_command_power = 50
+			army_experience = 25
+		}
+
+		ai_will_do = {
+			base = 0
+			modifier = {
+				add = 200 
+				has_political_power > 400
+			}
+		}
+	}
+
+	SWI_rally_cantonal_defense = { #Make it available only when certain ranges are active. 
+		
+		icon = GFX_decision_eng_propaganda_campaigns
+
+		priority = 95 
+
+		available = {
+			NOT = {
+				is_power_balance_in_range = {
+					id = SWI_centralization_bop
+					range = SWI_centralization_bop_fully_council
+				}
+			}
+		} 
+		days_remove = 30
+
+		cost = 50  
+		
+		remove_effect = {
+			add_power_balance_value = {
+				id = SWI_centralization_bop
+				value = 0.15
+			}
+			add_command_power = 50 
+			SWI_mr_lowest_increase = yes
+		}
+
+		ai_will_do = {
+			base = 400
+			modifier = {
+				add = 200 
+				has_political_power > 700
+			}
+		}
+	}
+
+	SWI_council_diplomatic_effort = {
+
+		icon = GFX_decision_hol_exchange_intelligence_data
+
+		priority = 80 
+
+		cost = var:SWI_diplomatic_effort_cost
+
+		days_remove = SWI_diplomatic_effort_cost
+
+		remove_effect = {
+			every_other_country = {
+				limit = {
+					SWI_is_country_to_balance = yes
+				}			
+				add_opinion_modifier = {
+					target = ROOT 
+					modifier = SWI_mild_appeasement
+				}
+			}
+			add_power_balance_value = {
+				id = SWI_centralization_bop
+				value = -0.10
+			}
+			if = {
+				limit = { 
+					check_variable = { SWI_diplomatic_effort_cost < 90 }
+				}
+				add_to_variable = {
+					var = SWI_diplomatic_effort_cost
+					value = 10
+					tooltip = SWI_increasing_cost_of_council_diplomatic_effort
+				}
+			}
+		}
+		ai_will_do = {
+			base = 50 
+			modifier = {
+				factor = 10 
+				SWI_someone_is_about_to_be_angry = yes 
+			}
+		}
+	}
+}
+
+SWI_absolute_neutrality_decisions_category = {
+	
+	SWI_show_of_defensive_force = {
+		
+		icon = GFX_decision_SWI_swiss_military_tradition_campaign
+
+		priority = 99
+
+		cost = 90
+
+		visible = {
+			has_completed_focus = SWI_armed_neutrality
+			NOT = { has_country_flag = SWI_militia_active } 
+		}
+
+
+		custom_cost_trigger = {
+			check_variable = {
+				var = SWI_military_readiness 
+				value = SWI_mr_max_amount
+				compare = greater_than_or_equals
+			}
+		}
+
+		complete_effect = {
+			
+		}
+		
+		custom_cost_text = SWI_decision_cost_max_MR
+
+		remove_effect = {
+			every_other_country = {	
+				limit = { SWI_is_country_to_balance = yes }
+			}
+			add_opinion_modifier = {
+				target = ROOT 
+				modifier = SWI_too_costly_to_invade
+			}
+
+			SWI_mr_max_reduction = yes
+		}
+		ai_will_do = {
+			base = 100
+		}
+	}
+
+	SWI_offer_fascist_to_trade_gold = {
+
+		icon = GFX_decision_hol_attract_foreign_investors
+
+		allowed = { original_tag = SWI }
+
+		visible = {
+			has_completed_focus = SWI_axis_gold
+			GER = {
+				NOT = {
+					has_dynamic_modifier = { modifier = SWI_gold_trade_with_switzerland }
+					has_dynamic_modifier = { modifier = SWI_stole_our_gold_reserves }
+					has_country_flag = SWI_rejected_investment 
+					has_country_flag = SWI_waiting_for_answer_timeout
+				}
+			}
+		}
+		
+		cosmetic_tag = GER
+
+		cost = 50 
+		complete_effect = {
+			GER = { country_event = { id = BBA_switzerland_trade.8 hours = 4 } }
+			effect_tooltip = {
+				custom_effect_tooltip = if_they_accept_tt
+				SWI_increase_gold_trade = yes 
+			}  
+		}
+		ai_will_do = {
+			base = 300 
+		}
+	}
+
+	SWI_offer_democratic_to_trade_gold = {
+		
+		icon = GFX_decision_hol_attract_foreign_investors
+
+		allowed = { original_tag = SWI }
+		cosmetic_tag = ENG
+		visible = {
+			has_completed_focus = SWI_allied_gold
+			ENG = {
+				NOT = {					
+					has_dynamic_modifier = { modifier = SWI_gold_trade_with_switzerland }
+					has_dynamic_modifier = { modifier = SWI_stole_our_gold_reserves }
+					has_country_flag = SWI_rejected_investment 
+					has_country_flag = SWI_waiting_for_answer_timeout
+				}
+			}
+		}
+		
+
+		cost = 50 
+		complete_effect = {
+			ENG = { country_event = { id = BBA_switzerland_trade.8 hours = 4 } }
+			effect_tooltip = {
+				custom_effect_tooltip = if_they_accept_tt
+				SWI_increase_gold_trade = yes 
+			}  
+		}
+		ai_will_do = {
+			base = 400 
+		}
+	}
+
+	SWI_seek_increased_trade_eng = {
+		name = SWI_seek_increased_trade
+		icon = GFX_decision_hol_attract_foreign_investors
+
+		allowed = { original_tag = SWI }
+		cosmetic_tag = ENG
+		visible = {
+			always = yes 
+			check_variable = { SWI.SWI_gold_trade < SWI.SWI_max_gold_trade }
+		}
+		available = {
+			ENG = {											
+				has_dynamic_modifier = { modifier = SWI_gold_trade_with_switzerland }
+				check_variable = { SWI_country_gold_trading_level < SWI.SWI_max_country_gold_trading_level }
+			}
+		}
+
+		cost = 50 
+
+		complete_effect = {
+			ENG = { country_event = { id = BBA_switzerland_trade.11 hours = 4 } } 
+			effect_tooltip = {
+				custom_effect_tooltip = if_they_accept_tt
+				ENG = { SWI_increase_gold_trade = yes } 
+			}  
+		}
+		ai_will_do = {
+			base = 300 
+		}	
+	}
+	SWI_seek_increased_trade_ger = {
+		name = SWI_seek_increased_trade
+		icon = GFX_decision_hol_attract_foreign_investors
+
+		allowed = { original_tag = SWI }
+		cosmetic_tag = GER
+		visible = {
+			always = yes 
+			check_variable = { SWI.SWI_gold_trade < SWI.SWI_max_gold_trade }
+		}
+		available = {
+			GER = {											
+				has_dynamic_modifier = { modifier = SWI_gold_trade_with_switzerland }
+				check_variable = { SWI_country_gold_trading_level < SWI.SWI_max_country_gold_trading_level }
+			}
+		}
+
+		cost = 50 
+
+		complete_effect = {
+			GER = { country_event = { id = BBA_switzerland_trade.11 hours = 4 } } 
+			effect_tooltip = {
+				custom_effect_tooltip = if_they_accept_tt
+				GER = { SWI_increase_gold_trade = yes } 
+			}  
+		}
+		ai_will_do = {
+			base = 300 
+		}	
+	}
+
+	SWI_seize_fascist_gold = {
+
+		icon = GFX_decision_gre_investment_decisions
+
+		allowed = { original_tag = SWI }
+		
+		visible = {
+			OR = {
+				has_completed_focus = SWI_take_a_stance
+				has_completed_focus = SWI_oasis_of_democracy 
+			}
+		}
+		cosmetic_tag = GER
+		
+		available = {
+			GER = { has_dynamic_modifier = { modifier = SWI_gold_trade_with_switzerland } }
+		}
+		cost = 50 
+
+		complete_effect = {
+			GER = {
+				SWI_seize_gold = yes
+				country_event = { id = BBA_switzerland_trade.12 hours = 4 }
+			}			
+			effect_tooltip = {
+				create_wargoal = {
+					target = FROM 
+					type = topple_government 
+				}			
+			}
+		}
+		ai_will_do = {
+			base = 200
+		}	
+	}
+}
+
+
+
+
+SWI_military_readiness_decisions_category = {	
+
+	SWI_activate_militia = {  # Activates Militias after a Delay
+		priority = 100
+
+		icon = GFX_decision_generic_civil_support
+
+		allowed = { original_tag = SWI }
+		
+		visible = {
+			NOT = { has_country_flag = SWI_militia_active }
+		}		
+
+		available = {
+			check_variable = {
+				var = SWI_military_readiness 
+				value = SWI_min_mil_readiness 
+				compare = greater_than_or_equals
+			}
+			NOT = { has_country_flag = SWI_militia_active }
+			has_template_majority_unit = militia
+
+		}		
+
+		days_remove = SWI_militia_activation_time
+
+		custom_cost_text = SWI_decision_cost_total_MR
+
+		custom_cost_trigger = { 
+			check_variable = {
+				var = SWI_military_readiness
+				value = SWI_min_mil_readiness
+				compare = greater_than_or_equals
+			}
+		}
+
+		complete_effect = {
+			SWI_mr_total_reduction = yes
+		}
+
+		remove_effect = {
+			set_country_flag = SWI_militia_active #activates the Militia Mission
+			effect_tooltip = { #Every time I have to make a Tooltip to represent basic functionality Dynamic Modifiers should support my will to live dies a little bit. 
+				remove_dynamic_modifier = {
+					modifier = SWI_dormant_citizen_militia
+				}			
+				add_dynamic_modifier = {
+					modifier = SWI_fake_active_citizen_militia_for_the_tooltip
+				}
+			}
+			hidden_effect = {
+				remove_dynamic_modifier = {
+					modifier = SWI_dormant_citizen_militia
+				}
+				add_dynamic_modifier =  {
+					modifier = SWI_active_citizen_militia
+				}
+			}
+		}
+
+		ai_will_do = {
+			base = 0 
+			modifier = { #PANIC! 
+				add = 100000
+				has_war = yes 
+			}
+		}
+	}
+
+	SWI_deactivate_militia = { #Deactivates Militias
+		
+		icon = GFX_decision_POL_looming_peasants_strike
+
+		priority = 8999
+
+		allowed = { original_tag = SWI }
+
+		visible = {
+			has_country_flag = SWI_militia_active
+		}
+
+		available = {
+			has_country_flag = SWI_militia_active
+		}
+
+		complete_effect = {
+			clr_country_flag = SWI_militia_active
+			custom_effect_tooltip = SWI_remove_citizen_militia_active_tooltip # I have about 10 more of these in me... 
+			hidden_effect = { 
+				remove_dynamic_modifier = {
+					modifier = SWI_active_citizen_militia
+				}
+			}
+			SWI_reset_citizen_militia_active_modifier = yes
+			add_dynamic_modifier = { 
+				modifier = SWI_dormant_citizen_militia
+			}
+		}
+		ai_will_do = {
+			base = 0 
+		}
+	}
+
+	SWI_militia_active = { # Shows that Militias are active and when timed out, increases the penalties and activates itself again   
+		
+		icon = GFX_decision_SWI_swiss_military_tradition_campaign
+
+		priority = 9000 
+		
+		allowed = { original_tag = SWI } 
+
+		days_mission_timeout = SWI_citizen_militia_activation_timeout
+		
+		is_good = no 
+		
+		available = {
+			hidden_trigger = { always = no }
+		}		
+		
+		cancel_trigger = {
+			NOT = {
+				has_country_flag = SWI_militia_active
+			}
+		} 
+
+		activation = {
+			has_country_flag = SWI_militia_active 
+		}
+
+		timeout_effect = {
+			
+			custom_effect_tooltip = SWI_militia_active_penalty_increase_TT 
+			if = {
+				limit = {
+					check_variable = { SWI_citizen_militia_active_level < 5 }
+				}
+				SWI_level_up_citizen_militia_active_modifier = yes 
+				
+			}
+			else = {
+				add_political_power = -10
+			}
+
+			activate_mission = SWI_militia_active
+		}
+	}
+
+	SWI_building_up_military_readiness_mission = {
+		
+		icon = GFX_decision_SWI_swiss_military_tradition_campaign
+
+		priority = 7000
+
+		allowed = { original_tag = SWI }
+
+		days_mission_timeout = 10
+
+		is_good = yes 
+
+		available = {
+			hidden_trigger = { always = no } 
+		}
+
+		cancel_trigger = {
+			NOT = { has_Country_flag = SWI_building_up_mr_cont_focus_active }
+		}
+
+		activation = {  has_Country_flag = SWI_building_up_mr_cont_focus_active } 
+
+		timeout_effect = {
+			SWI_mr_lowest_increase = yes
+			activate_mission = SWI_building_up_military_readiness_mission
+		} 
+	}
+
+
+	SWI_confederation_president_speech = {
+		priority = 99
+		icon = GFX_decision_generic_speech
+
+		allowed = { original_tag = SWI }
+
+		visible = {
+			NOT = { 
+				has_active_mission = SWI_militia_active
+				has_country_flag = SWI_president_gave_MR_speech 
+			}
+		}
+
+		fire_only_once = no
+
+		cost = 100
+
+		days_remove = 30 
+
+		remove_effect = {
+			SWI_mr_low_medium_increase = yes
+			set_country_flag = SWI_president_gave_MR_speech
+		}
+		ai_will_do = {
+			base = 75 
+		}
+	}
+
+	SWI_guisan_speech = { 
+		priority = 99 
+
+		icon = GFX_decision_SWI_guisan_speech
+
+		allowed = {
+			original_tag = SWI 
+		}
+
+		visible = { 
+			NOT = { has_active_mission = SWI_militia_active }
+			has_completed_focus = SWI_promote_guisan 
+		}
+
+		days_re_enable = 30
+
+		fire_only_once = no
+
+		custom_cost_text = decision_cost_CP_50_pp_50
+
+		custom_cost_trigger = {
+			command_power > 49 
+			has_political_power > 49
+		}
+
+		complete_effect = {
+			hidden_effect = {
+				add_command_power = -50
+				add_political_power = -50
+			}
+		}
+		days_remove = 15 
+
+		remove_effect = {
+			SWI_mr_low_medium_increase = yes
+		}
+
+		ai_will_do = {
+			base = 75 
+		}
+	}
+
+	SWI_military_training_drive = {
+		
+		priority = 80	
+
+		icon = GFX_decision_generic_military 
+		
+		allowed = { original_tag = SWI }
+
+		visible = {
+			NOT = { has_active_mission = SWI_militia_active }
+		}
+
+		fire_only_once = no
+
+		custom_cost_trigger = {
+			command_power > 49
+			has_political_power > 99
+		}
+
+		custom_cost_text = decision_cost_CP_50_PP_100
+
+		complete_effect = {
+			hidden_effect = {
+				add_command_power = -50
+				add_political_power = -100 
+			}
+		}
+
+		days_remove = 45
+
+		remove_effect = {
+			SWI_mr_medium_increase = yes 
+		}
+		ai_will_do = {
+			base = 75 
+		}
+	}
+
+	SWI_expand_military_staff = {
+		
+		priority = 70
+		icon = GFX_decision_generic_army_support
+
+		allowed = { original_tag = SWI }
+
+		visible = {
+			check_variable = {
+				var = SWI_military_readiness
+				value = 50
+				compare = greater_than_or_equals
+			}
+			check_variable = {
+				var = SWI_max_mil_readiness
+				value = 599
+				compare = greater_than_or_equals
+			}
+			NOT = { has_active_mission = SWI_militia_active }
+		}
+
+		fire_only_once = no 
+		
+		custom_cost_trigger = { 
+			check_variable = {
+				var = SWI_military_readiness
+				value = SWI_mr_high_medium_amount
+				compare = greater_than_or_equals
+			}
+		}
+
+		custom_cost_text = SWI_decision_cost_medium_high_MR
+
+		complete_effect = {
+			SWI_mr_high_medium_reduction = yes
+		}
+
+		days_remove = 30 
+
+		remove_effect = {
+			SWI_max_mr_medium_increase = yes 
+		}
+		ai_will_do = {
+			base = 75 
+		}
+	}
+
+	SWI_broaden_militias = {
+
+		priority = 20
+
+		icon = GFX_decision_POL_looming_peasants_strike
+
+		allowed = { original_tag = SWI }
+		
+		visible = {
+			NOT = { has_active_mission = SWI_militia_active }	
+		}
+
+		ai_will_do = {
+			base = 10 
+		}
+
+		fire_only_once = no 
+		
+		days_remove = 90 
+
+		custom_cost_trigger = {
+			check_variable = {
+				var = SWI_military_readiness 
+				value = SWI_mr_max_amount
+				compare = greater_than_or_equals
+			}
+		}
+
+		custom_cost_text = SWI_decision_cost_max_MR
+
+		complete_effect = {
+			SWI_mr_max_reduction = yes 
+		}
+
+		remove_effect = {
+			SWI_increase_militia_cap = yes 
+		}
+		ai_will_do = {
+			base = 75 	
+		}
+	}
+
+	SWI_arm_the_population = {
+		
+		priority = 70
+
+		icon = generic_prepare_civil_war
+
+		allowed = { original_tag = SWI }
+
+		visible = {
+			NOT = { has_active_mission = SWI_militia_active }
+		}
+
+		fire_only_once = no 
+		
+		custom_cost_trigger = { 
+			has_equipment = { infantry_equipment > 1999 }
+		}
+
+		custom_cost_text = decision_cost_ie_2000
+
+		complete_effect = {
+			add_equipment_to_stockpile = {
+				type = infantry_equipment
+				amount = -2000
+			}
+		}
+
+		days_remove = 15 
+
+		remove_effect = {
+			SWI_mr_high_increase = yes 
+		}
+		ai_will_do = {
+			base = 75
+		}
+	}
+
+	SWI_focus_on_the_economy = {
+		icon = GFX_decision_generic_factory
+
+		allowed = { original_tag = SWI }
+
+		visible = {
+			check_variable = {
+				var = SWI_military_readiness
+				value = 70
+				compare = greater_than_or_equals
+			}
+			NOT = { has_active_mission = SWI_militia_active }
+		}
+
+		fire_only_once = no 
+
+		custom_cost_trigger = {
+			check_variable = {
+				var = SWI_military_readiness
+				value = SWI_mr_high_amount
+				compare = greater_than_or_equals
+			}	
+		}
+
+		custom_cost_text = SWI_decision_cost_high_MR
+
+		complete_effect = {
+			hidden_effect = {
+				SWI_mr_high_reduction = yes
+			}
+		}
+
+		days_remove = 30
+
+		modifier = { 
+			consumer_goods_expected_value = -0.25
+			production_speed_buildings_factor = 0.25
+		}
+		ai_will_do = {
+			base = 150
+		}
+	}
+ 
+
+	SWI_focus_on_military_production = {
+		icon = GFX_decision_generic_industry
+
+		allowed = { original_tag = SWI }
+
+		visible = {
+			check_variable = {
+				var = SWI_military_readiness 
+				value = 50
+				compare = greater_than_or_equals
+			}
+			NOT = { has_active_mission = SWI_militia_active }
+		}
+
+		fire_only_once = no
+
+
+		days_remove = 45
+
+		custom_cost_trigger = {
+			check_variable = {
+				var = SWI_military_readiness 
+				value = SWI_mr_high_medium_amount
+				compare = greater_than_or_equals
+			}
+		}
+		
+		custom_cost_text = SWI_decision_cost_medium_high_MR
+
+		complete_effect = {
+			hidden_effect = { SWI_mr_high_medium_reduction = yes }
+		}
+
+		modifier = {
+			production_factory_efficiency_gain_factor = 0.05 
+			production_factory_max_efficiency_factor = 0.05
+			production_factory_start_efficiency_factor = 0.05
+			production_lack_of_resource_penalty_factor = -0.1
+		}
+		ai_will_do = {
+			base = 150
+		}
+	}
+
+	SWI_improve_divisions = {
+		icon = GFX_decision_generic_military
+		allowed = { original_tag = SWI }
+
+		visible = {
+			check_variable = {
+				var = SWI_military_readiness 
+				value = SWI_mr_high_amount 
+				compare = greater_than_or_equals
+			}
+			check_variable = { SWI_militia_template_level < 10 }
+			NOT = { has_active_mission = SWI_militia_active }
+		}
+
+		fire_only_once = no 
+
+		ai_will_do = {
+			base = 10 
+			modifier = {
+				factor = 10
+				check_variable = { SWI_militia_template_level < 5 }
+			}
+			modifier = {
+				factor = 0 
+				check_variable = { SWI_militia_template_level > 7 }
+			}
+		}
+
+		days_remove = 90 
+
+		custom_cost_trigger = {
+			check_variable = {
+				var = SWI_military_readiness 
+				value = SWI_mr_max_amount
+				compare = greater_than_or_equals
+			}
+		}
+
+		custom_cost_text = SWI_decision_cost_max_MR
+
+		complete_effect = {
+			SWI_mr_max_reduction = yes 
+		}
+
+		remove_effect = {
+			SWI_upgrade_template_and_divisions = yes 
+		}
+
+		ai_will_do = {
+			base = 300 
+		}
+	}
+
+	SWI_improve_deployment_speed = {
+		
+		icon = GFX_decision_generic_military
+
+		allowed = { original_tag = SWI }
+
+		visible = {
+			has_completed_focus = SWI_expedite_mobilization
+			check_variable = { SWI_militia_activation_time > 1 }
+		}
+
+		custom_cost_trigger = {
+			check_variable = {
+				var = SWI_military_readiness
+				value = SWI_mr_max_amount 
+				compare = greater_than_or_equals
+			}
+		}
+
+		custom_cost_text = SWI_decision_cost_high_MR 
+
+		complete_effect =  {
+			SWI_mr_max_reduction = yes
+		}
+
+		days_remove = 60
+
+		remove_effect = {
+			if = {
+				limit = {
+					check_variable = { SWI_militia_activation_time > 1 }
+				}
+				subtract_from_variable = { 
+					var = SWI_militia_activation_time 
+					value = 1
+					tooltip = SWI_reduce_militia_activation_time_TT 
+				}
+			}
+		}
+		ai_will_do = {
+			base = 150 
+		}
+	}
+
+	SWI_field_hospital_for_militias = {
+		
+		icon = GFX_decision_generic_research
+
+		allowed = { original_tag = SWI }
+
+		visible = {
+			has_idea = SWI_spirit_of_saint_bernard_idea
+		}
+		
+		fire_only_once = yes
+		
+		custom_cost_trigger = {
+			check_variable = {
+				var = SWI_military_readiness
+				value = SWI_mr_lowest_amount 
+				compare = greater_than_or_equals
+			}
+		}
+
+		custom_cost_text = SWI_decision_cost_lowest_MR 
+
+		complete_effect =  {
+			SWI_mr_lowest_reduction = yes
+		}
+
+		days_remove = 45
+
+		remove_effect = {
+			add_units_to_division_template = {
+				template_name = "Swiss Citizen Militia"
+				support = {
+					field_hospital = 0
+				} 
+			}
+		}
+		ai_will_do = {
+			base = 600 
+		}
+	}
+
+	SWI_support_for_militias = {
+		
+		icon = GFX_decision_generic_army_support
+
+		allowed = { original_tag = SWI }
+
+		fire_only_once = yes
+
+		visible = {
+			has_completed_focus = SWI_expanded_military_support
+		}
+
+		available = {
+			has_tech = tech_engineers
+			has_tech = tech_recon
+			has_tech = tech_logistics_company
+		}
+		custom_cost_trigger = {
+			check_variable = {
+				var = SWI_military_readiness
+				value = SWI_mr_lowest_amount 
+				compare = greater_than_or_equals
+			}
+		}
+
+		custom_cost_text = SWI_decision_cost_lowest_MR 
+
+		complete_effect =  {
+			SWI_mr_lowest_reduction = yes
+		}
+
+		days_remove = 60
+
+		remove_effect = {
+			add_units_to_division_template = {
+				template_name = "Swiss Citizen Militia"
+				support = {
+					engineer = 0
+					recon = 0
+					logistics_company = 0
+				} 
+			}
+		}
+
+		ai_will_do = {
+			base = 600 
+			modifier = {
+				factor = 3
+				SWI_MR_full = yes
+				check_variable = { SWI_military_readiness > 150 }
+			}
+		}
+	}
+}
+
+

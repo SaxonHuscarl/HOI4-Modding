@@ -1,0 +1,724 @@
+@LOCAL_OPERATION_EFFECT = 0.25
+operation_make_resistance_contacts = { ### 9 2/40
+	icon = GFX_operations_make_resistance_contacts
+	map_icon = GFX_operations_make_resistance_contacts_map
+	name = operation_make_resistance_contacts
+	desc = operation_make_resistance_contacts_desc
+	priority = 5
+
+	days = 90
+	network_strength = 40
+	operatives = 2
+
+	allowed = {
+		has_done_agency_upgrade = upgrade_form_operations
+	}
+
+	visible = {
+		NOT = { has_country_flag = ui_hide_resistance_operations@FROM }
+		network_national_coverage = {
+			target = FROM
+			value > 0
+		}
+		
+		FROM = {
+			garrison_manpower_need > 0
+		}
+	}
+
+	equipment = {
+		support_equipment = 50
+		recon_equipment = 50
+		radio_equipment = 75
+	}
+	
+	ai_will_do = {
+		base = 0
+		modifier = {
+			add = 1250
+			
+			OR = {
+				is_in_array = { ai_operations = token:operation_strengthen_resistance }
+				is_in_array = { ai_operations = token:operation_strengthen_society }
+			}
+		}
+		modifier = {
+			add = resistance_areas
+			
+			set_temp_variable = { resistance_areas = intel_resistance_asset_area@FROM^num }
+			multiply_temp_variable = { resistance_areas = -350 }
+		}
+	}
+
+	selection_target = {
+		targets = { FROM }
+	}
+
+	selection_target_state = {
+		has_resistance = yes
+		custom_trigger_tooltip = {
+			tooltip = MAKE_RESISTANCE_CONTACT_STATE_TOOLTIP
+			NOT = { has_variable = resistance_leader }
+			NOT = {
+				any_neighbor_state = {
+					has_variable = resistance_leader
+				}
+			}
+		}
+	}
+	
+	target_weight = {
+		base = 100
+		
+		modifier = {
+			factor = 0.5
+			
+			has_active_resistance = no
+		}
+		modifier = {
+			add = resistance_level
+			
+			set_temp_variable = { resistance_level = resistance }
+			multiply_temp_variable = { resistance_level = 0.25 }
+		}
+		modifier = {
+			add = t
+			
+			all_neighbor_state = {
+				if = {
+					limit = {
+						has_resistance = yes
+					}
+					add_to_temp_variable = { t = 5 }
+				}
+			}
+		}
+		modifier = {
+			add = v
+			
+			set_temp_variable = { v = highest_vp } #since this affects resistance target it might be good to focus these states
+		}
+		modifier = {
+			add = target
+			
+			set_temp_variable = { target = resistance_target }
+			multiply_temp_variable = { target = 0.5 }
+		}
+	}
+	
+	awarded_tokens = { token_resistance_contacts }
+	risk_chance = 0.1
+	outcome_extra_chance = 0
+	risk_modifiers = { operation_infiltrate_risk operation_risk }
+	outcome_modifiers = { operation_infiltrate_outcome operation_outcome }
+	cost_modifiers = { operation_infiltrate_cost operation_cost }
+	on_start = {
+		every_operative = {
+			add_to_temp_variable = { operative_outcome = leader_modifier@operation_infiltrate_outcome }
+		}
+		ROOT = {
+			set_temp_variable = { CRITICAL_SUCCESS = 25 }
+			set_temp_variable = { factor = modifier@operation_infiltrate_outcome }
+			add_to_temp_variable = { factor = modifier@operation_outcome }
+			add_to_temp_variable = { factor = operative_outcome }
+			subtract_from_temp_variable = { factor = FROM.modifier@enemy_operation_critical_success_chance }
+			add_to_temp_variable = { factor = 1 }
+			multiply_temp_variable = { CRITICAL_SUCCESS = factor }
+			
+			random = {
+				chance = CRITICAL_SUCCESS
+				
+				set_country_flag = operation_infiltrate_resistance_critical@FROM
+			}
+		}
+	}
+	outcome_execute = {
+		ROOT = {
+			
+			add_operation_token = {
+				tag = FROM
+				token = token_resistance_contacts
+			}
+			
+			set_variable = { FROM.FROM.resistance_leader = ROOT }
+			add_to_array = { intel_resistance_asset_area@FROM = FROM.FROM }
+			
+			if = {
+				limit = {
+					NOT = { has_variable = ROOT.selected_resistance_area@FROM }
+				}
+				set_variable = { ROOT.selected_resistance_area@FROM = FROM.FROM }
+			}
+			
+			if = {
+				limit = {
+					NOT = { has_variable = selected_resistance_area@FROM }
+				}
+				set_variable = { selected_resistance_area@FROM = FROM.FROM }
+			}
+			
+			custom_effect_tooltip = MAKE_RESISTANCE_CONTACT_TOOLTIP
+			
+			if = {
+				limit = {
+					has_country_flag = operation_infiltrate_resistance_critical@FROM
+				}
+				custom_effect_tooltip = CRITICAL_SUCCESS
+				FROM.FROM = {
+					add_resistance_target = {
+						amount = 10
+						tooltip = intelligency_agency_resistance_boost_tt
+						days = 120
+					}
+				}
+				clr_country_flag = operation_infiltrate_resistance_critical@FROM
+			}
+			add_to_array = { ROOT.operation_completed = token:operation_make_resistance_contacts }
+			add_to_array = { ROOT.operation_completed_state = FROM.FROM }
+			add_to_array = { ROOT.operation_completed_target = FROM }
+			add_to_array = { ROOT.operation_completed_date = global.date }
+		}
+	}
+	outcome_potential = {
+		ROOT = {
+		
+			set_temp_variable = { CRITICAL_SUCCESS = 25 }
+			set_temp_variable = { factor = modifier@operation_infiltrate_outcome }
+			add_to_temp_variable = { factor = modifier@operation_outcome }
+			subtract_from_temp_variable = { factor = FROM.modifier@enemy_operation_critical_success_chance }
+			add_to_temp_variable = { factor = 1 }
+			multiply_temp_variable = { CRITICAL_SUCCESS = factor }
+			
+			custom_effect_tooltip = MAKE_RESISTANCE_CONTACT_OUTCOME_POTENTIAL_TOOLTIP
+		#	effect_tooltip = {
+		#		add_operation_token = {
+		#			tag = FROM
+		#			token = token_resistance_contacts
+		#		}
+		#	}
+			
+			custom_effect_tooltip = OPERATION_OUTCOME_CRITICAL_SUCCESS
+			add_resistance_target = {
+				amount = 10
+				tooltip = intelligency_agency_resistance_boost_tt
+				days = 120
+			}
+		}
+	}
+
+	target_weight = {
+		base = 100
+		
+		modifier = {
+			set_temp_variable = { t = distance_to@ROOT.capital }
+			divide_temp_variable = { t = 600 }
+			clamp_temp_variable = { var = t min = 0 max = 1 }
+			multiply_temp_variable = { t = -40 }
+			
+			add = t
+		}
+	}
+	
+	phases = { #infiltration
+		infiltration_border = { base = 25 modifier = { factor = 0.1 ROOT = { is_neighbor_of = FROM } } }
+		infiltration_submarine = { base = 25 modifier = { factor = 0.1 ROOT = { has_navy_size = { size < 1 type = submarine } } } }
+		infiltration_paradrop = { base = 25 modifier = { factor = 0.1 ROOT = { has_equipment = { transport_plane_equipment < 1 } } } }
+	}
+	phases = { #resistance contacts
+		resistance_contacts_radio_circuits = { base = 33 }
+		resistance_support_pidgeons = { base = 33 }
+		resistance_contacts_briefings = { base = 33 }
+	}
+	phases = { #exfiltration
+		exfiltration_air_pickup = { base = 25 modifier = { factor = 0.1 ROOT = { has_equipment = { transport_plane_equipment < 1 } } } }
+		exfiltration_border = { base = 30 modifier = { factor = 0.1 ROOT = { is_neighbor_of = FROM } } }
+		exfiltration_go_to_ground = { base = 30 }
+		exfiltration_submarine_pickup = { base = 25 modifier = { factor = 0.1 ROOT = { has_navy_size = { size < 1 type = submarine } } } }
+	}
+}
+
+operation_strengthen_resistance = { ### 8 2/40
+	icon = GFX_operations_boost_resistance
+	map_icon = GFX_operations_boost_resistance_map
+	name = operation_boost_resistance
+	desc = operation_boost_resistance_desc
+	priority = 17
+
+	days = 60
+	network_strength = 40
+	operatives = 2
+
+	allowed = {
+		has_done_agency_upgrade = upgrade_form_operations
+	}
+
+	visible = {
+		NOT = { has_country_flag = ui_hide_resistance_operations@FROM }
+		network_strength = {
+			target = FROM
+			value > 20
+		}
+		has_variable = ROOT.selected_resistance_area@FROM
+	}
+
+	equipment = {
+		infantry_equipment = 250
+		infantry_uniforms = 250
+		support_equipment = 100
+	}
+
+	ai_will_do = {
+		base = 0
+		modifier = {
+			add = 1000
+			
+			is_in_array = { ai_operations = token:operation_strengthen_resistance }
+		}
+		modifier = {
+			add = 150
+			
+			check_variable = { ai_operations^0 = token:operation_strengthen_resistance }
+		}
+		modifier = {
+			add = 100
+			
+			check_variable = { ai_operations^1 = token:operation_strengthen_resistance }
+		}
+		modifier = {
+			add = 50
+			
+			check_variable = { ai_operations^2 = token:operation_strengthen_resistance }
+		}
+	}
+	required_tokens = { token_resistance_contacts }
+	risk_chance = 0.2
+	outcome_extra_chance = 0
+	risk_modifiers = { operation_strengthen_resistance_risk operation_risk }
+	outcome_modifiers = { operation_strengthen_resistance_outcome operation_outcome }
+	cost_modifiers = { operation_strengthen_resistance_cost operation_cost }
+	on_start = {
+		every_operative = {
+			add_to_temp_variable = { operative_outcome = leader_modifier@operation_strengthen_resistance_outcome }
+			add_to_temp_variable = { operative_bonus = leader_modifier@operation_strengthen_resistance_effect }
+			add_to_temp_variable = { operative_spread = leader_modifier@operation_strengthen_resistance_spread }
+		}
+		ROOT = {
+			set_temp_variable = { CRITICAL_SUCCESS = 25 }
+			set_temp_variable = { factor = modifier@operation_strengthen_resistance_outcome }
+			add_to_temp_variable = { factor = modifier@operation_outcome }
+			add_to_temp_variable = { factor = operative_outcome }
+			subtract_from_temp_variable = { factor = FROM.modifier@enemy_operation_critical_success_chance }
+			add_to_temp_variable = { factor = 1 }
+			multiply_temp_variable = { CRITICAL_SUCCESS = factor }
+			
+			random = {
+				chance = CRITICAL_SUCCESS
+				
+				set_country_flag = operation_strengthen_resistance_critical@FROM
+			}
+			
+			set_variable = { operation_strengthen_resistance_target@FROM = 0.1 }
+			set_temp_variable = { factor = 1 }
+			add_to_temp_variable = { factor = mtth:decryption_operation_effect }
+			add_to_temp_variable = { factor = operative_bonus }
+			add_to_temp_variable = { factor = modifier@operation_strengthen_resistance_effect }
+			multiply_variable = { operation_strengthen_resistance_target@FROM = factor }
+			
+			set_variable = { operation_strengthen_resistance_growth@FROM = 0.25 }
+			multiply_variable = { operation_strengthen_resistance_growth@FROM = factor }
+			
+			
+			set_temp_variable = { factor = modifier@operation_strengthen_resistance_spread }
+			add_to_temp_variable = { factor = operative_spread }
+			
+			set_variable = { operation_strengthen_resistance_target_spread@FROM = operation_strengthen_resistance_target@FROM }
+			multiply_variable = { operation_strengthen_resistance_target_spread@FROM = factor }
+			set_variable = { operation_strengthen_resistance_growth_spread@FROM = operation_strengthen_resistance_growth@FROM }
+			multiply_variable = { operation_strengthen_resistance_growth_spread@FROM = factor }
+		}
+	}
+	outcome_execute = {
+		hidden_effect = {
+			var:ROOT.selected_resistance_area@FROM = {
+				ROOT = {
+					set_temp_variable = { local = mtth:network_strength_state }
+					divide_temp_variable = { local = 100 }
+					set_temp_variable = { network_strength_state = local }
+					multiply_temp_variable = { local = @LOCAL_OPERATION_EFFECT }
+					add_to_temp_variable = { local = PREV.modifier@local_operation_effect }
+					set_temp_variable = { local_effect = local }
+					
+					add_to_temp_variable = { local = 1 }
+					
+					if = {
+						limit = {
+							PREV = { is_owned_by = ROOT }
+						}
+						add_to_temp_variable = { local = modifier@resistance_operation_effect_in_our_states }
+					}
+					
+					multiply_variable = { operation_strengthen_resistance_target@FROM = local }
+					multiply_variable = { operation_strengthen_resistance_growth@FROM = local }
+					
+					
+					## use these variables for tooltips & effects
+					set_temp_variable = { effect = operation_strengthen_resistance_target@FROM }
+					multiply_temp_variable = { effect = local }
+					set_temp_variable = { growth = operation_strengthen_resistance_growth@FROM }
+					multiply_temp_variable = { growth = local }
+					
+				}
+			}
+		}
+		custom_effect_tooltip = LOCAL_OPERATION_EFFECT_TOOLTIP
+		
+		ROOT = {
+			
+			hidden_effect = {
+				var:ROOT.selected_resistance_area@FROM = {
+					set_variable = { operation_resistance_target = ROOT.operation_strengthen_resistance_target@FROM }
+					set_variable = { operation_resistance_growth = ROOT.operation_strengthen_resistance_growth@FROM }
+				}
+			}
+			
+			custom_effect_tooltip = STRENGTHEN_RESISTANCE_TOOLTIP
+			hidden_effect = {
+				var:ROOT.selected_resistance_area@FROM = {
+					add_dynamic_modifier = {
+						modifier = operation_resistance
+						days = 120
+					}
+				}
+			}
+			if = {
+				limit = {
+					check_variable = { ROOT.modifier@operation_strengthen_resistance_spread > 0 }
+				}
+				
+				custom_effect_tooltip = STRENGTHEN_RESISTANCE_SPREAD_TOOLTIP
+				hidden_effect = {
+					var:ROOT.selected_resistance_area@FROM = {
+						every_neighbor_state = {
+							limit = {
+								has_resistance = yes
+								is_controlled_by = FROM
+							}
+								
+							set_variable = { operation_resistance_target = ROOT.operation_strengthen_resistance_target_spread@FROM }
+							set_variable = { operation_resistance_growth = ROOT.operation_strengthen_resistance_growth_spread@FROM }
+							add_dynamic_modifier = {
+								modifier = operation_resistance
+								days = 120
+							}
+						}
+					}
+				}
+			}
+			
+			
+			clear_variable = operation_strengthen_resistance_target@FROM
+			clear_variable = operation_strengthen_resistance_growth@FROM
+			clear_variable = operation_strengthen_resistance_target_spread@FROM
+			clear_variable = operation_strengthen_resistance_growth_spread@FROM
+			
+			if = {
+				limit = {
+					has_country_flag = operation_strengthen_resistance_critical@FROM
+				}
+				custom_effect_tooltip = CRITICAL_SUCCESS
+				var:ROOT.selected_resistance_area@FROM = {
+					add_resistance = 5
+				}
+				clr_country_flag = operation_strengthen_resistance_critical@FROM
+			}
+			add_to_array = { ROOT.operation_completed = token:operation_strengthen_resistance }
+			add_to_array = { ROOT.operation_completed_state = FROM.FROM }
+			add_to_array = { ROOT.operation_completed_target = FROM }
+			add_to_array = { ROOT.operation_completed_date = global.date }
+		}
+	}
+	outcome_potential = {
+		ROOT = {
+		
+			set_temp_variable = { resistance_target = 0.1 }
+			set_temp_variable = { factor = 1 }
+			add_to_temp_variable = { factor = modifier@operation_strengthen_resistance_effect }
+			multiply_temp_variable = { resistance_target = factor }
+			
+			set_temp_variable = { resistance_growth = 0.25 }
+			multiply_temp_variable = { resistance_growth = factor }
+			
+			custom_effect_tooltip = STRENGTHEN_RESISTANCE_OUTCOME_POTENTIAL_TOOLTIP
+			
+			set_temp_variable = { CRITICAL_SUCCESS = 25 }
+			set_temp_variable = { factor = modifier@operation_outcome }
+			add_to_temp_variable = { factor = modifier@operation_strengthen_resistance_outcome }
+			subtract_from_temp_variable = { factor = FROM.modifier@enemy_operation_critical_success_chance }
+			add_to_temp_variable = { factor = 1 }
+			multiply_temp_variable = { CRITICAL_SUCCESS = factor }
+			
+			custom_effect_tooltip = OPERATION_OUTCOME_CRITICAL_SUCCESS
+			custom_effect_tooltip = STRENGTHEN_RESISTANCE_OUTCOME_POTENTIAL_TOOLTIP_CRITICAL
+		}
+	}
+
+	phases = { #infiltration
+		infiltration_border = { base = 25 modifier = { factor = 0.1 ROOT = { is_neighbor_of = FROM } } }
+		infiltration_submarine = { base = 25 modifier = { factor = 0.1 ROOT = { has_navy_size = { size < 1 type = submarine } } } }
+		infiltration_paradrop = { base = 25 modifier = { factor = 0.1 ROOT = { has_equipment = { transport_plane_equipment < 1 } } } }
+	}
+	phases = { #resistance support
+		resistance_support_arms_depots = { base = 25 }
+		resistance_support_distribute_weapons = { base = 25 }
+		resistance_support_organize_training = { base = 25 }
+		resistance_support_coordinate_groups = { base = 25 }
+	}
+	phases = { #exfiltration
+		exfiltration_air_pickup = { base = 25 modifier = { factor = 0.1 ROOT = { has_equipment = { transport_plane_equipment < 1 } } } }
+		exfiltration_border = { base = 30 modifier = { factor = 0.1 ROOT = { is_neighbor_of = FROM } } }
+		exfiltration_go_to_ground = { base = 30 }
+		exfiltration_submarine_pickup = { base = 25 modifier = { factor = 0.1 ROOT = { has_navy_size = { size < 1 type = submarine } } } }
+	}
+}
+
+operation_strengthen_society = { ### 8 2/40
+	icon = GFX_operations_boost_resistance
+	map_icon = GFX_operations_boost_resistance_map
+	name = operation_boost_society
+	desc = operation_boost_society_desc
+	priority = 17
+
+	days = 60
+	network_strength = 40
+	operatives = 2
+
+	allowed = {
+		has_done_agency_upgrade = upgrade_form_operations
+	}
+
+	visible = {
+		NOT = { has_country_flag = ui_hide_resistance_operations@FROM }
+		network_strength = {
+			target = FROM
+			value > 20
+		}
+
+		has_variable = ROOT.selected_resistance_area@FROM
+	}
+
+	equipment = {
+		infantry_equipment = 250
+		radio_equipment = 125
+		support_equipment = 100
+	}
+
+	ai_will_do = {
+		base = 0
+		modifier = {
+			add = 1000
+			
+			is_in_array = { ai_operations = token:operation_strengthen_society }
+		}
+		modifier = {
+			add = 150
+			
+			check_variable = { ai_operations^0 = token:operation_strengthen_society }
+		}
+		modifier = {
+			add = 100
+			
+			check_variable = { ai_operations^1 = token:operation_strengthen_society }
+		}
+		modifier = {
+			add = 50
+			
+			check_variable = { ai_operations^2 = token:operation_strengthen_society }
+		}
+	}
+	required_tokens = { token_resistance_contacts }
+	risk_chance = 0.2
+	outcome_extra_chance = 0
+	risk_modifiers = { operation_strengthen_society_risk operation_risk }
+	outcome_modifiers = { operation_strengthen_society_outcome operation_outcome }
+	cost_modifiers = { operation_strengthen_society_cost operation_cost }
+	on_start = {
+		every_operative = {
+			add_to_temp_variable = { operative_outcome = leader_modifier@operation_strengthen_society_outcome }
+			add_to_temp_variable = { operative_bonus = leader_modifier@operation_strengthen_society_effect }
+			add_to_temp_variable = { operative_spread = leader_modifier@operation_strengthen_society_spread }
+		}
+		ROOT = {
+			set_temp_variable = { CRITICAL_SUCCESS = 25 }
+			set_temp_variable = { factor = modifier@operation_strengthen_society_outcome }
+			add_to_temp_variable = { factor = modifier@operation_outcome }
+			add_to_temp_variable = { factor = operative_outcome }
+			subtract_from_temp_variable = { factor = FROM.modifier@enemy_operation_critical_success_chance }
+			add_to_temp_variable = { factor = 1 }
+			multiply_temp_variable = { CRITICAL_SUCCESS = factor }
+			
+			random = {
+				chance = CRITICAL_SUCCESS
+				
+				set_country_flag = operation_strengthen_society_critical@FROM
+			}
+			
+			set_variable = { operation_strengthen_society_target@FROM = -0.3 }
+			set_temp_variable = { factor = 1 }
+			add_to_temp_variable = { factor = mtth:decryption_operation_effect }
+			add_to_temp_variable = { factor = operative_bonus }
+			add_to_temp_variable = { factor = modifier@operation_strengthen_society_effect }
+			multiply_variable = { operation_strengthen_society_target@FROM = factor }
+			
+			set_variable = { operation_strengthen_society_growth@FROM = -0.1 }
+			multiply_variable = { operation_strengthen_society_growth@FROM = factor }
+			
+			set_temp_variable = { factor = modifier@operation_strengthen_society_spread }
+			add_to_temp_variable = { factor = operative_spread }
+			
+			set_variable = { operation_strengthen_society_target_spread@FROM = operation_strengthen_society_target@FROM }
+			multiply_variable = { operation_strengthen_society_target_spread@FROM = factor }
+			set_variable = { operation_strengthen_society_growth_spread@FROM = operation_strengthen_society_growth@FROM }
+			multiply_variable = { operation_strengthen_society_growth_spread@FROM = factor }
+		}
+	}
+	outcome_execute = {
+		hidden_effect = {
+			var:ROOT.selected_resistance_area@FROM = {
+				ROOT = {
+					set_temp_variable = { local = mtth:network_strength_state }
+					divide_temp_variable = { local = 100 }
+					set_temp_variable = { network_strength_state = local }
+					multiply_temp_variable = { local = @LOCAL_OPERATION_EFFECT }
+					add_to_temp_variable = { local = PREV.modifier@local_operation_effect }
+					set_temp_variable = { local_effect = local }
+					
+					add_to_temp_variable = { local = 1 }
+					
+					if = {
+						limit = {
+							PREV = { is_owned_by = ROOT }
+						}
+						add_to_temp_variable = { local = modifier@resistance_operation_effect_in_our_states }
+					}
+					
+					multiply_variable = { operation_strengthen_society_target@FROM = local }
+					multiply_variable = { operation_strengthen_society_growth@FROM = local }
+					
+					
+					## use these variables for tooltips & effects
+					set_temp_variable = { effect = operation_strengthen_society_target@FROM }
+					multiply_temp_variable = { effect = local }
+					set_temp_variable = { growth = operation_strengthen_society_growth@FROM }
+					multiply_temp_variable = { growth = local }
+					
+				}
+			}
+		}
+		custom_effect_tooltip = LOCAL_OPERATION_EFFECT_TOOLTIP
+		
+		ROOT = {
+			
+			hidden_effect = {
+				var:ROOT.selected_resistance_area@FROM = {
+					set_variable = { operation_compliance_growth = ROOT.operation_strengthen_society_target@FROM }
+					set_variable = { operation_compliance_gain = ROOT.operation_strengthen_society_growth@FROM }
+				}
+			}
+			
+			custom_effect_tooltip = STRENGTHEN_SOCIETY_TOOLTIP
+			hidden_effect = {
+				var:ROOT.selected_resistance_area@FROM = {
+					add_dynamic_modifier = {
+						modifier = operation_compliance
+						days = 120
+					}
+				}
+			}
+			if = {
+				limit = {
+					check_variable = { ROOT.modifier@operation_strengthen_society_spread > 0 }
+				}
+				
+				custom_effect_tooltip = STRENGTHEN_SOCIETY_SPREAD_TOOLTIP
+				hidden_effect = {
+					var:ROOT.selected_resistance_area@FROM = {
+						every_neighbor_state = {
+							limit = {
+								has_resistance = yes
+								is_controlled_by = FROM
+							}
+								
+							set_variable = { operation_resistance_target = ROOT.operation_strengthen_society_target_spread@FROM }
+							set_variable = { operation_resistance_growth = ROOT.operation_strengthen_society_growth_spread@FROM }
+							add_dynamic_modifier = {
+								modifier = operation_compliance
+								days = 120
+							}
+						}
+					}
+				}
+			}
+			
+			
+			clear_variable = operation_strengthen_society_target@FROM
+			clear_variable = operation_strengthen_society_growth@FROM
+			clear_variable = operation_strengthen_society_target_spread@FROM
+			clear_variable = operation_strengthen_society_growth_spread@FROM
+			
+			if = {
+				limit = {
+					has_country_flag = operation_strengthen_society_critical@FROM
+				}
+				custom_effect_tooltip = CRITICAL_SUCCESS
+				var:ROOT.selected_resistance_area@FROM = {
+					add_compliance = -5
+				}
+				clr_country_flag = operation_strengthen_society_critical@FROM
+			}
+			add_to_array = { ROOT.operation_completed = token:operation_strengthen_society }
+			add_to_array = { ROOT.operation_completed_state = FROM.FROM }
+			add_to_array = { ROOT.operation_completed_target = FROM }
+			add_to_array = { ROOT.operation_completed_date = global.date }
+		}
+	}
+	outcome_potential = {
+		ROOT = {
+		
+			set_temp_variable = { compliance_growth = -0.5 }
+			set_temp_variable = { factor = 1 }
+			add_to_temp_variable = { factor = modifier@operation_strengthen_society_effect }
+			multiply_temp_variable = { compliance_growth = factor }
+			
+			set_temp_variable = { compliance_gain = -0.1 }
+			multiply_temp_variable = { compliance_gain = factor }
+			
+			custom_effect_tooltip = STRENGTHEN_SOCIETY_OUTCOME_POTENTIAL_TOOLTIP
+			
+			set_temp_variable = { CRITICAL_SUCCESS = 25 }
+			set_temp_variable = { factor = modifier@operation_outcome }
+			add_to_temp_variable = { factor = modifier@operation_strengthen_society_outcome }
+			subtract_from_temp_variable = { factor = FROM.modifier@enemy_operation_critical_success_chance }
+			add_to_temp_variable = { factor = 1 }
+			multiply_temp_variable = { CRITICAL_SUCCESS = factor }
+			
+			custom_effect_tooltip = OPERATION_OUTCOME_CRITICAL_SUCCESS
+			custom_effect_tooltip = STRENGTHEN_SOCIETY_OUTCOME_POTENTIAL_TOOLTIP_CRITICAL
+		}
+	}
+
+	phases = { #infiltration
+		infiltration_border = { base = 25 modifier = { factor = 0.1 ROOT = { is_neighbor_of = FROM } } }
+		infiltration_submarine = { base = 25 modifier = { factor = 0.1 ROOT = { has_navy_size = { size < 1 type = submarine } } } }
+		infiltration_paradrop = { base = 25 modifier = { factor = 0.1 ROOT = { has_equipment = { transport_plane_equipment < 1 } } } }
+	}
+	phases = { #compliance support
+		compliance_drop_leaflets = { base = 50 }
+		compliance_uncover_propaganda = { base = 50 }
+	}
+	phases = { #exfiltration
+		exfiltration_air_pickup = { base = 25 modifier = { factor = 0.1 ROOT = { has_equipment = { transport_plane_equipment < 1 } } } }
+		exfiltration_border = { base = 30 modifier = { factor = 0.1 ROOT = { is_neighbor_of = FROM } } }
+		exfiltration_go_to_ground = { base = 30 }
+		exfiltration_submarine_pickup = { base = 25 modifier = { factor = 0.1 ROOT = { has_navy_size = { size < 1 type = submarine } } } }
+	}
+}

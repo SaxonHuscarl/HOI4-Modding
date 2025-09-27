@@ -1,0 +1,717 @@
+# befriend
+# conquer
+# antagonize
+# build_ship
+# build_army
+# unit_ratio
+# build_building
+# research_tech
+# garrison
+# protect
+# influence
+
+european_ignore_china = {
+	allowed = { OR = { tag = GER tag = ITA tag = ROM tag = HUN tag = SLO tag = CRO tag = BUL tag = DEN tag = CZE } }
+	enable = {
+		#capital_scope = {
+		#	is_on_continent = europe
+		#}
+		is_in_faction_with = GER
+		GER = {
+			is_faction_leader = yes
+			is_in_faction_with = JAP
+		}
+		JAP = {
+			OR = {
+				has_war_with = CHI			
+				has_war_with = PRC			
+				has_war_with = XSM			
+				has_war_with = SHX
+			    has_war_with = GXC			
+				has_war_with = YUN			
+				has_war_with = YUT			
+				has_war_with = SCC			
+				has_war_with = SDC			
+				has_war_with = SKC
+				has_war_with = XIA
+				has_war_with = ZXL
+			}
+		}
+	}
+	abort = {
+		OR = {
+			NOT = {
+				country_exists = CHI
+				country_exists = PRC
+				country_exists = GXC
+				country_exists = XSM
+				country_exists = YUN
+				country_exists = SHX
+				country_exists = YUT
+				country_exists = SKC
+				country_exists = SCC
+				country_exists = SDC
+				country_exists = ZXL
+				country_exists = XIA
+			}
+			has_war_with = CHI
+			has_war_with = PRC
+			has_war_with = XSM
+			has_war_with = GXC
+			has_war_with = SHX
+			has_war_with = YUN
+			has_war_with = YUT
+			has_war_with = SKC
+			has_war_with = SDC
+			has_war_with = SCC
+			has_war_with = XIA
+			has_war_with = ZXL
+			NOT = {
+				is_in_faction_with = JAP
+			}
+		}
+	}
+	
+	ai_strategy = {
+		type = ignore
+		id = "JAP"
+		value = 1000
+	}
+	
+	ai_strategy = {
+		type = ignore
+		id = "CHI"
+		value = 1000
+	}
+	
+	ai_strategy = {
+		type = ignore
+		id = "PRC"
+		value = 1000
+	}
+	
+	ai_strategy = {
+		type = ignore
+		id = "GXC"
+		value = 1000
+	}
+	
+	ai_strategy = {
+		type = ignore
+		id = "XSM"
+		value = 1000
+	}
+	
+	ai_strategy = {
+		type = ignore
+		id = "YUN"
+		value = 1000
+	}
+	
+	ai_strategy = {
+		type = ignore
+		id = "SHX"
+		value = 1000
+	}
+	
+	ai_strategy = {
+		type = ignore
+		id = "YUT"
+		value = 1000
+	}
+	
+	ai_strategy = {
+		type = ignore
+		id = "SDC"
+		value = 1000
+	}
+	
+	ai_strategy = {
+		type = ignore
+		id = "SCC"
+		value = 1000
+	}
+	
+	ai_strategy = {
+		type = ignore
+		id = "SKC"
+		value = 1000
+	}
+	
+	ai_strategy = {
+		type = ignore
+		id = "XIA"
+		value = 1000
+	}
+	
+	ai_strategy = {
+		type = ignore
+		id = "ZXL"
+		value = 1000
+	}
+}
+
+liangguang_chiang = {
+	allowed = { tag = CHI }
+	enable = {
+		has_global_flag = liangguang_incident
+		country_exists = YUT
+	}
+	
+	abort = {
+		OR = {
+			NOT = {
+				has_global_flag = liangguang_incident
+			}
+			YUT = {
+				is_in_faction_with = CHI
+			}
+			NOT = { country_exists = YUT }
+		}
+	}
+	
+	ai_strategy = {
+		type = antagonize
+		id = "YUT"
+		value = 250
+	}
+}
+
+liangguang_chiang_gxc = {
+	allowed = { is_chinese_nations/TAG = yes }
+	enable = {
+		has_global_flag = liangguang_incident
+		OR = {
+			tag = CHI
+			is_in_faction_with = CHI
+		}
+		country_exists = GXC
+		NOT = {
+			is_in_faction_with = GXC
+			has_global_flag = both_agree_1
+		}
+	}
+	
+	abort = {
+		NOT = {
+			has_global_flag = liangguang_incident
+		}
+		has_country_flag = liangguang_resolved
+	}
+	
+	ai_strategy = {
+		type = antagonize
+		id = "GXC"
+		value = 250
+	}
+}
+
+zxl_to_jap = {
+	allowed = { tag = PRC }
+	enable = {
+		has_government = fascism
+		NOT = {
+			has_country_flag = has_pact_with_jap
+		}
+	}
+	
+	abort = {
+		has_country_flag = has_pact_with_jap
+	}
+	
+	ai_strategy = {
+		type = befriend
+		id = "JAP"
+		value = -250
+	}
+	
+	ai_strategy = {
+		type = alliance
+		id = "JAP"
+		value = -250
+	}
+}
+
+german_lend_lease_to_china = {
+	allowed = { tag = GER }
+	enable = {
+		CHI = {
+			has_idea = german_advisors
+		}
+		NOT = {
+			has_global_flag = GER_JAP_tripartite_pact
+		}
+	}
+	
+	abort = {
+		OR = {
+			CHI = {
+				NOT = {
+					has_idea = german_advisors
+				}
+			}
+			AND = {
+				CHI = {
+					has_war_with = JAP
+				}
+				has_war_together_with = JAP
+			}
+			has_global_flag = GER_JAP_tripartite_pact
+		}
+	}
+	
+	ai_strategy = {
+		id = "CHI"
+		type = support
+		value = 250
+	}
+}
+
+sov_lend_lease_to_china = {
+	allowed = { tag = SOV }
+	enable = {
+		has_global_flag = KMT_sino_soviet_neutrality
+		CHI = {
+			has_defensive_war_with = JAP
+		}
+		NOT = {
+			has_idea = KMT_SOV_JAP_neutrality
+			has_completed_focus = SOV_operation_zet
+		}
+	}
+	
+	abort = {
+		OR = {
+			has_completed_focus = SOV_operation_zet
+			CHI = {
+				NOT = {
+					has_defensive_war_with = JAP
+				}
+			}
+			has_war_together_with = JAP
+			has_war_with = GER
+			has_idea = KMT_SOV_JAP_neutrality
+			NOT = {
+				has_global_flag = KMT_sino_soviet_neutrality
+			}
+		}
+	}
+	
+	ai_strategy = {
+		id = "CHI"
+		type = support
+		value = 250
+	}
+}
+
+sov_lend_lease_to_china_zet = {
+	allowed = { tag = SOV }
+	enable = {
+		has_global_flag = KMT_sino_soviet_neutrality
+		CHI = {
+			has_defensive_war_with = JAP
+		}
+		has_completed_focus = SOV_operation_zet
+		NOT = {
+			has_idea = KMT_SOV_JAP_neutrality
+		}
+	}
+	
+	abort = {
+		OR = {
+			CHI = {
+				NOT = {
+					has_defensive_war_with = JAP
+				}
+			}
+			has_war_together_with = JAP
+			has_war_with = GER
+			has_idea = KMT_SOV_JAP_neutrality
+			NOT = {
+				has_global_flag = KMT_sino_soviet_neutrality
+			}
+		}
+	}
+	
+	ai_strategy = {
+		id = "CHI"
+		type = support
+		value = 100
+	}
+}
+
+xian_incident_border_troops_zxl = {
+	allowed = { tag = ZXL }
+	enable = {
+		has_global_flag = xian_incident
+	}
+	
+	abort = {
+		NOT = {
+			has_global_flag = xian_incident
+		}
+	}
+	
+	ai_strategy = {
+		id = "CHI"
+		type = antagonize
+		value = 50
+	}
+}
+
+xian_incident_border_troops = {
+	allowed = { tag = CHI }
+	enable = {
+		has_global_flag = xian_incident
+	}
+	
+	abort = {
+		NOT = {
+			has_global_flag = xian_incident
+		}
+	}
+	
+	ai_strategy = {
+		id = "ZXL"
+		type = antagonize
+		value = 150
+	}
+}
+
+USA_help_chi_against_JAP = { #is that wise? sending lend lease across the pacific?
+	allowed = { tag = USA }
+	enable = {
+		has_war_with = JAP
+		has_capitulated = no
+		CHI = {
+			has_war_with = JAP
+			has_capitulated = no
+		}
+	}
+	
+	abort = {
+		CHI = {
+			OR = {
+				has_capitulated = yes
+				NOT = {
+					has_war_with = JAP
+				}
+			}
+		}
+	}
+	
+	ai_strategy = {
+		id = "CHI"
+		type = support
+		value = 250
+	}
+}
+
+sov_ignore_china = {
+	allowed = { tag = SOV }
+	enable = {
+		has_idea = KMT_SOV_JAP_neutrality
+	}
+	
+	abort = {
+		NOT = {
+			has_idea = KMT_SOV_JAP_neutrality
+		}
+	}
+	
+	ai_strategy = {
+		id = "CHI"
+		type = ignore
+		value = 1000
+	}
+	ai_strategy = {
+		id = "CHI"
+		type = befriend
+		value = -50
+	}
+}
+
+SOV-CHI_nap_SOV = {
+	allowed = { tag = SOV }
+	enable = {
+		NOT = {
+			has_wargoal_against = CHI
+			is_justifying_wargoal_against = CHI
+			has_idea = KMT_SOV_JAP_neutrality
+		}
+		CHI = {
+			has_defensive_war_with = JAP
+		}
+	}
+	
+	abort = {
+		OR = {
+			has_wargoal_against = CHI
+			is_justifying_wargoal_against = CHI
+			has_idea = KMT_SOV_JAP_neutrality
+			CHI = {
+				has_defensive_war_with = JAP
+			}
+		}
+	}
+	
+	ai_strategy = {
+		type = befriend
+		id = "CHI"
+		value = 50
+	}
+}
+
+SOV-CHI_nap_CHI = {
+	allowed = { tag = CHI }
+	enable = {
+		has_defensive_war_with = JAP
+		NOT = {
+			has_wargoal_against = SOV
+			is_justifying_wargoal_against = SOV
+		}
+		SOV = {
+			NOT = {
+				has_idea = KMT_SOV_JAP_neutrality
+			}
+		}
+	}
+	
+	abort = {
+		OR = {
+			has_wargoal_against = SOV
+			is_justifying_wargoal_against = SOV
+			SOV = {
+				has_idea = KMT_SOV_JAP_neutrality
+			}
+			NOT = {
+				has_defensive_war_with = JAP
+			}
+		}
+	}
+	
+	ai_strategy = {
+		type = befriend
+		id = "SOV"
+		value = 50
+	}
+}
+
+CHI_befriend_NWNDG = {
+	allowed = { tag = CHI }
+	enable = {
+		has_global_flag = chi_accepted_prc71
+		NOT = {
+			has_war_with = PRC
+		}
+		PRC = { exists = yes }
+	}
+	
+	abort = {
+		has_war_with = PRC
+		PRC = { exists = no }
+	}
+	
+	ai_strategy = {
+		type = befriend
+		id = "PRC"
+		value = 100
+	}
+	
+	ai_strategy = {
+		type = alliance
+		id = "PRC"
+		value = 100
+	}
+}
+
+# make warlords support china better
+WTT_all_warlords_support_china_in_war = {
+	allowed = { is_chinese_nations/TAG = yes NOT = { tag = PRC tag = CHI } }
+
+	enable = {
+		CHI = { is_faction_leader = yes }
+		is_in_faction_with = CHI
+		has_war = yes
+		NOT = { tag = PRC tag = CHI }
+	}
+	abort = {
+		OR = {
+			CHI = { is_faction_leader = no }
+			NOT = { is_in_faction_with = CHI }
+			has_war = no
+		}		
+	}
+	
+	ai_strategy = {
+		type = send_volunteers_desire
+		id = PRC
+		value = 10000
+	}
+	ai_strategy = {
+		type = send_volunteers_desire
+		id = CHI
+		value = 10000
+	}
+	ai_strategy = {
+		type = spare_unit_factor
+		value = 1000
+	}
+	ai_strategy = {
+		type = garrison
+		value = -100
+	}
+}
+
+#
+PRC_save_up_equipments = {
+	allowed = { tag = PRC } 
+	enable = {
+		has_completed_focus = PRC_front_line_behind_enemy_line
+		has_war_with = JAP
+		has_equipment = { infantry_equipment < 501 }
+		any_of_scopes = {
+			array = PRC.core_states 
+			
+			controller = {
+				has_war_with = PRC
+			}
+			owner = {
+				OR = {
+					tag = PRC
+					has_war_together_with = PRC
+				}
+			}
+		}
+	}
+	abort = {
+		OR = {
+			has_equipment = { infantry_equipment > 1999 }
+			NOT = { has_war_with = JAP }
+			NOT = {
+				any_of_scopes = {
+					array = PRC.core_states 
+			
+					controller = {
+						has_war_with = PRC
+					}
+					owner = {
+						OR = {
+							tag = PRC
+							has_war_together_with = PRC
+						}
+					}
+				}
+			}
+		}		
+	}
+	
+	ai_strategy = {
+		type = save_equipment
+		id = infantry_equipment
+		value = 501
+	}
+}
+
+CHI_dont_join_fascist_JAP_faction = {
+	allowed = { tag = CHI } 
+	enable = {
+		JAP = { 
+			has_government = fascism
+			is_faction_leader = yes
+		}
+	}
+	abort = { 
+		OR = {
+			is_subject_of = JAP
+			is_in_faction_with = JAP 
+		}
+	}
+	
+	ai_strategy = {
+		type = alliance
+		id = "JAP"
+		value = -10000
+	}
+}
+
+south_warlords_ignore_north = {
+	allowed = { OR = { tag = GXC tag = YUT tag = YUN } } 
+	enable = { always = yes }
+	
+	abort = {
+		CHI = { surrender_progress > 0.2 }
+	}
+	
+	ai_strategy = {
+		type = dont_defend_ally_borders
+		id = "PGR"
+		value = 2000
+	}
+	ai_strategy = {
+		type = dont_defend_ally_borders
+		id = "SHX"
+		value = 2000
+	}
+	ai_strategy = {
+		type = dont_defend_ally_borders
+		id = "SDC"
+		value = 2000
+	}
+}
+
+SIK_dont_join_united_front_cw = {
+	allowed = { tag = SIK }
+	enable = {
+		has_civil_war = yes 
+		CHI = { is_faction_leader = yes }
+	}
+	
+	abort = {
+		has_civil_war = no 
+	}
+	
+	ai_strategy = {
+		type = alliance
+		id = "CHI"
+		value = -10000
+	}
+	ai_strategy = {
+		type = ignore
+		id = "CHI"
+		value = 10000
+	}
+	ai_strategy = {
+		type = dont_join_wars_with
+		id = "CHI"
+		value = -10000
+	}
+}
+
+CHI_dont_invite_SIK_cw = {
+	allowed = { tag = CHI }
+	enable = {
+		is_faction_leader = yes
+		SIK = { has_civil_war = yes }
+	}
+	
+	abort = {
+		SIK = { has_civil_war = no }
+	}
+	
+	ai_strategy = {
+		type = alliance
+		id = "SIK"
+		value = -10000
+	}
+	ai_strategy = {
+		type = ignore
+		id = "SIK"
+		value = 10000
+	}
+	ai_strategy = {
+		type = dont_join_wars_with
+		id = "SIK"
+		value = -10000
+	}
+}

@@ -1,0 +1,741 @@
+﻿###########################
+# Soviet Events
+###########################
+
+#  #  ##  #   ###       ##  ### ### #   # 
+#  # #  # #   #  #     #  #  #   #   # #  
+#### #  # #   #  #     #     #   #    #   
+#  # #  # #   #  #     #  #  #   #    #   
+#  #  ##  ### ###       ##  ###  #    #   
+
+add_namespace = wtt_soviet_hold_city
+
+ ## ###  ##  #   ### #  #  ##  ###   ##  ###  
+#    #  #  # #    #  ## # #    #  # #  # #  # 
+ #   #  #### #    #  # ## # ## ###  #### #  # 
+  #  #  #  # #    #  #  # #  # #  # #  # #  # 
+##   #  #  # ### ### #  #  ##  #  # #  # ###  
+
+# Defense of Stalingrad (state) successful
+country_event = {
+	id = wtt_soviet_hold_city.1
+	title = wtt_soviet_hold_city_t_success
+	desc = wtt_soviet_hold_city_d_success
+	picture = GFX_report_event_stalin_01
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = wtt_soviet_hold_city_o_success
+	}
+}
+
+# Defense of Stalingrad (state) failed
+country_event = {
+	id = wtt_soviet_hold_city.2
+	title = wtt_soviet_hold_city_t_fail
+	desc = wtt_soviet_hold_city_d_fail
+	picture = GFX_report_event_german_troops
+	
+	is_triggered_only = yes
+
+	immediate = { hidden_effect = { 217 = { CONTROLLER = { save_event_target_as = controller } } } }
+	
+	option = {
+		name = wtt_soviet_hold_city_o_fail
+	}
+}
+
+#   ### #  # ### #  #  ##  ###   ##  ###  
+#   #   ## #  #  ## # #    #  # #  # #  # 
+#   ##  # ##  #  # ## # ## ###  #### #  # 
+#   #   #  #  #  #  # #  # #  # #  # #  # 
+### ### #  # ### #  #  ##  #  # #  # ###  
+
+# Defense of Leningrad (state) successful
+country_event = {
+	id = wtt_soviet_hold_city.3
+	title = wtt_soviet_hold_city_t_success
+	desc = wtt_soviet_hold_city_d_success
+	picture = GFX_report_event_stalin_propaganda
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = wtt_soviet_hold_city_o_success
+	}
+}
+
+# Defense of Leningrad (state) failed
+country_event = {
+	id = wtt_soviet_hold_city.4
+	title = wtt_soviet_hold_city_t_fail
+	desc = wtt_soviet_hold_city_d_fail
+	picture = GFX_report_event_german_troops
+	
+	is_triggered_only = yes
+
+	immediate = { hidden_effect = { 195 = { CONTROLLER = { save_event_target_as = controller } } } }
+	
+	option = {
+		name = wtt_soviet_hold_city_o_fail
+	}
+}
+
+#   #  ##   ##  ##   ##  #   # 
+## ## #  # #   #  # #  # #   # 
+# # # #  #  #  #    #  # # # # 
+#   # #  #   # #  # #  # # # # 
+#   #  ##  ##   ##   ##   # #  
+
+# Defense of Moscow (state) successful
+country_event = {
+	id = wtt_soviet_hold_city.5
+	title = wtt_soviet_hold_city_t_success
+	desc = wtt_soviet_hold_city_d_success
+	picture = GFX_report_event_soviet_tank_parade
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = wtt_soviet_hold_city_o_success
+	}
+}
+
+# Defense of Moscow (state) failed
+country_event = {
+	id = wtt_soviet_hold_city.6
+	title = wtt_soviet_hold_city_t_fail
+	desc = wtt_soviet_hold_city_d_fail
+	picture = GFX_report_event_german_troops
+	
+	is_triggered_only = yes
+
+	immediate = { hidden_effect = { 845 = { CONTROLLER = { save_event_target_as = controller } } } }
+	
+	option = {
+		name = wtt_soviet_hold_city_o_fail
+	}
+}
+
+
+add_namespace = SOV_border_conflict_won_attacker
+
+country_event = {
+	id = SOV_border_conflict_won_attacker.2
+	title = wtt_border_conflict_won_attacker.1.t
+	desc = wtt_border_conflict_won_attacker.1.desc
+	
+	picture = GFX_report_event_chinese_soldiers_city_ruin
+
+	is_triggered_only = yes
+
+	immediate = {
+		save_event_target_as = our_country
+		FROM = { save_event_target_as = our_state }
+		FROM.FROM = { save_event_target_as = their_country }
+		FROM.FROM.FROM = { save_event_target_as = their_state }
+		remove_targeted_decision = { target = event_target:their_country decision = WTT_border_conflict_time_until_cancelled }
+		if = {
+			limit = {
+				has_variable = attacker_state
+			}
+			var:attacker_state = {
+				clr_state_flag = border_incident_active
+			}
+			var:defender_state = {
+				clr_state_flag = border_incident_active
+			}
+			clear_variable = attacker_state
+			clear_variable = defender_state
+		}
+		else_if = {
+			limit = {
+				has_variable = attacker_state_pup
+			}
+			var:attacker_state_pup = {
+				clr_state_flag = border_incident_active
+			}
+			var:defender_state_pup = {
+				clr_state_flag = border_incident_active
+			}
+			clear_variable = attacker_state_pup
+			clear_variable = defender_state_pup
+		}
+							
+	}
+	
+	option = {
+		name = wtt_border_conflict_won_attacker.1.a
+		add_political_power = 15
+		army_experience = 5
+		add_tech_bonus = {
+			name = border_conflict_lessons
+			bonus = 0.15
+			uses = 1
+			category = land_doctrine
+		}
+		if = {
+			limit = {
+				is_subject = yes
+			}
+			OVERLORD = { 
+				add_to_variable = { border_strength = 1 tooltip = border_increased_TT }
+				add_to_variable = { border_high = 1 }
+				country_event = SOV_border_conflict_won_attacker.3
+			}
+		}
+		else = { 
+			add_to_variable = { border_strength = 2 tooltip = border_increased_TT }
+			add_to_variable = { border_high = 2 }			
+		}	
+	}	
+}
+#puppet victory
+country_event = {
+	id = SOV_border_conflict_won_attacker.3
+	title = wtt_border_conflict_won_attacker.1.t
+	desc = wtt_border_conflict_won_attacker.1.desc
+	
+	picture = GFX_report_event_chinese_soldiers_city_ruin
+
+	is_triggered_only = yes
+
+	immediate = {
+	}
+	
+	option = {
+		name = wtt_border_conflict_won_attacker.1.a
+		add_political_power = 5
+		army_experience = 5
+		add_tech_bonus = {
+			name = border_conflict_lessons
+			bonus = 0.05
+			uses = 1
+			category = armor_tech
+			category = artillery
+			category = infantry_weapons
+		}
+	}	
+}
+
+add_namespace = SOV_border_conflict_won_defender
+country_event = {
+	id = SOV_border_conflict_won_defender.1
+	title = wtt_border_conflict_won_defender.1.t
+	desc = wtt_border_conflict_won_defender.1.desc
+	
+	picture = GFX_report_event_chinese_soldiers_mountain
+
+	is_triggered_only = yes
+
+	immediate = {
+		clr_global_flag = border_happening
+		hidden_effect = {
+			save_event_target_as = our_country
+			FROM = {
+				save_event_target_as = our_state
+				clr_state_flag = border_incident_active
+			}
+			FROM.FROM = { save_event_target_as = their_country }
+			FROM.FROM.FROM = {
+				save_event_target_as = their_state
+				clr_state_flag = border_incident_active
+			}
+			set_country_flag = show_effect_tooltips
+			clear_variable = attacker_state_vs_@FROM.FROM
+			clear_variable = defender_state_vs_@FROM.FROM
+			remove_targeted_decision = { target = event_target:their_country decision = WTT_border_conflict_time_until_cancelled }
+		}
+		if = {
+			limit = {
+				has_variable = global.JAP_temp_country
+			}
+			var:global.JAP_temp_country = {
+				transfer_state = var:global.JAP_temp_owned
+			}
+			clear_variable = global.JAP_temp_country
+			clear_variable = global.JAP_temp_owned
+		}
+	}
+	
+	#Same effect as attacker. Tooltip for their effects
+	option = {
+		name = wtt_border_conflict_won_defender.1.a
+		army_experience = 5
+		add_tech_bonus = {
+			name = border_conflict_lessons
+			bonus = 0.10
+			uses = 1
+			category = land_doctrine
+		}
+		if = {
+			limit = {
+				is_subject = no
+			}
+			add_to_variable = { border_strength = 2 tooltip = border_increased_TT } 
+		}
+		if = {
+			limit = { has_country_flag = show_effect_tooltips }
+			event_target:their_country = {
+				effect_tooltip = {
+					add_political_power = -25
+					army_experience = 5
+				}
+			}
+			clr_country_flag = show_effect_tooltips
+		}
+	}	
+}
+#small
+country_event = {
+	id = SOV_border_conflict_won_defender.2
+	title = wtt_border_conflict_won_defender.1.t
+	desc = wtt_border_conflict_won_defender.1.desc
+	
+	picture = GFX_report_event_chinese_soldiers_mountain
+
+	is_triggered_only = yes
+
+	immediate = {
+	
+		hidden_effect = {
+			save_event_target_as = our_country
+			FROM = {
+				save_event_target_as = our_state
+				clr_state_flag = border_incident_active
+			}
+			FROM.FROM = { save_event_target_as = their_country }
+			FROM.FROM.FROM = {
+				save_event_target_as = their_state
+				clr_state_flag = border_incident_active
+			}
+			set_country_flag = show_effect_tooltips
+			clear_variable = attacker_state_vs_@FROM.FROM
+			clear_variable = defender_state_vs_@FROM.FROM
+			remove_targeted_decision = { target = event_target:their_country decision = WTT_border_conflict_time_until_cancelled }
+		}
+	}
+	
+	#Same effect as attacker. Tooltip for their effects
+	option = {
+		name = wtt_border_conflict_won_defender.1.a
+		army_experience = 5
+		add_tech_bonus = {
+			name = border_conflict_lessons
+			bonus = 0.10
+			uses = 1
+			category = land_doctrine
+		}
+		if = {
+			limit = {
+				is_subject = no
+			}
+			add_to_variable = { border_strength = 2 tooltip = border_increased_TT } 
+			add_to_variable = { border_high = 2 }
+		}
+		if = {
+			limit = { has_country_flag = show_effect_tooltips }
+			event_target:their_country = {
+				effect_tooltip = {
+					add_political_power = -25
+					army_experience = 5
+				}
+			}
+			clr_country_flag = show_effect_tooltips
+		}
+	}	
+}
+add_namespace = SOV_border_conflict_lost_attacker
+
+country_event = {
+	id = SOV_border_conflict_lost_attacker.1
+	title = wtt_border_conflict_lost_attacker.1.t
+	desc = wtt_border_conflict_lost_attacker.1.desc
+	
+	picture = GFX_report_event_dead_soldiers
+
+	is_triggered_only = yes
+
+	immediate = {
+		save_event_target_as = our_country
+		FROM = { save_event_target_as = our_state }
+		FROM.FROM = { save_event_target_as = their_country }
+		FROM.FROM.FROM = { save_event_target_as = their_state }
+		set_country_flag = show_effect_tooltips
+		remove_targeted_decision = { target = event_target:their_country decision = WTT_border_conflict_time_until_cancelled }
+		if = {
+			limit = {
+				has_variable = attacker_state
+			}
+			var:attacker_state = {
+				clr_state_flag = border_incident_active
+			}
+			var:defender_state = {
+				clr_state_flag = border_incident_active
+				clr_state_flag = border_weakend
+			}
+			clear_variable = attacker_state
+			clear_variable = defender_state
+		}
+	}
+	
+	#Same effect as defender. Tooltip for their effects	
+	option = {
+		name = wtt_border_conflict_lost_attacker.1.a
+		add_political_power = -25
+		army_experience = 5
+		add_to_variable = { border_strength = -1 tooltip = border_reduced_TT }
+		clamp_variable = {
+			var = border_strength
+			min = 0
+		}
+		if = {
+			limit = { has_country_flag = show_effect_tooltips }
+			event_target:their_country = {
+				effect_tooltip = {
+					army_experience = 5
+					add_tech_bonus = {
+						name = border_conflict_lessons
+						bonus = 0.10
+						uses = 1
+						category = land_doctrine
+					}
+				}
+			}
+			clr_country_flag = show_effect_tooltips
+		}
+	}	
+}
+country_event = {
+	id = SOV_border_conflict_lost_attacker.2
+	title = wtt_border_conflict_lost_attacker.1.t
+	desc = wtt_border_conflict_lost_attacker.1.desc
+	
+	picture = GFX_report_event_dead_soldiers
+
+	is_triggered_only = yes
+
+	immediate = {
+		save_event_target_as = our_country
+		FROM = { save_event_target_as = our_state }
+		FROM.FROM = { save_event_target_as = their_country }
+		FROM.FROM.FROM = { save_event_target_as = their_state }
+		set_country_flag = show_effect_tooltips
+		remove_targeted_decision = { target = event_target:their_country decision = WTT_border_conflict_time_until_cancelled }
+		if = {
+			limit = {
+				has_variable = attacker_state
+			}
+			var:attacker_state = {
+				clr_state_flag = border_incident_active
+			}
+			var:defender_state = {
+				clr_state_flag = border_incident_active
+			}
+			clear_variable = attacker_state
+			clear_variable = defender_state
+		}
+		else_if = {
+			limit = {
+				has_variable = attacker_state_pup
+			}
+			var:attacker_state_pup = {
+				clr_state_flag = border_incident_active
+			}
+			var:defender_state_pup = {
+				clr_state_flag = border_incident_active
+			}
+			clear_variable = attacker_state_pup
+			clear_variable = defender_state_pup
+		}
+	}
+	
+	#Same effect as defender. Tooltip for their effects	
+	option = {
+		name = wtt_border_conflict_lost_attacker.1.a
+		add_political_power = -25
+		army_experience = 5
+		add_to_variable = { border_strength = -1 tooltip = border_reduced_TT }
+		clamp_variable = {
+			var = border_strength
+			min = 0
+		}
+		if = {
+			limit = { has_country_flag = show_effect_tooltips }
+			event_target:their_country = {
+				effect_tooltip = {
+					army_experience = 5
+					add_tech_bonus = {
+						name = border_conflict_lessons
+						bonus = 0.10
+						uses = 1
+						category = land_doctrine
+					}
+				}
+			}
+			clr_country_flag = show_effect_tooltips
+		}
+	}	
+}
+add_namespace = SOV_border_conflict_lost_defender
+#large
+country_event = {
+	id = SOV_border_conflict_lost_defender.1
+	title = wtt_border_conflict_lost_defender.1.t
+	desc = wtt_border_conflict_lost_defender.1.desc
+	
+	picture = GFX_report_event_dead_soldiers
+
+	is_triggered_only = yes
+
+	immediate = {
+		hidden_effect = {
+			save_event_target_as = our_country
+			FROM = {
+				save_event_target_as = our_state
+				clr_state_flag = border_incident_active
+			}
+			FROM.FROM = { save_event_target_as = their_country }
+			FROM.FROM.FROM = {
+				save_event_target_as = their_state
+				clr_state_flag = border_incident_active
+			}
+			set_country_flag = show_effect_tooltips
+			clear_variable = attacker_state_vs_@FROM.FROM
+			clear_variable = defender_state_vs_@FROM.FROM
+			remove_targeted_decision = { target = event_target:their_country decision = WTT_border_conflict_time_until_cancelled }
+		}
+		if = {
+			limit = {
+				has_variable = global.JAP_temp_country
+			}
+			var:global.JAP_temp_country = {
+				transfer_state = var:global.JAP_temp_owned
+			}
+			clear_variable = global.JAP_temp_country
+			clear_variable = global.JAP_temp_owned
+		}
+	}
+	
+	#Same effect as attacker. Tooltip for their effects
+	option = {
+		name = wtt_border_conflict_lost_defender.1.a
+		add_political_power = -15
+		army_experience = 5
+		add_to_variable = { border_strength = -1 }
+		clamp_variable = {
+			var = border_strength
+			min = 0
+		}
+		if = {
+			limit = { has_country_flag = show_effect_tooltips }
+			event_target:their_country = {
+				effect_tooltip = {
+					army_experience = 5
+					add_tech_bonus = {
+						name = border_conflict_lessons
+						bonus = 0.10
+						uses = 1
+						category = land_doctrine
+					}
+				}
+			}
+			clr_country_flag = show_effect_tooltips
+		}
+	}	
+}
+country_event = {
+	id = SOV_border_conflict_lost_defender.2
+	title = wtt_border_conflict_lost_defender.1.t
+	desc = wtt_border_conflict_lost_defender.1.desc
+	
+	picture = GFX_report_event_dead_soldiers
+
+	is_triggered_only = yes
+
+	immediate = {
+		hidden_effect = {
+			save_event_target_as = our_country
+			FROM = {
+				save_event_target_as = our_state
+				clr_state_flag = border_incident_active
+			}
+			FROM.FROM = { save_event_target_as = their_country }
+			FROM.FROM.FROM = {
+				save_event_target_as = their_state
+				clr_state_flag = border_incident_active
+			}
+			set_country_flag = show_effect_tooltips
+			clear_variable = attacker_state_vs_@FROM.FROM
+			clear_variable = defender_state_vs_@FROM.FROM
+			remove_targeted_decision = { target = event_target:their_country decision = WTT_border_conflict_time_until_cancelled }
+		}
+	}
+	
+	#Same effect as attacker. Tooltip for their effects
+	option = {
+		name = wtt_border_conflict_lost_defender.1.a
+		add_political_power = -15
+		army_experience = 5
+		add_to_variable = { border_strength = -1 }
+		clamp_variable = {
+			var = border_strength
+			min = 0
+		}
+		if = {
+			limit = { has_country_flag = show_effect_tooltips }
+			event_target:their_country = {
+				effect_tooltip = {
+					army_experience = 5
+					add_tech_bonus = {
+						name = border_conflict_lessons
+						bonus = 0.10
+						uses = 1
+						category = land_doctrine
+					}
+				}
+			}
+			clr_country_flag = show_effect_tooltips
+		}
+	}	
+}
+add_namespace = SOV_border_conflict_canceled_attacker
+
+country_event = {
+	id = SOV_border_conflict_canceled_attacker.2
+	title = wtt_border_conflict_canceled_attacker.1.t
+	desc = wtt_border_conflict_canceled_attacker.1.desc
+	
+	picture = GFX_report_event_chinese_soldiers_mountain
+
+	is_triggered_only = yes
+
+	immediate = {
+		save_event_target_as = our_country
+		FROM = { save_event_target_as = our_state }
+		FROM.FROM = { save_event_target_as = their_country }
+		FROM.FROM.FROM = { save_event_target_as = their_state }
+		set_country_flag = show_effect_tooltips
+		if = {
+			limit = {
+				has_variable = attacker_state
+			}
+			var:attacker_state = {
+				clr_state_flag = border_incident_active
+			}
+			var:defender_state = {
+				clr_state_flag = border_incident_active
+			}
+			clear_variable = attacker_state
+			clear_variable = defender_state
+		}
+		else_if = {
+			limit = {
+				has_variable = attacker_state_pup
+			}
+			var:attacker_state_pup = {
+				clr_state_flag = border_incident_active
+			}
+			var:defender_state_pup = {
+				clr_state_flag = border_incident_active
+			}
+			clear_variable = attacker_state_pup
+			clear_variable = defender_state_pup
+		}
+	}
+	
+	option = {
+		name = wtt_border_conflict_canceled_attacker.2.a
+		army_experience = 1
+		if = {
+			limit = { has_country_flag = show_effect_tooltips }
+			event_target:their_country = {
+				effect_tooltip = {
+					army_experience = 3
+					add_political_power = 5
+				}
+			}
+			clr_country_flag = show_effect_tooltips
+		}
+	}	
+}
+
+add_namespace = SOV_border_conflict_canceled_defender
+
+country_event = {
+	id = SOV_border_conflict_canceled_defender.2
+	title = wtt_border_conflict_canceled_defender.1.t
+	desc = wtt_border_conflict_canceled_defender.1.desc
+	
+	picture = GFX_report_event_chinese_soldiers_mountain
+
+	is_triggered_only = yes
+
+	immediate = {
+		hidden_effect = {
+			save_event_target_as = our_country
+			FROM = {
+				save_event_target_as = our_state
+				clr_state_flag = border_incident_active
+			}
+			FROM.FROM = { save_event_target_as = their_country }
+			FROM.FROM.FROM = {
+				save_event_target_as = their_state
+			}
+			set_country_flag = show_effect_tooltips
+		}
+		if = {
+			limit = {
+				has_variable = attacker_state
+			}
+			var:attacker_state = {
+				clr_state_flag = border_incident_active
+			}
+			var:defender_state = {
+				clr_state_flag = border_incident_active
+			}
+			clear_variable = attacker_state
+			clear_variable = defender_state
+		}
+	}
+	
+	option = {
+		name = wtt_border_conflict_canceled_defender.1.a
+		army_experience = 3
+		add_political_power = 5
+		if = {
+			limit = { has_country_flag = show_effect_tooltips }
+			event_target:their_country = {
+				effect_tooltip = {
+					army_experience = 1
+				}
+			}
+			clr_country_flag = show_effect_tooltips
+		}
+	}	
+}
+
+add_namespace = SOV_border_incident_defender_warning
+
+country_event = {
+	id = SOV_border_incident_defender_warning.1
+	title = wtt_border_incident_defender_warning.1.t
+	desc = wtt_border_incident_defender_warning.1.desc
+	
+	picture = GFX_report_event_chinese_soldiers_mountain
+
+	is_triggered_only = yes
+
+	#Event targets saved
+	#attacker_state
+	#defender_state
+	immediate = {
+		save_event_target_as = our_country
+		FROM = { save_event_target_as = their_country }
+	}
+	
+	option = {
+		name = wtt_border_incident_defender_warning.1.a
+	}	
+}

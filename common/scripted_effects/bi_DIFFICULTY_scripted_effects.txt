@@ -1,0 +1,816 @@
+
+# flags:
+# europe_player
+# asia_player
+# oceania_player
+# middle_east_player
+# north_america_player
+# south_america_player
+#
+# axis_player
+# east_player -JAP MEN MAN SIA
+# allied_player
+# commie_player
+# chi_player
+# unknown_player
+
+# if these flags are set, it means those AIs should get boosted
+# axis_ai 
+# allied_ai
+# east_ai
+# commie_ai
+# chi_ai
+
+
+d_log_player_allegiance = {
+
+	every_country = {
+		limit = {
+			OR = {
+				has_idea = BI_difficulty_ai_modifier/enemy_player/0
+				has_idea = BI_difficulty_ai_modifier/enemy_player/1
+				has_idea = BI_difficulty_ai_modifier/enemy_player/2
+				has_idea = BI_difficulty_ai_modifier/enemy_player/3
+				has_idea = BI_difficulty_ai_modifier/enemy_player/4
+			}
+		}
+		log = "[This.GetTag] | Has 'Enemy Player' modifier"
+	}
+	
+	if = {
+		limit = {
+			has_global_flag = axis_player
+		}
+		log = "axis_player"
+	}
+	if = {
+		limit = {
+			has_global_flag = east_player
+		}
+		log = "east_player"
+	}
+	if = {
+		limit = {
+			has_global_flag = allied_player
+		}
+		log = "allied_player"
+	}
+	if = {
+		limit = {
+			has_global_flag = commie_player
+		}
+		log = "commie_player"
+	}
+	if = {
+		limit = {
+			has_global_flag = chi_player
+		}
+		log = "chi_player"
+	}
+	if = {
+		limit = {
+			has_global_flag = unknown_player
+		}
+		log = "unknown_player"
+	}
+	
+	if = {
+		limit = {
+			has_global_flag = allied_ai
+		}
+		log = "allied_ai"
+	}
+	if = {
+		limit = {
+			has_global_flag = commie_ai
+		}
+		log = "commie_ai"
+	}
+	if = {
+		limit = {
+			has_global_flag = axis_ai
+		}
+		log = "axis_ai"
+	}
+	if = {
+		limit = {
+			has_global_flag = chi_ai
+		}
+		log = "chi_ai"
+	}
+	if = {
+		limit = {
+			has_global_flag = east_ai
+		}
+		log = "east_ai"
+	}
+	
+}
+
+check_player_allegiance = {
+
+	if = {
+		limit = {
+			capital_scope = {
+				is_on_continent = europe 
+			}
+		}
+		set_global_flag = europe_player
+	}
+	else_if = {
+		limit = {
+			capital_scope = {
+				is_on_continent = asia 
+			}
+		}
+		set_global_flag = asia_player
+	}
+	else_if = {
+		limit = {
+			capital_scope = {
+				is_on_continent = oceania 
+			}
+		}
+		set_global_flag = oceania_player
+	}
+	else_if = {
+		limit = {
+			capital_scope = {
+				is_on_continent = middle_east 
+			}
+		}
+		set_global_flag = middle_east_player
+	}
+	else_if = {
+		limit = {
+			capital_scope = {
+				is_on_continent = north_america 
+			}
+		}
+		set_global_flag = north_america_player
+	}
+	else_if = {
+		limit = {
+			capital_scope = {
+				is_on_continent = south_america 
+			}
+		}
+		set_global_flag = south_america_player
+	}
+	
+	if = {
+		limit = {
+			is_supposed_to_be_axis = yes				
+		}
+		set_global_flag = axis_player
+	}
+	if = {
+		limit = {
+			is_supposed_to_be_daitoa = yes						
+		}
+		set_global_flag = east_player
+	}
+	if = {
+		limit = {
+			is_supposed_to_be_allied = yes						
+		}
+		set_global_flag = allied_player
+	}
+	if = {
+		limit = {
+			is_supposed_to_be_comintern = yes					
+		}
+		set_global_flag = commie_player
+	}
+	if = {
+		limit = {
+			is_chinese_nations/TAG = yes
+			is_not_a_puppet_or_is_puppet_of_CHI = yes
+			not = {
+				original_tag = SIK
+			}
+		}
+		set_global_flag = chi_player
+	}
+	if = {
+		limit = {
+			not = {
+				original_tag = GER
+				original_tag = ITA
+				original_tag = BUL
+				original_tag = ROM
+				original_tag = FIN
+				original_tag = HUN
+				original_tag = IRQ
+				original_tag = PER
+				original_tag = AUS		
+				original_tag = JAP
+				original_tag = MAN
+				original_tag = MEN
+				original_tag = SIA
+				original_tag = ENG
+				original_tag = AST
+				original_tag = NZL
+				original_tag = CAN
+				original_tag = SAF
+				original_tag = FRA
+				original_tag = LEB
+				original_tag = SYR
+				original_tag = NOR
+				original_tag = BEL
+				original_tag = USA
+				original_tag = JOR
+				original_tag = RAJ
+				original_tag = HAI
+				original_tag = NEP
+				original_tag = BHU
+				original_tag = POL
+				original_tag = GRE
+				original_tag = LUX
+				original_tag = MEX
+				original_tag = SOV
+				original_tag = MON
+				original_tag = TAN
+				original_tag = SIK
+				is_chinese_nations/TAG = yes
+			}
+		}
+		set_global_flag = unknown_player
+	}
+						
+	if = {
+		limit = {
+			check_variable = { global.players^num = 1 }		
+		}
+		if = {
+			limit = {	
+				has_global_flag = axis_player
+			}
+			set_global_flag = allied_ai
+			set_global_flag = commie_ai
+		}
+		if = {
+			limit = {	
+				has_global_flag = east_player
+			}
+			set_global_flag = allied_ai
+			set_global_flag = chi_ai
+		}	
+		if = {
+			limit = {	
+				has_global_flag = allied_player
+			}
+			set_global_flag = axis_ai
+			set_global_flag = east_ai
+		}
+		if = {
+			limit = {	
+				has_global_flag = commie_player
+			}
+			set_global_flag = axis_ai
+		}	
+		if = {
+			limit = {	
+				has_global_flag = chi_player
+			}
+			set_global_flag = east_ai
+		}
+		if = {
+			limit = {	
+				has_global_flag = unknown_player
+			}
+			every_country = {
+				if = {
+					limit = { is_ai = no }	
+					country_event = { id = blackiceevents.9 days = 1 }
+				}
+			}
+		}
+		GER = {
+			bice_difficulty_adjustments = yes
+		}
+	}
+	else = {
+		if = {
+			limit = {	
+				not = { has_global_flag = allied_player }					
+			}
+			if = {
+				limit = {	
+					not = { has_global_flag = commie_player }
+					has_global_flag = axis_player						
+				}
+				set_global_flag = commie_ai
+			}
+			if = {
+				limit = {	
+					not = { has_global_flag = chi_player }
+					has_global_flag = east_player						
+				}
+				set_global_flag = chi_ai
+			}
+			if = {
+				limit = {	
+					not = { has_global_flag = commie_player }
+					not = { has_global_flag = chi_player }						
+				}
+				set_global_flag = allied_ai
+			}						
+		}
+		if = {
+			limit = {		
+				not = { has_global_flag = east_player }
+			}
+			if = {
+				limit = {	
+					OR = {
+						has_global_flag = allied_player
+						has_global_flag = chi_player
+					}
+				}
+				set_global_flag = east_ai
+			}
+		}
+		if = {
+			limit = {		
+				not = { has_global_flag = axis_player }
+			}
+			if = {
+				limit = {	
+					OR = {
+						has_global_flag = allied_player
+						has_global_flag = commie_player
+					}
+				}
+				set_global_flag = axis_ai
+			}
+		}
+		GER = {
+			bice_difficulty_adjustments = yes
+		}
+	}		
+}
+
+bice_difficulty_adjustments = {
+	set_temp_variable = { on_add = 1 }
+	
+	set_variable = { global.ai_difficulty = global.difficulty }
+	meta_effect = {
+		text = {
+			set_variable = { global.setting_status@difficulty_ai = token:difficulty_ai_[X] }
+		}
+		X = "[?global.difficulty]"
+	}
+	
+	set_variable = { global.setting_status@difficulty_purge = token:difficulty_purge_2 }
+	set_variable = { global.setting_status@difficulty_5yp = token:difficulty_5yp_2 }
+	set_variable = { global.setting_status@difficulty_congress = token:difficulty_congress_2 }
+	set_variable = { global.setting_status@difficulty_plan = token:difficulty_plan_2 }
+	set_variable = { global.setting_status@difficulty_colonial_boot = token:difficulty_colonial_boot_2 }
+	set_variable = { global.setting_status@difficulty_allied_anger = token:difficulty_allied_anger_2 }
+	set_variable = { global.setting_status@difficulty_spain_cost = token:difficulty_spain_cost_2 }
+	set_variable = { global.setting_status@difficulty_ita_pp_cost = token:difficulty_ita_pp_cost_2 }
+	
+	if = {
+		limit = {
+			check_variable = { global.players^num = 1 }
+		}
+			
+		if = {
+			limit = {
+				OR = {
+					has_global_flag = axis_player
+					has_global_flag = east_player
+				}
+			}
+			
+			if = {
+				limit = {
+					check_variable = { global.difficulty = 0 }
+				}
+				
+				easiest_axis = yes
+				
+				hardest_CW = yes
+				hardest_congress = yes
+				hardest_purge = yes
+				hardest_5yr = yes
+				
+			}
+			else_if = {
+				limit = {
+					check_variable = { global.difficulty = 1 }
+				}
+				
+				easier_axis = yes
+				
+				harder_CW = yes
+				harder_congress = yes
+				harder_purge = yes
+				harder_5yr = yes
+				
+			}
+			else_if = {
+				limit = {
+					check_variable = { global.difficulty = 3 }
+				}
+				
+				harder_axis = yes
+				
+				easier_CW = yes
+				easier_congress = yes
+				easier_purge = yes
+				easier_5yr = yes
+				
+			}
+			else_if = {
+				limit = {
+					check_variable = { global.difficulty = 4 }
+				}
+				
+				hardest_axis = yes
+				
+				easiest_CW = yes
+				easiest_congress = yes
+				easiest_purge = yes
+				easiest_5yr = yes
+				
+			}
+			
+		}
+			
+		else_if = {
+			limit = {
+				has_global_flag = commie_player
+			}
+			
+			if = {
+				limit = {
+					check_variable = { global.difficulty = 0 }
+				}
+				
+				easiest_purge = yes
+				easiest_5yr = yes
+				
+				hardest_axis = yes
+				
+			}
+			else_if = {
+				limit = {
+					check_variable = { global.difficulty = 1 }
+				}
+				
+				easier_purge = yes
+				easier_5yr = yes
+				
+				harder_axis = yes
+				
+			}
+			else_if = {
+				limit = {
+					check_variable = { global.difficulty = 3 }
+				}
+				
+				harder_purge = yes
+				harder_5yr = yes
+				
+				easier_axis = yes
+				
+			}
+			else_if = {
+				limit = {
+					check_variable = { global.difficulty = 4 }
+				}
+				
+				hardest_purge = yes
+				hardest_5yr = yes
+				
+				easiest_axis = yes
+				
+			}
+			
+		}
+			
+		else_if = {
+			limit = {
+				has_global_flag = allied_player
+			}
+			
+			if = {
+				limit = {
+					check_variable = { global.difficulty = 0 }
+				}
+				
+				easiest_CW = yes
+				easiest_congress = yes
+				
+				hardest_axis = yes
+				
+			}
+			else_if = {
+				limit = {
+					check_variable = { global.difficulty = 1 }
+				}
+				
+				easier_CW = yes
+				easier_congress = yes
+				
+				harder_axis = yes
+				
+			}
+			else_if = {
+				limit = {
+					check_variable = { global.difficulty = 3 }
+				}
+				
+				harder_CW = yes
+				harder_congress = yes
+				
+				easier_axis = yes
+				
+			}
+			else_if = {
+				limit = {
+					check_variable = { global.difficulty = 4 }
+				}
+				
+				hardest_CW = yes
+				hardest_congress = yes
+				
+				easiest_axis = yes
+				
+			}
+			
+		}
+		
+		if = {
+			limit = { 
+				# Civilian 0
+				difficulty < 1 
+			}
+			if = {
+				limit = {
+					OR = {
+						has_global_flag = axis_ai
+						SOV = {
+							is_ai = no
+						}
+					}
+				}
+				SOV = { set_variable = { border_cost_increase = 2 } }
+				MON = { set_variable = { border_cost_increase = 2 } }
+			}
+			if = {
+				limit = {
+					has_global_flag = commie_ai
+				}
+				SOV = { set_variable = { border_cost_increase = 14 } }
+				MON = { set_variable = { border_cost_increase = 14 } }
+			}
+			if = {
+				limit = {
+					has_global_flag = east_ai
+				}
+				JAP = { set_variable = { border_cost_increase = 14 } }
+				MAN = { set_variable = { border_cost_increase = 14 } }
+				MEN = { set_variable = { border_cost_increase = 14 } }
+			}
+			if = {
+				limit = {
+					has_global_flag = chi_ai
+				}
+				JAP = { set_variable = { border_cost_increase = 2 } }
+				MAN = { set_variable = { border_cost_increase = 2 } }
+				MEN = { set_variable = { border_cost_increase = 2 } }
+			}
+		}
+		else_if = {
+			limit = {
+				# recruit 1
+				difficulty < 2
+			}
+			if = {
+				limit = {
+					OR = {
+						has_global_flag = axis_ai
+						SOV = {
+							is_ai = no
+						}
+					}
+				}
+				SOV = { set_variable = { border_cost_increase = 5 } }
+				MON = { set_variable = { border_cost_increase = 5 } }
+			}
+			if = {
+				limit = {
+					has_global_flag = commie_ai
+				}
+				SOV = { set_variable = { border_cost_increase = 11 } }
+				MON = { set_variable = { border_cost_increase = 11 } }			
+			}
+			if = {
+				limit = {
+					has_global_flag = east_ai
+				}
+				JAP = { set_variable = { border_cost_increase = 11 } }
+				MAN = { set_variable = { border_cost_increase = 11 } }
+				MEN = { set_variable = { border_cost_increase = 11 } }
+			}
+			if = {
+				limit = {
+					has_global_flag = chi_ai
+				}
+				JAP = { set_variable = { border_cost_increase = 5 } }
+				MAN = { set_variable = { border_cost_increase = 5 } }
+				MEN = { set_variable = { border_cost_increase = 5 } }
+			}
+		}
+		else_if = {
+			limit = {
+				# veteran 3
+				difficulty < 4
+			}
+			if = {
+				limit = {
+					OR = {
+						has_global_flag = axis_ai
+						SOV = {
+							is_ai = no
+						}
+					}
+				}
+				SOV = { set_variable = { border_cost_increase = 11 } }
+				MON = { set_variable = { border_cost_increase = 11 } }
+			}
+			if = {
+				limit = {
+					has_global_flag = commie_ai
+				}
+				SOV = { set_variable = { border_cost_increase = 5 } }
+				MON = { set_variable = { border_cost_increase = 5 } }
+			}
+			if = {
+				limit = {
+					has_global_flag = east_ai
+				}
+				JAP = { set_variable = { border_cost_increase = 5 } }
+				MAN = { set_variable = { border_cost_increase = 5 } }
+				MEN = { set_variable = { border_cost_increase = 5 } }
+			}
+			if = {
+				limit = {
+					has_global_flag = chi_ai
+				}
+				JAP = { set_variable = { border_cost_increase = 11 } }
+				MAN = { set_variable = { border_cost_increase = 11 } }
+				MEN = { set_variable = { border_cost_increase = 11 } }
+			}
+		}
+		else_if = {
+			limit = {
+				# BICE 4
+				difficulty > 3
+			}	
+			if = {
+				limit = {
+					OR = {
+						has_global_flag = axis_ai
+						SOV = {
+							is_ai = no
+						}
+					}
+				}
+				SOV = { set_variable = { border_cost_increase = 14 } }
+				MON = { set_variable = { border_cost_increase = 14 } }
+			}
+			if = {
+				limit = {
+					has_global_flag = commie_ai
+				}
+				SOV = { set_variable = { border_cost_increase = 2 } }
+				MON = { set_variable = { border_cost_increase = 2 } }
+			}
+			if = {
+				limit = {
+					has_global_flag = east_ai
+				}
+				JAP = { set_variable = { border_cost_increase = 2 } }
+				MAN = { set_variable = { border_cost_increase = 2 } }
+				MEN = { set_variable = { border_cost_increase = 2 } }
+			}
+			if = {
+				limit = {
+					has_global_flag = chi_ai
+				}
+				JAP = { set_variable = { border_cost_increase = 14 } }
+				MAN = { set_variable = { border_cost_increase = 14 } }
+				MEN = { set_variable = { border_cost_increase = 14 } }
+			}
+		}
+	}
+}
+	
+easiest_purge = {
+	set_variable = { global.setting_status@difficulty_purge = token:difficulty_purge_0 }
+	difficulty_purge_0 = yes
+}
+easiest_5yr = {
+	set_variable = { global.setting_status@difficulty_5yp = token:difficulty_5yp_0 }
+	difficulty_5yp_0 = yes
+}
+easier_purge = {
+	set_variable = { global.setting_status@difficulty_purge = token:difficulty_purge_1 }
+	difficulty_purge_1 = yes
+}
+easier_5yr = {
+	set_variable = { global.setting_status@difficulty_5yp = token:difficulty_5yp_1 }
+	difficulty_5yp_1 = yes
+}
+harder_purge = {
+	set_variable = { global.setting_status@difficulty_purge = token:difficulty_purge_3 }
+	difficulty_purge_3 = yes
+}
+harder_5yr = {
+	set_variable = { global.setting_status@difficulty_5yp = token:difficulty_5yp_3 }
+	difficulty_5yp_3 = yes
+}
+hardest_purge = {
+	set_variable = { global.setting_status@difficulty_purge = token:difficulty_purge_4 }
+	difficulty_purge_4 = yes
+}
+hardest_5yr = {
+	set_variable = { global.setting_status@difficulty_5yp = token:difficulty_5yp_4 }
+	difficulty_5yp_4 = yes
+}
+easiest_congress = {
+	set_variable = { global.setting_status@difficulty_congress = token:difficulty_congress_0 }
+	difficulty_congress_0 = yes
+}
+easier_congress = {
+	set_variable = { global.setting_status@difficulty_congress = token:difficulty_congress_1 }
+	difficulty_congress_1 = yes
+}
+harder_congress = {
+	set_variable = { global.setting_status@difficulty_congress = token:difficulty_congress_3 }
+	difficulty_congress_3 = yes
+}
+hardest_congress = {
+	set_variable = { global.setting_status@difficulty_congress = token:difficulty_congress_4 }
+	difficulty_congress_4 = yes
+}
+easiest_CW = {
+	set_variable = { global.setting_status@difficulty_plan = token:difficulty_plan_0 }
+	set_variable = { global.setting_status@difficulty_colonial_boot = token:difficulty_colonial_boot_0 }
+	set_variable = { global.setting_status@difficulty_allied_anger = token:difficulty_allied_anger_0 }
+	difficulty_plan_0 = yes
+	difficulty_colonial_boot_0 = yes
+	difficulty_allied_anger_0 = yes
+}
+easier_CW = {
+	set_variable = { global.setting_status@difficulty_plan = token:difficulty_plan_1 }
+	set_variable = { global.setting_status@difficulty_colonial_boot = token:difficulty_colonial_boot_1 }
+	set_variable = { global.setting_status@difficulty_allied_anger = token:difficulty_allied_anger_1 }
+	difficulty_plan_1 = yes
+	difficulty_colonial_boot_1 = yes
+	difficulty_allied_anger_1 = yes
+}
+harder_CW = {
+	set_variable = { global.setting_status@difficulty_plan = token:difficulty_plan_3 }
+	set_variable = { global.setting_status@difficulty_colonial_boot = token:difficulty_colonial_boot_3 }
+	set_variable = { global.setting_status@difficulty_allied_anger = token:difficulty_allied_anger_3 }
+	difficulty_plan_3 = yes
+	difficulty_colonial_boot_3 = yes
+	difficulty_allied_anger_3 = yes
+}
+hardest_CW = {
+	set_variable = { global.setting_status@difficulty_plan = token:difficulty_plan_4 }
+	set_variable = { global.setting_status@difficulty_colonial_boot = token:difficulty_colonial_boot_4 }
+	set_variable = { global.setting_status@difficulty_allied_anger = token:difficulty_allied_anger_4 }
+	difficulty_plan_4 = yes
+	difficulty_colonial_boot_4 = yes
+	difficulty_allied_anger_4 = yes
+}
+easiest_axis = {
+	set_variable = { global.setting_status@difficulty_spain_cost = token:difficulty_spain_cost_0 }
+	set_variable = { global.setting_status@difficulty_ita_pp_cost = token:difficulty_ita_pp_cost_0 }
+	difficulty_spain_cost_0 = yes
+	difficulty_ita_pp_cost_0 = yes
+}
+easier_axis = {
+	set_variable = { global.setting_status@difficulty_spain_cost = token:difficulty_spain_cost_1 }
+	set_variable = { global.setting_status@difficulty_ita_pp_cost = token:difficulty_ita_pp_cost_1 }
+	difficulty_spain_cost_1 = yes
+	difficulty_ita_pp_cost_1 = yes
+}
+harder_axis = {
+	set_variable = { global.setting_status@difficulty_spain_cost = token:difficulty_spain_cost_3 }
+	set_variable = { global.setting_status@difficulty_ita_pp_cost = token:difficulty_ita_pp_cost_3 }
+	difficulty_spain_cost_3 = yes
+	difficulty_ita_pp_cost_3 = yes
+}
+hardest_axis = {
+	set_variable = { global.setting_status@difficulty_spain_cost = token:difficulty_spain_cost_4 }
+	set_variable = { global.setting_status@difficulty_ita_pp_cost = token:difficulty_ita_pp_cost_4 }
+	difficulty_spain_cost_4 = yes
+	difficulty_ita_pp_cost_4 = yes
+}

@@ -1,0 +1,690 @@
+@LOCAL_OPERATION_EFFECT = 0.25
+operation_infiltrate_armed_forces_navy = { ### 5 1/55
+	icon = GFX_operations_infiltrate_naval_forces
+	map_icon = GFX_operations_infiltrate_naval_forces_map
+	name = operation_infiltrate_armed_forces_navy
+	desc = operation_infiltrate_armed_forces_navy_desc
+	priority = 4
+
+	days = 90
+	network_strength = 35
+	operatives = 2
+
+	allowed = {
+		has_done_agency_upgrade = upgrade_form_operations
+	}
+
+	visible = {
+		NOT = { has_country_flag = ui_hide_navy_operations@FROM }
+		network_national_coverage = {
+			target = FROM
+			value > 0
+		}
+	}
+
+	available = {
+		set_temp_variable = { t = modifier@operation_navy_max_asset }
+		add_to_temp_variable = { t = 1 }
+		custom_trigger_tooltip = {
+			tooltip = operation_max_asset_trigger
+			NOT = {
+				check_variable = { intel_navy_asset_level@FROM = t }
+			}
+		}
+	}
+
+	equipment = {
+		support_equipment = 25
+		recon_equipment = 50
+	}
+	
+	ai_will_do = {
+		base = 0
+		modifier = {
+			add = 1250
+			
+			#OR = {
+				is_in_array = { ai_operations = token:operation_sabotage_port }
+			#}
+		}
+		modifier = {
+			add = num_asset
+			
+			set_temp_variable = { num_asset = intel_navy_asset_level@FROM }
+			multiply_temp_variable = { num_asset = -250 }
+		}
+		modifier = {
+			add = asset_chance
+			
+			set_temp_variable = { num_asset = modifier@operation_navy_keep_asset_chance }
+			multiply_temp_variable = { num_asset = -1000 }
+		}
+	}
+
+	awarded_tokens = {
+		token_navy
+	}
+	risk_chance = 0.1
+	outcome_extra_chance = 0
+	risk_modifiers = { operation_infiltrate_risk operation_risk }
+	outcome_modifiers = { operation_infiltrate_outcome operation_outcome }
+	cost_modifiers = { operation_infiltrate_cost operation_cost }
+	
+	on_start = {
+		every_operative = {
+			add_to_temp_variable = { operative_outcome = leader_modifier@operation_infiltrate_outcome }
+		}
+		ROOT = {
+			set_temp_variable = { CRITICAL_SUCCESS = 25 }
+			set_temp_variable = { factor = modifier@operation_infiltrate_outcome }
+			add_to_temp_variable = { factor = modifier@operation_outcome }
+			add_to_temp_variable = { factor = operative_outcome }
+			subtract_from_temp_variable = { factor = FROM.modifier@enemy_operation_critical_success_chance }
+			add_to_temp_variable = { factor = 1 }
+			multiply_temp_variable = { CRITICAL_SUCCESS = factor }
+			
+			random = {
+				chance = CRITICAL_SUCCESS
+				
+				set_country_flag = operation_infiltrate_navy_critical@FROM
+			}
+		}
+	}
+	outcome_execute = {
+		ROOT = {
+			
+			custom_effect_tooltip = {
+				localization_key = ADD_INTEL_TOKEN
+				TOKEN = token_navy
+				MODIFIER = MODIFIER_NAVY_INTEL_FACTOR
+				AMOUNT = 5
+			}
+			
+			operation_add_navy_asset = yes
+			
+			if = {
+				limit = {
+					has_country_flag = operation_infiltrate_navy_critical@FROM
+				}
+				custom_effect_tooltip = CRITICAL_SUCCESS
+				navy_experience = 10
+				add_intel = {
+					target = FROM
+					navy_intel = 10
+				}
+				clr_country_flag = operation_infiltrate_navy_critical@FROM
+			}
+			add_to_array = { ROOT.operation_completed = token:operation_infiltrate_civilian }
+			add_to_array = { ROOT.operation_completed_state = FROM.FROM }
+			add_to_array = { ROOT.operation_completed_target = FROM }
+			add_to_array = { ROOT.operation_completed_date = global.date }
+		}
+	}
+
+	### THIS IS ONLY! TOOLTIP
+	outcome_potential = { 
+		ROOT = {
+			
+			set_temp_variable = { CRITICAL_SUCCESS = 25 }
+			set_temp_variable = { factor = modifier@operation_infiltrate_outcome }
+			add_to_temp_variable = { factor = modifier@operation_outcome }
+			subtract_from_temp_variable = { factor = FROM.modifier@enemy_operation_critical_success_chance }
+			add_to_temp_variable = { factor = 1 }
+			multiply_temp_variable = { CRITICAL_SUCCESS = factor }
+			
+			custom_effect_tooltip = {
+				localization_key = ADD_INTEL_TOKEN
+				TOKEN = token_navy
+				MODIFIER = MODIFIER_NAVY_INTEL_FACTOR
+				AMOUNT = 5
+			}
+			
+			custom_effect_tooltip = OPERATION_OUTCOME_CRITICAL_SUCCESS
+			navy_experience = 10
+			add_intel = {
+				target = FROM
+				navy_intel = 10
+			}
+		}
+	}
+
+	phases = { #infiltration
+		infiltration_border = { base = 25 modifier = { factor = 0.1 ROOT = { is_neighbor_of = FROM } } }
+		infiltration_submarine = { base = 25 modifier = { factor = 0.1 ROOT = { has_navy_size = { size < 1 type = submarine } } } }
+		infiltration_paradrop = { base = 25 modifier = { factor = 0.1 ROOT = { has_equipment = { transport_plane_equipment < 1 } } } }
+		infiltration_diplomatic = {	base = 50 modifier = { factor = 0 FROM = { has_war_with = ROOT } } }
+	}
+	phases = { #infiltrate military
+		infiltrate_military_bribe = { base = 25 }
+		infiltrate_military_seduction = { base = 25 }
+		infiltrate_military_ideological_supporter = {
+			base = 25
+			modifier = {
+				FROM = { has_government = ROOT }
+				factor = 0
+			}
+		}
+	}
+	phases = { #exfiltration
+		exfiltration_air_pickup = { base = 25 modifier = { factor = 0.1 ROOT = { has_equipment = { transport_plane_equipment < 1 } } } }
+		exfiltration_border = { base = 30 modifier = { factor = 0.1 ROOT = { is_neighbor_of = FROM } } }
+		exfiltration_go_to_ground = { base = 30 }
+		exfiltration_submarine_pickup = { base = 25 modifier = { factor = 0.1 ROOT = { has_navy_size = { size < 1 type = submarine } } } }
+	}
+}
+
+
+operation_sabotage_port = { ### 18 2/35
+
+	icon = GFX_operations_targeted_sabotage
+	map_icon = GFX_operations_targeted_sabotage_map
+	name = operation_sabotage_port
+	desc = operation_sabotage_port_desc
+
+	priority = 16
+
+	days = 50
+	operatives = 2
+	network_strength = 50
+
+	allowed = {
+		has_done_agency_upgrade = upgrade_form_operations
+	}
+
+	visible = {
+		NOT = { has_country_flag = ui_hide_navy_operations@FROM }
+		network_strength = {
+			target = FROM
+			value > 25
+		}
+
+		has_operation_token = {
+			tag = FROM
+			token = token_navy
+		}
+	}	
+
+	available = {
+		custom_trigger_tooltip = {
+			tooltip = REQUIRE_NAVY_ASSET
+			
+			check_variable = { intel_navy_asset_level@FROM > 0 }
+		}
+	}
+
+	equipment = {
+		SMG_equipment = 100
+		recon_equipment = 50
+		support_equipment = 50
+	}
+	
+	ai_will_do = {
+		base = 0
+		modifier = {
+			add = 1000
+			
+			is_in_array = { ai_operations = token:operation_sabotage_port }
+		}
+		modifier = {
+			add = 150
+			
+			check_variable = { ai_operations^0 = token:operation_sabotage_port }
+		}
+		modifier = {
+			add = 100
+			
+			check_variable = { ai_operations^1 = token:operation_sabotage_port }
+		}
+		modifier = {
+			add = 50
+			
+			check_variable = { ai_operations^2 = token:operation_sabotage_port }
+		}
+	}
+	selection_target_state = {
+		naval_base > 0
+	}
+	selection_target = {
+		targets = { FROM }
+	}
+	
+	required_tokens = { token_navy }
+	
+	risk_chance = 0.2
+	outcome_extra_chance = 0
+	outcome_modifiers = { operation_sabotage_outcome operation_outcome }
+	risk_modifiers = { operation_sabotage_risk operation_risk }
+	cost_modifiers = { operation_sabotage_cost operation_cost }
+	
+	outcome_potential = {
+		custom_effect_tooltip = OPERATION_CHANCE_NAVY_TOKEN
+		set_temp_variable = { damage = 2 }
+		set_temp_variable = { factor = modifier@operation_sabotage_damage }
+		add_to_temp_variable = { factor = 1 }
+		multiply_temp_variable = { damage = factor }
+		
+		set_temp_variable = { repair = -0.25 }
+		set_temp_variable = { factor = modifier@operation_sabotage_repair }
+		add_to_temp_variable = { factor = 1 }
+		multiply_temp_variable = { repair = factor }
+		multiply_temp_variable = { repair = 100 }
+		
+		set_temp_variable = { CRITICAL_SUCCESS = 25 }
+		set_temp_variable = { factor = modifier@operation_outcome }
+		add_to_temp_variable = { factor = modifier@operation_sabotage_outcome }
+		subtract_from_temp_variable = { factor = FROM.modifier@enemy_operation_critical_success_chance }
+		add_to_temp_variable = { factor = 1 }
+		multiply_temp_variable = { CRITICAL_SUCCESS = factor }
+		
+		custom_effect_tooltip = {
+			localization_key = SABOTAGE_PORT_OUTCOME_POTENTIAL_TOOLTIP
+			DAMAGE = [?damage]
+			REPAIR = [?repair]
+		}
+	
+	}
+	on_start = {
+		every_operative = {
+			add_to_temp_variable = { operative_outcome = leader_modifier@operation_sabotage_outcome }
+			add_to_temp_variable = { operative_bonus = leader_modifier@operation_sabotage_damage }
+			add_to_temp_variable = { operative_spread = leader_modifier@operation_sabotage_spread }
+			add_to_temp_variable = { operative_asset = leader_modifier@operation_navy_keep_asset_chance }
+		}
+		ROOT = {
+			set_temp_variable = { CRITICAL_SUCCESS = 25 }
+			set_temp_variable = { factor = modifier@operation_outcome }
+			add_to_temp_variable = { factor = modifier@operation_sabotage_outcome }
+			add_to_temp_variable = { factor = operative_outcome }
+			subtract_from_temp_variable = { factor = FROM.modifier@enemy_operation_critical_success_chance }
+			add_to_temp_variable = { factor = 1 }
+			multiply_temp_variable = { CRITICAL_SUCCESS = factor }
+			
+			random = {
+				chance = CRITICAL_SUCCESS
+				
+				set_country_flag = operation_sabotage_port_critical@FROM
+			}
+			
+			
+			set_temp_variable = { USE_ASSET_CHANCE = 1 }
+			subtract_from_temp_variable = { USE_ASSET_CHANCE = operative_asset }
+			subtract_from_temp_variable = { USE_ASSET_CHANCE = modifier@operation_navy_keep_asset_chance }
+			multiply_temp_variable = { USE_ASSET_CHANCE = 100 }
+			random = {
+				chance = USE_ASSET_CHANCE
+				
+				set_country_flag = operation_sabotage_port_use_asset@FROM
+				operation_remove_navy_asset = yes
+			}
+			
+			
+			set_variable = { operation_sabotage_port_damage@FROM = 2 }
+			set_temp_variable = { factor = modifier@operation_sabotage_damage }
+			add_to_temp_variable = { factor = mtth:decryption_operation_effect }
+			add_to_temp_variable = { factor = operative_bonus }
+			subtract_from_temp_variable = { factor = FROM.modifier@operation_navy_enemy_effect }
+			add_to_temp_variable = { factor = 1 }
+			multiply_variable = { operation_sabotage_port_damage@FROM = factor }
+			
+			set_variable = { operation_sabotage_port_repair@FROM = -0.25 }
+			add_to_variable = { operation_sabotage_port_repair@FROM = modifier@operation_sabotage_repair }
+			
+			set_temp_variable = { factor = modifier@operation_sabotage_spread }
+			add_to_temp_variable = { factor = operative_spread }
+			
+			set_variable = { operation_sabotage_port_damage_spread@FROM = operation_sabotage_port_damage@FROM }
+			multiply_variable = { operation_sabotage_port_damage_spread@FROM = factor }
+			set_variable = { operation_sabotage_port_repair_spread@FROM = operation_sabotage_port_repair@FROM }
+			multiply_variable = { operation_sabotage_port_repair_spread@FROM = factor }
+			
+		}
+	}
+	outcome_execute = {
+		hidden_effect = {
+			FROM.FROM = {
+				ROOT = {
+					set_temp_variable = { local = mtth:network_strength_state }
+					divide_temp_variable = { local = 100 }
+					set_temp_variable = { network_strength_state = local }
+					multiply_temp_variable = { local = @LOCAL_OPERATION_EFFECT }
+					add_to_temp_variable = { local = PREV.modifier@local_operation_effect }
+					set_temp_variable = { local_effect = local }
+					
+					add_to_temp_variable = { local = 1 }
+					
+					multiply_variable = { operation_sabotage_port_damage@FROM = local }
+					multiply_variable = { operation_sabotage_port_repair@FROM = local }
+					
+					
+					## use these variables for tooltips & effects
+					set_temp_variable = { effect = operation_sabotage_port_damage@FROM }
+					multiply_temp_variable = { effect = local }
+					set_temp_variable = { repair = operation_sabotage_port_repair@FROM }
+					multiply_temp_variable = { repair = local }
+					
+				}
+			}
+		}
+		custom_effect_tooltip = LOCAL_OPERATION_EFFECT_TOOLTIP
+		
+		ROOT = {
+			if = {
+				limit = {
+					has_country_flag = operation_sabotage_port_use_asset@FROM
+				}
+				custom_effect_tooltip = SUBTRACT_NAVY_ASSET
+				clr_country_flag = operation_sabotage_port_use_asset@FROM
+			}
+			else = {
+				custom_effect_tooltip = OPERATION_KEEP_ASSET
+			}
+		
+			custom_effect_tooltip = SABOTAGE_PORT_TOOLTIP
+			if = {
+				limit = {
+					check_variable = { operation_sabotage_port_damage_spread@FROM = 0 }
+				}
+				hidden_effect = {
+					meta_effect = {
+						text = {
+							FROM.FROM = {
+								get_highest_port_provinces_coastal = yes
+								
+								damage_building = {
+									type = naval_base
+									damage = [D]
+									repair_speed_modifier = [R]
+									province = var:province
+								}
+							}
+						}
+						D = "[?ROOT.operation_sabotage_port_damage@FROM]"
+						R = "[?ROOT.operation_sabotage_port_repair@FROM]"
+					}
+				}
+			}
+			else = {
+				custom_effect_tooltip = SABOTAGE_PORT_SPREAD_TOOLTIP
+				hidden_effect = {
+					meta_effect = {
+						text = {
+							FROM.FROM = {
+								get_highest_port_provinces_coastal = yes
+								
+								damage_building = {
+									type = naval_base
+									damage = [D]
+									repair_speed_modifier = [R]
+									province = var:province
+								}
+								damage_building = {
+									type = naval_base
+									damage = [DS]
+									repair_speed_modifier = [RS]
+									province = var:second_province
+								}
+							}
+						}
+						D = "[?ROOT.operation_sabotage_port_damage@FROM]"
+						R = "[?ROOT.operation_sabotage_port_repair@FROM]"
+						DS = "[?ROOT.operation_sabotage_port_damage_spread@FROM]"
+						RS = "[?ROOT.operation_sabotage_port_repair_spread@FROM]"
+					}
+				}
+			}
+		
+			#clear_variable = operation_sabotage_port_damage@FROM
+			#clear_variable = operation_sabotage_port_repair@FROM
+			#clear_variable = operation_sabotage_port_damage_spread@FROM
+			#clear_variable = operation_sabotage_port_repair_spread@FROM
+			
+			if = {
+				limit = {
+					has_country_flag = operation_sabotage_port_critical@FROM
+				}
+				custom_effect_tooltip = CRITICAL_SUCCESS
+				custom_effect_tooltip = SABOTAGE_PORT_CRITICAL_TOOLTIP
+				
+				meta_effect = {
+					text = {
+						damage_units = {
+							province = [P]
+							damage = 0.1
+							ratio = yes
+							army = no
+							navy = yes
+						}
+					}
+					P = "[?province]"
+				}
+				
+				#clr_country_flag = operation_sabotage_port_critical@FROM
+			}
+			hidden_effect = {
+				FROM = {
+					set_variable = { operation_target_state = FROM.FROM }
+					country_event = { id = lar_operative_event.104 days = 3 }
+				}
+			}
+			add_to_array = { ROOT.operation_completed = token:operation_infiltrate_civilian }
+			add_to_array = { ROOT.operation_completed_state = FROM.FROM }
+			add_to_array = { ROOT.operation_completed_target = FROM }
+			add_to_array = { ROOT.operation_completed_date = global.date }
+		}
+	}
+	phases = { #infiltration
+		infiltration_border = { base = 25 modifier = { factor = 0.1 ROOT = { is_neighbor_of = FROM } } }
+		infiltration_submarine = { base = 25 modifier = { factor = 0.1 ROOT = { has_navy_size = { size < 1 type = submarine } } } }
+		infiltration_paradrop = { base = 25 modifier = { factor = 0.1 ROOT = { has_equipment = { transport_plane_equipment < 1 } } } }
+		infiltration_diplomatic = {	base = 50 modifier = { factor = 0 FROM = { has_war_with = ROOT } } }
+	}
+	phases = { #exfiltration
+		sabotage_port_explosives = { base = 50 }
+		sabotage_burn_port = { base = 50 }
+	}
+	phases = { #exfiltration
+		exfiltration_air_pickup = { base = 25 modifier = { factor = 0.1 ROOT = { has_equipment = { transport_plane_equipment < 1 } } } }
+		exfiltration_border = { base = 30 modifier = { factor = 0.1 ROOT = { is_neighbor_of = FROM } } }
+		exfiltration_go_to_ground = { base = 30 }
+		exfiltration_submarine_pickup = { base = 25 modifier = { factor = 0.1 ROOT = { has_navy_size = { size < 1 type = submarine } } } }
+	}
+}
+
+operation_steal_tech_navy = { ### 16 3/55
+	icon = GFX_operations_steal_blueprints
+	map_icon = GFX_operations_steal_blueprints_map
+	name = operation_steal_tech_navy
+	desc = operation_steal_tech_navy_desc
+	priority = 16
+
+	days = 70
+	network_strength = 40
+	operatives = 2
+
+	allowed = {
+		has_done_agency_upgrade = upgrade_form_operations
+	}
+
+	visible = {
+		NOT = { has_country_flag = ui_hide_navy_operations@FROM }
+		network_strength = {
+			target = FROM
+			value > 25
+		}
+
+		has_operation_token = {
+			tag = FROM
+			token = token_navy
+		}
+	}
+
+	available = {
+		custom_trigger_tooltip = {
+			tooltip = REQUIRE_NAVY_ASSET
+			
+			check_variable = { intel_navy_asset_level@FROM > 0 }
+		}
+	}
+
+	equipment = {
+		radio_equipment = 50
+		recon_equipment = 75
+	}
+
+	required_tokens = { token_navy }
+	
+	risk_chance = 0.2
+	outcome_extra_chance = 0
+	risk_modifiers = { operation_steal_tech_risk operation_risk }
+	outcome_modifiers = { operation_steal_tech_outcome operation_outcome }
+	cost_modifiers = { operation_steal_tech_cost operation_cost }
+
+	outcome_potential = {
+		custom_effect_tooltip = OPERATION_CHANCE_NAVY_TOKEN
+		
+		set_temp_variable = { bonus = 0.25 }
+		set_temp_variable = { factor = modifier@operation_steal_tech_bonus_factor }
+		add_to_temp_variable = { factor = 1 }
+		multiply_temp_variable = { bonus = factor }
+	
+		set_temp_variable = { aot_bonus = 0.25 }
+		set_temp_variable = { factor = modifier@operation_steal_tech_aot_factor }
+		add_to_temp_variable = { factor = 1 }
+		multiply_temp_variable = { aot_bonus = factor }
+		
+		set_temp_variable = { uses = 3 }
+		add_to_temp_variable = { uses = modifier@operation_steal_tech_uses }
+		
+		set_temp_variable = { CRITICAL_SUCCESS = 25 }
+		set_temp_variable = { factor = modifier@operation_outcome }
+		add_to_temp_variable = { factor = modifier@operation_steal_tech_outcome }
+		subtract_from_temp_variable = { factor = FROM.modifier@enemy_operation_critical_success_chance }
+		add_to_temp_variable = { factor = 1 }
+		multiply_temp_variable = { CRITICAL_SUCCESS = factor }
+		
+		custom_effect_tooltip = STEAL_TECH_NAVY_OUTCOME_POTENTIAL_TOOLTIP
+		FROM = {
+			add_timed_idea = {
+				idea = navy_steal_tech_critical
+				days = 70
+			}
+		}
+	}
+	on_start = {
+		every_operative = {
+			add_to_temp_variable = { operative_outcome = leader_modifier@operation_steal_tech_outcome }
+			add_to_temp_variable = { operative_bonus = leader_modifier@operation_steal_tech_bonus_factor }
+			add_to_temp_variable = { operative_uses = leader_modifier@operation_steal_tech_uses }
+			add_to_temp_variable = { operative_asset = leader_modifier@operation_navy_keep_asset_chance }
+		}
+		ROOT = {
+			set_temp_variable = { CRITICAL_SUCCESS = 25 }
+			set_temp_variable = { factor = modifier@operation_outcome }
+			add_to_temp_variable = { factor = modifier@operation_steal_tech_outcome }
+			add_to_temp_variable = { factor = operative_outcome }
+			subtract_from_temp_variable = { factor = FROM.modifier@enemy_operation_critical_success_chance }
+			add_to_temp_variable = { factor = 1 }
+			multiply_temp_variable = { CRITICAL_SUCCESS = factor }
+			
+			random = {
+				chance = CRITICAL_SUCCESS
+				
+				set_country_flag = operation_steal_tech_navy_critical@FROM
+			}
+			
+			
+			set_temp_variable = { USE_ASSET_CHANCE = 1 }
+			subtract_from_temp_variable = { USE_ASSET_CHANCE = operative_asset }
+			subtract_from_temp_variable = { USE_ASSET_CHANCE = modifier@operation_navy_keep_asset_chance }
+			multiply_temp_variable = { USE_ASSET_CHANCE = 100 }
+			random = {
+				chance = USE_ASSET_CHANCE
+				
+				set_country_flag = operation_steal_tech_navy_use_asset@FROM
+				operation_remove_navy_asset = yes
+			}
+			
+			
+			set_variable = { operation_steal_tech_navy_bonus@FROM = 0.25 }
+			set_temp_variable = { factor = modifier@operation_steal_tech_bonus_factor }
+			add_to_temp_variable = { factor = mtth:decryption_operation_effect }
+			add_to_temp_variable = { factor = operative_bonus }
+			subtract_from_temp_variable = { factor = FROM.modifier@operation_navy_enemy_effect }
+			add_to_temp_variable = { factor = 1 }
+			multiply_variable = { operation_steal_tech_navy_bonus@FROM = factor }
+			
+			set_variable = { operation_steal_tech_navy_ahead_of_time@FROM = 0.25 }
+			set_temp_variable = { factor = modifier@operation_steal_tech_aot_factor }
+			add_to_temp_variable = { factor = mtth:decryption_operation_effect }
+			subtract_from_temp_variable = { factor = FROM.modifier@operation_navy_enemy_effect }
+			add_to_temp_variable = { factor = 1 }
+			multiply_variable = { operation_steal_tech_navy_ahead_of_time@FROM = factor }
+			
+			set_variable = { operation_steal_tech_navy_uses@FROM = 3 }
+			add_to_variable = { operation_steal_tech_navy_uses@FROM = operative_uses }
+			add_to_variable = { operation_steal_tech_navy_uses@FROM = modifier@operation_steal_tech_uses }
+		}
+	}
+	outcome_execute = {
+		ROOT = {
+			
+			if = {
+				limit = {
+					has_country_flag = operation_steal_tech_navy_use_asset@FROM
+				}
+				custom_effect_tooltip = SUBTRACT_NAVY_ASSET
+				clr_country_flag = operation_steal_tech_navy_use_asset@FROM
+			}
+			else = {
+				custom_effect_tooltip = OPERATION_KEEP_ASSET
+			}
+			
+			custom_effect_tooltip = STEAL_TECH_NAVY_TOOLTIP
+			if = {
+				limit = {
+					NOT = { is_in_array = { FROM.research_steal = ROOT } }
+				}
+				add_to_array = { FROM.research_steal_navy = ROOT }
+			}
+			add_to_variable = { FROM.research_steal_uses_navy@ROOT = operation_steal_tech_navy_uses@FROM }
+			set_variable = { FROM.research_steal_bonus_navy@ROOT = operation_steal_tech_navy_bonus@FROM }
+			set_variable = { FROM.research_steal_ahead_of_time_navy@ROOT = operation_steal_tech_navy_ahead_of_time@FROM }
+			
+			clear_variable = operation_steal_tech_navy_bonus@FROM
+			clear_variable = operation_steal_tech_navy_ahead_of_time@FROM
+			clear_variable = operation_steal_tech_navy_uses@FROM
+			
+			if = {
+				limit = {
+					has_country_flag = operation_steal_tech_navy_critical@FROM
+				}
+				custom_effect_tooltip = CRITICAL_SUCCESS
+				FROM = {
+					add_timed_idea = {
+						idea = navy_steal_tech_critical
+						days = 70
+					}
+				}
+				clr_country_flag = operation_steal_tech_navy_critical@FROM
+			}
+		}
+	}
+
+	phases = { #infiltration
+		infiltration_border = { base = 25 modifier = { factor = 0.1 ROOT = { is_neighbor_of = FROM } } }
+		infiltration_submarine = { base = 25 modifier = { factor = 0.1 ROOT = { has_navy_size = { size < 1 type = submarine } } } }
+		infiltration_paradrop = { base = 25 modifier = { factor = 0.1 ROOT = { has_equipment = { transport_plane_equipment < 1 } } } }
+		infiltration_diplomatic = {	base = 50 modifier = { factor = 0 FROM = { has_war_with = ROOT } } }
+	}
+	phases = { #blueprint theft
+		steal_blueprints_bribe = { base = 33 }
+		steal_blueprints_seduction = { base = 33 }
+		steal_blueprints_middle_manager = { base = 33 }
+	}
+	phases = { #exfiltration
+		exfiltration_air_pickup = { base = 25 modifier = { factor = 0.1 ROOT = { has_equipment = { transport_plane_equipment < 1 } } } }
+		exfiltration_border = { base = 30 modifier = { factor = 0.1 ROOT = { is_neighbor_of = FROM } } }
+		exfiltration_go_to_ground = { base = 30 }
+		exfiltration_submarine_pickup = { base = 25 modifier = { factor = 0.1 ROOT = { has_navy_size = { size < 1 type = submarine } } } }
+	}
+}

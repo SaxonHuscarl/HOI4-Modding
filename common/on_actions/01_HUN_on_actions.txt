@@ -1,0 +1,186 @@
+on_actions = {
+	on_new_term_election = {
+		random_events = {
+			100 = hungary_flavor_elections.1
+			100 = hungary_flavor_elections.2
+			100 = hungary_flavor_elections.3
+		}
+	}
+	#PREV is war target
+	on_declare_war = {
+		effect = {
+
+			## Hungarian war
+			if = {
+				limit = {
+					OR = {
+						PREV = { tag = HUN }
+						tag = HUN 
+					}
+					HUN = { NOT = { has_country_flag = HUN_had_war } }
+					HUN = { exists = yes }
+				}
+				HUN = { set_country_flag = HUN_had_war }
+			}
+		}
+	}
+	
+	# ROOT is capitulated country, FROM is winner
+	on_capitulation = {
+		effect = {
+			if = {
+				limit = { HUN = { has_war = yes } }
+				HUN = { set_country_flag = HUN_had_war }
+			}
+			if = {
+				limit = {
+					TAG = SLO
+				}
+				HUN = {
+					country_event = { hours = 1 id = hungary_flavor_hidden.1 }
+				}
+			}
+		}
+	}
+	#ROOT is subject FROM is previous overlord
+	on_subject_free = {
+		effect = {
+			if = {
+				limit = {
+					TAG = SLO
+					FROM = {
+						tag = HUN
+					}
+				}
+				HUN = {
+					country_event = { hours = 1 id = hungary_flavor_hidden.1 }
+				}
+				country_event = { hours = 1 id = hungary_flavor_hidden.2 }
+			}
+		}
+	}
+	on_leave_faction = {
+		effect = {
+			if = { limit = { has_country_flag = HUN_visegrad_group_member } 
+				country_event = { hours = 6 id = hungary_flavor_gen.8 }
+			}
+			if = { limit = { has_country_flag = HUN_danube_federation_member } 
+				country_event = { hours = 6 id = hungary_flavor_gen.22 }
+			}
+		}
+	}
+	
+	on_join_faction = {
+		effect = {
+			if = { limit = { FROM = { has_country_flag = HUN_visegrad_group_member } }
+				country_event = { hours = 6 id = hungary_flavor_gen.7 }
+			}
+			if = { limit = { FROM = { has_country_flag = HUN_danube_federation_member } }
+				country_event = { hours = 6 id = hungary_flavor_gen.21 }
+			}
+		}
+	}
+	
+	#Not run on a specific country.
+	on_startup = {
+		effect = {
+			HUN = { country_event = { id = hungary_flavor.1 } }			#Welcome event (decide between realistic and non-realistic version)
+			#HUN = { country_event = { id = hun_news.26 days = 280 } }	#Event for the death of Gyula Gömbös
+			HUN = { country_event = { id = hun_news.22 days = 4457 } }	#Event for the 100th anniversary of the 1848 revolution (event checks whether HUN is not AHU before actually firing)
+			
+			# Set up some flags & variables at the start of the game
+				HUN = {
+					if = { 
+						limit = {
+							has_game_rule = {
+								rule = HUN_ai_behavior
+								option = RANDOM
+							}
+						}
+						random_list = {
+							15 = { set_country_flag = HUN_AI_RANDOM_HISTORICAL_HUN_FLAVOR }
+							10 = { set_country_flag = HUN_AI_RANDOM_REVISIONIST_HUN_FLAVOR }
+							10 = { set_country_flag = HUN_AI_RANDOM_REVISIONIST_GERMANY_HUN_FLAVOR }
+							10 = { set_country_flag = HUN_AI_RANDOM_AUSTRIA_HUNGARY_HUN_FLAVOR }
+							7 = { set_country_flag = HUN_AI_RANDOM_COMMUNIST_KADAR_HUN_FLAVOR }
+							8 = { set_country_flag = HUN_AI_RANDOM_COMMUNIST_RAKOSI_HUN_FLAVOR }
+							7 = { set_country_flag = HUN_AI_RANDOM_COMMUNIST_KUN_HUN_FLAVOR }
+							8 = { set_country_flag = HUN_AI_RANDOM_DEMOCRATIC_HUN_FLAVOR }
+							7 = { set_country_flag = HUN_AI_RANDOM_DEMOCRATIC_VISEGRAD_HUN_FLAVOR }
+							8 = { set_country_flag = HUN_AI_RANDOM_DEMOCRATIC_COALITION_HUN_FLAVOR }
+							10 = { set_country_flag = HUN_AI_RANDOM_HUNGARIST_HUN_FLAVOR }
+						}
+					}
+				}
+		}
+	}
+
+	on_government_exiled = {
+		effect = {
+			if = {
+				limit = {
+					original_tag = HUN
+					has_government = communism
+				}
+				add_country_leader_role = { 
+					character = HUN_mihaly_karolyi
+					  promote_character = yes 
+					country_leader = {
+						ideology = stalinism 
+						  expire = "1965.1.1.1" 
+						  traits = { 
+							
+						  } 
+					  } 
+				 }
+			}
+		}
+	}
+	on_monthly_HUN = {
+		effect = {
+			if = {
+				limit = {
+					has_idea = italian_hungarian_naval_academy
+					NOT = { has_country_flag = HUN_adriatic_initiative_enabled }
+				}
+				remove_ideas = italian_hungarian_naval_academy
+				ITA = {
+					remove_ideas = italian_hungarian_naval_academy
+				}
+			}
+			if = {
+				limit = {
+					all_country = {
+						NOT = { has_country_flag = HUN_policing_expansion_of_hungary }
+					}
+					any_of_scopes = {
+						array = global.majors
+						NOT = { has_country_flag = HUN_backed_out_from_treaty_of_trianon }
+						is_major = yes
+						OR = {
+							tag = ENG
+							tag = FRA
+							tag = USA
+							tag = ENG
+							tag = ITA
+							tag = JAP
+							tag = BEL
+							tag = CHI
+							tag = CUB
+							tag = GRE
+							tag = NIC
+							tag = PAN
+							tag = POL
+							tag = POR
+							tag = ROM
+							tag = YUG
+							tag = SIA
+							tag = CZE
+						}
+					}
+				}
+				country_event = { id = hungary_flavor_hidden.6 }
+			}
+		}
+	}
+}

@@ -1,0 +1,208 @@
+### operations are sorted by order of 
+### 1) no. of required operatives
+### 2) required network strength
+### eg. 1/70 comes before 2/40
+
+operation_rescue_operative = { ### 0 1/35
+	icon = GFX_operations_rescue_captured_operative
+	map_icon = GFX_operations_rescue_captured_operative_map
+	name = operation_rescue_operative
+	desc = operation_rescue_operative_desc
+	priority = 0
+	prevent_captured_operative_to_die = yes
+
+
+	days = 35
+	network_strength = 30
+	operatives = 1
+
+	visible = {
+		NOT = { has_country_flag = ui_hide_operations@FROM }
+		network_national_coverage = {
+			target = FROM
+			value > 0
+		}
+		FROM = {
+			has_captured_operative = ROOT
+		}
+	}
+
+	available = {
+		
+	}
+
+	equipment = {
+		
+	}
+	risk_chance = 0.1
+	cost_multiplier = 0 # we dont scale in cost for rescues
+
+	outcome_execute = { # SCOPE_OPERATION
+		ROOT = {
+			free_random_operative = {
+				captured_by = FROM
+				all = yes
+			}
+		}
+		ROOT = {
+			hidden_effect = {
+				set_country_flag = just_freed_operative_flag
+			}
+		}
+	}
+
+	outcome_potential = {
+		ROOT = {
+			free_random_operative = {
+				captured_by = FROM
+				all = yes
+			}
+		}
+	}
+
+	phases = { #infiltration
+		infiltration_border = { base = 25 modifier = { factor = 0.1 ROOT = { is_neighbor_of = FROM } } }
+		infiltration_submarine = { base = 25 modifier = { factor = 0.1 ROOT = { has_navy_size = { size < 1 type = submarine } } } }
+		infiltration_paradrop = { base = 25 modifier = { factor = 0.1 ROOT = { has_equipment = { transport_plane_equipment < 1 } } } }
+		infiltration_diplomatic = {	base = 50 modifier = { factor = 0 FROM = { has_war_with = ROOT } } }
+	}
+	phases = {
+		free_operative_free_in_transit = { base = 33 }
+		free_operative_liberate_camp = { base = 33 }
+		free_operative_smuggle_in_escape_gear = { base = 33 }
+	}
+	phases = { #exfiltration
+		exfiltration_air_pickup = { base = 25 modifier = { factor = 0.1 ROOT = { has_equipment = { transport_plane_equipment < 1 } } } }
+		exfiltration_border = { base = 30 modifier = { factor = 0.1 ROOT = { is_neighbor_of = FROM } } }
+		exfiltration_go_to_ground = { base = 30 }
+		exfiltration_submarine_pickup = { base = 25 modifier = { factor = 0.1 ROOT = { has_navy_size = { size < 1 type = submarine } } } }
+	}
+}
+
+operation_capture_cipher = { ### 3 1/55
+	icon = GFX_operations_capture_ciphers
+	map_icon = GFX_operations_capture_ciphers_map
+	name = operation_capture_cipher
+	desc = operation_capture_cipher_desc
+	priority = 6
+
+	days = 90
+	network_strength = 50
+	operatives = 2
+
+	allowed = {
+		has_done_agency_upgrade = upgrade_form_department
+		has_done_agency_upgrade = upgrade_form_operations
+	}
+
+	visible = {
+		NOT = { has_country_flag = ui_hide_operations@FROM }
+		network_strength = {
+			target = FROM
+			value > 25
+		}
+	}
+
+	equipment = {
+		
+	}
+	risk_chance = 0.2
+	outcome_extra_chance = 0
+	risk_modifiers = { operation_capture_cipher_risk operation_risk }
+	outcome_modifiers = { operation_capture_cipher_outcome operation_outcome }
+	cost_modifiers = { operation_capture_cipher_cost operation_cost }
+	
+	on_start = {
+		every_operative = {
+			add_to_temp_variable = { operative_outcome = leader_modifier@operation_capture_cipher_outcome }
+		}
+		ROOT = {
+			set_temp_variable = { CRITICAL_SUCCESS = 25 }
+			set_temp_variable = { factor = modifier@operation_outcome }
+			add_to_temp_variable = { factor = operative_outcome }
+			add_to_temp_variable = { factor = modifier@operation_capture_cipher_outcome }
+			subtract_from_temp_variable = { factor = FROM.modifier@enemy_operation_critical_success_chance }
+			add_to_temp_variable = { factor = 1 }
+			multiply_temp_variable = { CRITICAL_SUCCESS = factor }
+			
+			random = {
+				chance = CRITICAL_SUCCESS
+				
+				set_country_flag = operation_capture_cipher_critical@FROM
+			}
+		}
+	}
+	outcome_execute = {
+		ROOT = {
+			add_decryption = {
+				target = FROM
+				ratio = 0.2
+			}
+			
+			if = {
+				limit = {
+					has_country_flag = operation_capture_cipher_critical@FROM
+				}
+				custom_effect_tooltip = CRITICAL_SUCCESS
+				FROM = {
+					add_timed_idea = {
+						idea = disable_cryptology
+						days = 70
+					}
+				}
+				clr_country_flag = operation_capture_cipher_critical@FROM
+			}
+		}
+	}
+
+	outcome_potential = {
+		ROOT = {
+			
+			set_temp_variable = { CRITICAL_SUCCESS = 25 }
+			set_temp_variable = { factor = modifier@operation_outcome }
+			add_to_temp_variable = { factor = modifier@operation_capture_cipher_outcome }
+			subtract_from_temp_variable = { factor = FROM.modifier@enemy_operation_critical_success_chance }
+			add_to_temp_variable = { factor = 1 }
+			multiply_temp_variable = { CRITICAL_SUCCESS = factor }
+			
+			add_decryption = {
+				target = FROM
+				ratio = 0.2
+			}
+			custom_effect_tooltip = OPERATION_OUTCOME_CRITICAL_SUCCESS
+			FROM = {
+				add_timed_idea = {
+					idea = disable_cryptology
+					days = 70
+				}
+			}
+		}
+	}
+
+	phases = { #infiltration
+		infiltration_border = { base = 25 modifier = { factor = 0.1 ROOT = { is_neighbor_of = FROM } } }
+		infiltration_submarine = { base = 25 modifier = { factor = 0.1 ROOT = { has_navy_size = { size < 1 type = submarine } } } }
+		infiltration_paradrop = { base = 25 modifier = { factor = 0.1 ROOT = { has_equipment = { transport_plane_equipment < 1 } } } }
+		infiltration_diplomatic = {	base = 50 modifier = { factor = 0 FROM = { has_war_with = ROOT } } }
+	}
+	phases = { #capturing cyphers
+		capture_cyphers_bribe = { base = 20 }
+		capture_cyphers_raid = {
+			base = 20
+			modifier = {
+				ROOT = { has_war = no }
+				factor = 0
+			}
+		}
+		capture_cyphers_seduction = { base = 20 }
+		capture_cyphers_smuggle = { base = 20 }
+		capture_cyphers_reverse_engineer = { base = 20 }
+	}
+	phases = { #exfiltration
+		exfiltration_air_pickup = { base = 25 modifier = { factor = 0.1 ROOT = { has_equipment = { transport_plane_equipment < 1 } } } }
+		exfiltration_border = { base = 30 modifier = { factor = 0.1 ROOT = { is_neighbor_of = FROM } } }
+		exfiltration_go_to_ground = { base = 30 }
+		exfiltration_submarine_pickup = { base = 25 modifier = { factor = 0.1 ROOT = { has_navy_size = { size < 1 type = submarine } } } }
+	}
+}
+

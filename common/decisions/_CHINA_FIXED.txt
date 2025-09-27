@@ -1,0 +1,436 @@
+
+KMT_dcat_national_treasure = { #updated 19/2/2022 decision to move treasures, and a mission to loose them. should propably have a cost or a duration 
+
+	KMT_evacuate_national_treasures = {
+		icon = generic_nationalism
+		visible = {
+			has_variable = KMT_treasure_state
+			var:KMT_treasure_state = {
+				OR = {
+					any_neighbor_state = {
+						controller = {
+							has_war_with = ROOT
+							OR = {
+								tag = JAP
+								is_puppet_of = JAP
+							}
+						}
+					}
+					controller = {
+						has_war_with = ROOT
+						OR = {
+							tag = JAP
+							is_puppet_of = JAP
+						}
+					}
+				}
+			}
+		}
+
+
+		ai_will_do = {
+			base = 10000
+		}
+
+		days_remove = 0
+		days_re_enable = 0
+
+		cost = 0
+
+		complete_effect = { #824 -> 605 -> 325 -> Abroad
+			if = {
+				limit = {
+					824 = { has_state_flag = KMT_treasure_state }
+				}
+				824 = { clr_state_flag = KMT_treasure_state }
+				
+				605 = {
+					set_state_flag = KMT_treasure_state
+					custom_effect_tooltip = KMT_will_be_destination_tt
+					set_variable = { CHI.KMT_treasure_state = THIS.id }
+				}
+			}
+			else_if = {
+				limit = {
+					605 = { has_state_flag = KMT_treasure_state }
+				}
+				605 = { clr_state_flag = KMT_treasure_state }
+		
+				325 = {
+					set_state_flag = KMT_treasure_state
+					custom_effect_tooltip = KMT_will_be_destination_tt
+					set_variable = { CHI.KMT_treasure_state = THIS.id }
+				}
+			}
+			else_if = {
+				limit = {
+					325 = { has_state_flag = KMT_treasure_state }
+				}
+				325 = { clr_state_flag = KMT_treasure_state }
+				clear_variable = KMT_treasure_state
+				
+				add_timed_idea = {
+					idea = KMT_treasure_abroad_idea
+					days = 365
+				}
+				set_country_flag = treasures_abroad
+			}
+		}
+		remove_effect = {
+		}
+	}
+
+	KMT_treasures_will_be_ransacked = {
+
+		icon = generic_operation
+		
+		visible = {
+		}
+
+		available = {
+			NOT = {
+				var:KMT_treasure_state = {
+					controller = {
+						has_war_with = ROOT
+						OR = {
+							tag = JAP
+							is_puppet_of = JAP
+						}
+					}
+				}
+			}
+		}
+
+		days_mission_timeout = 5
+		fire_only_once = no
+
+		activation = {
+			has_variable = KMT_treasure_state
+			var:KMT_treasure_state = {
+				controller = {
+					has_war_with = ROOT
+					OR = {
+						tag = JAP
+						is_puppet_of = JAP
+					}
+				}
+			}
+		}
+
+		is_good = no
+
+		complete_effect = {
+		}
+
+		timeout_effect = {
+			country_event = {
+				id = kmt.204
+			}
+			effect_tooltip = {
+				if = {
+					limit = {
+						has_idea = kmt_defend_the_treasures
+					}
+					remove_ideas = kmt_defend_the_treasures
+				}
+				add_timed_idea = {
+					idea = kmt_national_treasure_ransacked
+					days = 900
+				}
+			}
+		}
+
+	}
+} 
+political_actions = {
+	CHI_integrate_warlords = {
+
+		icon = generic_operation
+		
+		allowed = { tag = CHI }
+		
+		highlight_states = { 
+			highlight_state_targets = {
+				state = var:FROM.capital
+			}
+		}
+		
+		available = {
+			hidden_trigger = { command_power > 19.9 }
+			OR = {
+				surrender_progress > 0.4
+				FROM = { surrender_progress > 0.25 }
+				AND = {
+					FROM = { tag = PGR }
+					is_ai = yes
+				}
+			}
+			NOT = { has_country_flag = CHI_is_annexing_warlord }
+		}
+		
+		visible = {
+			is_neighbor_of = FROM
+			is_in_faction_with = FROM
+			has_war_together_with = FROM
+			FROM = { NOT = { tag = PRC tag = SHX } }
+		}
+
+		custom_cost_trigger = {
+			command_power > 19.9
+		}
+		custom_cost_text = CHI_integrate_warlords_cost
+		
+		days_re_enable = 1
+		days_remove = CHI_annex_warlord_days
+		
+		target_root_trigger = {
+			is_faction_leader = yes
+		}
+		
+		target_array = global.chinese_nations
+		 
+		modifier = {
+			political_power_cost = 0.5
+			command_power_gain = -0.25
+		}
+		 
+		complete_effect = {
+			hidden_effect = { add_command_power = -20 }
+			set_temp_variable = { time = 50 }
+			
+			if = {
+				limit = {
+					FROM = { 
+						is_subject_of = CHI
+					} 
+				}
+				
+				multiply_temp_variable = { time = 0.75 }
+			}
+
+			if = {
+				limit = {
+					FROM = { 
+						is_neighbor_of = JAP 
+						has_war_with = JAP
+					}
+				}
+				
+				multiply_temp_variable = { time = 0.75 }
+			}
+
+			if = {
+				limit = {
+					FROM = { 
+						tag = PGR
+					}
+				}
+				
+				multiply_temp_variable = { time = 0.2 }
+			}
+
+			if = {
+				limit = {
+					FROM = { 
+						tag = SDC
+					}
+				}
+				
+				multiply_temp_variable = { time = 0.5 }
+			}
+			
+			set_temp_variable = { surrender_mult = 1 }
+			subtract_from_temp_variable = { surrender_mult = FROM.surrender_progress }
+			multiply_temp_variable = { time = surrender_mult }
+			
+			set_temp_variable = { surrender_mult = 1 }
+			subtract_from_temp_variable = { surrender_mult = surrender_progress }
+			multiply_temp_variable = { time = surrender_mult }
+			
+			clamp_temp_variable = { var = time min = 7 }
+			
+			set_temp_variable = { CHI_annex_warlord_days = time }
+			set_variable = { CHI_annex_warlord_days = time }
+			
+			meta_effect = {
+				text = {
+					set_country_flag = { flag = CHI_is_annexing_warlord value = 1 days = [X] }
+				}
+				X = "[?time|0]"
+			}
+			set_country_flag = CHI_is_annexing_warlord_@FROM
+			
+		}
+
+		remove_effect = {
+			clr_country_flag = CHI_is_annexing_warlord
+			clr_country_flag = CHI_is_annexing_warlord_@FROM
+			clear_variable = CHI_annex_warlord_days
+			
+			add_political_power = 25
+			
+			if = {
+				limit = {
+					is_ai = yes
+				}
+				add_command_power = 20
+			}
+			
+			annex_country = {
+				target = FROM 
+				transfer_troops = yes
+			}
+			
+			#hidden_effect = {
+			#	remove_targeted_decision = {
+			#		decision = CHI_integrate_warlords
+			#		target = FROM
+			#	}
+			#}
+		}
+		
+		ai_will_do = {
+			base = 50
+			
+			modifier = {
+				add = ai_add
+				
+				set_temp_variable = { ai_add = FROM.surrender_progress }
+				multiply_temp_variable = { ai_add = 10 }
+			}
+			modifier = {
+				add = 2
+				FROM = { 
+					is_neighbor_of = JAP 
+					has_war_with = JAP
+				}
+			}
+			modifier = {
+				add = 250
+				
+				FROM = { tag = PGR }
+			}
+			modifier = {
+				add = 1
+				
+				FROM = {
+					NOT = {
+						tag = EHA
+						tag = SCC
+					}
+				}
+			}
+		}
+	}
+
+	PRC_integrate_SHX = {
+
+		icon = generic_operation
+		
+		allowed = { tag = PRC }
+		
+		highlight_states = { 
+			highlight_state_targets = {
+				state = var:FROM.capital
+			}
+		}
+		
+		available = {
+			hidden_trigger = { command_power > 19.9 }
+			OR = {
+				surrender_progress > 0.4
+				FROM = { surrender_progress > 0.25 }
+			}
+			NOT = { has_country_flag = PRC_is_annexing_warlord }
+		}
+		
+		visible = {
+			is_neighbor_of = FROM
+			is_in_faction_with = FROM
+			has_war_together_with = FROM
+			FROM = {
+				NOT = { is_subject_of = CHI }
+			}
+		}
+
+		custom_cost_trigger = {
+			command_power > 19.9
+		}
+		custom_cost_text = CHI_integrate_warlords_cost
+		
+		days_re_enable = 1
+		days_remove = PRC_annex_warlord_days
+		
+		target_root_trigger = {
+			is_in_faction = yes
+		}
+		
+		targets = { SHX }
+		 
+		modifier = {
+			political_power_cost = 0.5
+			command_power_gain = -0.25
+		}
+		 
+		complete_effect = {
+			set_country_flag = PRC_is_annexing_warlord
+			
+			hidden_effect = { add_command_power = -20 }
+			set_temp_variable = { time = 50 }
+			
+			if = {
+				limit = {
+					FROM = { 
+						is_neighbor_of = JAP 
+						has_war_with = JAP
+					}
+				}
+				
+				multiply_temp_variable = { time = 0.75 }
+			}
+			
+			set_temp_variable = { surrender_mult = 1 }
+			subtract_from_temp_variable = { surrender_mult = FROM.surrender_progress }
+			multiply_temp_variable = { time = surrender_mult }
+			
+			set_temp_variable = { surrender_mult = 1 }
+			subtract_from_temp_variable = { surrender_mult = surrender_progress }
+			multiply_temp_variable = { time = surrender_mult }
+			
+			clamp_temp_variable = { var = time min = 7 }
+			
+			set_temp_variable = { PRC_annex_warlord_days = time }
+			set_variable = { PRC_annex_warlord_days = time }
+		}
+
+		remove_effect = {
+			clr_country_flag = PRC_is_annexing_warlord
+			clear_variable = PRC_annex_warlord_days
+			
+			add_political_power = 25
+			
+			annex_country = {
+				target = FROM 
+				transfer_troops = yes
+			}
+			
+			#hidden_effect = {
+			#	remove_targeted_decision = {
+			#		decision = PRC_integrate_SHX
+			#		target = FROM
+			#	}
+			#}
+		}
+		
+		ai_will_do = {
+			base = 30
+			
+			modifier = {
+				add = ai_add
+				
+				set_temp_variable = { ai_add = FROM.surrender_progress }
+				multiply_temp_variable = { ai_add = 10 }
+			}
+		}
+	}
+}

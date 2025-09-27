@@ -1,0 +1,4284 @@
+
+ai_update_country_logic = {
+	if = {
+		limit = {
+			OR = { #enter countries here when they have ai_templates/TAG defined
+				has_country_flag = ai_country_logic
+				tag = CAN
+				tag = EGY
+				tag = ENG
+				tag = FRA
+				tag = GER
+				tag = ITA
+				tag = RAJ
+				tag = NEP
+				tag = SOV
+				tag = TUR
+				tag = USA
+				tag = AST
+				tag = CHI
+				tag = JAP
+				tag = YUG
+				tag = ROM
+				tag = BUL
+				tag = FIN
+				tag = RGR
+				tag = VIC
+				tag = HUN
+				tag = GRE
+				tag = NZL
+				tag = AFG
+				tag = PRC
+				tag = GXC
+				tag = SDC
+				tag = MAN
+				tag = DEN
+				tag = CZE
+				tag = SLO
+				tag = CRO
+				tag = ALB
+				tag = ETH
+				tag = IRQ
+				tag = SIA
+				tag = SWI
+				tag = HOL
+				tag = BEL
+				tag = BRA
+				tag = MEX
+				tag = IRE
+				tag = LIT
+				tag = LAT
+				tag = EST
+				tag = POL
+				tag = POR
+				tag = SWE
+				tag = NOR
+				tag = POR
+				tag = SAF
+				tag = PER
+				tag = MON
+				tag = ARG
+			}
+		}
+		set_country_flag = ai_country_logic
+		meta_effect = {
+			text = {
+				d_ai_logic/[TAG] = yes
+			}
+			TAG = "[Root.GetTag]"
+		}
+		
+	}
+	else_if = {
+		limit = {
+			original_tag = SPR
+		}
+		d_ai_logic/SPR = yes
+	}
+	else_if = {
+		limit = {
+			OR = {
+				tag = BMP
+				tag = LEB
+				tag = SYR
+				tag = SAU
+				tag = OMA
+				tag = YEM
+				tag = TAN
+				tag = FRI
+			}
+		}
+		
+		d_ai_logic/militias = yes
+		
+	}
+	else_if = {
+		limit = {
+			OR = {
+				tag = JOR
+				tag = TUN
+			}
+		}
+		
+		d_ai_logic/middle_east = yes
+		
+	}
+	else_if = {
+		limit = {
+			OR = {
+				tag = INS
+				tag = MAL
+				original_tag = BUR
+			}
+		}
+		
+		d_ai_logic/asian_colonies = yes
+		
+	}
+	else_if = {
+		limit = {
+			OR = {
+				original_tag = PHI
+			}
+		}
+		
+		d_ai_logic/asia = yes
+		
+	}
+	else_if = {
+		limit = {
+			OR = {
+				tag = SHX
+				tag = YUN
+				tag = YUT
+				tag = XIA
+			}
+		}
+		
+		d_ai_logic/warlords = yes
+		
+	}
+	else_if = {
+		limit = {
+			OR = {
+				tag = EHA
+				tag = SKC
+			}
+		}
+		
+		d_ai_logic/warlords_heavy = yes
+		
+	}
+	else_if = {
+		limit = {
+			OR = {
+				tag = ZXL
+				tag = MEN
+			}
+		}
+		
+		d_ai_logic/warlords_developed = yes
+		
+	}
+	else_if = {
+		limit = {
+			OR = {
+				tag = XSM
+				original_tag = SIK
+			}
+		}
+		
+		d_ai_logic/warlords_cavalry = yes
+		
+	}
+	else_if = {
+		limit = {
+			OR = {
+				tag = PGR
+				tag = SCC
+			}
+		}
+		
+		d_ai_logic/warlords_cavalry_heavy = yes
+		
+	}
+	
+	if = { #minors starting air production
+		limit = {
+			check_variable = { ai_template_skip = 0 }
+			check_variable = { ai_fighter_target_buffer = 0 } #no air production preset has been loaded
+			OR = {
+				has_country_flag = ai_start_air_production
+				ai_start_air_production = yes
+			}
+		}
+		
+		if = {
+			limit = {
+				NOT = { has_country_flag = ai_start_air_production }
+			}
+			log = "[Root.GetTag] | [GetYear] [GetMonth] | START AIR PRODUCTION" 
+			set_country_flag = ai_start_air_production
+		}
+		
+		ai_generic_air_production = yes
+	}
+	
+}
+d_ai_logic/GER = {
+	if = {
+		limit = {
+			check_variable = { ai_ignore_templates = 0 }
+		}
+		ai_garrison_templates/GER = yes 
+		ai_infantry_templates/GER = yes 
+		ai_heavy_infantry_templates/GER = yes 
+		ai_motorized_templates/GER = yes 
+		ai_light_armor_templates/GER = yes 
+		ai_light_armor_alt_templates/GER = yes
+		ai_medium_armor_templates/GER = yes 
+		ai_heavy_armor_templates/GER = yes 
+		ai_mountaineer_templates/GER = yes
+		ai_marine_templates/GER = yes
+		
+	}
+	
+	if = {
+		limit = {
+			check_variable = { ai_ignore_deployment = 0 }
+		}
+		
+		############################## BUILD ARMY STRATEGIES #############################
+		### they only get applied when AI has a role template or the template variable ###
+		# disable_build
+		# production_ratio 
+			
+		set_temp_variable = { BASE@role_infantry 				= 120 }
+		set_temp_variable = { BASE@role_light_infantry 			= 0  }
+		set_temp_variable = { BASE@role_heavy_infantry 			= 30 }
+		set_temp_variable = { BASE@role_garrison 				= 20 }
+		set_temp_variable = { BASE@role_cavalry 				= 0  }
+		set_temp_variable = { BASE@role_motorized 				= 4 }
+		set_temp_variable = { BASE@role_light_armor 			= 4  }
+		set_temp_variable = { BASE@role_light_armor_alt 		= 2  }
+		set_temp_variable = { BASE@role_medium_armor 			= 4 }
+		set_temp_variable = { BASE@role_medium_armor_alt 		= 0  }
+		set_temp_variable = { BASE@role_heavy_armor 			= 4  }
+		set_temp_variable = { BASE@role_heavy_armor_alt 		= 0  }
+		set_temp_variable = { BASE@role_marines 				= 0 }
+		set_temp_variable = { BASE@role_mountaineers 			= 4  }
+		
+		if = { #reduce unit want if capitulated or subject
+			limit = { OR = { has_capitulated = yes is_subject = yes } }
+			
+			set_temp_variable = { production_ratio = -0.8 }
+		}
+		
+		if = {
+			limit = {
+				has_country_flag = { flag = ai_light_armor_template value > 1 }
+			}
+			add_to_temp_variable = { BASE@role_motorized = 4 }
+			add_to_temp_variable = { BASE@role_light_armor = 2 }
+			add_to_temp_variable = { BASE@role_medium_armor = 4 }
+		}
+		
+		if = {
+			limit = {
+				num_divisions > 80
+			}
+			add_to_temp_variable = { BASE@role_mountaineers = 6 }
+		}
+			
+		if = {
+			limit = {
+				ai_GER_has_defeated_FRA = yes
+			}
+			add_to_temp_variable = { BASE@role_infantry = 14 }
+			add_to_temp_variable = { BASE@role_garrison = 30 }
+			add_to_temp_variable = { BASE@role_heavy_infantry = 30 }
+			add_to_temp_variable = { BASE@role_motorized = 4 }
+			add_to_temp_variable = { BASE@role_light_armor = 2 }
+			add_to_temp_variable = { BASE@role_medium_armor = 8 }
+		}
+		
+		if = {
+			limit = {
+				ai_GER_has_defeated_SOV = yes
+			}
+			add_to_temp_variable = { BASE@role_infantry = -24 }
+			add_to_temp_variable = { BASE@role_heavy_infantry = 10 }
+			add_to_temp_variable = { BASE@role_garrison = 8 }
+			add_to_temp_variable = { BASE@role_medium_armor = 10 }
+			add_to_temp_variable = { BASE@role_motorized = 16 }
+			add_to_temp_variable = { BASE@role_heavy_armor = 4 }
+			add_to_temp_variable = { BASE@role_marines = 12 }
+		}
+	}
+	
+	if = {
+		limit = {
+			check_variable = { ai_ignore_air_production = 0 }
+		}
+		
+		#set_temp_variable = { air_ratio_mic_factor = 0.1 } #0.1 = 10% more; works same way as ai_desired_planes modifier
+		#set_temp_variable = { air_ratio_mic_min = 10 }
+		#set_temp_variable = { air_ratio_max_unused_resource_limit_to_mic = 0.5 } #means ai makes ADDITIONAL!! use of 50% of free alu / ap capacity
+		
+		############################## BUILD PLANE STRATEGIES #############################
+		### they only get applied when AI has the air equipment and the necessary flags ###
+		
+		set_temp_variable = { RATIO@fighter_equipment 				= 150 }
+		set_temp_variable = { RATIO@fighter_alt_equipment 			=   0 }
+		set_temp_variable = { RATIO@interceptor_equipment 			=  70 }
+		set_temp_variable = { RATIO@mr_fighter_equipment 			=  40 }
+		set_temp_variable = { RATIO@heavy_fighter_equipment 		=  -50 }
+		
+		set_temp_variable = { RATIO@CAS_equipment 					=  100 }
+		set_temp_variable = { RATIO@twin_cas_equipment 				=   0 }
+		set_temp_variable = { RATIO@nav_bomber_equipment 			=  -50 }
+		set_temp_variable = { RATIO@tac_bomber_equipment 			=  -25 }
+		set_temp_variable = { RATIO@light_bomber_equipment 			=  -25 }
+		set_temp_variable = { RATIO@fast_bomber_equipment 			=  -25 }
+		set_temp_variable = { RATIO@quad_engine_bomber_equipment 	=  -75 }
+		
+		set_temp_variable = { RATIO@jet_fighter_equipment 			=   0 }
+		set_temp_variable = { RATIO@jet_mr_fighter_equipment 		=   0 }
+		set_temp_variable = { RATIO@jet_tac_bomber_equipment 		=   0 }
+		set_temp_variable = { RATIO@jet_strat_bomber_equipment 		=   0 }
+		
+		set_temp_variable = { RATIO@cv_fighter_equipment 			=   0 }
+		set_temp_variable = { RATIO@cv_nav_bomber_equipment 		=   0 }
+		set_temp_variable = { RATIO@cv_CAS_equipment 				=   0 }
+		
+	### FIGHTER TARGET 
+		
+		set_temp_variable = { ai_fighter_target_buffer = 600 }
+		set_temp_variable = { max_enemy_fighter_ratio = 4.0 }
+		
+		if = { limit = { check_variable = { FIGHTER_WEIGHT^num = 0 } }
+			clear_array = FIGHTER_WEIGHT
+			add_to_array = { FIGHTER_WEIGHT = 1.00 } 	#-- fighter_equipment
+			add_to_array = { FIGHTER_WEIGHT = 0.90 } 	#-- interceptor_equipment
+			add_to_array = { FIGHTER_WEIGHT = 0.80 } 	#-- mr_fighter_equipment
+			add_to_array = { FIGHTER_WEIGHT = 1.20 } 	#-- heavy_fighter_equipment
+			add_to_array = { FIGHTER_WEIGHT = 0.85 } 	#-- fighter_alt_equipment
+			add_to_array = { FIGHTER_WEIGHT = 1.50 } 	#-- jet_fighter_equipment
+		}
+		
+		#-- These values determine how many fighter types AI wants per strategic region; scaled by: matching_states/num_region_states"
+		add_to_temp_array = { REGION_FIGHTER_NEED = 200 } 	#-- home area
+		add_to_temp_array = { REGION_FIGHTER_NEED = 150 } 	#-- core
+		add_to_temp_array = { REGION_FIGHTER_NEED = 125 } 	#-- owned & controlled 
+		add_to_temp_array = { REGION_FIGHTER_NEED = 100 } 	#-- only controlled
+		
+		
+	### EXTRA FIGHTER PRODUCTION FOCUS 
+		
+		set_temp_variable = { enable_ratio = 1.2 } #if below this ratio, we increase fighter production
+		set_temp_variable = { minimum_ratio = 0.5 } #at this ratio we hit max extra production, listed below
+		
+		#-- These values get scaled between enable_ratio(0%) & minimum_ratio(100%)
+		add_to_temp_array = { MAX_EXTRA_FIGHTER_RATIO_MULT = 1.50 } 	#-- fighter_equipment
+		add_to_temp_array = { MAX_EXTRA_FIGHTER_RATIO_MULT = 0.75 } 	#-- interceptor_equipment
+		add_to_temp_array = { MAX_EXTRA_FIGHTER_RATIO_MULT = 0.25 } 	#-- mr_fighter_equipment
+		add_to_temp_array = { MAX_EXTRA_FIGHTER_RATIO_MULT = 0.15 } 	#-- heavy_fighter_equipment
+		add_to_temp_array = { MAX_EXTRA_FIGHTER_RATIO_MULT = 0.00 } 	#-- fighter_alt_equipment
+		add_to_temp_array = { MAX_EXTRA_FIGHTER_RATIO_MULT = 0.00 } 	#-- jet_fighter_equipment
+		
+		
+	##--- MISC 
+	
+		if = {
+			limit = {
+				has_war_with = ENG
+				OR = {
+					ENG = { is_player = yes }
+					OR = {
+						ai_GER_has_defeated_SOV = yes
+						AND = {
+							NOT = { has_war_with = SOV}
+							date < 1941.3.1
+							ai_GER_has_defeated_FRA = yes 
+						}
+					} 
+				}
+			}
+			
+			#battle of britain / focus UK
+			add_to_temp_variable = { RATIO@fighter = 40 }
+			add_to_temp_variable = { RATIO@mr_fighter_equipment = 30 }
+			add_to_temp_variable = { RATIO@interceptor_equipment = 20 }
+			add_to_temp_variable = { RATIO@nav_bomber_equipment = 40 }
+			add_to_temp_variable = { RATIO@CAS_equipment = -30 }
+			add_to_temp_variable = { RATIO@heavy_fighter_equipment = 40 }
+			add_to_temp_variable = { RATIO@tac_bomber_equipment = 60 }
+			add_to_temp_variable = { RATIO@light_bomber_equipment = 10 }
+			add_to_temp_variable = { RATIO@fast_bomber_equipment = 10 }
+			add_to_temp_variable = { RATIO@quad_engine_bomber_equipment = 25 }
+		}
+		
+		if = {
+			limit = {
+				ai_GER_has_defeated_SOV = yes 
+			}
+			
+			add_to_temp_variable = { RATIO@quad_engine_bomber_equipment = 50 }
+			add_to_temp_variable = { RATIO@tac_bomber_equipment = 25 }
+			add_to_temp_variable = { RATIO@nav_bomber_equipment = 25 }
+			add_to_temp_variable = { RATIO@CAS_equipment = -80 }
+			add_to_temp_variable = { RATIO@heavy_fighter_equipment = 40 }
+		}
+		
+		ai_update_air_production = yes
+		
+	}
+	
+	if = {
+		limit = {
+			check_variable = { ai_ignore_naval_production = 0 }
+		}
+				
+		### SHIPS ###########################
+		
+		ai_naval_CV/GER = yes
+		ai_naval_BB/GER = yes
+		ai_naval_CL/GER = yes
+		
+		ai_naval_DD/generic = yes
+		ai_naval_SS/generic = yes
+		
+		ai_switch_escort_to_destroyer = yes
+	
+		## CONVOY TARGET
+		set_temp_variable = { ai_target_convoys = 500 }
+		
+		if = {
+			limit = {
+				has_war_with = ENG 
+				enemies_naval_strength_ratio > 1
+			}
+			subtract_from_temp_variable = { ai_target_convoys = 200 }
+		}
+		
+		############################### NAVAL ROLE NEEDS ###############################
+		### they always apply but they have no effect if the ai has no suitable ship ###
+		
+		set_temp_variable = { RATIO@naval_carrier 				 = 1 }
+		set_temp_variable = { RATIO@naval_capital_bb 			 = 1 }
+		set_temp_variable = { RATIO@naval_capital_bc 			 = 2 }
+		set_temp_variable = { RATIO@naval_cruiser_heavy 		 = 4 }
+		set_temp_variable = { RATIO@naval_cruiser_light 		 = 6 }
+		set_temp_variable = { RATIO@naval_screen 				 = 30 }
+		set_temp_variable = { RATIO@naval_submarine 			 = 5 }
+		
+	##--- MISC 
+	
+		if = { #focus on submarines
+			limit = {
+				has_war = yes
+			}
+				
+			set_temp_variable = { RATIO@naval_carrier 				 = 0 }
+			set_temp_variable = { RATIO@naval_capital_bb 			 = 0 }
+			set_temp_variable = { RATIO@naval_capital_bc 			 = 0 }
+			set_temp_variable = { RATIO@naval_cruiser_heavy 		 = 0 }
+			set_temp_variable = { RATIO@naval_cruiser_light 		 = 0 }
+			set_temp_variable = { RATIO@naval_screen 				 = 0 }
+			
+			set_temp_variable = { RATIO@naval_submarine 			 = 500 }
+		}
+		else = {
+			set_temp_variable = { min_dockyard@nrm_ship_hull_carrier = 3 }
+			set_temp_variable = { min_dockyard@nrm_ship_hull_capital = 3 }
+		}
+		
+		if = { #naval buildup after soviet defeat
+			limit = {
+				ai_GER_has_defeated_SOV = yes
+			}
+				
+			set_temp_variable = { min_dockyard@nrm_ship_hull_carrier = 12 }
+			set_temp_variable = { min_dockyard@nrm_ship_hull_capital = 9 }
+			
+			set_temp_variable = { RATIO@naval_carrier 				 = 2 }
+			set_temp_variable = { RATIO@naval_capital_bb 			 = 4 }
+			set_temp_variable = { RATIO@naval_capital_bc 			 = 2 }
+			set_temp_variable = { RATIO@naval_cruiser_heavy 		 = 4 }
+			set_temp_variable = { RATIO@naval_cruiser_light 		 = 6 }
+			set_temp_variable = { RATIO@naval_screen 				 = 35 }
+			set_temp_variable = { RATIO@naval_submarine 			 = 5 }
+			
+		}
+					
+		ai_update_ship_production = yes
+	}
+	
+	
+	ai_templates_on_end_effect = yes
+}
+
+
+
+d_ai_logic/ITA = {
+	#set_temp_variable = { ai_template_skip = 1 }
+	
+	if = {
+		limit = {
+			check_variable = { ai_ignore_templates = 0 }
+		}
+		ai_infantry_templates/ITA = yes
+		ai_light_infantry_templates/ITA = yes 
+		ai_garrison_templates/ITA = yes
+		ai_mountaineer_templates/ITA = yes
+		ai_motorized_templates/ITA = yes
+		ai_marine_templates/ITA = yes
+		ai_light_armor_templates/ITA = yes
+		ai_medium_armor_templates/ITA = yes
+		ai_heavy_armor_templates/ITA = yes
+		
+	}
+	
+	if = {
+		limit = {
+			check_variable = { ai_ignore_deployment = 0 }
+		}
+			
+		############################## BUILD ARMY STRATEGIES #############################
+		### they only get applied when AI has a role template or the template variable ###
+		# disable_build
+		# production_ratio 
+		
+		set_temp_variable = { BASE@role_infantry 				= 50 }
+		set_temp_variable = { BASE@role_light_infantry 			= 14 }
+		set_temp_variable = { BASE@role_heavy_infantry 			= 0 }
+		set_temp_variable = { BASE@role_garrison 				= 34 }
+		set_temp_variable = { BASE@role_cavalry 				= 0 }
+		set_temp_variable = { BASE@role_motorized 				= 8 }
+		set_temp_variable = { BASE@role_light_armor 			= 2 }
+		set_temp_variable = { BASE@role_light_armor_alt 		= 0 }
+		set_temp_variable = { BASE@role_medium_armor 			= 4 }
+		set_temp_variable = { BASE@role_medium_armor_alt 		= 0 }
+		set_temp_variable = { BASE@role_heavy_armor 			= 2 }
+		set_temp_variable = { BASE@role_heavy_armor_alt 		= 0 }
+		set_temp_variable = { BASE@role_marines 				= 4 }
+		set_temp_variable = { BASE@role_mountaineers 			= 8 }
+		
+		if = { #reduce unit want if capitulated or subject
+			limit = { OR = { has_capitulated = yes is_subject = yes } }
+			
+			set_temp_variable = { production_ratio = -0.8 }
+		}
+			
+		if = {
+			limit = {
+				controls_state = 853
+				controls_state = 118
+				controls_state = 116
+			}
+			
+			add_to_temp_variable = { BASE@role_motorized = 6 }
+			add_to_temp_variable = { BASE@role_medium_armor = 2 }
+		}
+	}
+	
+	if = {
+		limit = {
+			check_variable = { ai_ignore_air_production = 0 }
+		}
+		
+		############################## BUILD PLANE STRATEGIES #############################
+		### they only get applied when AI has the air equipment and the necessary flags ###
+		
+		set_temp_variable = { RATIO@fighter_equipment 				= 100 }
+		set_temp_variable = { RATIO@fighter_alt_equipment 			=   0 }
+		set_temp_variable = { RATIO@interceptor_equipment 			=  40 }
+		set_temp_variable = { RATIO@mr_fighter_equipment 			=   0 }
+		set_temp_variable = { RATIO@heavy_fighter_equipment 		=  15 }
+		
+		set_temp_variable = { RATIO@CAS_equipment 					=  0 }
+		set_temp_variable = { RATIO@twin_cas_equipment 				=  -75 }
+		set_temp_variable = { RATIO@nav_bomber_equipment 			=  -30 }
+		set_temp_variable = { RATIO@tac_bomber_equipment 			=  0 }
+		set_temp_variable = { RATIO@light_bomber_equipment 			=  -30 }
+		set_temp_variable = { RATIO@fast_bomber_equipment 			=  0 }
+		set_temp_variable = { RATIO@quad_engine_bomber_equipment 	=  0 }
+		
+		set_temp_variable = { RATIO@jet_fighter_equipment 			=   0 }
+		set_temp_variable = { RATIO@jet_mr_fighter_equipment 		=   0 }
+		set_temp_variable = { RATIO@jet_tac_bomber_equipment 		=   0 }
+		set_temp_variable = { RATIO@jet_strat_bomber_equipment 		=   0 }
+		
+		set_temp_variable = { RATIO@cv_fighter_equipment 			=   0 }
+		set_temp_variable = { RATIO@cv_nav_bomber_equipment 		=   0 }
+		set_temp_variable = { RATIO@cv_CAS_equipment 				=   0 }
+		
+	### FIGHTER TARGET 
+		
+		set_temp_variable = { ai_fighter_target_buffer = 500 }
+		set_temp_variable = { max_enemy_fighter_ratio = 4.0 }
+		
+		if = { limit = { check_variable = { FIGHTER_WEIGHT^num = 0 } }
+			clear_array = FIGHTER_WEIGHT
+			add_to_array = { FIGHTER_WEIGHT = 1.00 } 	#-- fighter_equipment
+			add_to_array = { FIGHTER_WEIGHT = 0.90 } 	#-- interceptor_equipment
+			add_to_array = { FIGHTER_WEIGHT = 0.80 } 	#-- mr_fighter_equipment
+			add_to_array = { FIGHTER_WEIGHT = 1.20 } 	#-- heavy_fighter_equipment
+			add_to_array = { FIGHTER_WEIGHT = 0.85 } 	#-- fighter_alt_equipment
+			add_to_array = { FIGHTER_WEIGHT = 1.50 } 	#-- jet_fighter_equipment
+		}
+		
+		#-- These values determine how many fighter types AI wants per strategic region; scaled by: matching_states/num_region_states"
+		add_to_temp_array = { REGION_FIGHTER_NEED = 200 } 	#-- home area
+		add_to_temp_array = { REGION_FIGHTER_NEED = 150 } 	#-- core
+		add_to_temp_array = { REGION_FIGHTER_NEED = 125 } 	#-- owned & controlled 
+		add_to_temp_array = { REGION_FIGHTER_NEED = 100 } 	#-- only controlled
+		
+		
+	### EXTRA FIGHTER PRODUCTION FOCUS 
+		
+		set_temp_variable = { enable_ratio = 1.2 } #if below this ratio, we increase fighter production
+		set_temp_variable = { minimum_ratio = 0.5 } #at this ratio we hit max extra production, listed below
+		
+		#-- These values get scaled between enable & maximum
+		add_to_temp_array = { MAX_EXTRA_FIGHTER_RATIO_MULT = 1.50 } 	#-- fighter_equipment
+		add_to_temp_array = { MAX_EXTRA_FIGHTER_RATIO_MULT = 0.00 } 	#-- interceptor_equipment
+		add_to_temp_array = { MAX_EXTRA_FIGHTER_RATIO_MULT = 0.25 } 	#-- mr_fighter_equipment
+		add_to_temp_array = { MAX_EXTRA_FIGHTER_RATIO_MULT = 0.15 } 	#-- heavy_fighter_equipment
+		add_to_temp_array = { MAX_EXTRA_FIGHTER_RATIO_MULT = 0.00 } 	#-- fighter_alt_equipment
+		add_to_temp_array = { MAX_EXTRA_FIGHTER_RATIO_MULT = 0.00 } 	#-- jet_fighter_equipment
+		
+		
+	##--- MISC 
+	
+		ai_update_air_production = yes
+		
+	}
+	
+	if = {
+		limit = {
+			check_variable = { ai_ignore_naval_production = 0 }
+		}
+				
+		### SHIPS ###########################
+		
+		ai_naval_CV/ITA = yes
+		ai_naval_BB/ITA = yes
+		ai_naval_CL/ITA = yes
+		
+		ai_naval_DD/generic = yes
+		ai_naval_SS/generic = yes
+		
+		ai_switch_escort_to_destroyer = yes
+		
+		## CONVOY TARGET
+		set_temp_variable = { ai_target_convoys = 400 }
+		
+		############################### NAVAL ROLE NEEDS ###############################
+		### they always apply but they have no effect if the ai has no suitable ship ###
+		
+		set_temp_variable = { RATIO@naval_carrier 				 = 1 }
+		set_temp_variable = { RATIO@naval_capital_bb 			 = 1 }
+		set_temp_variable = { RATIO@naval_cruiser_heavy 		 = 4 }
+		set_temp_variable = { RATIO@naval_cruiser_light 		 = 6 }
+		set_temp_variable = { RATIO@naval_screen 				 = 30 }
+		set_temp_variable = { RATIO@naval_submarine 			 = 5 }
+		
+	##--- MISC 
+			
+		ai_update_ship_production = yes
+	}
+	ai_templates_on_end_effect = yes
+}
+
+
+
+
+d_ai_logic/SOV = {
+	#set_temp_variable = { ai_template_skip = 1 }
+	
+	if = {
+		limit = {
+			check_variable = { ai_ignore_templates = 0 }
+		}
+		ai_garrison_templates/SOV = yes 
+		ai_infantry_templates/SOV = yes 
+		ai_assault_infantry_templates/SOV = yes
+		ai_heavy_infantry_templates/SOV = yes 
+		ai_motorized_templates/SOV = yes 
+		ai_light_armor_templates/SOV = yes 
+		ai_medium_armor_templates/SOV = yes 
+		ai_heavy_armor_templates/SOV = yes 
+		ai_mountaineer_templates/SOV = yes
+		ai_marine_templates/SOV = yes
+		
+		### SHIPS ###########################
+		
+		ai_naval_BB/SOV = yes
+		ai_naval_CA/SOV = yes
+		ai_naval_CL/SOV = yes
+		
+		## CONVOY TARGET
+		set_temp_variable = { ai_target_convoys = 1200 }
+	}
+	
+	if = {
+		limit = {
+			check_variable = { ai_ignore_deployment = 0 }
+		}
+			
+		############################## BUILD ARMY STRATEGIES #############################
+		### they only get applied when AI has a role template or the template variable ###
+		# disable_build
+		# production_ratio 
+		
+		set_temp_variable = { BASE@role_infantry 				= 160 }
+		set_temp_variable = { BASE@role_light_infantry 			= 0 }
+		set_temp_variable = { BASE@role_heavy_infantry 			= 0 }
+		set_temp_variable = { BASE@role_assault_infantry 		= 40 }
+		set_temp_variable = { BASE@role_garrison 				= 20 }
+		set_temp_variable = { BASE@role_cavalry 				= 0 }
+		set_temp_variable = { BASE@role_motorized 				= 12 }
+		set_temp_variable = { BASE@role_light_armor 			= 16 }
+		set_temp_variable = { BASE@role_light_armor_alt 		= 0 }
+		set_temp_variable = { BASE@role_medium_armor 			= 24 }
+		set_temp_variable = { BASE@role_medium_armor_alt 		= 0 }
+		set_temp_variable = { BASE@role_heavy_armor 			= 8 }
+		set_temp_variable = { BASE@role_heavy_armor_alt 		= 0 }
+		set_temp_variable = { BASE@role_marines 				= 0 }
+		set_temp_variable = { BASE@role_mountaineers 			= 12 }
+		
+		if = { #reduce unit want if capitulated or subject
+			limit = { OR = { has_capitulated = yes is_subject = yes } }
+			
+			set_temp_variable = { production_ratio = -0.85 }
+		}
+			
+		if = {
+			limit = {
+				date > 1939.6.1
+			}
+			multiply_temp_variable = { BASE@role_light_armor = 0.5 }
+			add_to_temp_variable = { BASE@role_medium_armor = 6 }
+			add_to_temp_variable = { BASE@role_heavy_infantry = 40 }
+		}
+		
+		if = {
+			limit = {
+				OR = {
+					has_war_with = JAP
+					has_war_with = ENG
+					has_war_with = USA
+				}
+			}
+			add_to_temp_variable = { BASE@role_marines = 8 }
+		}
+	}
+	if = {
+		limit = {
+			check_variable = { ai_ignore_air_production = 0 }
+		}
+		
+		############################## BUILD PLANE STRATEGIES #############################
+		### they only get applied when AI has the air equipment and the necessary flags ###
+		
+		set_temp_variable = { RATIO@fighter_equipment 				= 100 }
+		set_temp_variable = { RATIO@fighter_alt_equipment 			= 100 }
+		set_temp_variable = { RATIO@interceptor_equipment 			=  50 }
+		set_temp_variable = { RATIO@mr_fighter_equipment 			=   0 }
+		set_temp_variable = { RATIO@heavy_fighter_equipment 		=   0 }
+		
+		set_temp_variable = { RATIO@CAS_equipment 					=  120 }
+		set_temp_variable = { RATIO@twin_cas_equipment 				=   0 }
+		set_temp_variable = { RATIO@nav_bomber_equipment 			=   0 }
+		set_temp_variable = { RATIO@tac_bomber_equipment 			=  -40 }
+		set_temp_variable = { RATIO@light_bomber_equipment 			=   0 }
+		set_temp_variable = { RATIO@fast_bomber_equipment 			=   0 }
+		set_temp_variable = { RATIO@quad_engine_bomber_equipment 	=   0 }
+		
+		set_temp_variable = { RATIO@jet_fighter_equipment 			=   0 }
+		set_temp_variable = { RATIO@jet_mr_fighter_equipment 		=   0 }
+		set_temp_variable = { RATIO@jet_tac_bomber_equipment 		=   0 }
+		set_temp_variable = { RATIO@jet_strat_bomber_equipment 		=   0 }
+		
+		set_temp_variable = { RATIO@cv_fighter_equipment 			=   0 }
+		set_temp_variable = { RATIO@cv_nav_bomber_equipment 		=   0 }
+		set_temp_variable = { RATIO@cv_CAS_equipment 				=   0 }
+		
+	### FIGHTER TARGET 
+		
+		set_temp_variable = { ai_fighter_target_buffer = 600 }
+		set_temp_variable = { max_enemy_fighter_ratio = 3.0 }
+		
+		if = { limit = { check_variable = { FIGHTER_WEIGHT^num = 0 } }
+			clear_array = FIGHTER_WEIGHT
+			add_to_array = { FIGHTER_WEIGHT = 0.70 } 	#-- fighter_equipment
+			add_to_array = { FIGHTER_WEIGHT = 0.60 } 	#-- interceptor_equipment
+			add_to_array = { FIGHTER_WEIGHT = 0.50 } 	#-- mr_fighter_equipment
+			add_to_array = { FIGHTER_WEIGHT = 1.00 } 	#-- heavy_fighter_equipment
+			add_to_array = { FIGHTER_WEIGHT = 0.70 } 	#-- fighter_alt_equipment
+			add_to_array = { FIGHTER_WEIGHT = 1.50 } 	#-- jet_fighter_equipment
+		}
+		
+		#-- These values determine how many fighter types AI wants per strategic region; scaled by: matching_states/num_region_states"
+		add_to_temp_array = { REGION_FIGHTER_NEED = 200 } 	#-- home area
+		add_to_temp_array = { REGION_FIGHTER_NEED = 150 } 	#-- core
+		add_to_temp_array = { REGION_FIGHTER_NEED = 125 } 	#-- owned & controlled 
+		add_to_temp_array = { REGION_FIGHTER_NEED = 100 } 	#-- only controlled
+		
+		
+	### EXTRA FIGHTER PRODUCTION FOCUS 
+		
+		set_temp_variable = { enable_ratio = 1.5 } #if below this ratio, we increase fighter production
+		set_temp_variable = { minimum_ratio = 0.75 } #at this ratio we hit max extra production, listed below
+		
+		#-- These values get scaled between enable & maximum
+		add_to_temp_array = { MAX_EXTRA_FIGHTER_RATIO_MULT = 10.00 } 	#-- fighter_equipment
+		add_to_temp_array = { MAX_EXTRA_FIGHTER_RATIO_MULT = 10.00 } 	#-- interceptor_equipment
+		add_to_temp_array = { MAX_EXTRA_FIGHTER_RATIO_MULT = 0.00 } 	#-- mr_fighter_equipment
+		add_to_temp_array = { MAX_EXTRA_FIGHTER_RATIO_MULT = 0.00 } 	#-- heavy_fighter_equipment
+		add_to_temp_array = { MAX_EXTRA_FIGHTER_RATIO_MULT = 10.00 } 	#-- fighter_alt_equipment
+		add_to_temp_array = { MAX_EXTRA_FIGHTER_RATIO_MULT = 0.00 } 	#-- jet_fighter_equipment
+		
+	##--- MISC 
+		
+		if = {
+			limit = {
+					NOT = { has_country_flag = ai_tech/fighter_alt_equipment } #Yak-1 coincides with Lagg-1
+			}
+			add_to_temp_variable = { RATIO@fighter_equipment = -50 }
+		}
+	
+		ai_update_air_production = yes
+		
+	}
+	
+	if = {
+		limit = {
+			check_variable = { ai_ignore_research = 0 }
+		}
+
+		set_temp_variable = { MULT:land_doctrine = 1.0 } 
+		set_temp_variable = { MULT:air_doctrine = 1.0 } 
+		set_temp_variable = { MULT:navy_doctrine = 0.05 } 
+	}
+	
+	ai_templates_on_end_effect = yes
+}
+
+
+
+
+d_ai_logic/USA = {
+	#set_temp_variable = { ai_template_skip = 1 }
+	
+	if = {
+		limit = {
+			check_variable = { ai_ignore_templates = 0 }
+		}
+		ai_infantry_templates/USA = yes 
+		ai_heavy_infantry_templates/USA = yes 
+		ai_garrison_templates/USA = yes 
+		ai_motorized_templates/USA = yes
+		ai_marine_templates/USA = yes
+		ai_light_armor_templates/USA = yes  
+		ai_medium_armor_templates/USA = yes 
+		ai_heavy_armor_templates/USA = yes
+		
+	}
+	
+	if = {
+		limit = {
+			check_variable = { ai_ignore_deployment = 0 }
+		}
+			
+		############################## BUILD ARMY STRATEGIES #############################
+		### they only get applied when AI has a role template or the template variable ###
+		# disable_build
+		# production_ratio 
+		
+		set_temp_variable = { BASE@role_infantry 				= 50 }
+		set_temp_variable = { BASE@role_light_infantry 			= 0  }
+		set_temp_variable = { BASE@role_heavy_infantry 			= 80 }
+		set_temp_variable = { BASE@role_garrison 				= 40 }
+		set_temp_variable = { BASE@role_cavalry 				= 0  }
+		set_temp_variable = { BASE@role_motorized 				= 30 }
+		set_temp_variable = { BASE@role_light_armor 			= 8  }
+		set_temp_variable = { BASE@role_light_armor_alt 		= 0  }
+		set_temp_variable = { BASE@role_medium_armor 			= 12 }
+		set_temp_variable = { BASE@role_medium_armor_alt 		= 0  }
+		set_temp_variable = { BASE@role_heavy_armor 			= 4  }
+		set_temp_variable = { BASE@role_heavy_armor_alt 		= 0  }
+		set_temp_variable = { BASE@role_marines 				= 12 }
+		set_temp_variable = { BASE@role_mountaineers 			= 0  }
+		
+		if = { #reduce unit want if capitulated or subject
+			limit = { OR = { has_capitulated = yes is_subject = yes } }
+			
+			set_temp_variable = { production_ratio = -0.8 }
+		}
+			
+		if = {
+			limit = {
+				date > 1942.1.1
+				num_divisions > 120 
+			}
+			
+			add_to_temp_variable = { BASE@role_infantry = -10 }
+			add_to_temp_variable = { BASE@role_motorized = 10 }
+			add_to_temp_variable = { BASE@role_light_armor = 4 }
+		}
+		
+		if = {
+			limit = {
+				date > 1943.1.1
+				num_divisions > 140 
+			}
+			
+			add_to_temp_variable = { BASE@role_heavy_infantry = -20 }
+			add_to_temp_variable = { BASE@role_motorized = 20 }
+		}
+		
+		if = {
+			limit = {
+				num_of_military_factories > 280
+			}
+			
+			add_to_temp_variable = { BASE@role_medium_armor = 8 }
+			add_to_temp_variable = { BASE@role_light_armor = -4 }
+		}
+		
+		if = {
+			limit = {
+				num_of_military_factories > 340
+			}
+			
+			add_to_temp_variable = { BASE@role_medium_armor = 12 }
+			add_to_temp_variable = { BASE@role_light_armor = -4 }
+		}
+	}
+	
+	if = {
+		limit = {
+			check_variable = { ai_ignore_air_production = 0 }
+		}
+		
+		############################## BUILD PLANE STRATEGIES #############################
+		### they only get applied when AI has the air equipment and the necessary flags ###
+		
+		set_temp_variable = { RATIO@fighter_equipment 				= 100 }
+		set_temp_variable = { RATIO@fighter_alt_equipment 			=   0 }
+		set_temp_variable = { RATIO@interceptor_equipment 			=   0 }
+		set_temp_variable = { RATIO@mr_fighter_equipment 			=  10 }
+		set_temp_variable = { RATIO@heavy_fighter_equipment 		=  40 }
+		
+		set_temp_variable = { RATIO@CAS_equipment 					=  -20 }
+		set_temp_variable = { RATIO@twin_cas_equipment 				=  0 }
+		set_temp_variable = { RATIO@nav_bomber_equipment 			=  -60 }
+		set_temp_variable = { RATIO@tac_bomber_equipment 			=  0 }
+		set_temp_variable = { RATIO@light_bomber_equipment 			=  -40 }
+		set_temp_variable = { RATIO@fast_bomber_equipment 			=  0 }
+		set_temp_variable = { RATIO@quad_engine_bomber_equipment 	=  20 }
+		
+		set_temp_variable = { RATIO@jet_fighter_equipment 			=   0 }
+		set_temp_variable = { RATIO@jet_mr_fighter_equipment 		=   0 }
+		set_temp_variable = { RATIO@jet_tac_bomber_equipment 		=   0 }
+		set_temp_variable = { RATIO@jet_strat_bomber_equipment 		=   0 }
+		
+		set_temp_variable = { RATIO@cv_fighter_equipment 			=   0 }
+		set_temp_variable = { RATIO@cv_nav_bomber_equipment 		=   0 }
+		set_temp_variable = { RATIO@cv_CAS_equipment 				=   0 }
+		
+	### FIGHTER TARGET 
+		
+		set_temp_variable = { ai_fighter_target_buffer = 600 }
+		set_temp_variable = { max_enemy_fighter_ratio = 4.0 }
+		
+		if = { limit = { check_variable = { FIGHTER_WEIGHT^num = 0 } }
+			clear_array = FIGHTER_WEIGHT
+			add_to_array = { FIGHTER_WEIGHT = 1.00 } 	#-- fighter_equipment
+			add_to_array = { FIGHTER_WEIGHT = 0.90 } 	#-- interceptor_equipment
+			add_to_array = { FIGHTER_WEIGHT = 0.80 } 	#-- mr_fighter_equipment
+			add_to_array = { FIGHTER_WEIGHT = 1.20 } 	#-- heavy_fighter_equipment
+			add_to_array = { FIGHTER_WEIGHT = 0.85 } 	#-- fighter_alt_equipment
+			add_to_array = { FIGHTER_WEIGHT = 1.50 } 	#-- jet_fighter_equipment
+		}
+		
+		#-- These values determine how many fighter types AI wants per strategic region; scaled by: matching_states/num_region_states"
+		add_to_temp_array = { REGION_FIGHTER_NEED = 200 } 	#-- home area
+		add_to_temp_array = { REGION_FIGHTER_NEED = 150 } 	#-- core
+		add_to_temp_array = { REGION_FIGHTER_NEED = 125 } 	#-- owned & controlled 
+		add_to_temp_array = { REGION_FIGHTER_NEED = 100 } 	#-- only controlled
+		
+		
+	### EXTRA FIGHTER PRODUCTION FOCUS 
+		
+		set_temp_variable = { enable_ratio = 1.2 } #if below this ratio, we increase fighter production
+		set_temp_variable = { minimum_ratio = 0.5 } #at this ratio we hit max extra production, listed below
+		
+		#-- These values get scaled between enable & maximum
+		add_to_temp_array = { MAX_EXTRA_FIGHTER_RATIO_MULT = 1.50 } 	#-- fighter_equipment
+		add_to_temp_array = { MAX_EXTRA_FIGHTER_RATIO_MULT = 0.00 } 	#-- interceptor_equipment
+		add_to_temp_array = { MAX_EXTRA_FIGHTER_RATIO_MULT = 0.25 } 	#-- mr_fighter_equipment
+		add_to_temp_array = { MAX_EXTRA_FIGHTER_RATIO_MULT = 0.15 } 	#-- heavy_fighter_equipment
+		add_to_temp_array = { MAX_EXTRA_FIGHTER_RATIO_MULT = 0.00 } 	#-- fighter_alt_equipment
+		add_to_temp_array = { MAX_EXTRA_FIGHTER_RATIO_MULT = 0.00 } 	#-- jet_fighter_equipment
+		
+		
+	##--- MISC 
+		if = {
+			limit = {
+				check_variable = { ai_fighter_target_ratio > 0.75 }
+			}
+			add_to_temp_variable = { RATIO@quad_engine_bomber_equipment = 10 }
+		}
+		if = {
+			limit = {
+				check_variable = { ai_fighter_target_ratio > 1 }
+			}
+			add_to_temp_variable = { RATIO@quad_engine_bomber_equipment = 10 }
+		}
+		if = {
+			limit = {
+				check_variable = { ai_fighter_target_ratio > 1.25 }
+			}
+			add_to_temp_variable = { RATIO@quad_engine_bomber_equipment = 20 }
+		}
+			
+		ai_update_air_production = yes
+		
+	}
+	
+	if = {
+		limit = {
+			check_variable = { ai_ignore_naval_production = 0 }
+		}
+			
+		### SHIPS ###########################
+		
+		ai_naval_CV/USA = yes
+		ai_naval_BB/USA = yes
+		ai_naval_CA/USA = yes
+		ai_naval_CL/USA = yes
+		
+		ai_naval_DD/generic = yes
+		ai_naval_SS/generic = yes
+		
+		ai_switch_escort_to_destroyer = yes
+		
+		## CONVOY TARGET
+		set_temp_variable = { ai_target_convoys = 1500 }
+		
+		############################### NAVAL ROLE NEEDS ###############################
+		### they always apply but they have no effect if the ai has no suitable ship ###
+		
+		set_temp_variable = { RATIO@naval_carrier 				 = 4 }
+		set_temp_variable = { RATIO@naval_capital_bb 			 = 2 }
+		set_temp_variable = { RATIO@naval_cruiser_heavy 		 = 6 }
+		set_temp_variable = { RATIO@naval_cruiser_light 		 = 8 }
+		set_temp_variable = { RATIO@naval_screen 				 = 45 }
+		set_temp_variable = { RATIO@naval_submarine 			 = 10 }
+		
+	##--- MISC 
+	
+		set_temp_variable = { RATIO@naval_carrier 				 = 1 }
+		set_temp_variable = { RATIO@naval_capital_bb 			 = 1 }
+		set_temp_variable = { min_dockyard@nrm_ship_hull_capital = 9 }
+		set_temp_variable = { min_dockyard@nrm_ship_hull_carrier = 9 }
+		
+		if = {
+			limit = {
+				has_country_flag = HSD_USA_CV_essex
+			}
+			set_temp_variable = { min_dockyard@nrm_ship_hull_carrier = 12 }
+		}
+		
+		ai_update_ship_production = yes
+	}
+	
+	ai_templates_on_end_effect = yes
+}
+
+
+
+
+d_ai_logic/JAP = {
+
+	if = {
+		limit = {
+			check_variable = { ai_ignore_templates = 0 }
+		}
+		ai_infantry_templates/JAP = yes 
+		ai_marine_templates/JAP = yes 
+		ai_cavalry_templates/JAP = yes
+		ai_garrison_templates/JAP = yes
+		ai_light_infantry_templates/JAP = yes
+		ai_motorized_templates/JAP = yes
+		ai_light_armor_templates/JAP = yes
+		ai_medium_armor_templates/JAP = yes
+		ai_medium_armor_alt_templates/JAP = yes
+		
+		#EAI_motorized_templates/JAP = yes 
+		
+	}
+	
+	if = {
+		limit = {
+			check_variable = { ai_ignore_deployment = 0 }
+		}
+			
+		############################## BUILD ARMY STRATEGIES #############################
+		### they only get applied when AI has a role template or the template variable ###
+		# disable_build
+		# production_ratio 
+		
+		set_temp_variable = { BASE@role_infantry 				= 60 }
+		set_temp_variable = { BASE@role_light_infantry 			= 20 }
+		set_temp_variable = { BASE@role_heavy_infantry 			= 0 }
+		set_temp_variable = { BASE@role_garrison 				= 20 }
+		set_temp_variable = { BASE@role_cavalry 				= 0 }
+		set_temp_variable = { BASE@role_motorized 				= 4 }
+		set_temp_variable = { BASE@role_light_armor 			= 6 }
+		set_temp_variable = { BASE@role_light_armor_alt 		= 0 }
+		set_temp_variable = { BASE@role_medium_armor 			= 4 }
+		set_temp_variable = { BASE@role_medium_armor_alt 		= 2 }
+		set_temp_variable = { BASE@role_heavy_armor 			= 0 }
+		set_temp_variable = { BASE@role_heavy_armor_alt 		= 0 }
+		set_temp_variable = { BASE@role_marines 				= 6 }
+		set_temp_variable = { BASE@role_mountaineers 			= 0 }
+		
+		if = { #reduce unit want if capitulated or subject
+			limit = { OR = { has_capitulated = yes is_subject = yes } }
+			
+			set_temp_variable = { production_ratio = -0.8 }
+		}
+			
+		if = {
+			limit = {
+				date > 1936.8.1
+				OR = {
+					date < 1938.1.1
+					has_war_with = CHI 
+				}
+			}
+			add_to_temp_variable = { BASE@role_cavalry = 8 }
+			add_to_temp_variable = { BASE@role_light_infantry = 4 }
+		}
+		
+		if = {
+			limit = {
+				ai_JAP_has_defeated_CHI = yes
+			}
+			if = {
+				limit = {
+					OR = {
+						has_game_rule = {
+							rule = JAP_ai_behavior
+							option = SOUTHERN
+						}
+						has_game_rule = {
+							rule = JAP_ai_behavior
+							option = SOUTHERN_ALTERNATE
+						}
+					}
+				}
+				add_to_temp_variable = { BASE@role_marines = 4 }
+			}
+			if = {
+				limit = {
+					OR = {
+						has_game_rule = {
+							rule = JAP_ai_behavior
+							option = NORTHERN
+						}
+						has_game_rule = {
+							rule = JAP_ai_behavior
+							option = NORTHERN_ALTERNATE
+						}
+					}
+				}
+				add_to_temp_variable = { BASE@role_infantry = 4 }
+			}
+			add_to_temp_variable = { BASE@role_garrison = 22 }
+			add_to_temp_variable = { BASE@role_cavalry = 4 }
+			add_to_temp_variable = { BASE@role_infantry = 8 }
+			add_to_temp_variable = { BASE@role_light_infantry = 16 }
+		}
+		
+		if = {
+			limit = {
+				OR = {
+					date > 1941.3.1
+					has_war_with = USA 
+					has_war_with = ENG 
+					has_war_with = SOV
+				}
+			}
+			if = {
+				limit = {
+					OR = {
+						has_game_rule = {
+							rule = JAP_ai_behavior
+							option = SOUTHERN
+						}
+						has_game_rule = {
+							rule = JAP_ai_behavior
+							option = SOUTHERN_ALTERNATE
+						}
+					}
+				}
+				add_to_temp_variable = { BASE@role_marines = 6 }
+			}
+			if = {
+				limit = {
+					OR = {
+						has_game_rule = {
+							rule = JAP_ai_behavior
+							option = NORTHERN
+						}
+						has_game_rule = {
+							rule = JAP_ai_behavior
+							option = NORTHERN_ALTERNATE
+						}
+					}
+				}
+				add_to_temp_variable = { BASE@role_infantry = 6 }
+			}
+			add_to_temp_variable = { BASE@role_garrison = 12 }
+		}
+		
+		if = {
+			limit = {
+				num_of_military_factories > 65 
+			}
+			add_to_temp_variable = { BASE@role_infantry = 4 }
+			add_to_temp_variable = { BASE@role_garrison = 4 }
+			add_to_temp_variable = { BASE@role_light_infantry = 4 }
+		}
+		
+		if = {
+			limit = {
+				num_of_military_factories > 75 
+			}
+			add_to_temp_variable = { BASE@role_infantry = 4 }
+			add_to_temp_variable = { BASE@role_garrison = 4 }
+			add_to_temp_variable = { BASE@role_light_infantry = 4 }
+		}
+	}
+	
+	if = {
+		limit = {
+			check_variable = { ai_ignore_air_production = 0 }
+		}
+		
+		############################## BUILD PLANE STRATEGIES #############################
+		### they only get applied when AI has the air equipment and the necessary flags ###
+		
+		set_temp_variable = { RATIO@fighter_equipment 				= 40 }
+		set_temp_variable = { RATIO@fighter_alt_equipment 			= 40 }
+		set_temp_variable = { RATIO@interceptor_equipment 			=   0 }
+		set_temp_variable = { RATIO@mr_fighter_equipment 			=   0 }
+		set_temp_variable = { RATIO@heavy_fighter_equipment 		=  -60 }
+		
+		set_temp_variable = { RATIO@CAS_equipment 					= -30 }
+		set_temp_variable = { RATIO@twin_cas_equipment 				=   0 }
+		set_temp_variable = { RATIO@nav_bomber_equipment 			=   0 }
+		set_temp_variable = { RATIO@tac_bomber_equipment 			= -75 }
+		set_temp_variable = { RATIO@light_bomber_equipment 			= -50 }
+		set_temp_variable = { RATIO@fast_bomber_equipment 			=   0 }
+		set_temp_variable = { RATIO@quad_engine_bomber_equipment 	=   0 }
+		
+		set_temp_variable = { RATIO@jet_fighter_equipment 			= 100 }
+		set_temp_variable = { RATIO@jet_mr_fighter_equipment 		=   0 }
+		set_temp_variable = { RATIO@jet_tac_bomber_equipment 		=   0 }
+		set_temp_variable = { RATIO@jet_strat_bomber_equipment 		=   0 }
+		
+		set_temp_variable = { RATIO@cv_fighter_equipment 			=  40 }
+		set_temp_variable = { RATIO@cv_nav_bomber_equipment 		=  30 }
+		set_temp_variable = { RATIO@cv_CAS_equipment 				=   0 }
+
+		if = {
+			limit = {
+				has_tech = tech_mitsubishi_a6m_equipment_1
+			}
+			
+			add_to_temp_variable = { RATIO@cv_fighter_equipment = 120 }
+		}
+			
+
+		
+	### FIGHTER TARGET 
+		
+		set_temp_variable = { ai_fighter_target_buffer = 500 }
+		set_temp_variable = { max_enemy_fighter_ratio = 3.0 }
+		
+		if = { limit = { check_variable = { FIGHTER_WEIGHT^num = 0 } }
+			clear_array = FIGHTER_WEIGHT
+			add_to_array = { FIGHTER_WEIGHT = 1.00 } 	#-- fighter_equipment
+			add_to_array = { FIGHTER_WEIGHT = 0.80 } 	#-- interceptor_equipment
+			add_to_array = { FIGHTER_WEIGHT = 0.70 } 	#-- mr_fighter_equipment
+			add_to_array = { FIGHTER_WEIGHT = 1.20 } 	#-- heavy_fighter_equipment
+			add_to_array = { FIGHTER_WEIGHT = 1.00 } 	#-- fighter_alt_equipment
+			add_to_array = { FIGHTER_WEIGHT = 1.50 } 	#-- jet_fighter_equipment
+		}
+		
+		#-- These values determine how many fighter types AI wants per strategic region; scaled by: matching_states/num_region_states"
+		add_to_temp_array = { REGION_FIGHTER_NEED = 200 } 	#-- home area
+		add_to_temp_array = { REGION_FIGHTER_NEED = 150 } 	#-- core
+		add_to_temp_array = { REGION_FIGHTER_NEED = 75 } 	#-- owned & controlled 
+		add_to_temp_array = { REGION_FIGHTER_NEED = 50 } 	#-- only controlled
+		
+		
+	### EXTRA FIGHTER PRODUCTION FOCUS 
+		
+		set_temp_variable = { enable_ratio = 1.2 } #if below this ratio, we increase fighter production
+		set_temp_variable = { minimum_ratio = 0.5 } #at this ratio we hit max extra production, listed below
+		
+		#-- These values get scaled between enable & maximum
+		add_to_temp_array = { MAX_EXTRA_FIGHTER_RATIO_MULT = 2.00 } 	#-- fighter_equipment
+		add_to_temp_array = { MAX_EXTRA_FIGHTER_RATIO_MULT = 0.00 } 	#-- interceptor_equipment
+		add_to_temp_array = { MAX_EXTRA_FIGHTER_RATIO_MULT = 0.00 } 	#-- mr_fighter_equipment
+		add_to_temp_array = { MAX_EXTRA_FIGHTER_RATIO_MULT = 0.00 } 	#-- heavy_fighter_equipment
+		add_to_temp_array = { MAX_EXTRA_FIGHTER_RATIO_MULT = 2.00 } 	#-- fighter_alt_equipment
+		add_to_temp_array = { MAX_EXTRA_FIGHTER_RATIO_MULT = 0.00 } 	#-- jet_fighter_equipment
+		
+	##--- MISC 
+	
+		ai_update_air_production = yes
+		
+	}
+	
+	if = {
+		limit = {
+			check_variable = { ai_ignore_naval_production = 0 }
+		}
+			
+		### SHIPS ###########################
+		
+		ai_naval_CV/JAP = yes
+		ai_naval_BB/JAP = yes
+		ai_naval_CA/JAP = yes
+		ai_naval_CL/JAP = yes
+		
+		ai_naval_DD/generic = yes
+		ai_naval_SS/generic = yes
+		
+		ai_switch_escort_to_destroyer = yes
+		
+		## CONVOY TARGET
+		set_temp_variable = { ai_target_convoys = 800 }
+		
+		############################### NAVAL ROLE NEEDS ###############################
+		### they always apply but they have no effect if the ai has no suitable ship ###
+		
+		set_temp_variable = { min_dockyard@carrier = 3 }
+		
+		set_temp_variable = { RATIO@naval_carrier 				 = 3 }
+		set_temp_variable = { RATIO@naval_carrier_light 		 = 1 }
+		set_temp_variable = { RATIO@naval_capital_bb 			 = 1 }
+		set_temp_variable = { RATIO@naval_cruiser_heavy 		 = 5 }
+		set_temp_variable = { RATIO@naval_cruiser_light 		 = 12 }
+		set_temp_variable = { RATIO@naval_screen 				 = 50 }
+		set_temp_variable = { RATIO@naval_submarine 			 = 10 }
+		
+	##--- MISC 
+		
+		if = {
+			limit = {
+				has_country_flag = HSD_JAP_BB_yamato
+			}
+			set_temp_variable = { min_dockyard@capital_ship = 3 }
+		}
+		
+		ai_update_ship_production = yes
+	}
+	
+	ai_templates_on_end_effect = yes
+}
+
+
+
+
+d_ai_logic/CHI = {
+	#set_temp_variable = { ai_template_skip = 1 }
+	
+	if = {
+		limit = {
+			check_variable = { ai_ignore_templates = 0 }
+		}
+		ai_infantry_templates/CHI = yes
+		ai_heavy_infantry_templates/CHI = yes 
+		ai_cavalry_templates/CHI = yes 
+		ai_militia_templates/CHI = yes
+	}
+	
+	if = {
+		limit = {
+			check_variable = { ai_ignore_deployment = 0 }
+		}
+			
+		############################## BUILD ARMY STRATEGIES #############################
+		### they only get applied when AI has a role template or the template variable ###
+		# disable_build
+		# production_ratio 
+		
+		set_temp_variable = { BASE@role_infantry 				= 120 }
+		set_temp_variable = { BASE@role_light_infantry 			= 0 }
+		set_temp_variable = { BASE@role_heavy_infantry 			= 0 }
+		set_temp_variable = { BASE@role_garrison 				= 0 }
+		set_temp_variable = { BASE@role_cavalry 				= 0 }
+		set_temp_variable = { BASE@role_motorized 				= 0 }
+		set_temp_variable = { BASE@role_light_armor 			= 0 }
+		set_temp_variable = { BASE@role_light_armor_alt 		= 0 }
+		set_temp_variable = { BASE@role_medium_armor 			= 0 }
+		set_temp_variable = { BASE@role_medium_armor_alt 		= 0 }
+		set_temp_variable = { BASE@role_heavy_armor 			= 0 }
+		set_temp_variable = { BASE@role_heavy_armor_alt 		= 0 }
+		set_temp_variable = { BASE@role_marines 				= 0 }
+		set_temp_variable = { BASE@role_mountaineers 			= 0 }
+		set_temp_variable = { BASE@role_militia 				= 0 }
+		
+		
+		# Switch to normal infantry
+		
+		if = {
+			limit = {
+				has_country_flag = { flag = ai_heavy_infantry_template value > 1 }
+				OR = {
+					has_country_flag = { flag = ai_infantry_template value > 3 }
+					is_subject_of = JAP 
+				}
+			}
+			
+			add_to_temp_variable = { BASE@role_heavy_infantry 			= 20 }
+			
+		}
+	}
+	
+	ai_templates_on_end_effect = yes
+}
+
+
+
+d_ai_logic/RGR = {
+	#set_temp_variable = { ai_template_skip = 1 }
+	
+	if = {
+		limit = {
+			check_variable = { ai_ignore_templates = 0 }
+		}
+		ai_infantry_templates/warlords = yes
+		ai_heavy_infantry_templates/CHI = yes 
+		ai_cavalry_templates/CHI = yes 
+	}
+	
+	if = {
+		limit = {
+			check_variable = { ai_ignore_deployment = 0 }
+		}
+				
+		############################## BUILD ARMY STRATEGIES #############################
+		### they only get applied when AI has a role template or the template variable ###
+		# disable_build
+		# production_ratio 
+		
+		set_temp_variable = { BASE@role_infantry 				= 20 }
+		set_temp_variable = { BASE@role_light_infantry 			= 0 }
+		set_temp_variable = { BASE@role_heavy_infantry 			= 40 }
+		set_temp_variable = { BASE@role_garrison 				= 0 }
+		set_temp_variable = { BASE@role_cavalry 				= 2 }
+		set_temp_variable = { BASE@role_motorized 				= 0 }
+		set_temp_variable = { BASE@role_light_armor 			= 0 }
+		set_temp_variable = { BASE@role_light_armor_alt 		= 0 }
+		set_temp_variable = { BASE@role_medium_armor 			= 0 }
+		set_temp_variable = { BASE@role_medium_armor_alt 		= 0 }
+		set_temp_variable = { BASE@role_heavy_armor 			= 0 }
+		set_temp_variable = { BASE@role_heavy_armor_alt 		= 0 }
+		set_temp_variable = { BASE@role_marines 				= 0 }
+		set_temp_variable = { BASE@role_mountaineers 			= 0 }
+		
+	}
+	ai_templates_on_end_effect = yes
+}
+
+
+
+d_ai_logic/PRC = {
+	#set_temp_variable = { ai_template_skip = 1 }
+	
+	if = {
+		limit = {
+			check_variable = { ai_ignore_templates = 0 }
+		}
+		ai_infantry_templates/warlords = yes
+		ai_heavy_infantry_templates/CHI = yes 
+		ai_mountaineer_templates/PRC = yes 
+	}
+	
+	if = {
+		limit = {
+			check_variable = { ai_ignore_deployment = 0 }
+		}
+				
+		############################## BUILD ARMY STRATEGIES #############################
+		### they only get applied when AI has a role template or the template variable ###
+		# disable_build
+		# production_ratio 
+		
+		set_temp_variable = { BASE@role_infantry 				= 8 }
+		set_temp_variable = { BASE@role_light_infantry 			= 0 }
+		set_temp_variable = { BASE@role_heavy_infantry 			= 2 }
+		set_temp_variable = { BASE@role_garrison 				= 0 }
+		set_temp_variable = { BASE@role_cavalry 				= 0 }
+		set_temp_variable = { BASE@role_motorized 				= 0 }
+		set_temp_variable = { BASE@role_light_armor 			= 0 }
+		set_temp_variable = { BASE@role_light_armor_alt 		= 0 }
+		set_temp_variable = { BASE@role_medium_armor 			= 0 }
+		set_temp_variable = { BASE@role_medium_armor_alt 		= 0 }
+		set_temp_variable = { BASE@role_heavy_armor 			= 0 }
+		set_temp_variable = { BASE@role_heavy_armor_alt 		= 0 }
+		set_temp_variable = { BASE@role_marines 				= 0 }
+		set_temp_variable = { BASE@role_mountaineers 			= 4 }
+	}
+	
+	ai_templates_on_end_effect = yes
+}
+
+
+
+d_ai_logic/GXC = {
+	#set_temp_variable = { ai_template_skip = 1 }
+	
+	if = {
+		limit = {
+			check_variable = { ai_ignore_templates = 0 }
+		}
+		ai_infantry_templates/warlords = yes
+		ai_heavy_infantry_templates/warlords = yes 
+	}
+	
+	if = {
+		limit = {
+			check_variable = { ai_ignore_deployment = 0 }
+		}
+				
+		############################## BUILD ARMY STRATEGIES #############################
+		### they only get applied when AI has a role template or the template variable ###
+		# disable_build
+		# production_ratio 
+		
+		set_temp_variable = { BASE@role_infantry 				= 8 }
+		set_temp_variable = { BASE@role_light_infantry 			= 0 }
+		set_temp_variable = { BASE@role_heavy_infantry 			= 2 }
+		set_temp_variable = { BASE@role_garrison 				= 0 }
+		set_temp_variable = { BASE@role_cavalry 				= 0 }
+		set_temp_variable = { BASE@role_motorized 				= 0 }
+		set_temp_variable = { BASE@role_light_armor 			= 0 }
+		set_temp_variable = { BASE@role_light_armor_alt 		= 0 }
+		set_temp_variable = { BASE@role_medium_armor 			= 0 }
+		set_temp_variable = { BASE@role_medium_armor_alt 		= 0 }
+		set_temp_variable = { BASE@role_heavy_armor 			= 0 }
+		set_temp_variable = { BASE@role_heavy_armor_alt 		= 0 }
+		set_temp_variable = { BASE@role_marines 				= 0 }
+		set_temp_variable = { BASE@role_mountaineers 			= 0 }
+	}
+	
+	ai_templates_on_end_effect = yes
+}
+
+
+
+d_ai_logic/PGR = {
+	#set_temp_variable = { ai_template_skip = 1 }
+	
+	if = {
+		limit = {
+			check_variable = { ai_ignore_templates = 0 }
+		}
+		ai_heavy_infantry_templates/warlords = yes 
+		ai_cavalry_templates/CHI = yes 
+	}
+	
+	if = {
+		limit = {
+			check_variable = { ai_ignore_deployment = 0 }
+		}
+				
+		############################## BUILD ARMY STRATEGIES #############################
+		### they only get applied when AI has a role template or the template variable ###
+		# disable_build
+		# production_ratio 
+		
+		set_temp_variable = { BASE@role_infantry 				= 0 }
+		set_temp_variable = { BASE@role_light_infantry 			= 0 }
+		set_temp_variable = { BASE@role_heavy_infantry 			= 6 }
+		set_temp_variable = { BASE@role_garrison 				= 0 }
+		set_temp_variable = { BASE@role_cavalry 				= 2 }
+		set_temp_variable = { BASE@role_motorized 				= 0 }
+		set_temp_variable = { BASE@role_light_armor 			= 0 }
+		set_temp_variable = { BASE@role_light_armor_alt 		= 0 }
+		set_temp_variable = { BASE@role_medium_armor 			= 0 }
+		set_temp_variable = { BASE@role_medium_armor_alt 		= 0 }
+		set_temp_variable = { BASE@role_heavy_armor 			= 0 }
+		set_temp_variable = { BASE@role_heavy_armor_alt 		= 0 }
+		set_temp_variable = { BASE@role_marines 				= 0 }
+		set_temp_variable = { BASE@role_mountaineers 			= 0 }
+	}
+	
+	ai_templates_on_end_effect = yes
+}
+
+
+
+d_ai_logic/SDC = {
+	#set_temp_variable = { ai_template_skip = 1 }
+	
+	if = {
+		limit = {
+			check_variable = { ai_ignore_templates = 0 }
+		}
+		ai_infantry_templates/warlords = yes
+		ai_heavy_infantry_templates/warlords = yes 
+		ai_cavalry_templates/CHI = yes 
+	}
+	
+	if = {
+		limit = {
+			check_variable = { ai_ignore_deployment = 0 }
+		}
+				
+		############################## BUILD ARMY STRATEGIES #############################
+		### they only get applied when AI has a role template or the template variable ###
+		# disable_build
+		# production_ratio 
+		
+		set_temp_variable = { BASE@role_infantry 				= 4 }
+		set_temp_variable = { BASE@role_light_infantry 			= 0 }
+		set_temp_variable = { BASE@role_heavy_infantry 			= 4 }
+		set_temp_variable = { BASE@role_garrison 				= 0 }
+		set_temp_variable = { BASE@role_cavalry 				= 2 }
+		set_temp_variable = { BASE@role_motorized 				= 0 }
+		set_temp_variable = { BASE@role_light_armor 			= 0 }
+		set_temp_variable = { BASE@role_light_armor_alt 		= 0 }
+		set_temp_variable = { BASE@role_medium_armor 			= 0 }
+		set_temp_variable = { BASE@role_medium_armor_alt 		= 0 }
+		set_temp_variable = { BASE@role_heavy_armor 			= 0 }
+		set_temp_variable = { BASE@role_heavy_armor_alt 		= 0 }
+		set_temp_variable = { BASE@role_marines 				= 0 }
+		set_temp_variable = { BASE@role_mountaineers 			= 0 }
+	}
+	
+	ai_templates_on_end_effect = yes
+}
+
+
+
+d_ai_logic/EHA = {
+	#set_temp_variable = { ai_template_skip = 1 }
+	
+	if = {
+		limit = {
+			check_variable = { ai_ignore_templates = 0 }
+		}
+		ai_heavy_infantry_templates/warlords = yes 
+	}
+	
+	if = {
+		limit = {
+			check_variable = { ai_ignore_deployment = 0 }
+		}
+				
+		############################## BUILD ARMY STRATEGIES #############################
+		### they only get applied when AI has a role template or the template variable ###
+		# disable_build
+		# production_ratio 
+		
+		set_temp_variable = { BASE@role_infantry 				= 0 }
+		set_temp_variable = { BASE@role_light_infantry 			= 0 }
+		set_temp_variable = { BASE@role_heavy_infantry 			= 6 }
+		set_temp_variable = { BASE@role_garrison 				= 0 }
+		set_temp_variable = { BASE@role_cavalry 				= 0 }
+		set_temp_variable = { BASE@role_motorized 				= 0 }
+		set_temp_variable = { BASE@role_light_armor 			= 0 }
+		set_temp_variable = { BASE@role_light_armor_alt 		= 0 }
+		set_temp_variable = { BASE@role_medium_armor 			= 0 }
+		set_temp_variable = { BASE@role_medium_armor_alt 		= 0 }
+		set_temp_variable = { BASE@role_heavy_armor 			= 0 }
+		set_temp_variable = { BASE@role_heavy_armor_alt 		= 0 }
+		set_temp_variable = { BASE@role_marines 				= 0 }
+		set_temp_variable = { BASE@role_mountaineers 			= 0 }
+	}
+	
+	ai_templates_on_end_effect = yes
+}
+
+
+
+d_ai_logic/MAN = {
+	#set_temp_variable = { ai_template_skip = 1 }
+	
+	if = {
+		limit = {
+			check_variable = { ai_ignore_templates = 0 }
+		}
+		ai_infantry_templates/warlords = yes
+		ai_militia_templates/generic_normal = yes 
+		ai_cavalry_templates/generic_small = yes 
+	}
+	
+	if = {
+		limit = {
+			check_variable = { ai_ignore_deployment = 0 }
+		}
+				
+		############################## BUILD ARMY STRATEGIES #############################
+		### they only get applied when AI has a role template or the template variable ###
+		# disable_build
+		# production_ratio 
+		
+		set_temp_variable = { BASE@role_infantry 				= 10 }
+		set_temp_variable = { BASE@role_light_infantry 			= 0 }
+		set_temp_variable = { BASE@role_heavy_infantry 			= 0 }
+		set_temp_variable = { BASE@role_militia		 			= 6 }
+		set_temp_variable = { BASE@role_garrison 				= 0 }
+		set_temp_variable = { BASE@role_cavalry 				= 2 }
+		set_temp_variable = { BASE@role_motorized 				= 0 }
+		set_temp_variable = { BASE@role_light_armor 			= 0 }
+		set_temp_variable = { BASE@role_light_armor_alt 		= 0 }
+		set_temp_variable = { BASE@role_medium_armor 			= 0 }
+		set_temp_variable = { BASE@role_medium_armor_alt 		= 0 }
+		set_temp_variable = { BASE@role_heavy_armor 			= 0 }
+		set_temp_variable = { BASE@role_heavy_armor_alt 		= 0 }
+		set_temp_variable = { BASE@role_marines 				= 0 }
+		set_temp_variable = { BASE@role_mountaineers 			= 0 }
+	}
+	
+	ai_templates_on_end_effect = yes
+}
+
+d_ai_logic/ENG = {
+	#set_temp_variable = { ai_template_skip = 1 }
+	
+	if = {
+		limit = {
+			check_variable = { ai_ignore_templates = 0 }
+		}
+		ai_garrison_templates/ENG = yes
+		ai_infantry_templates/ENG = yes
+		ai_light_infantry_templates/ENG = yes
+		ai_heavy_infantry_templates/ENG = yes
+		ai_motorized_templates/ENG = yes
+		ai_medium_armor_templates/ENG = yes
+		ai_heavy_armor_templates/ENG = yes
+		ai_marine_templates/ENG = yes
+		
+	}
+	
+	if = {
+		limit = {
+			check_variable = { ai_ignore_deployment = 0 }
+		}
+				
+		############################## BUILD ARMY STRATEGIES #############################
+		### they only get applied when AI has a role template or the template variable ###
+		# disable_build
+		# production_ratio 
+		
+		set_temp_variable = { BASE@role_infantry 				= 12 }
+		set_temp_variable = { BASE@role_light_infantry 			= 6 }
+		set_temp_variable = { BASE@role_heavy_infantry 			= 4 }
+		set_temp_variable = { BASE@role_garrison 				= 24 }
+		set_temp_variable = { BASE@role_cavalry 				= 0 }
+		set_temp_variable = { BASE@role_motorized 				= 4 }
+		set_temp_variable = { BASE@role_light_armor 			= 0 }
+		set_temp_variable = { BASE@role_light_armor_alt 		= 0 }
+		set_temp_variable = { BASE@role_medium_armor 			= 6 }
+		set_temp_variable = { BASE@role_medium_armor_alt 		= 0 }
+		set_temp_variable = { BASE@role_heavy_armor 			= 4 }
+		set_temp_variable = { BASE@role_heavy_armor_alt 		= 0 }
+		set_temp_variable = { BASE@role_marines 				= 4 }
+		set_temp_variable = { BASE@role_mountaineers 			= 0 }
+		
+		if = { #reduce unit want if capitulated or subject
+			limit = { OR = { has_capitulated = yes is_subject = yes } }
+			
+			set_temp_variable = { production_ratio = -0.8 }
+		}
+			
+		if = { limit = { date < 1936.7.1 } set_temp_variable = { disable_build = 1 } }
+		
+		if = {
+			limit = {
+				OR = {
+					has_war_with = GER
+					has_war_with = ITA
+					has_war_with = SOV
+				}
+			}
+			add_to_temp_variable = { BASE@role_infantry = 4 }
+			add_to_temp_variable = { BASE@role_heavy_infantry = 2 }
+			add_to_temp_variable = { BASE@role_light_infantry = 2 }
+			add_to_temp_variable = { BASE@role_garrison = 4 }
+			add_to_temp_variable = { BASE@role_motorized = 2 }
+			add_to_temp_variable = { BASE@role_medium_armor = 2 }
+			add_to_temp_variable = { BASE@role_heavy_armor = 2 }
+		}
+		
+		if = {
+			limit = {
+				has_global_flag = fall_of_france
+			}
+			add_to_temp_variable = { BASE@role_garrison = 8 }
+			add_to_temp_variable = { BASE@role_marines = 4 }
+			add_to_temp_variable = { BASE@role_motorized = 2 }
+			add_to_temp_variable = { BASE@role_heavy_armor = -2 }
+			add_to_temp_variable = { BASE@role_heavy_infantry = -2 }
+		}
+		
+		if = {
+			limit = {
+				OR = {
+					has_war_with = JAP
+					has_war_with = CHI
+					has_war_with = RAJ
+					has_war_with = USA
+				}
+			}
+			add_to_temp_variable = { BASE@role_marines = 4 }
+			add_to_temp_variable = { BASE@role_garrison = 4 }
+			add_to_temp_variable = { BASE@role_infantry = 4 }
+		}
+		
+		if = {
+			limit = {
+				#fall of Italian NAfrica
+				controls_state = 448
+			}
+			add_to_temp_variable = { BASE@role_light_infantry = -4 }
+			add_to_temp_variable = { BASE@role_infantry = 4 }
+			add_to_temp_variable = { BASE@role_marines = 4 }
+			add_to_temp_variable = { BASE@role_heavy_infantry = 4 }
+			add_to_temp_variable = { BASE@role_heavy_armor = 2 }
+			add_to_temp_variable = { BASE@role_medium_armor = 2 }
+		}
+		
+		if = {
+			limit = {
+				OR = {
+					date > 1943.1.1
+					controls_state = 115
+				}
+			}
+			add_to_temp_variable = { BASE@role_heavy_infantry = 8 }
+			add_to_temp_variable = { BASE@role_infantry = 8 }
+			add_to_temp_variable = { BASE@role_medium_armor = 4 }
+			add_to_temp_variable = { BASE@role_motorized = 4 }
+		}
+	}
+	
+	if = {
+		limit = {
+			check_variable = { ai_ignore_air_production = 0 }
+		}
+		
+		############################## BUILD PLANE STRATEGIES #############################
+		### they only get applied when AI has the air equipment and the necessary flags ###
+		
+		set_temp_variable = { RATIO@fighter_equipment 				= 100 }
+		set_temp_variable = { RATIO@fighter_alt_equipment 			=   0 }
+		set_temp_variable = { RATIO@interceptor_equipment 			=   0 }
+		set_temp_variable = { RATIO@mr_fighter_equipment 			=  50 }
+		set_temp_variable = { RATIO@heavy_fighter_equipment 		=  25 }
+		
+		set_temp_variable = { RATIO@CAS_equipment 					=  -40 }
+		set_temp_variable = { RATIO@twin_cas_equipment 				=   0 }
+		set_temp_variable = { RATIO@nav_bomber_equipment 			=  -40 }
+		set_temp_variable = { RATIO@tac_bomber_equipment 			=  -60 }
+		set_temp_variable = { RATIO@light_bomber_equipment 			=  0 }
+		set_temp_variable = { RATIO@fast_bomber_equipment 			=  0 }
+		set_temp_variable = { RATIO@quad_engine_bomber_equipment 	=  -75 }
+		
+		set_temp_variable = { RATIO@jet_fighter_equipment 			=   0 }
+		set_temp_variable = { RATIO@jet_mr_fighter_equipment 		=   0 }
+		set_temp_variable = { RATIO@jet_tac_bomber_equipment 		=   0 }
+		set_temp_variable = { RATIO@jet_strat_bomber_equipment 		=   0 }
+		
+		set_temp_variable = { RATIO@cv_fighter_equipment 			=   -75 }
+		set_temp_variable = { RATIO@cv_nav_bomber_equipment 		=   -75 }
+		set_temp_variable = { RATIO@cv_CAS_equipment 				=   0 }
+		
+	### FIGHTER TARGET 
+		
+		set_temp_variable = { ai_fighter_target_buffer = 600 }
+		set_temp_variable = { max_enemy_fighter_ratio = 4.0 }
+		
+		if = { limit = { check_variable = { FIGHTER_WEIGHT^num = 0 } }
+			clear_array = FIGHTER_WEIGHT
+			add_to_array = { FIGHTER_WEIGHT = 1.00 } 	#-- fighter_equipment
+			add_to_array = { FIGHTER_WEIGHT = 0.90 } 	#-- interceptor_equipment
+			add_to_array = { FIGHTER_WEIGHT = 0.80 } 	#-- mr_fighter_equipment
+			add_to_array = { FIGHTER_WEIGHT = 1.20 } 	#-- heavy_fighter_equipment
+			add_to_array = { FIGHTER_WEIGHT = 0.85 } 	#-- fighter_alt_equipment
+			add_to_array = { FIGHTER_WEIGHT = 1.50 } 	#-- jet_fighter_equipment
+		}
+		
+		#-- These values determine how many fighter types AI wants per strategic region; scaled by: matching_states/num_region_states"
+		add_to_temp_array = { REGION_FIGHTER_NEED = 200 } 	#-- home area
+		add_to_temp_array = { REGION_FIGHTER_NEED = 150 } 	#-- core
+		add_to_temp_array = { REGION_FIGHTER_NEED = 125 } 	#-- owned & controlled 
+		add_to_temp_array = { REGION_FIGHTER_NEED = 100 } 	#-- only controlled
+		
+		
+	### EXTRA FIGHTER PRODUCTION FOCUS 
+		
+		set_temp_variable = { enable_ratio = 1.2 } #if below this ratio, we increase fighter production
+		set_temp_variable = { minimum_ratio = 0.5 } #at this ratio we hit max extra production, listed below
+		
+		#-- These values get scaled between enable & maximum
+		add_to_temp_array = { MAX_EXTRA_FIGHTER_RATIO_MULT = 2.50 } 	#-- fighter_equipment
+		add_to_temp_array = { MAX_EXTRA_FIGHTER_RATIO_MULT = 0.00 } 	#-- interceptor_equipment
+		add_to_temp_array = { MAX_EXTRA_FIGHTER_RATIO_MULT = 0.25 } 	#-- mr_fighter_equipment
+		add_to_temp_array = { MAX_EXTRA_FIGHTER_RATIO_MULT = 0.15 } 	#-- heavy_fighter_equipment
+		add_to_temp_array = { MAX_EXTRA_FIGHTER_RATIO_MULT = 0.00 } 	#-- fighter_alt_equipment
+		add_to_temp_array = { MAX_EXTRA_FIGHTER_RATIO_MULT = 0.00 } 	#-- jet_fighter_equipment
+		
+	##--- MISC 
+
+		if = {
+			limit = {
+				has_war_with = GER
+				OR = {
+					GER = {has_war_with = SOV }
+					is_in_faction_with = USA
+				}
+			}
+			
+			add_to_temp_variable = { RATIO@quad_engine_bomber_equipment = 75 }
+			add_to_temp_variable = { RATIO@tac_bomber_equipment = 40 }
+			add_to_temp_variable = { RATIO@fighter_equipment = -40 }
+		}
+		if = {
+			limit = {
+				has_global_flag = fall_of_france
+				NOT = {
+					GER = {has_war_with = SOV }
+					is_in_faction_with = USA
+				}
+			}
+			
+			add_to_temp_variable = { RATIO@fighter_equipment = 60 }
+			add_to_temp_variable = { RATIO@CAS_equipment = -40 }
+		}
+		ai_update_air_production = yes
+		
+	}
+	
+	if = {
+		limit = {
+			check_variable = { ai_ignore_naval_production = 0 }
+		}
+			
+		### SHIPS ###########################
+		
+		ai_naval_CV/ENG = yes
+		ai_naval_BB/ENG = yes
+		ai_naval_CA/ENG = yes
+		ai_naval_CL/ENG = yes
+		
+		ai_naval_DD/generic = yes
+		ai_naval_SS/generic = yes
+		
+		ai_switch_escort_to_destroyer = yes
+		
+		## CONVOY TARGET
+		set_temp_variable = { ai_target_convoys = 800 }
+		
+		############################### NAVAL ROLE NEEDS ###############################
+		### they always apply but they have no effect if the ai has no suitable ship ###
+		
+		set_temp_variable = { RATIO@naval_carrier 				 = 4 }
+		set_temp_variable = { RATIO@naval_capital_bb 			 = 3 }
+		set_temp_variable = { RATIO@naval_cruiser_heavy 		 = 6 }
+		set_temp_variable = { RATIO@naval_cruiser_light 		 = 8 }
+		set_temp_variable = { RATIO@naval_screen 				 = 45 }
+		set_temp_variable = { RATIO@naval_submarine 			 = 15 }
+		
+	##--- MISC 
+		if = { #buildup, make sure to have full production lines for CV and BB
+			limit = {
+				date < 1939.6.1
+			}
+			set_temp_variable = { RATIO@naval_carrier 				 = 1 }
+			set_temp_variable = { RATIO@naval_capital_bb 			 = 1 }
+			set_temp_variable = { min_dockyard@nrm_ship_hull_capital = 9 }
+			set_temp_variable = { min_dockyard@nrm_ship_hull_carrier = 9 }
+		}
+		
+		if = {
+			limit = {
+				OR = {
+					has_war = yes
+					has_completed_focus = ENG_peace_has_failed
+				}
+			}
+			add_to_temp_variable = { RATIO@naval_screen 				 = 10 }
+		}
+		if = {
+			limit = {
+				has_country_flag = anti_submarine_strategy_required
+			}
+			add_to_temp_variable = { RATIO@naval_screen 				 = 20 }
+		}
+		
+		ai_update_ship_production = yes
+	}
+	
+	ai_templates_on_end_effect = yes
+}
+
+ai_generic_air_production = {
+
+	if = {
+		limit = {
+			check_variable = { ai_ignore_air_production = 0 }
+		}
+		
+		if = {
+			limit = {
+				check_variable = { stock_ratio > 0.1 }
+			}
+			
+			set_temp_variable = { t = stock_ratio }
+			multiply_temp_variable = { t = 1.5 }
+			
+			set_temp_variable = { air_ratio_mic_factor = t }
+			clamp_temp_variable = { var = air_ratio_mic_factor max = 2 }
+		}
+		
+		#set_temp_variable = { air_ratio_mic_min = 10 }
+		
+		#if alu_plane_cap and ap_plane_cap > mic_plane_cap, then smallest-of-the-resource-cap - mic cap * var, and add it to mic_plane_cap
+		
+		set_temp_variable = { air_ratio_max_unused_resource_limit_to_mic = 0.5 } #the higher it is, the more mic_plane_cap gets increased towards unused alu_plane_cap or / and ap_plane_cap
+		add_to_temp_variable = { air_ratio_max_unused_resource_limit_to_mic = stock_ratio }
+		
+		############################## BUILD PLANE STRATEGIES #############################
+		### they only get applied when AI has the air equipment and the necessary flags ###
+		
+		set_temp_variable = { RATIO@fighter_equipment 				= 100 }
+		set_temp_variable = { RATIO@fighter_alt_equipment 			=   0 }
+		set_temp_variable = { RATIO@interceptor_equipment 			=   0 }
+		set_temp_variable = { RATIO@mr_fighter_equipment 			=  50 }
+		set_temp_variable = { RATIO@heavy_fighter_equipment 		=   0 }
+		
+		set_temp_variable = { RATIO@CAS_equipment 					=  50 }
+		set_temp_variable = { RATIO@twin_cas_equipment 				=   0 }
+		set_temp_variable = { RATIO@nav_bomber_equipment 			=   0 }
+		set_temp_variable = { RATIO@tac_bomber_equipment 			=  25 }
+		set_temp_variable = { RATIO@light_bomber_equipment 			=   0 }
+		set_temp_variable = { RATIO@fast_bomber_equipment 			=   0 }
+		set_temp_variable = { RATIO@quad_engine_bomber_equipment 	=   0 }
+		
+		set_temp_variable = { RATIO@jet_fighter_equipment 			=   0 }
+		set_temp_variable = { RATIO@jet_mr_fighter_equipment 		=   0 }
+		set_temp_variable = { RATIO@jet_tac_bomber_equipment 		=   0 }
+		set_temp_variable = { RATIO@jet_strat_bomber_equipment 		=   0 }
+		
+		set_temp_variable = { RATIO@cv_fighter_equipment 			=   0 }
+		set_temp_variable = { RATIO@cv_nav_bomber_equipment 		=   0 }
+		set_temp_variable = { RATIO@cv_CAS_equipment 				=   0 }
+		
+	### FIGHTER TARGET 
+		
+		set_temp_variable = { ai_fighter_target_buffer = 300 }
+		set_temp_variable = { max_enemy_fighter_ratio = 2.0 }
+		
+		if = { limit = { check_variable = { FIGHTER_WEIGHT^num = 0 } }
+			clear_array = FIGHTER_WEIGHT
+			add_to_array = { FIGHTER_WEIGHT = 1.00 } 	#-- fighter_equipment
+			add_to_array = { FIGHTER_WEIGHT = 0.90 } 	#-- interceptor_equipment
+			add_to_array = { FIGHTER_WEIGHT = 0.80 } 	#-- mr_fighter_equipment
+			add_to_array = { FIGHTER_WEIGHT = 1.20 } 	#-- heavy_fighter_equipment
+			add_to_array = { FIGHTER_WEIGHT = 0.85 } 	#-- fighter_alt_equipment
+			add_to_array = { FIGHTER_WEIGHT = 1.50 } 	#-- jet_fighter_equipment
+		}
+		
+		#-- These values determine how many fighter types AI wants per strategic region; scaled by: matching_states/num_region_states"
+		add_to_temp_array = { REGION_FIGHTER_NEED = 200 } 	#-- home area
+		add_to_temp_array = { REGION_FIGHTER_NEED = 150 } 	#-- core
+		add_to_temp_array = { REGION_FIGHTER_NEED = 125 } 	#-- owned & controlled 
+		add_to_temp_array = { REGION_FIGHTER_NEED = 100 } 	#-- only controlled
+		
+		
+	### EXTRA FIGHTER PRODUCTION FOCUS 
+		
+		set_temp_variable = { enable_ratio = 1.2 } #if below this ratio, we increase fighter production
+		set_temp_variable = { minimum_ratio = 0.5 } #at this ratio we hit max extra production, listed below
+		
+		#-- These values get scaled between enable & maximum
+		add_to_temp_array = { MAX_EXTRA_FIGHTER_RATIO_MULT = 1.50 } 	#-- fighter_equipment
+		add_to_temp_array = { MAX_EXTRA_FIGHTER_RATIO_MULT = 0.00 } 	#-- interceptor_equipment
+		add_to_temp_array = { MAX_EXTRA_FIGHTER_RATIO_MULT = 0.25 } 	#-- mr_fighter_equipment
+		add_to_temp_array = { MAX_EXTRA_FIGHTER_RATIO_MULT = 0.00 } 	#-- heavy_fighter_equipment
+		add_to_temp_array = { MAX_EXTRA_FIGHTER_RATIO_MULT = 0.00 } 	#-- fighter_alt_equipment
+		add_to_temp_array = { MAX_EXTRA_FIGHTER_RATIO_MULT = 0.00 } 	#-- jet_fighter_equipment
+		
+	##--- MISC 
+	
+		ai_update_air_production = yes
+		
+	}
+}
+
+
+d_ai_logic/CAN = {
+	#set_temp_variable = { ai_template_skip = 1 }
+	
+	if = {
+		limit = {
+			check_variable = { ai_ignore_templates = 0 }
+		}
+		ai_garrison_templates/CAN = yes
+		ai_infantry_templates/CAN = yes
+		ai_motorized_templates/CAN = yes
+		ai_medium_armor_templates/CAN = yes
+	}
+	
+	if = {
+		limit = {
+			check_variable = { ai_ignore_deployment = 0 }
+		}
+				
+		############################## BUILD ARMY STRATEGIES #############################
+		### they only get applied when AI has a role template or the template variable ###
+		# disable_build
+		# production_ratio 
+		
+		set_temp_variable = { BASE@role_infantry 				 = 8	}
+		set_temp_variable = { BASE@role_light_infantry 			 = 0	}
+		set_temp_variable = { BASE@role_heavy_infantry 			 = 0	}
+		set_temp_variable = { BASE@role_garrison 				 = 6	}
+		set_temp_variable = { BASE@role_cavalry 					 = 0	}
+		set_temp_variable = { BASE@role_motorized 				 = 6	}
+		set_temp_variable = { BASE@role_light_armor 				 = 0	}
+		set_temp_variable = { BASE@role_light_armor_alt 			 = 0	}
+		set_temp_variable = { BASE@role_medium_armor 			 = 0	}
+		set_temp_variable = { BASE@role_medium_armor_alt 		 = 0	}
+		set_temp_variable = { BASE@role_heavy_armor 				 = 0	}
+		set_temp_variable = { BASE@role_heavy_armor_alt 			 = 0	}
+		set_temp_variable = { BASE@role_marines 					 = 0	}
+		set_temp_variable = { BASE@role_mountaineers 			 = 0	}
+		
+		if = { limit = { date < 1937.1.1 } set_temp_variable = { disable_build = 1 } }
+		
+		if = {
+			limit = {
+				date > 1943.1.1
+				OR = {
+					has_country_flag = ENG_time_for_shermans
+					has_country_flag = HTD_CAN_trm_medium_tank_chassis_usa_ram_1_b
+					#replaceTRM #has_tech = tech_sherman_firefly_equipment_1
+				}
+			}
+			add_to_temp_variable = { BASE@role_medium_armor = 2 }
+		}
+	}
+	if = {
+		limit = {
+			check_variable = { ai_ignore_naval_production = 0 }
+		}
+				
+		### SHIPS ###########################
+		
+		ai_naval_DD/generic = yes
+		
+		## CONVOY TARGET
+		set_temp_variable = { ai_target_convoys = 200 }
+		
+		############################### NAVAL ROLE NEEDS ###############################
+		### they always apply but they have no effect if the ai has no suitable ship ###
+		
+		set_temp_variable = { RATIO@naval_screen 				 = 100 }
+		
+	##--- MISC 
+		
+		ai_update_ship_production = yes
+	}
+	
+	ai_templates_on_end_effect = yes
+}
+
+
+
+
+d_ai_logic/RAJ = {
+	#set_temp_variable = { ai_template_skip = 1 }
+	
+	if = {
+		limit = {
+			check_variable = { ai_ignore_templates = 0 }
+		}
+		ai_garrison_templates/RAJ = yes
+		ai_infantry_templates/RAJ = yes
+		ai_light_infantry_templates/RAJ = yes
+		ai_motorized_templates/RAJ = yes
+		#ai_light_armor_templates/RAJ = yes
+		ai_mountaineer_templates/RAJ = yes
+	}
+	
+	if = {
+		limit = {
+			check_variable = { ai_ignore_deployment = 0 }
+		}
+				
+		############################## BUILD ARMY STRATEGIES #############################
+		### they only get applied when AI has a role template or the template variable ###
+		# disable_build
+		# production_ratio 
+		
+		set_temp_variable = { BASE@role_infantry 				= 20 }
+		set_temp_variable = { BASE@role_light_infantry 			= 20 }
+		set_temp_variable = { BASE@role_heavy_infantry 			= 0 }
+		set_temp_variable = { BASE@role_garrison 				= 20 }
+		set_temp_variable = { BASE@role_cavalry 				= 4 }
+		set_temp_variable = { BASE@role_motorized 				= 0 }
+		set_temp_variable = { BASE@role_light_armor 			= 0 }
+		set_temp_variable = { BASE@role_light_armor_alt 		= 0 }
+		set_temp_variable = { BASE@role_medium_armor 			= 0 }
+		set_temp_variable = { BASE@role_medium_armor_alt 		= 0 }
+		set_temp_variable = { BASE@role_heavy_armor 			= 0 }
+		set_temp_variable = { BASE@role_heavy_armor_alt 		= 0 }
+		set_temp_variable = { BASE@role_marines 				= 0 }
+		set_temp_variable = { BASE@role_mountaineers 			= 10 }
+		
+		if = {
+			limit = {
+				is_in_faction_with = USA
+			}
+			add_to_temp_variable = { BASE@role_infantry = 20 }
+			add_to_temp_variable = { BASE@role_light_infantry = 10 }
+			add_to_temp_variable = { BASE@role_garrison = 10 }
+			add_to_temp_variable = { BASE@role_mountaineers = 10 }
+			add_to_temp_variable = { BASE@role_motorized = 2 }
+		}
+	}
+	
+	
+	ai_templates_on_end_effect = yes
+}
+
+
+
+
+d_ai_logic/NEP = {
+	#set_temp_variable = { ai_template_skip = 1 }
+	
+	if = {
+		limit = {
+			check_variable = { ai_ignore_templates = 0 }
+		}
+		ai_mountaineer_templates/NEP = yes
+	}
+	
+	if = {
+		limit = {
+			check_variable = { ai_ignore_deployment = 0 }
+		}
+				
+		############################## BUILD ARMY STRATEGIES #############################
+		### they only get applied when AI has a role template or the template variable ###
+		# disable_build
+		# production_ratio 
+		
+		set_temp_variable = { BASE@role_infantry 				= 0 }
+		set_temp_variable = { BASE@role_light_infantry 			= 0 }
+		set_temp_variable = { BASE@role_heavy_infantry 			= 0 }
+		set_temp_variable = { BASE@role_garrison 				= 0 }
+		set_temp_variable = { BASE@role_cavalry 				= 0 }
+		set_temp_variable = { BASE@role_motorized 				= 0 }
+		set_temp_variable = { BASE@role_light_armor 			= 0 }
+		set_temp_variable = { BASE@role_light_armor_alt 		= 0 }
+		set_temp_variable = { BASE@role_medium_armor 			= 0 }
+		set_temp_variable = { BASE@role_medium_armor_alt 		= 0 }
+		set_temp_variable = { BASE@role_heavy_armor 			= 0 }
+		set_temp_variable = { BASE@role_heavy_armor_alt 		= 0 }
+		set_temp_variable = { BASE@role_marines 				= 0 }
+		set_temp_variable = { BASE@role_mountaineers 			= 6 }
+		
+		if = {
+			limit = {
+				is_in_faction_with = USA
+			}
+			add_to_temp_variable = { BASE@role_mountaineers = 4 }
+		}
+	}
+	
+	ai_templates_on_end_effect = yes
+}
+
+
+
+
+d_ai_logic/EGY = {
+	#set_temp_variable = { ai_template_skip = 1 }
+	
+	if = {
+		limit = {
+			check_variable = { ai_ignore_templates = 0 }
+		}
+		ai_infantry_templates/EGY = yes
+		ai_cavalry_templates/EGY = yes
+		ai_motorized_templates/EGY = yes
+	}
+	
+	if = {
+		limit = {
+			check_variable = { ai_ignore_deployment = 0 }
+		}
+				
+		############################## BUILD ARMY STRATEGIES #############################
+		### they only get applied when AI has a role template or the template variable ###
+		# disable_build
+		# production_ratio 
+		
+		set_temp_variable = { BASE@role_infantry 				= 6 }
+		set_temp_variable = { BASE@role_light_infantry 			= 0 }
+		set_temp_variable = { BASE@role_heavy_infantry 			= 0 }
+		set_temp_variable = { BASE@role_garrison 				= 0 }
+		set_temp_variable = { BASE@role_cavalry 				= 2 }
+		set_temp_variable = { BASE@role_motorized 				= 0 }
+		set_temp_variable = { BASE@role_light_armor 			= 0 }
+		set_temp_variable = { BASE@role_light_armor_alt 		= 0 }
+		set_temp_variable = { BASE@role_medium_armor 			= 0 }
+		set_temp_variable = { BASE@role_medium_armor_alt 		= 0 }
+		set_temp_variable = { BASE@role_heavy_armor 			= 0 }
+		set_temp_variable = { BASE@role_heavy_armor_alt 		= 0 }
+		set_temp_variable = { BASE@role_marines 				= 0 }
+		set_temp_variable = { BASE@role_mountaineers 			= 0 }
+		
+		if = {
+			limit = {
+				date > 1940.1.1
+			}
+			add_to_temp_variable = { BASE@role_infantry = 4 }
+			add_to_temp_variable = { BASE@role_motorized = 2 }
+		}
+		if = {
+			limit = {
+				date > 1941.1.1
+			}
+			add_to_temp_variable = { BASE@role_motorized = 2 }
+		}
+	}
+	
+	ai_templates_on_end_effect = yes
+}
+
+
+
+d_ai_logic/AST = {
+	#set_temp_variable = { ai_template_skip = 1 }
+	
+	if = {
+		limit = {
+			check_variable = { ai_ignore_templates = 0 }
+		}
+		ai_infantry_templates/AST = yes
+		ai_motorized_templates/AST = yes
+		ai_medium_armor_templates/AST = yes
+	}
+	
+	if = {
+		limit = {
+			check_variable = { ai_ignore_deployment = 0 }
+		}
+				
+		############################## BUILD ARMY STRATEGIES #############################
+		### they only get applied when AI has a role template or the template variable ###
+		# disable_build
+		# production_ratio 
+		
+		set_temp_variable = { BASE@role_infantry 				= 12 }
+		set_temp_variable = { BASE@role_light_infantry 			= 0 }
+		set_temp_variable = { BASE@role_heavy_infantry 			= 0 }
+		set_temp_variable = { BASE@role_garrison 				= 0 }
+		set_temp_variable = { BASE@role_cavalry 				= 0 }
+		set_temp_variable = { BASE@role_motorized 				= 2 }
+		set_temp_variable = { BASE@role_light_armor 			= 0 }
+		set_temp_variable = { BASE@role_light_armor_alt 		= 0 }
+		set_temp_variable = { BASE@role_medium_armor 			= 2 }
+		set_temp_variable = { BASE@role_medium_armor_alt 		= 0 }
+		set_temp_variable = { BASE@role_heavy_armor 			= 0 }
+		set_temp_variable = { BASE@role_heavy_armor_alt 		= 0 }
+		set_temp_variable = { BASE@role_marines 				= 0 }
+		set_temp_variable = { BASE@role_mountaineers 			= 0 }
+	}
+	
+	ai_templates_on_end_effect = yes
+}
+
+d_ai_logic/NZL = {
+	#set_temp_variable = { ai_template_skip = 1 }
+	
+	if = {
+		limit = {
+			check_variable = { ai_ignore_templates = 0 }
+		}
+		ai_militia_templates/generic_normal = yes
+		ai_cavalry_templates/generic_small = yes
+	}
+	
+	if = {
+		limit = {
+			check_variable = { ai_ignore_deployment = 0 }
+		}
+				
+		############################## BUILD ARMY STRATEGIES #############################
+		### they only get applied when AI has a role template or the template variable ###
+		# disable_build
+		# production_ratio 
+		
+		set_temp_variable = { BASE@role_infantry 				= 0 }
+		set_temp_variable = { BASE@role_light_infantry 			= 0 }
+		set_temp_variable = { BASE@role_heavy_infantry 			= 0 }
+		set_temp_variable = { BASE@role_militia	 				= 6 }
+		set_temp_variable = { BASE@role_garrison 				= 0 }
+		set_temp_variable = { BASE@role_cavalry 				= 2 }
+		set_temp_variable = { BASE@role_motorized 				= 0 }
+		set_temp_variable = { BASE@role_light_armor 			= 0 }
+		set_temp_variable = { BASE@role_light_armor_alt 		= 0 }
+		set_temp_variable = { BASE@role_medium_armor 			= 0 }
+		set_temp_variable = { BASE@role_medium_armor_alt 		= 0 }
+		set_temp_variable = { BASE@role_heavy_armor 			= 0 }
+		set_temp_variable = { BASE@role_heavy_armor_alt 		= 0 }
+		set_temp_variable = { BASE@role_marines 				= 0 }
+		set_temp_variable = { BASE@role_mountaineers 			= 0 }
+	}
+	
+	ai_templates_on_end_effect = yes
+}
+
+d_ai_logic/BUL = {
+	#set_temp_variable = { ai_template_skip = 1 }
+	
+	if = {
+		limit = {
+			check_variable = { ai_ignore_templates = 0 }
+		}
+		ai_infantry_templates/BUL = yes
+	}
+	
+	if = {
+		limit = {
+			check_variable = { ai_ignore_deployment = 0 }
+		}
+				
+		############################## BUILD ARMY STRATEGIES #############################
+		### they only get applied when AI has a role template or the template variable ###
+		# disable_build
+		# production_ratio 
+		
+		set_temp_variable = { BASE@role_infantry 				= 12 }
+		set_temp_variable = { BASE@role_light_infantry 			= 0 }
+		set_temp_variable = { BASE@role_heavy_infantry 			= 0 }
+		set_temp_variable = { BASE@role_garrison 				= 0 }
+		set_temp_variable = { BASE@role_cavalry 				= 0 }
+		set_temp_variable = { BASE@role_motorized 				= 0 }
+		set_temp_variable = { BASE@role_light_armor 			= 0 }
+		set_temp_variable = { BASE@role_light_armor_alt 		= 0 }
+		set_temp_variable = { BASE@role_medium_armor 			= 0 }
+		set_temp_variable = { BASE@role_medium_armor_alt 		= 0 }
+		set_temp_variable = { BASE@role_heavy_armor 			= 0 }
+		set_temp_variable = { BASE@role_heavy_armor_alt 		= 0 }
+		set_temp_variable = { BASE@role_marines 				= 0 }
+		set_temp_variable = { BASE@role_mountaineers 			= 0 }
+	}
+	
+	ai_templates_on_end_effect = yes
+}
+
+d_ai_logic/FRA = {
+	#set_temp_variable = { ai_template_skip = 1 }
+	
+	if = {
+		limit = {
+			check_variable = { ai_ignore_templates = 0 }
+		}
+		ai_garrison_templates/FRA = yes 
+		ai_infantry_templates/FRA = yes 
+		ai_heavy_infantry_templates/FRA = yes 
+		ai_motorized_templates/FRA = yes 
+		ai_light_armor_templates/FRA = yes 
+		ai_heavy_armor_templates/FRA = yes 
+		ai_mountaineer_templates/FRA = yes
+		
+	}
+	
+	if = {
+		limit = {
+			check_variable = { ai_ignore_deployment = 0 }
+		}
+			
+		############################## BUILD ARMY STRATEGIES #############################
+		### they only get applied when AI has a role template or the template variable ###
+		# disable_build
+		# production_ratio 
+		
+		set_temp_variable = { BASE@role_infantry 				= 75 }
+		set_temp_variable = { BASE@role_light_infantry 			= 0 }
+		set_temp_variable = { BASE@role_heavy_infantry 			= 9 }
+		set_temp_variable = { BASE@role_garrison 				= 17 }
+		set_temp_variable = { BASE@role_cavalry 				= 0 }
+		set_temp_variable = { BASE@role_motorized 				= 10 }
+		set_temp_variable = { BASE@role_light_armor 			= 5 }
+		set_temp_variable = { BASE@role_light_armor_alt 		= 0 }
+		set_temp_variable = { BASE@role_medium_armor 			= 0 }
+		set_temp_variable = { BASE@role_medium_armor_alt 		= 0 }
+		set_temp_variable = { BASE@role_heavy_armor 			= 6 }
+		set_temp_variable = { BASE@role_heavy_armor_alt 		= 0 }
+		set_temp_variable = { BASE@role_marines 				= 0 }
+		set_temp_variable = { BASE@role_mountaineers 			= 4 }
+		
+		if = { #reduce unit want if capitulated or subject
+			limit = { OR = { has_capitulated = yes is_subject = yes } }
+			
+			set_temp_variable = { production_ratio = -0.8 }
+		}
+		
+		if = {
+			limit = {
+				has_capitulated = yes 
+			}
+			set_temp_variable = { BASE@role_light_armor = 0 }
+			set_temp_variable = { BASE@role_heavy_armor = 0 }
+			set_temp_variable = { BASE@role_motorized = 0 }
+			set_temp_variable = { BASE@role_mountaineers = 0 }
+			
+			set_temp_variable = { BASE@role_infantry = 2 }
+			set_temp_variable = { BASE@role_garrison = 6 }
+		}
+		
+		if = {
+			limit = {
+				OR = {
+					has_war = yes
+					date > 1939.6.1
+					threat > 0.10
+				}
+				has_capitulated = no
+			}
+			add_to_temp_variable = { BASE@role_infantry = 14 }
+			#add_to_temp_variable = { BASE@role_motorized = 8 }
+			add_to_temp_variable = { BASE@role_heavy_armor = 6 }
+			add_to_temp_variable = { BASE@role_mountaineers = 1 }
+		}
+		
+	}
+	
+	if = {
+		limit = {
+			check_variable = { ai_ignore_air_production = 0 }
+		}
+		set_temp_variable = { air_ratio_mic_factor = -0.25 }
+		############################## BUILD PLANE STRATEGIES #############################
+		### they only get applied when AI has the air equipment and the necessary flags ###
+		
+		set_temp_variable = { RATIO@fighter_equipment 				= 100 }
+		set_temp_variable = { RATIO@fighter_alt_equipment 			=   0 }
+		set_temp_variable = { RATIO@interceptor_equipment 			=   0 }
+		set_temp_variable = { RATIO@mr_fighter_equipment 			=   0 }
+		set_temp_variable = { RATIO@heavy_fighter_equipment 		=   0 }
+		
+		set_temp_variable = { RATIO@CAS_equipment 					=   0 }
+		set_temp_variable = { RATIO@twin_cas_equipment 				=  -30 }
+		set_temp_variable = { RATIO@nav_bomber_equipment 			=   0 }
+		set_temp_variable = { RATIO@tac_bomber_equipment 			=   0 }
+		set_temp_variable = { RATIO@light_bomber_equipment 			=   0 }
+		set_temp_variable = { RATIO@fast_bomber_equipment 			=   0 }
+		set_temp_variable = { RATIO@quad_engine_bomber_equipment 	=   0 }
+		
+		set_temp_variable = { RATIO@jet_fighter_equipment 			=   0 }
+		set_temp_variable = { RATIO@jet_mr_fighter_equipment 		=   0 }
+		set_temp_variable = { RATIO@jet_tac_bomber_equipment 		=   0 }
+		set_temp_variable = { RATIO@jet_strat_bomber_equipment 		=   0 }
+		
+		set_temp_variable = { RATIO@cv_fighter_equipment 			=   0 }
+		set_temp_variable = { RATIO@cv_nav_bomber_equipment 		=   0 }
+		set_temp_variable = { RATIO@cv_CAS_equipment 				=   0 }
+		
+	### FIGHTER TARGET 
+		
+		set_temp_variable = { ai_fighter_target_buffer = 350 }
+		set_temp_variable = { max_enemy_fighter_ratio = 1.25 }
+		
+		if = { limit = { check_variable = { FIGHTER_WEIGHT^num = 0 } }
+			clear_array = FIGHTER_WEIGHT
+			add_to_array = { FIGHTER_WEIGHT = 1.00 } 	#-- fighter_equipment
+			add_to_array = { FIGHTER_WEIGHT = 0.80 } 	#-- interceptor_equipment
+			add_to_array = { FIGHTER_WEIGHT = 0.70 } 	#-- mr_fighter_equipment
+			add_to_array = { FIGHTER_WEIGHT = 1.20 } 	#-- heavy_fighter_equipment
+			add_to_array = { FIGHTER_WEIGHT = 1.00 } 	#-- fighter_alt_equipment
+			add_to_array = { FIGHTER_WEIGHT = 1.50 } 	#-- jet_fighter_equipment
+		}
+		
+		#-- These values determine how many fighter types AI wants per strategic region; scaled by: matching_states/num_region_states"
+		add_to_temp_array = { REGION_FIGHTER_NEED = 150 } 	#-- home area
+		add_to_temp_array = { REGION_FIGHTER_NEED = 125 } 	#-- core
+		add_to_temp_array = { REGION_FIGHTER_NEED = 100 } 	#-- owned & controlled 
+		add_to_temp_array = { REGION_FIGHTER_NEED = 90 } 	#-- only controlled
+		
+		
+	### EXTRA FIGHTER PRODUCTION FOCUS 
+		
+		set_temp_variable = { enable_ratio = 0.5 } #if below this ratio, we increase fighter production
+		set_temp_variable = { minimum_ratio = 0.25 } #at this ratio we hit max extra production, listed below
+		
+		#-- These values get scaled between enable & maximum
+		add_to_temp_array = { MAX_EXTRA_FIGHTER_RATIO_MULT = 2.00 } 	#-- fighter_equipment
+		add_to_temp_array = { MAX_EXTRA_FIGHTER_RATIO_MULT = 0.00 } 	#-- interceptor_equipment
+		add_to_temp_array = { MAX_EXTRA_FIGHTER_RATIO_MULT = 0.00 } 	#-- mr_fighter_equipment
+		add_to_temp_array = { MAX_EXTRA_FIGHTER_RATIO_MULT = 0.00 } 	#-- heavy_fighter_equipment
+		add_to_temp_array = { MAX_EXTRA_FIGHTER_RATIO_MULT = 0.00 } 	#-- fighter_alt_equipment
+		add_to_temp_array = { MAX_EXTRA_FIGHTER_RATIO_MULT = 0.00 } 	#-- jet_fighter_equipment
+		
+	##--- MISC 
+	
+		ai_update_air_production = yes
+		
+	}
+	
+	if = {
+		limit = {
+			check_variable = { ai_ignore_naval_production = 0 }
+		}
+			
+		### SHIPS ###########################
+		
+		ai_naval_CV/FRA = yes
+		ai_naval_BB/FRA = yes
+		ai_naval_CA/FRA = yes
+		ai_naval_CL/FRA = yes
+		
+		ai_naval_DD/generic = yes
+		ai_naval_SS/generic = yes
+		
+		ai_switch_escort_to_destroyer = yes
+		
+		############################### NAVAL ROLE NEEDS ###############################
+		### they always apply but they have no effect if the ai has no suitable ship ###
+		
+		set_temp_variable = { RATIO@naval_capital_bb 			 = 4 }
+		set_temp_variable = { RATIO@naval_capital_bc 			 = 8 }
+		set_temp_variable = { RATIO@naval_cruiser_heavy 		 = 10 }
+		set_temp_variable = { RATIO@naval_cruiser_light 		 = 8 }
+		set_temp_variable = { RATIO@naval_screen 				 = 60 }
+		set_temp_variable = { RATIO@naval_submarine 			 = 10 }
+		
+	##--- MISC 
+			
+		ai_update_ship_production = yes
+	}
+	ai_templates_on_end_effect = yes
+}
+
+d_ai_logic/VIC = {
+	#set_temp_variable = { ai_template_skip = 1 }
+	
+	if = {
+		limit = {
+			check_variable = { ai_ignore_templates = 0 }
+		}
+		ai_garrison_templates/FRA = yes 
+		ai_infantry_templates/FRA = yes 
+		ai_heavy_infantry_templates/FRA = yes 
+		ai_motorized_templates/FRA = yes 
+		#ai_light_armor_templates/FRA = yes 
+		ai_heavy_armor_templates/FRA = yes 
+		ai_mountaineer_templates/FRA = yes
+		
+	}
+	
+	if = {
+		limit = { #TODO this is just the french plan
+			check_variable = { ai_ignore_deployment = 0 }
+		}
+				
+		############################## BUILD ARMY STRATEGIES #############################
+		### they only get applied when AI has a role template or the template variable ###
+		# disable_build
+		# production_ratio 
+		
+		set_temp_variable = { BASE@role_infantry 				= 36 }
+		set_temp_variable = { BASE@role_light_infantry 			= 0 }
+		set_temp_variable = { BASE@role_heavy_infantry 			= 8 }
+		set_temp_variable = { BASE@role_garrison 				= 18 }
+		set_temp_variable = { BASE@role_cavalry 				= 0 }
+		set_temp_variable = { BASE@role_motorized 				= 10 }
+		set_temp_variable = { BASE@role_light_armor 			= 2 }
+		set_temp_variable = { BASE@role_light_armor_alt 		= 0 }
+		set_temp_variable = { BASE@role_medium_armor 			= 0 }
+		set_temp_variable = { BASE@role_medium_armor_alt 		= 0 }
+		set_temp_variable = { BASE@role_heavy_armor 			= 6 }
+		set_temp_variable = { BASE@role_heavy_armor_alt 		= 0 }
+		set_temp_variable = { BASE@role_marines 				= 0 }
+		set_temp_variable = { BASE@role_mountaineers 			= 6 }
+	}
+	
+	ai_templates_on_end_effect = yes
+}
+
+d_ai_logic/TUR = {
+	#set_temp_variable = { ai_template_skip = 1 }
+	
+	if = {
+		limit = {
+			check_variable = { ai_ignore_templates = 0 }
+		}
+		ai_infantry_templates/TUR = yes
+		ai_cavalry_templates/TUR = yes
+		ai_mountaineer_templates/TUR = yes
+	}
+	
+	if = {
+		limit = {
+			check_variable = { ai_ignore_deployment = 0 }
+		}
+				
+		############################## BUILD ARMY STRATEGIES #############################
+		### they only get applied when AI has a role template or the template variable ###
+		# disable_build
+		# production_ratio 
+		
+		set_temp_variable = { BASE@role_infantry 				= 24 }
+		set_temp_variable = { BASE@role_light_infantry 			= 0 }
+		set_temp_variable = { BASE@role_heavy_infantry 			= 0 }
+		set_temp_variable = { BASE@role_garrison 				= 0 }
+		set_temp_variable = { BASE@role_cavalry 				= 4 }
+		set_temp_variable = { BASE@role_motorized 				= 0 }
+		set_temp_variable = { BASE@role_light_armor 			= 0 }
+		set_temp_variable = { BASE@role_light_armor_alt 		= 0 }
+		set_temp_variable = { BASE@role_medium_armor 			= 0 }
+		set_temp_variable = { BASE@role_medium_armor_alt 		= 0 }
+		set_temp_variable = { BASE@role_heavy_armor 			= 0 }
+		set_temp_variable = { BASE@role_heavy_armor_alt 		= 0 }
+		set_temp_variable = { BASE@role_marines 				= 0 }
+		set_temp_variable = { BASE@role_mountaineers 			= 6 }
+	}
+	
+	ai_templates_on_end_effect = yes
+}
+	
+d_ai_logic/POL = {
+	#set_temp_variable = { ai_template_skip = 1 }
+	
+	if = {
+		limit = {
+			check_variable = { ai_ignore_templates = 0 }
+		}
+		ai_garrison_templates/POL = yes
+		ai_infantry_templates/POL = yes
+		ai_cavalry_templates/POL = yes
+		ai_mountaineer_templates/POL = yes
+	}
+	
+	if = {
+		limit = {
+			check_variable = { ai_ignore_deployment = 0 }
+		}
+				
+		############################## BUILD ARMY STRATEGIES #############################
+		### they only get applied when AI has a role template or the template variable ###
+		# disable_build
+		# production_ratio 
+		
+		set_temp_variable = { BASE@role_infantry 				= 40 }
+		set_temp_variable = { BASE@role_light_infantry 			= 0 }
+		set_temp_variable = { BASE@role_heavy_infantry 			= 0 }
+		set_temp_variable = { BASE@role_garrison 				= 8 }
+		set_temp_variable = { BASE@role_cavalry 				= 6 }
+		set_temp_variable = { BASE@role_motorized 				= 0 }
+		set_temp_variable = { BASE@role_light_armor 			= 0 }
+		set_temp_variable = { BASE@role_light_armor_alt 		= 0 }
+		set_temp_variable = { BASE@role_medium_armor 			= 0 }
+		set_temp_variable = { BASE@role_medium_armor_alt 		= 0 }
+		set_temp_variable = { BASE@role_heavy_armor 			= 0 }
+		set_temp_variable = { BASE@role_heavy_armor_alt 		= 0 }
+		set_temp_variable = { BASE@role_marines 				= 0 }
+		set_temp_variable = { BASE@role_mountaineers 			= 4 }
+		
+		if = {
+			limit = {
+				num_divisions > 50
+			}
+			add_to_temp_variable = { BASE@role_cavalry = 6 }
+		}
+		if = {
+			limit = {
+				has_capitulated = yes 
+			}
+			set_temp_variable = { BASE@role_infantry = 0 }
+			set_temp_variable = { BASE@role_garrison = 6 }
+			set_temp_variable = { BASE@role_infantry = 0 }
+		}
+	}
+	
+	ai_templates_on_end_effect = yes
+}
+
+
+
+d_ai_logic/HUN = {
+	#set_temp_variable = { ai_template_skip = 1 }
+	
+	if = {
+		limit = {
+			check_variable = { ai_ignore_templates = 0 }
+		}
+		ai_infantry_templates/HUN = yes
+		ai_motorized_templates/HUN = yes
+	}
+	
+	if = {
+		limit = {
+			check_variable = { ai_ignore_deployment = 0 }
+		}
+				
+		############################## BUILD ARMY STRATEGIES #############################
+		### they only get applied when AI has a role template or the template variable ###
+		# disable_build
+		# production_ratio 
+		
+		set_temp_variable = { BASE@role_infantry 				= 20 }
+		set_temp_variable = { BASE@role_light_infantry 			= 0 }
+		set_temp_variable = { BASE@role_heavy_infantry 			= 0 }
+		set_temp_variable = { BASE@role_garrison 				= 0 }
+		set_temp_variable = { BASE@role_cavalry 				= 0 }
+		set_temp_variable = { BASE@role_motorized 				= 2 }
+		set_temp_variable = { BASE@role_light_armor 			= 0 }
+		set_temp_variable = { BASE@role_light_armor_alt 		= 0 }
+		set_temp_variable = { BASE@role_medium_armor 			= 0 }
+		set_temp_variable = { BASE@role_medium_armor_alt 		= 0 }
+		set_temp_variable = { BASE@role_heavy_armor 			= 0 }
+		set_temp_variable = { BASE@role_heavy_armor_alt 		= 0 }
+		set_temp_variable = { BASE@role_marines 				= 0 }
+		set_temp_variable = { BASE@role_mountaineers 			= 0 }
+	}
+	
+	ai_templates_on_end_effect = yes
+}
+	
+
+
+d_ai_logic/ROM = {
+	#set_temp_variable = { ai_template_skip = 1 }
+	
+	if = {
+		limit = {
+			check_variable = { ai_ignore_templates = 0 }
+		}
+		ai_infantry_templates/ROM = yes
+		ai_cavalry_templates/ROM = yes
+		ai_mountaineer_templates/ROM = yes
+		ai_motorized_templates/ROM = yes
+	}
+	
+	if = {
+		limit = {
+			check_variable = { ai_ignore_deployment = 0 }
+		}
+				
+		############################## BUILD ARMY STRATEGIES #############################
+		### they only get applied when AI has a role template or the template variable ###
+		# disable_build
+		# production_ratio 
+		
+		set_temp_variable = { BASE@role_infantry 				= 22 }
+		set_temp_variable = { BASE@role_light_infantry 			= 0 }
+		set_temp_variable = { BASE@role_heavy_infantry 			= 0 }
+		set_temp_variable = { BASE@role_garrison 				= 0 }
+		set_temp_variable = { BASE@role_cavalry 				= 6 }
+		set_temp_variable = { BASE@role_motorized 				= 0 }
+		set_temp_variable = { BASE@role_light_armor 			= 0 }
+		set_temp_variable = { BASE@role_light_armor_alt 		= 0 }
+		set_temp_variable = { BASE@role_medium_armor 			= 0 }
+		set_temp_variable = { BASE@role_medium_armor_alt 		= 0 }
+		set_temp_variable = { BASE@role_heavy_armor 			= 0 }
+		set_temp_variable = { BASE@role_heavy_armor_alt 		= 0 }
+		set_temp_variable = { BASE@role_marines 				= 0 }
+		set_temp_variable = { BASE@role_mountaineers 			= 4 }
+		
+		if = {
+			limit = {
+				OR = {
+					date > 1941.1.1
+					check_variable = { ai_division_limit_ratio > 0.9 }
+				}
+				ai_has_anti_tank_brigade = yes
+				ai_has_anti_tank_brigade_med = yes
+			}
+			add_to_temp_variable = { BASE@role_motorized = 4 }
+		}
+	}
+	
+	ai_templates_on_end_effect = yes
+}
+
+
+
+
+d_ai_logic/YUG = {
+	#set_temp_variable = { ai_template_skip = 1 }
+	
+	if = {
+		limit = {
+			check_variable = { ai_ignore_templates = 0 }
+		}
+		ai_infantry_templates/YUG = yes
+		ai_light_infantry_templates/YUG = yes
+		ai_mountaineer_templates/YUG = yes
+	}
+	
+	if = {
+		limit = {
+			check_variable = { ai_ignore_deployment = 0 }
+		}
+				
+		############################## BUILD ARMY STRATEGIES #############################
+		### they only get applied when AI has a role template or the template variable ###
+		
+		set_temp_variable = { BASE@role_infantry 				= 28 }
+		set_temp_variable = { BASE@role_light_infantry 			= 12 }
+		set_temp_variable = { BASE@role_heavy_infantry 			= 0 }
+		set_temp_variable = { BASE@role_garrison 				= 0 }
+		set_temp_variable = { BASE@role_cavalry 				= 0 }
+		set_temp_variable = { BASE@role_motorized 				= 0 }
+		set_temp_variable = { BASE@role_light_armor 			= 0 }
+		set_temp_variable = { BASE@role_light_armor_alt 		= 0 }
+		set_temp_variable = { BASE@role_medium_armor 			= 0 }
+		set_temp_variable = { BASE@role_medium_armor_alt 		= 0 }
+		set_temp_variable = { BASE@role_heavy_armor 			= 0 }
+		set_temp_variable = { BASE@role_heavy_armor_alt 		= 0 }
+		set_temp_variable = { BASE@role_marines 				= 0 }
+		set_temp_variable = { BASE@role_mountaineers 			= 10 }
+	}
+	
+	ai_templates_on_end_effect = yes
+}
+
+
+
+
+d_ai_logic/GRE = {
+	#set_temp_variable = { ai_template_skip = 1 }
+	
+	if = {
+		limit = {
+			check_variable = { ai_ignore_templates = 0 }
+		}
+		ai_infantry_templates/GRE = yes
+		ai_mountaineer_templates/GRE = yes
+	}
+	
+	if = {
+		limit = {
+			check_variable = { ai_ignore_deployment = 0 }
+		}
+				
+		############################## BUILD ARMY STRATEGIES #############################
+		### they only get applied when AI has a role template or the template variable ###
+		# disable_build
+		# production_ratio 
+		
+		set_temp_variable = { BASE@role_infantry 				= 12 }
+		set_temp_variable = { BASE@role_light_infantry 			= 0 }
+		set_temp_variable = { BASE@role_heavy_infantry 			= 0 }
+		set_temp_variable = { BASE@role_garrison 				= 0 }
+		set_temp_variable = { BASE@role_cavalry 				= 0 }
+		set_temp_variable = { BASE@role_motorized 				= 0 }
+		set_temp_variable = { BASE@role_light_armor 			= 0 }
+		set_temp_variable = { BASE@role_light_armor_alt 		= 0 }
+		set_temp_variable = { BASE@role_medium_armor 			= 0 }
+		set_temp_variable = { BASE@role_medium_armor_alt 		= 0 }
+		set_temp_variable = { BASE@role_heavy_armor 			= 0 }
+		set_temp_variable = { BASE@role_heavy_armor_alt 		= 0 }
+		set_temp_variable = { BASE@role_marines 				= 0 }
+		set_temp_variable = { BASE@role_mountaineers 			= 6 }
+	}
+	
+	ai_templates_on_end_effect = yes
+}
+
+
+
+
+d_ai_logic/PER = {
+	#set_temp_variable = { ai_template_skip = 1 }
+	
+	if = {
+		limit = {
+			check_variable = { ai_ignore_templates = 0 }
+		}
+		ai_infantry_templates/PER = yes 
+		#ai_cavalry_templates/PER = yes
+	}
+	
+	if = {
+		limit = {
+			check_variable = { ai_ignore_deployment = 0 }
+		}
+				
+		############################## BUILD ARMY STRATEGIES #############################
+		### they only get applied when AI has a role template or the template variable ###
+		# disable_build
+		# production_ratio 
+		
+		set_temp_variable = { BASE@role_infantry 				= 16  } 
+		set_temp_variable = { BASE@role_light_infantry 			= 0  }
+		set_temp_variable = { BASE@role_heavy_infantry 			= 0  }
+		set_temp_variable = { BASE@role_garrison 				= 0  }
+		set_temp_variable = { BASE@role_cavalry 				= 0  }
+		set_temp_variable = { BASE@role_motorized 				= 0  }
+		set_temp_variable = { BASE@role_light_armor 			= 0  }
+		set_temp_variable = { BASE@role_light_armor_alt 		= 0  }
+		set_temp_variable = { BASE@role_medium_armor 			= 0  }
+		set_temp_variable = { BASE@role_medium_armor_alt 		= 0  }
+		set_temp_variable = { BASE@role_heavy_armor 			= 0  }
+		set_temp_variable = { BASE@role_heavy_armor_alt 		= 0  }
+		set_temp_variable = { BASE@role_marines 				= 0  }
+		set_temp_variable = { BASE@role_mountaineers 			= 0  }
+		
+		if = {
+			limit = {
+				is_subject = yes 
+			}
+			multiply_temp_variable = { BASE@role_infantry = 0.5 }
+			multiply_temp_variable = { BASE@role_cavalry = 0.5 }
+		}
+	}
+	
+	ai_templates_on_end_effect = yes
+}
+
+
+
+
+d_ai_logic/AFG = {
+	#set_temp_variable = { ai_template_skip = 1 }
+	
+	if = {
+		limit = {
+			check_variable = { ai_ignore_templates = 0 }
+		}
+		ai_militia_templates/AFG = yes 
+	}
+	
+	if = {
+		limit = {
+			check_variable = { ai_ignore_deployment = 0 }
+		}
+				
+		############################## BUILD ARMY STRATEGIES #############################
+		### they only get applied when AI has a role template or the template variable ###
+		# disable_build
+		# production_ratio 
+		
+		set_temp_variable = { BASE@role_infantry 				= 0  } 
+		set_temp_variable = { BASE@role_light_infantry 			= 0  }
+		set_temp_variable = { BASE@role_heavy_infantry 			= 0  }
+		set_temp_variable = { BASE@role_militia		 			= 8  }
+		set_temp_variable = { BASE@role_garrison 				= 0  }
+		set_temp_variable = { BASE@role_cavalry 				= 0  }
+		set_temp_variable = { BASE@role_motorized 				= 0  }
+		set_temp_variable = { BASE@role_light_armor 			= 0  }
+		set_temp_variable = { BASE@role_light_armor_alt 		= 0  }
+		set_temp_variable = { BASE@role_medium_armor 			= 0  }
+		set_temp_variable = { BASE@role_medium_armor_alt 		= 0  }
+		set_temp_variable = { BASE@role_heavy_armor 			= 0  }
+		set_temp_variable = { BASE@role_heavy_armor_alt 		= 0  }
+		set_temp_variable = { BASE@role_marines 				= 0  }
+		set_temp_variable = { BASE@role_mountaineers 			= 0  }
+	}
+	
+	ai_templates_on_end_effect = yes
+}
+
+
+
+
+d_ai_logic/ETH = {
+	#set_temp_variable = { ai_template_skip = 1 }
+	
+	if = {
+		limit = {
+			check_variable = { ai_ignore_templates = 0 }
+		}
+		ai_militia_templates/ETH = yes 
+		ai_mountaineer_templates/ETH = yes
+		ai_light_infantry_templates/generic_desert = yes
+	}
+	
+	if = {
+		limit = {
+			check_variable = { ai_ignore_deployment = 0 }
+		}
+				
+		############################## BUILD ARMY STRATEGIES #############################
+		### they only get applied when AI has a role template or the template variable ###
+		# disable_build
+		# production_ratio 
+		
+		set_temp_variable = { BASE@role_infantry 				= 0  } 
+		set_temp_variable = { BASE@role_light_infantry 			= 4  }
+		set_temp_variable = { BASE@role_heavy_infantry 			= 0  }
+		set_temp_variable = { BASE@role_militia		 			= 10  }
+		set_temp_variable = { BASE@role_garrison 				= 0  }
+		set_temp_variable = { BASE@role_cavalry 				= 0  }
+		set_temp_variable = { BASE@role_motorized 				= 0  }
+		set_temp_variable = { BASE@role_light_armor 			= 0  }
+		set_temp_variable = { BASE@role_light_armor_alt 		= 0  }
+		set_temp_variable = { BASE@role_medium_armor 			= 0  }
+		set_temp_variable = { BASE@role_medium_armor_alt 		= 0  }
+		set_temp_variable = { BASE@role_heavy_armor 			= 0  }
+		set_temp_variable = { BASE@role_heavy_armor_alt 		= 0  }
+		set_temp_variable = { BASE@role_marines 				= 0  }
+		set_temp_variable = { BASE@role_mountaineers 			= 2  }
+	}
+	
+	ai_templates_on_end_effect = yes
+}
+
+
+
+
+d_ai_logic/IRQ = {
+	#set_temp_variable = { ai_template_skip = 1 }
+	
+	if = {
+		limit = {
+			check_variable = { ai_ignore_templates = 0 }
+		}
+		ai_infantry_templates/generic_small = yes 
+		ai_mountaineer_templates/generic_small = yes
+		ai_motorized_templates/generic = yes
+	}
+	
+	if = {
+		limit = {
+			check_variable = { ai_ignore_deployment = 0 }
+		}
+				
+		############################## BUILD ARMY STRATEGIES #############################
+		### they only get applied when AI has a role template or the template variable ###
+		# disable_build
+		# production_ratio 
+		
+		set_temp_variable = { BASE@role_infantry 				= 4  } 
+		set_temp_variable = { BASE@role_light_infantry 			= 0  }
+		set_temp_variable = { BASE@role_heavy_infantry 			= 0  }
+		set_temp_variable = { BASE@role_garrison 				= 0  }
+		set_temp_variable = { BASE@role_cavalry 				= 0  }
+		set_temp_variable = { BASE@role_motorized 				= 2  }
+		set_temp_variable = { BASE@role_light_armor 			= 0  }
+		set_temp_variable = { BASE@role_light_armor_alt 		= 0  }
+		set_temp_variable = { BASE@role_medium_armor 			= 0  }
+		set_temp_variable = { BASE@role_medium_armor_alt 		= 0  }
+		set_temp_variable = { BASE@role_heavy_armor 			= 0  }
+		set_temp_variable = { BASE@role_heavy_armor_alt 		= 0  }
+		set_temp_variable = { BASE@role_marines 				= 0  }
+		set_temp_variable = { BASE@role_mountaineers 			= 2  }
+	}
+	
+	ai_templates_on_end_effect = yes
+}
+
+d_ai_logic/SIA = {
+	#set_temp_variable = { ai_template_skip = 1 }
+	
+	if = {
+		limit = {
+			check_variable = { ai_ignore_templates = 0 }
+		}
+		ai_infantry_templates/generic_small = yes 
+		ai_motorized_templates/generic = yes
+	}
+	
+	if = {
+		limit = {
+			check_variable = { ai_ignore_deployment = 0 }
+		}
+				
+		############################## BUILD ARMY STRATEGIES #############################
+		### they only get applied when AI has a role template or the template variable ###
+		# disable_build
+		# production_ratio 
+		
+		set_temp_variable = { BASE@role_infantry 				= 8  } 
+		set_temp_variable = { BASE@role_light_infantry 			= 0  }
+		set_temp_variable = { BASE@role_heavy_infantry 			= 0  }
+		set_temp_variable = { BASE@role_garrison 				= 0  }
+		set_temp_variable = { BASE@role_cavalry 				= 0  }
+		set_temp_variable = { BASE@role_motorized 				= 1  }
+		set_temp_variable = { BASE@role_light_armor 			= 0  }
+		set_temp_variable = { BASE@role_light_armor_alt 		= 0  }
+		set_temp_variable = { BASE@role_medium_armor 			= 0  }
+		set_temp_variable = { BASE@role_medium_armor_alt 		= 0  }
+		set_temp_variable = { BASE@role_heavy_armor 			= 0  }
+		set_temp_variable = { BASE@role_heavy_armor_alt 		= 0  }
+		set_temp_variable = { BASE@role_marines 				= 0  }
+		set_temp_variable = { BASE@role_mountaineers 			= 0  }
+	}
+	
+	ai_templates_on_end_effect = yes
+}
+
+
+
+d_ai_logic/MON = {
+	#set_temp_variable = { ai_template_skip = 1 }
+	
+	if = {
+		limit = {
+			check_variable = { ai_ignore_templates = 0 }
+		}
+		ai_cavalry_templates/generic_small = yes
+	}
+	
+	if = {
+		limit = {
+			check_variable = { ai_ignore_deployment = 0 }
+		}
+				
+		############################## BUILD ARMY STRATEGIES #############################
+		### they only get applied when AI has a role template or the template variable ###
+		# disable_build
+		# production_ratio 
+		
+		set_temp_variable = { BASE@role_infantry 				= 0  } 
+		set_temp_variable = { BASE@role_light_infantry 			= 0  }
+		set_temp_variable = { BASE@role_heavy_infantry 			= 0  }
+		set_temp_variable = { BASE@role_garrison 				= 0  }
+		set_temp_variable = { BASE@role_cavalry 				= 8  }
+		set_temp_variable = { BASE@role_motorized 				= 0  }
+		set_temp_variable = { BASE@role_light_armor 			= 0  }
+		set_temp_variable = { BASE@role_light_armor_alt 		= 0  }
+		set_temp_variable = { BASE@role_medium_armor 			= 0  }
+		set_temp_variable = { BASE@role_medium_armor_alt 		= 0  }
+		set_temp_variable = { BASE@role_heavy_armor 			= 0  }
+		set_temp_variable = { BASE@role_heavy_armor_alt 		= 0  }
+		set_temp_variable = { BASE@role_marines 				= 0  }
+		set_temp_variable = { BASE@role_mountaineers 			= 0  }
+	}
+	
+	ai_templates_on_end_effect = yes
+}
+
+d_ai_logic/ARG = {
+	#set_temp_variable = { ai_template_skip = 1 }
+	
+	if = {
+		limit = {
+			check_variable = { ai_ignore_templates = 0 }
+		}
+		ai_infantry_templates/ARG = yes
+		ai_mountaineer_templates/ARG = yes
+	}
+	
+	if = {
+		limit = {
+			check_variable = { ai_ignore_deployment = 0 }
+		}
+				
+		############################## BUILD ARMY STRATEGIES #############################
+		### they only get applied when AI has a role template or the template variable ###
+		# disable_build
+		# production_ratio 
+		
+		set_temp_variable = { BASE@role_infantry 				= 10  } 
+		set_temp_variable = { BASE@role_light_infantry 			= 0  }
+		set_temp_variable = { BASE@role_heavy_infantry 			= 0  }
+		set_temp_variable = { BASE@role_garrison 				= 0  }
+		set_temp_variable = { BASE@role_cavalry 				= 0  }
+		set_temp_variable = { BASE@role_motorized 				= 0  }
+		set_temp_variable = { BASE@role_light_armor 			= 0  }
+		set_temp_variable = { BASE@role_light_armor_alt 		= 0  }
+		set_temp_variable = { BASE@role_medium_armor 			= 0  }
+		set_temp_variable = { BASE@role_medium_armor_alt 		= 0  }
+		set_temp_variable = { BASE@role_heavy_armor 			= 0  }
+		set_temp_variable = { BASE@role_heavy_armor_alt 		= 0  }
+		set_temp_variable = { BASE@role_marines 				= 0  }
+		set_temp_variable = { BASE@role_mountaineers 			= 6  }
+	}
+	
+	ai_templates_on_end_effect = yes
+}
+
+
+
+d_ai_logic/HOL = {
+	#set_temp_variable = { ai_template_skip = 1 }
+	
+	if = {
+		limit = {
+			check_variable = { ai_ignore_templates = 0 }
+		}
+		ai_infantry_templates/generic_normal = yes
+		ai_militia_templates/generic_normal = yes
+		ai_motorized_templates/generic = yes
+		ai_garrison_templates/generic = yes
+	}
+	
+	if = {
+		limit = {
+			check_variable = { ai_ignore_deployment = 0 }
+		}
+				
+		############################## BUILD ARMY STRATEGIES #############################
+		### they only get applied when AI has a role template or the template variable ###
+		# disable_build
+		# production_ratio 
+		
+		set_temp_variable = { BASE@role_infantry 				= 16 } 
+		set_temp_variable = { BASE@role_militia 				= 2  }
+		set_temp_variable = { BASE@role_garrison 				= 6  }
+		set_temp_variable = { BASE@role_motorized 				= 2  }
+		
+		if = {
+			limit = {
+				has_capitulated = yes
+			}
+			set_temp_variable = { BASE@role_infantry = 0 }
+			set_temp_variable = { BASE@role_motorized = 0 }
+			
+			add_to_temp_variable = { BASE@role_militia = 10  }
+		}
+	}
+	
+	ai_templates_on_end_effect = yes
+}
+d_ai_logic/BEL = {
+	#set_temp_variable = { ai_template_skip = 1 }
+	
+	if = {
+		limit = {
+			check_variable = { ai_ignore_templates = 0 }
+		}
+		ai_infantry_templates/generic_normal = yes
+		ai_cavalry_templates/generic_small = yes
+		ai_motorized_templates/generic = yes
+	}
+	
+	if = {
+		limit = {
+			check_variable = { ai_ignore_deployment = 0 }
+		}
+				
+		############################## BUILD ARMY STRATEGIES #############################
+		### they only get applied when AI has a role template or the template variable ###
+		# disable_build
+		# production_ratio 
+		
+		set_temp_variable = { BASE@role_infantry 				= 18  } 
+		set_temp_variable = { BASE@role_cavalry 				= 6  }
+		set_temp_variable = { BASE@role_motorized 				= 4  }
+		
+		#if = {
+		#	limit = {
+		#		GER = { is_ai = yes }
+		#	}
+		#	set_temp_variable = { BASE@role_infantry = 12 }
+		#	set_temp_variable = { BASE@role_cavalry = 4 }
+		#}
+		if = {
+			limit = {
+				has_capitulated = yes
+			}
+			set_temp_variable = { BASE@role_infantry = 6 }
+			set_temp_variable = { BASE@role_cavalry = 2 }
+			set_temp_variable = { BASE@role_motorized = 4 }
+		}
+	}
+	
+	ai_templates_on_end_effect = yes
+}
+d_ai_logic/BRA = {
+	#set_temp_variable = { ai_template_skip = 1 }
+	
+	if = {
+		limit = {
+			check_variable = { ai_ignore_templates = 0 }
+		}
+		ai_infantry_templates/generic_normal = yes
+		ai_motorized_templates/generic = yes
+		ai_garrison_templates/generic = yes
+	}
+	
+	if = {
+		limit = {
+			check_variable = { ai_ignore_deployment = 0 }
+		}
+				
+		############################## BUILD ARMY STRATEGIES #############################
+		### they only get applied when AI has a role template or the template variable ###
+		# disable_build
+		# production_ratio 
+		
+		set_temp_variable = { BASE@role_infantry 				= 12  } 
+		set_temp_variable = { BASE@role_garrison 				= 10  }
+		set_temp_variable = { BASE@role_motorized 				= 0  }
+		
+		if = {
+			limit = {
+				check_variable = { ai_division_limit_ratio > 0.75 }
+				check_variable = { field_strength > 0.95 }
+				check_variable = { ai_num_of_military_factories > 24 }
+			}
+			add_to_temp_variable = { BASE@role_motorized = 6 }
+		}
+	}
+	
+	ai_templates_on_end_effect = yes
+}
+d_ai_logic/MEX = {
+	#set_temp_variable = { ai_template_skip = 1 }
+	
+	if = {
+		limit = {
+			check_variable = { ai_ignore_templates = 0 }
+		}
+		ai_infantry_templates/generic_normal = yes
+		ai_motorized_templates/generic = yes
+		ai_garrison_templates/generic = yes
+	}
+	
+	if = {
+		limit = {
+			check_variable = { ai_ignore_deployment = 0 }
+		}
+				
+		############################## BUILD ARMY STRATEGIES #############################
+		### they only get applied when AI has a role template or the template variable ###
+		# disable_build
+		# production_ratio 
+		
+		set_temp_variable = { BASE@role_infantry 				= 14  } 
+		set_temp_variable = { BASE@role_garrison 				= 8  }
+		
+		if = {
+			limit = {
+				check_variable = { ai_division_limit_ratio > 0.75 }
+				check_variable = { field_strength > 0.95 }
+				check_variable = { ai_num_of_military_factories > 24 }
+			}
+			add_to_temp_variable = { BASE@role_motorized = 6 }
+		}
+	}
+	
+	ai_templates_on_end_effect = yes
+}
+d_ai_logic/IRE = {
+	#set_temp_variable = { ai_template_skip = 1 }
+	
+	if = {
+		limit = {
+			check_variable = { ai_ignore_templates = 0 }
+		}
+		ai_infantry_templates/generic_normal = yes
+		ai_cavalry_templates/generic_small = yes
+	}
+	
+	if = {
+		limit = {
+			check_variable = { ai_ignore_deployment = 0 }
+		}
+				
+		############################## BUILD ARMY STRATEGIES #############################
+		### they only get applied when AI has a role template or the template variable ###
+		# disable_build
+		# production_ratio 
+		
+		set_temp_variable = { BASE@role_infantry 				= 8  } 
+		set_temp_variable = { BASE@role_cavalry 				= 4  }
+		
+		if = {
+			limit = {
+				has_war = yes 
+			}
+			add_to_temp_variable = { BASE@role_infantry = 4 }
+			add_to_temp_variable = { BASE@role_cavalry = 2 }
+		}
+	}
+	
+	ai_templates_on_end_effect = yes
+}
+d_ai_logic/LIT = {
+	#set_temp_variable = { ai_template_skip = 1 }
+	
+	if = {
+		limit = {
+			check_variable = { ai_ignore_templates = 0 }
+		}
+		ai_infantry_templates/generic_small = yes
+		ai_cavalry_templates/generic_small = yes
+	}
+	
+	if = {
+		limit = {
+			check_variable = { ai_ignore_deployment = 0 }
+		}
+				
+		############################## BUILD ARMY STRATEGIES #############################
+		### they only get applied when AI has a role template or the template variable ###
+		# disable_build
+		# production_ratio 
+		
+		set_temp_variable = { BASE@role_infantry 				= 5  } 
+		set_temp_variable = { BASE@role_cavalry 				= 3  }
+	}
+	
+	ai_templates_on_end_effect = yes
+}
+d_ai_logic/LAT = {
+	#set_temp_variable = { ai_template_skip = 1 }
+	
+	if = {
+		limit = {
+			check_variable = { ai_ignore_templates = 0 }
+		}
+		ai_infantry_templates/generic_small = yes
+	}
+	
+	if = {
+		limit = {
+			check_variable = { ai_ignore_deployment = 0 }
+		}
+				
+		############################## BUILD ARMY STRATEGIES #############################
+		### they only get applied when AI has a role template or the template variable ###
+		# disable_build
+		# production_ratio 
+		
+		set_temp_variable = { BASE@role_infantry 				= 6  } 
+	}
+	
+	ai_templates_on_end_effect = yes
+}
+d_ai_logic/EST = {
+	#set_temp_variable = { ai_template_skip = 1 }
+	
+	if = {
+		limit = {
+			check_variable = { ai_ignore_templates = 0 }
+		}
+		ai_infantry_templates/generic_small = yes
+	}
+	
+	if = {
+		limit = {
+			check_variable = { ai_ignore_deployment = 0 }
+		}
+				
+		############################## BUILD ARMY STRATEGIES #############################
+		### they only get applied when AI has a role template or the template variable ###
+		# disable_build
+		# production_ratio 
+		
+		set_temp_variable = { BASE@role_infantry 				= 5  } 
+	}
+	
+	ai_templates_on_end_effect = yes
+}
+d_ai_logic/POR = {
+	#set_temp_variable = { ai_template_skip = 1 }
+	
+	if = {
+		limit = {
+			check_variable = { ai_ignore_templates = 0 }
+		}
+		ai_infantry_templates/generic_normal = yes
+		ai_motorized_templates/generic = yes
+		ai_garrison_templates/generic = yes
+	}
+	
+	if = {
+		limit = {
+			check_variable = { ai_ignore_deployment = 0 }
+		}
+				
+		############################## BUILD ARMY STRATEGIES #############################
+		### they only get applied when AI has a role template or the template variable ###
+		# disable_build
+		# production_ratio 
+		
+		set_temp_variable = { BASE@role_infantry 				= 16  } 
+		set_temp_variable = { BASE@role_garrison 				= 6  }
+		set_temp_variable = { BASE@role_motorized 				= 6  }
+	}
+	
+	ai_templates_on_end_effect = yes
+}
+d_ai_logic/SWE = {
+	#set_temp_variable = { ai_template_skip = 1 }
+	
+	if = {
+		limit = {
+			check_variable = { ai_ignore_templates = 0 }
+		}
+		ai_infantry_templates/generic_normal = yes
+		ai_motorized_templates/generic = yes
+		ai_garrison_templates/generic = yes
+	}
+	
+	if = {
+		limit = {
+			check_variable = { ai_ignore_deployment = 0 }
+		}
+				
+		############################## BUILD ARMY STRATEGIES #############################
+		### they only get applied when AI has a role template or the template variable ###
+		# disable_build
+		# production_ratio 
+		
+		set_temp_variable = { BASE@role_infantry 				= 20  } 
+		set_temp_variable = { BASE@role_garrison 				= 6  }
+		set_temp_variable = { BASE@role_motorized 				= 4  }
+	}
+	
+	ai_templates_on_end_effect = yes
+}
+d_ai_logic/NOR = {
+	#set_temp_variable = { ai_template_skip = 1 }
+	
+	if = {
+		limit = {
+			check_variable = { ai_ignore_templates = 0 }
+		}
+		ai_garrison_templates/generic = yes
+		ai_cavalry_templates/generic_small = yes
+		ai_mountaineer_templates/generic_small = yes
+	}
+	
+	if = {
+		limit = {
+			check_variable = { ai_ignore_deployment = 0 }
+		}
+				
+		############################## BUILD ARMY STRATEGIES #############################
+		### they only get applied when AI has a role template or the template variable ###
+		# disable_build
+		# production_ratio 
+		
+		set_temp_variable = { BASE@role_infantry 				= 0  } 
+		set_temp_variable = { BASE@role_light_infantry 			= 0  }
+		set_temp_variable = { BASE@role_heavy_infantry 			= 0  }
+		set_temp_variable = { BASE@role_garrison 				= 12  }
+		set_temp_variable = { BASE@role_cavalry 				= 4  }
+		set_temp_variable = { BASE@role_motorized 				= 0  }
+		set_temp_variable = { BASE@role_light_armor 			= 0  }
+		set_temp_variable = { BASE@role_light_armor_alt 		= 0  }
+		set_temp_variable = { BASE@role_medium_armor 			= 0  }
+		set_temp_variable = { BASE@role_medium_armor_alt 		= 0  }
+		set_temp_variable = { BASE@role_heavy_armor 			= 0  }
+		set_temp_variable = { BASE@role_heavy_armor_alt 		= 0  }
+		set_temp_variable = { BASE@role_marines 				= 0  }
+		set_temp_variable = { BASE@role_mountaineers 			= 4  }
+	}
+	
+	ai_templates_on_end_effect = yes
+}
+d_ai_logic/DEN = {
+	#set_temp_variable = { ai_template_skip = 1 }
+	
+	if = {
+		limit = {
+			check_variable = { ai_ignore_templates = 0 }
+		}
+		ai_garrison_templates/generic = yes
+		ai_cavalry_templates/generic_small = yes
+	}
+	
+	if = {
+		limit = {
+			check_variable = { ai_ignore_deployment = 0 }
+		}
+				
+		############################## BUILD ARMY STRATEGIES #############################
+		### they only get applied when AI has a role template or the template variable ###
+		# disable_build
+		# production_ratio 
+		
+		set_temp_variable = { BASE@role_infantry 				= 0  } 
+		set_temp_variable = { BASE@role_light_infantry 			= 0  }
+		set_temp_variable = { BASE@role_heavy_infantry 			= 0  }
+		set_temp_variable = { BASE@role_garrison 				= 6  }
+		set_temp_variable = { BASE@role_cavalry 				= 2  }
+		set_temp_variable = { BASE@role_motorized 				= 0  }
+		set_temp_variable = { BASE@role_light_armor 			= 0  }
+		set_temp_variable = { BASE@role_light_armor_alt 		= 0  }
+		set_temp_variable = { BASE@role_medium_armor 			= 0  }
+		set_temp_variable = { BASE@role_medium_armor_alt 		= 0  }
+		set_temp_variable = { BASE@role_heavy_armor 			= 0  }
+		set_temp_variable = { BASE@role_heavy_armor_alt 		= 0  }
+		set_temp_variable = { BASE@role_marines 				= 0  }
+		set_temp_variable = { BASE@role_mountaineers 			= 0  }
+	}
+	
+	ai_templates_on_end_effect = yes
+}
+d_ai_logic/SAF = {
+	#set_temp_variable = { ai_template_skip = 1 }
+	
+	if = {
+		limit = {
+			check_variable = { ai_ignore_templates = 0 }
+		}
+		ai_infantry_templates/SAF = yes
+		ai_garrison_templates/SAF = yes
+	}
+	
+	if = {
+		limit = {
+			check_variable = { ai_ignore_deployment = 0 }
+		}
+				
+		############################## BUILD ARMY STRATEGIES #############################
+		### they only get applied when AI has a role template or the template variable ###
+		# disable_build
+		# production_ratio 
+		
+		set_temp_variable = { BASE@role_infantry 				= 10  } 
+		set_temp_variable = { BASE@role_garrison 				= 6  }
+	}
+	
+	ai_templates_on_end_effect = yes
+}
+d_ai_logic/FIN = {
+	#set_temp_variable = { ai_template_skip = 1 }
+	
+	if = {
+		limit = {
+			check_variable = { ai_ignore_templates = 0 }
+		}
+		ai_light_infantry_templates/FIN = yes
+		ai_infantry_templates/FIN = yes
+	}
+	
+	if = {
+		limit = {
+			check_variable = { ai_ignore_deployment = 0 }
+		}
+				
+		############################## BUILD ARMY STRATEGIES #############################
+		### they only get applied when AI has a role template or the template variable ###
+		# disable_build
+		# production_ratio 
+		
+		set_temp_variable = { BASE@role_infantry 				= 10  } 
+		set_temp_variable = { BASE@role_light_infantry 			= 14  }
+	}
+	
+	ai_templates_on_end_effect = yes
+}
+d_ai_logic/SPR = {
+	#set_temp_variable = { ai_template_skip = 1 }
+	
+	if = {
+		limit = {
+			check_variable = { ai_ignore_templates = 0 }
+		}
+		ai_infantry_templates/SPR = yes
+		#ai_cavalry_templates/generic_small = yes
+		ai_mountaineer_templates/SPR = yes
+	}
+	
+	if = {
+		limit = {
+			check_variable = { ai_ignore_deployment = 0 }
+		}
+				
+		############################## BUILD ARMY STRATEGIES #############################
+		### they only get applied when AI has a role template or the template variable ###
+		
+		set_temp_variable = { BASE@role_infantry 				= 36 }
+		set_temp_variable = { BASE@role_light_infantry 			= 0 }
+		set_temp_variable = { BASE@role_heavy_infantry 			= 0 }
+		set_temp_variable = { BASE@role_militia		 			= 0 }
+		set_temp_variable = { BASE@role_garrison 				= 0 }
+		set_temp_variable = { BASE@role_cavalry 				= 0 }
+		set_temp_variable = { BASE@role_motorized 				= 0 }
+		set_temp_variable = { BASE@role_light_armor 			= 0 }
+		set_temp_variable = { BASE@role_light_armor_alt 		= 0 }
+		set_temp_variable = { BASE@role_medium_armor 			= 0 }
+		set_temp_variable = { BASE@role_medium_armor_alt 		= 0 }
+		set_temp_variable = { BASE@role_heavy_armor 			= 0 }
+		set_temp_variable = { BASE@role_heavy_armor_alt 		= 0 }
+		set_temp_variable = { BASE@role_marines 				= 0 }
+		set_temp_variable = { BASE@role_mountaineers 			= 8 }
+	}
+	
+	ai_templates_on_end_effect = yes
+}
+d_ai_logic/CZE = {
+	#set_temp_variable = { ai_template_skip = 1 }
+	
+	if = {
+		limit = {
+			check_variable = { ai_ignore_templates = 0 }
+		}
+		ai_infantry_templates/generic_normal = yes
+		ai_cavalry_templates/generic_small = yes
+		ai_mountaineer_templates/generic_small = yes
+		ai_light_armor_templates/CZE = yes
+	}
+	
+	if = {
+		limit = {
+			check_variable = { ai_ignore_deployment = 0 }
+		}
+				
+		############################## BUILD ARMY STRATEGIES #############################
+		### they only get applied when AI has a role template or the template variable ###
+		
+		set_temp_variable = { BASE@role_infantry 				= 18 }
+		set_temp_variable = { BASE@role_light_infantry 			= 0 }
+		set_temp_variable = { BASE@role_heavy_infantry 			= 0 }
+		set_temp_variable = { BASE@role_militia		 			= 0 }
+		set_temp_variable = { BASE@role_garrison 				= 0 }
+		set_temp_variable = { BASE@role_cavalry 				= 2 }
+		set_temp_variable = { BASE@role_motorized 				= 0 }
+		set_temp_variable = { BASE@role_light_armor 			= 2 }
+		set_temp_variable = { BASE@role_light_armor_alt 		= 0 }
+		set_temp_variable = { BASE@role_medium_armor 			= 0 }
+		set_temp_variable = { BASE@role_medium_armor_alt 		= 0 }
+		set_temp_variable = { BASE@role_heavy_armor 			= 0 }
+		set_temp_variable = { BASE@role_heavy_armor_alt 		= 0 }
+		set_temp_variable = { BASE@role_marines 				= 0 }
+		set_temp_variable = { BASE@role_mountaineers 			= 6 }
+	}
+	
+	ai_templates_on_end_effect = yes
+}
+d_ai_logic/SLO = {
+	#set_temp_variable = { ai_template_skip = 1 }
+	
+	if = {
+		limit = {
+			check_variable = { ai_ignore_templates = 0 }
+		}
+		ai_infantry_templates/generic_normal = yes
+		ai_cavalry_templates/generic_small = yes
+	}
+	
+	if = {
+		limit = {
+			check_variable = { ai_ignore_deployment = 0 }
+		}
+				
+		############################## BUILD ARMY STRATEGIES #############################
+		### they only get applied when AI has a role template or the template variable ###
+		
+		set_temp_variable = { BASE@role_infantry 				= 4 }
+		set_temp_variable = { BASE@role_light_infantry 			= 0 }
+		set_temp_variable = { BASE@role_heavy_infantry 			= 0 }
+		set_temp_variable = { BASE@role_militia		 			= 0 }
+		set_temp_variable = { BASE@role_garrison 				= 0 }
+		set_temp_variable = { BASE@role_cavalry 				= 2 }
+		set_temp_variable = { BASE@role_motorized 				= 0 }
+		set_temp_variable = { BASE@role_light_armor 			= 0 }
+		set_temp_variable = { BASE@role_light_armor_alt 		= 0 }
+		set_temp_variable = { BASE@role_medium_armor 			= 0 }
+		set_temp_variable = { BASE@role_medium_armor_alt 		= 0 }
+		set_temp_variable = { BASE@role_heavy_armor 			= 0 }
+		set_temp_variable = { BASE@role_heavy_armor_alt 		= 0 }
+		set_temp_variable = { BASE@role_marines 				= 0 }
+		set_temp_variable = { BASE@role_mountaineers 			= 0 }
+	}
+	
+	ai_templates_on_end_effect = yes
+}
+d_ai_logic/CRO = {
+	#set_temp_variable = { ai_template_skip = 1 }
+	
+	if = {
+		limit = {
+			check_variable = { ai_ignore_templates = 0 }
+		}
+		ai_infantry_templates/generic_normal = yes
+		ai_militia_templates/generic_normal = yes
+		ai_motorized_templates/generic = yes
+	}
+	
+	if = {
+		limit = {
+			check_variable = { ai_ignore_deployment = 0 }
+		}
+				
+		############################## BUILD ARMY STRATEGIES #############################
+		### they only get applied when AI has a role template or the template variable ###
+		
+		set_temp_variable = { BASE@role_infantry 				= 6 }
+		set_temp_variable = { BASE@role_light_infantry 			= 0 }
+		set_temp_variable = { BASE@role_heavy_infantry 			= 0 }
+		set_temp_variable = { BASE@role_militia		 			= 2 }
+		set_temp_variable = { BASE@role_garrison 				= 0 }
+		set_temp_variable = { BASE@role_cavalry 				= 0 }
+		set_temp_variable = { BASE@role_motorized 				= 2 }
+		set_temp_variable = { BASE@role_light_armor 			= 0 }
+		set_temp_variable = { BASE@role_light_armor_alt 		= 0 }
+		set_temp_variable = { BASE@role_medium_armor 			= 0 }
+		set_temp_variable = { BASE@role_medium_armor_alt 		= 0 }
+		set_temp_variable = { BASE@role_heavy_armor 			= 0 }
+		set_temp_variable = { BASE@role_heavy_armor_alt 		= 0 }
+		set_temp_variable = { BASE@role_marines 				= 0 }
+		set_temp_variable = { BASE@role_mountaineers 			= 0 }
+	}
+	
+	ai_templates_on_end_effect = yes
+}
+d_ai_logic/ALB = {
+	#set_temp_variable = { ai_template_skip = 1 }
+	
+	if = {
+		limit = {
+			check_variable = { ai_ignore_templates = 0 }
+		}
+		ai_infantry_templates/generic_normal = yes
+	}
+	
+	if = {
+		limit = {
+			check_variable = { ai_ignore_deployment = 0 }
+		}
+				
+		############################## BUILD ARMY STRATEGIES #############################
+		### they only get applied when AI has a role template or the template variable ###
+		
+		set_temp_variable = { BASE@role_infantry 				= 2 }
+		set_temp_variable = { BASE@role_light_infantry 			= 0 }
+		set_temp_variable = { BASE@role_heavy_infantry 			= 0 }
+		set_temp_variable = { BASE@role_militia		 			= 0 }
+		set_temp_variable = { BASE@role_garrison 				= 0 }
+		set_temp_variable = { BASE@role_cavalry 				= 0 }
+		set_temp_variable = { BASE@role_motorized 				= 0 }
+		set_temp_variable = { BASE@role_light_armor 			= 0 }
+		set_temp_variable = { BASE@role_light_armor_alt 		= 0 }
+		set_temp_variable = { BASE@role_medium_armor 			= 0 }
+		set_temp_variable = { BASE@role_medium_armor_alt 		= 0 }
+		set_temp_variable = { BASE@role_heavy_armor 			= 0 }
+		set_temp_variable = { BASE@role_heavy_armor_alt 		= 0 }
+		set_temp_variable = { BASE@role_marines 				= 0 }
+		set_temp_variable = { BASE@role_mountaineers 			= 0 }
+	}
+	
+	ai_templates_on_end_effect = yes
+}
+d_ai_logic/SWI = {
+	#set_temp_variable = { ai_template_skip = 1 }
+	
+	if = {
+		limit = {
+			check_variable = { ai_ignore_templates = 0 }
+		}
+		ai_garrison_templates/generic = yes
+		ai_mountaineer_templates/generic_small = yes
+	}
+	
+	if = {
+		limit = {
+			check_variable = { ai_ignore_deployment = 0 }
+		}
+				
+		############################## BUILD ARMY STRATEGIES #############################
+		### they only get applied when AI has a role template or the template variable ###
+		
+		set_temp_variable = { BASE@role_infantry 				= 0 }
+		set_temp_variable = { BASE@role_light_infantry 			= 0 }
+		set_temp_variable = { BASE@role_heavy_infantry 			= 0 }
+		set_temp_variable = { BASE@role_militia		 			= 0 }
+		set_temp_variable = { BASE@role_garrison 				= 10 }
+		set_temp_variable = { BASE@role_cavalry 				= 0 }
+		set_temp_variable = { BASE@role_motorized 				= 0 }
+		set_temp_variable = { BASE@role_light_armor 			= 0 }
+		set_temp_variable = { BASE@role_light_armor_alt 		= 0 }
+		set_temp_variable = { BASE@role_medium_armor 			= 0 }
+		set_temp_variable = { BASE@role_medium_armor_alt 		= 0 }
+		set_temp_variable = { BASE@role_heavy_armor 			= 0 }
+		set_temp_variable = { BASE@role_heavy_armor_alt 		= 0 }
+		set_temp_variable = { BASE@role_marines 				= 0 }
+		set_temp_variable = { BASE@role_mountaineers 			= 6 }
+	}
+	
+	ai_templates_on_end_effect = yes
+}
+d_ai_logic/militias = {
+	#set_temp_variable = { ai_template_skip = 1 }
+	
+	if = {
+		limit = {
+			check_variable = { ai_ignore_templates = 0 }
+		}
+		ai_militia_templates/generic_small = yes
+	}
+	
+	if = {
+		limit = {
+			check_variable = { ai_ignore_deployment = 0 }
+		}
+				
+		############################## BUILD ARMY STRATEGIES #############################
+		### they only get applied when AI has a role template or the template variable ###
+		# disable_build
+		# production_ratio 
+		
+		set_temp_variable = { BASE@role_militia 				= 8  } 
+	}
+	
+	ai_templates_on_end_effect = yes
+}
+d_ai_logic/middle_east = {
+	#set_temp_variable = { ai_template_skip = 1 }
+	
+	if = {
+		limit = {
+			check_variable = { ai_ignore_templates = 0 }
+		}
+		ai_light_infantry_templates/generic_desert = yes
+	}
+	
+	if = {
+		limit = {
+			check_variable = { ai_ignore_deployment = 0 }
+		}
+				
+		############################## BUILD ARMY STRATEGIES #############################
+		### they only get applied when AI has a role template or the template variable ###
+		# disable_build
+		# production_ratio 
+		
+		set_temp_variable = { BASE@role_light_infantry 		= 8  } 
+	}
+	
+	ai_templates_on_end_effect = yes
+}
+d_ai_logic/asian_colonies = {
+	#set_temp_variable = { ai_template_skip = 1 }
+	
+	if = {
+		limit = {
+			check_variable = { ai_ignore_templates = 0 }
+		}
+		ai_militia_templates/generic_normal = yes
+	}
+	
+	if = {
+		limit = {
+			check_variable = { ai_ignore_deployment = 0 }
+		}
+				
+		############################## BUILD ARMY STRATEGIES #############################
+		### they only get applied when AI has a role template or the template variable ###
+		# disable_build
+		# production_ratio 
+		
+		set_temp_variable = { BASE@role_militia 				= 8  } 
+	}
+	
+	ai_templates_on_end_effect = yes
+}
+d_ai_logic/asia = {
+	#set_temp_variable = { ai_template_skip = 1 }
+	
+	if = {
+		limit = {
+			check_variable = { ai_ignore_templates = 0 }
+		}
+		ai_infantry_templates/generic_jungle = yes
+	}
+	
+	if = {
+		limit = {
+			check_variable = { ai_ignore_deployment = 0 }
+		}
+				
+		############################## BUILD ARMY STRATEGIES #############################
+		### they only get applied when AI has a role template or the template variable ###
+		# disable_build
+		# production_ratio 
+		
+		set_temp_variable = { BASE@role_infantry 				= 8  } 
+	}
+	
+	ai_templates_on_end_effect = yes
+}
+d_ai_logic/warlords = {
+	#set_temp_variable = { ai_template_skip = 1 }
+	
+	if = {
+		limit = {
+			check_variable = { ai_ignore_templates = 0 }
+		}
+		ai_infantry_templates/warlords = yes
+	}
+	
+	if = {
+		limit = {
+			check_variable = { ai_ignore_deployment = 0 }
+		}
+				
+		############################## BUILD ARMY STRATEGIES #############################
+		### they only get applied when AI has a role template or the template variable ###
+		# disable_build
+		# production_ratio 
+		
+		set_temp_variable = { BASE@role_infantry 				= 8 }
+		set_temp_variable = { BASE@role_light_infantry 			= 0 }
+		set_temp_variable = { BASE@role_heavy_infantry 			= 0 }
+		set_temp_variable = { BASE@role_garrison 				= 0 }
+		set_temp_variable = { BASE@role_cavalry 				= 0 }
+		set_temp_variable = { BASE@role_motorized 				= 0 }
+		set_temp_variable = { BASE@role_light_armor 			= 0 }
+		set_temp_variable = { BASE@role_light_armor_alt 		= 0 }
+		set_temp_variable = { BASE@role_medium_armor 			= 0 }
+		set_temp_variable = { BASE@role_medium_armor_alt 		= 0 }
+		set_temp_variable = { BASE@role_heavy_armor 			= 0 }
+		set_temp_variable = { BASE@role_heavy_armor_alt 		= 0 }
+		set_temp_variable = { BASE@role_marines 				= 0 }
+		set_temp_variable = { BASE@role_mountaineers 			= 0 }
+	}
+	
+	ai_templates_on_end_effect = yes
+}
+d_ai_logic/warlords_developed = {
+	#set_temp_variable = { ai_template_skip = 1 }
+	
+	if = {
+		limit = {
+			check_variable = { ai_ignore_templates = 0 }
+		}
+		ai_infantry_templates/warlords = yes
+		ai_heavy_infantry_templates/warlords = yes 
+	}
+	
+	if = {
+		limit = {
+			check_variable = { ai_ignore_deployment = 0 }
+		}
+				
+		############################## BUILD ARMY STRATEGIES #############################
+		### they only get applied when AI has a role template or the template variable ###
+		# disable_build
+		# production_ratio 
+		
+		set_temp_variable = { BASE@role_infantry 				= 4 }
+		set_temp_variable = { BASE@role_light_infantry 			= 0 }
+		set_temp_variable = { BASE@role_heavy_infantry 			= 4 }
+		set_temp_variable = { BASE@role_garrison 				= 0 }
+		set_temp_variable = { BASE@role_cavalry 				= 0 }
+		set_temp_variable = { BASE@role_motorized 				= 0 }
+		set_temp_variable = { BASE@role_light_armor 			= 0 }
+		set_temp_variable = { BASE@role_light_armor_alt 		= 0 }
+		set_temp_variable = { BASE@role_medium_armor 			= 0 }
+		set_temp_variable = { BASE@role_medium_armor_alt 		= 0 }
+		set_temp_variable = { BASE@role_heavy_armor 			= 0 }
+		set_temp_variable = { BASE@role_heavy_armor_alt 		= 0 }
+		set_temp_variable = { BASE@role_marines 				= 0 }
+		set_temp_variable = { BASE@role_mountaineers 			= 0 }
+	}
+	
+	ai_templates_on_end_effect = yes
+}
+d_ai_logic/warlords_heavy = {
+	#set_temp_variable = { ai_template_skip = 1 }
+	
+	if = {
+		limit = {
+			check_variable = { ai_ignore_templates = 0 }
+		}
+		ai_heavy_infantry_templates/warlords = yes
+	}
+	
+	if = {
+		limit = {
+			check_variable = { ai_ignore_deployment = 0 }
+		}
+				
+		############################## BUILD ARMY STRATEGIES #############################
+		### they only get applied when AI has a role template or the template variable ###
+		# disable_build
+		# production_ratio 
+		
+		set_temp_variable = { BASE@role_infantry 				= 0 }
+		set_temp_variable = { BASE@role_light_infantry 			= 0 }
+		set_temp_variable = { BASE@role_heavy_infantry 			= 6 }
+		set_temp_variable = { BASE@role_garrison 				= 0 }
+		set_temp_variable = { BASE@role_cavalry 				= 0 }
+		set_temp_variable = { BASE@role_motorized 				= 0 }
+		set_temp_variable = { BASE@role_light_armor 			= 0 }
+		set_temp_variable = { BASE@role_light_armor_alt 		= 0 }
+		set_temp_variable = { BASE@role_medium_armor 			= 0 }
+		set_temp_variable = { BASE@role_medium_armor_alt 		= 0 }
+		set_temp_variable = { BASE@role_heavy_armor 			= 0 }
+		set_temp_variable = { BASE@role_heavy_armor_alt 		= 0 }
+		set_temp_variable = { BASE@role_marines 				= 0 }
+		set_temp_variable = { BASE@role_mountaineers 			= 0 }
+	}
+	
+	ai_templates_on_end_effect = yes
+}
+d_ai_logic/warlords_cavalry = {
+	#set_temp_variable = { ai_template_skip = 1 }
+	
+	if = {
+		limit = {
+			check_variable = { ai_ignore_templates = 0 }
+		}
+		ai_infantry_templates/warlords = yes
+		ai_cavalry_templates/CHI = yes 
+	}
+	
+	if = {
+		limit = {
+			check_variable = { ai_ignore_deployment = 0 }
+		}
+				
+		############################## BUILD ARMY STRATEGIES #############################
+		### they only get applied when AI has a role template or the template variable ###
+		# disable_build
+		# production_ratio 
+		
+		set_temp_variable = { BASE@role_infantry 				= 8 }
+		set_temp_variable = { BASE@role_light_infantry 			= 0 }
+		set_temp_variable = { BASE@role_heavy_infantry 			= 0 }
+		set_temp_variable = { BASE@role_garrison 				= 0 }
+		set_temp_variable = { BASE@role_cavalry 				= 2 }
+		set_temp_variable = { BASE@role_motorized 				= 0 }
+		set_temp_variable = { BASE@role_light_armor 			= 0 }
+		set_temp_variable = { BASE@role_light_armor_alt 		= 0 }
+		set_temp_variable = { BASE@role_medium_armor 			= 0 }
+		set_temp_variable = { BASE@role_medium_armor_alt 		= 0 }
+		set_temp_variable = { BASE@role_heavy_armor 			= 0 }
+		set_temp_variable = { BASE@role_heavy_armor_alt 		= 0 }
+		set_temp_variable = { BASE@role_marines 				= 0 }
+		set_temp_variable = { BASE@role_mountaineers 			= 0 }
+	}
+	
+	ai_templates_on_end_effect = yes
+}
+d_ai_logic/warlords_cavalry_heavy = {
+	#set_temp_variable = { ai_template_skip = 1 }
+	
+	if = {
+		limit = {
+			check_variable = { ai_ignore_templates = 0 }
+		}
+		ai_heavy_infantry_templates/warlords = yes
+		ai_cavalry_templates/CHI = yes 
+	}
+	
+	if = {
+		limit = {
+			check_variable = { ai_ignore_deployment = 0 }
+		}
+				
+		############################## BUILD ARMY STRATEGIES #############################
+		### they only get applied when AI has a role template or the template variable ###
+		# disable_build
+		# production_ratio 
+		
+		set_temp_variable = { BASE@role_infantry 				= 0 }
+		set_temp_variable = { BASE@role_light_infantry 			= 0 }
+		set_temp_variable = { BASE@role_heavy_infantry 			= 6 }
+		set_temp_variable = { BASE@role_garrison 				= 0 }
+		set_temp_variable = { BASE@role_cavalry 				= 2 }
+		set_temp_variable = { BASE@role_motorized 				= 0 }
+		set_temp_variable = { BASE@role_light_armor 			= 0 }
+		set_temp_variable = { BASE@role_light_armor_alt 		= 0 }
+		set_temp_variable = { BASE@role_medium_armor 			= 0 }
+		set_temp_variable = { BASE@role_medium_armor_alt 		= 0 }
+		set_temp_variable = { BASE@role_heavy_armor 			= 0 }
+		set_temp_variable = { BASE@role_heavy_armor_alt 		= 0 }
+		set_temp_variable = { BASE@role_marines 				= 0 }
+		set_temp_variable = { BASE@role_mountaineers 			= 0 }
+	}
+	
+	ai_templates_on_end_effect = yes
+}

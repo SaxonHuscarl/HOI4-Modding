@@ -1,0 +1,593 @@
+
+ai_difficulty_normal = {
+	check_variable = { global.ai_difficulty = 2 }
+}
+
+ai_difficulty_hard = {
+	check_variable = { global.ai_difficulty = 3 }
+}
+
+ai_difficulty_very_hard = {
+	check_variable = { global.ai_difficulty = 4 }
+}
+
+#########################################
+############ CONSTRUCTION 
+#########################################
+
+
+### priority construction AI
+
+ai_low_update = {
+	OR = {
+		tag = PER
+		tag = ETH
+		tag = VEN
+		tag = COL
+		tag = BOL
+		tag = CHL
+		tag = PRU
+		
+		tag = NEP
+		tag = BHU
+		
+		tag = LAT
+		tag = LIT
+		tag = EST
+		tag = DEN
+	}
+}
+ai_very_low_update = {
+	OR = {
+		tag = MON
+		tag = GUA
+		tag = HON
+		tag = ELS
+		tag = NIC
+		tag = COS
+		tag = PAN
+		tag = CUB
+		tag = HAI
+		tag = DOM
+		tag = ECU
+		tag = PAR
+		tag = URG
+		tag = ALB
+		tag = TAN
+		tag = LUX
+		tag = HAT
+		tag = OMA
+		tag = YEM
+		tag = TIB
+		tag = AFG
+		tag = SAU
+		tag = LIB	
+		tag = FRI
+		tag = SYR
+		tag = IRQ
+		tag = BMP
+		tag = LEB
+		tag = JOR
+		tag = TUN
+		tag = MAR
+		tag = MOR
+		tag = MAL
+		tag = INS
+		tag = PHI
+		tag = IRE
+		tag = AUS
+		tag = CZE
+		
+		tag = ZXL
+		tag = SCC
+		tag = SKC
+		tag = XSM
+		tag = YUN
+		tag = GXC
+		tag = XIA
+		tag = YUT
+		tag = SDC
+		tag = PGR
+		tag = SHX
+		tag = EHA
+		
+		
+	}
+}
+ai_can_defend_other_countries = {
+	set_temp_variable = { needed = num_divisions }
+	add_to_temp_variable = { needed = num_of_military_factories }
+
+	check_variable = { needed > 50 }
+	
+}
+ai_can_THIS_defend_ROOT = { #ROOT = country to support THIS = country that sends support
+	
+	THIS = { ai_can_defend_other_countries = yes }
+	
+	### When should it never defend? 
+	NOT = {
+		tag = ROOT 
+		exists = no
+		#check_variable = { controlled_states^num = 0 } #this propably messes with invasions
+	}
+	
+	## No land connection, check for convoys
+	set_temp_variable = { start_state_id = capital }
+	set_temp_variable = { target_state_id = ROOT.capital }
+	if = {
+		limit = {
+			NOT = { is_neighbor_of = ROOT }
+			ROOT = {
+				NOT = {
+					 can_build_railway = {
+						build_only_on_allied = yes
+						start_state = start_state_id
+						target_state = target_state_id
+					}
+				}
+			}
+		}
+		ROOT = { 
+			OR = {
+				has_country_flag = coastal_state
+				
+				tag = D02 #TODO_SOL - its a shitty workaround for imperial burma
+			}
+		} 
+		THIS = {
+			ai_can_defend_country_by_sea = yes
+		}
+	}
+	
+	if = { #Never defend VIX
+		limit = {
+			ROOT = { tag = VIX }
+		}
+		always = no
+	}
+	
+	if = { #Never defend Iceland
+		limit = {
+			ROOT = { tag = ICE }
+		}
+		always = no
+	}
+	
+	if = { #Axis: Pls dont defend IEA
+		limit = {
+			THIS = {
+				is_in_faction_with = GER
+			}
+			ROOT = {
+				tag = ETH
+				is_subject_of = ITA
+			}
+		}
+		always = no
+	}
+	
+	if = {
+		limit = {
+			THIS = { tag = GER }
+			ROOT = { tag = ITA }
+		}
+		OR = { 
+			ITA = { surrender_progress > 0.2 }
+			FRA = { has_capitulated = yes }
+		}
+	}
+	
+	if = { #Axis: Pls dont defend Middle East without Suez or Turkey
+		limit = {
+			THIS = {
+				is_in_faction_with = GER
+			}
+			ROOT = {
+				OR = {
+					tag = IRQ
+					tag = PER
+					AND = {
+						has_variable = original_capital
+						var:original_capital = {
+							is_on_continent = middle_east
+						}
+					}
+				}
+			}
+		}
+		OR = {
+			853 = { is_controlled_by_ROOT_or_ally = yes }
+			49 = { is_controlled_by_ROOT_or_ally = yes }
+		}
+	}
+	
+	if = { #Axis: Noone but GER can defend FIN
+		limit = {
+			NOT = { tag = GER }
+			ROOT = { tag = FIN is_in_faction_with = GER }
+		}
+		always = no
+	}
+	
+	if = { #Axis: GER doesnt need help against allies
+		limit = {
+			ROOT = { tag = GER }
+			THIS = { 
+				is_in_faction_with = GER 
+				NOT = { has_war_with = SOV }
+			}
+		}
+		always = no
+	}
+	
+	if = { #Axis: GER doesnt need help too soon
+		limit = {
+			ROOT = { tag = GER }
+			THIS = { 
+				is_in_faction_with = GER 
+				date < 1942.3.1
+				surrender_progress < 0.05
+			}
+		}
+		always = no
+	}
+	
+	if = { #Axis: ITA, just chill brother
+		limit = {
+			ROOT = { NOT = { is_subject_of = ITA } }
+			THIS = { 
+				tag = ITA
+			}
+		}
+		always = no
+	}
+	
+	if = { #Axis: MINORS! AT THIS POINT I SHOULD HAVE JUST SCRIPTED IT
+		limit = {
+			ROOT = { tag = ITA }
+			THIS = { 
+				is_in_faction_with = ITA
+				NOT = { tag = GER }
+				NOT = { is_subject_of = ITA }
+			}
+		}
+		always = no
+	}
+	
+	if = { #South America: Stay local
+		limit = {
+			ROOT = {
+				has_variable = original_capital
+			}
+			THIS = {
+				has_variable = original_capital
+				var:original_capital = { is_on_continent = south_america }
+			}
+		}
+		
+		var:ROOT.original_capital = { is_on_continent = south_america }
+	}
+	
+	if = { #Allies in Middle East: Stay local
+		limit = { 
+			THIS = { 
+				has_variable = original_capital
+				OR = {
+					var:original_capital = { is_on_continent = middle_east }
+					tag = EGY 
+				}
+				is_in_faction_with = ENG 
+			}
+		}
+		
+		always = no 
+	}
+	if = { #Allies in Middle East: Leave Defence to the Majors
+		limit = { 
+			ROOT = {
+				has_variable = original_capital
+				var:original_capital = { is_on_continent = middle_east }
+				is_in_faction_with = ENG 
+			}
+		}
+		
+		THIS = { OR = { tag = ENG tag = FRA tag = USA is_major = yes } }
+	}
+	
+	if = { #Allies in Asia: Stay in Asia
+		limit = { 
+			has_variable = ROOT.original_capital
+			
+			is_in_faction_with = ENG 
+			has_variable = original_capital
+			var:original_capital = { 
+				OR = {
+					is_on_continent = australia 
+					is_on_continent = asia 
+				}
+			}
+		}
+		
+		var:original_capital = { 
+			OR = {
+				is_on_continent = australia 
+				is_on_continent = asia 
+			}
+		}
+	}
+	
+	if = { #Allies: Leave the fighting in Europe for the majors
+		limit = {
+			ROOT = {
+				has_variable = original_capital
+				var:original_capital = { is_on_continent = europe }
+				has_war_with = GER 
+				is_in_faction_with = ENG 
+				is_in_faction_with = USA
+			}
+		}
+		
+		THIS = { OR = { tag = ENG tag = USA tag = CAN tag = FRA is_major = yes } }
+	}
+	
+	if = { #Allies: Dont stop GER too soon pls
+		limit = {
+			THIS = { is_in_faction_with = ENG }
+			ROOT = { OR = { tag = FRA tag = NOR tag = HOL tag = GRE tag = POL } }
+		}
+		date > 1941.1.1
+	}
+	
+	if = { #Allies: Dont even try to stop Axis in Yugoslavia
+		limit = {
+			THIS = { is_in_faction_with = ENG }
+			ROOT = { tag = YUG }
+		}
+		date > 1941.9.1
+	}
+	
+	if = { #ENG: dont get into super low supply situations
+		limit = {
+			THIS = { tag = ENG }
+			ROOT = { OR = { tag = INS tag = TUN tag = AST tag = NZL tag = PHI tag = BUR } }
+		}
+		always = no
+	}
+
+	if = { #FRA: only defend locally
+		limit = {
+			THIS = { tag = FRA }
+		}
+		OR = {
+			date > 1942.1.1
+			has_capitulated = yes
+			ROOT = { tag = BEL }
+		}
+	}
+	
+}
+
+ai_can_defend_country_by_sea = {
+	OR = {
+		AND = {
+			num_of_naval_factories > 3
+			stockpile_ratio = { archetype = convoy ratio > 50 }
+			#check_variable = { num_ships > 25 }
+		}
+		
+		major_country = yes
+		
+	}
+}
+
+
+@AI_BASE_FIELD_STRENGTH_TRIGGER = 0.75 #when using ai_field_strength_trigger without setting "trigger" temp var before
+
+ai_field_strength_trigger = {
+	if = {
+		limit = {
+			check_variable = { num_target_equipment_in_armies@equipment > 0 }
+		}
+		
+		set_temp_variable = { base = @AI_BASE_FIELD_STRENGTH_TRIGGER }
+		set_temp_variable = { ratio = num_equipment_in_armies@equipment }
+		divide_temp_variable = { ratio = num_target_equipment_in_armies@equipment }
+		check_variable = { ratio > trigger?base }
+	}
+}
+
+# var:v = advisor
+# THIS = country
+# var:slot = character slot
+# can access all temp variables related to advisor ai
+
+ai_can_pick_high_command_army = {
+	check_variable = { ai_dont_pick_high_command_army = 0 }
+	
+	has_country_flag = has_army_chief
+	OR = {
+		NOT = { has_country_flag = has_high_command_army }
+		has_country_flag = { flag = has_high_command_army value < 2 }
+	}
+}
+ai_can_pick_high_command_air = {
+	check_variable = { ai_dont_pick_high_command_air = 0 }
+	
+	has_country_flag = has_air_chief
+	OR = {
+		NOT = { has_country_flag = has_high_command_air }
+		has_country_flag = { flag = has_high_command_air value < 2 }
+	}
+}
+ai_can_pick_high_command_navy = {
+	check_variable = { ai_dont_pick_high_command_navy = 0 }
+	
+	has_country_flag = has_navy_chief
+	OR = {
+		NOT = { has_country_flag = has_high_command_navy }
+		has_country_flag = { flag = has_high_command_navy value < 2 }
+	}
+}
+
+
+ai_can_pick_theorist_army = {
+	check_variable = { ai_dont_pick_theorist_army = 0 }
+
+	has_country_flag = has_army_chief
+	OR = {
+		NOT = { has_country_flag = has_theorist_army }
+		has_country_flag = { flag = has_theorist_army value < 2 }
+	}
+}
+ai_can_pick_theorist_air = {
+	check_variable = { ai_dont_pick_theorist_air = 0 }
+
+	has_country_flag = has_air_chief
+	OR = {
+		NOT = { has_country_flag = has_theorist_air }
+		has_country_flag = { flag = has_theorist_air value < 2 }
+	}
+}
+ai_can_pick_theorist_navy = {
+	check_variable = { ai_dont_pick_theorist_navy = 0 }
+
+	has_country_flag = has_navy_chief
+	OR = {
+		NOT = { has_country_flag = has_theorist_navy }
+		has_country_flag = { flag = has_theorist_navy value < 2 }
+	}
+}
+
+#General trigger for performance reasons, if this is false no invasion code is run at all
+ai_allow_naval_invasions = {
+	has_country_flag = coastal_state
+	has_country_flag = ai_marines_template
+
+}
+
+#each allowed ai area iterates through all state controllers at war with ROOT and checks this trigger
+
+ai_can_ROOT_naval_invade_THIS = { 
+
+	#ROOT = country that wants to invade
+	#THIS = target to get invaded
+	
+	OR = {
+		alliance_strength_ratio < 0.8
+		
+		strength_ratio = { tag = ROOT ratio < 1.0 }
+	
+		ai_historical_invasion = yes
+	}
+	
+	ROOT = {
+		OR = {
+			has_navy_size = { size > 50 }
+			
+			alliance_naval_strength_ratio > 1
+			
+			PREV = { ai_historical_invasion = yes }
+		}
+	}
+
+	### custom triggers
+	
+	if = {
+		limit = { # ALLIED FACTION
+			ROOT = { is_in_faction_with = ENG }
+		}
+		
+		if = {
+			limit = {
+				THIS = { OR = { tag = GER is_subject_of = GER } }
+			}
+			
+			OR = {
+				date > 1942.1.1
+				ROOT = { is_in_faction_with = USA }
+				GER = { has_war_with = SOV }
+			}
+			
+		}
+	}
+}
+
+ai_historical_invasion = {
+
+	OR = {
+	# italy invasion in greece
+		AND = { 
+			ROOT = { original_tag = ITA } 
+
+			THIS = { original_tag = GRE } 
+		}
+			
+		# allies on axis
+		AND = { 
+			ROOT = { is_in_faction_with = ENG is_in_faction_with = USA } 
+
+			THIS = { is_in_faction_with = GER } 
+			
+			ENG = { has_war_with = GER }
+		}
+		
+		# allies on axis 2
+		AND = { 
+			ROOT = { is_in_faction_with = ENG } 
+
+			THIS = { is_in_faction_with = ITA } 
+			
+			ENG = { has_war_with = ITA }
+		}
+		
+		# allies on axis 3
+		AND = { 
+			ROOT = { is_in_faction_with = ENG } 
+
+			THIS = { is_in_faction_with = JAP } 
+			
+			ENG = { has_war_with = JAP }
+		}
+		
+		AND = {
+			ROOT = { is_in_faction_with = JAP }
+			
+			THIS = { is_in_faction_with = CHI }
+		}
+	}
+		
+}
+
+ai_ignore_invasion = {
+	
+	if = {
+		limit = {
+			ROOT = { is_in_faction_with = ENG }
+			THIS = { tag = GER }
+		}
+		
+		NOT = {
+			date > 1942.1.1
+			ROOT = { is_in_faction_with = USA }
+			GER = { has_war_with = SOV }
+		}
+	}
+	else = {
+		always = no
+	}
+	
+	if = {
+		limit = {
+			ROOT = { 
+				tag = ITA
+			}
+			THIS = { tag = FRA }
+		}
+		
+		date < 1941.1.1
+	}
+	else = {
+		always = no
+	}
+}

@@ -1,0 +1,260 @@
+
+ai_buy_convoys_when_low_majors = {
+	allowed = {
+		has_dlc = "Arms Against Tyranny"
+	}
+	
+	enable = {
+		has_country_flag = coastal_state
+		is_major = yes
+		stockpile_ratio = {
+			archetype = convoy
+			ratio < 100
+		}
+	}
+	abort_when_not_enabled = yes
+	
+	ai_strategy = {
+		type = equipment_market_buy
+		equipment_type = convoy
+		value = 250
+	}
+}
+
+ai_buy_convoys_when_low_commonwealth = {
+	allowed = {
+		has_dlc = "Arms Against Tyranny"
+		OR = {
+			tag = AST
+			tag = CAN
+			tag = INS
+			tag = MAL
+			tag = NZL
+			tag = RAJ
+		}
+	}
+	
+	enable = {
+		has_country_flag = coastal_state
+	}
+	abort_when_not_enabled = yes
+	
+	ai_strategy = {
+		type = equipment_market_buy
+		equipment_type = convoy
+		value = 50
+	}
+}
+
+CHI_puppets_buy_garrison_eq = {
+	allowed = {
+		has_dlc = "Arms Against Tyranny"
+		OR = {
+			tag = MAN
+			tag = RGR
+			tag = CHI
+		}
+	}
+	enable = {
+		is_subject_of = JAP
+	}
+	abort = {
+		OR = {
+			NOT = { is_subject_of = JAP }
+		}
+	}
+
+	ai_strategy = {
+		type = equipment_market_buy
+		equipment_type = garrison_equipment
+		seller = JAP
+		value = 200
+	}
+	ai_strategy = { type = equipment_market_for_sale_threshold id = infantry value = 10000 }
+}
+
+CHI_dont_sell_pls = {
+	allowed = { tag = CHI }
+	enable = {
+		num_of_military_factories < 120
+		check_variable = { stock_ratio < 0.15 }
+	}
+	abort_when_not_enabled = yes 
+	
+	ai_strategy = { type = equipment_market_for_sale_threshold id = infantry value = 200000 }
+	ai_strategy = { type = equipment_market_for_sale_threshold id = support value = 200000 }
+	ai_strategy = { type = equipment_market_for_sale_threshold id = artillery value = 200000 }
+	ai_strategy = { type = equipment_market_for_sale_threshold id = motorized value = 200000 }
+	ai_strategy = { type = equipment_market_for_sale_threshold id = convoy value = 200000 }
+	ai_strategy = { type = equipment_market_for_sale_threshold id = train value = 200000 }
+	
+}
+
+civil_war_no_market_export = {
+	enable = {
+		has_civil_war = yes
+	}
+	abort_when_not_enabled = yes 
+	
+	ai_strategy = { type = equipment_market_for_sale_factor id = train value = -100 }
+	ai_strategy = { type = equipment_market_for_sale_factor id = anti_tank value = -100 }
+	ai_strategy = { type = equipment_market_for_sale_factor id = anti_air value = -100 }
+	ai_strategy = { type = equipment_market_for_sale_factor id = artillery value = -100 }
+	ai_strategy = { type = equipment_market_for_sale_factor id = infantry value = -100 }
+	ai_strategy = { type = equipment_market_for_sale_factor id = armor value = -100 }
+	ai_strategy = { type = equipment_market_for_sale_factor id = motorized value = -100 }
+	ai_strategy = { type = equipment_market_for_sale_factor id = mechanized value = -100 }
+	ai_strategy = { type = equipment_market_for_sale_factor id = convoy value = -100 }
+}
+
+default_market_stockpile_management = {
+	
+	enable = {
+		always = yes
+	}
+	abort_when_not_enabled = yes
+	
+	## THRESHOLD
+	
+	ai_strategy = { type = equipment_market_for_sale_threshold id = motorized value = 200 }
+	ai_strategy = { type = equipment_market_for_sale_threshold id = convoy value = 80 }
+	ai_strategy = { type = equipment_market_for_sale_threshold id = train value = 5 }
+	
+	ai_strategy = { type = equipment_market_for_sale_threshold id = fighter value = 1 }
+	ai_strategy = { type = equipment_market_for_sale_threshold id = cas value = 1 }
+	ai_strategy = { type = equipment_market_for_sale_threshold id = cv_fighter value = 1 }
+	ai_strategy = { type = equipment_market_for_sale_threshold id = cv_cas value = 1 }
+	ai_strategy = { type = equipment_market_for_sale_threshold id = tactical_bomber value = 1 }
+	ai_strategy = { type = equipment_market_for_sale_threshold id = strategic_bomber value = 1 }
+	
+	## MAX 
+	
+	ai_strategy = { type = equipment_market_max_for_sale id = motorized value = 250  } #dont have more than this amount in the market
+	
+	## MIN
+	
+	ai_strategy = { type = equipment_market_min_for_sale id = train value = 3  } #only put up trains in batches of 5
+	ai_strategy = { type = equipment_market_min_for_sale id = convoy value = 5  } #only put up convoys in batches of 30
+	
+	## FACTOR
+	
+	ai_strategy = { type = equipment_market_for_sale_factor id = fighter value = 100  }
+	ai_strategy = { type = equipment_market_for_sale_factor id = motorized value = -25  }
+	ai_strategy = { type = equipment_market_for_sale_factor id = train value = -50  }
+	
+}
+
+increase_arms_exports_1 = {
+	allowed = {
+		has_dlc = "Arms Against Tyranny"
+	}
+	enable = {
+		check_variable = { stock_ratio > 0.1 }
+	}
+	abort_when_not_enabled = yes
+	
+	ai_strategy = { type = equipment_market_for_sale_factor id = train value = 5 }
+	ai_strategy = { type = equipment_market_for_sale_factor id = anti_tank value = 20 }
+	ai_strategy = { type = equipment_market_for_sale_factor id = anti_air value = 20 }
+	ai_strategy = { type = equipment_market_for_sale_factor id = artillery value = 20 }
+	ai_strategy = { type = equipment_market_for_sale_factor id = infantry value = 20 }
+	ai_strategy = { type = equipment_market_for_sale_factor id = armor value = 20 }
+	ai_strategy = { type = equipment_market_for_sale_factor id = motorized value = 20 }
+	ai_strategy = { type = equipment_market_for_sale_factor id = mechanized value = 20 }
+}
+
+increase_arms_exports_2 = {
+	allowed = {
+		has_dlc = "Arms Against Tyranny"
+	}
+	enable = {
+		check_variable = { stock_ratio > 0.15 }
+	}
+	abort_when_not_enabled = yes
+	
+	ai_strategy = { type = equipment_market_for_sale_factor id = train value = 5 }
+	ai_strategy = { type = equipment_market_for_sale_factor id = anti_tank value = 60 }
+	ai_strategy = { type = equipment_market_for_sale_factor id = anti_air value = 60 }
+	ai_strategy = { type = equipment_market_for_sale_factor id = artillery value = 60 }
+	ai_strategy = { type = equipment_market_for_sale_factor id = infantry value = 60 }
+	ai_strategy = { type = equipment_market_for_sale_factor id = armor value = 60 }
+	ai_strategy = { type = equipment_market_for_sale_factor id = motorized value = 60 }
+	ai_strategy = { type = equipment_market_for_sale_factor id = mechanized value = 60 }
+}
+
+increase_arms_exports_3 = {
+	allowed = {
+		has_dlc = "Arms Against Tyranny"
+	}
+	enable = {
+		check_variable = { stock_ratio > 0.20 }
+	}
+	abort_when_not_enabled = yes
+	
+	ai_strategy = { type = equipment_market_for_sale_factor id = train value = 5 }
+	ai_strategy = { type = equipment_market_for_sale_factor id = anti_tank value = 80 }
+	ai_strategy = { type = equipment_market_for_sale_factor id = anti_air value = 80 }
+	ai_strategy = { type = equipment_market_for_sale_factor id = artillery value = 80 }
+	ai_strategy = { type = equipment_market_for_sale_factor id = infantry value = 80 }
+	ai_strategy = { type = equipment_market_for_sale_factor id = armor value = 80 }
+	ai_strategy = { type = equipment_market_for_sale_factor id = motorized value = 80 }
+	ai_strategy = { type = equipment_market_for_sale_factor id = mechanized value = 80 }
+}
+
+dont_buy_with_weak_industry = {
+	allowed = {
+		has_dlc = "Arms Against Tyranny"
+	}
+	enable = {
+		num_of_civilian_factories < 25
+	}
+	abort = {
+		OR = {
+			num_of_civilian_factories > 30
+			has_war = yes
+			tag = SIA #needs to buy for its army
+		}
+	}
+	
+	ai_strategy = { type = equipment_market_spend_factories value = -100 }
+}
+
+dont_buy_shitty_air_models = {
+	allowed = {
+		has_dlc = "Arms Against Tyranny"
+	}
+	enable = {
+		NOT = { has_country_flag = ai_production/fighter_equipment }
+	}
+	abort = {
+		has_country_flag = {
+			flag = ai_production/fighter_equipment
+			value = 1
+			days > 365
+		}
+	}
+	
+	ai_strategy = { type = equipment_market_buying_threshold id = fighter_equipment value = -99999 }
+	ai_strategy = { type = equipment_market_buying_threshold id = fighter_alt_equipment value = -99999 }
+	ai_strategy = { type = equipment_market_buying_threshold id = heavy_fighter_equipment value = -99999 }
+	ai_strategy = { type = equipment_market_buying_threshold id = interceptor_equipment value = -99999 }
+	ai_strategy = { type = equipment_market_buying_threshold id = mr_fighter_equipment value = -99999 }
+	ai_strategy = { type = equipment_market_buying_threshold id = CAS_equipment value = -99999 }
+	ai_strategy = { type = equipment_market_buying_threshold id = twin_cas_equipment value = -99999 }
+	ai_strategy = { type = equipment_market_buying_threshold id = tac_bomber_equipment value = -99999 }
+	ai_strategy = { type = equipment_market_buying_threshold id = nav_bomber_equipment value = -99999 }
+	ai_strategy = { type = equipment_market_buying_threshold id = flying_boat_equipment value = -99999 }
+	ai_strategy = { type = equipment_market_buying_threshold id = light_bomber_equipment value = -99999 }
+	ai_strategy = { type = equipment_market_buying_threshold id = fast_bomber_equipment value = -99999 }
+	ai_strategy = { type = equipment_market_buying_threshold id = quad_engine_bomber_equipment value = -99999 }
+	ai_strategy = { type = equipment_market_buying_threshold id = cv_fighter_equipment value = -99999 }
+	ai_strategy = { type = equipment_market_buying_threshold id = cv_nav_bomber_equipment value = -99999 }
+	ai_strategy = { type = equipment_market_buying_threshold id = cv_CAS_equipment value = -99999 }
+	ai_strategy = { type = equipment_market_buying_threshold id = jet_fighter_equipment value = -99999 }
+	ai_strategy = { type = equipment_market_buying_threshold id = jet_mr_fighter_equipment value = -99999 }
+	ai_strategy = { type = equipment_market_buying_threshold id = jet_tac_bomber_equipment value = -99999 }
+	ai_strategy = { type = equipment_market_buying_threshold id = jet_strat_bomber_equipment value = -99999 }
+	ai_strategy = { type = equipment_market_buying_threshold id = scout_plane_equipment value = -99999 }
+	ai_strategy = { type = equipment_market_buying_threshold id = transport_plane_equipment value = -99999 }
+}
+

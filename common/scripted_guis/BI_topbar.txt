@@ -1,0 +1,1276 @@
+
+scripted_gui = {
+	BI_dynamic_topbar_view = {
+		context_type = player_context
+		
+		window_name = "BI_dynamic_topbar_container"
+		parent_window_token = top_bar
+		
+		dirty = BI_topbar_update
+		
+		dynamic_lists = {  
+			topbar_list = {
+				array = Root.topbar_array  
+				change_scope = yes  
+				value = topbar
+				index = topbar_i
+				entry_container = "topbar_list_container"
+			}
+			topbar_menu = { 
+				array = topbar_menu@var:topbar_i 
+				value = topbar_menu_v
+				index = topbar_menu_i
+				change_scope = yes
+				entry_container = "topbar_menu_container"
+			}  
+		} 
+		
+		properties = { 
+			topbar_icon = {     
+				image = "GFX_[?topbar.GetTokenKey]"
+			} 
+			topbar_menu_icon = {        
+				image = "GFX_[?topbar_menu_v.GetTokenKey]"
+			}
+			list = {
+				frame = list_frame
+			}
+		}
+		
+		effects = {
+			
+			BI_add_dynamic_topbar_click = { 
+				if = {
+					limit = { 
+						check_variable = { ROOT.topbar_array^num < 13 }
+					}
+					
+					add_to_array = { topbar_array = token:topbar_empty }
+				}
+				add_to_variable = { ROOT.BI_topbar_update = 1 }
+			} 
+			
+			#TOPBAR Dynamic Info 
+			list_click = {  
+				
+				topbar_assign_information = yes
+				add_to_variable = { Root.BI_topbar_update = 1 }
+			}
+			list_shift_click = {
+				
+				set_variable = { shift_click = 1 }
+				topbar_assign_information = yes
+				clear_variable = shift_click
+				add_to_variable = { Root.BI_topbar_update = 1 }
+			}
+			background_button_click = {
+				for_each_loop = { 
+					array = topbar_array
+					
+					clear_array = ROOT.topbar_menu@var:i
+				}
+				if = {
+					limit = {
+						OR = {
+							NOT = { check_variable = { selected_topbar = topbar_i } }
+							NOT = { has_variable = selected_topbar }
+						} 
+					}  
+					log = "Not identical [?selected_topbar] and  [?topbar_i]"     
+					set_variable = { selected_topbar = topbar_i }  
+					
+					update_topbar_menu = yes
+				}
+				else = {
+					log = "identical [?selected_topbar] and  [?topbar_i], CLEAR"
+					
+					clear_variable = subcategory_selected
+					clear_variable = selected_topbar
+					clear_array = subcategory
+					
+					for_each_loop = { 
+						array = topbar_array
+						
+						clear_array = topbar_menu@var:i
+					}
+				}
+				add_to_variable = { Root.BI_topbar_update = 1 }
+			}
+			background_button_right_click = {	
+				remove_from_array = { array = topbar_array index = topbar_i }
+				
+				add_to_variable = { Root.BI_topbar_update = 1 }
+			}
+			select_target_click = {
+				if = {
+					limit = {
+						ROOT = { has_country_flag = topbar_show_countries }
+					}
+					ROOT = { 
+						clr_country_flag = topbar_show_countries 
+						clr_country_flag = ui_country_selection
+						clear_array = country_selection
+						clear_variable = current_topbar_slot
+					}
+				}
+				else = {
+					BI_filter_effect = yes
+					ROOT = { 
+						set_country_flag = topbar_show_countries 
+						set_country_flag = ui_country_selection
+						set_variable = { current_topbar_slot = Prev.id }
+					}
+					add_to_variable = { Root.BI_topbar_update = 1 }
+				}
+			}
+			
+			topbar_icon_click = {
+				meta_effect = {
+					text = {
+						custom_effect_tooltip = "[X]_tt"
+					}
+					X = "[?topbar.GetTokenKey]"
+				}
+			}
+			topbar_menu_icon_click = { 
+				meta_effect = {
+					text = {
+						custom_effect_tooltip = "[X]_tt"
+					}
+					X = "[?topbar_menu_v.GetTokenKey]"
+				}
+			}
+			
+			options_exit_button_click = {
+				clear_variable = subcategory_selected
+				clear_variable = selected_topbar
+				clear_array = subcategory
+				
+				for_each_loop = { 
+					array = topbar_array
+					
+					clear_array = topbar_menu@var:i
+				}
+				add_to_variable = { Root.BI_topbar_update = 1 }
+			}
+		}
+		
+		triggers = { 
+			list_click_enabled = {
+				if = {
+					limit = {
+						OR = {
+							is_in_array = { subcategory = topbar_menu_v }
+							check_variable = { subcategory_selected = topbar_menu_v }
+						}
+					}
+					set_temp_variable = { list_frame = 2 }
+				}
+				else = {
+					set_temp_variable = { list_frame = 1 }
+				}
+			}
+			topbar_menu_expand_icon_visible = {
+				OR = {
+					check_variable = { topbar_menu_v = token:topbar_menu_fuel }
+					check_variable = { topbar_menu_v = token:topbar_menu_food }
+					check_variable = { topbar_menu_v = token:topbar_menu_refineries }
+					check_variable = { topbar_menu_v = token:topbar_menu_assemblies }
+					check_variable = { topbar_menu_v = token:topbar_menu_resource_total }
+					check_variable = { topbar_menu_v = token:topbar_menu_resource_produced }
+					check_variable = { topbar_menu_v = token:topbar_menu_resource_imported }
+					check_variable = { topbar_menu_v = token:topbar_menu_resource_exported }
+					check_variable = { topbar_menu_v = token:topbar_menu_resource_consumed }
+				}
+			}
+			
+			list_visible = {
+				check_variable = { topbar_menu_v > 0 }
+			}
+			topbar_menu_icon_visible = {
+				check_variable = { topbar_menu_v > 0 }
+			}
+		
+			#select_target_click_enabled = {
+				#OR = {
+				#	has_state_flag = { flag = selected_topbar_info value = 32 }
+				#	has_state_flag = { flag = selected_topbar_info value = 34 }
+				#}
+			#}
+			background_button_highlight_visible = {
+				has_variable = selected_topbar
+				check_variable = { selected_topbar = topbar_i }
+			}
+			topbar_menu_header_visible = {
+				has_variable = selected_topbar
+				check_variable = { selected_topbar = topbar_i }
+			}
+			topbar_menu_background_visible = {
+				has_variable = selected_topbar
+				check_variable = { selected_topbar = topbar_i }
+			}
+			options_exit_button_visible = {
+	 			has_variable = selected_topbar
+				check_variable = { selected_topbar = topbar_i }
+			}
+			select_target_visible = {
+				always = no
+				has_variable = selected_topbar
+				check_variable = { selected_topbar = topbar_i }
+			}
+		}
+	}
+	BI_topbar_experience_view_menu = {
+		context_type = player_context
+		
+		window_name = "BI_experience_container"
+		parent_window_token = top_bar 
+		
+		visible = {
+			
+		}
+		
+		dirty = ui_update_xp
+ 
+		effects = {  
+			max_army_xp_bg_click = {
+				MTT_get_max_army_experience_modifiers = yes 
+			}
+			max_air_xp_bg_click = {
+				MTT_get_max_air_experience_modifiers = yes 
+			}
+			max_navy_xp_bg_click = {
+				MTT_get_max_navy_experience_modifiers = yes 
+			}
+			
+			
+			
+		} 
+		
+		triggers = {
+		}
+	}
+	BI_topbar_factories_view_menu = {
+		context_type = player_context
+		   
+		window_name = "BI_topbar_factories"
+		parent_window_token = top_bar 
+		
+		visible = {
+			
+		}
+		
+		dirty = num_of_factories
+ 
+		effects = {  
+			
+			
+			
+		} 
+		
+		triggers = {
+		}
+	}
+	BI_topbar_equipment_intro_alert = {
+		context_type = player_context 
+		   
+		window_name = "BI_equipment_intro_alert"
+		parent_window_token = top_bar 
+		
+		visible = {
+			
+		}
+		
+		dirty = ui_eq_intro_alert
+		
+		effects = {  
+			 
+			alert_click = {
+				d_update_equipment_intro_alert = yes
+			}
+		
+		} 
+		
+		triggers = {
+			alert_visible = {
+				check_variable = { num_alerts > 0 }
+			}
+			alerts_visible = {
+				check_variable = { num_alerts > 0 }
+			}
+			alert_click_enabled = {
+				equipment_intro_alert = yes
+			}
+		}
+	}
+	BI_topbar_refinery_alert = {
+		context_type = player_context 
+		   
+		window_name = "BI_refinery_alert"
+		parent_window_token = top_bar 
+		
+		visible = {
+			check_variable = { ui_refinery_alert > 0 }
+		}
+		
+		dirty = ui_refinery_alert
+		
+	}
+	
+	BI_topbar_political_view_menu = {
+		context_type = player_context
+		
+		window_name = "BI_topbar_political_power"
+		parent_window_token = top_bar
+		
+		dirty = political_power
+		
+		effects = {
+			open_storage_click = {
+				clr_country_flag = ui_collapse_storage
+			}
+		}
+	}
+	BI_topbar_command_view_menu = {
+		context_type = player_context
+		
+		window_name = "BI_topbar_command_power"
+		parent_window_token = top_bar
+		
+		dirty = command_power
+		
+	}
+	BI_topbar_window = {
+		context_type = player_context
+		
+		window_name = "BI_topbar_container"
+		parent_window_token = top_bar
+		
+		dirty = ui_topbar_update
+		
+		dynamic_lists = {
+			alert_list = { 
+				array = alerts
+				change_scope = yes
+				entry_container = "alert_entry_container"
+			}
+		}
+		
+		properties = {
+			alert_icon = {
+				image = GFX_[?v.GetTokenKey]
+			}
+			food_bar = {
+				frame = frame
+			}
+		}
+		effects = {
+			sidebar_hidden_click = {
+				set_country_flag = sidebar
+				add_to_variable = { ui_topbar_update = 1 }
+			}
+			alert_icon_click = {
+				
+				meta_effect = {
+					text = { 
+						[X] = yes
+					}
+					X = "[?v.GetTokenKey]"
+				}
+			}
+		 	text_click = {
+				ui_update_food_consumption = yes 
+				
+				custom_effect_tooltip = RATIONS_TITLE
+		 	}
+		}
+		triggers = {
+			sidebar_hidden_visible = {
+				NOT = { has_country_flag = sidebar }
+			}
+			intel_agency_button_visible = {
+				NOT = { has_dlc = "La Resistance" }
+			}
+			intel_agency_button_click_enabled = {
+				always = no
+			}   
+			food_bar_click_enabled = {  
+				set_temp_variable = { frame = food }
+				divide_temp_variable = { frame = food_max }
+				multiply_temp_variable = { frame = 100 }
+			}   
+		}
+	}
+	BI_topbar_manpower_view_menu = {
+		context_type = player_context
+		
+		window_name = "BI_topbar_manpower"
+		parent_window_token = top_bar
+		
+		dirty = manpower_k 
+ 
+		properties = { 
+			conscription_ratio_bar = {
+				frame = temp1
+			}
+		}
+		
+		triggers = {
+			conscription_text_visible = {
+				conscription_ratio > 0.999
+			}
+			conscription_text_ratio_visible = {
+				#always = no
+				NOT = { conscription_ratio > 0.999 }
+			}
+			conscription_ratio_bar_visible = {  
+				#always = no
+				NOT = { conscription_ratio > 0.999 } 
+			}
+			conscription_ratio_bar_click_enabled = { 
+				
+				set_temp_variable = { target_cons = modifier@conscription }
+				set_temp_variable = { factor = modifier@conscription_factor }
+				add_to_temp_variable = { factor = 1 }
+				multiply_temp_variable = { target_cons = factor }
+				
+				
+				#always = no
+				set_temp_variable = { ratio_frame = previous_conscription_target }
+			 	divide_temp_variable = { ratio_frame = target_cons }
+				#log = "[?ratio_frame] TARGET CONS"
+				
+				get_target_conscription = yes
+				
+				set_temp_variable = { temp1 = mobilization_ratio }
+				subtract_from_temp_variable = { temp1 = ratio_frame }
+				
+				set_temp_variable = { temp2 = ratio_frame }
+				subtract_from_temp_variable = { temp2 = 1 }
+				multiply_temp_variable = { temp2 = -1 }
+				#log = "[?temp2] temp2"
+				
+				set_temp_variable = { temp3 = 1 }
+				check_variable = { temp2 > 0 }
+				divide_temp_variable = { temp3 = temp2 }
+				
+				multiply_temp_variable = { temp1 = temp3 }
+				multiply_temp_variable = { temp1 = 100 }
+				round_temp_variable = temp1 
+				#log = "[?temp1] temp1"
+			}
+		}
+	}
+	BI_topbar_special_forces = { 
+		context_type = player_context 
+		
+		parent_window_token = top_bar
+		window_name = "BI_topbar_special_forces_container"
+		
+		dirty = ui_sof_update
+		
+		properties = { 
+			sof_ratio_bar = {
+				frame = sof_frame
+			}
+			special_forces_background = {
+				frame = sof_icon?3
+			}
+		} 
+		
+		effects = { 
+		 	sof_ratio_bar_click = {
+				MTT_get_special_forces_cap_modifiers = yes 
+		 	}
+			special_forces_background_click = {
+				ui_list_special_battalions = yes 
+				ui_list_special_forces_modifiers = yes
+			}
+			
+		}
+	 	
+	} 
+	
+	BI_select_onmap_country_gui = {
+		context_type = selected_country_context
+		
+		window_name = "BI_select_onmap_country_container"
+		  
+		visible = {
+			ROOT = { has_country_flag = ui_country_selection }
+			#ROOT = {
+			#	OR = {
+			#		has_country_flag = ai_difficulty_add_countries
+			#		has_country_flag = topbar_show_countries
+			#		has_country_flag = BI_performance_show_countries
+			#		has_country_flag = BI_AI_show_countries
+			#		has_country_flag = EAI_show_countries
+			#	}
+			#}
+		}
+ 
+		effects = {
+			select_country_button_click = {
+				set_temp_variable = { add_country = THIS }
+				ROOT = { 
+					if = {
+						limit = {
+							has_country_flag = topbar_show_countries
+						}
+						
+						var:current_topbar_slot = { 
+							
+							set_variable = { targeted_country = Prev.Prev.id } 
+						}
+						add_to_variable = { BI_topbar_update = 1 }
+						clr_country_flag = topbar_show_countries 
+						clear_array = country_selection
+					}
+					else_if = {
+						limit = {
+							has_country_flag = BI_performance_show_countries
+						}
+						if = {
+							limit = {
+								NOT = { has_country_flag = BI_performance_select_annex_country } 
+							}
+							add_to_array = { BI_performance_selected_country_array = Prev.id }
+						}
+						else = { 
+							set_variable = { BI_performance_select_annex_country = Prev.id }
+							
+							clr_country_flag = BI_performance_select_annex_country
+							clr_country_flag = BI_performance_show_countries
+						}
+					}
+					else_if = {
+						limit = {
+							has_country_flag = EAI_show_countries
+						}
+						
+						add_to_array = { Root.EAI_selected_country_array = Prev.id }
+					}
+					else_if = {
+						limit = {
+							has_country_flag = ai_difficulty_add_countries
+						}
+						
+						if = {
+							limit = {
+								check_variable = { ai_setting_target_countries^num = 0 }
+							}
+							
+							if = {
+								limit = {
+									NOT = {
+										var:add_country = { has_country_flag = ai_difficulty_setting_target }
+										any_country = {
+											has_country_flag = ai_difficulty_setting_target
+											is_in_array = { ai_difficulty_setting_targets = add_country }
+										}
+									}
+								} 
+								add_to_array = { Root.ai_setting_target_countries = add_country }
+								remove_from_array = { array = ROOT.ai_setting_target }
+								add_to_array = { ROOT.ai_setting_target = add_country }
+								add_to_array = { ROOT.ai_setting_target = 1 }
+								PREV = {
+									set_country_flag = ai_difficulty_setting_target
+									set_variable = { ROOT.selected_target = THIS }
+								}
+								clear_array = ROOT.ai_setting_target_countries
+								add_to_array = { ROOT.ai_setting_target_countries = PREV }
+								for_each_scope_loop = {
+									array = PREV.ai_difficulty_setting_targets
+									
+									add_to_array = { ROOT.ai_setting_target_countries = THIS }
+								}
+									
+							}
+							
+							else = {
+								random_country = {
+									limit = {
+										is_in_array = { ai_difficulty_setting_targets = add_country }
+									}
+									ROOT = { 
+										set_variable = { setting_holder = PREV }
+										set_variable = { setting_add_country = add_country }
+										country_event = BI_on_action.141 
+									}
+								}
+								
+							}
+						}
+						else = {
+							var:ROOT.selected_target = {
+								
+								if = {
+									limit = {
+										NOT = {
+											var:add_country = { has_country_flag = ai_difficulty_setting_target }
+											any_country = {
+												has_country_flag = ai_difficulty_setting_target
+												is_in_array = { ai_difficulty_setting_targets = add_country }
+											}
+										}
+									} 
+									add_to_array = { ai_difficulty_setting_targets = add_country }
+									
+									clear_array = ROOT.ai_setting_target_countries
+									add_to_array = { ROOT.ai_setting_target_countries = THIS }
+									for_each_scope_loop = {
+										array = ai_difficulty_setting_targets
+										
+										add_to_array = { ROOT.ai_setting_target_countries = THIS }
+									}
+									
+									for_each_scope_loop = {
+										array = ROOT.ai_setting_target_countries
+										 
+										ui_ai_add_country_to_settings = yes
+									}
+								}
+								else = {
+									random_country = {
+										limit = {
+											is_in_array = { ai_difficulty_setting_targets = add_country }
+										}
+										ROOT = { 
+											set_variable = { setting_holder = PREV }
+											set_variable = { setting_add_country = add_country }
+											country_event = BI_on_action.140 
+										}
+									}
+									
+								}
+								
+								
+							}
+						}
+					}
+				}
+				clr_country_flag = ui_country_selection
+			}
+		}
+		
+		triggers = {
+			select_country_button_click_enabled = {
+				ROOT = { 
+					if = {
+						limit = {
+							has_country_flag = BI_performance_show_countries
+						}
+						if = {
+							limit = {
+								NOT = { has_country_flag = BI_performance_select_annex_country } 
+							}
+							NOT = { is_in_array = { BI_performance_selected_country_array = Prev.id } }
+						}
+					}
+					else_if = {
+						limit = {
+							has_country_flag = EAI_show_countries
+						}
+						NOT = { is_in_array = { EAI_selected_country_array = Prev.id } }
+					}
+					else_if = {
+						limit = {
+							has_country_flag = ai_difficulty_add_countries
+						}
+						NOT = { is_in_array = { Root.ai_setting_target_countries = Prev.id } }
+					}
+				}
+			}
+		}
+	}
+	
+	BI_country_selection_menu = {
+		context_type = player_context  
+		 
+		window_name = "BI_country_selection_container"
+		
+		visible = {
+			has_country_flag = ui_country_selection
+			#OR = { 
+			#	has_country_flag = ai_difficulty_add_countries
+			#	has_country_flag = topbar_show_countries
+			#	has_country_flag = BI_performance_show_countries
+			#	has_country_flag = BI_AI_show_countries
+			#	has_country_flag = EAI_show_countries
+			#}
+		}
+		
+		dynamic_lists = { 
+			topbar_country_list = { 
+				array = country_selection 
+				change_scope = yes
+				entry_container = "topbar_country_container"
+			}  
+		} 
+		
+		properties = { 
+			flag = {
+				image = "[This.GetFlag]"
+			}
+			
+			BI_filter_europe = {
+				image = "[BI_GetFilterEurope]" 
+			}
+			BI_filter_north_america = {
+				image = "[BI_GetFilterNorthAmerica]"
+			}
+			BI_filter_south_america = {
+				image = "[BI_GetFilterSouthAmerica]"
+			}
+			BI_filter_africa = {
+				image = "[BI_GetFilterAfrica]"
+			}
+			BI_filter_middle_east = {
+				image = "[BI_GetFilterMiddleEast]"
+			}
+			BI_filter_oceania = {
+				image = "[BI_GetFilterOceania]"
+			}
+			BI_filter_asia = {
+				image = "[BI_GetFilterAsia]"
+			}
+			
+			BI_filter_owned_neighbors = {
+				image = "[BI_GetFilterNeighborsOwned]"
+			}
+			BI_filter_neighbors = {
+				image = "[BI_GetFilterNeighbors]"
+			}
+			BI_filter_major = {
+				image = "[BI_GetFilterMajor]"
+			}
+			BI_filter_faction = {
+				image = "[BI_GetFilterFaction]"
+			}
+			BI_filter_subjects = {
+				image = "[BI_GetFilterSubjects]"
+			}
+			BI_filter_enemies = {
+				image = "[BI_GetFilterEnemies]"
+			}
+		}
+		
+		triggers = {
+			flag_click_enabled = {
+				ROOT = { 
+					if = {
+						limit = {
+							has_country_flag = BI_performance_show_countries
+						}
+						if = {
+							limit = {
+								NOT = { has_country_flag = BI_performance_select_annex_country } 
+							}
+							NOT = { is_in_array = { BI_performance_selected_country_array = Prev.id } }
+						}
+					}
+					else_if = {
+						limit = {
+							has_country_flag = EAI_show_countries
+						}
+						NOT = { is_in_array = { EAI_selected_country_array = Prev.id } }
+					}
+					else_if = {
+						limit = {
+							has_country_flag = BI_AI_show_countries
+						}
+						NOT = { is_in_array = { BI_AI_selected_countries = Prev.id } }
+					}
+					else_if = {
+						limit = {
+							has_country_flag = ai_difficulty_add_countries
+						}
+						NOT = { is_in_array = { Root.ai_setting_target_countries = Prev.id } }
+						NOT = { PREV = { has_country_flag = ai_difficulty_setting_target } }
+					}
+						
+				}
+			}
+		}
+		
+		effects = {
+			BI_filter_close_button_click = {
+				if = {
+					limit = {
+						has_country_flag = topbar_show_countries
+					}
+					clr_country_flag = topbar_show_countries 
+					clear_array = country_selection
+					clear_variable = current_topbar_slot
+				}
+				if = {
+					limit = {
+						has_country_flag = BI_performance_show_countries
+					}
+					clr_country_flag = BI_performance_show_countries
+					clear_array = country_selection
+				}
+				if = {
+					limit = {
+						has_country_flag = EAI_show_countries
+					}
+					clr_country_flag = EAI_show_countries
+					clear_array = country_selection
+				}
+				if = {
+					limit = {
+						has_country_flag = BI_AI_show_countries
+					}
+					clr_country_flag = BI_AI_show_countries
+					clear_array = country_selection
+				}
+				if = {
+					limit = {
+						has_country_flag = ai_difficulty_add_countries
+					}
+					clr_country_flag = ai_difficulty_add_countries
+					clear_array = country_selection
+				}
+				
+				clr_country_flag = ui_country_selection
+			}
+			flag_click = {
+				set_temp_variable = { add_country = THIS }
+				ROOT = { 
+					if = {
+						limit = {
+							has_country_flag = ai_difficulty_add_countries
+						}
+						if = {
+							limit = {
+								check_variable = { ai_setting_target_countries^num = 0 }
+							}
+							
+							if = {
+								limit = {
+									NOT = {
+										var:add_country = { has_country_flag = ai_difficulty_setting_target }
+										any_country = {
+											has_country_flag = ai_difficulty_setting_target
+											is_in_array = { ai_difficulty_setting_targets = add_country }
+										}
+									}
+								} 
+								add_to_array = { Root.ai_setting_target_countries = add_country }
+								remove_from_array = { array = ROOT.ai_setting_target }
+								add_to_array = { ROOT.ai_setting_target = add_country }
+								add_to_array = { ROOT.ai_setting_target = 1 }
+								PREV = {
+									set_country_flag = ai_difficulty_setting_target
+									set_variable = { ROOT.selected_target = THIS }
+								}
+								clear_array = ROOT.ai_setting_target_countries
+								add_to_array = { ROOT.ai_setting_target_countries = PREV }
+								for_each_scope_loop = {
+									array = PREV.ai_difficulty_setting_targets
+									
+									add_to_array = { ROOT.ai_setting_target_countries = THIS }
+								}
+									
+							}
+							
+							else = {
+								random_country = {
+									limit = {
+										is_in_array = { ai_difficulty_setting_targets = add_country }
+									}
+									ROOT = { 
+										set_variable = { setting_holder = PREV }
+										set_variable = { setting_add_country = add_country }
+										country_event = BI_on_action.141 
+									}
+								}
+								
+							}
+						}
+						else = {
+							var:ROOT.selected_target = {
+								
+								if = {
+									limit = {
+										NOT = {
+											var:add_country = { has_country_flag = ai_difficulty_setting_target }
+											any_country = {
+												has_country_flag = ai_difficulty_setting_target
+												is_in_array = { ai_difficulty_setting_targets = add_country }
+											}
+										}
+									} 
+									add_to_array = { ai_difficulty_setting_targets = add_country }
+									
+									clear_array = ROOT.ai_setting_target_countries
+									add_to_array = { ROOT.ai_setting_target_countries = THIS }
+									for_each_scope_loop = {
+										array = ai_difficulty_setting_targets
+										
+										add_to_array = { ROOT.ai_setting_target_countries = THIS }
+									}
+									
+									for_each_scope_loop = {
+										array = ROOT.ai_setting_target_countries
+										 
+										ui_ai_add_country_to_settings = yes
+									}
+								}
+								else = {
+									random_country = {
+										limit = {
+											is_in_array = { ai_difficulty_setting_targets = add_country }
+										}
+										ROOT = { 
+											set_variable = { setting_holder = PREV }
+											set_variable = { setting_add_country = add_country }
+											country_event = BI_on_action.140 
+										}
+									}
+									
+								}
+								
+								
+							}
+						}
+					}
+					add_to_variable = { ui_difficulty = 1 }
+				}
+			}
+			
+			flag_shift_click = {
+				ROOT = { 
+					if = {
+						limit = {
+							has_country_flag = BI_performance_show_countries
+						}
+						
+						for_each_scope_loop = {
+							array = country_selection
+							
+							add_to_array = { Root.BI_performance_selected_country_array = This.id }
+						}
+					}
+				}
+			}
+			
+			BI_filter_europe_click = {
+				if = {
+					limit = {
+						NOT = { has_country_flag = BI_filter_europe }
+					}
+					set_country_flag = BI_filter_europe
+				}
+				else = {
+					clr_country_flag = BI_filter_europe
+				}
+				
+				BI_filter_effect = yes
+			}
+			BI_filter_north_america_click = {
+				if = {
+					limit = {
+						NOT = { has_country_flag = BI_filter_north_america }
+					}
+					set_country_flag = BI_filter_north_america
+				}
+				else = {
+					clr_country_flag = BI_filter_north_america
+				}
+				
+				BI_filter_effect = yes
+			}
+			BI_filter_south_america_click = {
+				if = {
+					limit = {
+						NOT = { has_country_flag = BI_filter_south_america }
+					}
+					set_country_flag = BI_filter_south_america
+				}
+				else = {
+					clr_country_flag = BI_filter_south_america
+				}
+				
+				BI_filter_effect = yes
+			}
+			BI_filter_africa_click = {
+				if = {
+					limit = {
+						NOT = { has_country_flag = BI_filter_africa }
+					}
+					set_country_flag = BI_filter_africa
+				}
+				else = {
+					clr_country_flag = BI_filter_africa
+				}
+				
+				BI_filter_effect = yes
+			}
+			BI_filter_asia_click = {
+				if = {
+					limit = {
+						NOT = { has_country_flag = BI_filter_asia }
+					}
+					set_country_flag = BI_filter_asia
+				}
+				else = {
+					clr_country_flag = BI_filter_asia
+				}
+				
+				BI_filter_effect = yes
+			}
+			BI_filter_middle_east_click = {
+				if = {
+					limit = {
+						NOT = { has_country_flag = BI_filter_middle_east }
+					}
+					set_country_flag = BI_filter_middle_east
+				}
+				else = {
+					clr_country_flag = BI_filter_middle_east
+				}
+				
+				BI_filter_effect = yes
+			}
+			
+			BI_filter_owned_neighbors_click = {
+				if = {
+					limit = {
+						NOT = { has_country_flag = BI_filter_neighbors_owned }
+					}
+					set_country_flag = BI_filter_neighbors_owned
+				}
+				else = {
+					clr_country_flag = BI_filter_neighbors_owned
+				}
+				
+				BI_filter_effect = yes
+			}
+			BI_filter_neighbors_click = {
+				if = {
+					limit = {
+						NOT = { has_country_flag = BI_filter_neighbors }
+					}
+					set_country_flag = BI_filter_neighbors
+				}
+				else = {
+					clr_country_flag = BI_filter_neighbors
+				}
+				
+				BI_filter_effect = yes
+			}
+			BI_filter_major_click = {
+				if = {
+					limit = {
+						NOT = { has_country_flag = BI_filter_major }
+					}
+					set_country_flag = BI_filter_major
+				}
+				else = {
+					clr_country_flag = BI_filter_major
+				}
+				
+				BI_filter_effect = yes
+			}
+			BI_filter_faction_click = {
+				if = {
+					limit = {
+						NOT = { has_country_flag = BI_filter_faction }
+					}
+					set_country_flag = BI_filter_faction
+				}
+				else = {
+					clr_country_flag = BI_filter_faction
+				}
+				
+				BI_filter_effect = yes
+			}
+			BI_filter_subjects_click = {
+				if = {
+					limit = {
+						NOT = { has_country_flag = BI_filter_subjects }
+					}
+					set_country_flag = BI_filter_subjects
+				}
+				else = {
+					clr_country_flag = BI_filter_subjects
+				}
+				
+				BI_filter_effect = yes
+			}
+			BI_filter_enemies_click = {
+				if = {
+					limit = {
+						NOT = { has_country_flag = BI_filter_enemies }
+					}
+					set_country_flag = BI_filter_enemies
+				}
+				else = {
+					clr_country_flag = BI_filter_enemies
+				}
+				 
+				BI_filter_effect = yes
+			}
+		}
+	}
+	#topbar-tension
+	BI_topbar_right_view_menu = {
+		context_type = player_context
+		
+		window_name = "tension_view_menu_container"
+		parent_window_token = top_bar
+		
+		dirty = global.threat
+ 
+		effects = {
+            bice_icon_click = {
+				clr_country_flag = BI_startup_content
+				add_to_variable = { BI_open_main_menu = 1 }
+				if = {
+					limit = {
+						NOT = { has_country_flag = ui_show_main_menu }
+					}
+					set_country_flag = ui_show_main_menu
+				}
+				else = {
+					clr_country_flag = ui_show_main_menu
+				}
+            }
+		}
+		
+	}
+	BI_storage_topbar = {
+		context_type = player_context 
+		
+		window_name = "storage_container"
+		parent_window_token = top_bar
+		
+		dirty = ui_storage
+		
+		visible = {
+			NOT = { has_country_flag = ui_collapse_storage }
+		}
+		
+		dynamic_lists = { 
+			storage_list = {  
+				array = global.storage
+				change_scope = yes
+				entry_container = "storage_entry"
+			}
+		}
+		
+		properties = {
+			icon = {
+				frame = global.storage_frame^i
+			}
+		}
+		
+		effects = {
+			close_click = {
+				set_country_flag = ui_collapse_storage
+			}
+			resource_click = {
+				if = {
+					limit = {
+						check_variable = { assign_storage > 0 }
+					}
+					
+					subtract_from_variable = { assign_storage = 1 }
+					var:assign_storage_state^0 = {
+						
+						subtract_from_variable = { assign_storage = 1 }
+						add_to_variable = { storage@var:v = 1 }
+						add_to_variable = { ROOT.num_storage@var:v = 1 }
+															
+						set_temp_variable = { storage_modifier = ROOT.modifier@max_resource_storage_factor }
+						add_to_temp_variable = { storage_modifier = 1 }
+						multiply_temp_variable = { storage_modifier = global.resource_cost@var:v }
+						multiply_temp_variable = { storage_modifier = 50 }
+						
+										
+						add_to_variable = { ROOT.max_storage@var:v = storage_modifier }
+						
+						log = "[This.GetName] | [?storage@var:v] Storage | [?assign_storage] Assign Storage"
+						if = {
+							limit = {
+								check_variable = { assign_storage < 1 }
+							}
+							clear_variable = assign_storage
+							set_temp_variable = { assign_storage_done = 1 }
+						}
+					}
+					
+					if = {
+						limit = {
+							check_variable = { assign_storage_done > 0 }
+						}
+						remove_from_array = { ROOT.assign_storage_state = ROOT.assign_storage_state^0 }
+					}
+							
+				}
+				else = {
+					if = { #stop output
+						limit = { has_variable = storage_output@var:v }
+						
+						clear_variable = storage_output@var:v
+						
+						if = {
+							limit = {
+								all_of = {
+									array = global.storage
+									
+									check_variable = { storage_output@var:v = 0 }
+								}
+							}
+							remove_dynamic_modifier = { modifier = storage }
+						}
+					}	
+					else_if = { #start output
+						limit = {
+							check_variable = { storage@var:v > 0 }
+						}
+									
+						set_temp_variable = { factor = modifier@storage_output_factor }
+						add_to_temp_variable = { factor = 1 }
+						
+						set_variable = { storage_output@var:v = global.resource_cost@var:v }
+						multiply_variable = { storage_output@var:v = factor }
+						set_temp_variable = { t = storage_output@var:v }
+						multiply_variable = { storage_output@var:v = num_storage@var:v }
+						add_to_variable = { storage_output@var:v = t }
+								
+						log = "[?storage_output@var:v] output"
+						if = {
+							limit = {
+								NOT = {
+									has_dynamic_modifier = { modifier = storage }
+								}
+							}
+							add_dynamic_modifier = { modifier = storage }
+						}
+						
+					}
+				}
+				
+				add_to_variable = { ui_storage = 1 }
+			}
+        }
+
+		triggers = {
+			disabled_visible = {
+				check_variable = { storage@var:v > 0 }
+				check_variable = { storage_output@var:v = 0 }
+			}
+			highlight_visible = {
+				check_variable = { assign_storage > 0 }
+			}
+			assign_storage_text_visible = {
+				check_variable = { assign_storage > 0 }
+			}
+		}
+		
+	} 
+	
+}

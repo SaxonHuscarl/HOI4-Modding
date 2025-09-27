@@ -1,0 +1,1942 @@
+
+
+#ai_stability_need
+#ai_war_support_need
+#ai_<resource>_need
+#ai_political_need
+
+@AI_ST_WS_BASE_SCORE = 50
+
+@AI_STABILITY_TARGET_AT_WAR = 1
+@AI_STABILITY_MIN_AT_WAR = 0.6
+
+@AI_STABILITY_TARGET_AT_PEACE = 0.75
+@AI_STABILITY_MIN_AT_PEACE = 0.3
+
+
+@AI_WAR_SUPPORT_TARGET_AT_WAR = 1
+@AI_WAR_SUPPORT_MIN_AT_WAR = 0.75
+
+@AI_WAR_SUPPORT_TARGET_AT_PEACE = 0.1
+@AI_WAR_SUPPORT_TARGET_FROM_TENSION = 0.5
+@AI_WAR_SUPPORT_MIN_AT_PEACE = 0.0
+
+@AI_DECISION_NEED_NUM_WEEKS_OF_DRIFT = 5 #positive weekly drift * this gets added to current stability value
+
+@AI_DECISION_NEED_MIN_WEEKS_TO_TARGET_AT_WAR = 10
+@AI_DECISION_NEED_MIN_WEEKS_TO_TARGET_AT_PEACE = 30 #if gain is positive and we reach target in this many weeks, do not do more decisions 
+@AI_DECISION_NEED_WEEKS_TO_MIN_FOR_CRITICAL = 10 #if we reach minimum in this many weeks, ai will treat decisions as critical
+@AI_DECISION_NEED_CRITICAL_SCORE_MULT = 2.0
+
+### LAWS 
+@AI_DAYS_CADET_TRAINING_CHANGE = 90
+
+@AI_MANPOWER_TARGET_RATIO_OF_FIELDED_MP = 0.1
+@AI_MANPOWER_TARGET_OF_FIELDED_MP_MAX = 250 #250k, meaning 2.5 million in field
+
+@AI_MANPOWER_TARGET_RATIO_OF_TOTAL_MP = 0.01
+@AI_MANPOWER_TARGET_OF_TOTAL_MP_MAX = 400 #400k, meaning 40 million core pop
+
+@AI_MANPOWER_TARGET_RATIO_FROM_LAW_LEVEL = 0.97 #per level of manpower laws the manpower needed to switch laws get multiplied by this
+
+@AI_MANPOWER_TARGET_UNIT_LIMIT_MULT_START = 0.8 
+@AI_MANPOWER_TARGET_UNIT_LIMIT_MULT = 1 #(ai_limit_ratio - 0.8 ) * this / 5  #the closer we get to the unit cap the less manpower we want 
+@AI_MANPOWER_TARGET_UNIT_LIMIT_MULT_MIN = 0.75 #limit the total reduction to this ratio
+
+@AI_UPGRADE_CIV_FUEL_TO_INCOME_RATIO = 0.3 #civ fuel use needs to be less than this ratio of income*fuel_ratio
+@AI_DOWNGRADE_CIV_FUEL_TO_INCOME_RATIO = 0.5 #civ fuel use needs to be more than this ratio of income*fuel_ratio
+
+@AI_OIL_IMPORTANCE = 1.5
+@AI_RUBBER_IMPORTANCE = 4 #these ones are used when evaluating if switching trade laws would benefit us
+@AI_TUNGSTEN_IMPORTANCE = 1
+@AI_STEEL_IMPORTANCE = 1
+@AI_ALUMINIUM_IMPORTANCE = 1.5
+@AI_CHROMIUM_IMPORTANCE = 2
+@AI_IRON_IMPORTANCE = 0.75
+@AI_COAL_IMPORTANCE = 0.75
+@AI_BAUXITE_IMPORTANCE = 1.75
+@AI_FOOD_IMPORTANCE = 0.5
+
+@AI_RESOURCE_NEED_IMPORT_WEIGHT = 0.5 #multiplies above value with this if imported
+
+@AI_ALLIED_NEIGHBOR_POTENTIAL_EXPORT_RATIO = 1.0 #potential = resource_need * this
+@AI_ALLIED_POTENTIAL_EXPORT_RATIO = 0.7
+@AI_NEIGHBOR_POTENTIAL_EXPORT_RATIO = 0.4
+@AI_GLOBAL_POTENTIAL_EXPORT_RATIO = 0.05
+
+@AI_MAX_CIC_RATIO_FOR_POTENTIAL_NEEDED_IMPORT = 0.3 #how much IC we would be willing to spend for needed imports if we were to switch our trade law
+
+@AI_TRADE_LAW_ASSURED_EXPORT_WEIGHT = 2.0 #this one works on assumptions, using the resource_need of neighboring allies as a guidance
+@AI_TRADE_LAW_POTENTIAL_EXPORT_WEIGHT = 0.2 #same as above, but not just for neighboring allies
+@AI_TRADE_LAW_POTENTIAL_IMPORT_WEIGHT = -2.0 #this doesnt work on assumptions. this affects how much the imports needed if we were to switch trade laws are worth it to the score
+@AI_TRADE_LAW_POTENTIAL_IMPORT_SAVED_WEIGHT = 3.0 #how much imports which we could cancel if we were to switch trade law are worth to the score
+
+@AI_TRADE_LAW_REQUIRED_SCORE_IC_RATIO_MAJOR = 1.5 #num IC / score needs to be higher than this to change trade law. for majors this can be bypassed if the score is above 100 (before dividing with num ic obviously)
+@AI_TRADE_LAW_REQUIRED_SCORE_IC_RATIO_MINOR = 2.0 
+
+############################
+### TOTAL MOBILISATION 
+
+@AI_TM_STABILITY_REQUIRED = 0.70
+
+@AI_TM_BASE_SCORE = 100 
+@AI_TM_POLITICAL_POWER_DAILY_WEIGHT = 20 #how much political power we gain daily
+@AI_TM_STABILITY_WEEKLY_WEIGHT = 150 #weekly stability modifier
+@AI_TM_STABILITY_NEED_WEIGHT = -10 #stability need, how much ai wants to boost stability atm
+@AI_TM_STABILITY_FULLFILLED_SCORE = 200 #when we are at stability need of 0 
+@AI_TM_CONSUMER_GOODS_POTENTIAL_WEIGHT = 250 #how much consumer goods ratio we would gain 
+@AI_TM_CONSUMER_GOODS_NO_GAIN_SCORE = -400 #when it doesnt actually improve our construction
+@AI_TM_STOCKPILE_RATIO_WEIGHT = -200 #if we have stockpile ratio, we dont need extra production
+
+@AI_TM_REQUIRED_SCORE_UPGRADE = 1000
+@AI_TM_REQUIRED_SCORE_FOR_ABORT = 700
+@AI_TM_ABORT_AT_PREVIOUS_UPGRADE_SCORE = 0.7
+
+@AI_TM_ABORT_AT_STABILITY = 0.6
+@AI_TM_DAYS_BETWEEN_LAST_ABORT = 180 #lets maybe not bother with this too soon again if we just had to abort it
+@AI_TM_MIN_DAYS_BEFORE_ABORT = 90 
+
+ai_update_country_laws = {
+	
+	################	ECONOMY LAW	   ################
+	
+	if = {
+		limit = {
+			check_variable = { law_change_days@token:economy = 0 }
+		}
+			
+		if = {
+			limit = {	
+				check_variable = { law_level@token:economy < 6 }
+				
+				can_level_up_economy = yes 
+
+			}
+			
+			level_up_economy_law = yes
+		}
+		#else_if = {
+		#	limit = {
+		#	
+		#		OR = {
+		#			has_idea = war_economy 
+		#			has_idea = tot_economic_mobilisation
+		#		}
+		#		
+		#	}
+		#	
+		#	d_ai_update_total_mobilisation = yes
+		#	
+		#}
+	}
+	
+	################	MANPOWER LAW	################
+	
+	if = {
+		limit = {
+			conscription_ratio > 0.95
+			conscription_ratio < 1.01
+		}
+		
+		set_temp_variable = { manpower_fielded = max_available_manpower_k }
+		subtract_from_temp_variable = { manpower_fielded = manpower_k }
+		multiply_temp_variable = { manpower_fielded = @AI_MANPOWER_TARGET_RATIO_OF_FIELDED_MP }
+		set_temp_variable = { max_value = @AI_MANPOWER_TARGET_OF_FIELDED_MP_MAX }
+		clamp_temp_variable = { var = manpower_fielded max = max_value }
+		
+		set_temp_variable = { manpower_total = core_population_k }
+		multiply_temp_variable = { manpower_total = @AI_MANPOWER_TARGET_RATIO_OF_TOTAL_MP }
+		set_temp_variable = { max_value = @AI_MANPOWER_TARGET_OF_TOTAL_MP_MAX }
+		clamp_temp_variable = { var = manpower_total max = max_value }
+		
+		set_temp_variable = { manpower_total_threshold = manpower_total }
+		add_to_temp_variable = { manpower_total_threshold = manpower_fielded }
+		
+		set_temp_variable = { law_level = law_level@age_laws }
+		add_to_temp_variable = { law_level = law_level@conscription_law }
+		
+		for_loop_effect = {
+			end = law_level 
+			
+			multiply_temp_variable = { manpower_total_threshold = @AI_MANPOWER_TARGET_RATIO_FROM_LAW_LEVEL }
+		}
+				
+		if = {
+			limit = {
+				check_variable = { ai_division_limit_ratio > @AI_MANPOWER_TARGET_UNIT_LIMIT_MULT_START }
+			}
+				
+			set_temp_variable = { unit_limit_start = 1 }
+			subtract_from_temp_variable = { unit_limit_start = @AI_MANPOWER_TARGET_UNIT_LIMIT_MULT_START } #=0.2
+			
+			set_temp_variable = { unit_limit_div = 1 }
+			divide_temp_variable = { unit_limit_div = unit_limit_start } #=5
+			
+			set_temp_variable = { unit_limit_ratio = ai_division_limit_ratio } #0.9
+			subtract_from_temp_variable = { unit_limit_ratio = @AI_MANPOWER_TARGET_UNIT_LIMIT_MULT_START } #0.1
+			multiply_temp_variable = { unit_limit_ratio = @AI_MANPOWER_TARGET_UNIT_LIMIT_MULT } #0.1
+			multiply_temp_variable = { unit_limit_ratio = unit_limit_div } #0.5
+			
+			set_temp_variable = { unit_limit_mult = 1 }
+			subtract_from_temp_variable = { unit_limit_mult = unit_limit_ratio }
+			
+			set_temp_variable = { min_value = @AI_MANPOWER_TARGET_UNIT_LIMIT_MULT_MIN }
+			clamp_temp_variable = { var = unit_limit_mult min = min_value }
+			
+			multiply_temp_variable = { manpower_total_threshold = unit_limit_mult }
+			
+		}
+		
+		if = {
+			limit = {
+				check_variable = { manpower_total_threshold > manpower_k }
+			}
+			
+			if = {
+				limit = {
+					can_level_up_manpower = yes
+				}
+				level_up_manpower = yes
+			}
+			else_if = {
+				limit = {
+					can_level_up_conscription = yes
+				}
+				level_up_conscription = yes
+			}
+		}
+	}
+
+	################	FOREIGN POLITICS	################
+	
+	if = {
+		limit = {
+			has_idea = foreign_isolationism
+			can_take_foreign_cooperative = yes
+		}
+		clear_variable = law_level@token:foreign_policy
+		swap_ideas = {
+			remove_idea = foreign_isolationism
+			add_idea = foreign_cooperative
+		}
+			add_to_array = { ai_law_switch = token:foreign_cooperative }
+			add_to_array = { ai_law_switch_date = global.date }
+		log = "[Root.GetTag] | [GetYear] [GetMonth] | Switch to foreign_cooperative"
+	}
+	else_if = {
+		limit = {
+			has_idea = foreign_neutral
+			can_take_foreign_cooperative = yes
+		}
+		clear_variable = law_level@token:foreign_policy
+		swap_ideas = {
+			remove_idea = foreign_neutral
+			add_idea = foreign_cooperative
+		}
+			add_to_array = { ai_law_switch = token:foreign_cooperative }
+			add_to_array = { ai_law_switch_date = global.date }
+		log = "[Root.GetTag] | [GetYear] [GetMonth] | Switch to foreign_cooperative"
+	}
+	else_if = {
+		limit = {
+			has_idea = foreign_cooperative
+			has_offensive_war = yes
+		}
+		clear_variable = law_level@token:foreign_policy
+		swap_ideas = {
+			remove_idea = foreign_cooperative
+			add_idea = foreign_interventionism
+		}
+			add_to_array = { ai_law_switch = token:foreign_interventionism }
+			add_to_array = { ai_law_switch_date = global.date }
+		log = "[Root.GetTag] | [GetYear] [GetMonth] | Switch to foreign_interventionism"
+	}
+		
+	################	PRESS  	 ################
+	
+	if = {
+		limit = {
+			has_idea = press_free
+		}
+		if = {
+			limit = {
+				can_take_press_censored = yes
+			}
+			clear_variable = law_level@token:press
+			swap_ideas = {
+				remove_idea = press_free
+				add_idea = press_censored
+			}
+			add_to_array = { ai_law_switch = token:press_censored }
+			add_to_array = { ai_law_switch_date = global.date }
+			log = "[Root.GetTag] | [GetYear] [GetMonth] | Switch to press_censored"
+		}
+		else_if = {
+			limit = {
+				can_take_press_regulated = yes
+			}
+			clear_variable = law_level@token:press
+			swap_ideas = {
+				remove_idea = press_free
+				add_idea = press_regulated
+			}
+			add_to_array = { ai_law_switch = token:press_regulated }
+			add_to_array = { ai_law_switch_date = global.date }
+			log = "[Root.GetTag] | [GetYear] [GetMonth] | Switch to press_regulated"
+		}
+	}
+	else_if = {
+		limit = {
+			has_idea = press_regulated
+		}
+		if = {
+			limit = {
+				can_take_press_censored = yes
+			}
+			clear_variable = law_level@token:press
+			swap_ideas = {
+				remove_idea = press_regulated
+				add_idea = press_censored
+			}
+			add_to_array = { ai_law_switch = token:press_censored }
+			add_to_array = { ai_law_switch_date = global.date }
+			log = "[Root.GetTag] | [GetYear] [GetMonth] | Switch to press_censored"
+		}
+	}
+	
+	################	CADET TRAINING    ################
+	
+	#CADET TRAINING 
+	if = {
+		limit = {
+			check_variable = { law_change_days@token:cadet_training_standards = 0 }
+			NOT = { has_country_flag = ai_cadet_training_change }
+		
+			num_divisions > 10
+			
+			can_level_up_cadet_training = yes
+			
+			OR = {
+				has_idea = train_none
+				threat > 0.5
+				has_war = yes
+				any_claim = yes
+			}
+		}
+		log = "[Root.GetTag] | [GetYear] [GetMonth] | Level up cadet_training_standards"
+		level_up_cadet_training = yes
+		set_country_flag = { flag = ai_cadet_training_change value = 1 days = @AI_DAYS_CADET_TRAINING_CHANGE }
+		
+	}
+
+	################	CIV FUEL RATION    ################
+	
+	if = {
+		limit = {
+			OR = {
+				major_country = yes
+				check_variable = { resource_produced@oil > 20 }
+			}
+		}
+			
+		set_temp_variable = { fuel = resource@oil }
+		#set_temp_variable = { fuel = resource_produced@oil }
+		#subtract_from_temp_variable = { fuel = resource_exported@oil }
+		
+		set_temp_variable = { gain_per_oil = 1.5 }
+		set_temp_variable = { mod = modifier@fuel_gain_factor }
+		add_to_temp_variable = { mod = 1 }
+		multiply_temp_variable = { gain_per_oil = mod }
+		
+		multiply_temp_variable = { fuel = gain_per_oil }
+		multiply_temp_variable = { fuel = 24 }
+		multiply_temp_variable = { fuel = fuel_ratio }
+		
+		set_temp_variable = { civ_fuel_need = civilian_fuel_use }
+		multiply_temp_variable = { civ_fuel_need = 24 }
+
+		set_temp_variable = { requisite = civ_fuel_need }
+		divide_temp_variable = { requisite = fuel }
+		
+		#log = "[?fuel] fuel"
+		#log = "[?civ_fuel_need] civ_fuel_need"
+		
+		if = {
+			limit = {
+				check_variable = { law_level@token:civ_fuel_usage < 4 }
+				
+				check_variable = { requisite < @AI_UPGRADE_CIV_FUEL_TO_INCOME_RATIO }
+						
+				set_temp_variable = { next = law_level@token:civ_fuel_usage }
+				add_to_temp_variable = { next = 1 }
+				
+				meta_trigger = {
+					text = { can_take_[X] = yes }
+					X = "[?global.law@token:civ_fuel_usage^next.GetTokenKey]"
+				}
+		
+			}
+			#log = "[Root.GetTag] | [GetMonth][GetYear] | [?requisite] | UPGRADE CIV FUEL to [?global.law@token:civ_fuel_usage^next.GetTokenKey]"
+			
+			set_temp_variable = { last_level = law_level@token:civ_fuel_usage }
+			clear_variable = law_level@token:civ_fuel_usage
+			swap_ideas = {
+				remove_idea = var:global.law@token:civ_fuel_usage^last_level
+				add_idea = var:global.law@token:civ_fuel_usage^next
+			}
+			
+			set_temp_variable = { log = global.law@token:civ_fuel_usage^next }
+			add_to_array = { ai_law_switch = log }
+			add_to_array = { ai_law_switch_date = global.date }
+			log = "[Root.GetTag] | [GetYear] [GetMonth] | Switch to [?global.law@token:civ_fuel_usage^next.GetTokenKey]"
+		}
+		else_if = {
+			limit = {
+				check_variable = { law_level@token:civ_fuel_usage > 2 }
+				
+				check_variable = { requisite > @AI_DOWNGRADE_CIV_FUEL_TO_INCOME_RATIO }
+				
+				set_temp_variable = { next = law_level@token:civ_fuel_usage }
+				add_to_temp_variable = { next = -1 }
+				
+				meta_trigger = {
+					text = { can_take_[X] = yes }
+					X = "[?global.law@token:civ_fuel_usage^next.GetTokenKey]"
+				}
+		
+			}
+			#log = "[Root.GetTag] | [GetMonth][GetYear] | [?requisite] | DOWNGRADE CIV FUEL to [?global.law@token:civ_fuel_usage^next.GetTokenKey]"
+			
+			set_temp_variable = { last_level = law_level@token:civ_fuel_usage }
+			clear_variable = law_level@token:civ_fuel_usage
+			swap_ideas = {
+				remove_idea = var:global.law@token:civ_fuel_usage^last_level
+				add_idea = var:global.law@token:civ_fuel_usage^next
+			}
+			set_temp_variable = { log = global.law@token:civ_fuel_usage^next }
+			add_to_array = { ai_law_switch = log }
+			add_to_array = { ai_law_switch_date = global.date }
+			log = "[Root.GetTag] | [GetYear] [GetMonth] | Switch to [?global.law@token:civ_fuel_usage^next.GetTokenKey]"
+		}
+	}
+	
+	#TAXES
+	if = {
+		limit = {
+			OR = {
+				has_idea = tax_high 
+				has_idea = tax_extreme
+			}
+		}
+		if = {
+
+			limit = {
+				OR = {
+					has_country_flag = ai_civilian_build
+					has_stability < 0.7
+					AND = {
+						has_stability < 0.75
+						check_variable = { modifier@stability_weekly < -0.01 }
+					}
+				}
+				can_take_tax_average = yes
+			}
+			set_temp_variable = { remove_law_t = global.law@token:taxes^law_level@token:taxes }
+			clear_variable = law_level@token:taxes
+			swap_ideas = {
+				remove_idea = var:remove_law_t
+				add_idea = tax_average
+			}
+			add_to_array = { ai_law_switch = token:tax_average }
+			add_to_array = { ai_law_switch_date = global.date }
+			log = "[Root.GetTag] | [GetYear] [GetMonth] | Switch to tax_average"
+		}
+	}
+	else_if = {
+		limit = {
+			NOT = { has_idea = tax_high }
+			OR = {
+				has_war = yes 
+				has_country_flag = ai_military_build
+			}
+			OR = {
+				has_stability > 0.75
+				AND = {
+					has_stability > 0.7
+					check_variable = { modifier@stability_weekly > 0 }
+				}
+			}
+			can_take_tax_high = yes 
+		}
+		set_temp_variable = { remove_law_t = global.law@token:taxes^law_level@token:taxes }
+		clear_variable = law_level@token:taxes
+		swap_ideas = {
+			remove_idea = var:remove_law_t
+			add_idea = tax_high
+		}
+			add_to_array = { ai_law_switch = token:tax_high }
+			add_to_array = { ai_law_switch_date = global.date }
+		log = "[Root.GetTag] | [GetYear] [GetMonth] | Switch to tax_high"
+	}
+	
+	else_if = {
+		limit = {
+			has_idea = tax_average
+		}
+		if = {
+			limit = {
+				has_war = no
+				has_country_flag = ai_civilian_build
+				has_stability < 0.50
+				can_take_tax_low = yes 
+			}
+			swap_ideas = {
+				remove_idea = tax_average
+				add_idea = tax_low
+			}
+			add_to_array = { ai_law_switch = token:tax_low }
+			add_to_array = { ai_law_switch_date = global.date }
+			log = "[Root.GetTag] | [GetYear] [GetMonth] | Switch to tax_low"
+		}
+	}
+	else_if = {
+		limit = {
+			has_idea = tax_low
+		}
+		if = {
+			limit = {
+				OR = {
+					has_war = yes
+					has_country_flag = ai_military_build
+				}
+				OR = {
+					has_stability > 0.60
+					has_civil_war = yes
+				}
+				can_take_tax_average = yes 
+			}
+			swap_ideas = {
+				remove_idea = tax_low
+				add_idea = tax_average
+			}
+			add_to_array = { ai_law_switch = token:tax_average }
+			add_to_array = { ai_law_switch_date = global.date }
+			log = "[Root.GetTag] | [GetYear] [GetMonth] | Switch to tax_average"
+		}
+	}
+	
+	
+	#TARIFFS
+	if = {
+		limit = {
+			NOT = { has_idea = tariffs_high }
+			can_take_tariffs_high = yes 
+			OR = {
+				has_stability > 0.75
+				AND = {
+					has_stability > 0.65
+					check_variable = { modifier@stability_weekly > 0 }
+				}
+			}
+		}
+		
+		set_temp_variable = { remove_law_t = global.law@token:tariffs^law_level@token:tariffs }
+		clear_variable = law_level@token:tariffs
+		swap_ideas = {
+			remove_idea = var:remove_law_t
+			add_idea = tariffs_high
+		}
+		add_to_array = { ai_law_switch = token:tariffs_high }
+		add_to_array = { ai_law_switch_date = global.date }
+		log = "[Root.GetTag] | [GetYear] [GetMonth] | Switch to tariffs_high"
+	}
+	
+	#EDUCATION
+	if = {
+		limit = {
+			tag = GER
+			
+			NOT = { has_idea = edu_low }
+			date > 1941.1.1
+			has_war = yes 
+			
+			can_take_edu_low = yes
+		}
+		set_temp_variable = { remove_law_t = global.law@token:education^law_level@token:education }
+		clear_variable = law_level@token:education
+		swap_ideas = {
+			remove_idea = var:remove_law_t
+			add_idea = edu_low
+		}
+			add_to_array = { ai_law_switch = token:edu_low }
+			add_to_array = { ai_law_switch_date = global.date }
+		log = "[Root.GetTag] | [GetYear] [GetMonth] | Switch to edu_low"
+	}
+	
+	if = {
+		limit = {
+			check_variable = { law_level@token:education > 1 }
+			check_variable = { amount_research_slots < 7 }
+		}
+		log = "[Root.GetTag] | [GetYear] [GetMonth] | Level down education"
+		
+		level_down_education = yes
+	}
+	
+	#BONDS
+	
+	if = {
+		limit = {
+			has_war = yes
+			has_idea = bonds_peace
+		}
+		level_up_bonds = yes
+	}
+		
+		
+	############### TRADE LAW ###############
+	
+	if = {
+		limit = {
+			tag = USA
+			date > 1941.1.1
+		}
+		add_ideas = export_focus
+	}
+	
+	if = {
+		limit = {
+			tag = ENG
+		}
+		add_ideas = free_trade_protectionist
+	}
+}
+
+d_ai_update_total_mobilisation = {
+	if = {
+		limit = {
+			OR = {
+				always = yes
+				has_idea = war_economy
+				has_idea = tot_economic_mobilisation
+			}
+		}
+			
+		set_temp_variable = { ai_total_moblization_score = @AI_TM_BASE_SCORE }
+		
+		set_temp_variable = { t1 = political_power_daily }
+		multiply_temp_variable = { t1 = @AI_TM_POLITICAL_POWER_DAILY_WEIGHT }
+		add_to_temp_variable = { ai_total_moblization_score = t1 }
+		
+		set_temp_variable = { t1 = modifier@stability_weekly }
+		multiply_temp_variable = { t1 = @AI_TM_STABILITY_WEEKLY_WEIGHT }
+		add_to_temp_variable = { ai_total_moblization_score = t1 }
+		
+		set_temp_variable = { t1 = ai_stability_need }
+		multiply_temp_variable = { t1 = @AI_TM_STABILITY_NEED_WEIGHT }
+		add_to_temp_variable = { ai_total_moblization_score = t1 }
+		
+		if = {
+			limit = {
+				check_variable = { ai_stability_need = 0 }
+			}
+			add_to_temp_variable = { ai_total_moblization_score = @AI_TM_STABILITY_FULLFILLED_SCORE }
+		}
+		
+		set_temp_variable = { t1 = modifier@consumer_goods_expected_value }
+		subtract_from_temp_variable = { t1 = modifier@min_consumer_goods_factor }
+		clamp_temp_variable = { var = t1 min = 0 }
+		multiply_temp_variable = { t1 = @AI_TM_CONSUMER_GOODS_POTENTIAL_WEIGHT }
+		add_to_temp_variable = { ai_total_moblization_score = t1 }
+		
+		if = {
+			limit = {
+				check_variable = { t1 = 0 }
+			}
+			add_to_temp_variable = { ai_total_moblization_score = @AI_TM_CONSUMER_GOODS_NO_GAIN_SCORE }
+		}
+		
+		set_temp_variable = { t1 = stock_ratio }
+		multiply_temp_variable = { t1 = @AI_TM_STOCKPILE_RATIO_WEIGHT }
+		add_to_temp_variable = { ai_total_moblization_score = t1 }
+		
+		if = {
+			limit = {
+				NOT = { has_country_flag = ai_total_moblization_abort }
+				has_idea = war_economy
+				check_variable = { ai_total_moblization_score > @AI_TM_REQUIRED_SCORE_UPGRADE }
+				can_take_tot_economic_mobilisation = yes 
+			}
+			
+			set_variable = { ai_tot_mobilization_last_score = ai_total_moblization_score }
+			set_country_flag = { flag = ai_total_moblization_switch value = 1 days = @AI_TM_MIN_DAYS_BEFORE_ABORT }
+			add_ideas = tot_economic_mobilisation
+		}
+		else_if = {
+			limit = {
+				NOT = { has_country_flag = ai_total_moblization_switch }
+				has_idea = tot_economic_mobilisation
+				set_temp_variable = { last_score = ai_tot_mobilization_last_score }
+				multiply_temp_variable = { last_score = @AI_TM_ABORT_AT_PREVIOUS_UPGRADE_SCORE }
+				OR = {
+					check_variable = { ai_total_moblization_score < @AI_TM_REQUIRED_SCORE_UPGRADE }
+					check_variable = { ai_total_moblization_score < last_score }
+				}
+			}
+			
+			clear_variable = ai_tot_mobilization_last_score
+			set_country_flag = { flag = ai_total_moblization_abort value = 1 days = @AI_TM_DAYS_BETWEEN_LAST_ABORT }
+			add_ideas = war_economy
+		}
+	}
+	
+	#log = "[?ai_total_moblization_score] TOTAL MOBILIZATION"
+}
+
+ai_update_mobilization_law = {
+	if = {
+		limit = {
+			check_variable = { law_change_days@token:mobilization_laws = 0 }
+			check_variable = { law_level@token:mobilization_laws < 3 }
+			
+			can_level_up_mobilization = yes
+		}
+		
+		set_temp_variable = { law_category = token:mobilization_laws }
+		set_temp_variable = { level = law_level@token:mobilization_laws }
+		add_to_temp_variable = { level = 1 }
+		start_law_change = yes
+	}
+}
+
+ai_check_stability_need = {
+	set_temp_variable = { max_target = mtth:max_stability }
+	
+	if = {
+		limit = { has_war = yes }
+		set_temp_variable = { ai_stability_target = max_target }
+		multiply_temp_variable = { ai_stability_target = @AI_STABILITY_TARGET_AT_WAR }
+		
+		set_temp_variable = { ai_stability_min = max_target }
+		multiply_temp_variable = { ai_stability_min = @AI_STABILITY_MIN_AT_WAR }
+		
+		set_temp_variable = { min_weeks = @AI_DECISION_NEED_MIN_WEEKS_TO_TARGET_AT_WAR }
+	}
+	else = {
+		set_temp_variable = { ai_stability_target = max_target }
+		multiply_temp_variable = { ai_stability_target = @AI_STABILITY_TARGET_AT_PEACE }
+		
+		set_temp_variable = { ai_stability_min = max_target }
+		multiply_temp_variable = { ai_stability_min = @AI_STABILITY_MIN_AT_PEACE }
+		
+		set_temp_variable = { min_weeks = @AI_DECISION_NEED_MIN_WEEKS_TO_TARGET_AT_PEACE }
+	}
+	
+	set_variable = { ai_stability_need = @AI_ST_WS_BASE_SCORE }
+	
+	if = { #if our current gain brings us to target amount in timely manner set score to 0
+		limit = {
+			check_variable = { modifier@stability_weekly > 0 }
+			
+			set_temp_variable = { has_stability_value = modifier@stability_weekly }
+			multiply_temp_variable = { has_stability_value = @AI_DECISION_NEED_NUM_WEEKS_OF_DRIFT }
+			add_to_temp_variable = { has_stability_value = has_stability }
+			
+			subtract_from_temp_variable = { ai_stability_target = has_stability_value }
+			
+			#log = "[?has_stability_value] has_stability_value | [?ai_stability_target] ai_stability_target"
+			set_temp_variable = { weeks_to_reach_target = ai_stability_target }
+			divide_temp_variable = { weeks_to_reach_target = modifier@stability_weekly }
+			
+			#log = "[?weeks_to_reach_target] WEEKS TO REACH TARGET POSITIVE"
+			check_variable = { weeks_to_reach_target < min_weeks }
+		}
+		
+		clear_variable = ai_stability_need
+	}
+	else_if = { #if we reach ai_stability_min soon or already under it, make ai consider decision scores as critical (priority over advisors)
+		limit = { 
+			check_variable = { modifier@stability_weekly < 0 } 
+			
+			set_temp_variable = { has_stability_value = modifier@stability_weekly }
+			multiply_temp_variable = { has_stability_value = @AI_DECISION_NEED_NUM_WEEKS_OF_DRIFT }
+			add_to_temp_variable = { has_stability_value = has_stability }
+			
+			subtract_from_temp_variable = { ai_stability_target = has_stability_value }
+			
+			set_temp_variable = { weeks_to_reach_target = has_stability_value }
+			subtract_from_temp_variable = { weeks_to_reach_target = ai_stability_min }
+			divide_temp_variable = { weeks_to_reach_target = modifier@stability_weekly }
+			multiply_temp_variable = { weeks_to_reach_target = -1 }
+			
+			#log = "[?weeks_to_reach_target] WEEKS TO REACH ZERO NEGATIVE"
+			check_variable = { weeks_to_reach_target < @AI_DECISION_NEED_WEEKS_TO_MIN_FOR_CRITICAL }
+		}
+		
+		multiply_variable = { ai_stability_need = @AI_DECISION_NEED_CRITICAL_SCORE_MULT } 
+	}
+	else_if = {
+		limit = {
+			check_variable = { modifier@stability_weekly = 0 }
+		}
+		subtract_from_temp_variable = { ai_stability_target = has_stability }
+		#log = "SUBTRACT"
+	}
+	#log = "[?ai_stability_need] ai_stability_need | [?ai_stability_target] ai_stability_target"
+	multiply_variable = { ai_stability_need = ai_stability_target }
+	
+	#log = "FINAL VALUE: [?ai_stability_need] "
+	if = {
+		limit = {
+			check_variable = { ai_stability_need = 0 }
+		}
+		clear_variable = ai_stability_need
+	}
+	
+}
+
+ai_check_war_support_need = {
+	set_temp_variable = { max_target = mtth:max_war_support }
+	
+	if = {
+		limit = { has_war = yes }
+		set_temp_variable = { ai_war_support_target = max_target }
+		multiply_temp_variable = { ai_war_support_target = @AI_WAR_SUPPORT_TARGET_AT_WAR }
+		
+		set_temp_variable = { ai_war_support_min = max_target }
+		multiply_temp_variable = { ai_war_support_min = @AI_WAR_SUPPORT_MIN_AT_WAR }
+		
+		set_temp_variable = { min_weeks = @AI_DECISION_NEED_MIN_WEEKS_TO_TARGET_AT_WAR }
+	}
+	else = {
+		set_temp_variable = { ai_war_support_target = max_target }
+		multiply_temp_variable = { ai_war_support_target = @AI_WAR_SUPPORT_TARGET_AT_PEACE }
+		
+		set_temp_variable = { tension = global.threat }
+		multiply_temp_variable = { tension = @AI_WAR_SUPPORT_TARGET_FROM_TENSION }
+		add_to_temp_variable = { ai_war_support_target = tension }
+		
+		set_temp_variable = { ai_war_support_min = max_target }
+		multiply_temp_variable = { ai_war_support_min = @AI_WAR_SUPPORT_MIN_AT_PEACE }
+		
+		set_temp_variable = { min_weeks = @AI_DECISION_NEED_MIN_WEEKS_TO_TARGET_AT_PEACE }
+	}
+	
+	set_variable = { ai_war_support_need = @AI_ST_WS_BASE_SCORE }
+	
+	if = { #if our current gain brings us to target amount in timely manner set score to 0
+		limit = {
+			check_variable = { modifier@war_support_weekly > 0 }
+			
+			set_temp_variable = { has_war_support_value = modifier@war_support_weekly }
+			multiply_temp_variable = { has_war_support_value = @AI_DECISION_NEED_NUM_WEEKS_OF_DRIFT }
+			add_to_temp_variable = { has_war_support_value = has_war_support }
+			
+			subtract_from_temp_variable = { ai_war_support_target = has_war_support_value }
+			
+			#log = "[?has_war_support_value] has_war_support_value | [?ai_war_support_target] ai_war_support_target"
+			set_temp_variable = { weeks_to_reach_target = ai_war_support_target }
+			divide_temp_variable = { weeks_to_reach_target = modifier@war_support_weekly }
+			
+			#log = "[?weeks_to_reach_target] WEEKS TO REACH TARGET POSITIVE"
+			check_variable = { weeks_to_reach_target < min_weeks }
+		}
+		
+		clear_variable = ai_war_support_need
+	}
+	else_if = { #if we reach ai_war_support_min soon or already under it, make ai consider decision scores as critical (priority over advisors)
+		limit = { 
+			check_variable = { modifier@war_support_weekly < 0 } 
+			
+			set_temp_variable = { has_war_support_value = modifier@war_support_weekly }
+			multiply_temp_variable = { has_war_support_value = @AI_DECISION_NEED_NUM_WEEKS_OF_DRIFT }
+			add_to_temp_variable = { has_war_support_value = has_war_support }
+			
+			subtract_from_temp_variable = { ai_war_support_target = has_war_support_value }
+			
+			set_temp_variable = { weeks_to_reach_target = has_war_support_value }
+			subtract_from_temp_variable = { weeks_to_reach_target = ai_war_support_min }
+			divide_temp_variable = { weeks_to_reach_target = modifier@war_support_weekly }
+			multiply_temp_variable = { weeks_to_reach_target = -1 }
+			
+			#log = "[?weeks_to_reach_target] WEEKS TO REACH ZERO NEGATIVE"
+			check_variable = { weeks_to_reach_target < @AI_DECISION_NEED_WEEKS_TO_MIN_FOR_CRITICAL }
+		}
+		
+		multiply_variable = { ai_war_support_need = @AI_DECISION_NEED_CRITICAL_SCORE_MULT } 
+	}
+	else_if = {
+		limit = {
+			check_variable = { modifier@war_support_weekly = 0 }
+		}
+		subtract_from_temp_variable = { ai_war_support_target = has_war_support }
+		#log = "SUBTRACT"
+	}
+	#log = "[?ai_war_support_need] ai_war_support_need | [?ai_war_support_target] ai_war_support_target"
+	multiply_variable = { ai_war_support_need = ai_war_support_target }
+	
+	#log = "FINAL VALUE: [?ai_war_support_need] "
+	if = {
+		limit = {
+			check_variable = { ai_war_support_need = 0 }
+		}
+		clear_variable = ai_war_support_need
+	}
+	
+}
+
+ai_check_political_party_drift_need = {
+
+}
+
+d_ai_update_trade_laws = {
+	
+	if = {
+		limit = {
+			always = no
+			set_temp_variable = { total_resources = resource_produced@oil }
+			add_to_temp_variable = { total_resources = resource_produced@rubber }
+			add_to_temp_variable = { total_resources = resource_produced@tungsten }
+			add_to_temp_variable = { total_resources = resource_produced@steel }
+			add_to_temp_variable = { total_resources = resource_produced@aluminium }
+			add_to_temp_variable = { total_resources = resource_produced@chromium }
+			
+			check_variable = { total_resources > 20 }
+		}
+			
+		################	TRADE LAW	################
+		
+		
+		#log = "===================================================================================="
+		#log = "==================================== [This.GetNameDef]"
+		#log = "===================================================================================="
+		#log = " [This.GetTag] | [This.GetTag] | [This.GetTag] | [This.GetTag] | [This.GetTag] | [This.GetTag] | [This.GetTag] | [This.GetTag] | [This.GetTag] | [This.GetTag] | [This.GetTag] | [This.GetTag] | [This.GetTag] | [This.GetTag]"
+		
+		set_temp_variable = { owned_cic = mtth:num_of_owned_civilian_factories }
+		set_temp_variable = { import_cic = mtth:num_of_civilian_factories_for_import }
+		set_temp_variable = { export_cic = mtth:num_of_civilian_factories_from_export }
+		
+		#log = "[?owned_cic] IC OWNED"
+		#log = "[?export_cic] IC from EXPORTS"
+		#log = "[?import_cic] IC for IMPORTS"
+		
+		if = { ## FREE TRADE - check what change to export_focus would give us
+			limit = { 
+				check_variable = { law_level@trade_laws = 0 }
+			}			
+			
+			### ===> SWITCH TO EXPORT FOCUS
+			
+			set_temp_variable = { ai_trade_law_target = token:export_focus }
+			set_temp_variable = { extra_min_export = 0.5 }
+			subtract_from_temp_variable = { extra_min_export = modifier@min_export }
+			
+			#log = "CHECK POTENTIAL TRADE LAW CHANGE TO ==>[?ai_trade_law_target.GetTokenKey]<=="
+			ai_check_trade_law_change_consequences = yes 
+			ai_calculate_trade_law_score = yes 
+		}
+		else_if = {
+			limit = {
+				check_variable = { law_level@trade_laws = 1 }
+			}
+			
+			### ===> SWITCH TO FREE TRADE
+			
+			set_temp_variable = { ai_trade_law_target = token:free_trade }
+			set_temp_variable = { extra_min_export = 0.75 }
+			subtract_from_temp_variable = { extra_min_export = modifier@min_export }
+			
+			#log = "CHECK POTENTIAL TRADE LAW CHANGE TO ==>[?ai_trade_law_target.GetTokenKey]<=="
+			ai_check_trade_law_change_consequences = yes 
+			ai_calculate_trade_law_score = yes 
+			
+			
+			### ===> SWITCH TO LIMITED EXPORT
+			
+			set_temp_variable = { ai_trade_law_target = token:limited_exports }
+			set_temp_variable = { extra_min_export = 0.25 }
+			subtract_from_temp_variable = { extra_min_export = modifier@min_export }
+			
+			#log = "CHECK POTENTIAL TRADE LAW CHANGE TO ==>[?ai_trade_law_target.GetTokenKey]<=="
+			ai_check_trade_law_change_consequences = yes 
+			ai_calculate_trade_law_score = yes 
+		}
+		else_if = {
+			limit = {
+				check_variable = { law_level@trade_laws = 2 }
+			}
+			
+			### ===> SWITCH TO EXPORT FOCUS
+			
+			set_temp_variable = { ai_trade_law_target = token:export_focus }
+			set_temp_variable = { extra_min_export = 0.5 }
+			subtract_from_temp_variable = { extra_min_export = modifier@min_export }
+			
+			#log = "CHECK POTENTIAL TRADE LAW CHANGE TO ==>[?ai_trade_law_target.GetTokenKey]<=="
+			ai_check_trade_law_change_consequences = yes 
+			ai_calculate_trade_law_score = yes 
+			
+			### ===> SWITCH TO CLOSED ECONOMY
+			
+			set_temp_variable = { ai_trade_law_target = token:closed_economy }
+			set_temp_variable = { extra_min_export = 0 }
+			subtract_from_temp_variable = { extra_min_export = modifier@min_export }
+			
+			#log = "CHECK POTENTIAL TRADE LAW CHANGE TO ==>[?ai_trade_law_target.GetTokenKey]<=="
+			ai_check_trade_law_change_consequences = yes 
+			ai_calculate_trade_law_score = yes 
+		}
+		else_if = {
+			limit = {
+				check_variable = { law_level@trade_laws = 3 }
+			}
+			
+			### ===> SWITCH TO LIMITED EXPORT
+			
+			set_temp_variable = { ai_trade_law_target = token:limited_exports }
+			set_temp_variable = { extra_min_export = 0.25 }
+			subtract_from_temp_variable = { extra_min_export = modifier@min_export }
+			
+			#log = "CHECK POTENTIAL TRADE LAW CHANGE TO ==>[?ai_trade_law_target.GetTokenKey]<=="
+			ai_check_trade_law_change_consequences = yes 
+			ai_calculate_trade_law_score = yes 
+			
+		}
+		
+		if = {
+			limit = {
+				check_variable = { num_of_civilian_factories > 0 }
+				check_variable = { ai_best_trade_law^num > 0 }
+			}
+			#log = "================ [This.GetTag] SCORE OVERVIEW ======="
+			
+			if = {
+				limit = {
+					check_variable = { num_of_civilian_factories > 0 }
+				}
+				if = {
+					limit = {
+						check_variable = { ai_best_trade_score^0 > ai_best_trade_score^1 }
+					}
+					#log = "===> [?ai_best_trade_law^0.GetTokenKey] | SCORE: [?ai_best_trade_score^0]"
+					
+					set_temp_variable = { score = ai_best_trade_score^0 }
+					divide_temp_variable = { score = num_of_civilian_factories }
+					if = { 
+						limit = {
+							is_major = yes 
+							OR = {
+								check_variable = { score > @AI_TRADE_LAW_REQUIRED_SCORE_IC_RATIO_MAJOR }
+								check_variable = { ai_best_trade_score^0 > 100 }
+							}
+						}
+						#log = "FINAL SCORE: [?score] | CHANGE POSSIBLE"
+										
+						set_variable = { trade_law_change = ai_best_trade_law^0 }
+						URG = { 
+							set_variable = { trade_law_change = ai_best_trade_law^0 }
+							country_event = BI_on_action.107 
+							country_event = { id = BI_on_action.108 hours = 1 }
+						}
+						add_ideas = var:ai_best_trade_law^0
+					}
+					else_if = {
+						limit = {
+							is_major = no 
+							check_variable = { score > @AI_TRADE_LAW_REQUIRED_SCORE_IC_RATIO_MINOR }
+						}
+						#log = "FINAL SCORE: [?score] | CHANGE POSSIBLE"
+						
+						URG = { 
+							set_variable = { trade_law_change = ai_best_trade_law^0 }
+							country_event = BI_on_action.107 
+							country_event = { id = BI_on_action.108 hours = 1 }
+						}
+						add_ideas = var:ai_best_trade_law^0
+					}
+				}
+				else = {
+					
+					#log = "===> [?ai_best_trade_law^1.GetTokenKey] | SCORE: [?ai_best_trade_score^1]"
+					set_temp_variable = { score = ai_best_trade_score^1 }
+					divide_temp_variable = { score = num_of_civilian_factories }
+					
+					
+					if = { 
+						limit = {
+							is_major = yes 
+							OR = {
+								check_variable = { score > @AI_TRADE_LAW_REQUIRED_SCORE_IC_RATIO_MAJOR }
+								check_variable = { ai_best_trade_score^1 > 100 }
+							}
+						}
+						#log = "FINAL SCORE: [?score] | CHANGE POSSIBLE"
+										
+						URG = { 
+							set_variable = { trade_law_change = ai_best_trade_law^1 }
+							country_event = BI_on_action.107 
+							country_event = { id = BI_on_action.108 hours = 1 }
+						}
+						add_ideas = var:ai_best_trade_law^1
+					}
+					else_if = {
+						limit = {
+							is_major = no 
+							check_variable = { score > @AI_TRADE_LAW_REQUIRED_SCORE_IC_RATIO_MINOR }
+						}
+						#log = "FINAL SCORE: [?score] | CHANGE POSSIBLE"
+						
+						URG = { 
+							set_variable = { trade_law_change = ai_best_trade_law^1 }
+							country_event = BI_on_action.107 
+							country_event = { id = BI_on_action.108 hours = 1 }
+						}
+						add_ideas = var:ai_best_trade_law^1
+					}
+				}
+				
+				
+				
+			}
+			
+			
+			add_to_array = { ai_best_trade_law_history = 0 }
+			add_to_array = { ai_best_trade_law_history_score = 0 }
+			add_to_array = { ai_best_trade_law_history_date = 0 }
+			
+			#log = " "
+			#log = " "
+			#log = " "
+		}
+	}
+}
+
+ai_check_trade_law_change_consequences = {
+	
+	ai_get_foreign_resource_need = yes
+
+	set_temp_variable = { potential_export_total = 0 }
+	set_temp_variable = { potential_import_total = 0 }
+	set_temp_variable = { potential_import_cancelled_total = 0 }
+	set_temp_variable = { potential_export_sold_total = 0 }
+	set_temp_variable = { potential_min_trade = extra_min_export }
+	add_to_temp_variable = { potential_min_trade = modifier@min_export }
+	
+	#log = " "
+	#log = ">>>>>>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<"
+	#log = "-----==>> CHECK 1/3: GET POTENTIAL RESOURCE VALUES --------"
+	#log = ">>>>>>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<"
+	#log = " "
+			
+	for_each_loop = {
+		array = resources 
+			
+		set_temp_variable = { potential_import = 0 }
+		set_temp_variable = { potential_export = 0 }
+		set_temp_variable = { potential_import_cancelled = 0 }
+		set_temp_variable = { potential_export@var:v = 0 }
+	
+		#### get a ratio of how many resources we export and one for how many we would be able to export
+		
+		set_temp_variable = { current_max_export = resource_produced@var:v }
+		multiply_temp_variable = { current_max_export = modifier@min_export }
+		divide_temp_variable = { current_max_export = global.resource_cost@var:v }
+		add_to_temp_variable = { current_max_export_total = current_max_export }
+		
+		set_temp_variable = { potential_max_export = resource_produced@var:v }
+		multiply_temp_variable = { potential_max_export = potential_min_trade }
+		divide_temp_variable = { potential_max_export = global.resource_cost@var:v }
+		add_to_temp_variable = { potential_max_export_total = potential_max_export }
+		
+		if = {
+			limit = {
+				check_variable = { resource_produced@var:v > 0 }
+			}
+				
+			set_temp_variable = { potential_export = resource_produced@var:v }
+			multiply_temp_variable = { potential_export = extra_min_export } #how much resource would go to market compared to now
+			
+			if = { #POTENTIAL IMPORT COST
+				limit = {
+					check_variable = { resource_consumed@var:v > 0 }
+				}
+				
+				# this variable returns how many resources we will have left to use after switch 
+				set_temp_variable = { potential_useable = resource_produced@var:v } #6
+				subtract_from_temp_variable = { potential_useable = resource_exported@var:v } #-4 = 2
+				subtract_from_temp_variable = { potential_useable = potential_export }
+				add_to_temp_variable = { potential_useable = resource_imported@var:v }
+				
+				### if current_consumed > potential_useable then divide with trade cost to get CIC cost 
+				
+				if = {
+					limit = {
+						check_variable = { resource_consumed@var:v > potential_useable }
+					}
+					set_temp_variable = { potential_import = resource_consumed@var:v }
+					subtract_from_temp_variable = { potential_import = potential_useable }
+					divide_temp_variable = { potential_import = global.resource_cost@var:v } #HOW MANY RES FOR 1 CIC? 
+					add_to_temp_variable = { potential_import = 0.5 }
+					round_temp_variable = potential_import 
+				}
+				
+				### if potential_export > 0 and resource_imported > 0  current_useable then subtract the amount of imports 
+				
+				if = {
+					limit = { 
+						check_variable = { resource_imported@var:v > 0 }
+						check_variable = { potential_export < -4 }
+					}
+					
+					set_temp_variable = { potential_import_cancelled = resource_imported@var:v }
+					divide_temp_variable = { potential_import_cancelled = global.resource_cost@var:v }
+					add_to_temp_variable = { potential_import_cancelled = 0.5 }
+					round_temp_variable = potential_import_cancelled 
+					
+					set_temp_variable = { t1 = potential_export }
+					multiply_temp_variable = { t1 = -1 }
+					divide_temp_variable = { t1 = global.resource_cost@var:v }
+					add_to_temp_variable = { t1 = 0.5 }
+					round_temp_variable = t1 
+					
+					#clamp_temp_variable = { var = t1 min = 0 }
+					clamp_temp_variable = { var = potential_import_cancelled max = t1 }
+				}
+			}
+			set_temp_variable = { potential_export_resources = potential_export }
+			round_temp_variable = potential_export_resources 
+			
+			divide_temp_variable = { potential_export = global.resource_cost@var:v }
+			add_to_temp_variable = { potential_export = 0.5 }
+			round_temp_variable = potential_export 
+			
+			set_temp_variable = { potential_export_weight = potential_export_resources }
+			multiply_temp_variable = { potential_export_weight = resources_weight^i }
+			divide_temp_variable = { potential_export_weight = global.resource_cost@var:v }
+			add_to_temp_variable = { potential_export_weight = 0.5 }
+			round_temp_variable = potential_export_weight 
+			
+			
+			add_to_temp_variable = { potential_export@var:v = potential_export_resources }
+			
+			add_to_temp_variable = { potential_export_weight_total = potential_export_weight }
+			add_to_temp_variable = { potential_export_total = potential_export }
+			add_to_temp_variable = { potential_import_total = potential_import }
+			add_to_temp_variable = { potential_import_cancelled_total = potential_import_cancelled }
+			
+			#log = "-------------------------------------------------"
+			#log = "-------- RESOURCE: [?v.GetTokenKey]"
+			#log = "[?potential_export_resources] POTENTIAL_EXPORT_RESOURCES"
+			#log = "[?potential_export] POTENTIAL_EXPORT (in CIC)"
+			#log = "[?potential_export_weight] POTENTIAL_EXPORT_WEIGHT (in CIC) (Weight: x[?resources_weight^i])"
+			
+			if = { limit = { NOT = { check_variable = { potential_import = 0 } } }
+			#log = "[?potential_import] POTENTIAL_IMPORT (in CIC)"
+			}
+			if = { limit = { NOT = { check_variable = { potential_import_cancelled = 0 } } }
+			#log = "[?potential_import_cancelled] POTENTIAL_IMPORT_CANCELLED (in CIC)"
+			}
+		}
+		
+	}
+	
+	#log = " "
+	#log = " "
+	
+	set_temp_variable = { export_sold_ratio = export_cic }
+	divide_temp_variable = { export_sold_ratio = current_max_export_total }
+	#log = "[?current_max_export_total] CURRENT_MAX_EXPORT_TOTAL"
+	#log = "[?export_sold_ratio] EXPORT_SOLD_RATIO"
+	
+	set_temp_variable = { potential_export_sold_ratio = export_cic }
+	divide_temp_variable = { potential_export_sold_ratio = potential_max_export_total }
+	#log = "[?potential_max_export_total] POTENTIAL_MAX_EXPORT_TOTAL"
+	#log = "[?potential_export_sold_ratio] POTENTIAL_EXPORT_SOLD_RATIO"
+	
+	#log = " "
+	#log = ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<"
+	#log = "-----==>> CHECK 2/3: GET FOREIGN RESOURCE NEED AND GUARANTEED EXPORTS --------"
+	#log = ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<"
+	#log = " "
+				
+	for_each_loop = {
+		array = resources 
+			
+		if = {
+			limit = {
+				OR = {
+					check_variable = { allied_resource_need@var:v > 0 }
+					check_variable = { allied_neighbor_resource_need@var:v > 0 }
+					check_variable = { neighbor_resource_need@var:v > 0 }
+				}
+				OR = { 
+					check_variable = { potential_export@var:v > 6 }
+					check_variable = { potential_export@var:v < 0 }
+				}
+			}
+				
+			set_temp_variable = { average_export_ratio = 0 }
+			set_temp_variable = { average_export_ratio_num = 0 }
+			
+			set_temp_variable = { potential_export_weighted = potential_export@var:v }
+			multiply_temp_variable = { potential_export_weighted = resources_weight^i }
+			
+			#log = "-------------------------------------------------"
+			#log = "-------- RESOURCE: [?v.GetTokenKey]"
+			#log = "[?potential_export@var:v] POTENTIAL EXPORT RESOURCES (Weighted: [?potential_export_weighted])"
+			
+
+			if = {
+				limit = {
+					check_variable = { allied_resource_need@var:v > 0 }
+				}
+				set_temp_variable = { weight = resources_weight^i }
+				set_temp_variable = { factor = @AI_ALLIED_POTENTIAL_EXPORT_RATIO }
+				
+				set_temp_variable = { assumed_export_ratio = allied_resource_need@var:v }
+				multiply_temp_variable = { assumed_export_ratio = weight }
+				
+				clamp_temp_variable = { var = assumed_export_ratio max = potential_export_weighted } #clamp to our potential_export
+				clamp_temp_variable = { var = assumed_export_ratio min = 0 } #if its negative then set it to 0 
+				
+				multiply_temp_variable = { assumed_export_ratio = factor }
+				
+				#log = "[?allied_resource_need@var:v]/[?potential_export_weighted] RESOURCES NEEDED BY ALLIES (Weight: [?allied_resource_need@var:v] * [?weight] * [?factor] = [?assumed_export_ratio])"
+				
+				
+				add_to_temp_variable = { average_export_ratio = assumed_export_ratio }
+				add_to_temp_variable = { average_export_ratio_num = 1 }
+			}
+			if = {
+				limit = {
+					check_variable = { allied_neighbor_resource_need@var:v > 0 }
+				}
+				set_temp_variable = { weight = resources_weight^i }
+				set_temp_variable = { factor = @AI_ALLIED_NEIGHBOR_POTENTIAL_EXPORT_RATIO }
+				
+				set_temp_variable = { assumed_export_ratio = allied_neighbor_resource_need@var:v }
+				multiply_temp_variable = { assumed_export_ratio = weight }
+				
+				clamp_temp_variable = { var = assumed_export_ratio max = potential_export_weighted } #clamp to our potential_export
+				clamp_temp_variable = { var = assumed_export_ratio min = 0 } #if its negative then set it to 0 
+				
+				multiply_temp_variable = { assumed_export_ratio = factor }
+				
+				#log = "[?allied_neighbor_resource_need@var:v]/[?potential_export_weighted] RESOURCES NEEDED BY ALLIED NEIGHBORS (Weight: [?allied_neighbor_resource_need@var:v] * [?weight] * [?factor] = [?assumed_export_ratio])"
+				
+				
+				add_to_temp_variable = { average_export_ratio = assumed_export_ratio }
+				add_to_temp_variable = { average_export_ratio_num = 1 }
+			}
+			if = {
+				limit = {
+					check_variable = { neighbor_resource_need@var:v > 0 }
+				}
+				set_temp_variable = { factor = @AI_NEIGHBOR_POTENTIAL_EXPORT_RATIO }
+				
+				set_temp_variable = { assumed_export_ratio = neighbor_resource_need@var:v }
+				multiply_temp_variable = { assumed_export_ratio = resources_weight^i }
+				
+				clamp_temp_variable = { var = assumed_export_ratio max = potential_export_weighted } #clamp to our potential_export
+				clamp_temp_variable = { var = assumed_export_ratio min = 0 } #if its negative then set it to 0 
+				
+				multiply_temp_variable = { assumed_export_ratio = factor }
+				
+				#log = "[?neighbor_resource_need@var:v]/[?potential_export_weighted] RESOURCES NEEDED BY NEIGHBORS (Weight: [?neighbor_resource_need@var:v] * [?resources_weight^i] * [?factor] = [?assumed_export_ratio])"
+				
+				
+				add_to_temp_variable = { average_export_ratio = assumed_export_ratio }
+				add_to_temp_variable = { average_export_ratio_num = 1 }
+			}
+			if = {
+				limit = {
+					check_variable = { global.ai_resource_need@var:v > 0 }
+				}
+				set_temp_variable = { factor = @AI_GLOBAL_POTENTIAL_EXPORT_RATIO }
+				
+				set_temp_variable = { assumed_export_ratio = global.ai_resource_need@var:v }
+				multiply_temp_variable = { assumed_export_ratio = resources_weight^i }
+				
+				clamp_temp_variable = { var = assumed_export_ratio max = potential_export_weighted } #clamp to our potential_export
+				clamp_temp_variable = { var = assumed_export_ratio min = 0 } #if its negative then set it to 0 
+				
+				multiply_temp_variable = { assumed_export_ratio = factor }
+				
+				#log = "[?global.ai_resource_need@var:v]/[?potential_export_weighted] RESOURCES NEEDED GLOBALLY (Weight: [?global.ai_resource_need@var:v] * [?resources_weight^i] * [?factor] = [?assumed_export_ratio])"
+				#log = " "
+				
+				
+				add_to_temp_variable = { average_export_ratio = assumed_export_ratio }
+				add_to_temp_variable = { average_export_ratio_num = 1 }
+			}
+			
+			divide_temp_variable = { average_export_ratio = average_export_ratio_num }
+			##log = "[?average_export_ratio] AVERAGE_EXPORT_RATIO (Cost Divisor: [?global.resource_cost@var:v])"
+			divide_temp_variable = { average_export_ratio = global.resource_cost@var:v } #resources_cost^i
+			
+			if = { 
+				limit = { check_variable = { average_export_ratio > 0 } }
+				add_to_temp_variable = { average_export_ratio = 0.5 }
+			}
+			else = { add_to_temp_variable = { average_export_ratio = -0.5 } }
+			
+			round_temp_variable = average_export_ratio
+			add_to_temp_variable = { potential_export_sold_total = average_export_ratio }
+			
+			if = {
+				limit = {
+					check_variable = { average_export_ratio < 0 }
+				}
+				#Clamp to num CIC from exports
+				multiply_temp_variable = { average_export_ratio = -1 }
+				
+				set_temp_variable = { max_export_loss = mtth:num_of_civilian_factories_from_export }
+	
+				#log = "[?average_export_ratio] POTENTIAL_EXPORT_LOSS (Max Total Loss: [?max_export_loss] | in CIC) "
+				##log = "-------------------------------------------------"
+				
+				clamp_temp_variable = { var = average_export_ratio max = max_export_loss }
+				multiply_temp_variable = { average_export_ratio = -1 }
+			}
+			else = {
+				#log = "[?average_export_ratio] POTENTIAL_EXPORT_SOLD (in CIC) "
+			}
+		}
+	}
+	
+}
+
+ai_calculate_trade_law_score = {
+	if = {
+		limit = {
+			check_variable = { potential_import_total > 0 }
+		}
+		### MAX CIC RATIO FOR POTENTIAL IMPORT
+		set_temp_variable = { CIC_for_import = potential_import_total }
+		#add_to_temp_variable = { CIC_for_import = mtth:num_of_civilian_factories_for_import }
+		subtract_from_temp_variable = { CIC_for_import = potential_import_cancelled_total }
+		divide_temp_variable = { CIC_for_import = num_of_civilian_factories } #TODO: mtth:num_of_total_civilian_factories
+	
+		#log = "[?CIC_for_import] POTENTIAL_IMPORT_CIC_RATIO (Needed: <0.3 | Total CIC: [?num_of_civilian_factories])"
+		
+		set_temp_variable = { CIC_for_import_2 = CIC_for_import }
+		add_to_temp_variable = { CIC_for_import_2 = mtth:num_of_civilian_factories_for_import }
+		#log = "[?CIC_for_import_2] POTENTIAL_IMPORT_CIC_RATIO with current imports"
+	}
+	#log = " "
+	#log = ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<"
+	#log = "-----==>> CHECK 3/3: CREATE A SCORE, THEN RUN SCRIPT AGAIN IF NEEDED AND COMPARE --------"
+	#log = ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<"
+	#log = " "
+	#log = "________________________________________________________________________________"
+	#log = "|====> CALCULATE SCORE for switching to [?ai_trade_law_target.GetTokenKey] <===="
+	#log = "| "
+	
+	#log = "| "
+	#log = "--------------------------------------------------------------------------------"
+	#log = "| "
+	
+	if = {
+		limit = { 
+			check_variable = { CIC_for_import < @AI_MAX_CIC_RATIO_FOR_POTENTIAL_NEEDED_IMPORT }
+		}
+		set_temp_variable = { score = 0 }
+		
+		####### SCORE ADJUSTMENTS ################
+		
+		if = {
+			limit = {
+				check_variable = { potential_import_cancelled_total > 8 }
+				check_variable = { potential_import_cancelled_total > potential_import_total }
+			}
+			multiply_temp_variable = { potential_import_cancelled_total = 1.5 }
+		}
+		
+		if = { #potential_export_sold_total is negative -> potential_export_loss
+			limit = {
+				check_variable = { potential_export_sold_total < 0 }
+			}
+				
+				#TODO MAKE THIS DYNAMIC
+			if = { #reduce potential_export_loss if our potential_export is big enough
+				limit = {
+					set_temp_variable = { potential_export_loss = potential_export_sold_total }
+					multiply_temp_variable = { potential_export_loss = -1 }
+					
+					set_temp_variable = { total_export_ratio = potential_export_total }
+					multiply_temp_variable = { total_export_ratio = 0.25 }
+					
+					check_variable = { total_export_ratio > potential_export_loss }
+				}
+				multiply_temp_variable = { potential_export_sold_total = 0.1 }
+				##log = "[?potential_export_sold_total] REDUCED BY 90%!"
+			}
+			
+			multiply_temp_variable = { potential_export_sold_total = -1 }
+			clamp_temp_variable = { var = potential_export_sold_total max = max_export_loss }
+			multiply_temp_variable = { potential_export_sold_total = -1 }
+			
+			#log = "| [?max_export_loss] MAX_EXPORT_LOSS, clamps POTENTIAL_EXPORT_SOLD_TOTAL if its negative"
+			
+			# CLAMPED THE POTENTIAL LOST EXPORT TO num_of_civilian_factories_from_export
+		}
+		
+		clamp_temp_variable = { var = potential_export_total min = -32 max = 32 }
+		
+		##########################################
+		
+		### potential_export_sold_total
+		
+		if = {
+			limit = {
+				NOT = { check_variable = { potential_export_sold_total = 0 } }
+			}
+				
+			set_temp_variable = { weight = potential_export_sold_total }
+			multiply_temp_variable = { weight = @AI_TRADE_LAW_ASSURED_EXPORT_WEIGHT }
+			
+			set_temp_variable = { factor = weight }
+			divide_temp_variable = { factor = num_of_civilian_factories }
+			if = { limit = { check_variable = { factor > 0 } } add_to_temp_variable = { factor = 1 } }
+			else = { subtract_from_temp_variable = { factor = 1 } multiply_temp_variable = { factor = -1 } }
+			
+			multiply_temp_variable = { weight = factor }
+			add_to_temp_variable = { score = weight }
+			#log = "| POTENTIAL_EXPORT_SOLD_TOTAL | IC FACTOR: [?factor]| WEIGHT: [?weight] "
+		}
+		
+		### potential_export_total
+		
+		if = {
+			limit = {
+				NOT = { check_variable = { potential_export_total = 0 } }
+			}
+			set_temp_variable = { weight = potential_export_total }
+			multiply_temp_variable = { weight = @AI_TRADE_LAW_POTENTIAL_EXPORT_WEIGHT }
+			
+			set_temp_variable = { factor = weight }
+			divide_temp_variable = { factor = num_of_civilian_factories }
+			if = { limit = { check_variable = { factor > 0 } } add_to_temp_variable = { factor = 1 } }
+			else = { subtract_from_temp_variable = { factor = 1 } multiply_temp_variable = { factor = -1 } }
+			
+			multiply_temp_variable = { weight = factor }
+			add_to_temp_variable = { score = weight }
+			#log = "| POTENTIAL_EXPORT_TOTAL | IC FACTOR: [?factor]| WEIGHT: [?weight] "
+		}
+		
+		### potential_import_total
+		
+		if = {
+			limit = {
+				NOT = { check_variable = { potential_import_total = 0 } }
+			}
+					
+			set_temp_variable = { weight = potential_import_total }
+			multiply_temp_variable = { weight = @AI_TRADE_LAW_POTENTIAL_IMPORT_WEIGHT }
+			
+			set_temp_variable = { factor = weight }
+			divide_temp_variable = { factor = num_of_civilian_factories }
+			if = { limit = { check_variable = { factor > 0 } } add_to_temp_variable = { factor = 1 } }
+			else = { subtract_from_temp_variable = { factor = 1 } multiply_temp_variable = { factor = -1 } }
+			
+			multiply_temp_variable = { weight = factor }
+			add_to_temp_variable = { score = weight }
+			#log = "| POTENTIAL_IMPORT_TOTAL | IC FACTOR: [?factor]| WEIGHT: [?weight] "
+		}
+		
+		### potential_import_cancelled_total
+		
+		if = {
+			limit = {
+				NOT = { check_variable = { potential_import_cancelled_total = 0 } }
+			}
+					
+			set_temp_variable = { weight = potential_import_cancelled_total }
+			multiply_temp_variable = { weight = @AI_TRADE_LAW_ASSURED_EXPORT_WEIGHT }
+			
+			set_temp_variable = { factor = weight }
+			divide_temp_variable = { factor = num_of_civilian_factories }
+			if = { limit = { check_variable = { factor > 0 } } add_to_temp_variable = { factor = 1 } }
+			else = { subtract_from_temp_variable = { factor = 1 } multiply_temp_variable = { factor = -1 } }
+			
+			multiply_temp_variable = { weight = factor }
+			add_to_temp_variable = { score = weight }
+			#log = "| POTENTIAL_IMPORT_CANCELLED_TOTAL | IC FACTOR: [?factor]| WEIGHT: [?weight] "
+		}	
+		
+		#log = "| "
+		#log = "|==> FINAL SCORE: [?score] | [This.GetTag] [GetMonth] [GetYear] <=="
+		#log = "--------------------------------------------------------------------------------"
+	}
+	
+	add_to_temp_array = { ai_best_trade_law = ai_trade_law_target }
+	add_to_temp_array = { ai_best_trade_score = score }
+}
+
+ai_get_foreign_resource_need = {
+	if = {
+		limit = {
+			check_variable = { resources_weight^num = 0 }
+		}
+		#these need to match the order of global.resources array	
+		add_to_temp_array = { resources_weight = @AI_OIL_IMPORTANCE }
+		add_to_temp_array = { resources_weight = @AI_ALUMINIUM_IMPORTANCE }
+		add_to_temp_array = { resources_weight = @AI_RUBBER_IMPORTANCE }
+		add_to_temp_array = { resources_weight = @AI_TUNGSTEN_IMPORTANCE }
+		add_to_temp_array = { resources_weight = @AI_STEEL_IMPORTANCE }
+		add_to_temp_array = { resources_weight = @AI_CHROMIUM_IMPORTANCE }
+		add_to_temp_array = { resources_weight = @AI_BAUXITE_IMPORTANCE }
+		add_to_temp_array = { resources_weight = @AI_COAL_IMPORTANCE }
+		add_to_temp_array = { resources_weight = @AI_IRON_IMPORTANCE }
+		add_to_temp_array = { resources_weight = @AI_FOOD_IMPORTANCE }
+		
+	}
+	
+	if = {
+		limit = {
+			NOT = { check_variable = { has_checked_foreign_resource_need = 1 } }
+			OR = {
+				check_variable = { resource_produced@rubber > 8 }
+				check_variable = { resource_produced@tungsten > 8 }
+				check_variable = { resource_produced@steel > 8 }
+				check_variable = { resource_produced@aluminium > 8 }
+				check_variable = { resource_produced@chromium > 8 }
+				check_variable = { resource_produced@iron > 32 }
+				check_variable = { resource_produced@coal > 32 }
+				check_variable = { resource_produced@bauxite > 32 }
+				check_variable = { resource_produced@food > 32 }
+			}
+		}
+		set_temp_variable = { has_checked_foreign_resource_need = 1 }
+			
+		if = {
+			limit = {
+				#has_war = yes 
+				is_in_faction = yes 
+				check_variable = { faction_members^num > 1 }
+			}
+			for_each_scope_loop = {
+				array = faction_members 
+				
+				if = {
+					limit = {
+						NOT = { tag = ROOT }
+					}
+					
+					if = { #can trade over land with this ally
+						limit = {
+							is_neighbor_of = ROOT 
+							capital_scope = {
+								#set_temp_variable = { temp = distance_to@ROOT.capital }
+								check_variable = { distance_to@ROOT.capital < 300 }
+							}
+						}
+						##log = "[This.GetTag] distance below 300 pixels [?temp]"
+							
+						for_each_loop = {
+							array = resources 
+							
+							if = {
+								limit = {
+									check_variable = { resource@var:v < 0 }
+									##log = "[This.GetTag] [?resource@var:v] SUBTRACT [?v.GetTokenKey]"
+								}
+								subtract_from_temp_variable = { allied_neighbor_resource_need@var:v = resource@var:v }
+							}
+							if = {
+								limit = {
+									check_variable = { resource_imported@var:v > 0 }
+									##log = "[This.GetTag] IMPORT [?resource_imported@var:v] ADD [?v.GetTokenKey]"
+								}
+								set_temp_variable = { import = resource_imported@var:v }
+								multiply_temp_variable = { import = @AI_RESOURCE_NEED_IMPORT_WEIGHT }
+								add_to_temp_variable = { allied_neighbor_resource_need@var:v = import }
+							}
+							##log = "[?allied_neighbor_resource_need@var:v] ITERATION DONE"
+						}
+					}
+					else = {
+						for_each_loop = {
+							array = resources 
+							
+							if = {
+								limit = {
+									check_variable = { resource@var:v < 0 }
+									##log = "[This.GetTag] [?resource@var:v] SUBTRACT [?v.GetTokenKey]"
+								}
+								subtract_from_temp_variable = { allied_resource_need@var:v = resource@var:v }
+							}
+							if = {
+								limit = {
+									check_variable = { resource_imported@var:v > 0 }
+									##log = "[This.GetTag] IMPORT [?resource_imported@var:v] ADD [?v.GetTokenKey]"
+								}
+								set_temp_variable = { import = resource_imported@var:v }
+								multiply_temp_variable = { import = @AI_RESOURCE_NEED_IMPORT_WEIGHT }
+								add_to_temp_variable = { allied_resource_need@var:v = import }
+							}
+							##log = "[?allied_resource_need@var:v] ITERATION DONE"
+						}
+					}
+				}
+			}
+					
+			#log = " "
+			#log = "================================== ALLIED NEIGHBOR RESOURCE NEED"
+			#log = "[?allied_neighbor_resource_need@token:rubber] RUBBER"
+			#log = "[?allied_neighbor_resource_need@token:tungsten] TUNGSTEN"
+			#log = "[?allied_neighbor_resource_need@token:steel] STEEL"
+			#log = "[?allied_neighbor_resource_need@token:aluminium] ALUMINIUM"
+			#log = "[?allied_neighbor_resource_need@token:chromium] CHROMIUM"
+			
+			#log = "================================== ALLIED RESOURCE NEED"
+			#log = "[?allied_resource_need@token:rubber] RUBBER"
+			#log = "[?allied_resource_need@token:tungsten] TUNGSTEN"
+			#log = "[?allied_resource_need@token:steel] STEEL"
+			#log = "[?allied_resource_need@token:aluminium] ALUMINIUM"
+			#log = "[?allied_resource_need@token:chromium] CHROMIUM"
+
+		}
+		else = {
+			for_each_scope_loop = {
+				array = neighbors 
+				
+				if = { #can trade over land with this neighbor
+					limit = {
+						capital_scope = {
+							check_variable = { distance_to@ROOT.capital < 300 }
+						}
+						OR = {
+							has_opinion = {
+								target = ROOT
+								value > 0
+							}
+							has_same_government_as_root = yes 
+						}
+						NOT = {
+							has_war_with = ROOT 
+							has_wargoal_against = ROOT 
+							is_justifying_wargoal_against = ROOT 
+							
+						}
+						has_civil_war = no 
+					}
+					##log = "[This.GetTag] distance below 300 pixels [?temp]"
+						
+					for_each_loop = {
+						array = resources 
+						
+						if = {
+							limit = {
+								check_variable = { resource@var:v < 0 }
+								##log = "[This.GetTag] [?resource@var:v] SUBTRACT [?v.GetTokenKey]"
+							}
+							subtract_from_temp_variable = { neighbor_resource_need@var:v = resource@var:v }
+						}
+						if = {
+							limit = {
+								check_variable = { resource_imported@var:v > 0 }
+								##log = "[This.GetTag] IMPORT [?resource_imported@var:v] ADD [?v.GetTokenKey]"
+							}
+							set_temp_variable = { import = resource_imported@var:v }
+							multiply_temp_variable = { import = @AI_RESOURCE_NEED_IMPORT_WEIGHT }
+							add_to_temp_variable = { neighbor_resource_need@var:v = import }
+						}
+						##log = "[?neighbor_resource_need@var:v] ITERATION DONE"
+					}
+				}
+			}
+			#log = "================================== NEIGHBOR RESOURCE NEED"
+			#log = "[?neighbor_resource_need@token:rubber] RUBBER"
+			#log = "[?neighbor_resource_need@token:tungsten] TUNGSTEN"
+			#log = "[?neighbor_resource_need@token:steel] STEEL"
+			#log = "[?neighbor_resource_need@token:aluminium] ALUMINIUM"
+			#log = "[?neighbor_resource_need@token:chromium] CHROMIUM"
+			
+			
+		}
+	}			
+}
+		
+d_ai_get_global_resource_need = {
+	for_each_loop = {
+		array = global.resources 
+		
+		if = {
+			limit = {
+				check_variable = { resource@var:v < 0 }
+			}
+			subtract_from_variable = { global.ai_resource_need@var:v = resource@var:v }
+			##log = "[This.GetTag] [?resource@var:v] SUBTRACT TO [?global.ai_resource_need@var:v]"
+		}
+		if = {
+			limit = {
+				check_variable = { resource_imported@var:v > 0 }
+				##log = "[This.GetTag] IMPORT [?resource_imported@var:v] ADD [?v.GetTokenKey]"
+			}
+			set_temp_variable = { import = resource_imported@var:v }
+			multiply_temp_variable = { import = @AI_RESOURCE_NEED_IMPORT_WEIGHT }
+			add_to_variable = { global.ai_resource_need@var:v = import }
+		}
+		##log = "[?global.ai_resource_need@var:v] ITERATION DONE"
+	}
+	round_variable = global.ai_resource_need@token:rubber
+	round_variable = global.ai_resource_need@token:tungsten
+	round_variable = global.ai_resource_need@token:steel
+	round_variable = global.ai_resource_need@token:aluminium
+	round_variable = global.ai_resource_need@token:chromium
+	round_variable = global.ai_resource_need@token:iron
+	round_variable = global.ai_resource_need@token:coal
+	round_variable = global.ai_resource_need@token:bauxite
+	round_variable = global.ai_resource_need@token:food
+	#for_each_loop = {
+	#	array = resources 
+	#	
+	#	#log = "[?global.ai_resource_need@var:v] NEED FOR [?v.GetTokenKey]"
+	#}
+}
+		
+d_print_trade_law_history = {
+	every_country = {
+		limit = { check_variable = { ai_best_trade_law_history^num > 0 } }
+		
+		log = " "
+		log = "=============================================================="
+		log = "============ [This.GetName] [This.GetTag]"
+		log = "=============================================================="
+		log = " "
+		
+		for_each_loop = {
+			array = ai_best_trade_law_history
+			
+			if = {
+				limit = {
+					NOT = { check_variable = { v = 0 } }
+				}
+				log = "[?v.GetTokenKey] | SCORE: [?ai_best_trade_law_history_score^i] | DATE: [?ai_best_trade_law_history_date^i.GetDateStringNoHourLong]"
+			}
+			else = {
+				log = " "
+			}
+		}
+	}
+}
+
+##### these all require a temp variable "opinion_target" to be set before using this. opinion_target will then apply the opinion modifier towards ROOT
+##### example how it looks like to have ITA get rejected claims opinion debuff towards GER (ITA likes GER less):
+
+# 		 	set_temp_variable = { opinion_target = ITA }
+# 		 	set_temp_variable = { opinion_weight = 2 } #how many times
+#			GER = { add_OPN_rejected_claims_to_PREV = yes }
+
+d_OPN_add_rejected_claims_to_PREV = {
+	set_temp_variable = { opinion_target = ITA }
+	set_temp_variable = { opinion_weight = 1 }
+	OPN_add_rejected_claims_to_PREV = yes
+}
+OPN_add_rejected_claims_to_PREV = {
+	if = {
+		limit = {
+			NOT = { has_country_flag = { flag = OPN_rejected_claims_@PREV value > 4 } }
+		}
+			
+		var:opinion_target = {
+			if = { limit = { has_country_flag = { flag = OPN_rejected_claims_@PREV value = 5 } }      set_temp_variable = { flag_value = 5 } set_temp_variable = { opinion_value = -96 } }
+			else_if = { limit = { has_country_flag = { flag = OPN_rejected_claims_@PREV value = 4 } } set_temp_variable = { flag_value = 4 } set_temp_variable = { opinion_value = -72 } }
+			else_if = { limit = { has_country_flag = { flag = OPN_rejected_claims_@PREV value = 3 } } set_temp_variable = { flag_value = 3 } set_temp_variable = { opinion_value = -48 } }
+			else_if = { limit = { has_country_flag = { flag = OPN_rejected_claims_@PREV value = 2 } } set_temp_variable = { flag_value = 2 } set_temp_variable = { opinion_value = -24 } }
+			else_if = { limit = { has_country_flag = { flag = OPN_rejected_claims_@PREV value = 1 } } set_temp_variable = { flag_value = 1 } set_temp_variable = { opinion_value = -18 } }
+		
+			set_temp_variable = { target_value = flag_value }
+			add_to_temp_variable = { target_value = opinion_weight?1 }
+			clamp_temp_variable = { var = target_value max = 5 }
+			
+			set_temp_variable = { num_increases = target_value }
+			subtract_from_temp_variable = { num_increases = flag_value }
+			
+			if = { limit = { check_variable = { target_value = 5 } }     set_temp_variable = { opinion_value = -96 } }
+			else_if = { limit = { check_variable = { target_value = 4 } } set_temp_variable = { opinion_value = -72 } }
+			else_if = { limit = { check_variable = { target_value = 3 } } set_temp_variable = { opinion_value = -48 } }
+			else_if = { limit = { check_variable = { target_value = 2 } } set_temp_variable = { opinion_value = -24 } }
+			else_if = { limit = { check_variable = { target_value = 1 } } set_temp_variable = { opinion_value = -18 } }
+			
+			custom_effect_tooltip = "add_rejected_our_claims_TT"
+		
+			for_loop_effect = {
+				end = num_increases 
+				
+				if = {
+					limit = {
+						has_country_flag = { flag = OPN_rejected_claims_@PREV value = 4 }
+					}
+					
+					remove_opinion_modifier = {
+						target = PREV
+						modifier = rejected_our_claims_4
+					}
+					add_opinion_modifier = {
+						target = PREV
+						modifier = rejected_our_claims_5
+					}
+					set_country_flag = { flag = OPN_rejected_claims_@PREV value = 5 days = 600 }
+				}
+				else_if = {
+					limit = {
+						has_country_flag = { flag = OPN_rejected_claims_@PREV value = 3 }
+					}
+					
+					remove_opinion_modifier = {
+						target = PREV
+						modifier = rejected_our_claims_3
+					}
+					add_opinion_modifier = {
+						target = PREV
+						modifier = rejected_our_claims_4
+					}
+					set_country_flag = { flag = OPN_rejected_claims_@PREV value = 4 days = 600 }
+				}
+				else_if = {
+					limit = {
+						has_country_flag = { flag = OPN_rejected_claims_@PREV value = 2 }
+					}
+					
+					remove_opinion_modifier = {
+						target = PREV
+						modifier = rejected_our_claims_2
+					}
+					add_opinion_modifier = {
+						target = PREV
+						modifier = rejected_our_claims_3
+					}
+					set_country_flag = { flag = OPN_rejected_claims_@PREV value = 3 days = 600 }
+				}
+				else_if = {
+					limit = {
+						has_country_flag = { flag = OPN_rejected_claims_@PREV value = 1 }
+					}
+					
+					remove_opinion_modifier = {
+						target = PREV
+						modifier = rejected_our_claims_1
+					}
+					add_opinion_modifier = {
+						target = PREV
+						modifier = rejected_our_claims_2
+					}
+					set_country_flag = { flag = OPN_rejected_claims_@PREV value = 2 days = 600 }
+				}
+				else_if = {
+					limit = {
+						NOT = { has_country_flag = OPN_rejected_claims_@PREV }
+					}
+					add_opinion_modifier = {
+						target = PREV
+						modifier = rejected_our_claims_1
+					}
+					set_country_flag = { flag = OPN_rejected_claims_@PREV value = 1 days = 600 }
+				}
+				
+			}		
+		}
+	}
+}

@@ -1,0 +1,112 @@
+﻿
+add_namespace = industry_evac
+state_event = { #FROM.FROM = STATE; THIS = COUNTRY
+	id = industry_evac.1
+	hidden = yes  #timeout
+    timeout_days = 1 
+	is_triggered_only = yes 
+	
+	trigger = {
+		FROM.FROM = { has_state_flag = industry_evac_in_progress }
+	}
+	
+	immediate = {
+		log = "industry_evac.1"
+		FROM.FROM = {
+			if = {
+				limit = {
+					check_variable = { CIC_during > 0 }
+				}
+				set_temp_variable = { num_remove = CIC_during }
+				multiply_temp_variable = { num_remove = 0.5 }
+			    round_temp_variable = num_remove 
+				remove_building = {
+					type = industrial_complex
+					level = num_remove
+				}
+				var:target_state = { 
+					add_building_construction = {
+						type = industrial_complex
+						level = num_remove
+						instant_build = yes
+					}
+				}
+				subtract_from_variable = { CIC_during = num_remove }
+
+			}
+			if = {
+				limit = {
+					check_variable = { MIC_during > 0 }
+				}
+				set_temp_variable = { num_remove = MIC_during }
+				multiply_temp_variable = { num_remove = 0.5 }
+			    round_temp_variable = num_remove 
+				remove_building = {
+					type = arms_factory
+					level = num_remove
+				}
+				var:target_state = { 
+					add_building_construction = {
+						type = arms_factory
+						level = num_remove
+						instant_build = yes
+					}
+				}
+				subtract_from_variable = { MIC_during = num_remove }
+
+			}
+		}
+	}
+}
+state_event = {
+	id = industry_evac.2
+	hidden = yes  #timeout
+    timeout_days = 1 
+	is_triggered_only = yes 
+	
+	trigger = {
+		FROM.FROM = { has_state_flag = industry_evac_in_progress }
+	}
+	
+	immediate = {
+		log = "industry_evac.2"
+		FROM.FROM = {
+			if = {
+				limit = {
+					check_variable = { CIC_during > 0 }
+				}
+				log = "[?CIC_during] REMOVE CIC"
+				remove_building = {
+					type = industrial_complex
+					level = CIC_during
+				}
+				var:target_state = { 
+					add_building_construction = {
+						type = industrial_complex
+						level = CIC_during
+						instant_build = yes
+					}
+				}
+				clear_variable = CIC_during
+			}
+			if = {
+				limit = {
+					check_variable = { MIC_during > 0 }
+				}
+				log = "[?MIC_during] REMOVE MIC"
+				remove_building = {
+					type = arms_factory
+					level = MIC_during
+				}
+				var:target_state = { 
+					add_building_construction = {
+						type = arms_factory
+						level = MIC_during
+						instant_build = yes
+					}
+				}
+				clear_variable = MIC_during
+			}
+		}
+	}
+}

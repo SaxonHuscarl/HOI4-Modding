@@ -1,0 +1,567 @@
+
+ai_defense_mapmode = {
+	FROM = {
+		set_temp_variable = { alpha = 1 }
+	
+		set_temp_variable = { amount = 0 }
+		
+		if = {
+			limit = {
+				NOT = { ROOT = { has_country_flag = ui_ai_country_defence_THIS } }
+			}
+			if = {
+				limit = {
+					CONTROLLER = { var:ROOT.targeted_country = { has_country_flag = ai_defend_@PREV } }
+				}
+				add_to_temp_variable = { amount = 5.1 }
+			}
+			else = {
+				set_temp_variable = { amount = 0 }
+			}
+			
+			set_temp_variable = { continent = mtth:continent }
+			if = {
+				limit = {
+					var:ROOT.targeted_country = { 
+						check_variable = { ai_force_defend@var:continent = 1 }
+					} 
+				}
+				add_to_temp_variable = { amount = 5.1 }
+			}
+			
+			set_temp_variable = { region_target = region }
+			if = {
+				limit = {
+					var:ROOT.targeted_country = { 
+						check_variable = { ai_no_front@europe = 1 } 
+						is_in_array = { global.continent_states@europe = region_target }
+					} 
+				}
+				add_to_temp_variable = { amount = -2 }
+			}
+			if = {
+				limit = {
+					var:ROOT.targeted_country = { 
+						check_variable = { ai_no_front@asia = 1 } 
+						is_in_array = { global.continent_states@asia = region_target }
+					} 
+				}
+				add_to_temp_variable = { amount = -2 }
+			}
+			if = {
+				limit = {
+					var:ROOT.targeted_country = { 
+						check_variable = { ai_no_front@middle_east = 1 } 
+						is_in_array = { global.continent_states@middle_east = region_target }
+					} 
+				}
+				add_to_temp_variable = { amount = -2 }
+			}
+			if = {
+				limit = {
+					var:ROOT.targeted_country = { 
+						check_variable = { ai_no_front@africa = 1 } 
+						is_in_array = { global.continent_states@africa = region_target }
+					} 
+				}
+				add_to_temp_variable = { amount = -2 }
+			}
+			if = {
+				limit = {
+					var:ROOT.targeted_country = { 
+						check_variable = { ai_no_front@north_america = 1 } 
+						is_in_array = { global.continent_states@north_america = region_target }
+					} 
+				}
+				add_to_temp_variable = { amount = -2 }
+			}
+			if = {
+				limit = {
+					var:ROOT.targeted_country = { 
+						check_variable = { ai_no_front@south_america = 1 } 
+						is_in_array = { global.continent_states@south_america = region_target }
+					} 
+				}
+				add_to_temp_variable = { amount = -2 }
+			}
+			
+			else_if = {
+				limit = {
+					var:ROOT.targeted_country = { 
+						check_variable = { ai_no_front_region@var:region_target = 1 } 
+					}
+				}
+				add_to_temp_variable = { amount = -2 }
+			}
+			
+			if = {
+				limit = {
+					CONTROLLER = { tag = var:ROOT.targeted_country }
+				}
+				set_temp_variable = { green = 1.0 }
+				set_temp_variable = { red = 1.0 }
+				set_temp_variable = { blue = 1.0 }
+			}
+			
+		
+			else_if = {
+				limit = {check_variable = { amount = 0}}
+				set_temp_variable = { alpha = 0.05 }
+			}
+			else_if = {
+				limit = {
+					check_variable = { amount >10}
+				}
+				set_temp_variable = { green = amount }
+				subtract_from_temp_variable = { green = 10 }
+				divide_temp_variable = { green = 5 }
+				set_temp_variable = { red = 0.0 }
+				set_temp_variable = { blue = 0.0 }
+			}
+			else_if = {
+				limit = {
+					check_variable = {amount>5}
+				}
+				set_temp_variable = { green = 10 }
+				subtract_from_temp_variable = { green = amount }
+				divide_temp_variable = { green = 5 }
+				set_temp_variable = { blue = 0.0 }
+				set_temp_variable = { red = 0.0 }
+			}
+			else = {
+				set_temp_variable = { green = amount }
+				divide_temp_variable = { green = 5 }
+				set_temp_variable = { blue = 0.0 }
+				set_temp_variable = { red = 1.0 }
+			}
+		
+		}
+		else = { #display countries defending us
+			set_temp_variable = { green = 0.0 }
+			set_temp_variable = { red = 0.0 }
+			set_temp_variable = { blue = 0.0 }
+			set_temp_variable = { alpha = 0.05 }
+				
+			if = {
+				limit = {
+					CONTROLLER = {
+						var:ROOT.targeted_country = { 
+							PREV = { has_country_flag = ai_defend_@PREV }
+						}
+					}
+				}
+				set_temp_variable = { alpha = 1 }
+				set_temp_variable = { green = 0.0 }
+				set_temp_variable = { red = 0.0 }
+				set_temp_variable = { blue = 1.0 }
+			}
+		}
+		
+	}
+	
+		
+}
+
+front_state_mapmode = {
+	FROM = {
+		set_temp_variable = { alpha = 0.5 }
+	
+		set_temp_variable = { amount = 0 }
+		if = {
+			limit = {
+				is_in_array = { global.front_states = THIS }
+			}
+			add_to_temp_variable = { amount = 20 }
+		}
+		if = {
+			limit = {
+				set_temp_variable = { front = THIS }
+				any_of = {
+					array = global.front_states
+					
+					var:v = { check_variable = { distance_to@var:front < 100 } }
+				}
+			}
+			add_to_temp_variable = { amount = 10 }
+		}
+		else_if = {
+			limit = {
+				set_temp_variable = { front = THIS }
+				any_of = {
+					array = global.front_states
+					
+					var:v = { check_variable = { distance_to@var:front < 150 } }
+				}
+			}
+			add_to_temp_variable = { amount = 5 }
+		}
+	
+		if = {
+			limit = {check_variable = { amount = 0}}
+			set_temp_variable = { alpha = 0.05 }
+		}
+		else_if = {
+			limit = {
+				check_variable = { amount >10}
+			}
+			set_temp_variable = { red = amount }
+			subtract_from_temp_variable = { red = 10 }
+			divide_temp_variable = { red = 5 }
+			set_temp_variable = { green = 0.0 }
+			set_temp_variable = { blue = 0.0 }
+		}
+		else_if = {
+			limit = {
+				check_variable = {amount>5}
+			}
+			set_temp_variable = { blue = 10 }
+			subtract_from_temp_variable = { blue = amount }
+			divide_temp_variable = { blue = 5 }
+			set_temp_variable = { green = 0.0 }
+			set_temp_variable = { red = 0.0 }
+		}
+		else = {
+			set_temp_variable = { green = amount }
+			divide_temp_variable = { green = 5 }
+			set_temp_variable = { blue = 0.0 }
+			set_temp_variable = { red = 0.0 }
+		}
+		
+	}
+}
+ai_invasion_mapmode = {
+
+	FROM = {
+
+		set_temp_variable = { alpha = 1 }
+	
+		set_temp_variable = { amount = 0 }
+		
+		if = {
+			limit = {
+				check_variable = { ROOT.ai_invasion_area_score@var:ai_invasion_area > 0 }
+			}
+			set_temp_variable = { amount = ROOT.ai_invasion_area_score@var:ai_invasion_area }
+			divide_temp_variable = { amount = 2 }
+		}
+		if = {
+			limit = {
+				check_variable = { ROOT.ai_area_priority@var:ai_invasion_area > 0 }
+			}
+			set_temp_variable = { amount = ROOT.ai_area_priority@var:ai_invasion_area }
+			divide_temp_variable = { amount = 5 }
+		}
+		
+		if = {
+			limit = {check_variable = { amount = 0}}
+			set_temp_variable = { alpha = 0.05 }
+		}
+		else_if = {
+			limit = {
+				check_variable = { amount >99}
+			}
+			set_temp_variable = { green = amount }
+			subtract_from_temp_variable = { green = 99 }
+			divide_temp_variable = { green = 10 }
+			set_temp_variable = { red = 0.0 }
+			set_temp_variable = { blue = amount }
+			divide_temp_variable = { blue = 5 }
+		}
+		else_if = {
+			limit = {
+				check_variable = {amount>5}
+			}
+			set_temp_variable = { green = 10 }
+			subtract_from_temp_variable = { green = amount }
+			divide_temp_variable = { green = 5 }
+			set_temp_variable = { blue = 0.0 }
+			set_temp_variable = { red = 0.0 }
+		}
+		else = {
+			set_temp_variable = { green = amount }
+			divide_temp_variable = { green = 5 }
+			set_temp_variable = { blue = 0.0 }
+			set_temp_variable = { red = 1.0 }
+		}
+		
+	}
+}
+map_ai_building_slot_score = {
+	if = {
+		limit = {
+			check_variable = { ROOT.map_ai_building_slot_score = 0 }
+		}
+		set_temp_variable = { amount = FROM.ai_default_slot_score }
+	}
+	else_if = {
+		limit = {
+			check_variable = { ROOT.map_ai_building_slot_score = 1 }
+		}
+		set_temp_variable = { amount = FROM.ai_resource_slot_score }
+	}
+	else_if = {
+		limit = {
+			check_variable = { ROOT.map_ai_building_slot_score = 2 }
+		}
+		set_temp_variable = { amount = FROM.ai_radar_slot_score }
+	}
+	else_if = {
+		limit = {
+			check_variable = { ROOT.map_ai_building_slot_score = 3 }
+		}
+		set_temp_variable = { amount = FROM.ai_airbase_slot_score }
+	}
+	else_if = {
+		limit = {
+			check_variable = { ROOT.map_ai_building_slot_score = 4 }
+		}
+		set_temp_variable = { amount = FROM.ai_new_radar_slot_score }
+	}
+	else_if = {
+		limit = {
+			check_variable = { ROOT.map_ai_building_slot_score = 5 }
+		}
+		
+		if = {
+			limit = {
+				is_in_array = { global.ai_radar_states = FROM }
+			}
+			FROM = {
+				if = {
+					limit = {
+						has_state_flag = ai_new_radar_location
+					}
+					set_temp_variable = { amount = 11 }
+				}
+				else = {
+					set_temp_variable = { amount = 100 }
+				}
+			}
+					
+		}
+		else_if = {
+			limit = {
+				check_variable = { FROM.building_level@radar_station > 0 }
+			}
+			set_temp_variable = { amount = 1 }
+		}
+		else = {
+			set_temp_variable = { amount = 0 }
+		}
+		
+		
+	}
+	
+	# BUILDINGS BUILT
+	else_if = {
+		limit = {
+			check_variable = { ROOT.map_ai_building_slot_score = 6 }
+		}
+		set_temp_variable = { amount = FROM.ai_built@infrastructure }
+	}
+	else_if = {
+		limit = {
+			check_variable = { ROOT.map_ai_building_slot_score = 7 }
+		}
+		set_temp_variable = { amount = FROM.ai_built@air_base }
+	}
+	else_if = {
+		limit = {
+			check_variable = { ROOT.map_ai_building_slot_score = 8 }
+		}
+		set_temp_variable = { amount = FROM.ai_built@radar_station }
+	}
+	else_if = {
+		limit = {
+			check_variable = { ROOT.map_ai_building_slot_score = 9 }
+		}
+		set_temp_variable = { amount = 0 }
+		all_of = {
+			array = global.buildings
+			
+			add_to_temp_variable = { amount = FROM.ai_built@var:v }
+		}
+	}
+	
+	FROM = {
+		set_temp_variable = { alpha = 0.5 }
+	
+		if = {
+			limit = {check_variable = { amount = 0}}
+			set_temp_variable = { alpha = 0.05 }
+		}
+		else_if = {
+			limit = {
+				check_variable = { amount >30}
+			}
+			set_temp_variable = { blue = amount }
+			subtract_from_temp_variable = { blue = 10 }
+			divide_temp_variable = { blue = 5 }
+			set_temp_variable = { green = 1.0 }
+			set_temp_variable = { red = 0.0 }
+		}
+		else_if = {
+			limit = {
+				check_variable = {amount>20}
+			}
+			set_temp_variable = { red = 10 }
+			subtract_from_temp_variable = { red = amount }
+			divide_temp_variable = { red = 5 }
+			set_temp_variable = { green = 1.0 }
+			set_temp_variable = { blue = 0.0 }
+		}
+		else_if = {
+			limit = {
+				check_variable = {amount>10}
+			}
+			set_temp_variable = { blue = 15 }
+			subtract_from_temp_variable = { blue = amount }
+			divide_temp_variable = { blue = 5 }
+			set_temp_variable = { red = 0.0 }
+			set_temp_variable = { green = 0.0 }
+		}
+		else = {
+			set_temp_variable = { green = amount }
+			divide_temp_variable = { green = 4 }
+			set_temp_variable = { red = 1.0 }
+			set_temp_variable = { blue = 0.0 }
+		}
+		
+		if = {
+			limit = {
+				check_variable = { ROOT.map_ai_building_slot_score = 3 }
+				check_variable = { amount < 3 }
+			}
+			set_temp_variable = { green = 0.0 }
+			set_temp_variable = { red = 1.0 }
+			set_temp_variable = { blue = 0.0 }
+		}
+		
+		if = {
+			limit = {
+				check_variable = { ROOT.map_ai_building_slot_score = 0 }
+			}
+			if = {
+				limit = {
+					var:controller = {
+						any_of = {
+							array = controlled_states
+							
+							var:v = { 
+								check_variable = { ai_default_slot_score > 0 } 
+							}
+						}
+						NOT = {
+							any_of = {
+								array = controlled_states
+								
+								var:v = { 
+									check_variable = { ai_default_slot_score > amount } 
+									check_variable = { ai_default_slot_score > 0 } 
+								}
+							}
+						}
+					}
+				}
+				set_temp_variable = { green = 1.0 }
+				set_temp_variable = { red = 1.0 }
+				set_temp_variable = { blue = 1.0 }
+			}
+		}
+		else_if = {
+			limit = {
+				check_variable = { ROOT.map_ai_building_slot_score = 1 }
+			}
+			if = {
+				limit = {
+					var:controller = {
+						any_of = {
+							array = controlled_states
+							
+							var:v = { 
+								check_variable = { ai_resource_slot_score > 0 } 
+							}
+						}
+						NOT = {
+							any_of = {
+								array = controlled_states
+								
+								var:v = { 
+									check_variable = { ai_resource_slot_score > amount } 
+									check_variable = { ai_resource_slot_score > 0 } 
+								}
+							}
+						}
+					}
+				}
+				set_temp_variable = { green = 1.0 }
+				set_temp_variable = { red = 1.0 }
+				set_temp_variable = { blue = 1.0 }
+			}
+		}
+		else_if = {
+			limit = {
+				check_variable = { ROOT.map_ai_building_slot_score = 2 }
+			}
+			if = {
+				limit = {
+					var:controller = {
+						any_of = {
+							array = controlled_states
+							
+							var:v = { 
+								check_variable = { ai_radar_slot_score > 0 } 
+							}
+						}
+						NOT = {
+							any_of = {
+								array = controlled_states
+								
+								var:v = { 
+									check_variable = { ai_radar_slot_score > amount } 
+									check_variable = { ai_radar_slot_score > 0 } 
+								}
+							}
+						}
+					}
+				}
+				set_temp_variable = { green = 1.0 }
+				set_temp_variable = { red = 1.0 }
+				set_temp_variable = { blue = 1.0 }
+			}
+		}
+		else_if = {
+			limit = {
+				check_variable = { ROOT.map_ai_building_slot_score = 3 }
+			}
+			if = {
+				limit = {
+					var:controller = {
+						any_of = {
+							array = controlled_states
+							
+							var:v = { 
+								check_variable = { ai_airbase_slot_score > 0 } 
+							}
+						}
+						NOT = {
+							any_of = {
+								array = controlled_states
+								
+								var:v = { 
+									check_variable = { ai_airbase_slot_score > amount } 
+									check_variable = { ai_airbase_slot_score > 0 } 
+								}
+							}
+						}
+					}
+				}
+				set_temp_variable = { green = 1.0 }
+				set_temp_variable = { red = 1.0 }
+				set_temp_variable = { blue = 1.0 }
+			}
+		}
+		
+		
+	}
+}

@@ -1,0 +1,2752 @@
+scripted_gui = {
+	
+	ai_production_settings = {
+		window_name = "ai_production_settings_container"
+		context_type = player_context  
+		  
+		visible = {
+			has_country_flag = ui_show_ai_production
+		} 
+		
+		properties = {
+			enable = { frame = enable_frame }
+			lock_settings = { frame = lock_frame }
+			army = { frame = army_frame }
+			air = { frame = air_frame }
+			navy = { frame = navy_frame }
+		}
+		
+		dynamic_lists = { 
+			ai_production_list = { 
+				array = selected_ai_roles
+				change_scope = yes
+				entry_container = "ai_production_entry"
+			}
+		}
+		
+		triggers = {
+			enable_click_enabled = {
+				set_temp_variable = { enable_frame = 1 }
+				if = {
+					limit = {
+						var:ROOT.targeted_country = {
+							meta_trigger = {
+								text = {
+									has_country_flag = ai_[X]_template
+								}
+								X = "[?v.GetTokenLocalizedKey]"
+							}
+						}
+					}
+					set_temp_variable = { enable_frame = 2 }
+				}
+				
+			}
+			lock_settings_click_enabled = {
+				if = {
+					limit = {
+						has_country_flag = ui_ai_army_production_lock
+					}
+					set_temp_variable = { lock_frame = 2 }
+				}
+				else = {
+					set_temp_variable = { lock_frame = 1 }
+				}
+				
+				if = {
+					limit = {
+						has_country_flag = ui_show_ai_air_production
+					}
+					set_temp_variable = { army_frame = 2 }
+					set_temp_variable = { navy_frame = 2 }
+				}
+				else_if = {
+					limit = {
+						has_country_flag = ui_show_ai_navy_production
+					}
+					set_temp_variable = { army_frame = 2 }
+					set_temp_variable = { air_frame = 2 }
+				}
+				else = {
+					set_temp_variable = { navy_frame = 2 }
+					set_temp_variable = { air_frame = 2 }
+				}
+			}
+			lock_settings_visible = { always = no }
+		}
+		
+		effects = {
+			close_button_click = {
+				clear_variable = targeted_country
+				clr_country_flag = ui_show_ai_production
+			}
+			army_click = {
+				clr_country_flag = ui_show_ai_air_production
+				clr_country_flag = ui_show_ai_navy_production
+				ui_show_ai_army_production = yes
+			}
+			air_click = {
+				set_country_flag = ui_show_ai_air_production
+				clr_country_flag = ui_show_ai_navy_production
+				ui_show_ai_air_production = yes
+			}
+			navy_click = {
+				clr_country_flag = ui_show_ai_air_production
+				set_country_flag = ui_show_ai_navy_production
+				ui_show_ai_navy_production = yes
+			}
+			lock_settings_click = {
+				if = {
+					limit = {
+						has_country_flag = ui_ai_army_production_lock
+					}
+						
+					clr_country_flag = ui_ai_army_production_lock
+					clr_country_flag = ui_ai_army_production_lock_save
+					
+				}
+				else = {
+				
+					set_country_flag = ui_ai_army_production_lock
+					set_country_flag = ui_ai_army_production_lock_save
+					for_each_loop = {
+						array = ai_roles
+						
+						set_variable = { ai_lock_role@var:v = ai_unit_need@var:v }
+					}
+					
+				}
+			}
+			flat_add_click = {
+				set_temp_variable = { amount = 1 }
+				ui_increase_ai_role_flat_click = yes
+			}
+			flat_add_shift_click = {
+				set_temp_variable = { amount = 5 }
+				ui_increase_ai_role_flat_click = yes
+			}
+			flat_add_control_click = {
+				set_temp_variable = { amount = 10 }
+				ui_increase_ai_role_flat_click = yes
+			}
+			flat_subtract_click = {
+				set_temp_variable = { amount = -1 }
+				ui_increase_ai_role_flat_click = yes
+			}
+			flat_subtract_shift_click = {
+				set_temp_variable = { amount = -5 }
+				ui_increase_ai_role_flat_click = yes
+			}
+			flat_subtract_control_click = {
+				set_temp_variable = { amount = -10 }
+				ui_increase_ai_role_flat_click = yes
+			}
+			
+			mult_add_click = {
+				set_temp_variable = { amount = 0.01 }
+				ui_increase_ai_role_factor_click = yes
+			}
+			mult_add_shift_click = {
+				set_temp_variable = { amount = 0.05 }
+				ui_increase_ai_role_factor_click = yes
+			}
+			mult_add_control_click = {
+				set_temp_variable = { amount = 0.1 }
+				ui_increase_ai_role_factor_click = yes
+			}
+			mult_subtract_click = {
+				set_temp_variable = { amount = -0.01 }
+				ui_increase_ai_role_factor_click = yes
+			}
+			mult_subtract_shift_click = {
+				set_temp_variable = { amount = -0.05 }
+				ui_increase_ai_role_factor_click = yes
+			}
+			mult_subtract_control_click = {
+				set_temp_variable = { amount = -0.1 }
+				ui_increase_ai_role_factor_click = yes
+			}
+		}
+		
+	}
+	BI_AI_open_tabs = {
+		window_name = "BI_AI_open_tabs_container"
+		context_type = player_context  
+		  
+		visible = {
+			is_ai = yes
+		} 
+		
+		effects = {
+			diplomacy_click = {
+				if = { limit = { has_country_flag = BI_AI_diplomacy_tab }
+					clr_country_flag = BI_AI_diplomacy_tab
+				}
+				else = { set_country_flag = BI_AI_diplomacy_tab }
+				add_to_variable = { BI_AI_gui_update = 1 }
+			}
+			intelligence_click = {
+				if = { limit = { has_country_flag = BI_AI_intelligence_tab }
+					clr_country_flag = BI_AI_intelligence_tab
+				}
+				else = { set_country_flag = BI_AI_intelligence_tab }
+				add_to_variable = { BI_AI_gui_update = 1 }
+			}
+			politics_click = {
+				if = { limit = { has_country_flag = BI_AI_politics_tab }
+					clr_country_flag = BI_AI_politics_tab
+				}
+				else = { set_country_flag = BI_AI_politics_tab }
+				add_to_variable = { BI_AI_gui_update = 1 }
+			}
+			lend_lease_click = {
+				if = { limit = { has_country_flag = BI_AI_lend_lease_tab }
+					clr_country_flag = BI_AI_lend_lease_tab
+				}
+				else = { set_country_flag = BI_AI_lend_lease_tab }
+				add_to_variable = { BI_AI_gui_update = 1 }
+			}
+			construction_click = {
+				if = { limit = { has_country_flag = BI_AI_construction_tab }
+					clr_country_flag = BI_AI_construction_tab
+				}
+				else = { set_country_flag = BI_AI_construction_tab }
+				add_to_variable = { BI_AI_gui_update = 1 }
+			}
+			construction2_click = {
+				if = { limit = { has_country_flag = BI_AI_construction_tab2 }
+					clr_country_flag = BI_AI_construction_tab2
+			  	}
+				else = { 
+					set_country_flag = BI_AI_construction_tab2 
+						
+					meta_effect = { 
+						text = { ai_construction_logic/[X] = yes }
+						X = "[This.GetTag]"
+					}
+						
+					set_variable = { debug_ic_ratio/radar_station = ic_ratio/radar_station }
+					set_variable = { debug_min_ic/radar_station = min_ic/radar_station }
+					
+					set_variable = { debug_ic_ratio/air_base = ic_ratio/air_base }
+					set_variable = { debug_min_ic/air_base = min_ic/air_base }
+					
+					set_variable = { debug_ic_ratio/fuel_silo = ic_ratio/fuel_silo }
+					set_variable = { debug_min_ic/fuel_silo = min_ic/fuel_silo }
+					
+					set_variable = { debug_ic_ratio/infrastructure = ic_ratio/infrastructure }
+					set_variable = { debug_min_ic/infrastructure = min_ic/infrastructure }
+					
+					set_variable = { debug_ic_ratio/air_assembly = ic_ratio/air_assembly }
+					set_variable = { debug_min_ic/air_assembly = min_ic/air_assembly }
+					
+				}
+				add_to_variable = { BI_AI_gui_update = 1 }
+			}
+			production_click = {
+				if = { limit = { has_country_flag = BI_AI_air_production_tab }
+					clr_country_flag = BI_AI_air_production_tab
+				}
+				else = { set_country_flag = BI_AI_air_production_tab }
+				add_to_variable = { BI_AI_gui_update = 1 }
+			}
+			production_land_click = {	
+				if = { limit = { has_country_flag = BI_AI_land_production_tab }
+					clr_country_flag = BI_AI_land_production_tab
+				}
+				else = { set_country_flag = BI_AI_land_production_tab }
+				
+			}
+			deployment_click = {
+				if = { limit = { has_country_flag = ui_ai_template }
+					clr_country_flag = ui_ai_template
+				}
+				else = { set_country_flag = ui_ai_template 
+					
+				}
+				add_to_variable = { BI_AI_gui_update = 1 }
+			}
+			research_click = {
+				if = { limit = { has_country_flag = BI_AI_research_tab }
+					clr_country_flag = BI_AI_research_tab
+				}
+				else = { set_country_flag = BI_AI_research_tab }
+				add_to_variable = { BI_AI_gui_update = 1 }
+			}
+			targets_click = {
+				if = { limit = { has_country_flag = BI_AI_countries_tab }
+					clr_country_flag = BI_AI_countries_tab
+				}
+				else = { set_country_flag = BI_AI_countries_tab }
+				add_to_variable = { BI_AI_gui_update = 1 }
+			}
+		}
+	}
+	BI_AI_politics_tab = {
+		window_name = "BI_AI_politics_tab_container"
+		context_type = player_context  
+		parent_scripted_gui = BI_AI_open_tabs
+		 
+		visible = {
+			has_country_flag = BI_AI_politics_tab
+		}
+		
+		effects = {
+			close_button_click = {
+				add_to_variable = { BI_AI_gui_update = 1 }
+				clr_country_flag = BI_AI_politics_tab
+			}
+		}
+		
+		dynamic_lists = { 
+			ai_law_list = { 
+				array = ai_law_switch
+				change_scope = yes
+				entry_container = "ai_law_entry"
+			}  
+		} 
+	}
+	BI_AI_land_production_tab = {
+		window_name = "BI_AI_land_production_tab_container"
+		context_type = player_context 
+		parent_scripted_gui = BI_AI_open_tabs 
+		 
+		visible = {
+			has_country_flag = BI_AI_land_production_tab
+		}
+		
+		effects = {
+			close_button_click = {
+				add_to_variable = { BI_AI_gui_update = 1 }
+				clr_country_flag = BI_AI_land_production_tab
+			}
+		}		 
+		
+		dynamic_lists = { 
+			ai_production_list = { 
+				array = ai_deficit_production 
+				change_scope = yes
+				entry_container = "ai_land_production_entry"
+			}  
+		} 
+	}
+	BI_AI_air_production_tab = {
+		window_name = "BI_AI_air_production_tab_container"
+		context_type = player_context 
+		parent_scripted_gui = BI_AI_open_tabs 
+		 
+		visible = {
+			has_country_flag = BI_AI_air_production_tab
+		}
+		
+		effects = {
+			close_button_click = {
+				add_to_variable = { BI_AI_gui_update = 1 }
+				clr_country_flag = BI_AI_air_production_tab
+				ai_clear_air_production_UI = yes
+			}
+			get_values_button_click = {		
+				ai_update_air_production_UI = yes	
+			}
+		}		 
+		 
+		triggers = {
+			rubber_visible = {
+				meta_trigger = {
+					text = {
+						ai_production/[X] = yes
+					}
+					X = "[?v.GetTokenKey]"
+				}
+				
+				is_in_array = { ai_rubber = v }
+			}
+		}
+		
+		dynamic_lists = { 
+			ai_production_list = { 
+				array = ai_air_production 
+				change_scope = yes
+				entry_container = "ai_air_production_entry"
+			}  
+		} 
+	}
+	BI_AI_diplomacy_tab = {
+		window_name = "BI_AI_diplomacy_tab_container"
+		context_type = player_context  
+		parent_scripted_gui = BI_AI_open_tabs
+		  
+		visible = {
+			has_country_flag = BI_AI_diplomacy_tab
+		} 
+		
+		effects = {
+			close_button_click = {
+				add_to_variable = { BI_AI_gui_update = 1 }
+				clr_country_flag = BI_AI_diplomacy_tab
+			}
+			
+			conquer_click = {
+				clear_array = ai_strategy_list
+				clear_array = ai_strategy_list_value
+				every_other_country = {
+					limit = {
+						meta_trigger = {  
+							text = {
+								NOT = { check_variable = { ROOT.ai_strategy_conquer@[X] = 0 } } 
+							}
+							X = "[This.GetTag]"
+						}
+					}
+						meta_effect = {  
+							text = {
+								set_temp_variable = { t1 = ROOT.ai_strategy_conquer@[X] }
+							}
+							X = "[This.GetTag]"
+						}
+					add_to_array = { ROOT.ai_strategy_list = THIS }
+					add_to_array = { ROOT.ai_strategy_list_value = t1 }
+				}
+			}
+			prepare_for_war_click = {
+				clear_array = ai_strategy_list
+				clear_array = ai_strategy_list_value
+				every_other_country = {
+					limit = {
+						meta_trigger = {  
+							text = {
+								NOT = { check_variable = { ROOT.ai_strategy_prepare_for_war@[X] = 0 } } 
+							}
+							X = "[This.GetTag]"
+						}
+					}
+					meta_effect = {  
+						text = {
+							set_temp_variable = { t1 = ROOT.ai_strategy_prepare_for_war@[X] }
+						}
+						X = "[This.GetTag]"
+					}
+					add_to_array = { ROOT.ai_strategy_list = THIS }
+					add_to_array = { ROOT.ai_strategy_list_value = t1 }
+				}
+			}
+			befriend_click = {
+				clear_array = ai_strategy_list
+				clear_array = ai_strategy_list_value
+				every_other_country = {
+					limit = {
+						meta_trigger = {  
+							text = {
+								NOT = { check_variable = { ROOT.ai_strategy_befriend@[X] = 0 } } 
+							}
+							X = "[This.GetTag]"
+						}
+					}
+					meta_effect = {  
+						text = {
+							set_temp_variable = { t1 = ROOT.ai_strategy_befriend@[X] }
+						}
+						X = "[This.GetTag]"
+					}
+					add_to_array = { ROOT.ai_strategy_list = THIS }
+					add_to_array = { ROOT.ai_strategy_list_value = t1 }
+				}
+			}
+			alliance_click = {
+				clear_array = ai_strategy_list
+				clear_array = ai_strategy_list_value
+				every_other_country = {
+					limit = {
+						meta_trigger = {  
+							text = {
+								NOT = { check_variable = { ROOT.ai_strategy_alliance@[X] = 0 } } 
+							}
+							X = "[This.GetTag]"
+						}
+					}
+					meta_effect = {  
+						text = {
+							set_temp_variable = { t1 = ROOT.ai_strategy_alliance@[X] }
+						}
+						X = "[This.GetTag]"
+					}
+					add_to_array = { ROOT.ai_strategy_list = THIS }
+					add_to_array = { ROOT.ai_strategy_list_value = t1 }
+				}
+			}
+			antagonize_click = {
+				clear_array = ai_strategy_list
+				clear_array = ai_strategy_list_value
+				every_other_country = {
+					limit = {
+						meta_trigger = {  
+							text = {
+								NOT = { check_variable = { ROOT.ai_strategy_antagonize@[X] = 0 } } 
+							}
+							X = "[This.GetTag]"
+						}
+					}
+					meta_effect = {  
+						text = {
+							set_temp_variable = { t1 = ROOT.ai_strategy_antagonize@[X] }
+						}
+						X = "[This.GetTag]"
+					}
+					add_to_array = { ROOT.ai_strategy_list = THIS }
+					add_to_array = { ROOT.ai_strategy_list_value = t1 }
+				}
+			}
+			contain_click = {
+				clear_array = ai_strategy_list
+				clear_array = ai_strategy_list_value
+				every_other_country = {
+					limit = {
+						meta_trigger = {  
+							text = {
+								NOT = { check_variable = { ROOT.ai_strategy_contain@[X] = 0 } } 
+							}
+							X = "[This.GetTag]"
+						}
+					}
+					meta_effect = {  
+						text = {
+							set_temp_variable = { t1 = ROOT.ai_strategy_contain@[X] }
+						}
+						X = "[This.GetTag]"
+					}
+					add_to_array = { ROOT.ai_strategy_list = THIS }
+					add_to_array = { ROOT.ai_strategy_list_value = t1 }
+				}
+			}
+			declare_war_click = {
+				clear_array = ai_strategy_list
+				clear_array = ai_strategy_list_value
+				every_other_country = {
+					limit = {
+						meta_trigger = {  
+							text = {
+								NOT = { check_variable = { ROOT.ai_strategy_declare_war@[X] = 0 } } 
+							}
+							X = "[This.GetTag]"
+						}
+					}
+					meta_effect = {  
+						text = {
+							set_temp_variable = { t1 = ROOT.ai_strategy_declare_war@[X] }
+						}
+						X = "[This.GetTag]"
+					}
+					add_to_array = { ROOT.ai_strategy_list = THIS }
+					add_to_array = { ROOT.ai_strategy_list_value = t1 }
+				}
+			}
+			consider_weak_click = {
+				clear_array = ai_strategy_list
+				clear_array = ai_strategy_list_value
+				every_other_country = {
+					limit = {
+						meta_trigger = {  
+							text = {
+								NOT = { check_variable = { ROOT.ai_strategy_consider_weak@[X] = 0 } } 
+							}
+							X = "[This.GetTag]"
+						}
+					}
+					meta_effect = {  
+						text = {
+							set_temp_variable = { t1 = ROOT.ai_strategy_consider_weak@[X] }
+						}
+						X = "[This.GetTag]"
+					}
+					add_to_array = { ROOT.ai_strategy_list = THIS }
+					add_to_array = { ROOT.ai_strategy_list_value = t1 }
+				}
+			}
+			dont_defend_ally_borders_click = {
+				clear_array = ai_strategy_list
+				clear_array = ai_strategy_list_value
+				every_other_country = {
+					limit = {
+						meta_trigger = {  
+							text = {
+								NOT = { check_variable = { ROOT.ai_strategy_dont_defend_ally_borders@[X] = 2000 } } 
+							}
+							X = "[This.GetTag]"
+						}
+					}
+					meta_effect = {  
+						text = {
+							set_temp_variable = { t1 = ROOT.ai_strategy_dont_defend_ally_borders@[X] }
+						}
+						X = "[This.GetTag]"
+					}
+					add_to_array = { ROOT.ai_strategy_list = THIS }
+					add_to_array = { ROOT.ai_strategy_list_value = t1 }
+				}
+			}
+			force_defend_ally_borders_click = {
+				clear_array = ai_strategy_list
+				clear_array = ai_strategy_list_value
+				every_other_country = {
+					limit = {
+						meta_trigger = {  
+							text = {
+								NOT = { check_variable = { ROOT.ai_strategy_force_defend_ally_borders@[X] = 0 } } 
+							}
+							X = "[This.GetTag]"
+						}
+					}
+					meta_effect = {  
+						text = {
+							set_temp_variable = { t1 = ROOT.ai_strategy_force_defend_ally_borders@[X] }
+						}
+						X = "[This.GetTag]"
+					}
+					add_to_array = { ROOT.ai_strategy_list = THIS }
+					add_to_array = { ROOT.ai_strategy_list_value = t1 }
+				}
+			}
+			ignore_click = {
+				clear_array = ai_strategy_list
+				clear_array = ai_strategy_list_value
+				every_other_country = {
+					limit = {
+						meta_trigger = {  
+							text = {
+								NOT = { check_variable = { ROOT.ai_strategy_ignore@[X] = 0 } } 
+							}
+							X = "[This.GetTag]"
+						}
+					}
+					meta_effect = {  
+						text = {
+							set_temp_variable = { t1 = ROOT.ai_strategy_ignore@[X] }
+						}
+						X = "[This.GetTag]"
+					}
+					add_to_array = { ROOT.ai_strategy_list = THIS }
+					add_to_array = { ROOT.ai_strategy_list_value = t1 }
+				}
+			}
+			protect_click = {
+				clear_array = ai_strategy_list
+				clear_array = ai_strategy_list_value
+				every_other_country = {
+					limit = {
+						meta_trigger = {  
+							text = {
+								NOT = { check_variable = { ROOT.ai_strategy_protect@[X] = 0 } } 
+							}
+							X = "[This.GetTag]"
+						}
+					}
+					meta_effect = {  
+						text = {
+							set_temp_variable = { t1 = ROOT.ai_strategy_protect@[X] }
+						}
+						X = "[This.GetTag]"
+					}
+					add_to_array = { ROOT.ai_strategy_list = THIS }
+					add_to_array = { ROOT.ai_strategy_list_value = t1 }
+				}
+			}
+			invade_click = {
+				clear_array = ai_strategy_list
+				clear_array = ai_strategy_list_value
+				every_other_country = {
+					limit = {
+						meta_trigger = {  
+							text = {
+								NOT = { check_variable = { ROOT.ai_strategy_invade@[X] = -2000 } } 
+							}
+							X = "[This.GetTag]"
+						}
+					}
+					meta_effect = {  
+						text = {
+							set_temp_variable = { t1 = ROOT.ai_strategy_invade@[X] }
+						}
+						X = "[This.GetTag]"
+					}
+					add_to_array = { ROOT.ai_strategy_list = THIS }
+					add_to_array = { ROOT.ai_strategy_list_value = t1 }
+				}
+			}
+			send_volunteers_desire_click = {
+				clear_array = ai_strategy_list
+				clear_array = ai_strategy_list_value
+				every_other_country = {
+					limit = {
+						meta_trigger = {  
+							text = {
+								NOT = { check_variable = { ROOT.ai_strategy_send_volunteers_desire@[X] = -2000 } } 
+							}
+							X = "[This.GetTag]"
+						}
+					}
+					meta_effect = {  
+						text = {
+							set_temp_variable = { t1 = ROOT.ai_strategy_send_volunteers_desire@[X] }
+						}
+						X = "[This.GetTag]"
+					}
+					add_to_array = { ROOT.ai_strategy_list = THIS }
+					add_to_array = { ROOT.ai_strategy_list_value = t1 }
+				}
+			}
+			support_click = {
+				clear_array = ai_strategy_list
+				clear_array = ai_strategy_list_value
+				every_other_country = {
+					limit = {
+						meta_trigger = {  
+							text = {
+								NOT = { check_variable = { ROOT.ai_strategy_support@[X] = 0 } } 
+							}
+							X = "[This.GetTag]"
+						}
+					}
+					meta_effect = {  
+						text = {
+							set_temp_variable = { t1 = ROOT.ai_strategy_support@[X] }
+						}
+						X = "[This.GetTag]"
+					}
+					add_to_array = { ROOT.ai_strategy_list = THIS }
+					add_to_array = { ROOT.ai_strategy_list_value = t1 }
+				}
+			}
+		}
+		 
+		properties = {
+			flag = {
+				image = "[This.GetFlag]"
+			}
+		}
+		
+		dynamic_lists = { 
+			EAI_diplomacy_list = { 
+				array = ai_strategy_list
+				change_scope = yes
+				entry_container = "EAI_diplomacy_container"
+			}  
+		} 
+	}
+	BI_AI_research_tab = {
+		window_name = "BI_AI_research_tab_container"
+		context_type = player_context  
+		parent_scripted_gui = BI_AI_open_tabs 
+		  
+		visible = { 
+			has_country_flag = BI_AI_research_tab
+		} 
+		
+		effects = {  
+			close_button_click = {
+				add_to_variable = { BI_AI_gui_update = 1 }
+				clr_country_flag = BI_AI_research_tab
+			}
+		}
+		
+		dynamic_lists = { 
+			ai_research_list = { 
+				array = debug_ai_research
+				change_scope = yes
+				entry_container = "ai_research_entry"
+			}  
+			ai_template_research_list = { 
+				array = ai_template_techs
+				change_scope = yes
+				entry_container = "ai_template_research_entry"
+			}  
+		} 
+	}
+	BI_AI_intelligence_tab = {
+		window_name = "BI_AI_intelligence_tab_container"
+		context_type = player_context  
+		parent_scripted_gui = BI_AI_open_tabs 
+		  
+		visible = { 
+			has_country_flag = BI_AI_intelligence_tab
+		} 
+		
+		effects = {
+			close_button_click = {
+				add_to_variable = { BI_AI_gui_update = 1 }
+				clr_country_flag = BI_AI_intelligence_tab
+			}
+		}
+		
+		dynamic_lists = { 
+			ai_operation_list = { 
+				array = ROOT.operation_completed
+				change_scope = yes
+				entry_container = "ai_operation_history"
+			} 
+		} 
+	}
+	ai_scripted_construction = {
+		window_name = "ai_scripted_construction"
+		context_type = player_context  
+		parent_scripted_gui = BI_AI_open_tabs
+		  
+		visible = { 
+			has_country_flag = BI_AI_construction_tab2  
+		} 
+		
+		effects = {
+			close_button_click = {
+				clr_country_flag = BI_AI_construction_tab2
+			}
+			
+			test_button_click = {
+				meta_effect = {
+					text = {
+						ai_construction_logic/[X] = yes
+					}
+					X = "[Root.GetTag]"
+				}
+				set_variable = { target_MIC_to_CIC_ratio = MIC_to_CIC_ratio }
+				set_variable = { target_NIC_to_MIC_ratio = NIC_to_MIC_ratio }
+				
+				set_variable = { debug_ai_aluminium_refinery_need_factor = ai_aluminium_refinery_need_factor }
+				set_variable = { debug_ai_air_assembly_need_factor = ai_air_assembly_need_factor }
+				
+				
+			}
+		}
+		
+		triggers = {
+			location_active_visible = {
+					
+				set_temp_variable = { max_ic_entries = num_of_civilian_factories_available_for_projects }
+				divide_temp_variable = { max_ic_entries = 24 }
+				add_to_temp_variable = { max_ic_entries = 0.5 }
+				round_temp_variable = max_ic_entries
+				
+				if = {
+					limit = {
+						check_variable = { max_ic_entries > i }
+					}
+					#multiply_temp_variable = { progress = 24 }
+				}
+				else = {
+					always = no
+				}
+			}
+			trigger_icon_click_enabled = {
+				meta_trigger = {
+					text = {
+						ai_can_build_[X] = yes
+					}
+					X = "[?v.GetTokenKey]"
+				}
+				if = {
+					limit = {
+						meta_trigger = {
+							text = {
+								ai_can_build_[X] = yes
+							}
+							X = "[?v.GetTokenKey]"
+						}
+					}
+					set_temp_variable = { trigger_frame = 2 }
+				}
+				else = {
+					set_temp_variable = { trigger_frame = 1 }
+				}
+			}
+		}
+		
+		properties = {
+			building_icon = {
+				frame = global.building_frame@var:v
+			}
+			trigger_icon = {
+				frame = trigger_frame
+			}
+		}
+		
+		dynamic_lists = { 
+			ai_construction_queue = { 
+				array = ai_queue
+				change_scope = yes
+				entry_container = "ai_construction_queue_entry"
+			}  
+			ai_building_info = { 
+				array = global.buildings
+				change_scope = yes
+				entry_container = "ai_construction_queue_info_entry"
+			}  
+		}
+	}
+		
+	BI_AI_construction_tab = {
+		window_name = "BI_AI_construction_tab_container"
+		context_type = player_context  
+		parent_scripted_gui = BI_AI_open_tabs
+		  
+		visible = { 
+			has_country_flag = BI_AI_construction_tab
+		} 
+		
+		effects = {
+			close_button_click = {
+				add_to_variable = { BI_AI_gui_update = 1 }
+				clr_country_flag = BI_AI_construction_tab
+			}
+			shared_click = {
+				add_to_variable = { BI_AI_gui_update = 1 }
+				clear_array = ai_radar_slot_scores
+				clear_array = ai_airbase_slot_scores
+				clear_array = ai_resource_slot_scores
+				clear_array = ai_shared_slot_scores
+				#ai_get_shared_slot_scores_GUI = yes 
+			}
+			resource_click = {
+				add_to_variable = { BI_AI_gui_update = 1 }
+				clear_array = ai_radar_slot_scores
+				clear_array = ai_airbase_slot_scores
+				clear_array = ai_resource_slot_scores
+				clear_array = ai_shared_slot_scores
+				#ai_get_resource_slot_scores_GUI = yes 
+			}
+			radar_click = {
+				add_to_variable = { BI_AI_gui_update = 1 }
+				clear_array = ai_radar_slot_scores
+				clear_array = ai_airbase_slot_scores
+				clear_array = ai_resource_slot_scores
+				clear_array = ai_shared_slot_scores
+				#ai_get_radar_slot_scores_GUI = yes  
+			}
+			airbase_click = {
+				add_to_variable = { BI_AI_gui_update = 1 }
+				clear_array = ai_radar_slot_scores
+				clear_array = ai_airbase_slot_scores
+				clear_array = ai_resource_slot_scores
+				clear_array = ai_shared_slot_scores
+				#ai_get_airbase_slot_scores_GUI = yes 
+			}
+		}
+		
+		triggers = {
+		}
+		
+		dynamic_lists = { 
+			ai_radar_score_list = { 
+				array = ai_radar_slot_scores
+				change_scope = yes
+				entry_container = "ai_radar_score_container"
+			}  
+			ai_resource_score_list = { 
+				array = ai_resource_slot_scores
+				change_scope = yes
+				entry_container = "ai_resource_score_container"
+			}  
+			ai_shared_score_list = { 
+				array = ai_shared_slot_scores
+				change_scope = yes
+				entry_container = "ai_shared_score_container"
+			}  
+			ai_airbase_score_list = { 
+				array = ai_airbase_slot_scores
+				change_scope = yes 
+				entry_container = "ai_airbase_score_container"
+			}  
+		} 
+	}  
+	BI_AI_countries_tab = {
+		window_name = "BI_AI_countries_tab_container"
+		context_type = player_context  
+		parent_scripted_gui = BI_AI_open_tabs
+		   
+		visible = { 
+			has_country_flag = BI_AI_countries_tab
+		} 
+		
+		effects = {
+			close_button_click = {
+				add_to_variable = { BI_AI_gui_update = 1 }
+				clr_country_flag = BI_AI_countries_tab
+			}
+			air_click = {
+				get_sorted_scored_countries = {
+					scorer = ai_GetMainAirEnemy
+					array = ai_enemy_target_array
+				}
+				get_sorted_scored_countries = {
+					scorer = ai_GetMainAirEnemy
+					array = ai_enemy_target_score_array
+					scores = ai_enemy_target_score_array
+				}
+			}
+		}
+		
+		dynamic_lists = { 
+			ai_enemy_target_list = { 
+				array = ai_enemy_target_array
+				change_scope = yes
+				entry_container = "ai_enemy_target_container"
+			} 
+		}
+	}
+	
+	BI_AI_selected_countries_tab = {
+		window_name = "BI_AI_defence_countries"
+		context_type = selected_country_context  
+		#parent_scripted_gui = BI_AI_open_tabs
+		    
+		visible = { 
+			has_global_flag = ai_show_defence
+		} 
+		    
+		effects = {
+			close_button_click = {
+				clr_country_flag = ui_ai_country_defence
+			}
+		}
+		
+		dynamic_lists = { 
+			ai_country_target_list = { 
+				array = ai_countries_defend_us
+				change_scope = yes
+				entry_container = "ai_country_target_container"
+			} 
+			ai_country_defending_list = { 
+				array = ai_defend_these_countries
+				change_scope = yes
+				entry_container = "ai_country_defending_container"
+			} 
+			ai_advisor_list = { 
+				array = ai_advisor_slot_debug
+				change_scope = yes
+				entry_container = "ai_advisor_list_container"
+			} 
+		}
+	}
+	BI_AI_selected_countries_advisor_tab = {
+		window_name = "BI_AI_advisor_countries"
+		context_type = player_context  
+		#parent_scripted_gui = BI_AI_open_tabs
+		    
+		visible = { 
+			has_global_flag = ai_show_advisor
+		} 
+		
+		triggers = {
+			close_button_click_enabled = {
+				all_of = {
+					array = global.idea_slots
+					value = type
+					
+					all_of = {
+						array = ai_character_new@var:type
+						
+						add_to_temp_array = { ai_advisor_new = v }
+						add_to_temp_array = { ai_advisor_new_type = type }
+					}
+				}
+					
+			}
+		}
+		    
+		effects = {
+			close_button_click = {
+				clr_country_flag = ui_ai_country_defence
+			}
+		}
+		
+		dynamic_lists = { 
+			ai_advisor_list = { 
+				array = ai_advisor_slot_debug
+				change_scope = yes
+				entry_container = "ai_advisor_list_container"
+			} 
+			ai_advisor_pick_list = { 
+				array = ai_advisor_history
+				change_scope = yes
+				entry_container = "ai_advisor_pick_container"
+			} 
+			
+			ai_advisor_new_list = { 
+				array = ai_advisor_new
+				change_scope = yes
+				entry_container = "ai_advisor_new_container"
+			} 
+		}
+	}
+	BI_AI_selected_countries_strategy = {
+		window_name = "BI_AI_strategy_countries"
+		context_type = selected_country_context  
+		#parent_scripted_gui = BI_AI_open_tabs
+		    
+		visible = { 
+			has_global_flag = ai_show_strategy
+		} 
+		    
+		effects = {
+			close_button_click = {
+				clr_country_flag = ui_ai_country_defence
+			}
+		}
+		
+	}
+	
+	
+	ai_setting_defence = { 
+		window_name = "ai_setting_country_defence"
+		context_type = player_context  
+		    
+		visible = { 
+			has_country_flag = ui_ai_country_defence
+		}
+		properties = {
+			country_defence_toggle = {
+				frame = frame_var
+			}
+			lock_settings = {
+				frame = lock_var
+			}
+			
+			area_force_defend_ally_borders = {
+				frame = area_force_frame
+			}
+			area_no_front_unit_request = {
+				frame = area_no_front_frame
+			}
+			
+			countries = {
+				frame = countries_frame
+			}
+			countries_this = {
+				frame = countries_this_frame
+			}
+		}
+		    
+		dynamic_lists = { 
+			country_defence_list = { 
+				array = defence_array_list
+				change_scope = yes
+				entry_container = "[GetCountryDefenceContainer]"
+			}
+		}
+		
+		effects = {
+			countries_this_click = {
+				clear_array = defence_array_list
+				var:ROOT.targeted_country = {
+					if = {
+						limit = {
+							#NOT = { has_country_flag = ai_use_area_defense }
+						}
+						for_each_loop = {
+							array = allies
+							
+							add_to_array = { ROOT.defence_array_list = v }
+						}
+						for_each_loop = {
+							array = subjects
+							
+							if = {
+								limit = {
+									NOT = { is_in_array = { ROOT.defence_array_list = v } }
+								}
+								add_to_array = { ROOT.defence_array_list = v }
+							}
+						}
+					
+						if = {
+							limit = {
+								is_subject = yes
+							}
+							OVERLORD = {
+								if = {
+									limit = {
+										NOT = { is_in_array = { ROOT.defence_array_list = THIS } }
+									}
+									add_to_array = { ROOT.defence_array_list = THIS }
+								}
+							}
+						}
+					}
+				}
+				
+				set_country_flag = ui_ai_country_defence_THIS
+				
+				force_update_map_mode = {
+					limit = {
+						always = yes
+					}
+					mapmode = ai_defense_mapmode
+				}
+			}
+			countries_click = {
+				clear_array = defence_array_list
+				add_to_array = { defence_array_list = 1 }
+				add_to_array = { defence_array_list = token:europe }
+				add_to_array = { defence_array_list = token:africa }
+				add_to_array = { defence_array_list = token:middle_east }
+				add_to_array = { defence_array_list = token:asia }
+				add_to_array = { defence_array_list = token:north_america }
+				add_to_array = { defence_array_list = token:south_america }
+				add_to_array = { defence_array_list = 2 }
+				
+				var:ROOT.targeted_country = {
+					if = {
+						limit = {
+							NOT = { has_country_flag = ai_use_area_defense }
+						}
+						for_each_loop = {
+							array = allies
+							
+							add_to_array = { ROOT.defence_array_list = v }
+						}
+						for_each_loop = {
+							array = subjects
+							
+							if = {
+								limit = {
+									NOT = { is_in_array = { ROOT.defence_array_list = v } }
+								}
+								add_to_array = { ROOT.defence_array_list = v }
+							}
+						}
+					
+						if = {
+							limit = {
+								is_subject = yes
+							}
+							OVERLORD = {
+								if = {
+									limit = {
+										NOT = { is_in_array = { ROOT.defence_array_list = THIS } }
+									}
+									add_to_array = { ROOT.defence_array_list = THIS }
+								}
+							}
+						}
+					}
+				}
+				
+				clr_country_flag = ui_ai_country_defence_THIS
+				
+				force_update_map_mode = {
+					limit = {
+						always = yes
+					}
+					mapmode = ai_defense_mapmode
+				}
+			}
+			close_button_click = {
+				clr_country_flag = ui_ai_country_defence
+				clear_array = defence_array_list
+				clear_variable = targeted_country
+			}  
+			
+			country_defence_toggle_click = {
+				set_temp_variable = { ui_setting = 0 }
+				if = {
+					limit = {
+						ROOT = { has_country_flag = ui_ai_country_defence_THIS }
+					}
+					
+					var:ROOT.targeted_country = {
+						PREV = {
+							if = {
+								limit = {
+									has_country_flag = ai_defend_@PREV
+								}
+								set_temp_variable = { ui_setting = 1 }
+								
+								ai_THIS_remove_defence_for_PREV = yes
+							}
+							else = {
+								ai_THIS_add_defence_for_PREV = yes
+							}
+						}
+					}
+				}
+				else = {
+				
+					var:ROOT.targeted_country = {
+						if = {
+							limit = {
+								has_country_flag = ai_defend_@PREV
+							}
+							set_temp_variable = { ui_setting = 1 }
+							
+							PREV = {
+								PREV = {
+									ai_THIS_remove_defence_for_PREV = yes
+								}
+							}
+						}
+						else = {
+							
+							PREV = {
+								PREV = {
+									ai_THIS_add_defence_for_PREV = yes
+								}
+							}
+						}
+					}
+				}
+			}
+			lock_settings_click = {
+				if = {
+					limit = {
+						has_country_flag = ui_ai_country_defence_THIS
+					}
+					var:ROOT.targeted_country = {
+						if = {
+							limit = {
+								has_country_flag = ui_ai_lock_defense_THIS
+							}
+							clr_country_flag = ui_ai_lock_defense_THIS
+						}
+						else = {
+							set_country_flag = ui_ai_lock_defense_THIS
+						}
+					}
+				}
+				else = {
+					var:ROOT.targeted_country = {
+						if = {
+							limit = {
+								has_country_flag = ui_ai_lock_defense
+							}
+							clr_country_flag = ui_ai_lock_defense
+						}
+						else = {
+							set_country_flag = ui_ai_lock_defense
+						}
+					}
+				}
+			}
+			
+			area_force_defend_ally_borders_click = {
+				if = {
+					limit = { #CLEAR
+						var:ROOT.targeted_country = {
+						
+							has_variable = ai_force_defend@var:v
+						}
+					}
+					var:ROOT.targeted_country = {
+					
+						clear_variable = ai_force_defend@var:v
+						meta_effect = {
+							text = {
+								add_ai_strategy = {
+									type = force_defend_ally_borders
+									id = [X]
+									value = 10
+								}
+							}
+							X = "[?v.GetTokenKey]"
+						}
+						
+						if = {
+							limit = {
+								check_variable = { ai_force_defend@europe = 0 }
+								check_variable = { ai_force_defend@asia = 0 }
+								check_variable = { ai_force_defend@africa = 0 }
+								check_variable = { ai_force_defend@middle_east = 0 }
+								check_variable = { ai_force_defend@north_america = 0 }
+								check_variable = { ai_force_defend@south_america = 0 }
+							}
+							clr_country_flag = ai_use_area_defense
+							for_each_loop = {
+								array = allies
+								
+								add_to_array = { ROOT.defence_array_list = v }
+							}
+						}
+					}
+					
+				}
+				else = { #ADD
+					var:ROOT.targeted_country = {
+						set_variable = { ai_force_defend@var:v = 1 }
+						meta_effect = {
+							text = {
+								add_ai_strategy = {
+									type = force_defend_ally_borders
+									id = [X]
+									value = -10
+								}
+							}
+							X = "[?v.GetTokenKey]"
+						}
+						
+						### clear country defence script and disable it
+						
+						set_country_flag = ai_use_area_defense
+						
+						every_other_country = {	
+							PREV = {
+								ai_THIS_remove_defence_for_PREV = yes
+							}
+						}
+								
+					}
+					clear_array = defence_array_list
+					add_to_array = { defence_array_list = 1 }
+					add_to_array = { defence_array_list = token:europe }
+					add_to_array = { defence_array_list = token:africa }
+					add_to_array = { defence_array_list = token:middle_east }
+					add_to_array = { defence_array_list = token:asia }
+					add_to_array = { defence_array_list = token:north_america }
+					add_to_array = { defence_array_list = token:south_america }
+					add_to_array = { defence_array_list = 2 }
+				}
+				
+				force_update_map_mode = {
+					limit = {
+						always = yes
+					}
+					mapmode = ai_defense_mapmode
+				}
+			}
+			area_no_front_unit_request_click = {
+				if = { 
+					limit = { #CLEAR
+						var:ROOT.targeted_country = {
+						
+							check_variable = { ai_no_front@var:v > 0 }
+						}
+					}
+					var:ROOT.targeted_country = {
+					
+						clear_variable = ai_no_front@var:v
+						if = {
+							limit = {
+								check_variable = { v = token:europe }
+							}
+							add_ai_strategy = { type = front_unit_request area = europe value = 100 }
+						}
+						else_if = {
+							limit = {
+								check_variable = { v = token:north_america }
+							}
+							add_ai_strategy = { type = front_unit_request area = north_america value = 100 }
+						}
+						else_if = {
+							limit = {
+								check_variable = { v = token:south_america }
+							}
+							add_ai_strategy = { type = front_unit_request area = south_america value = 100 }
+						}
+						else_if = {
+							limit = {
+								check_variable = { v = token:middle_east }
+							}
+							add_ai_strategy = { type = front_unit_request area = middle_east value = 100 }
+						}
+						else_if = {
+							limit = {
+								check_variable = { v = token:asia }
+							}
+							add_ai_strategy = { type = front_unit_request area = asia value = 100 }
+						}
+						else_if = {
+							limit = {
+								check_variable = { v = token:africa }
+							}
+							add_ai_strategy = { type = front_unit_request area = africa value = 100 }
+						}
+					}
+				}
+				else = { #ADD
+					var:ROOT.targeted_country = {
+						set_variable = { ai_no_front@var:v = 1 }
+						if = {
+							limit = {
+								check_variable = { v = token:europe }
+							}
+							add_ai_strategy = { type = front_unit_request area = europe value = -100 }
+						}
+						else_if = {
+							limit = {
+								check_variable = { v = token:north_america }
+							}
+							add_ai_strategy = { type = front_unit_request area = north_america value = -100 }
+						}
+						else_if = {
+							limit = {
+								check_variable = { v = token:south_america }
+							}
+							add_ai_strategy = { type = front_unit_request area = south_america value = -100 }
+						}
+						else_if = {
+							limit = {
+								check_variable = { v = token:middle_east }
+							}
+							add_ai_strategy = { type = front_unit_request area = middle_east value = -100 }
+						}
+						else_if = {
+							limit = {
+								check_variable = { v = token:asia }
+							}
+							add_ai_strategy = { type = front_unit_request area = asia value = -100 }
+						}
+						else_if = {
+							limit = {
+								check_variable = { v = token:africa }
+							}
+							add_ai_strategy = { type = front_unit_request area = africa value = -100 }
+						}
+					}
+				}
+				
+				force_update_map_mode = {
+					limit = {
+						is_ai = no
+					}
+					mapmode = ai_defense_mapmode
+				}
+			}
+			
+			# tooltip  
+			binder_click = {
+				if = {
+					limit = {
+						var:ROOT.targeted_country = {
+							has_country_flag = ai_use_area_defense
+						}
+					}
+					custom_effect_tooltip = AI_DEF_COUNTRY_TOOLTIP_DISABLED
+						
+					if = {
+						limit = {
+							var:ROOT.targeted_country = {
+								check_variable = { ai_force_defend@europe = 1 }
+							}
+						}
+						custom_effect_tooltip = "Force Defend: Europe"
+					}
+					if = {
+						limit = {
+							var:ROOT.targeted_country = {
+								check_variable = { ai_force_defend@africa = 1 }
+							}
+						}
+						custom_effect_tooltip = "Force Defend: Africa"
+					}
+					if = {
+						limit = {
+							var:ROOT.targeted_country = {
+								check_variable = { ai_force_defend@middle_east = 1 }
+							}
+						}
+						custom_effect_tooltip = "Force Defend: Middle East"
+					}
+					if = {
+						limit = {
+							var:ROOT.targeted_country = {
+								check_variable = { ai_force_defend@asia = 1 }
+							}
+						}
+						custom_effect_tooltip = "Force Defend: Asia"
+					}
+					if = {
+						limit = {
+							var:ROOT.targeted_country = {
+								check_variable = { ai_force_defend@north_america = 1 }
+							}
+						}
+						custom_effect_tooltip = "Force Defend: North America"
+					}
+					if = {
+						limit = {
+							var:ROOT.targeted_country = {
+								check_variable = { ai_force_defend@south_america = 1 }
+							}
+						}
+						custom_effect_tooltip = "Force Defend: South America"
+					}
+					
+				}
+			}
+		}
+		triggers = {
+			country_defence_toggle_click_enabled = {
+				set_temp_variable = { frame_var = 0 }
+				if = {
+					limit = {
+						ROOT = { has_country_flag = ui_ai_country_defence_THIS }
+					}
+					
+					var:ROOT.targeted_country = {
+						PREV = {
+							if = {
+								limit = {
+									has_country_flag = ai_defend_@PREV
+								}
+								set_temp_variable = { frame_var = 2 }
+							}
+							else = {
+								set_temp_variable = { frame_var = 1 }
+							}
+						}
+					}
+				}
+				else = {
+				
+					var:ROOT.targeted_country = {
+						if = {
+							limit = {
+								has_country_flag = ai_defend_@PREV
+							}
+							set_temp_variable = { frame_var = 2 }
+						}
+						else = {
+							set_temp_variable = { frame_var = 1 }
+						}
+					}
+				}
+			}
+			lock_settings_click_enabled = {
+				set_temp_variable = { lock_var = 0 }
+				if = {
+					limit = {
+						has_country_flag = ui_ai_country_defence_THIS
+					}
+					var:ROOT.targeted_country = {
+						if = {
+							limit = {
+								has_country_flag = ui_ai_lock_defense_THIS
+							}
+							set_temp_variable = { lock_var = 2 }
+						}
+						else = {
+							set_temp_variable = { lock_var = 1 }
+						}
+					}
+				}
+				else = {
+					var:ROOT.targeted_country = {
+						if = {
+							limit = {
+								has_country_flag = ui_ai_lock_defense
+							}
+							set_temp_variable = { lock_var = 2 }
+						}
+						else = {
+							set_temp_variable = { lock_var = 1 }
+						}
+					}
+				}
+			}
+			
+			countries_click_enabled = {
+				if = {
+					limit = {
+						has_country_flag = ui_ai_country_defence_THIS
+					}
+					set_temp_variable = { countries_frame = 2 }
+				}
+				else = {
+					set_temp_variable = { countries_frame = 1 }
+				}
+			}
+			countries_this_click_enabled = {
+				if = {
+					limit = {
+						has_country_flag = ui_ai_country_defence_THIS
+					} 
+					set_temp_variable = { countries_this_frame = 1 }
+				}
+				else = {
+					set_temp_variable = { countries_this_frame = 2 }
+				}
+			}
+			
+			
+			area_force_defend_ally_borders_click_enabled = {
+				if = {
+					limit = {
+						var:ROOT.targeted_country = {
+						
+							has_variable = ai_force_defend@var:v
+						}
+					}
+					set_temp_variable = { area_force_frame = 2 }
+				}
+				else = {
+					set_temp_variable = { area_force_frame = 1 }
+				
+				}
+			}
+			area_no_front_unit_request_click_enabled = {
+				if = {
+					limit = {
+						var:ROOT.targeted_country = {
+						
+							check_variable = { ai_no_front@var:v > 0 }
+						}
+					}
+					set_temp_variable = { area_no_front_frame = 1 }
+				}
+				else = {
+					set_temp_variable = { area_no_front_frame = 2 }
+				
+				}
+			}
+		}
+			
+	}
+	
+	ai_templates = {
+		window_name = "ai_templates_overview"
+		context_type = player_context  
+		parent_scripted_gui = BI_AI_open_tabs
+		   
+		visible = { 
+			has_country_flag = ui_ai_template  
+		} 
+		
+		properties = {
+			role_button = {
+				frame = role_button_frame
+			}
+		}
+		
+		triggers = {
+			role_button_click_enabled = {
+				if = {
+					limit = {
+						check_variable = { current_role = v }
+					}
+					set_temp_variable = { role_button_frame = 1 }
+				}
+				else = {
+					set_temp_variable = { role_button_frame = 2 }
+				}
+			}
+			
+			active_visible = {
+				set_temp_variable = { idid = template_i }
+				add_to_temp_variable = { idid = 1 }
+				ROOT = {
+					meta_trigger = {
+						text = {
+							has_country_flag = { flag = ai_[ROLE]_template value = [X] }
+						} 
+						ROLE = "[?current_role.GetTokenLocalizedKey]"
+						X = "[?idid]"
+					}
+				}
+			}
+			
+			regiment_change_visible = {
+				set_temp_variable = { diff_to_last = 0 }
+				check_variable = { template_i > 0 }
+				
+				set_temp_variable = { last_to_compare = template_i }
+				subtract_from_temp_variable = { last_to_compare = 1 }
+				
+				set_temp_variable = { amount = ai_templates_diff^i }
+				
+				var:ROOT.ai_template_entry^last_to_compare = {
+					any_of = {
+						array = ai_templates
+						value = temp_v
+						index = temp_i
+						
+						check_variable = { temp_v = v }
+						NOT = { check_variable = { amount = ai_templates_diff^temp_i } }
+						set_temp_variable = { diff_to_last = amount }
+						subtract_from_temp_variable = { diff_to_last = ai_templates_diff^temp_i }
+					}
+				}
+			}
+			regiment_visible = {
+				check_variable = { diff_to_last = 0 }
+			}
+			regiment_new_visible = {
+				check_variable = { template_i > 0 }
+				
+				set_temp_variable = { last_to_compare = template_i }
+				subtract_from_temp_variable = { last_to_compare = 1 }
+				
+				var:ROOT.ai_template_entry^last_to_compare = {
+						
+					NOT = {  
+						is_in_array = { ai_templates = v } 
+					}
+				}
+			}
+			support_new_visible = {
+				check_variable = { template_i > 0 }
+			
+				set_temp_variable = { last_to_compare = template_i }
+				subtract_from_temp_variable = { last_to_compare = 1 }
+				
+				var:ROOT.ai_template_entry^last_to_compare = {
+						
+					NOT = {  
+						is_in_array = { ai_templates_support = v } 
+					}
+				}
+			}
+		}
+		
+		effects = {
+			role_button_click = {
+				set_variable = { current_role = v }
+				meta_effect = {
+					text = {
+						set_variable = { current_role_title = token:[X]_title }
+					}
+					X = "[?v.GetTokenKey]"
+				}
+				
+				ui_ai_open_templates = yes
+			}
+			set_active_click = {
+				set_temp_variable = { idid = template_i }
+				add_to_temp_variable = { idid = 1 }
+				ROOT = {
+					meta_effect = {
+						text = {
+							set_country_flag = { flag = ai_[ROLE]_template value = [X] }
+						} 
+						ROLE = "[?current_role.GetTokenLocalizedKey]"
+						X = "[?idid]"
+					}
+				}
+			}
+			close_button_click = {
+				clr_country_flag = ui_ai_template
+			}
+			print_ai_template_click = { #LMAOOOOOOO this is so cursed
+				log = "@garrison_prio = 0"
+				log = "@light_infantry_prio = 1"
+				log = "@infantry_prio = 2 "
+				log = "@cavalry_prio = 3"
+				log = "@assault_infantry_prio = 4"
+				log = "@heavy_infantry_prio = 5"
+				log = "@motorized_prio = 6"
+				log = "@mountaineers_prio = 7"
+				log = "@light_armor_alt_prio = 8"
+				log = "@light_armor_prio = 9"
+				log = "@medium_armor_alt_prio = 10"
+				log = "@medium_armor_prio = 11"
+				log = "@heavy_armor_alt_prio = 12"
+				log = "@heavy_armor_prio = 13"
+				log = "@marines_prio = 14"
+				log = "@militia_prio = 15"
+				log = " "
+				log = "[Root.GetTag]_[?current_role.GetTokenLocalizedKey]_role = {"
+				log = " "
+				log = "    available_for = {"
+				log = "        [Root.GetTag]"
+				log = "    }"
+				log = " "
+				log = "    role = [?current_role.GetTokenLocalizedKey]"
+				if = {
+					limit = {
+						OR = {
+							check_variable = { current_role = token:role_light_armor }
+							check_variable = { current_role = token:role_light_armor_alt }
+							check_variable = { current_role = token:role_medium_armor }
+							check_variable = { current_role = token:role_medium_armor_alt }
+							check_variable = { current_role = token:role_heavy_armor }
+						}
+					}
+					log = "    front_role_override = offence"
+				}
+				log = " "
+				for_each_loop = {
+					array = ai_template_entry
+					
+					set_temp_variable = { entry = i }
+					add_to_temp_variable = { entry = 1 }
+					log = "    [Root.GetTag]_[?current_role.GetTokenLocalizedKey]_role_[?entry] = {"
+					log = "        upgrade_prio = {"
+					log = "            base = 0"
+					log = " "
+					log = "            modifier = { add = 10 has_country_flag = { flag = ai_[?current_role.GetTokenLocalizedKey]_template value = [?entry] } }"
+					log = "        }"
+					log = " "
+					log = "        reinforce_prio = @[?current_role.GetTokenLocalizedKey]_prio"
+					log = " "
+					log = "        #can_upgrade_in_field = { }"
+					log = " "
+					log = "        target_template = {"
+					log = "            support = {"
+					var:v = {
+						for_each_loop = {
+							array = ai_templates_support
+							log = "                [?v.GetTokenKey] = 1"
+						}
+					log = "            }"
+					log = " "
+					log = "            regiments = {"
+					
+						for_each_loop = {
+							array = ai_templates
+							value = regiment
+							log = "                [?regiment.GetTokenKey] = [?ai_templates_diff^i]"
+						}
+					log = "            }"
+					log = " "
+					log = "        }"
+					log = "    }"
+					
+					}
+				}
+				log = "}"
+			}
+		}
+		
+		dynamic_lists = { 
+			ai_role_list = { 
+				array = ai_roles
+				entry_container = "ai_role_entry"
+				change_scope = yes
+			}  
+			ai_templates_list = { 
+				array = ai_template_entry
+				entry_container = "ai_template_entry"
+				index = template_i
+				change_scope = yes
+			}  
+			ai_template_list = { 
+				array = ai_templates
+				change_scope = yes
+				entry_container = "ai_template_content"
+			}  
+			ai_template_support_list = { 
+				array = ai_templates_support
+				change_scope = yes
+				entry_container = "ai_template_support_content"
+			}  
+			ai_template_either_list = { 
+				array = ai_templates_either
+				change_scope = yes
+				entry_container = "ai_template_either_content"
+			}  
+		}
+	}
+	
+	ai_map_mode = { 
+		window_name = "ai_map_mode_container"
+		context_type = player_context  
+		  
+		mapmode = ai_building_slot_score
+		  
+		properties = {
+			ai_default_slot_score = {
+				frame = frame_0
+			}
+			ai_resource_slot_score = {
+				frame = frame_1
+			}
+			ai_radar_slot_score = {
+				frame = frame_2
+			}
+			ai_new_radar_slot_score = {
+				frame = frame_4
+			}
+			ai_airbase_slot_score = {
+				frame = frame_3
+			}
+			ai_radar_states = {
+				frame = frame_5
+			}
+			ai_resource_slot_built = {
+				frame = frame_6
+			}
+			ai_airbase_slot_built = {
+				frame = frame_7
+			}
+			ai_radar_slot_built = {
+				frame = frame_8
+			}
+			ai_default_slot_built = {
+				frame = frame_9
+			}
+		}
+		   
+		effects = {
+			ai_default_slot_score_click = {
+				set_variable = { map_ai_building_slot_score = 0 }
+
+				force_update_map_mode = {
+					limit = {
+						always = yes
+					}
+					mapmode = ai_building_slot_score
+				}
+			}
+			ai_resource_slot_score_click = {
+				set_variable = { map_ai_building_slot_score = 1 }
+
+				force_update_map_mode = {
+					limit = {
+						always = yes
+					}
+					mapmode = ai_building_slot_score
+				}
+			}
+			ai_radar_slot_score_click = {
+				set_variable = { map_ai_building_slot_score = 2 }
+
+				force_update_map_mode = {
+					limit = {
+						always = yes
+					}
+					mapmode = ai_building_slot_score
+				}
+			}
+			ai_new_radar_slot_score_click = {
+				set_variable = { map_ai_building_slot_score = 4 }
+
+				force_update_map_mode = {
+					limit = {
+						always = yes
+					}
+					mapmode = ai_building_slot_score
+				}
+			}
+			ai_airbase_slot_score_click = {
+				set_variable = { map_ai_building_slot_score = 3 }
+
+				force_update_map_mode = {
+					limit = {
+						always = yes
+					}
+					mapmode = ai_building_slot_score
+				}
+			}
+			ai_radar_states_click = {
+				set_variable = { map_ai_building_slot_score = 5 }
+				
+				force_update_map_mode = {
+					limit = {
+						always = yes
+					}
+					mapmode = ai_building_slot_score
+				}
+			}
+			
+			ai_resource_slot_built_click = {
+				set_variable = { map_ai_building_slot_score = 6 }
+				
+				force_update_map_mode = {
+					limit = {
+						always = yes
+					}
+					mapmode = ai_building_slot_score
+				}
+			}
+			ai_airbase_slot_built_click = {
+				set_variable = { map_ai_building_slot_score = 7 }
+				
+				force_update_map_mode = {
+					limit = {
+						always = yes
+					}
+					mapmode = ai_building_slot_score
+				}
+			}
+			ai_radar_slot_built_click = {
+				set_variable = { map_ai_building_slot_score = 8 }
+				
+				force_update_map_mode = {
+					limit = {
+						always = yes
+					}
+					mapmode = ai_building_slot_score
+				}
+			}
+			ai_default_slot_built_click = {
+				set_variable = { map_ai_building_slot_score = 9 }
+				
+				force_update_map_mode = {
+					limit = {
+						always = yes
+					}
+					mapmode = ai_building_slot_score
+				}
+			}
+		}
+		    
+		triggers = {
+			ai_default_slot_score_click_enabled = {
+				if = {
+					limit = {
+						check_variable = { map_ai_building_slot_score = 0 }
+					}
+					set_temp_variable = { frame_0 = 2 }
+				}
+				else = {
+					set_temp_variable = { frame_0 = 1 }
+				}
+			}
+			ai_resource_slot_score_click_enabled = {
+				if = {
+					limit = {
+						check_variable = { map_ai_building_slot_score = 1 }
+					}
+					set_temp_variable = { frame_1 = 2 }
+				}
+				else = {
+					set_temp_variable = { frame_1 = 1 }
+				}
+			}
+			ai_radar_slot_score_click_enabled = {
+				if = {
+					limit = {
+						check_variable = { map_ai_building_slot_score = 2 }
+					}
+					set_temp_variable = { frame_2 = 2 }
+				}
+				else = {
+					set_temp_variable = { frame_2 = 1 }
+				}
+			}
+			ai_new_radar_slot_score_click_enabled = {
+				if = {
+					limit = {
+						check_variable = { map_ai_building_slot_score = 4 }
+					}
+					set_temp_variable = { frame_4 = 2 }
+				}
+				else = {
+					set_temp_variable = { frame_4 = 1 }
+				}
+			}
+			ai_airbase_slot_score_click_enabled = {
+				if = {
+					limit = {
+						check_variable = { map_ai_building_slot_score = 3 }
+					}
+					set_temp_variable = { frame_3 = 2 }
+				}
+				else = {
+					set_temp_variable = { frame_3 = 1 }
+				}
+			}
+			ai_radar_states_click_enabled = {
+				if = {
+					limit = {
+						check_variable = { map_ai_building_slot_score = 5 }
+					}
+					set_temp_variable = { frame_5 = 2 }
+				}
+				else = {
+					set_temp_variable = { frame_5 = 1 }
+				}
+			}
+			
+			ai_resource_slot_built_click_enabled = {
+				if = {
+					limit = {
+						check_variable = { map_ai_building_slot_score = 6 }
+					}
+					set_temp_variable = { frame_6 = 2 }
+				}
+				else = {
+					set_temp_variable = { frame_6 = 1 }
+				}
+			}
+			ai_airbase_slot_built_click_enabled = {
+				if = {
+					limit = {
+						check_variable = { map_ai_building_slot_score = 7 }
+					}
+					set_temp_variable = { frame_7 = 2 }
+				}
+				else = {
+					set_temp_variable = { frame_7 = 1 }
+				}
+			}
+			ai_radar_slot_built_click_enabled = {
+				if = {
+					limit = {
+						check_variable = { map_ai_building_slot_score = 8 }
+					}
+					set_temp_variable = { frame_8 = 2 }
+				}
+				else = {
+					set_temp_variable = { frame_8 = 1 }
+				}
+			}
+			ai_default_slot_built_click_enabled = {
+				if = {
+					limit = {
+						check_variable = { map_ai_building_slot_score = 9 }
+					}
+					set_temp_variable = { frame_9 = 2 }
+				}
+				else = {
+					set_temp_variable = { frame_9 = 1 }
+				}
+			}
+		}
+			
+	}
+	
+	
+	ai_defense_map_mode = { 
+		window_name = "ai_defense_map_mode_container"
+		context_type = player_context  
+		  
+		#mapmode = ai_defense_mapmode
+		
+		visible = {
+			always = no
+		}
+		    
+		properties = {
+			ai_country = {
+				frame = frame_0
+			}
+			ai_area = {
+				frame = frame_1
+			}
+			
+			ai_area_regions = {
+				frame = frame_2
+			}
+			ai_area_areas = {
+				frame = frame_3
+			}
+			ai_area_states = {
+				frame = frame_4
+			}
+		}
+		effects = {
+			ai_country_click = {
+				set_country_flag = ui_mapmode_ai_countries
+				clear_array = ROOT.region_centre_states
+
+				every_state = {
+					limit = {
+						is_capital = yes
+						CONTROLLER = {
+							OR = {
+								is_subject_of = var:ROOT.targeted_country
+								is_in_faction_with = var:ROOT.targeted_country
+							}
+							NOT = { tag = var:ROOT.targeted_country }
+						}
+					}
+					
+					add_to_array = { ROOT.region_centre_states = THIS }
+				}
+				
+				clr_country_flag = ui_mapmode_ai_regions
+				clr_country_flag = ui_mapmode_ai_areas
+				clr_country_flag = ui_mapmode_ai_states
+				
+				force_update_map_mode = {
+					limit = {
+						always = yes
+					}
+					mapmode = ai_defense_mapmode
+				}
+			}
+			ai_area_click = {
+				clr_country_flag = ui_mapmode_ai_countries
+
+				force_update_map_mode = {
+					limit = {
+						always = yes
+					}
+					mapmode = ai_defense_mapmode
+				}
+			}
+			
+			ai_area_areas_click = {
+				clr_country_flag = ui_mapmode_ai_countries
+				
+				set_country_flag = ui_mapmode_ai_areas
+				
+				clr_country_flag = ui_mapmode_ai_regions
+				clr_country_flag = ui_mapmode_ai_states
+				
+				# Save States for Continent Selection
+				clear_array = region_centre_states
+				
+				force_update_map_mode = {
+					limit = {
+						always = yes
+					}
+					mapmode = ai_defense_mapmode
+				}
+			}
+			ai_area_regions_click = {
+				clr_country_flag = ui_mapmode_ai_countries
+				
+				set_country_flag = ui_mapmode_ai_regions
+				
+				clr_country_flag = ui_mapmode_ai_areas
+				clr_country_flag = ui_mapmode_ai_states
+				clear_array = region_centre_states
+				every_state = {
+					limit = {
+						is_capital = yes
+						CONTROLLER = {
+							OR = {
+								is_subject_of = var:ROOT.targeted_country
+								is_in_faction_with = var:ROOT.targeted_country
+							}
+						}
+					}
+					
+					add_to_array = { ROOT.region_centre_states = THIS }
+				}
+
+				force_update_map_mode = {
+					limit = {
+						always = yes
+					}
+					mapmode = ai_defense_mapmode
+				}
+			}
+			ai_area_states_click = {
+				clr_country_flag = ui_mapmode_ai_countries
+				
+				set_country_flag = ui_mapmode_ai_states
+				
+				clr_country_flag = ui_mapmode_ai_areas
+				clr_country_flag = ui_mapmode_ai_regions
+
+				force_update_map_mode = {
+					limit = {
+						always = yes
+					}
+					mapmode = ai_defense_mapmode
+				}
+			}
+		}
+		triggers = {
+			ai_country_click_enabled = {
+				if = {
+					limit = {
+						has_country_flag = ui_mapmode_ai_countries
+					}
+					set_temp_variable = { frame_0 = 2 }
+				}
+				else = {
+					set_temp_variable = { frame_0 = 1 }
+				}
+			}
+			ai_area_click_enabled = {
+				if = {
+					limit = {
+						has_country_flag = ui_mapmode_ai_countries
+					}
+					set_temp_variable = { frame_1 = 1 }
+				}
+				else = {
+					set_temp_variable = { frame_1 = 2 }
+				}
+			}
+			
+			ai_area_regions_click_enabled = {
+				if = {
+					limit = {
+						has_country_flag = ui_mapmode_ai_regions
+					}
+					set_temp_variable = { frame_2 = 2 }
+				}
+				else = {
+					set_temp_variable = { frame_2 = 1 }
+				}
+			}
+			ai_area_areas_click_enabled = {
+				if = {
+					limit = {
+						has_country_flag = ui_mapmode_ai_areas
+					}
+					set_temp_variable = { frame_3 = 2 }
+				}
+				else = {
+					set_temp_variable = { frame_3 = 1 }
+				}
+			}
+			ai_area_states_click_enabled = {
+				if = {
+					limit = {
+						has_country_flag = ui_mapmode_ai_states
+					}
+					set_temp_variable = { frame_4 = 2 }
+				}
+				else = {
+					set_temp_variable = { frame_4 = 1 }
+				}
+			}
+		}
+	}
+	
+	ai_defense_map_icons_state = { 
+		window_name = "ai_defense_map_mode_icons_state_container"
+		context_type = state_mapicon  
+		  
+		visible = {
+			always = no
+		}
+		#mapmode = ai_defense_mapmode
+		
+		mapicon_targets = {
+			target_array = global.states
+			target_trigger = {
+				if = {
+					limit = {
+						ROOT = { has_country_flag = ui_ai_country_defence_THIS }
+					}
+					FROM = {
+						is_capital = yes
+						CONTROLLER = {
+							NOT = { tag = var:ROOT.targeted_country }
+							OR = {
+								is_subject_of = var:ROOT.targeted_country
+								is_in_faction_with = var:ROOT.targeted_country
+							}
+						}
+					}
+				}
+				else = {
+					FROM = {
+						OR = {
+							AND = {
+								is_capital = yes
+								CONTROLLER = {
+									NOT = { tag = var:ROOT.targeted_country }
+									OR = {
+										is_subject_of = var:ROOT.targeted_country
+										is_in_faction_with = var:ROOT.targeted_country
+									}
+								}
+							}
+							state = 65
+							state = 804
+							state = 660
+							state = 417
+							state = 383
+							state = 487
+						}
+					}
+				}
+			}
+		}
+		
+		properties = {
+			flag = {
+				image = "[?Controller.GetFlag]"
+			}
+		}
+		
+		effects = {
+			defend_country_click = {
+				if = {
+					limit = {
+						ROOT = { has_country_flag = ui_ai_country_defence_THIS }
+					}
+					CONTROLLER = {
+						var:ROOT.targeted_country = { 
+							PREV = { 
+								ai_THIS_add_defence_for_PREV = yes
+							}
+						}
+					}
+				}
+				else = {
+					CONTROLLER = {
+						var:ROOT.targeted_country = {
+							ai_THIS_add_defence_for_PREV = yes
+						}
+					}
+				}
+				
+				force_update_map_mode = { limit = { always = yes } mapmode = ai_defense_mapmode }
+			}
+			dont_defend_country_click = {
+				if = {
+					limit = {
+						ROOT = { has_country_flag = ui_ai_country_defence_THIS }
+					}
+					CONTROLLER = {
+						var:ROOT.targeted_country = { 
+							PREV = { 
+								ai_THIS_remove_defence_for_PREV = yes
+							}
+						}
+					}
+				}
+				else = {
+					CONTROLLER = {
+						var:ROOT.targeted_country = {
+							ai_THIS_remove_defence_for_PREV = yes
+						}
+					}
+				}
+				
+				force_update_map_mode = { limit = { always = yes } mapmode = ai_defense_mapmode }
+			}
+			
+			defend_state_click = {
+				
+				if = { #AREAS / CONTINENTS
+					limit = {
+						ROOT = { has_country_flag = ui_mapmode_ai_areas }
+					}
+						
+					set_temp_variable = { continent = global.region_continent@var:region }
+					var:ROOT.targeted_country = {
+						set_variable = { ai_no_front@var:continent = 0 }
+						if = {
+							limit = {
+								check_variable = { continent = token:europe }
+							}
+							add_ai_strategy = { type = front_unit_request area = europe value = 100 }
+						}
+						else_if = {
+							limit = {
+								check_variable = { continent = token:north_america }
+							}
+							add_ai_strategy = { type = front_unit_request area = north_america value = 100 }
+						}
+						else_if = {
+							limit = {
+								check_variable = { continent = token:south_america }
+							}
+							add_ai_strategy = { type = front_unit_request area = south_america value = 100 }
+						}
+						else_if = {
+							limit = {
+								check_variable = { continent = token:middle_east }
+							}
+							add_ai_strategy = { type = front_unit_request area = middle_east value = 100 }
+						}
+						else_if = {
+							limit = {
+								check_variable = { continent = token:asia }
+							}
+							add_ai_strategy = { type = front_unit_request area = asia value = 100 }
+						}
+						else_if = {
+							limit = {
+								check_variable = { continent = token:africa }
+							}
+							add_ai_strategy = { type = front_unit_request area = africa value = 100 }
+						}
+					}
+					
+				}
+				
+				force_update_map_mode = {
+					limit = {
+						always = yes
+					}
+					mapmode = ai_defense_mapmode
+				}
+			}
+			dont_defend_state_click = {
+				if = { #AREAS / CONTINENTS
+					limit = {
+						ROOT = { has_country_flag = ui_mapmode_ai_areas }
+					}
+							
+					set_temp_variable = { continent = global.region_continent@var:region }
+				log = "test hello [?continent.GetTokenKey]"
+					var:ROOT.targeted_country = {
+						set_variable = { ai_no_front@var:continent = 1 }
+						if = {
+							limit = {
+								check_variable = { continent = token:europe }
+							}
+							add_ai_strategy = { type = front_unit_request area = europe value = -100 }
+						}
+						else_if = {
+							limit = {
+								check_variable = { continent = token:north_america }
+							}
+							add_ai_strategy = { type = front_unit_request area = north_america value = -100 }
+						}
+						else_if = {
+							limit = {
+								check_variable = { continent = token:south_america }
+							}
+							add_ai_strategy = { type = front_unit_request area = south_america value = -100 }
+						}
+						else_if = {
+							limit = {
+								check_variable = { continent = token:middle_east }
+							}
+							add_ai_strategy = { type = front_unit_request area = middle_east value = -100 }
+						}
+						else_if = {
+							limit = {
+								check_variable = { continent = token:asia }
+							}
+							add_ai_strategy = { type = front_unit_request area = asia value = -100 }
+						}
+						else_if = {
+							limit = {
+								check_variable = { continent = token:africa }
+							}
+							add_ai_strategy = { type = front_unit_request area = africa value = -100 }
+						}
+					}
+				}
+				
+				force_update_map_mode = {
+					limit = {
+						always = yes
+					}
+					mapmode = ai_defense_mapmode
+				}
+			}
+		}
+		triggers = {
+			defend_country_visible = {
+				NOT = {
+					state = 65
+					state = 804
+					state = 660
+					state = 417
+					state = 383
+					state = 487
+				}
+				
+				if = {
+					limit = {
+						ROOT = { has_country_flag = ui_ai_country_defence_THIS }
+					}
+					
+					NOT = {
+						CONTROLLER = {
+							var:ROOT.targeted_country = { 
+								PREV = { has_country_flag = ai_defend_@PREV }
+							}
+						}
+					}
+				}
+				else = {
+					ROOT = { has_country_flag = ui_mapmode_ai_countries }
+					CONTROLLER = {
+						var:ROOT.targeted_country = {
+							#NOT = { has_country_flag = ai_use_area_defense }
+							NOT = { has_country_flag = ai_defend_@PREV }
+						}
+					}
+				}
+			}
+			dont_defend_country_visible = {
+				NOT = {
+					state = 65
+					state = 804
+					state = 660
+					state = 417
+					state = 383
+					state = 487
+				}
+				if = {
+					limit = {
+						ROOT = { has_country_flag = ui_ai_country_defence_THIS }
+					}
+					CONTROLLER = {
+						var:ROOT.targeted_country = { 
+							PREV = { has_country_flag = ai_defend_@PREV }
+						}
+					}
+				}
+				else = {
+					ROOT = { has_country_flag = ui_mapmode_ai_countries }
+					CONTROLLER = {
+						var:ROOT.targeted_country = {
+							NOT = { has_country_flag = ai_use_area_defense }
+							has_country_flag = ai_defend_@PREV
+						}
+					}
+				}
+			}
+			flag_visible = {
+				NOT = {
+					state = 65
+					state = 804
+					state = 660
+					state = 417
+					state = 383
+					state = 487
+				}
+				ROOT = { has_country_flag = ui_mapmode_ai_countries }
+			}
+			
+			defend_country_click_enabled = {
+				var:ROOT.targeted_country = {
+					NOT = { has_country_flag = ai_use_area_defense }
+				}
+			}
+			flag_click_enabled = {
+				var:ROOT.targeted_country = {
+					NOT = { has_country_flag = ai_use_area_defense }
+				}
+			}
+			
+			defend_state_visible = {
+				OR = {
+					state = 65
+					state = 804
+					state = 660
+					state = 417
+					state = 383
+					state = 487
+				}
+				ROOT = { has_country_flag = ui_mapmode_ai_areas }
+				if = { #AREAS / CONTINENTS
+					limit = {
+						ROOT = { has_country_flag = ui_mapmode_ai_areas }
+					}
+							
+					set_temp_variable = { continent = global.region_continent@var:region }
+					var:ROOT.targeted_country = {
+						check_variable = { ai_no_front@var:continent = 1 }
+					}
+				}
+			}
+			dont_defend_state_visible = {
+				OR = {
+					state = 65
+					state = 804
+					state = 660
+					state = 417
+					state = 383
+					state = 487
+				}
+				ROOT = { has_country_flag = ui_mapmode_ai_areas }
+				if = { #AREAS / CONTINENTS
+					limit = {
+						ROOT = { has_country_flag = ui_mapmode_ai_areas }
+					}
+							
+					set_temp_variable = { continent = global.region_continent@var:region }
+					var:ROOT.targeted_country = {
+						check_variable = { ai_no_front@var:continent = 0 }
+					}
+				}
+			}
+			
+			force_defend_state_visible = {
+				ROOT = { has_country_flag = ui_mapmode_ai_areas }	
+				set_temp_variable = { continent = global.region_continent@var:region }
+				var:ROOT.targeted_country = {
+					check_variable = { ai_force_defend@var:continent = 1 }
+				}
+			}
+			force_dont_defend_state_visible = {
+				ROOT = { has_country_flag = ui_mapmode_ai_areas }	
+				set_temp_variable = { continent = global.region_continent@var:region }
+				var:ROOT.targeted_country = {
+					check_variable = { ai_force_defend@var:continent = 0 }
+				}
+			}
+		}
+	}
+}

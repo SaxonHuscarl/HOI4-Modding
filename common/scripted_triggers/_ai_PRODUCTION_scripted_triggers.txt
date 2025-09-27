@@ -1,0 +1,644 @@
+
+
+ai_start_air_production = {
+	
+	if = {
+		limit = {
+			tag = CHI
+		}
+		NOT = { 
+			has_idea = incompetent_industry_real
+			has_idea = incompetent_industry_real_2
+			has_idea = incompetent_industry_real_3
+			has_idea = incompetent_industry_real_4
+		}
+		num_of_military_factories > 140
+		num_of_civilian_factories > 100
+	}
+	else_if = {
+		limit = {
+			tag = RAJ
+		}
+		check_variable = { mtth:ai_num_of_military_factories > 100 }
+	}
+	else_if = {
+		limit = {
+			OR = { tag = HOL tag = BEL }
+		}
+		date > 1939.6.1
+		OR = {
+			check_variable = { stock_ratio > 0.1 }
+			date > 1939.12.1
+		}
+	}
+	else = {
+		check_variable = { num_of_military_factories > 30 }
+		OR = {
+			check_variable = { mtth:ai_num_of_military_factories > 50 }
+			check_variable = { num_air_assembly > 0 }
+			check_variable = { stock_ratio > 0.175 }
+		}
+	}
+	
+	check_variable = { ai_division_limit_ratio > 0.5 }
+	
+	check_variable = { field_strength > 0.9 }
+}
+
+ai_air_ignore_ratio = {
+	major_country = yes
+	NOT = { 
+		has_country_flag = { flag = ai_production/fighter_equipment value = 1 days > 150 } 
+	}
+} 
+
+ai_production/fighter_equipment = { #GER ENG
+
+	has_country_flag = ai_tech/fighter_equipment
+	
+	### CONDITIONS
+	OR = {
+		num_of_military_factories > 50 
+		has_country_flag = ai_skip/fighter_equipment
+		major_country = no
+	}
+	
+	### MAX VALUE 
+	set_temp_variable = { current = num_equipment@fighter_equipment }
+	add_to_temp_variable = { current = num_deployed_planes_with_type@fighter_equipment }
+	
+	check_variable = { current < 6000 }
+	
+}
+
+ai_production/fighter_alt_equipment = { #SOV JAP ITA
+
+	has_country_flag = ai_tech/fighter_alt_equipment
+	
+	### CONDITIONS
+	num_of_military_factories > 60 
+		
+	### MAX VALUE 
+	set_temp_variable = { current = num_equipment@fighter_alt_equipment }
+	add_to_temp_variable = { current = num_deployed_planes_with_type@fighter_alt_equipment }
+	
+	check_variable = { current < 6000 }
+	
+}
+
+ai_production/interceptor_equipment = { #GER
+
+	has_country_flag = ai_tech/interceptor_equipment
+	
+	### CONDITIONS
+	num_of_military_factories > 60 
+	
+	check_variable = { ai_fighter_buffer_ratio > trigger }
+	
+	### MAX VALUE 
+	set_temp_variable = { current = num_equipment@interceptor_equipment }
+	add_to_temp_variable = { current = num_deployed_planes_with_type@interceptor_equipment }
+	
+	check_variable = { current < 4000 }
+	
+}
+
+ai_production/mr_fighter_equipment = { #GER ENG
+	NOT = { has_country_flag = ai_fighter_production_focus }
+	
+	has_country_flag = ai_tech/mr_fighter_equipment
+	
+	### CONDITIONS
+	OR = {
+		has_country_flag = ai_skip/mr_fighter_equipment
+		num_of_military_factories > 60 
+	}
+
+	check_variable = { ai_fighter_buffer_ratio > trigger }
+	
+	### MAX VALUE 
+	set_temp_variable = { current = num_equipment@mr_fighter_equipment }
+	add_to_temp_variable = { current = num_deployed_planes_with_type@mr_fighter_equipment }
+	
+	check_variable = { current < 4000 }
+	
+}
+
+ai_production/heavy_fighter_equipment = { #GER
+
+	has_country_flag = ai_tech/heavy_fighter_equipment
+	
+	### CONDITIONS
+	num_of_military_factories > 70
+	
+	OR = {
+		ai_air_ignore_ratio = yes
+		check_variable = { ai_fighter_buffer_ratio > trigger }
+	}
+	
+	### MAX VALUE 
+	set_temp_variable = { current = num_equipment@heavy_fighter_equipment }
+	add_to_temp_variable = { current = num_deployed_planes_with_type@heavy_fighter_equipment }
+	
+	check_variable = { current < 3500 }
+	
+}
+
+ai_production/CAS_equipment = { #GER ENG
+	NOT = { has_country_flag = ai_fighter_production_focus }
+
+	has_country_flag = ai_tech/CAS_equipment
+	
+	#NOT = { tag = ENG } ?
+	
+	### CONDITIONS
+	OR = {
+		num_of_military_factories > 50 
+		has_country_flag = ai_skip/CAS_equipment 
+	}
+	
+	OR = {
+		ai_air_ignore_ratio = yes
+		check_variable = { ai_fighter_buffer_ratio > trigger }
+	}
+	
+	### MAX VALUE 
+	set_temp_variable = { current = num_equipment@CAS_equipment }
+	add_to_temp_variable = { current = num_deployed_planes_with_type@CAS_equipment }
+	
+	if = { limit = { tag = SOV } check_variable = { current < 5000 } }
+	else = { check_variable = { current < 3000 } }
+	
+}
+
+ai_production/twin_cas_equipment = {
+	NOT = { has_country_flag = ai_fighter_production_focus }
+
+	has_country_flag = ai_tech/twin_cas_equipment
+	
+	### CONDITIONS
+	num_of_military_factories > 60
+	
+	check_variable = { ai_fighter_buffer_ratio > trigger }
+	
+	### MAX VALUE 
+	set_temp_variable = { current = num_equipment@twin_cas_equipment }
+	add_to_temp_variable = { current = num_deployed_planes_with_type@twin_cas_equipment }
+	
+	check_variable = { current < 3000 }
+	
+}
+
+ai_production/tac_bomber_equipment = { #GER ENG
+	NOT = { has_country_flag = ai_fighter_production_focus }
+
+	has_country_flag = ai_tech/tac_bomber_equipment
+	
+	### CONDITIONS
+	OR = {
+		num_of_military_factories > 60 
+		has_country_flag = ai_skip/tac_bomber_equipment
+	}
+	OR = {
+		ai_air_ignore_ratio = yes
+		check_variable = { ai_fighter_buffer_ratio > trigger }
+	}
+	
+	### MAX VALUE 
+	set_temp_variable = { current = num_equipment@tac_bomber_equipment }
+	add_to_temp_variable = { current = num_deployed_planes_with_type@tac_bomber_equipment }
+	
+	check_variable = { current < 3000 }
+	
+	### RUBBER COST
+	if = {
+		limit = {
+			OR = {
+				tag = GER 
+				tag = ENG
+			}
+		}
+		add_to_temp_array = { ai_rubber = token:tac_bomber_equipment }
+		
+		if = { #trigger for the first time starting production
+			limit = {
+				NOT = { has_country_flag = ai_production/tac_bomber_equipment }
+			}
+			check_variable = { resource@rubber > min_rubber } #only produce a new equipment if we got rubber
+		}
+	}
+	
+	
+}
+
+ai_production/nav_bomber_equipment = { #GER ENG
+	NOT = { has_country_flag = ai_fighter_production_focus }
+
+	has_country_flag = ai_tech/nav_bomber_equipment
+	
+	### CONDITIONS
+	num_of_military_factories > 60 
+	
+	OR = {
+		ai_air_ignore_ratio = yes
+		check_variable = { ai_fighter_buffer_ratio > trigger }
+	}
+	
+	if = {
+		limit = {
+			tag = ENG 
+		}
+		OR = {
+			has_deployed_air_force_size = {
+				size > 200
+				type = tactical_bomber
+			}
+			has_deployed_air_force_size = {
+				size > 150
+				type = strategic_bomber
+			}
+		}
+	}
+	### MAX VALUE 
+	set_temp_variable = { current = num_equipment@nav_bomber_equipment }
+	add_to_temp_variable = { current = num_deployed_planes_with_type@nav_bomber_equipment }
+	
+	check_variable = { current < 2500 }
+	
+	### RUBBER COST
+	if = {
+		limit = {
+			OR = {
+				tag = GER 
+				tag = ENG
+				tag = ITA
+			}
+		}
+		add_to_temp_array = { ai_rubber = token:nav_bomber_equipment }
+		
+		if = { #trigger for the first time starting production
+			limit = {
+				NOT = { has_country_flag = ai_production/nav_bomber_equipment }
+			}
+			check_variable = { resource@rubber > min_rubber } #only produce a new equipment if we got rubber
+		}
+	}
+}
+
+ai_production/flying_boat_equipment = { #GER ENG
+	NOT = { has_country_flag = ai_fighter_production_focus }
+
+	has_country_flag = ai_tech/flying_boat_equipment
+	
+	### CONDITIONS
+	num_of_military_factories > 60 
+	
+	OR = {
+		ai_air_ignore_ratio = yes
+		check_variable = { ai_fighter_buffer_ratio > trigger }
+	}
+	
+	### MAX VALUE 
+	set_temp_variable = { current = num_equipment@flying_boat_equipment }
+	add_to_temp_variable = { current = num_deployed_planes_with_type@flying_boat_equipment }
+	
+	check_variable = { current < 2500 }
+	
+	### RUBBER COST
+	if = {
+		limit = {
+			always = no
+			
+		}
+		add_to_temp_array = { ai_rubber = token:flying_boat_equipment }
+		
+		if = { #trigger for the first time starting production
+			limit = {
+				NOT = { has_country_flag = ai_production/flying_boat_equipment }
+			}
+			check_variable = { resource@rubber > min_rubber } #only produce a new equipment if we got rubber
+		}
+	}
+}
+
+ai_production/light_bomber_equipment = { #GER
+	NOT = { has_country_flag = ai_fighter_production_focus }
+
+	has_country_flag = ai_tech/light_bomber_equipment
+	
+	### CONDITIONS
+	num_of_military_factories > 60 
+	
+	OR = {
+		ai_air_ignore_ratio = yes
+		check_variable = { ai_fighter_buffer_ratio > trigger }
+	}
+	
+	### MAX VALUE 
+	set_temp_variable = { current = num_equipment@light_bomber_equipment }
+	add_to_temp_variable = { current = num_deployed_planes_with_type@light_bomber_equipment }
+	
+	check_variable = { current < 3000 }
+	
+	### RUBBER COST
+	if = {
+		limit = {
+			tag = ITA 
+		}
+		add_to_temp_array = { ai_rubber = token:light_bomber_equipment }
+		
+		if = { #trigger for the first time starting production
+			limit = {
+				NOT = { has_country_flag = ai_production/light_bomber_equipment }
+			}
+			check_variable = { resource@rubber > min_rubber } #only produce a new equipment if we got rubber
+		}
+	}
+}
+
+ai_production/fast_bomber_equipment = { #GER
+	NOT = { has_country_flag = ai_fighter_production_focus }
+
+	has_country_flag = ai_tech/fast_bomber_equipment
+	
+	### CONDITIONS
+	num_of_military_factories > 60 
+	
+	OR = {
+		ai_air_ignore_ratio = yes
+		check_variable = { ai_fighter_buffer_ratio > trigger }
+	}
+	
+	### MAX VALUE 
+	set_temp_variable = { current = num_equipment@fast_bomber_equipment }
+	add_to_temp_variable = { current = num_deployed_planes_with_type@fast_bomber_equipment }
+	
+	check_variable = { current < 3000 }
+	
+	### RUBBER COST
+	if = {
+		limit = {
+			tag = GER 
+		}
+		add_to_temp_array = { ai_rubber = token:fast_bomber_equipment }
+		
+		if = { #trigger for the first time starting production
+			limit = {
+				NOT = { has_country_flag = ai_production/fast_bomber_equipment }
+			}
+			check_variable = { resource@rubber > min_rubber } #only produce a new equipment if we got rubber
+		}
+	}
+}
+
+ai_production/quad_engine_bomber_equipment = { #GER ENG
+	NOT = { has_country_flag = ai_fighter_production_focus }
+
+	has_country_flag = ai_tech/quad_engine_bomber_equipment
+	
+	### CONDITIONS
+	num_of_military_factories > 70 
+	
+	check_variable = { ai_fighter_buffer_ratio > trigger }
+	
+	### MAX VALUE 
+	set_temp_variable = { current = num_equipment@quad_engine_bomber_equipment }
+	add_to_temp_variable = { current = num_deployed_planes_with_type@quad_engine_bomber_equipment }
+	
+	check_variable = { current < 3000 }
+	
+	### RUBBER COST
+	if = {
+		limit = {
+			OR = {
+				tag = GER 
+				tag = ENG
+			}
+		}
+		add_to_temp_array = { ai_rubber = token:quad_engine_bomber_equipment }
+		
+		if = { #trigger for the first time starting production
+			limit = {
+				NOT = { has_country_flag = ai_production/quad_engine_bomber_equipment }
+			}
+			check_variable = { resource@rubber > min_rubber } #only produce a new equipment if we got rubber
+		}
+	}
+	
+}
+
+ai_production/cv_fighter_equipment = { #ENG
+	NOT = { has_country_flag = ai_fighter_production_focus }
+
+	has_country_flag = ai_tech/cv_fighter_equipment
+	
+	### CONDITIONS
+	num_of_military_factories > 60 
+	has_navy_size = { type = carrier size > 0 }
+	
+	### MAX VALUE 
+	
+	if = {
+		limit = {
+			check_variable = { num_deployed_planes_with_type@cv_fighter_equipment > 0 }
+			set_temp_variable = { ratio = num_equipment@cv_fighter_equipment }
+			divide_temp_variable = { ratio = num_deployed_planes_with_type@cv_fighter_equipment }
+		}
+		check_variable = { ratio < 0.25 }
+	}
+	
+}
+
+ai_production/cv_nav_bomber_equipment = { #ENG
+	NOT = { has_country_flag = ai_fighter_production_focus }
+
+	has_country_flag = ai_tech/cv_nav_bomber_equipment
+	
+	### CONDITIONS
+	num_of_military_factories > 60 
+	has_navy_size = { type = carrier size > 0 }
+	
+	### MAX VALUE 
+	
+	if = {
+		limit = {
+			check_variable = { num_deployed_planes_with_type@cv_nav_bomber_equipment > 0 }
+			set_temp_variable = { ratio = num_equipment@cv_nav_bomber_equipment }
+			divide_temp_variable = { ratio = num_deployed_planes_with_type@cv_nav_bomber_equipment }
+		}
+		check_variable = { ratio < 0.25 }
+	}
+	
+	### RUBBER COST
+	if = {
+		limit = {
+			OR = {
+				tag = ENG
+			}
+		}
+		add_to_temp_array = { ai_rubber = token:cv_nav_bomber_equipment }
+		
+		if = { #trigger for the first time starting production
+			limit = {
+				NOT = { has_country_flag = ai_production/cv_nav_bomber_equipment }
+			}
+			check_variable = { resource@rubber > min_rubber } #only produce a new equipment if we got rubber
+		}
+	}
+}
+
+ai_production/cv_CAS_equipment = {
+	NOT = { has_country_flag = ai_fighter_production_focus }
+
+	has_country_flag = ai_tech/cv_CAS_equipment
+	
+	### CONDITIONS
+	num_of_military_factories > 60 
+	has_navy_size = { type = carrier size > 0 }
+	
+	### MAX VALUE 
+	
+	if = {
+		limit = {
+			check_variable = { num_deployed_planes_with_type@cv_CAS_equipment > 0 }
+			set_temp_variable = { ratio = num_equipment@cv_CAS_equipment }
+			divide_temp_variable = { ratio = num_deployed_planes_with_type@cv_CAS_equipment }
+		}
+		check_variable = { ratio < 0.25 }
+	}
+	
+}
+
+##### JET AIRCRAFT #TODO_AI: we forgot jet cas LOL
+
+ai_production/jet_fighter_equipment = { #GER
+	NOT = { has_country_flag = ai_fighter_production_focus }
+
+	has_country_flag = ai_tech/jet_fighter_equipment
+	
+	### CONDITIONS
+	num_of_military_factories > 60 
+	
+	### MAX VALUE 
+	set_temp_variable = { current = num_equipment@jet_fighter_equipment }
+	add_to_temp_variable = { current = num_deployed_planes_with_type@jet_fighter_equipment }
+	
+	check_variable = { current < 4000 }
+	
+	### TUNGSTEN COST
+	if = {
+		limit = {
+			OR = {
+				tag = GER
+				tag = ITA 
+				tag = JAP 
+				tag = ENG 
+				tag = SOV 
+			}
+		}
+		add_to_temp_array = { ai_tungsten = token:jet_fighter_equipment }
+		
+		if = { #trigger for the first time starting production
+			limit = {
+				NOT = { has_country_flag = ai_production/jet_fighter_equipment }
+			}
+			check_variable = { resource@tungsten > min_tungsten } #only produce a new equipment if we got rubber
+		}
+	}
+}
+
+ai_production/jet_mr_fighter_equipment = { #GER
+	NOT = { has_country_flag = ai_fighter_production_focus }
+
+	has_country_flag = ai_tech/jet_mr_fighter_equipment
+	
+	### CONDITIONS
+	num_of_military_factories > 60 
+	
+	### MAX VALUE 
+	set_temp_variable = { current = num_equipment@jet_mr_fighter_equipment }
+	add_to_temp_variable = { current = num_deployed_planes_with_type@jet_mr_fighter_equipment }
+	
+	check_variable = { current < 4000 }
+	
+	### TUNGSTEN COST
+	if = {
+		limit = {
+			OR = {
+				tag = GER
+				tag = JAP 
+				tag = USA
+				tag = ENG 
+			}
+		}
+		add_to_temp_array = { ai_tungsten = token:jet_mr_fighter_equipment }
+		
+		if = { #trigger for the first time starting production
+			limit = {
+				NOT = { has_country_flag = ai_production/jet_mr_fighter_equipment }
+			}
+			check_variable = { resource@tungsten > min_tungsten } #only produce a new equipment if we got rubber
+		}
+	}
+}
+
+ai_production/jet_tac_bomber_equipment = {
+	NOT = { has_country_flag = ai_fighter_production_focus }
+
+	has_country_flag = ai_tech/jet_tac_bomber_equipment
+	
+	### CONDITIONS
+	num_of_military_factories > 60 
+	
+	### MAX VALUE 
+	set_temp_variable = { current = num_equipment@jet_tac_bomber_equipment }
+	add_to_temp_variable = { current = num_deployed_planes_with_type@jet_tac_bomber_equipment }
+	
+	check_variable = { current < 4000 }
+	
+	### TUNGSTEN COST
+	if = {
+		limit = {
+			tag = GER
+		}
+		add_to_temp_array = { ai_tungsten = token:jet_tac_bomber_equipment }
+		
+		if = { #trigger for the first time starting production
+			limit = {
+				NOT = { has_country_flag = ai_production/jet_tac_bomber_equipment }
+			}
+			check_variable = { resource@tungsten > min_tungsten } #only produce a new equipment if we got rubber
+		}
+	}
+}
+
+ai_production/jet_strat_bomber_equipment = {
+	NOT = { has_country_flag = ai_fighter_production_focus }
+
+	has_country_flag = ai_tech/jet_strat_bomber_equipment
+	
+	### CONDITIONS
+	num_of_military_factories > 60 
+	
+	### MAX VALUE 
+	set_temp_variable = { current = num_equipment@jet_strat_bomber_equipment }
+	add_to_temp_variable = { current = num_deployed_planes_with_type@jet_strat_bomber_equipment }
+	
+	check_variable = { current < 4000 }
+	
+	### TUNGSTEN COST
+	if = {
+		limit = {
+			
+		}
+		add_to_temp_array = { ai_tungsten = token:jet_strat_bomber_equipment }
+		
+		if = { #trigger for the first time starting production
+			limit = {
+				NOT = { has_country_flag = ai_production/jet_strat_bomber_equipment }
+			}
+			check_variable = { resource@tungsten > min_tungsten } #only produce a new equipment if we got rubber
+		}
+	}
+}
+	

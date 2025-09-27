@@ -1,0 +1,641 @@
+
+# naval_avoid_region					# prevents convoys using a region, as well as normal fleet assignment with high values
+# naval_convoy_raid_region				# increases convoy raid score
+# naval_invasion_focus 					# i assume this factors MAX_CAPITAL_FORCES_FOR_INVASION_SUPPORT
+# naval_invasion_supremacy_weight       # this factors NAVAL_SUPREMACY_WEIGHT_PER_DIVISION_ON_INVASION_ORDER
+# strike_force_home_base				# set naval region used for strike base home
+# naval_mission_threshold				# this sets how much score is needed to assign a mission
+#	MISSION_PATROL
+#	MISSION_STRIKE_FORCE
+#	MISSION_CONVOY_ESCORT
+#	MISSION_CONVOY_RAIDING
+#	MISSION_NAVAL_INVASION_SUPPORT
+#	MISSION_MINES_PLANTING
+#	MISSION_MINES_SWEEPING
+#	MISSION_TRAINING
+###########################################################################
+##### ENG #################################################################
+###########################################################################
+
+ENG_home_fleet = {
+	allowed = { tag = ENG }
+	enable = {
+		has_capitulated = no
+	}
+	
+	abort_when_not_enabled = yes
+	
+	ai_strategy = {
+		type = strike_force_home_base
+		id = 16 # north sea
+		value = 70
+	}
+	
+}
+
+ENG_mediterranean_fleet = {
+	allowed = { tag = ENG }
+	enable = {
+		controls_state = 853
+	}
+	
+	abort_when_not_enabled = yes
+	
+	ai_strategy = {
+		type = strike_force_home_base
+		id = 69 #eastern med
+		value = 120
+	}  
+	
+}
+
+ENG_mediterranean_fleet_fallback = {
+	allowed = { tag = ENG }
+	enable = {
+		controls_state = 118
+		NOT = { controls_state = 853 }
+	}
+	
+	abort_when_not_enabled = yes
+	
+	ai_strategy = {
+		type = strike_force_home_base
+		id = 68 #western med
+		value = 120
+	}  
+	
+}
+
+ENG_blockade_GER = {
+	allowed = { tag = ENG }
+	enable = {
+		has_war_with = GER
+	}
+	
+	abort_when_not_enabled = yes
+	
+	#ai_strategy = { type = naval_mission_threshold id = "MISSION_CONVOY_RAIDING" value = 1000 }
+	ai_strategy = { type = naval_convoy_raid_region id = 49  value = 200 } #North Atlantic Ridge
+	ai_strategy = { type = naval_convoy_raid_region id = 43  value = 200 } #Western Approaches
+	ai_strategy = { type = naval_convoy_raid_region id = 44  value = 200 } #Denmark Strait
+	ai_strategy = { type = naval_convoy_raid_region id = 47  value = 200 } #Iberian Coast
+	ai_strategy = { type = naval_convoy_raid_region id = 61  value = 200 } #Cap Verde
+}
+
+ENG_blockade_IEA = {
+	allowed = { tag = ENG }
+	enable = {
+		271 = { CONTROLLER = { has_war_with = ENG } }
+	}
+	
+	abort_when_not_enabled = yes
+	
+	ai_strategy = { type = naval_convoy_raid_region id = 102  value = 250 } #East African Coast
+}
+
+ENG_blockade_IEA_no_suez = {
+	allowed = { tag = ENG }
+	enable = {
+		853 = { CONTROLLER = { has_war_with = ENG } }
+		271 = { CONTROLLER = { has_war_with = ENG } }
+	}
+	
+	abort_when_not_enabled = yes
+	
+	ai_strategy = { type = naval_convoy_raid_region id = 100  value = 200 } #Red Sea
+	ai_strategy = { type = naval_convoy_raid_region id = 102  value = 250 } #East African Coast
+}
+
+ENG_blockade_BMP = {
+	allowed = { tag = ENG }
+	enable = {
+		controls_state = 447
+		any_state_in = {
+			strategic_region = 289
+			OR = {
+				GER = { divisions_in_state = { state = PREV size > 0 } }
+				ITA = { divisions_in_state = { state = PREV size > 0 } }
+			}
+		}
+	}
+	
+	abort_when_not_enabled = yes
+	
+	ai_strategy = { type = naval_convoy_raid_region id = 69  value = 200 } #Levantine Sea
+	ai_strategy = { type = naval_convoy_raid_region id = 298  value = 150 } #Eastern Mediterranean
+}
+
+ENG_raid_mediterranean = {
+	allowed = { tag = ENG }
+	enable = {
+		controls_state = 447
+		has_war_with = ITA
+	}
+	
+	abort_when_not_enabled = yes
+	
+	ai_strategy = { type = naval_convoy_raid_region id = 169  value = -50 } #Tyrrhenian Sea
+	
+	ai_strategy = { type = naval_convoy_raid_region id = 69  value = 80 } #Levantine Sea
+	ai_strategy = { type = naval_convoy_raid_region id = 298  value = 80 } #Eastern Mediterranean
+	ai_strategy = { type = naval_convoy_raid_region id = 250  value = 80 } #Ionian Sea
+	ai_strategy = { type = naval_convoy_raid_region id = 29  value = 80 } #Central Sea
+	ai_strategy = { type = naval_convoy_raid_region id = 299  value = 80 } #Central Sea
+}
+
+ENG_blockade_sealion = {
+	allowed = { tag = ENG }
+	enable = {
+		has_global_flag = sealion_has_happened
+		has_war = yes
+		has_capitulated = no
+		OR = {
+			any_state_in = {
+				strategic_region = 1
+				OR = {
+					GER = { divisions_in_state = { state = PREV size > 0 } }
+					ITA = { divisions_in_state = { state = PREV size > 0 } }
+					CONTROLLER = { has_war_with = ENG }
+				}
+			}
+			any_state_in = {
+				strategic_region = 2
+				OR = {
+					GER = { divisions_in_state = { state = PREV size > 0 } }
+					ITA = { divisions_in_state = { state = PREV size > 0 } }
+					CONTROLLER = { has_war_with = ENG }
+				}
+			}
+			any_state_in = {
+				strategic_region = 236
+				OR = {
+					GER = { divisions_in_state = { state = PREV size > 0 } }
+					ITA = { divisions_in_state = { state = PREV size > 0 } }
+					CONTROLLER = { has_war_with = ENG }
+				}
+			}
+			any_state_in = {
+				strategic_region = 3
+				OR = {
+					GER = { divisions_in_state = { state = PREV size > 0 } }
+					ITA = { divisions_in_state = { state = PREV size > 0 } }
+					CONTROLLER = { has_war_with = ENG }
+				}
+			}
+		}
+	}
+	
+	abort_when_not_enabled = yes
+	
+	ai_strategy = { type = naval_mission_threshold id = "MISSION_CONVOY_RAIDING" value = 10000 }
+	ai_strategy = { type = naval_convoy_raid_region id = 18  value = 12000 }
+	ai_strategy = { type = naval_convoy_raid_region id = 226  value = 11000 }
+	ai_strategy = { type = naval_convoy_raid_region id = 273  value = 11000 }
+	
+	ai_strategy = {
+    	type = strike_force_home_base
+    	id = 18
+    	value = 250
+	}
+}
+
+ENG_avoid_ITA_1 = {
+	allowed = { OR = { tag = ENG tag = USA } }
+	enable = {
+		OR = {
+			has_war_with = ITA
+			has_global_flag = fall_of_france
+			GER = { has_war_with = BEL }
+			FRA = { surrender_progress > 0.12 }
+		}
+	}
+	abort = {
+		is_in_faction_with = USA
+	}
+	
+	ai_strategy = { type = naval_avoid_region id = 168 value = 5000 } #Adriatic Sea
+	
+	ai_strategy = { type = naval_avoid_region id = 169 value = 500 } #Tyrrhenian Sea
+	ai_strategy = { type = naval_avoid_region id = 285 value = 50 } #Aegean Sea
+	ai_strategy = { type = naval_avoid_region id = 299 value = 50 } #Sicily Strait
+	ai_strategy = { type = naval_avoid_region id = 224 value = 50 } #Balearic
+	
+	#ai_strategy = { type = naval_avoid_region id = 68 value = 50 } #Western Mediteranean Sea
+	#ai_strategy = { type = naval_avoid_region id = 278 value = 50 } #Gulf of Aden strait
+	#ai_strategy = { type = naval_avoid_region id = 277 value = 50 } #Gulf of Aden
+	#ai_strategy = { type = naval_avoid_region id = 100 value = 50 } #Red Sea
+}
+ENG_avoid_ITA_2 = {
+	allowed = { OR = { tag = ENG tag = USA } }
+	enable = {
+		has_war_with = ITA
+		is_in_faction_with = USA
+	}
+	abort = {
+		NOT = { has_war_with = ITA }
+	}
+	
+	
+	ai_strategy = { type = naval_avoid_region id = 168 value = 5000 } #Adriatic Sea
+	
+	ai_strategy = { type = naval_avoid_region id = 169 value = 500 } #Tyrrhenian Sea
+	ai_strategy = { type = naval_avoid_region id = 285 value = 50 } #Aegean Sea
+	ai_strategy = { type = naval_avoid_region id = 299 value = 50 } #Sicily Strait
+	ai_strategy = { type = naval_avoid_region id = 224 value = 50 } #Balearic
+	
+	#ai_strategy = { type = naval_avoid_region id = 68 value = 50 } #Western Mediteranean Sea
+	#ai_strategy = { type = naval_avoid_region id = 278 value = 50 } #Gulf of Aden strait
+	#ai_strategy = { type = naval_avoid_region id = 277 value = 50 } #Gulf of Aden
+	#ai_strategy = { type = naval_avoid_region id = 100 value = 50 } #Red Sea
+}
+
+ENG_avoid_JAP_1 = {
+	allowed = { tag = ENG }
+	enable = {
+		has_war_with = JAP
+	}
+	abort_when_not_enabled = yes
+	
+	ai_strategy = { type = naval_avoid_region id = 79 value = 50000 } #Adriatic Sea
+	ai_strategy = { type = naval_avoid_region id = 77 value = 50000 } #Tyrrhenian Sea
+	ai_strategy = { type = naval_avoid_region id = 76 value = 50000 } #Sicily Strait
+	ai_strategy = { type = naval_avoid_region id = 90 value = 50000 } #Sicily Strait
+	
+	ai_strategy = { type = naval_avoid_region id = 94 value = 50 } #Western Mediteranean Sea
+	ai_strategy = { type = naval_avoid_region id = 78 value = 50 } #Gulf of Aden strait
+	ai_strategy = { type = naval_avoid_region id = 177 value = 50 } #Gulf of Aden
+	
+}
+
+ALLIES_dont_raid_GER_coast = {
+	allowed = { OR = { tag = FRA tag = ENG tag = NOR tag = HOL tag = BEL tag = CAN tag = GER } }
+	enable = {
+		always = yes
+	}
+	abort = {
+		always = no
+	}
+	ai_strategy = { type = naval_convoy_raid_region id = 284  value = -5000 }
+	
+	ai_strategy = { type = naval_convoy_raid_region id = 281  value = -5000 }
+	
+}
+ALLIES_avoid_GER_coast = {
+	allowed = { OR = { tag = FRA tag = ENG tag = NOR tag = HOL tag = BEL tag = CAN tag = GER } }
+	enable = {
+		has_war_with = GER
+		NOT = { has_war_with = ITA }
+		FRA = { has_capitulated = no }
+		is_in_faction_with = ENG
+	}
+	abort = {
+		NOT = { has_war_with = GER }
+	}
+	
+	ai_strategy = { type = naval_avoid_region id = 284 value = 5000 } #German Coast
+	
+	ai_strategy = { type = naval_avoid_region id = 281 value = 5000 } #Dutch Sea
+	
+}
+
+ALLIES_avoid_GER_french_coast = {
+	allowed = { OR = { tag = FRA tag = ENG tag = USA tag = HOL tag = BEL tag = CAN } }
+	enable = { 
+		has_war = yes
+		is_in_faction_with = ENG
+		has_war_with = GER
+		has_global_flag = fall_of_france
+	}
+	
+	abort = {
+		OR = {
+			14 = { CONTROLLER = { is_in_faction_with = ROOT } }
+			15 = { CONTROLLER = { is_in_faction_with = ROOT } }
+			19 = { CONTROLLER = { is_in_faction_with = ROOT } }
+			23 = { CONTROLLER = { is_in_faction_with = ROOT } }
+			29 = { CONTROLLER = { is_in_faction_with = ROOT } }
+		}
+	}
+	
+	ai_strategy = { type = naval_avoid_region id = 42 value = 5000 }
+	
+	ai_strategy = { type = naval_convoy_raid_region id = 42  value = -5000 }
+	ai_strategy = { type = naval_convoy_raid_region id = 281 value = -5000 }
+}
+
+ALLIES_avoid_baltic = {
+	allowed = { OR = { tag = FRA tag = ENG tag = USA tag = HOL tag = BEL tag = CAN } }
+	enable = { 
+		has_war = yes
+		is_in_faction_with = ENG
+		OR = { has_war_with = SOV has_war_with = GER } 
+		NOT = { 58 = { CONTROLLER = { is_in_faction_with = ENG } } } #Schleswig Holstein
+	}
+	
+	abort_when_not_enabled = yes
+	
+	ai_strategy = { type = naval_convoy_raid_region id = 249 value = -5000 }
+	ai_strategy = { type = naval_convoy_raid_region id = 9 value = -5000 }
+	ai_strategy = { type = naval_convoy_raid_region id = 279 value = -5000 }
+	ai_strategy = { type = naval_convoy_raid_region id = 284 value = -5000 }
+	
+	ai_strategy = { type = naval_avoid_region id = 249 value = 5000 }
+	ai_strategy = { type = naval_avoid_region id = 9 value = 5000 }
+	ai_strategy = { type = naval_avoid_region id = 279 value = 5000 }
+	ai_strategy = { type = naval_avoid_region id = 284 value = 5000 }
+}
+
+###########################################################################
+##### USA #################################################################
+###########################################################################
+
+USA_strike_force_hawaii = {
+	allowed = { tag = USA }
+	enable = {
+		has_war_with = JAP
+		surrender_progress < 0.2
+		629 = { is_controlled_by_ROOT_or_ally = yes }
+	}
+	abort_when_not_enabled = yes
+	
+	ai_strategy = { type = strike_force_home_base id = 105 value = 250 } # Hawaii Ridge
+}
+USA_strike_force_egypt = {
+	allowed = { tag = USA }
+	enable = {
+		has_war_with = GER
+		surrender_progress < 0.2
+		is_in_faction_with = ENG 
+		853 = { is_controlled_by_ROOT_or_ally = yes }
+		#ENG = { has_capitulated = no }
+	}
+	abort_when_not_enabled = yes
+	
+	ai_strategy = { type = strike_force_home_base id = 69 value = 120 } # Levantine Sea
+}
+
+USA_raid_GER = {
+	allowed = { tag = USA }
+	enable = {
+		has_war_with = GER
+	}
+	
+	abort_when_not_enabled = yes
+	
+	ai_strategy = { type = naval_convoy_raid_region id = 49  value = 100 }
+	ai_strategy = { type = naval_convoy_raid_region id = 43  value = 100 }
+	ai_strategy = { type = naval_convoy_raid_region id = 44  value = 100 }
+	ai_strategy = { type = naval_convoy_raid_region id = 47  value = 100 }
+	ai_strategy = { type = naval_convoy_raid_region id = 51  value = 100 }
+	ai_strategy = { type = naval_convoy_raid_region id = 58  value = 100 }
+	ai_strategy = { type = naval_convoy_raid_region id = 61  value = 100 }
+	ai_strategy = { type = naval_convoy_raid_region id = 59  value = 100 }
+	ai_strategy = { type = naval_convoy_raid_region id = 53  value = 100 }
+}
+
+USA_blockade_sealion = {
+	allowed = { tag = ENG }
+	enable = {
+		has_global_flag = sealion_has_happened
+		has_war = yes
+		ENG = { has_capitulated = no }
+		OR = {
+			any_state_in = {
+				strategic_region = 1
+				OR = {
+					GER = { divisions_in_state = { state = PREV size > 0 } }
+					ITA = { divisions_in_state = { state = PREV size > 0 } }
+					CONTROLLER = { has_war_with = ENG }
+				}
+			}
+			any_state_in = {
+				strategic_region = 2
+				OR = {
+					GER = { divisions_in_state = { state = PREV size > 0 } }
+					ITA = { divisions_in_state = { state = PREV size > 0 } }
+					CONTROLLER = { has_war_with = ENG }
+				}
+			}
+			any_state_in = {
+				strategic_region = 236
+				OR = {
+					GER = { divisions_in_state = { state = PREV size > 0 } }
+					ITA = { divisions_in_state = { state = PREV size > 0 } }
+					CONTROLLER = { has_war_with = ENG }
+				}
+			}
+			any_state_in = {
+				strategic_region = 3
+				OR = {
+					GER = { divisions_in_state = { state = PREV size > 0 } }
+					ITA = { divisions_in_state = { state = PREV size > 0 } }
+					CONTROLLER = { has_war_with = ENG }
+				}
+			}
+		}
+	}
+	
+	abort_when_not_enabled = yes
+	
+	ai_strategy = { type = naval_convoy_raid_region id = 18  value = 500 }
+	ai_strategy = { type = naval_convoy_raid_region id = 226  value = 500 }
+	ai_strategy = { type = naval_convoy_raid_region id = 273  value = 500 }
+	
+	ai_strategy = {
+    	type = strike_force_home_base
+    	id = 18
+    	value = 250
+	}
+}
+
+USA_avoid_JAP_1 = {
+	allowed = { tag = USA }
+	enable = {
+		has_idea = USA_navy_shock
+		has_war_with = JAP
+	}
+	abort_when_not_enabled = yes
+	
+	ai_strategy = { type = naval_avoid_region id = 73 value = 5000 }
+	ai_strategy = { type = naval_avoid_region id = 79 value = 5000 }
+	ai_strategy = { type = naval_avoid_region id = 77 value = 5000 }
+	ai_strategy = { type = naval_avoid_region id = 76 value = 5000 }
+	ai_strategy = { type = naval_avoid_region id = 90 value = 5000 }
+	ai_strategy = { type = naval_avoid_region id = 87 value = 5000 }
+	ai_strategy = { type = naval_avoid_region id = 177 value = 5000 }
+	ai_strategy = { type = naval_avoid_region id = 96 value = 5000 }
+	ai_strategy = { type = naval_avoid_region id = 174 value = 5000 }
+	ai_strategy = { type = naval_avoid_region id = 78 value = 5000 }
+	ai_strategy = { type = naval_avoid_region id = 94 value = 5000 }
+	ai_strategy = { type = naval_avoid_region id = 75 value = 5000 }
+	ai_strategy = { type = naval_avoid_region id = 80 value = 5000 }
+	
+	ai_strategy = { type = naval_avoid_region id = 84 value = 200 }
+	ai_strategy = { type = naval_avoid_region id = 97 value = 200 }
+	
+	ai_strategy = { type = naval_avoid_region id = 84 value = 100 }
+	ai_strategy = { type = naval_avoid_region id = 83 value = 100 }
+	ai_strategy = { type = naval_avoid_region id = 97 value = 100 }
+	ai_strategy = { type = naval_avoid_region id = 95 value = 100 }
+	ai_strategy = { type = naval_avoid_region id = 93 value = 100 }
+}
+USA_avoid_JAP_2 = {
+	allowed = { tag = USA }
+	enable = {
+		has_war_with = JAP
+		NOT = { has_idea = USA_navy_shock }
+	}
+	
+	abort = {
+		OR = {
+			NOT = { has_war_with = JAP }
+			has_war = no
+			alliance_naval_strength_ratio > 2.5
+		}
+	}
+	
+	ai_strategy = { type = naval_avoid_region id = 79 value = 1000 }
+	ai_strategy = { type = naval_avoid_region id = 87 value = 1000 }
+	
+	ai_strategy = { type = naval_avoid_region id = 73 value = 500 }
+	ai_strategy = { type = naval_avoid_region id = 77 value = 500 }
+	ai_strategy = { type = naval_avoid_region id = 76 value = 500 }
+	ai_strategy = { type = naval_avoid_region id = 90 value = 500 }
+	ai_strategy = { type = naval_avoid_region id = 177 value = 500 }
+	ai_strategy = { type = naval_avoid_region id = 96 value = 500 }
+	ai_strategy = { type = naval_avoid_region id = 174 value = 500 }
+	
+	ai_strategy = { type = naval_avoid_region id = 78 value = 100 }
+	ai_strategy = { type = naval_avoid_region id = 94 value = 100 }
+	ai_strategy = { type = naval_avoid_region id = 84 value = 100 }
+}
+
+###########################################################################
+##### GER #################################################################
+###########################################################################
+
+GER_naval_missions_early_war = {
+	allowed = { tag = GER }
+	enable = {
+		FRA = {
+			has_war_with = GER
+			NOT = { has_capitulated = yes }
+			is_in_faction_with = ENG
+		}
+	}
+	
+	abort_when_not_enabled = yes
+	
+	ai_strategy = { type = naval_mission_threshold id = "MISSION_PATROL" value = 20000 }
+	ai_strategy = { type = naval_mission_threshold id = "MISSION_STRIKE_FORCE" value = 20000 }
+	ai_strategy = { type = naval_mission_threshold id = "MISSION_CONVOY_ESCORT" value = 20000 }
+	ai_strategy = { type = naval_mission_threshold id = "MISSION_CONVOY_RAIDING" value = 20000 }
+	
+	ai_strategy = { type = strike_force_home_base id = 6 value = 100 } # North West Germany
+	
+}
+
+GER_avoid_ENG = {
+	allowed = { tag = GER }
+	enable = {
+		has_war_with = ENG
+
+		NOT = { ENG = { has_capitulated = yes } }
+
+		alliance_naval_strength_ratio < 0.75
+	}
+	
+	abort_when_not_enabled = yes
+	
+	ai_strategy = { type = naval_avoid_region id = 18 value = 5000 } #English Channel
+	ai_strategy = { type = naval_avoid_region id = 226 value = 5000 } #British Coast
+	ai_strategy = { type = naval_avoid_region id = 273 value = 5000 } #Irish Sea	
+	ai_strategy = { type = naval_avoid_region id = 272 value = 5000 } #Scottish Sea
+	ai_strategy = { type = naval_avoid_region id = 42 value = 5000 } #Gulf of Biscay
+}
+
+###########################################################################
+##### ITA #################################################################
+###########################################################################
+
+ITA_avoid_ETH = {
+	allowed = { tag = ITA }
+	enable = {
+		has_war = yes
+		enemies_naval_strength_ratio > 1.0 
+	}
+	abort_when_not_enabled = yes
+
+	ai_strategy = { type = naval_avoid_region id = 47 value = 500 }
+	ai_strategy = { type = naval_avoid_region id = 48 value = 500 }
+	ai_strategy = { type = naval_avoid_region id = 61 value = 500 }
+	ai_strategy = { type = naval_avoid_region id = 62 value = 500 }
+	ai_strategy = { type = naval_avoid_region id = 65 value = 500 }
+	ai_strategy = { type = naval_avoid_region id = 103 value = 500 }
+	ai_strategy = { type = naval_avoid_region id = 102 value = 500 }
+	ai_strategy = { type = naval_avoid_region id = 104 value = 500 }
+	ai_strategy = { type = naval_avoid_region id = 277 value = 500 }
+	ai_strategy = { type = naval_avoid_region id = 278 value = 500 }
+}
+
+###########################################################################
+##### JAP #################################################################
+###########################################################################
+
+JAP_avoid_atlantic = {
+	allowed = { tag = JAP }
+	enable = {
+		has_war = yes
+	}
+	
+	abort_when_not_enabled = yes
+	
+	ai_strategy = { type = naval_avoid_region id = 65 value = 50 }
+	ai_strategy = { type = naval_avoid_region id = 107 value = 50 }
+	ai_strategy = { type = naval_avoid_region id = 63 value = 50 }
+}
+JAP_conserve_fuel = {
+	allowed = { tag = JAP }
+	enable = {
+		fuel_ratio < 0.50
+		OR = {
+			has_war = no
+			AND = {
+				NOT = { has_war_with = USA }
+				NOT = { has_war_with = ENG }
+				NOT = { has_war_with = FRA }
+			}
+		}
+	}
+	abort = {
+		OR = {
+			fuel_ratio < 0.75
+			has_war_with = USA
+			has_war_with = ENG
+			has_war_with = FRA
+		}
+	}
+	
+	ai_strategy = { type = naval_mission_threshold id = "MISSION_TRAINING" value = 2000 }
+}
+
+###########################################################################
+##### ALL #################################################################
+###########################################################################
+
+ai_conserve_fuel = {
+	enable = { fuel_ratio < 0.25 }
+	abort = { fuel_ratio > 0.4 }
+
+	ai_strategy = { type = naval_mission_threshold id = "MISSION_TRAINING" value = 2000 }
+	ai_strategy = { type = naval_mission_threshold id = "MISSION_MINES_PLANTING" value = 2000 }
+	ai_strategy = { type = naval_mission_threshold id = "MISSION_MINES_SWEEPING" value = 2000 }
+}
+ai_conserve_fuel_2 = {
+	enable = { fuel_ratio < 0.15 }
+	abort = { fuel_ratio > 0.2 }
+
+	ai_strategy = { type = naval_mission_threshold id = "MISSION_STRIKE_FORCE" value = 500 }
+	ai_strategy = { type = naval_mission_threshold id = "MISSION_PATROL" value = 500 }
+	ai_strategy = { type = naval_mission_threshold id = "MISSION_CONVOY_RAIDING" value = 500 }
+}

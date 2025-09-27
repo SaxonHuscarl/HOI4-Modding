@@ -1,0 +1,4618 @@
+technologies = {
+	###Vertical positions
+	@1930 = 0
+	@1930_1 = 1
+	@1936 = 2
+	@1936_1 = 3
+	@1937 = 4
+	@1937_1 = 5
+	@1938 = 6
+	@1938_1 = 7
+	@1939 = 8
+	@1939_1 = 9
+	@1940 = 10
+	@1940_1 =11
+	@1941 = 12
+	@1941_1 = 13
+	@1942 = 14
+	@1942_1 = 15
+	@1943 = 16
+	@1944 = 18
+	@1945 = 20
+	@1946 = 22
+	@1947 = 24
+	@1948 = 26
+	@1949 = 28
+	@1950 = 30
+	@1951 = 32
+	
+	###Horizontal positions
+	@CORP_RADIO = -4
+	@TNK_RADIO = -3
+	@RECON_RADIO = -2
+	@HQ = -2
+	@INF_RADIO = 0
+	@TRCK_RADIO = -1
+	@EL_ME_ENG = 1
+	@CONSUMER = 2
+	@RADAR = 3
+	@TV = 4
+	
+	@BASIC_ENCRP = 9
+	@MECH_COMP = 8
+	@ELEC_COMP = 7
+	@LISTEN = 1
+	@AVIONICS = 5
+	
+	@RCKT_ENG = 13
+	@BAL_MSL = 15
+	@MSL = 15
+	@GUIDED_WEAPONS = 17
+	@FLYING_BOMB = 17
+	
+	@JET_PROTOTYPE = 20
+	@JET_THEORY = 22
+	@JET_ENG = 24
+	@JET_ENG2 = 25
+	
+	@NUC_BOMB = 29
+	@FISS_EXP = 31
+	@ATOM_RES = 31
+	@IMP_PART = 33
+	
+	#################################################
+	#################################################
+	#################################################
+	
+	@E_PRIORITY_1 = 1000
+	@E_PRIORITY_2 = 2000 
+	@E_PRIORITY_3 = 4000 
+	@E_PRIORITY_4 = 8000 
+	@E_PRIORITY_5 = 12000
+	@E_PRIORITY_6 = 16000
+	
+	@NUKE_PRIORITY = 1000 
+	@JET_PRIORITY = 1000
+	
+	electronic_mechanical_engineering = {
+		allow = { has_country_flag = UNLOCK:electronics_folder } 
+		
+		# small boost to research speed
+		research_speed_factor = 0.02
+		
+		enable_building = {
+			building = electronics_facility
+			level = 1
+		}
+		
+		path = {
+			leads_to_tech = HQ_communications
+			research_cost_coeff = 1
+		}
+		path = {
+			leads_to_tech = mechanical_computing
+			research_cost_coeff = 1
+		}
+		path = {
+			leads_to_tech = consumer_electronics
+			research_cost_coeff = 1
+		}
+		path = {
+			leads_to_tech = avionics_improvements
+			research_cost_coeff = 1
+		}
+		
+		research_cost = 1
+		start_year = 1936
+		folder = {
+			name = electronics_folder
+			position = { x = @EL_ME_ENG y = @1930 }
+		}
+		
+		special_project_specialization = { specialization_electronics }
+
+		ai_will_do = {
+			base = @E_PRIORITY_6
+			
+			modifier = {
+				factor = ai_tech_need/tech_signal_company?1
+			}
+			modifier = {
+				factor = ai_factor 
+				
+				set_temp_variable = { ai_factor = ai_electronic_tech_need } #AI RESEARCH CATEGORY
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		
+		on_research_complete = {
+			set_temp_variable = { tech = token:electronic_mechanical_engineering }
+			on_electronics_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = electronics_tt
+		}		
+		categories = {
+			electronics
+		}
+	}
+	consumer_electronics = {
+		allow = { has_country_flag = UNLOCK:electronics_folder } 
+		
+		stability_factor = 0.02
+	
+		start_year = 1936
+		research_cost = 1
+		folder = {
+			name = electronics_folder
+			position = { x = @TV y = @1936 }
+		}
+		path = {
+			leads_to_tech = consumer_tv
+			research_cost_coeff = 1
+		}
+		special_project_specialization = { specialization_electronics }
+
+		ai_will_do = {
+			base = @E_PRIORITY_5
+			
+			modifier = {
+				factor = ai_factor 
+				
+				set_temp_variable = { ai_factor = ai_electronic_tech_need } #AI RESEARCH CATEGORY
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		
+		on_research_complete = {
+			set_temp_variable = { tech = token:consumer_electronics }
+			on_electronics_tech_research_complete = yes
+			add_political_power = 50
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = electronics_tt
+			custom_effect_tooltip = civilian_tech_tt
+		}		
+		categories = {
+			electronics
+			civilian_tech
+		}
+	}
+	consumer_tv = {
+		allow = { has_country_flag = UNLOCK:electronics_folder } 
+		
+		political_power_gain = 0.10
+		press_cost_factor = -0.10
+	
+
+		start_year = 1937
+		research_cost = 1
+		folder = {
+			name = electronics_folder
+			position = { x = @TV y = @1937 }
+		}
+	
+		special_project_specialization = { specialization_electronics }
+
+		ai_will_do = {
+			base = @E_PRIORITY_5
+			
+			modifier = {
+				factor = ai_factor 
+				
+				set_temp_variable = { ai_factor = ai_electronic_tech_need } #AI RESEARCH CATEGORY
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		
+		on_research_complete = {
+			set_temp_variable = { tech = token:consumer_tv }
+			on_electronics_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = electronics_tt
+		}		
+		categories = {
+			electronics
+		}
+	}	
+	#### Land lines/ runners
+	HQ_communications = {
+		allow = { has_country_flag = UNLOCK:electronics_folder } 
+		
+		land_reinforce_rate = 0.04
+		coordination_bonus = 0.01
+		planning_speed = 0.05
+	
+		path = {
+			leads_to_tech = radio_technology
+			research_cost_coeff = 1
+		}
+		start_year = 1936
+		research_cost = 1
+		folder = {
+			name = electronics_folder
+			position = { x = @HQ y = @1936 }
+		}
+		
+		special_project_specialization = { specialization_electronics }
+
+		ai_will_do = {
+			base = @E_PRIORITY_5
+			
+			modifier = {
+				factor = ai_tech_need/tech_signal_company?1
+			}
+			modifier = {
+				factor = ai_factor 
+				
+				set_temp_variable = { ai_factor = ai_electronic_tech_need } #AI RESEARCH CATEGORY
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		
+		on_research_complete = {
+			set_temp_variable = { tech = token:HQ_communications }
+			on_electronics_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = electronics_tt
+		}		
+		categories = {
+			electronics
+		}
+	}
+	radio_technology = {
+		allow = { has_country_flag = UNLOCK:electronics_folder } 
+		
+		desc = "radio_TT"
+		
+		coordination_bonus = 0.03
+		enable_equipments = { 
+			radio_equipment_0
+		}
+		
+		on_research_complete = {
+			set_temp_variable = { tech = token:radio_technology }
+			on_electronics_tech_research_complete = yes
+			custom_effect_tooltip = radio_TT
+			custom_effect_tooltip = radio_new_equipment_tt
+			
+			set_temp_variable = { temp = 40 }
+			set_temp_variable = { total_div_hq = num_battalions_with_type@DIV_HQ }
+			add_to_temp_variable = { total_div_hq = num_battalions_with_type@DIV_HQ_airborne }
+			add_to_temp_variable = { total_div_hq = num_battalions_with_type@DIV_HQ_car }
+			add_to_temp_variable = { total_div_hq = num_battalions_with_type@DIV_HQ_mech }
+			#add_to_temp_variable = { total_div_hq = num_battalions_with_type@DIV_HQ_arm }
+			multiply_temp_variable = { total_div_hq = temp }
+			
+			custom_effect_tooltip = div_hq_tt
+			
+			custom_effect_tooltip = add_equipment_radio
+			hidden_effect = { country_event = { id = BI_techs.5 hours = 1 } }
+			
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = electronics_tt
+			custom_effect_tooltip = radio_tech_tt
+			
+			add_to_variable = { ui_eq_intro_alert = 1 }
+		}
+		
+		path = {
+			leads_to_tech = radio_detection 
+			research_cost_coeff = 1
+		}
+		path = {
+			leads_to_tech = vehicle_radio
+			research_cost_coeff = 1
+		}
+		path = {
+			leads_to_tech = tank_radio
+			research_cost_coeff = 1
+		}
+		path = {
+			leads_to_tech = corps_communications
+			research_cost_coeff = 1
+		}
+		start_year = 1937
+		research_cost = 1.5
+		folder = {
+			name = electronics_folder
+			position = { x = @HQ y = @1937 }
+		}
+		folder = {
+			name = support_folder
+			position = { x = 23 y = 4 }
+		}
+		
+		special_project_specialization = { specialization_electronics }
+
+		ai_will_do = {
+			base = @E_PRIORITY_6
+			
+			modifier = {
+				factor = ai_tech_need/tech_signal_company?1
+			}
+			modifier = {
+				factor = ai_factor 
+				
+				set_temp_variable = { ai_factor = ai_electronic_tech_need } #AI RESEARCH CATEGORY
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		
+		categories = {
+			electronics
+			radio_tech
+		}
+	}
+	vehicle_radio = {
+		allow = { has_country_flag = UNLOCK:electronics_folder } 
+	
+		on_research_complete = {
+			set_temp_variable = { tech = token:vehicle_radio }
+			on_electronics_tech_research_complete = yes
+			custom_effect_tooltip = radio_new_equipment_tt
+			
+			set_temp_variable = { temp = 10 }
+			set_temp_variable = { total_semi_mot = num_battalions_with_type@motorcycle_infantry }
+			add_to_temp_variable = { total_semi_mot = num_battalions_with_type@ss_motorcycle_infantry }
+			add_to_temp_variable = { total_semi_mot = num_battalions_with_type@semi_motorized }
+			add_to_temp_variable = { total_semi_mot = num_battalions_with_type@semi_motorized_assault }
+			add_to_temp_variable = { total_semi_mot = num_battalions_with_type@ss_semi_motorized }
+			add_to_temp_variable = { total_semi_mot = num_battalions_with_type@ss_semi_motorized_assault }
+			multiply_temp_variable = { total_semi_mot = temp }
+			
+			set_temp_variable = { total_mot = num_battalions_with_type@motorized }
+			add_to_temp_variable = { total_mot = num_battalions_with_type@motorized_assault }
+			add_to_temp_variable = { total_mot = num_battalions_with_type@ss_motorized }
+			add_to_temp_variable = { total_mot = num_battalions_with_type@ss_motorized_assault }
+			add_to_temp_variable = { total_mot = num_battalions_with_type@guards_motorized }
+			add_to_temp_variable = { total_mot = num_battalions_with_type@guards_motorized_assault }
+			multiply_temp_variable = { total_mot = temp }
+			
+			set_temp_variable = { total_mech = num_battalions_with_type@mechanized }
+			add_to_temp_variable = { total_mech = num_battalions_with_type@mechanized_assault }
+			add_to_temp_variable = { total_mech = num_battalions_with_type@ss_mechanized }
+			add_to_temp_variable = { total_mech = num_battalions_with_type@ss_mechanized_assault }
+			add_to_temp_variable = { total_mech = num_battalions_with_type@guards_mechanized }
+			add_to_temp_variable = { total_mech = num_battalions_with_type@guards_mechanized_assault }
+			multiply_temp_variable = { total_mech = temp }
+			
+			set_temp_variable = { total_amph_mech = num_battalions_with_type@amphibious_mechanized }
+			add_to_temp_variable = { total_amph_mech = num_battalions_with_type@amphibious_mechanized_assault }
+			add_to_temp_variable = { total_amph_mech = num_battalions_with_type@american_amph_lv }
+			add_to_temp_variable = { total_amph_mech = num_battalions_with_type@american_amph_lv_assault }
+			multiply_temp_variable = { total_amph_mech = temp }
+			
+			set_temp_variable = { total_cavalry = num_battalions_with_type@cavalry }
+			add_to_temp_variable = { total_cavalry = num_battalions_with_type@camelry }
+			add_to_temp_variable = { total_cavalry = num_battalions_with_type@guards_cavalry }
+			add_to_temp_variable = { total_cavalry = num_battalions_with_type@ss_cavalry }
+			multiply_temp_variable = { total_cavalry = temp }
+			
+			custom_effect_tooltip = semi_motorized_tt
+			custom_effect_tooltip = motorized_tt
+			custom_effect_tooltip = mechanized_tt
+			custom_effect_tooltip = amph_mechanized_tt
+			custom_effect_tooltip = cavalry_tt
+			
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = electronics_tt
+			custom_effect_tooltip = radio_tech_tt
+			
+			if = {
+				limit = {
+					is_ai = yes
+				}
+				set_country_flag = ai_last_intro/radio_equipment
+			}
+			add_to_variable = { ui_eq_intro_alert = 1 }
+		}
+		
+		path = {
+			leads_to_tech = recon_radio
+			research_cost_coeff = 1
+		}
+		path = {
+			leads_to_tech = infantry_radio
+			research_cost_coeff = 1
+		}
+		
+		research_cost = 1
+		start_year = 1938
+		folder = {
+			name = electronics_folder
+			position = { x = @TRCK_RADIO y = @1938 }
+		}
+		
+		special_project_specialization = { specialization_electronics }
+
+		ai_will_do = {
+			base = 0
+			
+			modifier = {
+				add = @E_PRIORITY_6
+				
+				ai_radio_motorized_tech = yes 
+			}
+			modifier = {
+				factor = ai_factor 
+				
+				set_temp_variable = { ai_factor = ai_electronic_tech_need } #AI RESEARCH CATEGORY
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		
+		categories = {
+			electronics
+			radio_tech
+		}
+	}
+	infantry_radio = {
+		allow = { has_country_flag = UNLOCK:electronics_folder } 
+		
+		# units with radios can more efficiently join combats when there is room
+		land_reinforce_rate = 0.01
+	
+		on_research_complete = {
+			set_temp_variable = { tech = token:infantry_radio }
+			on_electronics_tech_research_complete = yes
+			custom_effect_tooltip = radio_new_equipment_tt
+					
+			set_temp_variable = { temp = 6 }
+			set_temp_variable = { total_infantry = num_battalions_with_type@infantry }
+			add_to_temp_variable = { total_infantry = num_battalions_with_type@infantry_assault }
+			add_to_temp_variable = { total_infantry = num_battalions_with_type@ss_infantry }
+			add_to_temp_variable = { total_infantry = num_battalions_with_type@ss_infantry_assault }
+			add_to_temp_variable = { total_infantry = num_battalions_with_type@guards_infantry }
+			add_to_temp_variable = { total_infantry = num_battalions_with_type@guards_infantry_assault }
+			add_to_temp_variable = { total_infantry = num_battalions_with_type@luftwaffe_infantry }
+			multiply_temp_variable = { total_infantry = temp }
+			
+			custom_effect_tooltip = infantry_tt
+
+			set_temp_variable = { temp = 6 }
+			set_temp_variable = { total_light_infantry = num_battalions_with_type@light_infantry }
+			add_to_temp_variable = { total_light_infantry = num_battalions_with_type@ss_light_infantry }
+			multiply_temp_variable = { total_light_infantry = temp }
+			
+			custom_effect_tooltip = light_infantry_tt
+			
+			set_temp_variable = { temp = 5 }
+			set_temp_variable = { total_irregulars_unit = num_battalions_with_type@irregulars_unit }
+			multiply_temp_variable = { total_irregulars_unit = temp }
+			
+			custom_effect_tooltip = irregulars_unit_tt
+			
+			set_temp_variable = { temp = 6 }
+			set_temp_variable = { total_paratrooper = num_battalions_with_type@paratrooper }
+			add_to_temp_variable = { total_paratrooper = num_battalions_with_type@ss_paratrooper }
+			add_to_temp_variable = { total_paratrooper = num_battalions_with_type@guards_paratrooper }
+			multiply_temp_variable = { total_paratrooper = temp }
+			
+			set_temp_variable = { total_mountaineer = num_battalions_with_type@mountaineers }
+			add_to_temp_variable = { total_mountaineer = num_battalions_with_type@ss_mountaineers }
+			add_to_temp_variable = { total_mountaineer = num_battalions_with_type@gurkha }
+			multiply_temp_variable = { total_mountaineer = temp }
+			
+			set_temp_variable = { total_marine = num_battalions_with_type@marine }
+			add_to_temp_variable = { total_marine = num_battalions_with_type@marine_assault }
+			multiply_temp_variable = { total_marine = temp }
+			
+			set_temp_variable = { total_nkvd = num_battalions_with_type@nkvd }
+			multiply_temp_variable = { total_nkvd = temp }
+			
+			custom_effect_tooltip = paratrooper_tt
+			custom_effect_tooltip = mountaineers_tt
+			custom_effect_tooltip = marine_tt
+			custom_effect_tooltip = nkvd_tt
+			
+			set_temp_variable = { temp = 3 }
+			set_temp_variable = { total_garrison = num_battalions_with_type@garrison }
+			multiply_temp_variable = { total_garrison = temp }
+			
+			set_temp_variable = { total_militia = num_battalions_with_type@militia }
+			multiply_temp_variable = { total_militia = temp }
+			
+			custom_effect_tooltip = garrison_tt
+			custom_effect_tooltip = militia_tt
+
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = electronics_tt
+			custom_effect_tooltip = radio_tech_tt
+			
+			if = {
+				limit = { is_ai = yes }
+				set_temp_variable = { total_need_ai = 0 }
+				add_to_temp_variable = { total_need_ai = total_infantry }
+				add_to_temp_variable = { total_need_ai = total_light_infantry }
+				add_to_temp_variable = { total_need_ai = total_irregulars_unit }
+				add_to_temp_variable = { total_need_ai = total_paratrooper }
+				add_to_temp_variable = { total_need_ai = total_mountaineer }
+				add_to_temp_variable = { total_need_ai = total_marine }
+				add_to_temp_variable = { total_need_ai = total_nkvd }
+				add_to_temp_variable = { total_need_ai = total_garrison }
+				add_to_temp_variable = { total_need_ai = total_militia }
+				ai_tech_unlock_radio = yes
+			}
+			add_to_variable = { ui_eq_intro_alert = 1 }
+		}
+		
+		#path = {
+		#	leads_to_tech = artillery_radio
+		#	research_cost_coeff = 1
+		#}
+		
+		start_year = 1939
+		research_cost = 1.2
+		folder = {
+			name = electronics_folder
+			position = { x = @INF_RADIO y = @1939 }
+		}
+		
+		special_project_specialization = { specialization_electronics }
+
+		ai_will_do = {
+			base = @E_PRIORITY_5
+			
+			modifier = {
+				factor = ai_factor 
+				
+				set_temp_variable = { ai_factor = ai_electronic_tech_need } #AI RESEARCH CATEGORY
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		
+		categories = {
+			electronics
+			radio_tech
+		}
+	}
+	corps_communications = {
+		allow = { 
+			has_country_flag = UNLOCK:electronics_folder 
+		} 
+		
+		land_reinforce_rate = 0.01
+		planning_speed = 0.05
+		coordination_bonus = 0.01
+		
+		category_all_DIV_HQ = {
+			default_morale = 0.1
+		}
+		
+		DIV_HQ  = {
+			need = {
+               	radio_equipment = 10
+         	}
+		}
+		DIV_HQ_airborne  = {
+			need = {
+               	radio_equipment = 10
+         	}
+		}
+		DIV_HQ_car  = {
+			need = {
+               	radio_equipment = 10
+         	}
+		}
+		DIV_HQ_mech  = {
+			need = {
+               	radio_equipment = 10
+         	}
+		}
+		#DIV_HQ_arm  = {
+		#	need = {
+        #       	radio_equipment = 10
+        # 	}
+		#}
+		
+		research_cost = 1
+		start_year = 1938
+		folder = {
+			name = electronics_folder
+			position = { x = @CORP_RADIO y = @1938 }
+		}
+		
+		special_project_specialization = { specialization_electronics }
+
+		ai_will_do = {
+			base = @E_PRIORITY_5
+			
+			modifier = {
+				factor = ai_factor 
+				
+				set_temp_variable = { ai_factor = ai_electronic_tech_need } #AI RESEARCH CATEGORY
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		
+		on_research_complete = {
+			set_temp_variable = { tech = token:corps_communications }
+			on_electronics_tech_research_complete = yes
+			custom_effect_tooltip = radio_new_equipment_tt
+			
+			set_temp_variable = { temp = 10 }
+			set_temp_variable = { total_div_hq = num_battalions_with_type@DIV_HQ }
+			add_to_temp_variable = { total_div_hq = num_battalions_with_type@DIV_HQ_airborne }
+			add_to_temp_variable = { total_div_hq = num_battalions_with_type@DIV_HQ_car }
+			add_to_temp_variable = { total_div_hq = num_battalions_with_type@DIV_HQ_mech }
+			#add_to_temp_variable = { total_div_hq = num_battalions_with_type@DIV_HQ_arm }
+			multiply_temp_variable = { total_div_hq = temp }
+			
+			custom_effect_tooltip = div_hq_tt
+			
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = electronics_tt
+			custom_effect_tooltip = radio_tech_tt
+			
+			if = {
+				limit = {
+					is_ai = yes
+				}
+				set_country_flag = ai_last_intro/radio_equipment
+			}
+		}
+		categories = {
+			electronics
+			radio_tech
+		}
+		
+		dependencies = {
+			radio_equipment_support_group_tech = 1 
+		}
+	}
+	
+	# artillery radio
+#	artillery_radio = {
+#		allow = { has_country_flag = UNLOCK:electronics_folder } 
+#		
+#		path = {
+#			leads_to_tech = recon_radio
+#			research_cost_coeff = 1
+#		}
+#		path = {
+#			leads_to_tech = vehicle_radio
+#			research_cost_coeff = 1
+#		}
+#		path = {
+#			leads_to_tech = tank_radio
+#			research_cost_coeff = 1
+#		}
+#		artillery_brigade = {
+#			need = {
+#               	radio_equipment = 6
+#         	}
+#		}
+#		artillery_brigade_mot = {
+#			need = {
+#               	radio_equipment = 6
+#         	}
+#		}
+#		artillery_brigade_med = {
+#			need = {
+#               	radio_equipment = 6
+#         	}
+#		}
+#		artillery_brigade_mot_med= {
+#			need = {
+#               	radio_equipment = 6
+#         	}
+#		}
+#		mountain_artillery_brigade= {
+#			need = {
+#               	radio_equipment = 6
+#         	}
+#		}
+#		mountain_artillery_brigade_mot= {
+#			need = {
+#               	radio_equipment = 6
+#         	}
+#		}
+#		airborne_artillery_brigade= {
+#			need = {
+#               	radio_equipment = 6
+#         	}
+#		}
+#		anti_tank_brigade = {
+#			need = {
+#               	radio_equipment = 6
+#         	}
+#		}
+#		anti_tank_brigade_mot = {
+#			need = {
+#               	radio_equipment = 6
+#         	}
+#		}
+#		rocket_artillery_brigade = {
+#			need = {
+#               	radio_equipment = 6
+#         	}
+#		}
+#		motorized_rocket_brigade = {
+#			need = {
+#               	radio_equipment = 6
+#         	}
+#		}
+#		artillery_division = {
+#			need = {
+#               	radio_equipment = 6
+#         	}
+#		}
+#		ss_artillery_brigade = {
+#			need = {
+#               	radio_equipment = 6
+#         	}
+#		}
+#		ss_artillery_brigade_mot = {
+#			need = {
+#               	radio_equipment = 6
+#         	}
+#		}
+#		ss_artillery_medium = {
+#			need = {
+#               	radio_equipment = 6
+#         	}
+#		}
+#		ss_artillery_medium_mot= {
+#			need = {
+#               	radio_equipment = 6
+#         	}
+#		}
+#		ss_mountain_artillery_brigade= {
+#			need = {
+#               	radio_equipment = 6
+#         	}
+#		}
+#		ss_mountain_artillery_brigade_mot= {
+#			need = {
+#               	radio_equipment = 6
+#         	}
+#		}
+#		ss_airborne_artillery_brigade= {
+#			need = {
+#               	radio_equipment = 6
+#         	}
+#		}
+#		ss_rocket_artillery_brigade = {
+#			need = {
+#               	radio_equipment = 6
+#         	}
+#		}
+#		ss_motorized_rocket_brigade = {
+#			need = {
+#               	radio_equipment = 6
+#         	}
+#		}
+#		ss_anti_tank_brigade = {
+#			need = {
+#               	radio_equipment = 6
+#         	}
+#		}
+#		ss_anti_tank_brigade_mot = {
+#			need = {
+#               	radio_equipment = 6
+#         	}
+#		}
+#		guards_artillery_brigade = {
+#			need = {
+#               	radio_equipment = 6
+#         	}
+#		}
+#		guards_artillery_brigade_mot = {
+#			need = {
+#               	radio_equipment = 6
+#         	}
+#		}
+#		guards_motorized_rocket_brigade = {
+#			need = {
+#               	radio_equipment = 6
+#         	}
+#		}
+#		
+#		on_research_complete = {
+#			custom_effect_tooltip = radio_new_equipment_tt
+#			set_temp_variable = { temp = 6 }
+#			set_temp_variable = { total_arty = num_battalions_with_type@artillery_brigade }
+#			add_to_temp_variable = { total_arty = num_battalions_with_type@artillery_brigade_mot }
+#			multiply_temp_variable = { total_arty = temp }
+#			set_temp_variable = { total_med_arty = num_battalions_with_type@artillery_brigade_med }
+#			add_to_temp_variable = { total_med_arty = num_battalions_with_type@artillery_brigade_mot_med }
+#			multiply_temp_variable = { total_med_arty = temp }
+#			set_temp_variable = { total_med_arty = num_battalions_with_type@artillery_brigade_med }
+#			add_to_temp_variable = { total_med_arty = num_battalions_with_type@artillery_brigade_mot_med }
+#			multiply_temp_variable = { total_med_arty = temp }
+#			set_temp_variable = { total_anti_tank = num_battalions_with_type@anti_tank_brigade }
+#			add_to_temp_variable = { total_anti_tank = num_battalions_with_type@anti_tank_brigade_mot }
+#			multiply_temp_variable = { total_anti_tank = temp }
+#			set_temp_variable = { total_pack_arty = num_battalions_with_type@mountain_artillery_brigade }
+#			add_to_temp_variable = { total_pack_arty = num_battalions_with_type@mountain_artillery_brigade_mot }
+#			multiply_temp_variable = { total_pack_arty = temp }
+#			set_temp_variable = { total_rocket = num_battalions_with_type@rocket_artillery_brigade }
+#			add_to_temp_variable = { total_rocket = num_battalions_with_type@motorized_rocket_brigade }
+#			multiply_temp_variable = { total_rocket = temp }
+#			if = {
+#				limit = { tag = GER }
+#				set_temp_variable = { temp = 6 }
+#				set_temp_variable = { total_ss_rocket = num_battalions_with_type@ss_rocket_artillery_brigade }
+#				add_to_temp_variable = { total_ss_rocket = num_battalions_with_type@ss_motorized_rocket_brigade }
+#				multiply_temp_variable = { total_ss_rocket = temp }
+#				
+#				custom_effect_tooltip = ss_rocket_tt
+#			}
+#			custom_effect_tooltip = artillery_tt2
+#			custom_effect_tooltip = med_artillery_tt2
+#			custom_effect_tooltip = anti_tank_tt2
+#			custom_effect_tooltip = pack_arty_tt
+#			custom_effect_tooltip = rocket_tt
+#
+#			custom_effect_tooltip = tech_category_tt
+#			custom_effect_tooltip = electronics_tt
+#			custom_effect_tooltip = radio_tech_tt
+#		}
+#		
+#		research_cost = 1.8
+#		start_year = 1939
+#		folder = {
+#			name = electronics_folder
+#			position = { x = @HQ y = @1939 }
+#		}
+#		
+#		ai_will_do = {
+#			factor = 10
+#			modifier = {
+#				add = 500
+#				EAI_timegate_1938/10 = yes
+#				EAI_radio_tech_focus = yes
+#			}
+#			modifier = {
+#				factor = 10
+#				EAI_timegate_1939/1 = yes
+#			}
+#		}
+#		
+#		categories = {
+#			electronics
+#			radio_tech
+#		}
+#	}
+	# tank radio
+	tank_radio = {
+		allow = { has_country_flag = UNLOCK:electronics_folder } 
+
+		enable_equipment_modules = {
+			trm_radio_1
+		}
+		
+		path = {
+			leads_to_tech = tank_radio2
+			research_cost_coeff = 1
+		}		
+		on_research_complete = {
+			set_temp_variable = { tech = token:tank_radio }
+			on_electronics_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = electronics_tt
+			custom_effect_tooltip = radio_tech_tt
+		}
+		
+		research_cost = 1.5
+		start_year = 1940
+		folder = {
+			name = electronics_folder
+			position = { x = @TNK_RADIO y = @1940 }
+		}
+		
+		special_project_specialization = { specialization_electronics }
+
+		ai_will_do = {
+			base = 0
+			
+			modifier = {
+				add = @E_PRIORITY_5 
+				
+				ai_radio_tank_tech = yes 
+			}
+			modifier = {
+				factor = ai_factor 
+				
+				set_temp_variable = { ai_factor = ai_electronic_tech_need } #AI RESEARCH CATEGORY
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		
+		
+		categories = {
+			electronics
+			radio_tech
+		}
+	}
+	# tank radio
+	tank_radio2 = {
+		allow = { 
+			has_country_flag = UNLOCK:electronics_folder 
+		} 
+		
+		enable_equipment_modules = {
+			trm_radio_2
+		}
+		
+		dependencies = {
+			radio_technology = 1
+		}
+		
+		research_cost = 1.5
+		path = {
+			leads_to_tech = tank_radio3
+			research_cost_coeff = 1
+		}
+		folder = {
+			name = electronics_folder
+			position = { x = @TNK_RADIO y = @1942 }
+		}
+		
+		start_year = 1942
+		
+		special_project_specialization = { specialization_electronics }
+
+		ai_will_do = {
+			base = @E_PRIORITY_5
+			
+			modifier = {
+				factor = ai_factor 
+				
+				set_temp_variable = { ai_factor = ai_electronic_tech_need } #AI RESEARCH CATEGORY
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		
+		on_research_complete = {
+			set_temp_variable = { tech = token:tank_radio2 }
+			on_electronics_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = electronics_tt
+			custom_effect_tooltip = radio_tech_tt
+		}
+		categories = {
+			electronics
+			radio_tech
+		}
+	}
+	tank_radio3 = {
+		allow = { has_country_flag = UNLOCK:electronics_folder } 
+		
+		enable_equipment_modules = {
+			trm_radio_3
+		}
+		
+		research_cost = 1.5
+		folder = {
+			name = electronics_folder
+			position = { x = @TNK_RADIO y = @1944 }
+		}
+		
+		start_year = 1944
+		
+		special_project_specialization = { specialization_electronics }
+
+		ai_will_do = {
+			base = @E_PRIORITY_5
+			
+			modifier = {
+				factor = ai_factor 
+				
+				set_temp_variable = { ai_factor = ai_electronic_tech_need } #AI RESEARCH CATEGORY
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		
+		on_research_complete = {
+			set_temp_variable = { tech = token:tank_radio3 }
+			on_electronics_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = electronics_tt
+			custom_effect_tooltip = radio_tech_tt
+		}		
+		categories = {
+			electronics
+			radio_tech
+		}
+	}
+	#infantry radio
+	#infantry_radio = {
+	#
+	#	category_all_infantry = {
+	#		#max_organisation = 15
+	#		need = {
+    #           	infantry_radio_equipment = 10
+    #     	}
+	#	}
+	#	
+	#	research_cost = 2.5
+	#	start_year = 1941
+	#	folder = {
+	#		name = electronics_folder
+	#		position = { x = -3 y = 12 }
+	#	}
+	#	
+	#	ai_will_do = {
+	#		factor = 1
+	#		
+	#		modifier = {
+	#			factor = 2
+	#			date > "1940.1.1"
+	#		}
+	#		
+	#		modifier = {
+	#			factor = 3
+	#			date > "1940.1.6"
+	#		}
+	#	}
+	#	
+	#	categories = {
+	#		electronics
+	#		radio_tech
+	#	}
+	#}
+	
+	#recon radio
+	recon_radio = {
+		allow = { has_country_flag = UNLOCK:electronics_folder } 
+		
+		on_research_complete = {
+			set_temp_variable = { tech = token:recon_radio }
+			on_electronics_tech_research_complete = yes
+			custom_effect_tooltip = radio_new_equipment_tt
+			
+			set_temp_variable = { temp = 6 }
+			set_temp_variable = { total_recon = num_battalions_with_type@recon }
+			add_to_temp_variable = { total_recon = num_battalions_with_type@recon_cav }
+			add_to_temp_variable = { total_recon = num_battalions_with_type@recon_mot }
+			add_to_temp_variable = { total_recon = num_battalions_with_type@recon_mech }
+			add_to_temp_variable = { total_recon = num_battalions_with_type@recon_ac }
+			multiply_temp_variable = { total_recon = temp }
+			
+			custom_effect_tooltip = recon_tt
+			
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = electronics_tt
+			custom_effect_tooltip = radio_tech_tt
+			
+			
+			if = {
+				limit = {
+					has_country_flag = radio_equipment_intro/complete
+				}
+				clr_country_flag = radio_equipment_intro/complete #clear flag so you can introduce it to para
+				set_country_flag = radio_equipment_intro/infantry_group
+				set_country_flag = radio_equipment_intro/mobile_group
+				set_country_flag = radio_equipment_intro/special_forces_group
+			}
+			clr_country_flag = radio_equipment_intro/support_group
+			
+			if = {
+				limit = {
+					is_ai = yes 
+				}
+				set_technology = { radio_equipment_recon_group_tech = 1 }
+			}
+			add_to_variable = { ui_eq_intro_alert = 1 }
+		}
+		
+		research_cost = 1.2
+		start_year = 1939
+		folder = {
+			name = electronics_folder
+			position = { x = @RECON_RADIO y = @1939 }
+		}
+		
+		special_project_specialization = { specialization_electronics }
+
+		ai_will_do = {
+			base = @E_PRIORITY_1
+			
+			modifier = {
+				factor = ai_factor 
+				
+				set_temp_variable = { ai_factor = ai_electronic_tech_need } #AI RESEARCH CATEGORY
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		
+		categories = {
+			electronics
+			radio_tech
+		}
+	}
+	# air - ground communications
+	radio_detection = {
+		allow = { has_country_flag = UNLOCK:electronics_folder } 
+		
+		air_accidents_factor = -0.01
+		air_interception_detect_factor = 0.01
+		
+		path = {
+			leads_to_tech = hfdf_tech
+			research_cost_coeff = 1
+		}
+		path = {
+			leads_to_tech = hfdf_tech_lar
+			research_cost_coeff = 1
+		}
+		path = {
+			leads_to_tech = early_radar 
+			research_cost_coeff = 1
+		}			
+		start_year = 1937
+		research_cost = 1
+		folder = {
+			name = electronics_folder
+			position = { x = @CONSUMER y = @1937 }
+		}	
+		
+		special_project_specialization = { specialization_electronics }
+
+		ai_will_do = {
+			base = 0
+			
+			modifier = {
+				add = ai_base
+				
+				set_temp_variable = { base = @E_PRIORITY_6 }
+				ai_radar_tech = yes 
+			}
+			modifier = {
+				factor = ai_factor 
+				
+				set_temp_variable = { ai_factor = ai_aircraft_tech_need } #AI RESEARCH CATEGORY
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		
+		on_research_complete = {
+			set_temp_variable = { tech = token:radio_detection }
+			on_electronics_tech_research_complete = yes
+			custom_effect_tooltip = {
+				localization_key = SP_UNLOCK_PROJECT
+				PROJECT = sp_electronics_radar_early	
+			}
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = electronics_tt
+			custom_effect_tooltip = radio_tech_tt
+		}
+		categories = {
+			electronics
+			radio_tech
+		}
+	}
+	avionics_improvements = {
+		allow = { has_country_flag = UNLOCK:electronics_folder } 
+		
+		air_accidents_factor = -0.03
+		air_strategic_bomber_bombing_factor = 0.02
+		path = {
+			leads_to_tech = advanced_avionics
+			research_cost_coeff = 1
+		}
+		
+		research_cost = 1.2
+		start_year = 1938
+		folder = {
+			name = electronics_folder
+			position = { x = @AVIONICS y = @1938 }
+		}	
+		
+		special_project_specialization = { specialization_electronics }
+
+		ai_will_do = {
+			base = @E_PRIORITY_2
+			
+			modifier = {
+				factor = ai_factor 
+				
+				set_temp_variable = { ai_factor = ai_aircraft_tech_need } #AI RESEARCH CATEGORY
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		
+		on_research_complete = {
+			set_temp_variable = { tech = token:avionics_improvements }
+			on_electronics_tech_research_complete = yes
+			custom_effect_tooltip = {
+				localization_key = SP_UNLOCK_PROJECT
+				PROJECT = sp_air_advanced_avionics	
+			}
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = electronics_tt
+			custom_effect_tooltip = air_equipment_tt
+		}		
+		categories = {
+			electronics
+			air_equipment
+		}
+	}
+	
+	advanced_avionics = {
+		allow = { 
+			ROOT = { is_special_project_completed = sp:sp_air_advanced_avionics }
+		}
+		
+		is_special_project_tech = yes
+		
+		air_accidents_factor = -0.03
+		air_weather_penalty = -0.02 
+		air_strategic_bomber_bombing_factor = 0.03
+		research_cost = 1.2
+		start_year = 1940
+		path = {
+			leads_to_tech = improved_avionics
+			research_cost_coeff = 1
+		}
+		folder = {
+			name = electronics_folder
+			position = { x = @AVIONICS y = @1940 }
+		}
+		
+		
+		special_project_specialization = { specialization_electronics }
+
+		ai_will_do = {
+			base = @E_PRIORITY_2
+			
+			modifier = {
+				factor = ai_factor 
+				
+				set_temp_variable = { ai_factor = ai_aircraft_tech_need } #AI RESEARCH CATEGORY
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		
+		on_research_complete = {
+			set_temp_variable = { tech = token:advanced_avionics }
+			on_electronics_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = electronics_tt
+			custom_effect_tooltip = air_equipment_tt
+		}		
+		categories = {
+			electronics
+			air_equipment
+		}
+	}
+	improved_avionics = {
+		allow = { has_country_flag = UNLOCK:electronics_folder } 
+		
+		air_accidents_factor = -0.03
+		air_night_penalty = -0.03
+		air_strategic_bomber_bombing_factor = 0.05
+		research_cost = 1.2
+		start_year = 1942
+		folder = {
+			name = electronics_folder
+			position = { x = @AVIONICS y = @1942 }
+		}
+		dependencies = {
+			improved_decimetric_radar = 1
+		}
+		
+		special_project_specialization = { specialization_electronics }
+
+		ai_will_do = {
+			base = @E_PRIORITY_2
+			
+			modifier = {
+				factor = ai_factor 
+				
+				set_temp_variable = { ai_factor = ai_aircraft_tech_need } #AI RESEARCH CATEGORY
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		
+		on_research_complete = {
+			set_temp_variable = { tech = token:improved_avionics }
+			on_electronics_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = electronics_tt
+			custom_effect_tooltip = air_equipment_tt
+		}		
+		categories = {
+			electronics
+			air_equipment
+		}
+	}
+	
+	early_radar = {
+		allow = { 
+			ROOT = { is_special_project_completed = sp:sp_electronics_radar_early }
+		}
+		
+		is_special_project_tech = yes
+		
+		# can build radars/radar boost in air/sea combat depends on radar level
+		enable_building = {
+			building = radar_station
+			level = 1
+		}
+		
+		path = {
+			leads_to_tech = decimetric_radar 
+			research_cost_coeff = 1
+		}
+		path = {
+			leads_to_tech = capital_ship_radar 
+			research_cost_coeff = 1
+		}
+		research_cost = 1.25
+		start_year = 1939
+		folder = {
+			name = electronics_folder
+			position = { x = @RADAR y = @1939 }
+		}
+		
+		special_project_specialization = { specialization_electronics }
+
+		ai_will_do = {
+			base = 0
+			
+			modifier = {
+				add = ai_base
+				
+				set_temp_variable = { base = @E_PRIORITY_5 }
+				ai_radar_tech = yes 
+			}
+			modifier = {
+				factor = ai_factor 
+				
+				set_temp_variable = { ai_factor = ai_aircraft_tech_need } #AI RESEARCH CATEGORY
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		
+		on_research_complete = {
+			set_temp_variable = { tech = token:early_radar }
+			on_electronics_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = electronics_tt
+			custom_effect_tooltip = radar_tech_tt
+		}		
+		categories = {
+			electronics
+			radar_tech
+		}
+	}
+	
+	decimetric_radar = {
+		allow = { has_country_flag = UNLOCK:electronics_folder } 
+		
+		# can build radars/radar boost in air/sea combat depends on radar level
+		enable_building = {
+			building = radar_station
+			level = 2
+		}
+		
+		path = {
+			leads_to_tech = improved_decimetric_radar 
+			research_cost_coeff = 1
+		}
+		research_cost = 1.25
+		start_year = 1940
+		folder = {
+			name = electronics_folder
+			position = { x = @RADAR y = @1940 }
+		}
+		
+		special_project_specialization = { specialization_electronics }
+
+		ai_will_do = {
+			base = 0
+			
+			modifier = {
+				add = ai_base
+				
+				set_temp_variable = { base = @E_PRIORITY_5 }
+				ai_radar_tech = yes 
+			}
+			modifier = {
+				factor = ai_factor 
+				
+				set_temp_variable = { ai_factor = ai_aircraft_tech_need } #AI RESEARCH CATEGORY
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		
+		on_research_complete = {
+			set_temp_variable = { tech = token:decimetric_radar }
+			on_electronics_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = electronics_tt
+			custom_effect_tooltip = radar_tech_tt
+		}		
+		categories = {
+			electronics
+			radar_tech
+		}
+	}
+	
+	improved_decimetric_radar = {
+		allow = { has_country_flag = UNLOCK:electronics_folder } 
+
+		# radar boost in air/sea combat depends on radar level
+
+		production_speed_radar_station_factor = 0.1
+		static_anti_air_hit_chance_factor = 0.05
+		
+		path = {
+			leads_to_tech = centimetric_radar 
+			research_cost_coeff = 1
+		}		
+		research_cost = 1.25
+		start_year = 1941
+		
+		folder = {
+			name = electronics_folder
+			position = { x = @RADAR y = @1941 }
+		}
+		
+		special_project_specialization = { specialization_electronics }
+
+		ai_will_do = {
+			base = 0
+			
+			modifier = {
+				add = ai_base
+				
+				set_temp_variable = { base = @E_PRIORITY_5 }
+				ai_radar_tech = yes 
+			}
+			modifier = {
+				factor = ai_factor 
+				
+				set_temp_variable = { ai_factor = ai_aircraft_tech_need } #AI RESEARCH CATEGORY
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		
+		on_research_complete = {
+			set_temp_variable = { tech = token:improved_decimetric_radar }
+			on_electronics_tech_research_complete = yes
+			custom_effect_tooltip = {
+				localization_key = SP_UNLOCK_PROJECT
+				PROJECT = sp_electronics_radar_centimetric	
+			}
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = electronics_tt
+			custom_effect_tooltip = radar_tech_tt
+		}		
+		categories = {
+			electronics
+			radar_tech
+		}
+	}
+	
+	centimetric_radar = {
+		allow = { 
+			ROOT = { is_special_project_completed = sp:sp_electronics_radar_centimetric }
+		}
+		
+		is_special_project_tech = yes
+
+		# radar boost in air/sea combat depends on radar level
+		enable_building = {
+			building = radar_station
+			level = 3
+		}
+		production_speed_radar_station_factor = 0.1
+		static_anti_air_hit_chance_factor = 0.05
+		
+		path = {
+			leads_to_tech = improved_centimetric_radar 
+			research_cost_coeff = 1
+		}	
+		research_cost = 1.75
+		start_year = 1942
+
+		folder = {
+			name = electronics_folder
+			position = { x = @RADAR y = @1942 }
+		}
+		
+		special_project_specialization = { specialization_electronics }
+
+		ai_will_do = {
+			base = 0
+			
+			modifier = {
+				add = ai_base
+				
+				set_temp_variable = { base = @E_PRIORITY_5 }
+				ai_radar_tech = yes 
+			}
+			modifier = {
+				factor = ai_factor 
+				
+				set_temp_variable = { ai_factor = ai_aircraft_tech_need } #AI RESEARCH CATEGORY
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		
+		on_research_complete = {
+			set_temp_variable = { tech = token:centimetric_radar }
+			on_electronics_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = electronics_tt
+			custom_effect_tooltip = radar_tech_tt
+		}		
+		categories = {
+			electronics
+			radar_tech
+		}
+	}
+	
+	improved_centimetric_radar = {
+		allow = { has_country_flag = UNLOCK:electronics_folder } 
+
+		# radar boost in air/sea combat depends on radar level
+		enable_building = {
+			building = radar_station
+			level = 4
+		}
+		production_speed_radar_station_factor = 0.1
+		static_anti_air_hit_chance_factor = 0.05
+		
+		path = {
+			leads_to_tech = advanced_centimetric_radar 
+			research_cost_coeff = 1
+		}	
+		research_cost = 1.75
+		start_year = 1943
+		
+		folder = {
+			name = electronics_folder
+			position = { x = @RADAR y = @1943 }
+		}
+		
+		special_project_specialization = { specialization_electronics }
+
+		ai_will_do = {
+			base = 0
+			
+			modifier = {
+				add = ai_base
+				
+				set_temp_variable = { base = @E_PRIORITY_5 }
+				ai_radar_tech = yes 
+			}
+			modifier = {
+				factor = ai_factor 
+				
+				set_temp_variable = { ai_factor = ai_aircraft_tech_need } #AI RESEARCH CATEGORY
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		
+		on_research_complete = {
+			set_temp_variable = { tech = token:improved_centimetric_radar }
+			custom_effect_tooltip = {
+				localization_key = SP_UNLOCK_PROJECT
+				PROJECT = sp_electronics_aa_proximity_fuze	
+			}
+			on_electronics_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = electronics_tt
+			custom_effect_tooltip = radar_tech_tt
+		}		
+		categories = {
+			electronics
+			radar_tech
+		}
+	}
+	
+	advanced_centimetric_radar = {
+		allow = { has_country_flag = UNLOCK:electronics_folder } 
+
+		# radar boost in air/sea combat depends on radar level
+		enable_building = {
+			building = radar_station
+			level = 5
+		}		
+		production_speed_radar_station_factor = 0.1
+		static_anti_air_hit_chance_factor = 0.05
+		
+		research_cost = 1.75
+		start_year = 1944	
+		folder = {
+			name = electronics_folder
+			position = { x = @RADAR y = @1944 }
+		}
+		
+		special_project_specialization = { specialization_electronics }
+
+		ai_will_do = {
+			base = 0
+			
+			modifier = {
+				add = ai_base
+				
+				set_temp_variable = { base = @E_PRIORITY_5 }
+				ai_radar_tech = yes 
+			}
+			modifier = {
+				factor = ai_factor 
+				
+				set_temp_variable = { ai_factor = ai_aircraft_tech_need } #AI RESEARCH CATEGORY
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		
+		on_research_complete = {
+			set_temp_variable = { tech = token:advanced_centimetric_radar }
+			on_electronics_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = electronics_tt
+			custom_effect_tooltip = radar_tech_tt
+		}		
+		categories = {
+			electronics
+			radar_tech
+		}
+	}
+	
+	# Non-LaR versions
+	hfdf_tech = {
+		allow = { has_country_flag = UNLOCK:electronics_folder } 
+		allow_branch = {
+			NOT = { has_dlc = "La Resistance" }
+		}
+		
+		local_factory_sabotage = -0.01
+		foreign_subversive_activites = -0.02
+		#enemy_#partisan_effect = -0.02
+		path = {
+			leads_to_tech = hfdf_tech2
+			research_cost_coeff = 1
+		}
+		
+		research_cost = 1
+		start_year = 1938
+		folder = {
+			name = electronics_folder
+			position = { x = @LISTEN y = @1938 }
+		}	
+		
+		special_project_specialization = { specialization_electronics }
+
+		ai_will_do = {
+			factor = 0
+		}
+		
+		on_research_complete = {
+			set_temp_variable = { tech = token:hfdf_tech }
+			on_electronics_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = electronics_tt
+			custom_effect_tooltip = radio_tech_tt
+		}		
+		categories = {
+			electronics
+			radio_tech
+		}
+	}
+	hfdf_tech2 = {
+		allow = { has_country_flag = UNLOCK:electronics_folder } 
+		allow_branch = {
+			NOT = { has_dlc = "La Resistance" }
+		}
+		
+		local_factory_sabotage = -0.02
+		foreign_subversive_activites = -0.02
+		#enemy_#partisan_effect = -0.02
+		path = {
+			leads_to_tech = hfdf_tech3
+			research_cost_coeff = 1
+		}
+		dependencies = {
+			radio_detection = 1
+		}
+		research_cost = 1
+		start_year = 1940
+		folder = {
+			name = electronics_folder
+			position = { x = @LISTEN y = @1940 }
+		}	
+		
+		special_project_specialization = { specialization_electronics }
+
+		ai_will_do = {
+			factor = 0
+		}
+		
+		on_research_complete = {
+			set_temp_variable = { tech = token:hfdf_tech2 }
+			on_electronics_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = electronics_tt
+			custom_effect_tooltip = radio_tech_tt
+		}		
+		categories = {
+			electronics
+			radio_tech
+		}
+	}
+	hfdf_tech3 = {
+		allow = { has_country_flag = UNLOCK:electronics_folder } 
+		allow_branch = {
+			NOT = { has_dlc = "La Resistance" }
+		}
+		
+		local_factory_sabotage = -0.03
+		foreign_subversive_activites = -0.05
+		spotting_chance = 0.01
+		convoy_escort_efficiency = 0.05
+		#enemy_#partisan_effect = -0.05
+
+		dependencies = {
+			radio_detection = 1
+		}
+		research_cost = 1
+		start_year = 1942
+		folder = {
+			name = electronics_folder
+			position = { x = @LISTEN y = @1942 }
+		}	
+		
+		special_project_specialization = { specialization_electronics }
+
+		ai_will_do = {
+			factor = 0
+		}
+		
+		on_research_complete = {
+			set_temp_variable = { tech = token:hfdf_tech3 }
+			on_electronics_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = electronics_tt
+			custom_effect_tooltip = radio_tech_tt
+		}		
+		categories = {
+			electronics
+			radio_tech
+		}
+	}
+	
+	# LaR versions
+	hfdf_tech_lar = {
+		allow = { has_country_flag = UNLOCK:electronics_folder } 
+		allow_branch = {
+			has_dlc = "La Resistance"
+		}
+		
+		local_factory_sabotage = -0.01
+		foreign_subversive_activites = -0.02
+		army_intel_factor = 0.02
+		navy_intel_factor = 0.02
+		airforce_intel_factor = 0.02
+		intelligence_agency_defense = 0.15
+		#enemy_#partisan_effect = -0.02
+		path = {
+			leads_to_tech = hfdf_tech2_lar
+			research_cost_coeff = 1
+		}
+		
+		research_cost = 1
+		start_year = 1938
+		folder = {
+			name = electronics_folder
+			position = { x = @LISTEN y = @1938 }
+		}	
+		
+		special_project_specialization = { specialization_electronics }
+
+		ai_will_do = {
+			base = @E_PRIORITY_1
+			
+			modifier = {
+				factor = ai_mult
+				
+				ai_intelligence_tech_need = yes
+			}
+			modifier = {
+				factor = ai_factor 
+				
+				set_temp_variable = { ai_factor = ai_electronic_tech_need } #AI RESEARCH CATEGORY
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		
+		on_research_complete = {
+			set_temp_variable = { tech = token:hfdf_tech_lar }
+			on_electronics_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = electronics_tt
+			custom_effect_tooltip = radio_tech_tt
+		}		
+		categories = {
+			electronics
+			radio_tech
+		}
+	}
+	hfdf_tech2_lar = {
+		allow = { has_country_flag = UNLOCK:electronics_folder } 
+		allow_branch = {
+			has_dlc = "La Resistance"
+		}
+		
+		local_factory_sabotage = -0.02
+		foreign_subversive_activites = -0.02
+		army_intel_factor = 0.02
+		navy_intel_factor = 0.02
+		airforce_intel_factor = 0.02
+		intelligence_agency_defense = 0.15
+		#enemy_#partisan_effect = -0.02
+		path = {
+			leads_to_tech = hfdf_tech3_lar
+			research_cost_coeff = 1
+		}
+		dependencies = {
+			radio_detection = 1
+		}
+		research_cost = 1
+		start_year = 1940
+		folder = {
+			name = electronics_folder
+			position = { x = @LISTEN y = @1940 }
+		}	
+		
+		special_project_specialization = { specialization_electronics }
+
+		ai_will_do = {
+			base = @E_PRIORITY_1
+			
+			modifier = {
+				factor = ai_mult
+				
+				ai_intelligence_tech_need = yes
+			}
+			modifier = {
+				factor = ai_factor 
+				
+				set_temp_variable = { ai_factor = ai_electronic_tech_need } #AI RESEARCH CATEGORY
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		
+		on_research_complete = {
+			set_temp_variable = { tech = token:hfdf_tech2_lar }
+			on_electronics_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = electronics_tt
+			custom_effect_tooltip = radio_tech_tt
+		}		
+		categories = {
+			electronics
+			radio_tech
+		}
+	}
+	hfdf_tech3_lar = {
+		allow = { has_country_flag = UNLOCK:electronics_folder } 
+		allow_branch = {
+			has_dlc = "La Resistance"
+		}
+		
+		local_factory_sabotage = -0.03
+		foreign_subversive_activites = -0.05
+		army_intel_factor = 0.01
+		navy_intel_factor = 0.01
+		airforce_intel_factor = 0.01
+		intelligence_agency_defense = 0.2
+		spotting_chance = 0.01
+		convoy_escort_efficiency = 0.05
+		#enemy_#partisan_effect = -0.05
+
+		dependencies = {
+			radio_detection = 1
+		}
+		research_cost = 1
+		start_year = 1942
+		folder = {
+			name = electronics_folder
+			position = { x = @LISTEN y = @1942 }
+		}	
+		
+		special_project_specialization = { specialization_electronics }
+
+		ai_will_do = {
+			base = @E_PRIORITY_1
+			
+			modifier = {
+				factor = ai_mult
+				
+				ai_intelligence_tech_need = yes
+			}
+			modifier = {
+				factor = ai_factor 
+				
+				set_temp_variable = { ai_factor = ai_electronic_tech_need } #AI RESEARCH CATEGORY
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		
+		on_research_complete = {
+			set_temp_variable = { tech = token:hfdf_tech3_lar }
+			on_electronics_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = electronics_tt
+			custom_effect_tooltip = radio_tech_tt
+		}		
+		categories = {
+			electronics
+			radio_tech
+		}
+	}
+	### Shipradar
+#	small_ship_radar = {
+#		## screens gain sea and air detection
+#		category_all_destroyer = {
+#			surface_detection = 0.05
+#			surface_visibility = 0.05
+#			anti_air_attack = 0.05
+#		}
+#		escort_carrier = {
+#			surface_detection = 0.05
+#			surface_visibility = 0.05
+#			anti_air_attack = 0.05
+#		}
+#		category_all_subs = {
+#			surface_detection = 0.01
+#			surface_visibility = 0.01
+#			anti_air_attack = 0.01
+#		}
+#		dependencies = {
+#			radio_detection = 1
+#		}
+#		
+#		research_cost = 0.75
+#		folder = {
+#			name = electronics_folder
+#			position = { x = 2 y = 4 }
+#		}
+#		
+#		ai_will_do = {
+#			factor = 4
+#			modifier = {
+#				factor = 0
+#				trade_interdiction_doctrine = yes
+#			}
+#			modifier = {
+#				add = 5000
+#				tag = JAP
+#			}
+#		}
+#		
+#		categories = {
+#			electronics
+#			radar_tech
+#		}
+#	}
+#	medium_ship_radar = {
+#		## LC, CA, SPT gain sea and air detection
+#		light_cruiser = {
+#			surface_detection = 0.10
+#			surface_visibility = 0.10
+#			anti_air_attack = 0.10
+#		}
+#		heavy_cruiser = {
+#			surface_detection = 0.10
+#			surface_visibility = 0.10
+#			anti_air_attack = 0.10
+#		}
+#		pocket_battleship = {
+#			surface_detection = 0.10
+#			surface_visibility = 0.10
+#			anti_air_attack = 0.10
+#		}
+#		dependencies = {
+#			decimetric_radar = 1
+#		}
+#		
+#		research_cost = 0.5
+#		folder = {
+#			name = electronics_folder
+#			position = { x = 2 y = 6 }
+#		}
+#		
+#		ai_will_do = {
+#			factor = 10
+#			modifier = {
+#				factor = 0
+#				trade_interdiction_doctrine = yes
+#			}
+#		}
+#		
+#		categories = {
+#			electronics
+#			radar_tech
+#		}
+#	}
+#	big_ship_radar = {
+#		## captials gain sea and air detection
+#		battle_cruiser = {
+#			surface_detection = 0.15
+#			surface_visibility = 0.15
+#			anti_air_attack = 0.15
+#		}
+#		category_all_battleship = {
+#			surface_detection = 0.15
+#			surface_visibility = 0.15
+#			anti_air_attack = 0.15
+#		}
+#		category_all_cruiser = {
+#			surface_detection = 0.15
+#			surface_visibility = 0.15
+#			anti_air_attack = 0.15
+#		}
+#		dependencies = {
+#			improved_decimetric_radar = 1
+#		}
+#		
+#		research_cost = 0.25
+#		folder = {
+#			name = electronics_folder
+#			position = { x = 2 y = 8 }
+#		}
+#		
+#		ai_will_do = {
+#			factor = 10
+#			modifier = {
+#				factor = 0
+#				trade_interdiction_doctrine = yes
+#			}
+#		}
+#		
+#		categories = {
+#			electronics
+#			radar_tech
+#		}
+#	}
+	
+	mechanical_computing = {
+		allow = { has_country_flag = UNLOCK:electronics_folder } 
+
+		# small boost to research speed
+		research_speed_factor = 0.02
+		specialization_electronics_speed_factor = 0.05
+		
+		path = {
+			leads_to_tech = electronic_computing_machine 
+			research_cost_coeff = 1
+		}
+		
+		research_cost = 2.5
+		start_year = 1936
+		
+		folder = {
+			name = electronics_folder
+			position = { x = @MECH_COMP y = @1936 }
+		}
+		
+		special_project_specialization = { specialization_electronics }
+
+		ai_will_do = {
+			base = @E_PRIORITY_4
+			
+			modifier = {
+				factor = ai_factor 
+				
+				set_temp_variable = { ai_factor = ai_electronic_tech_need } #AI RESEARCH CATEGORY
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		
+		on_research_complete = {
+			set_temp_variable = { tech = token:mechanical_computing }
+			on_electronics_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = electronics_tt
+			custom_effect_tooltip = computing_tech_tt
+		}		
+		categories = {
+			electronics
+			computing_tech
+		}
+	}
+	
+	electronic_computing_machine = {
+		allow = { has_country_flag = UNLOCK:electronics_folder } 
+		
+		# small boost to research speed
+		research_speed_factor = 0.02
+		specialization_electronics_speed_factor = 0.05
+		
+		path = {
+			leads_to_tech = computing_machine 
+			research_cost_coeff = 1
+		}
+		
+		research_cost = 1.5
+		start_year = 1937
+		folder = {
+			name = electronics_folder
+			position = { x = @MECH_COMP y = @1937 }
+		}
+		
+		special_project_specialization = { specialization_electronics }
+
+		ai_will_do = {
+			base = @E_PRIORITY_4
+			
+			modifier = {
+				factor = ai_factor 
+				
+				set_temp_variable = { ai_factor = ai_electronic_tech_need } #AI RESEARCH CATEGORY
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		
+		on_research_complete = {
+			set_temp_variable = { tech = token:electronic_computing_machine }
+			on_electronics_tech_research_complete = yes
+			custom_effect_tooltip = {
+				localization_key = SP_UNLOCK_PROJECT
+				PROJECT = sp_electronics_computing_machine	
+			}
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = electronics_tt
+			custom_effect_tooltip = computing_tech_tt
+		}		
+		categories = {
+			electronics
+			#encryption_tech
+			#decryption_tech
+			computing_tech
+		}
+	}
+	
+	computing_machine = {
+		allow = { 
+			ROOT = { is_special_project_completed = sp:sp_electronics_computing_machine }
+		}
+		
+		is_special_project_tech = yes
+
+		# small boost to research speed
+		research_speed_factor = 0.02
+		specialization_electronics_speed_factor = 0.05
+		
+		path = {
+			leads_to_tech = improved_computing_machine 
+			research_cost_coeff = 1
+		}
+		path = {
+			leads_to_tech = basic_encryption 
+			research_cost_coeff = 1
+		}
+		path = {
+			leads_to_tech = basic_decryption 
+			research_cost_coeff = 1
+		}
+		path = {
+			leads_to_tech = basic_encryption_lar 
+			research_cost_coeff = 1
+		}
+		path = {
+			leads_to_tech = basic_decryption_lar 
+			research_cost_coeff = 1
+		}
+		
+		research_cost = 2.5
+		start_year = 1938
+		folder = {
+			name = electronics_folder
+			position = { x = @MECH_COMP y = @1938 }
+		}
+		
+		special_project_specialization = { specialization_electronics }
+
+		ai_will_do = {
+			base = @E_PRIORITY_4
+			
+			modifier = {
+				factor = ai_factor 
+				
+				set_temp_variable = { ai_factor = ai_electronic_tech_need } #AI RESEARCH CATEGORY
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		
+		on_research_complete = {
+			set_temp_variable = { tech = token:computing_machine }
+			on_electronics_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = electronics_tt
+			custom_effect_tooltip = computing_tech_tt
+		}		
+		categories = {
+			electronics
+			#encryption_tech
+			#decryption_tech
+			computing_tech
+		}
+	}
+	
+	improved_computing_machine = {
+		allow = { has_country_flag = UNLOCK:electronics_folder } 
+
+		# small boost to research speed
+		research_speed_factor = 0.03
+		specialization_electronics_speed_factor = 0.06
+		
+		path = {
+			leads_to_tech = advanced_computing_machine 
+			research_cost_coeff = 1
+		}
+		path = {
+			leads_to_tech = improved_encryption 
+			research_cost_coeff = 1
+		}
+		path = {
+			leads_to_tech = improved_decryption 
+			research_cost_coeff = 1
+		}
+		path = {
+			leads_to_tech = improved_encryption_lar
+			research_cost_coeff = 1
+		}
+		path = {
+			leads_to_tech = improved_decryption_lar 
+			research_cost_coeff = 1
+		}	
+		research_cost = 2.5
+		start_year = 1940
+		
+		folder = {
+			name = electronics_folder
+			position = { x = @MECH_COMP y = @1940 }
+		}
+		
+		special_project_specialization = { specialization_electronics }
+
+		ai_will_do = {
+			base = @E_PRIORITY_4
+			
+			modifier = {
+				factor = ai_factor 
+				
+				set_temp_variable = { ai_factor = ai_electronic_tech_need } #AI RESEARCH CATEGORY
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		
+		on_research_complete = {
+			set_temp_variable = { tech = token:improved_computing_machine }
+			on_electronics_tech_research_complete = yes
+			custom_effect_tooltip = {
+				localization_key = SP_UNLOCK_PROJECT
+				PROJECT = sp_electronics_advanced_computing_machine	
+			}
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = electronics_tt
+			custom_effect_tooltip = computing_tech_tt
+		}		
+		categories = {
+			electronics
+			#encryption_tech
+			#decryption_tech
+			computing_tech
+		}
+	}
+	
+	advanced_computing_machine = {
+		allow = { 
+			ROOT = { is_special_project_completed = sp:sp_electronics_advanced_computing_machine }
+		}
+		
+		is_special_project_tech = yes
+
+		# small boost to research speed
+		research_speed_factor = 0.03
+		specialization_electronics_speed_factor = 0.06
+		
+		path = {
+			leads_to_tech = semimodern_computing_machine 
+			research_cost_coeff = 1
+		}
+		path = {
+			leads_to_tech = advanced_encryption 
+			research_cost_coeff = 1
+		}
+		path = {
+			leads_to_tech = advanced_decryption 
+			research_cost_coeff = 1
+		}
+		path = {
+			leads_to_tech = advanced_encryption_lar 
+			research_cost_coeff = 1
+		}
+		path = {
+			leads_to_tech = advanced_decryption_lar 
+			research_cost_coeff = 1
+		}			
+		research_cost = 2.5
+		start_year = 1942
+		
+		folder = {
+			name = electronics_folder
+			position = { x = @MECH_COMP y = @1942 }
+		}
+		
+		special_project_specialization = { specialization_electronics }
+
+		ai_will_do = {
+			base = @E_PRIORITY_4
+			
+			modifier = {
+				factor = ai_factor 
+				
+				set_temp_variable = { ai_factor = ai_electronic_tech_need } #AI RESEARCH CATEGORY
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		
+		on_research_complete = {
+			set_temp_variable = { tech = token:advanced_computing_machine }
+			on_electronics_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = electronics_tt
+			custom_effect_tooltip = computing_tech_tt
+		}		
+		categories = {
+			electronics
+			#encryption_tech
+			#decryption_tech
+			computing_tech
+		}
+	}
+	
+	semimodern_computing_machine = {
+		allow = { has_country_flag = UNLOCK:electronics_folder } 
+
+		# small boost to research speed
+		research_speed_factor = 0.03
+		specialization_electronics_speed_factor = 0.07
+		
+		research_cost = 2.5
+		start_year = 1944
+		
+		folder = {
+			name = electronics_folder
+			position = { x = @MECH_COMP y = @1944 }
+		}
+		
+		special_project_specialization = { specialization_electronics }
+
+		ai_will_do = {
+			base = @E_PRIORITY_4
+			
+			modifier = {
+				factor = ai_factor 
+				
+				set_temp_variable = { ai_factor = ai_electronic_tech_need } #AI RESEARCH CATEGORY
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		
+		on_research_complete = {
+			set_temp_variable = { tech = token:semimodern_computing_machine }
+			on_electronics_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = electronics_tt
+			custom_effect_tooltip = computing_tech_tt
+		}		
+		categories = {
+			electronics
+			#encryption_tech
+			#decryption_tech
+			computing_tech
+		}
+	}
+	# Non-LaR versions
+	basic_encryption = {
+		allow = { has_country_flag = UNLOCK:electronics_folder }
+		allow_branch = {
+			NOT = { has_dlc = "La Resistance" }
+		}
+
+		# encryption 1
+		encryption = 1
+		
+		research_cost = 1
+		start_year = 1938
+		
+		folder = {
+			name = electronics_folder
+			position = { x = @BASIC_ENCRP y = @1938_1 }
+		}
+		
+		special_project_specialization = { specialization_electronics }
+
+		ai_will_do = {
+			base = @E_PRIORITY_3
+			
+			modifier = {
+				factor = ai_mult
+				
+				ai_intelligence_tech_need = yes
+			}
+			modifier = {
+				factor = ai_factor 
+				
+				set_temp_variable = { ai_factor = ai_electronic_tech_need } #AI RESEARCH CATEGORY
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		
+		on_research_complete = {
+			set_temp_variable = { tech = token:basic_encryption }
+			on_electronics_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = electronics_tt
+			custom_effect_tooltip = encryption_tech_tt
+			custom_effect_tooltip = computing_tech_tt
+			hidden_effect = {
+				if = {
+					limit = { tag = GER }
+				}
+				country_event = { id = enigma.8 random_days = 500 }
+			}
+		}		
+		categories = {
+			electronics
+			encryption_tech
+			computing_tech
+		}
+	}
+	
+	improved_encryption = {
+		allow = { has_country_flag = UNLOCK:electronics_folder } 
+		allow_branch = {
+			NOT = { has_dlc = "La Resistance" }
+		}
+
+		# encryption 2
+		encryption = 1
+		
+		research_cost = 1
+		start_year = 1940
+		
+		dependencies = {
+			basic_encryption = 1
+		}
+		
+		folder = {
+			name = electronics_folder
+			position = { x = @BASIC_ENCRP y = @1940_1 }
+		}
+		
+		special_project_specialization = { specialization_electronics }
+
+		ai_will_do = {
+			base = @E_PRIORITY_3
+			
+			modifier = {
+				factor = ai_mult
+				
+				ai_intelligence_tech_need = yes
+			}
+			modifier = {
+				factor = ai_factor 
+				
+				set_temp_variable = { ai_factor = ai_electronic_tech_need } #AI RESEARCH CATEGORY
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		
+		on_research_complete = {
+			set_temp_variable = { tech = token:improved_encryption }
+			on_electronics_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = electronics_tt
+			custom_effect_tooltip = encryption_tech_tt
+			custom_effect_tooltip = computing_tech_tt
+			hidden_effect = {
+				if = {
+					limit = { tag = GER }
+				}
+				country_event = { id = enigma.10 random_days = 500 }
+			}
+		}		
+		categories = {
+			electronics
+			encryption_tech
+			computing_tech
+		}
+	}
+	
+	advanced_encryption = {
+		allow = { has_country_flag = UNLOCK:electronics_folder } 
+		allow_branch = {
+			NOT = { has_dlc = "La Resistance" }
+		}
+
+		# encryption 3
+		encryption = 1
+		
+		research_cost = 1
+		start_year = 1942
+		
+		dependencies = {
+			improved_encryption = 1
+		}
+		
+		folder = {
+			name = electronics_folder
+			position = { x = @BASIC_ENCRP y = @1942_1 }
+		}
+		
+		special_project_specialization = { specialization_electronics }
+
+		ai_will_do = {
+			base = @E_PRIORITY_3
+			
+			modifier = {
+				factor = ai_mult
+				
+				ai_intelligence_tech_need = yes
+			}
+			modifier = {
+				factor = ai_factor 
+				
+				set_temp_variable = { ai_factor = ai_electronic_tech_need } #AI RESEARCH CATEGORY
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		
+		on_research_complete = {
+			set_temp_variable = { tech = token:advanced_encryption }
+			on_electronics_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = electronics_tt
+			custom_effect_tooltip = encryption_tech_tt
+			custom_effect_tooltip = computing_tech_tt
+		}		
+		categories = {
+			electronics
+			encryption_tech
+			computing_tech
+		}
+	}
+	
+	basic_decryption = {
+		allow = { has_country_flag = UNLOCK:electronics_folder } 
+		allow_branch = {
+			NOT = { has_dlc = "La Resistance" }
+		}
+
+		# decryption 1
+		decryption = 1
+		
+		research_cost = 1.5
+		start_year = 1938
+		
+		folder = {
+			name = electronics_folder
+			position = { x = @ELEC_COMP y = @1938_1 }
+		}
+		
+		special_project_specialization = { specialization_electronics }
+
+		ai_will_do = {
+			base = @E_PRIORITY_3
+			
+			modifier = {
+				factor = ai_mult
+				
+				ai_intelligence_tech_need = yes
+			}
+			modifier = {
+				factor = ai_factor 
+				
+				set_temp_variable = { ai_factor = ai_electronic_tech_need } #AI RESEARCH CATEGORY
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		
+		on_research_complete = {
+			set_temp_variable = { tech = token:basic_decryption }
+			on_electronics_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = electronics_tt
+			custom_effect_tooltip = decryption_tech_tt
+			custom_effect_tooltip = computing_tech_tt
+			hidden_effect = {
+				if = {
+					limit = {
+						tag = ENG
+					}
+					country_event = { id = enigma.3 days = 365 random_days = 60 } #enigma.txt
+				}
+			}
+		}		
+		categories = {
+			electronics
+			decryption_tech
+			computing_tech
+		}
+	}
+	
+	improved_decryption = {
+		allow = { has_country_flag = UNLOCK:electronics_folder } 
+		allow_branch = {
+			NOT = { has_dlc = "La Resistance" }
+		}
+
+		# decryption 2
+		decryption = 1
+		
+		research_cost = 1.5
+		start_year = 1940
+		
+		dependencies = {
+			basic_decryption = 1
+		}
+		
+		folder = {
+			name = electronics_folder
+			position = { x = @ELEC_COMP y = @1940_1 }
+		}
+		
+		special_project_specialization = { specialization_electronics }
+
+		ai_will_do = {
+			base = @E_PRIORITY_3
+			
+			modifier = {
+				factor = ai_mult
+				
+				ai_intelligence_tech_need = yes
+			}
+			modifier = {
+				factor = ai_factor 
+				
+				set_temp_variable = { ai_factor = ai_electronic_tech_need } #AI RESEARCH CATEGORY
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		
+		on_research_complete = {
+			set_temp_variable = { tech = token:improved_decryption }
+			on_electronics_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = electronics_tt
+			custom_effect_tooltip = decryption_tech_tt
+			custom_effect_tooltip = computing_tech_tt
+			hidden_effect = {
+				if = {
+					limit = { tag = USA }
+				}
+				country_event = { id = enigma.11 random_days = 600 }
+			}
+		}		
+		categories = {
+			electronics
+			decryption_tech
+			computing_tech
+		}
+	}
+	
+	advanced_decryption = {
+		allow = { has_country_flag = UNLOCK:electronics_folder } 
+		allow_branch = {
+			NOT = { has_dlc = "La Resistance" }
+		}
+
+		# decryption 3
+		decryption = 1
+		
+		research_cost = 1.5
+		start_year = 1942
+		
+		dependencies = {
+			improved_decryption = 1
+		}
+		
+		folder = {
+			name = electronics_folder
+			position = { x = @ELEC_COMP y = @1942_1 }
+		}
+		
+		special_project_specialization = { specialization_electronics }
+
+		ai_will_do = {
+			base = @E_PRIORITY_3
+			
+			modifier = {
+				factor = ai_mult
+				
+				ai_intelligence_tech_need = yes
+			}
+			modifier = {
+				factor = ai_factor 
+				
+				set_temp_variable = { ai_factor = ai_electronic_tech_need } #AI RESEARCH CATEGORY
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		
+		on_research_complete = {
+			set_temp_variable = { tech = token:advanced_decryption }
+			on_electronics_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = electronics_tt
+			custom_effect_tooltip = decryption_tech_tt
+			custom_effect_tooltip = computing_tech_tt
+		}		
+		categories = {
+			electronics
+			decryption_tech
+			computing_tech
+		}
+	}
+	
+	# LaR versions
+	basic_encryption_lar = {
+		allow = { has_country_flag = UNLOCK:electronics_folder } 
+		allow_branch = {
+			has_dlc = "La Resistance"
+		}
+
+		# encryption 1
+		crypto_strength = 1
+		
+		research_cost = 1
+		start_year = 1938
+		
+		folder = {
+			name = electronics_folder
+			position = { x = @BASIC_ENCRP y = @1938_1 }
+		}
+		
+		special_project_specialization = { specialization_electronics }
+
+		ai_will_do = {
+			base = @E_PRIORITY_3
+			
+			modifier = {
+				factor = ai_mult
+				
+				ai_intelligence_tech_need = yes
+			}
+			modifier = {
+				factor = ai_factor 
+				
+				set_temp_variable = { ai_factor = ai_electronic_tech_need } #AI RESEARCH CATEGORY
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		
+		on_research_complete = {
+			set_temp_variable = { tech = token:basic_encryption_lar }
+			on_electronics_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = electronics_tt
+			custom_effect_tooltip = encryption_tech_tt
+			custom_effect_tooltip = computing_tech_tt
+			hidden_effect = {
+				if = {
+					limit = { tag = GER }
+				}
+				country_event = { id = enigma.8 random_days = 500 }
+			}
+		}		
+		categories = {
+			electronics
+			encryption_tech
+			computing_tech
+		}
+	}
+	
+	improved_encryption_lar = {
+		allow = { has_country_flag = UNLOCK:electronics_folder } 
+		allow_branch = {
+			has_dlc = "La Resistance"
+		}
+
+		# encryption 2
+		crypto_strength = 2
+		
+		research_cost = 1
+		start_year = 1940
+		
+		dependencies = {
+			basic_encryption_lar = 1
+		}
+		
+		folder = {
+			name = electronics_folder
+			position = { x = @BASIC_ENCRP y = @1940_1 }
+		}
+		
+		special_project_specialization = { specialization_electronics }
+
+		ai_will_do = {
+			base = @E_PRIORITY_3
+			
+			modifier = {
+				factor = ai_mult
+				
+				ai_intelligence_tech_need = yes
+			}
+			modifier = {
+				factor = ai_factor 
+				
+				set_temp_variable = { ai_factor = ai_electronic_tech_need } #AI RESEARCH CATEGORY
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		
+		on_research_complete = {
+			set_temp_variable = { tech = token:improved_encryption_lar }
+			on_electronics_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = electronics_tt
+			custom_effect_tooltip = encryption_tech_tt
+			custom_effect_tooltip = computing_tech_tt
+			hidden_effect = {
+				if = {
+					limit = { tag = GER }
+				}
+				country_event = { id = enigma.10 random_days = 500 }
+			}
+		}		
+		categories = {
+			electronics
+			encryption_tech
+			computing_tech
+		}
+	}
+	
+	advanced_encryption_lar = {
+		allow = { has_country_flag = UNLOCK:electronics_folder } 
+		allow_branch = {
+			has_dlc = "La Resistance"
+		}
+
+		# encryption 3
+		crypto_strength = 2
+		
+		research_cost = 1
+		start_year = 1942
+		
+		dependencies = {
+			improved_encryption_lar = 1
+		}
+		
+		folder = {
+			name = electronics_folder
+			position = { x = @BASIC_ENCRP y = @1942_1 }
+		}
+		
+		special_project_specialization = { specialization_electronics }
+
+		ai_will_do = {
+			base = @E_PRIORITY_3
+			
+			modifier = {
+				factor = ai_mult
+				
+				ai_intelligence_tech_need = yes
+			}
+			modifier = {
+				factor = ai_factor 
+				
+				set_temp_variable = { ai_factor = ai_electronic_tech_need } #AI RESEARCH CATEGORY
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		
+		on_research_complete = {
+			set_temp_variable = { tech = token:advanced_encryption_lar }
+			on_electronics_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = electronics_tt
+			custom_effect_tooltip = encryption_tech_tt
+			custom_effect_tooltip = computing_tech_tt
+		}		
+		categories = {
+			electronics
+			encryption_tech
+			computing_tech
+		}
+	}
+	
+	basic_decryption_lar = {
+		allow = { has_country_flag = UNLOCK:electronics_folder } 
+		allow_branch = {
+			has_dlc = "La Resistance"
+		}
+
+		# decryption 1
+		decryption_power = 5
+		decryption_power_factor = 0.05
+				
+		research_cost = 1.5
+		start_year = 1938
+		
+		folder = {
+			name = electronics_folder
+			position = { x = @ELEC_COMP y = @1938_1 }
+		}
+		
+		special_project_specialization = { specialization_electronics }
+
+		ai_will_do = {
+			base = @E_PRIORITY_3
+			
+			modifier = {
+				factor = ai_mult
+				
+				ai_intelligence_tech_need = yes
+			}
+			modifier = {
+				factor = ai_factor 
+				
+				set_temp_variable = { ai_factor = ai_electronic_tech_need } #AI RESEARCH CATEGORY
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		
+		on_research_complete = {
+			set_temp_variable = { tech = token:basic_decryption_lar }
+			on_electronics_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = electronics_tt
+			custom_effect_tooltip = decryption_tech_tt
+			custom_effect_tooltip = computing_tech_tt
+			hidden_effect = {
+				if = {
+					limit = {
+						tag = ENG
+					}
+					country_event = { id = enigma.3 days = 365 random_days = 60 } #enigma.txt
+				}
+			}
+		}		
+		categories = {
+			electronics
+			decryption_tech
+			computing_tech
+		}
+	}
+	
+	improved_decryption_lar = {
+		allow = { has_country_flag = UNLOCK:electronics_folder } 
+		allow_branch = {
+			has_dlc = "La Resistance"
+		}
+
+		# decryption 2
+		decryption_power = 10
+		decryption_power_factor = 0.05
+		
+		research_cost = 1.5
+		start_year = 1940
+		
+		dependencies = {
+			basic_decryption_lar = 1
+		}
+	
+		folder = {
+			name = electronics_folder
+			position = { x = @ELEC_COMP y = @1940_1 }
+		}
+		
+		special_project_specialization = { specialization_electronics }
+
+		ai_will_do = {
+			base = @E_PRIORITY_3
+			
+			modifier = {
+				factor = ai_mult
+				
+				ai_intelligence_tech_need = yes
+			}
+			modifier = {
+				factor = ai_factor 
+				
+				set_temp_variable = { ai_factor = ai_electronic_tech_need } #AI RESEARCH CATEGORY
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		
+		on_research_complete = {
+			set_temp_variable = { tech = token:improved_decryption_lar }
+			on_electronics_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = electronics_tt
+			custom_effect_tooltip = decryption_tech_tt
+			custom_effect_tooltip = computing_tech_tt
+			hidden_effect = {
+				if = {
+					limit = { tag = USA }
+				}
+				country_event = { id = enigma.11 random_days = 600 }
+			}
+		}		
+		categories = {
+			electronics
+			decryption_tech
+			computing_tech
+		}
+	}
+	
+	advanced_decryption_lar = {
+		allow = { has_country_flag = UNLOCK:electronics_folder } 
+		allow_branch = {
+			has_dlc = "La Resistance"
+		}
+
+		# decryption 3
+		decryption_power = 10
+		decryption_power_factor = 0.05
+		
+		research_cost = 1.5
+		start_year = 1942
+		
+		dependencies = {
+			improved_decryption_lar = 1
+		}
+		
+		folder = {
+			name = electronics_folder
+			position = { x = @ELEC_COMP y = @1942_1 }
+		}
+		
+		special_project_specialization = { specialization_electronics }
+
+		ai_will_do = {
+			base = @E_PRIORITY_3
+			
+			modifier = {
+				factor = ai_mult
+				
+				ai_intelligence_tech_need = yes
+			}
+			modifier = {
+				factor = ai_factor 
+				
+				set_temp_variable = { ai_factor = ai_electronic_tech_need } #AI RESEARCH CATEGORY
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		
+		on_research_complete = {
+			set_temp_variable = { tech = token:advanced_decryption_lar }
+			on_electronics_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = electronics_tt
+			custom_effect_tooltip = decryption_tech_tt
+			custom_effect_tooltip = computing_tech_tt
+		}		
+		categories = {
+			electronics
+			decryption_tech
+			computing_tech
+		}
+	}
+
+#### Rockets ####
+	basic_land_launched_rockets = {
+		allow = { has_country_flag = UNLOCK:electronics_folder } 
+		
+		path = {
+			leads_to_tech = basic_missile_concepts
+			research_cost_coeff = 1
+		}
+		
+		path = {
+			leads_to_tech = liquid_fueled_rockets
+			research_cost_coeff = 1
+		}
+		
+		research_cost = 1.0
+		start_year = 1938
+		
+		folder = {
+			name = electronics_folder
+			position = { x = @MSL y = @1938 }
+		}
+	
+		special_project_specialization = { specialization_air }
+
+		ai_will_do = {
+			factor = 0
+			modifier = {
+				add = ai_base
+				
+				set_temp_variable = { base = 10000 }
+				ai_rocket_artillery_tech = yes 
+			}
+			modifier = {
+				factor = ai_tech_need/rocket_artillery?1
+			}
+		}
+		
+		on_research_complete = {
+			set_temp_variable = { tech = token:basic_land_launched_rockets }
+			on_electronics_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = rocketry_tt
+		}		
+		categories = {
+			rocketry
+		}
+	}
+	basic_missile_concepts = {
+		allow = { has_country_flag = UNLOCK:electronics_folder } 
+		
+		path = {
+			leads_to_tech = ballistic_missile_concepts
+			research_cost_coeff = 1
+		}
+		path = {
+			leads_to_tech = early_guidance_systems
+			research_cost_coeff = 1
+		}
+		
+		research_cost = 1.0
+		start_year = 1940
+		
+		folder = {
+			name = electronics_folder
+			position = { x = @MSL y = @1940 }
+		}
+	
+		special_project_specialization = { specialization_air }
+
+		ai_will_do = {
+			factor = 0
+		}
+		
+		on_research_complete = {
+			set_temp_variable = { tech = token:basic_missile_concepts }
+			on_electronics_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = rocketry_tt
+		}		
+		categories = {
+			rocketry
+		}
+	}	
+	ballistic_missile_concepts = {
+		allow = { has_country_flag = UNLOCK:electronics_folder } 
+		
+		path = {
+			leads_to_tech = multi_charge_gun_concepts
+			research_cost_coeff = 1
+		}
+		
+		research_cost = 1.5
+		start_year = 1942
+		
+		folder = {
+			name = electronics_folder
+			position = { x = @MSL y = @1942 }
+		}
+	
+		special_project_specialization = { specialization_air }
+
+		ai_will_do = {
+			factor = 0
+		}
+		
+		on_research_complete = {
+			set_temp_variable = { tech = token:ballistic_missile_concepts }
+			on_electronics_tech_research_complete = yes
+			custom_effect_tooltip = {
+				localization_key = SP_UNLOCK_PROJECT
+				PROJECT = sp_rockets_early_ballistic_missile	
+			}
+			custom_effect_tooltip = {
+				localization_key = SP_UNLOCK_PROJECT
+				PROJECT = sp_rockets_improved_ballistic_missile
+			}
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = rocketry_tt
+		}		
+		categories = {
+			rocketry
+		}
+	}
+	multi_charge_gun_concepts = {
+		allow = { has_country_flag = UNLOCK:electronics_folder } 
+		
+		allow_branch = {
+			has_dlc = "Gotterdammerung"
+		}
+		
+		research_cost = 1.5
+		start_year = 1943
+		
+		folder = {
+			name = electronics_folder
+			position = { x = @MSL y = @1943 }
+		}
+	
+		special_project_specialization = { specialization_land }
+
+		ai_will_do = {
+			factor = 0
+		}
+		
+		on_research_complete = {
+			set_temp_variable = { tech = token:multi_charge_gun_concepts }
+			on_electronics_tech_research_complete = yes
+			custom_effect_tooltip = {
+				localization_key = SP_UNLOCK_PROJECT
+				PROJECT = sp_land_multi_charge_large_caliber_gun	
+			}
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = rocketry_tt
+			custom_effect_tooltip = artillery_tt
+		}		
+		categories = {
+			rocketry
+			artillery
+		}
+	}
+	early_guidance_systems = {
+		allow = { has_country_flag = UNLOCK:electronics_folder } 
+		
+		research_cost = 1.5
+		start_year = 1942
+		dependencies = {
+			advanced_avionics = 1 
+		}
+		folder = {
+			name = electronics_folder
+			position = { x = @GUIDED_WEAPONS y = @1941 }
+		}
+		
+		special_project_specialization = { specialization_electronics }
+
+		ai_will_do = {
+			factor = 0
+		}
+		
+		on_research_complete = {
+			set_temp_variable = { tech = token:early_guidance_systems }
+			on_electronics_tech_research_complete = yes
+			custom_effect_tooltip = {
+				localization_key = SP_UNLOCK_PROJECT
+				PROJECT = sp_air_guided_bombs	
+			}
+			custom_effect_tooltip = {
+				localization_key = SP_UNLOCK_PROJECT
+				PROJECT = sp_rockets_flying_bomb_pulsejet
+			}
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = electronics_tt
+		}		
+		categories = {
+			electronics
+		}
+	}
+	
+#	guided_bombs = {
+#		
+#		allow = { 
+#			ROOT = { is_special_project_completed = sp:sp_air_guided_bombs }
+#		}
+#		
+#		is_special_project_tech = yes
+#		
+#		research_cost = 1.5
+#		start_year = 1943
+#
+#		folder = {
+#			name = electronics_folder
+#			position = { x = @GUIDED_WEAPONS y = @1943 }
+#		}
+#		
+#		ai_will_do = {
+#			factor = 0
+#		}
+#		
+#		on_research_complete = {
+#			set_temp_variable = { tech = token:early_guidance_systems }
+#			on_electronics_tech_research_complete = yes
+#			custom_effect_tooltip = tech_category_tt
+#			custom_effect_tooltip = electronics_tt
+#		}		
+#		categories = {
+#			electronics
+#		}
+#	}
+#	
+#	flying_bomb_pulsejet = {
+#		
+#		allow = { 
+#			ROOT = { is_special_project_completed = sp:sp_rockets_flying_bomb_pulsejet }
+#		}
+#		
+#		is_special_project_tech = yes
+#		
+#		research_cost = 1.5
+#		start_year = 1943
+#
+#		folder = {
+#			name = electronics_folder
+#			position = { x = @GUIDED_WEAPONS y = @1943 }
+#		}
+#		
+#		ai_will_do = {
+#			factor = 0
+#		}
+#		
+#		on_research_complete = {
+#			set_temp_variable = { tech = token:early_guidance_systems }
+#			on_electronics_tech_research_complete = yes
+#			custom_effect_tooltip = tech_category_tt
+#			custom_effect_tooltip = rocketry_tt
+#		}		
+#		categories = {
+#			rocketry
+#		}
+#	}
+#	flying_bomb_jet = {
+#		
+#		allow = { 
+#			ROOT = { is_special_project_completed = sp:sp_rockets_flying_bomb_pulsejet }
+#		}
+#		
+#		is_special_project_tech = yes
+#		
+#		research_cost = 1.5
+#		start_year = 1943
+#
+#		folder = {
+#			name = electronics_folder
+#			position = { x = @GUIDED_WEAPONS y = @1943 }
+#		}
+#		
+#		ai_will_do = {
+#			factor = 0
+#		}
+#		
+#		on_research_complete = {
+#			set_temp_variable = { tech = token:early_guidance_systems }
+#			on_electronics_tech_research_complete = yes
+#			custom_effect_tooltip = tech_category_tt
+#			custom_effect_tooltip = rocketry_tt
+#		}		
+#		categories = {
+#			rocketry
+#		}
+#	}
+	
+	liquid_fueled_rockets = {
+		allow = { has_country_flag = UNLOCK:electronics_folder } 
+
+		path = {
+			leads_to_tech = experimental_rockets
+			research_cost_coeff = 1
+		}
+		
+		research_cost = 1
+		start_year = 1939
+		
+		folder = {
+			name = electronics_folder
+			position = { x = @RCKT_ENG y = @1939 }
+		}
+	
+		special_project_specialization = { specialization_air }
+
+		ai_will_do = {
+			factor = 0
+		}
+		
+		on_research_complete = {
+			set_temp_variable = { tech = token:liquid_fueled_rockets }
+			on_electronics_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = rocketry_tt
+		}		
+		categories = {
+			rocketry
+		}
+	}
+	experimental_rockets = {
+		allow = { has_country_flag = UNLOCK:electronics_folder } 
+
+		enable_building = {
+			building = rocket_site
+			level = 1
+		}
+		
+		path = {
+			leads_to_tech = rocket_engines 
+			research_cost_coeff = 1
+		}
+		
+		research_cost = 1.25
+		start_year = 1941
+		
+		folder = {
+			name = electronics_folder
+			position = { x = @RCKT_ENG y = @1941 }
+		}
+	
+		special_project_specialization = { specialization_air }
+
+		ai_will_do = {
+			factor = 0
+		}
+		
+		on_research_complete = {
+			set_temp_variable = { tech = token:experimental_rockets }
+			on_electronics_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = rocketry_tt
+		}		
+		categories = {
+			rocketry
+		}
+	}	
+	rocket_engines = {
+		allow = { has_country_flag = UNLOCK:electronics_folder } 
+
+		enable_building = {
+			building = rocket_site
+			level = 2
+		}
+		
+		path = {
+			leads_to_tech = improved_rocket_engines
+			research_cost_coeff = 1
+		}
+		
+		dependencies = {
+			chemical_industry_iii = 1
+		}
+		
+		research_cost = 1.5
+		start_year = 1943
+		
+		folder = {
+			name = electronics_folder
+			position = { x = @RCKT_ENG y = @1943 }
+		}
+		
+		special_project_specialization = { specialization_air }
+
+		ai_will_do = {
+			factor = 0
+		}
+		
+		on_research_complete = {
+			set_temp_variable = { tech = token:rocket_engines }
+			on_electronics_tech_research_complete = yes
+			custom_effect_tooltip = {
+				localization_key = SP_UNLOCK_PROJECT
+				PROJECT = sp_rockets_early_ballistic_missile	
+			}
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = rocketry_tt
+			if = {
+				limit = {
+					TAG = GER
+				}
+				news_event = { id = news.156 random_days = 14 }
+			}
+		}		
+		categories = {
+			rocketry
+		}		
+	}
+	improved_rocket_engines = {
+		allow = { has_country_flag = UNLOCK:electronics_folder } 
+		
+		path = {
+			leads_to_tech = long_range_rockets
+			research_cost_coeff = 1
+		}
+		
+		research_cost = 1.5
+		start_year = 1944
+		
+		folder = {
+			name = electronics_folder
+			position = { x = @RCKT_ENG y = @1944 }
+		}
+		
+		special_project_specialization = { specialization_air }
+
+		ai_will_do = {
+			factor = 0
+		}
+		
+		on_research_complete = {
+			set_temp_variable = { tech = token:improved_rocket_engines }
+			on_electronics_tech_research_complete = yes
+			custom_effect_tooltip = {
+				localization_key = SP_UNLOCK_PROJECT
+				PROJECT = sp_rockets_improved_ballistic_missile
+			}
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = rocketry_tt
+		}		
+		categories = {
+			rocketry
+		}
+	}
+	
+	long_range_rockets = {
+		allow = { has_country_flag = UNLOCK:electronics_folder } 
+		
+		rocket_interceptor = {
+			air_range = 0.25
+		}
+		ballistic_missile = {
+			air_range = 0.3
+		}
+		
+		dependencies = {
+			chemical_industry_iv = 1
+		}
+		
+		research_cost = 1.5
+		start_year = 1945
+		
+		folder = {
+			name = electronics_folder
+			position = { x = @RCKT_ENG y = @1945 }
+		}
+	
+		special_project_specialization = { specialization_air }
+
+		ai_will_do = {
+			factor = 0
+		}
+		
+		on_research_complete = {
+			set_temp_variable = { tech = token:long_range_rockets }
+			on_electronics_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = rocketry_tt
+		}		
+		categories = {
+			rocketry
+		}
+	}
+	
+#	early_ballistic_missile = {
+#		allow = { 
+#			ROOT = { is_special_project_completed = sp:sp_rockets_early_ballistic_missile }
+#		}
+#		
+#		is_special_project_tech = yes
+#
+#		show_equipment_icon = yes
+#
+#		path = {
+#			leads_to_tech = improved_ballistic_missile
+#			research_cost_coeff = 1
+#		}
+#
+#		research_cost = 1.5
+#		start_year = 1944
+#		
+#		folder = {
+#			name = electronics_folder
+#			position = { x = @BAL_MSL y = @1944 }
+#		}
+#		
+#		ai_will_do = {
+#			factor = 0
+#		}
+#		
+#		on_research_complete = {
+#			set_temp_variable = { tech = token:early_ballistic_missile }
+#			on_electronics_tech_research_complete = yes
+#			custom_effect_tooltip = tech_category_tt
+#			custom_effect_tooltip = rocketry_tt
+#		}		
+#		categories = {
+#			rocketry
+#		}		
+#	}
+#	improved_ballistic_missile = {
+#		allow = { 
+#			ROOT = { is_special_project_completed = sp:sp_rockets_improved_ballistic_missile }
+#		}
+#		
+#		is_special_project_tech = yes
+#
+#		show_equipment_icon = yes
+#
+#		research_cost = 1.5
+#		start_year = 1946
+#		
+#		folder = {
+#			name = electronics_folder
+#			position = { x = @BAL_MSL y = @1946 }
+#		}
+#		
+#		ai_will_do = {
+#			factor = 0
+#		}
+#		
+#		on_research_complete = {
+#			set_temp_variable = { tech = token:improved_ballistic_missile }
+#			on_electronics_tech_research_complete = yes
+#			custom_effect_tooltip = tech_category_tt
+#			custom_effect_tooltip = rocketry_tt
+#		}		
+#		categories = {
+#			rocketry
+#		}		
+#	}
+	
+### Jets
+	improved_turbine_engines = {
+		allow = { has_country_flag = UNLOCK:electronics_folder } 
+
+		path = {
+			leads_to_tech = advanced_turbine_engines 
+			research_cost_coeff = 1
+		}
+		
+		path = {
+			leads_to_tech = advanced_turbine_engines 
+			research_cost_coeff = 1
+		}
+		
+		start_year = 1938
+		research_cost = 1.25
+		folder = {
+			name = electronics_folder
+			position = { x = @JET_THEORY y = @1938 }
+		}
+		
+		special_project_specialization = { specialization_air }
+
+		ai_will_do = {
+			base = 0 
+			modifier = {
+				add = ai_base 
+				
+				set_temp_variable = { base = @JET_PRIORITY }
+				ai_jet_tech = yes
+			}
+		}	
+		
+		on_research_complete = {
+			set_temp_variable = { tech = token:improved_turbine_engines }
+			on_electronics_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = air_engine_tt
+			custom_effect_tooltip = air_equipment_tt
+		}		
+		categories = {
+			jet_technology
+			air_engine
+			air_equipment
+		}
+	}
+	advanced_turbine_engines = {
+		allow = { has_country_flag = UNLOCK:electronics_folder } 
+		
+		max_air_experience = 5
+		
+		path = {
+			leads_to_tech = jet_engines 
+			research_cost_coeff = 1
+		}
+		path = {
+			leads_to_tech = jet_aircraft_prototype 
+			research_cost_coeff = 1
+		}
+		
+		start_year = 1941
+		research_cost = 1.5
+		folder = {
+			name = electronics_folder
+			position = { x = @JET_THEORY y = @1941 }
+		}
+		
+		special_project_specialization = { specialization_air }
+
+		ai_will_do = {
+			base = 0 
+			modifier = {
+				add = ai_base 
+				
+				set_temp_variable = { base = @JET_PRIORITY }
+				ai_jet_tech = yes
+			}
+		}	
+		
+		on_research_complete = {
+			set_temp_variable = { tech = token:advanced_turbine_engines }
+			on_electronics_tech_research_complete = yes
+			air_experience = 5
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = air_engine_tt
+			custom_effect_tooltip = air_equipment_tt
+		}		
+		categories = {
+			jet_technology
+			air_engine
+			air_equipment
+		}
+	}
+	jet_engines = {
+		allow = { has_country_flag = UNLOCK:electronics_folder } 
+	
+		path = {
+			leads_to_tech = tech_air_engine_jet 
+			research_cost_coeff = 1
+		}
+		path = {
+			leads_to_tech = tech_air_engine_motorjet
+			research_cost_coeff = 1
+		}	
+		
+		dependencies = {
+			computing_machine = 1
+		}
+		
+		start_year = 1942
+		research_cost = 1.5
+		folder = {
+			name = electronics_folder
+			position = { x = @JET_ENG y = @1942 }
+		}
+		
+		#desc = "JET_ENGINES_SPECIAL"
+
+		on_research_complete = {
+			set_temp_variable = { tech = token:jet_engines }
+			on_electronics_tech_research_complete = yes
+			custom_effect_tooltip = {
+				localization_key = SP_UNLOCK_PROJECT
+				PROJECT = sp_air_jet_engine
+			}
+			custom_effect_tooltip = {
+				localization_key = SP_UNLOCK_PROJECT
+				PROJECT = sp_air_motorjet_engine
+			}
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = jet_technology_tt
+			custom_effect_tooltip = air_equipment_tt
+		}
+		
+		special_project_specialization = { specialization_air }
+
+		ai_will_do = {
+			base = 0 
+			modifier = {
+				add = ai_base 
+				
+				set_temp_variable = { base = @JET_PRIORITY }
+				ai_jet_tech = yes
+			}
+		}	
+			
+		categories = {
+			jet_technology
+			air_equipment
+		}
+	}
+
+	tech_air_engine_jet = {
+		allow = { 
+			ROOT = { is_special_project_completed = sp:sp_air_jet_engine }
+		}
+		
+		is_special_project_tech = yes
+		
+		path = {
+			leads_to_tech = jet_engine_improvements
+			research_cost_coeff = 1
+		}	
+
+		research_cost = 2.0
+		start_year = 1945
+		folder = {
+			name = electronics_folder
+			position = { x = @JET_ENG y = @1945 }
+		}
+		folder = {
+			name = luftwaffe_folder
+			position = { x = 0 y = 34 }
+		}
+		folder = {
+			name = italyair_folder
+			position = { x = 0 y = 28 }
+		}
+		folder = {
+			name = japanair_folder
+			position = { x = 0 y = 28 }
+		}
+		folder = {
+			name = britishair_folder
+			position = { x = 0 y = 32 }
+		}
+		folder = {
+			name = usair_folder
+			position = { x = 0 y = 32 }
+		}
+		folder = {
+			name = sovietair_folder
+			position = { x = 0 y = 30 }
+		}
+		folder = {
+			name = frenchair_folder
+			position = { x = 0 y = 24 }
+		}
+		folder = {
+			name = air_techs_folder
+			position = { x = 0 y = 10 }
+		}
+		
+		#desc = "JET_ENGINES_SPECIAL"
+
+		on_research_complete = {
+			set_temp_variable = { tech = token:tech_air_engine_jet }
+			on_electronics_tech_research_complete = yes
+			#custom_effect_tooltip = JET_ENGINES_RESEARCHED
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = air_equipment_tt
+			custom_effect_tooltip = jet_engine_tt
+		}		
+		categories = {
+			air_equipment
+			jet_engine
+		}
+		
+		special_project_specialization = { specialization_air }
+
+		ai_will_do = {
+			base = 0 
+			modifier = {
+				add = ai_base 
+				
+				set_temp_variable = { base = @JET_PRIORITY }
+				ai_jet_tech = yes
+			}
+		}	
+		
+	}
+	
+	tech_air_engine_motorjet = {
+		allow = { 
+			ROOT = { is_special_project_completed = sp:sp_air_motorjet_engine }
+		}
+		
+		is_special_project_tech = yes
+		
+		allow_branch = {
+			OR = {
+				tag = ITA
+				original_tag = ITA
+			}
+		}
+
+		research_cost = 1.75
+		start_year = 1944
+		folder = {
+			name = electronics_folder
+			position = { x = @JET_ENG2 y = @1944 }
+		}
+		folder = {
+			name = italyair_folder
+			position = { x = 0 y = 26 }
+		}
+		on_research_complete = {
+			set_temp_variable = { tech = token:tech_air_engine_motorjet }
+			on_electronics_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = air_equipment_tt
+			custom_effect_tooltip = jet_engine_tt
+		}		
+		categories = {
+			air_equipment
+			jet_engine
+		}
+		
+		special_project_specialization = { specialization_air }
+
+		ai_will_do = {
+			base = 0 
+			modifier = {
+				add = ai_base 
+				
+				set_temp_variable = { base = @JET_PRIORITY }
+				ai_jet_tech = yes
+			}
+		}	
+		
+	}
+	jet_engine_improvements = {
+		allow = { has_country_flag = UNLOCK:electronics_folder } 
+		
+		category_jet = {
+			air_range = 0.05
+			maximum_speed = 0.03
+		}	
+		path = {
+			research_cost_coeff = 1
+		}
+		
+		folder = {
+			name = electronics_folder
+			position = { x = @JET_ENG y = @1948 }
+		}
+		
+		start_year = 1946
+		research_cost = 2.0
+		
+		special_project_specialization = { specialization_air }
+
+		ai_will_do = {
+			base = 0 
+			modifier = {
+				add = ai_base 
+				
+				set_temp_variable = { base = @JET_PRIORITY }
+				ai_jet_tech = yes
+			}
+		}	
+		
+		on_research_complete = {
+			set_temp_variable = { tech = token:jet_engine_improvements }
+			on_electronics_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = jet_technology_tt
+			custom_effect_tooltip = air_equipment_tt
+		}		
+		categories = {
+			jet_technology
+			air_equipment
+		}
+	}
+
+	
+	jet_aircraft_prototype = {
+		allow = { has_country_flag = UNLOCK:electronics_folder } 
+		
+		max_air_experience = 10
+		
+		path = {
+			leads_to_tech = jet_aircraft_airframes 
+			research_cost_coeff = 1
+		}
+		
+		start_year = 1943
+		research_cost = 1.5
+		folder = {
+			name = electronics_folder
+			position = { x = @JET_PROTOTYPE y = @1943 }
+		}
+		
+		special_project_specialization = { specialization_air }
+
+		ai_will_do = {
+			base = 0 
+			modifier = {
+				add = ai_base 
+				
+				set_temp_variable = { base = @JET_PRIORITY }
+				ai_jet_tech = yes
+			}
+		}	
+		
+		on_research_complete = {
+			set_temp_variable = { tech = token:jet_aircraft_prototype }
+			on_electronics_tech_research_complete = yes
+			air_experience = 10
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = jet_technology_tt
+			custom_effect_tooltip = air_equipment_tt
+		}		
+		categories = {
+			jet_technology
+			air_equipment
+		}
+	}
+	
+	jet_aircraft_airframes = {
+		allow = { has_country_flag = UNLOCK:electronics_folder } 
+		
+		category_jet = {
+			air_range = 0.05
+			maximum_speed = 0.02
+			air_agility = 0.02
+		}
+		path = {
+			leads_to_tech = jet_aircraft 
+			research_cost_coeff = 1
+		}
+		
+		folder = {
+			name = electronics_folder
+			position = { x = @JET_PROTOTYPE y = @1946 }
+		}
+		
+		start_year = 1946
+		research_cost = 1.5
+		
+		special_project_specialization = { specialization_air }
+
+		ai_will_do = {
+			base = 0 
+			modifier = {
+				add = ai_base 
+				
+				set_temp_variable = { base = @JET_PRIORITY }
+				ai_jet_tech = yes
+			}
+		}	
+		
+		on_research_complete = {
+			set_temp_variable = { tech = token:jet_aircraft_airframes }
+			on_electronics_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = jet_technology_tt
+			custom_effect_tooltip = air_equipment_tt
+		}		
+		categories = {
+			jet_technology
+			air_equipment
+		}
+	}
+
+### Nuclear stuff
+	atomic_research = {
+		allow = { has_country_flag = UNLOCK:nuclear_folder } 
+
+		research_speed_factor = 0.01
+		
+		path = {
+			leads_to_tech = basic_particle_accelerators
+			research_cost_coeff = 1
+		}
+		
+		start_year = 1936
+		research_cost = 3
+		
+		folder = {
+			name = electronics_folder
+			position = { x = @ATOM_RES y = @1936 }
+		}
+		
+		special_project_specialization = { specialization_nuclear }
+
+		ai_will_do = {
+			base = 0 
+			modifier = {
+				add = ai_base 
+				
+				set_temp_variable = { base = @NUKE_PRIORITY }
+				ai_nuke_tech = yes
+			}
+		}	
+		
+		on_research_complete = {
+			set_temp_variable = { tech = token:atomic_research }
+			on_electronics_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = nuclear_tt
+			
+			add_to_variable = { nuclear_tech_level = 1 }
+		}		
+		categories = {
+			nuclear
+		}
+	}
+	basic_particle_accelerators = {
+		allow = { has_country_flag = UNLOCK:nuclear_folder } 
+		
+		enable_building = {
+			building = nuclear_facility
+			level = 1
+		}
+		
+		path = {
+			leads_to_tech = fission_experiments
+			research_cost_coeff = 1
+		}
+		
+		path = {
+			leads_to_tech = improved_particle_sources
+			research_cost_coeff = 1
+		}
+		
+		start_year = 1938
+		research_cost = 3.5
+		
+		folder = {
+			name = electronics_folder
+			position = { x = @ATOM_RES y = @1938 }
+		}
+		
+		special_project_specialization = { specialization_nuclear }
+
+		ai_will_do = {
+			base = 0 
+			modifier = {
+				add = ai_base 
+				
+				set_temp_variable = { base = @NUKE_PRIORITY }
+				ai_nuke_tech = yes
+			}
+		}	
+		
+		on_research_complete = {
+			set_temp_variable = { tech = token:basic_particle_accelerators }
+			on_electronics_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = nuclear_tt
+			
+			add_to_variable = { nuclear_tech_level = 1 }
+		}		
+		categories = {
+			nuclear
+		}
+	}
+	improved_particle_sources = {
+		allow = { has_country_flag = UNLOCK:nuclear_folder } 
+		
+		production_speed_nuclear_reactor_factor = 0.02
+		production_speed_nuclear_reactor_heavy_water_factor = 0.02
+		
+		path = {
+			leads_to_tech = improved_particle_detectors
+			research_cost_coeff = 1
+		}
+		
+		start_year = 1939
+		research_cost = 4
+		
+		folder = {
+			name = electronics_folder
+			position = { x = @IMP_PART y = @1939 }
+		}
+		
+		special_project_specialization = { specialization_nuclear }
+
+		ai_will_do = {
+			base = 0 
+			modifier = {
+				add = ai_base 
+				
+				set_temp_variable = { base = @NUKE_PRIORITY }
+				ai_nuke_tech = yes
+			}
+		}	
+		
+		on_research_complete = {
+			set_temp_variable = { tech = token:improved_particle_sources }
+			on_electronics_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = nuclear_tt
+			
+			add_to_variable = { nuclear_tech_level = 1 }
+		}	
+		categories = {
+			nuclear
+		}
+	}
+	
+	improved_particle_detectors = {
+		allow = { has_country_flag = UNLOCK:nuclear_folder } 
+		
+		production_speed_nuclear_reactor_factor = 0.05	
+		production_speed_nuclear_reactor_heavy_water_factor = 0.05	
+
+		path = {
+			leads_to_tech = synchrotron_particle_accelerators
+			research_cost_coeff = 1
+		}
+		
+		start_year = 1940
+		research_cost = 4.5
+		
+		folder = {
+			name = electronics_folder
+			position = { x = @IMP_PART y = @1940 }
+		}
+		
+		special_project_specialization = { specialization_nuclear }
+
+		ai_will_do = {
+			base = 0 
+			modifier = {
+				add = ai_base 
+				
+				set_temp_variable = { base = @NUKE_PRIORITY }
+				ai_nuke_tech = yes
+			}
+		}	
+		
+		on_research_complete = {
+			set_temp_variable = { tech = token:improved_particle_detectors }
+			on_electronics_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = nuclear_tt
+			
+			add_to_variable = { nuclear_tech_level = 1 }
+		}			
+		categories = {
+			nuclear
+		}
+	}
+	
+	synchrotron_particle_accelerators = {
+		allow = { has_country_flag = UNLOCK:nuclear_folder } 
+		
+		production_speed_nuclear_reactor_factor = 0.05
+		production_speed_nuclear_reactor_heavy_water_factor = 0.05
+		
+		path = {
+			leads_to_tech = research_reactors
+			research_cost_coeff = 1
+		}
+		
+		start_year = 1942
+		research_cost = 5
+		folder = {
+			name = electronics_folder
+			position = { x = @IMP_PART y = @1942 }
+		}
+		
+		special_project_specialization = { specialization_nuclear }
+
+		ai_will_do = {
+			base = 0 
+			modifier = {
+				add = ai_base 
+				
+				set_temp_variable = { base = @NUKE_PRIORITY }
+				ai_nuke_tech = yes
+			}
+		}	
+		
+		on_research_complete = {
+			set_temp_variable = { tech = token:synchrotron_particle_accelerators }
+			on_electronics_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = nuclear_tt
+			
+			add_to_variable = { nuclear_tech_level = 1 }
+		}		
+		categories = {
+			nuclear
+		}
+	}
+	
+	fission_experiments = {
+		allow = { has_country_flag = UNLOCK:nuclear_folder } 
+		
+		research_speed_factor = 0.01
+		
+		path = {
+			leads_to_tech = nuclear_fission
+			research_cost_coeff = 1
+		}
+		
+		start_year = 1939
+		research_cost = 4.5
+		
+		folder = {
+			name = electronics_folder
+			position = { x = @FISS_EXP y = @1939 }
+		}
+		
+		special_project_specialization = { specialization_nuclear }
+
+		ai_will_do = {
+			base = 0 
+			modifier = {
+				add = ai_base 
+				
+				set_temp_variable = { base = @NUKE_PRIORITY }
+				ai_nuke_tech = yes
+			}
+		}	
+		
+		on_research_complete = {
+			set_temp_variable = { tech = token:fission_experiments }
+			on_electronics_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = nuclear_tt
+			
+			add_to_variable = { nuclear_tech_level = 1 }
+			hidden_effect = {
+				news_event = { id = news.174 random_days = 100 }
+			}
+		}			
+		categories = {
+			nuclear
+		}
+	}
+	
+	nuclear_fission = {
+		allow = { has_country_flag = UNLOCK:nuclear_folder } 
+		
+		research_speed_factor = 0.01
+		
+		path = {
+			leads_to_tech = nuclear_reactor
+			research_cost_coeff = 1
+		}
+		path = {
+			leads_to_tech = nuclear_weapons_research
+			research_cost_coeff = 1
+		}
+		
+		start_year = 1941
+		research_cost = 4.5
+		
+		folder = {
+			name = electronics_folder
+			position = { x = @FISS_EXP y = @1941 }
+		}
+		
+		special_project_specialization = { specialization_nuclear }
+
+		ai_will_do = {
+			base = 0 
+			modifier = {
+				add = ai_base 
+				
+				set_temp_variable = { base = @NUKE_PRIORITY }
+				ai_nuke_tech = yes
+			}
+		}	
+		
+		on_research_complete = {
+			set_temp_variable = { tech = token:nuclear_fission }
+			on_electronics_tech_research_complete = yes
+			custom_effect_tooltip = {
+				localization_key = SP_UNLOCK_PROJECT
+				PROJECT = sp_nuclear_reactor	
+			}
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = nuclear_tt
+			
+			add_to_variable = { nuclear_tech_level = 1 }
+		}		
+		categories = {
+			nuclear
+		}
+	}
+	nuclear_reactor = {
+		allow = { 
+			ROOT = { is_special_project_completed = sp:sp_nuclear_reactor }
+		}
+		
+		is_special_project_tech = yes
+		
+		path = {
+			leads_to_tech = nuclear_weapons_production
+			research_cost_coeff = 1
+		}
+		
+		path = {
+			leads_to_tech = research_reactors
+			research_cost_coeff = 1
+		}
+		
+		start_year = 1943
+		research_cost = 4
+		folder = {
+			name = electronics_folder
+			position = { x = @FISS_EXP y = @1943 }
+		}
+		
+		special_project_specialization = { specialization_nuclear }
+
+		ai_will_do = {
+			base = 0 
+			modifier = {
+				add = ai_base 
+				
+				set_temp_variable = { base = @NUKE_PRIORITY }
+				ai_nuke_tech = yes
+			}
+		}	
+		
+		on_research_complete = {
+			set_temp_variable = { tech = token:nuclear_reactor }
+			on_electronics_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = nuclear_tt
+			
+			add_to_variable = { nuclear_tech_level = 1 }
+		}			
+		categories = {
+			nuclear
+		}
+	}
+	nuclear_weapons_research = {
+		allow = { has_country_flag = UNLOCK:nuclear_folder } 
+		
+		path = {
+			leads_to_tech = nuclear_weapons_production
+			research_cost_coeff = 1
+		}
+		
+		start_year = 1942
+		research_cost = 4
+		
+		folder = {
+			name = electronics_folder
+			position = { x = @NUC_BOMB y = @1942 }
+		}
+		
+		special_project_specialization = { specialization_nuclear }
+
+		ai_will_do = {
+			base = 0 
+			modifier = {
+				add = ai_base 
+				
+				set_temp_variable = { base = @NUKE_PRIORITY }
+				ai_nuke_tech = yes
+			}
+		}	
+		
+		on_research_complete = {
+			set_temp_variable = { tech = token:nuclear_weapons_research }
+			on_electronics_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = nuclear_tt
+			
+			add_to_variable = { nuclear_tech_level = 1 }
+		}			
+		categories = {
+			nuclear
+		}
+	}	
+	nuclear_weapons_production = {
+		allow = { has_country_flag = UNLOCK:nuclear_folder } 
+		
+		path = {
+			leads_to_tech = nukes
+			research_cost_coeff = 1
+		}
+		
+		dependencies = {
+			nuclear_reactor = 1
+			nuclear_weapons_research = 1
+		}
+		
+		
+		start_year = 1944
+		research_cost = 4
+		folder = {
+			name = electronics_folder
+			position = { x = @NUC_BOMB y = @1944 }
+		}
+		
+		special_project_specialization = { specialization_nuclear }
+
+		ai_will_do = {
+			base = 0 
+			modifier = {
+				add = ai_base 
+				
+				set_temp_variable = { base = @NUKE_PRIORITY }
+				ai_nuke_tech = yes
+			}
+		}	
+		
+		on_research_complete = {
+			set_temp_variable = { tech = token:nuclear_weapons_production }
+			on_electronics_tech_research_complete = yes
+			custom_effect_tooltip = {
+				localization_key = SP_UNLOCK_PROJECT
+				PROJECT = sp_nuclear_bomb	
+			}
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = nuclear_tt
+			
+			add_to_variable = { nuclear_tech_level = 1 }
+		}		
+		categories = {
+			nuclear
+		}
+	}
+	nukes = {
+		allow = { 
+			ROOT = { is_special_project_completed = sp:sp_nuclear_bomb}
+		}
+		
+		is_special_project_tech = yes
+	
+		start_year = 1945
+		research_cost = 4
+		
+		folder = {
+			name = electronics_folder
+			position = { x = @NUC_BOMB y = @1945 }
+		}
+		
+		special_project_specialization = { specialization_nuclear }
+
+		ai_will_do = {
+			base = 0 
+			modifier = {
+				add = ai_base 
+				
+				set_temp_variable = { base = @NUKE_PRIORITY }
+				ai_nuke_tech = yes
+			}
+		}	
+		
+		
+		nuclear_production = 1
+		on_research_complete = {
+			set_temp_variable = { tech = token:nuclear_weapons_production }
+			on_electronics_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = nuclear_tt
+			
+			add_to_variable = { nuclear_tech_level = 1 }
+			add_to_variable = { has_nuke = 1 }
+		}			
+		categories = {
+			nuclear
+		}
+	}
+	
+	research_reactors = {
+		allow = { has_country_flag = UNLOCK:nuclear_folder } 
+		
+		start_year = 1945
+		research_cost = 4
+		dependencies = {
+			nuclear_reactor = 1
+			synchrotron_particle_accelerators = 1
+		}
+		
+		folder = {
+			name = electronics_folder
+			position = { x = @IMP_PART y = @1946 }
+		}
+		
+		special_project_specialization = { specialization_nuclear }
+
+		ai_will_do = {
+			base = 0 
+			modifier = {
+				add = ai_base 
+				
+				set_temp_variable = { base = @NUKE_PRIORITY }
+				ai_nuke_tech = yes
+			}
+		}	
+		
+		on_research_complete = {
+			add_research_slot = 1
+			add_research_centre = yes
+			SLOT:industry_folder = yes
+			SLOT:raw_materials_folder = yes
+			SLOT:electronics_folder = yes
+			SLOT:nuclear_folder = yes
+
+			set_temp_variable = { tech = token:research_reactors }
+			on_electronics_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = nuclear_tt
+			
+			add_to_variable = { nuclear_tech_level = 1 }
+		}		
+		categories = {
+			nuclear
+		}
+	}
+}

@@ -1,0 +1,128 @@
+
+add_allied_anger = {
+	if = {
+		limit = {
+			#NOT = { has_global_flag = allied_anger_done }
+		}
+				
+		if = {
+			limit = {
+				check_variable = { extra_anger > 0 }
+			}
+			set_temp_variable = { total_anger = anger }
+			add_to_temp_variable = { total_anger = extra_anger }
+			
+			custom_effect_tooltip = ALLIED_ANGER_INCREASE_EXTRA_TT
+			hidden_effect = {
+				every_country = {
+					limit = {
+						OR = {
+							#is_ally_with = FRA
+							#is_ally_with = ENG
+							tag = ENG
+							#tag = FRA
+						}
+					}
+					set_temp_variable = { multi = total_anger }
+					multiply_temp_variable = { multi = anger_modifier }
+					add_to_variable = { allied_anger = multi tooltip = anger_added_TT }	
+				}
+			}
+		}
+		else = {
+			custom_effect_tooltip = ALLIED_ANGER_INCREASE
+			hidden_effect = {
+				every_country = {
+					limit = {
+						OR = {
+							is_ally_with = FRA
+							is_ally_with = ENG
+							tag = ENG
+							tag = FRA
+						}
+					}
+					
+					set_temp_variable = { multi = anger }
+					multiply_temp_variable = { multi = anger_modifier }
+					add_to_variable = { allied_anger = multi }		
+				}
+			}
+		}
+	}
+}
+
+
+recent_major_land_acquisition_effect = {
+	if = {
+		limit = {
+			NOT = { has_global_flag = allied_anger_done }
+			NOT = { has_country_flag = { flag = recent_major_land_acquisition value = 1 days > 180 } }
+		}
+				
+		set_temp_variable = { extra_anger = 0 }
+		if = {
+			limit = {
+				has_country_flag = recent_major_land_acquisition
+			}
+			custom_effect_tooltip = recent_major_land_acquisition_TT
+
+			if = {
+				limit = {
+					check_variable = { #< 50
+						var = recent_major_land_acquisition
+						value = 50
+						compare = less_than_or_equals
+					}
+				}
+				add_to_temp_variable = { extra_anger = 40 }
+				custom_effect_tooltip = allied_anger_increase_TT
+			}
+
+			else_if = {
+				limit = {
+					check_variable = { #< 100
+						var = recent_major_land_acquisition
+						value = 100
+						compare = less_than_or_equals
+					}
+					check_variable = { #> 50
+						var = recent_major_land_acquisition
+						value = 50
+						compare = greater_than_or_equals
+					}
+				}
+				add_to_temp_variable = { extra_anger = 3 }
+				custom_effect_tooltip = allied_anger_increase_TT
+			}
+
+			else_if = {
+				limit = {
+					check_variable = { #< 150
+						var = recent_major_land_acquisition
+						value = 150
+						compare = less_than_or_equals
+					}
+					check_variable = { #> 100
+						var = recent_major_land_acquisition
+						value = 100
+						compare = greater_than_or_equals
+					}
+				}
+				add_to_temp_variable = { extra_anger = 20 }
+				custom_effect_tooltip = allied_anger_increase_TT
+			}
+
+			else_if = {
+				limit = {
+					check_variable = { #> 150
+						var = recent_major_land_acquisition
+						value = 150
+						compare = greater_than_or_equals
+					}
+				}
+				add_to_temp_variable = { extra_anger = 10 }
+				custom_effect_tooltip = allied_anger_increase_TT
+			}
+		}
+	}
+}

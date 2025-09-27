@@ -1,0 +1,218 @@
+﻿###########################
+# Hungarian Events
+###########################
+
+add_namespace = DOD_hungary
+#Demand Overlordship over Slovakia - CZE agrees, Hungary gets options on whether to annex or puppet
+country_event = {
+	id = DOD_hungary.101
+	title = DOD_hungary.101.t
+	desc = DOD_hungary.101.desc 
+	picture = GFX_report_event_military_planning_1
+	
+	is_triggered_only = yes
+
+	option = {# annex
+		name = DOD_hungary.101.a
+		ai_chance = {
+			factor = 70
+			modifier = {
+				country_exists = SLO
+				factor = 0
+			}
+		}
+		HUN = {
+			annex_country = {
+				target = SLO 
+			}
+		}
+		if = {
+			limit = {
+				country_exists = CZE
+			}
+			CZE = {
+				set_cosmetic_tag = CZE_ONLY
+			}
+		}
+	}
+
+	option = {# puppet
+		name = DOD_hungary.101.b
+		ai_chance = {
+			factor = 30
+		}
+		if = {
+			limit = {
+				70 = {
+					is_owned_by = CZE
+				}
+			}
+			SLO = { transfer_state = 70 }
+		}
+		if = {
+			limit = {
+				71 = {
+					is_owned_by = CZE	
+				}
+			}
+			SLO = { transfer_state = 71 }
+		}
+		if = {
+			limit = {
+				72 = {
+					is_owned_by = CZE	
+				}
+			}
+			SLO = { transfer_state = 72 }
+		}
+		if = {
+			limit = {
+				154 = { is_owned_by = HUN }
+				73 = {
+					is_owned_by = CZE
+				}
+			}
+			HUN = { transfer_state = 73 }
+		}
+		if = {
+			limit = {
+				664 = {
+					is_owned_by = CZE
+				}
+			}
+			HUN = { transfer_state = 664 }
+		}
+		every_state = {
+			limit = {
+				is_owned_by = SLO
+			}
+			add_core_of = SLO
+		}
+		SLO = {
+				load_oob = SLO_1939
+				add_manpower = 9876
+				add_state_core = 664
+				add_state_core = 73
+			}
+		puppet = SLO
+		if = {
+			limit = {
+				country_exists = CZE
+			}
+			CZE = {
+				set_cosmetic_tag = CZE_ONLY
+			}
+		}
+	}
+}
+#Demand Overlordship over Slovakia - GER betrays promise
+country_event = {
+	id = DOD_hungary.106
+	title = DOD_hungary.106.t
+	desc = DOD_hungary.106.desc 
+	picture = GFX_report_event_german_troops
+	
+	is_triggered_only = yes
+
+	option = {# fume
+		name = DOD_hungary.106.a
+		ai_chance = {
+			factor = 5
+		}
+		remove_opinion_modifier = { target = GER modifier = HUN_split_CZE }
+		add_opinion_modifier = { target = GER modifier = HUN_split_CZE_betrayed }
+	}
+
+	option = {# take what is ours
+		name = DOD_hungary.106.b
+		ai_chance = {
+			factor = 95
+			modifier = {
+				factor = 0
+				OR = {
+					is_historical_focus_on = yes 
+					is_in_faction_with = GER
+				}
+			}
+		}
+		remove_opinion_modifier = { target = GER modifier = HUN_split_CZE }
+		add_opinion_modifier = { target = GER modifier = HUN_split_CZE_betrayed }
+		create_wargoal = {
+			type = take_state_focus
+			target = CZE
+			generator = { 70 71 72 73 }
+		}
+		hidden_effect = {
+			news_event = { id = news.311 days = 1 }
+		}
+	}	
+}
+#### AH takes CZE - Sudetenland Crisis ####
+#AH Sudetenland - GER offers Polish claims for Sudetenland
+country_event = {
+	id = DOD_hungary.185
+	title = DOD_hungary.185.t
+	desc = DOD_hungary.185.desc 
+	picture = GFX_report_event_horthy2
+	is_triggered_only = yes
+
+	option = {#Sounds Good
+		name = DOD_hungary.185.a
+		add_state_claim = 88
+		add_state_claim = 89
+		add_state_claim = 91
+		GER = { country_event = DOD_hungary.186 }
+		ai_chance = {
+			base = 60
+		}
+	}
+	option = {#We can get those anyways!
+		name = DOD_hungary.185.b
+		GER = { country_event = DOD_hungary.187 }
+		ai_chance = {
+			base = 40
+		}
+	}
+}
+
+#AH Sudetenland - HUN agrees
+country_event = {
+	id = DOD_hungary.186
+	title = DOD_hungary.186.t
+	desc = DOD_hungary.186.desc 
+	picture = GFX_report_event_horthy2
+	is_triggered_only = yes
+
+	option = {#Excellent
+		name = DOD_hungary.186.a
+		set_country_flag = ah_ger_poland_pact
+	}
+}
+
+#AH Sudetenland - AH refuses Poland offer
+country_event = {
+	id = DOD_hungary.187
+	title = DOD_hungary.187.t
+	desc = DOD_hungary.187.desc 
+	picture = GFX_report_event_horthy2
+	is_triggered_only = yes
+
+	immediate = { set_global_flag = ah_says_no_ger_pact }
+	option = {#Demand Sudetenland - GO BACK TO MUNICH STUFF
+		name = DOD_hungary.187.a
+		country_event = germany.349
+		ai_chance = {
+			base = 95
+		}
+	}
+	option = {#We don't dare risk an international crisis #####CHAIN BRANCH END#####
+		name = DOD_hungary.187.b
+		add_political_power = -35
+		set_temp_variable = { pop = -0.07 }
+		add_ruling_pop = yes 
+		add_stability = -0.03
+		ai_chance = {
+			base = 5
+		}
+	}
+}

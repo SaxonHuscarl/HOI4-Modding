@@ -1,0 +1,3211 @@
+##########################
+### Written by Aquillo ###
+##########################
+
+focus_tree = {
+	id = arab_focus	
+	country = {
+		factor = 0
+		
+		modifier = {
+			add = 5
+			OR = {
+				tag = SAU
+				tag = YEM
+				tag = OMA
+				tag = LEB
+				tag = SYR
+				tag = LBA
+				tag = PAL
+				tag = MAR
+				tag = MOR
+				tag = TUN								
+				tag = EGY
+				tag = IRQ
+			}
+			OR = {
+				has_dlc = "Waking the Tiger"
+				has_dlc = "La Resistance"
+			}
+		}
+	}
+	
+	default = no
+	continuous_focus_position = { x = 1500 y = 945 }
+	shared_focus = CW_allied_anger
+
+##############################
+###### Economic branch #######
+##############################
+	focus = {
+		id = Arab_Search_For_Oil_Deposits
+		icon = GFX_goal_desert_oil
+		search_filters = { FOCUS_FILTER_INDUSTRY}
+		cost = 70 # Previously was: 70.0 
+		x = 8
+		y = 0
+		ai_will_do = {
+			factor = 2
+			modifier = {
+				add = -2
+				date < 1937.1.1				
+			}
+			modifier = {
+				add = 1
+				is_subject = yes			
+			}
+		}
+		completion_reward = {
+			unlock_decision_tooltip = {
+				decision = Arab_Search_For_Oil
+				show_effect_tooltip = yes
+			}
+		}
+
+	}
+	
+	focus = {
+		id = Arab_Bureaucracy
+		icon = GFX_generic_government_bureaucracy
+		search_filters = { FOCUS_FILTER_POLITICAL }
+		cost = 70 # Previously was: 70.0 
+		x = 3
+		y = 0
+		ai_will_do = {
+			factor = 3
+		}
+        completion_reward = {
+			add_political_power = 50
+		}
+	}
+	
+	focus = {
+		id = Arab_Build_Schools
+		icon = GFX_goal_school_bookstacks
+		cost = 70 # Previously was: 70.0 
+		search_filters = { FOCUS_FILTER_RESEARCH FOCUS_FILTER_CHI_INFLATION}
+		prerequisite = {
+			focus = Arab_Bureaucracy
+		}
+		available = {
+			NOT = {
+				has_idea = Arab_hyper_inflation_5
+				OR = {
+					has_idea = edu_minimal
+					hidden_trigger = {
+						is_ai = yes
+					}
+				}
+			}
+		}
+		ai_will_do = {
+			factor = 4
+			modifier = {
+				add = -1
+				has_idea = Arab_hyper_inflation_2			
+			}
+			modifier = {
+				add = -2
+				has_idea = Arab_hyper_inflation_3			
+			}
+			modifier = {
+				add = -3
+				has_idea = Arab_hyper_inflation_4			
+			}
+		}
+		x = 0
+		y = 1
+		completion_reward = {			
+			add_ideas = Arab_Schools
+			Arab_hyper_inflation_level_up = yes
+		}
+	}
+	
+	focus = {
+		id = Arab_Build_More_Schools
+		icon = GFX_focus_AFG_education_reform
+		search_filters = { FOCUS_FILTER_RESEARCH FOCUS_FILTER_CHI_INFLATION}
+		cost = 84 # Previously was: 84.0 
+		x = 0
+		y = 2
+		prerequisite = {
+			focus = Arab_Build_Schools
+				}
+		available = {
+			NOT = {
+				has_idea = Arab_hyper_inflation_5
+				OR = {
+					has_idea = edu_minimal
+					hidden_trigger = {
+						is_ai = yes
+					}
+				}
+			}
+		}
+		ai_will_do = {
+			factor = 4
+			modifier = {
+				add = -1
+				has_idea = Arab_hyper_inflation_2			
+			}
+			modifier = {
+				add = -2
+				has_idea = Arab_hyper_inflation_3			
+			}
+			modifier = {
+				add = -3
+				has_idea = Arab_hyper_inflation_4			
+			}
+		}
+		completion_reward = {
+			swap_ideas = { 
+				remove_idea = Arab_Schools 
+				add_idea = Arab_Schools2
+				}
+			Arab_hyper_inflation_level_up = yes
+		}
+	}
+	focus = {
+		id = Arab_spys
+		icon = GFX_goal_spy_focus
+		cost = 49 # Previously was: 49.0 
+		x = 2
+		y = 1
+		relative_position_id = Arab_Build_More_Schools
+		
+		prerequisite = {
+			focus = Arab_Build_More_Schools
+		}
+		available = {
+			has_dlc = "La Resistance"
+		}
+		ai_will_do = {
+			factor = 4
+		}
+		completion_reward = {
+			add_ideas = Arab_spies
+		}
+	}	
+	focus = {
+		id = Arab_Research_Funding
+		icon = GFX_focus_research
+		cost = 105 # Previously was: 105.0 
+		search_filters = { FOCUS_FILTER_RESEARCH FOCUS_FILTER_CHI_INFLATION}
+		prerequisite = {
+			focus = Arab_Build_More_Schools
+		}
+		x = 0
+		y = 3
+		available = {
+			NOT = {
+				has_idea = Arab_hyper_inflation_5
+				has_idea = edu_minimal
+			}
+			OR = {		
+				num_of_factories > 14
+				is_ai = no
+			}
+		}
+		ai_will_do = {
+			factor = 4
+			modifier = {
+				add = -1
+				has_idea = Arab_hyper_inflation_2			
+			}
+			modifier = {
+				add = -2
+				has_idea = Arab_hyper_inflation_3			
+			}
+			modifier = {
+				add = -3
+				has_idea = Arab_hyper_inflation_4			
+			}
+		}
+		completion_reward = {
+			add_research_slot = 1
+			add_research_centre = yes
+			SLOT:industry_folder = yes
+			SLOT:raw_materials_folder = yes
+			Arab_hyper_inflation_level_up = yes
+		}
+
+	}
+	
+	focus = {
+		id = Arab_Revise_Bedouin_Control_Law
+		icon = GFX_goal_bled_agreement
+		cost = 77 # Previously was: 77.0 
+		search_filters = { FOCUS_FILTER_POLITICAL FOCUS_FILTER_INDUSTRY FOCUS_FILTER_MANPOWER}
+		prerequisite = {
+			focus = Arab_Bureaucracy
+		}
+		x = 2
+		y = 1
+		ai_will_do = {
+			factor = 4
+			modifier = {
+				factor = 0
+				has_stability < 0.50				
+			}
+		}
+		available = {
+			NOT = {
+				has_idea = security_liberty_first
+			}
+		}
+		completion_reward = {
+		add_stability = -0.15
+			swap_ideas = { 
+				remove_idea = Arab_Tribes 
+				add_idea = Arab_Tribes2
+			}
+		}
+
+	}
+	
+	focus = {
+		id = Arab_Integrate_Nomads
+		icon = GFX_goal_CRO_muslims_excluded
+		cost = 140 # Previously was: 140.0 
+		search_filters = { FOCUS_FILTER_POLITICAL FOCUS_FILTER_INDUSTRY FOCUS_FILTER_MANPOWER}
+		prerequisite = {
+			focus = Arab_Revise_Bedouin_Control_Law
+		}
+		x = 2
+		y = 2
+		available = {
+			NOT = {
+				has_idea = security_liberty_first
+			}
+		}
+		ai_will_do = {
+			factor = 4
+			modifier = {
+				factor = 0
+				has_stability < 60				
+			}
+		}
+		completion_reward = {
+		add_stability = -0.25
+			swap_ideas = { 
+				remove_idea = Arab_Tribes2 
+				add_idea = Arab_Tribes3
+			}
+		}
+		
+	}
+	focus = {
+		id = Arab_Subsidize_Farmers
+		icon = GFX_focus_AFG_contact_rural_loyalists
+		cost = 70 # Previously was: 70.0 
+		search_filters = { FOCUS_FILTER_STABILITY FOCUS_FILTER_WAR_SUPPORT FOCUS_FILTER_CHI_INFLATION}
+		prerequisite = {
+			focus = Arab_Bureaucracy
+		}
+		available = {
+			NOT = {
+				has_idea = Arab_hyper_inflation_5
+			}
+		}
+		ai_will_do = {
+			factor = 3
+		}
+		x = 4
+		y = 1
+		completion_reward = {
+			add_stability = 0.1
+			add_war_support = 0.05
+			Arab_hyper_inflation_level_up = yes
+		}
+
+	}
+	
+	focus = {
+		id = Arab_Welfare
+		icon = GFX_focus_ETH_sway_the_warlords
+		cost = 70 # Previously was: 70.0 
+		prerequisite = {
+			focus = Arab_Subsidize_Farmers
+		}
+		search_filters = { FOCUS_FILTER_STABILITY FOCUS_FILTER_CHI_INFLATION}
+		available = {
+			NOT = {
+				has_idea = Arab_hyper_inflation_5
+			}
+		}
+		x = 4
+		y = 2
+		ai_will_do = {
+			factor = 4
+			modifier = {
+				add = -1
+				has_idea = Arab_hyper_inflation_2			
+			}
+			modifier = {
+				add = -2
+				has_idea = Arab_hyper_inflation_3			
+			}
+			modifier = {
+				add = -3
+				has_idea = Arab_hyper_inflation_4			
+			}
+		
+		}
+		completion_reward = {
+			add_ideas = Arab_Social
+			Arab_hyper_inflation_level_up = yes
+		}
+	}
+	
+	focus = {
+		id = Arab_Healthcare
+		icon = GFX_goal_medicine
+		cost = 105 # Previously was: 105.0 
+		search_filters = {FOCUS_FILTER_WAR_SUPPORT FOCUS_FILTER_CHI_INFLATION}
+		prerequisite = {
+			focus = Arab_Welfare
+		}
+		available = {
+			NOT = {
+				has_idea = Arab_hyper_inflation_5
+			}
+		}
+		ai_will_do = {
+			factor = 4
+			modifier = {
+				add = -1
+				has_idea = Arab_hyper_inflation_2			
+			}
+			modifier = {
+				add = -2
+				has_idea = Arab_hyper_inflation_3			
+			}
+			modifier = {
+				add = -3
+				has_idea = Arab_hyper_inflation_4			
+			}
+		}
+		x = 4
+		y = 3
+		completion_reward = {			
+			swap_ideas = { 
+				remove_idea = Arab_Social
+				add_idea = Arab_Social2
+				}
+			Arab_hyper_inflation_level_up = yes
+		}
+	}
+	
+	focus = {
+		id = Arab_Agriculture
+		icon = GFX_focus_generic_sheep
+		search_filters = { FOCUS_FILTER_MANPOWER}
+		cost = 42 # Previously was: 42.0 
+		prerequisite = {
+			focus = Arab_Bureaucracy
+		}
+		available = {
+			NOT = {
+				has_idea = Arab_hyper_inflation_5
+			}
+		}
+		x = 6
+		y = 1
+		ai_will_do = {
+			factor = 4		
+		}
+		completion_reward = {
+			add_timed_idea = { 
+				idea = Arab_Farms 
+				days = 200 
+			}
+		}
+	}
+	
+	focus = {
+		id = Arab_Develop_Oil_Industry
+		icon = GFX_goal_generic_oil_refinery
+		cost = 70 # Previously was: 70.0 
+		search_filters = { FOCUS_FILTER_INDUSTRY}
+		prerequisite = {
+			focus = Arab_Search_For_Oil_Deposits		
+		}
+		prerequisite = {
+			focus = Arab_Bureaucracy
+		}
+		x = 8
+		y = 1
+		ai_will_do = {
+			factor = 2
+		}
+		available = {
+			has_country_flag = Arab_oil_Found
+		}
+		completion_reward = {
+			add_tech_bonus = {
+				name = fuel_bonus
+				bonus = 0.10
+				uses = 2
+				category = fuel_tech
+			}
+			random_owned_controlled_state = {
+				add_resource = {
+					type = oil
+					amount = 2
+				}
+			}
+		}
+	}
+	
+	focus = {
+		id = Arab_Trade
+		icon = GFX_focus_generic_positive_trade_relations_gold
+		cost = 56 # Previously was: 56.0 
+		prerequisite = {
+			focus = Arab_Develop_Oil_Industry
+		}
+		search_filters = { FOCUS_FILTER_CHI_INFLATION}
+		available = { has_Arab_inflation = yes }		
+		x = 6
+		y = 2
+		ai_will_do = {
+			factor = 1
+			modifier = {
+				add = 2
+				has_idea = Arab_hyper_inflation_2			
+			}
+			modifier = {
+				add = 3
+				has_idea = Arab_hyper_inflation_3			
+			}
+			modifier = {
+				add = 4
+				has_idea = Arab_hyper_inflation_4			
+			}
+			modifier = {
+				add = 5
+				has_idea = Arab_hyper_inflation_5			
+			}
+		}
+		completion_reward = {
+			Arab_hyper_inflation_level_down = yes
+		}
+	}
+	focus = {
+		id = Arab_diplomacy
+		icon = GFX_focus_generic_befriend_mapuche
+		cost = 32
+		prerequisite = {
+			focus = Arab_Trade
+		}
+		search_filters = { FOCUS_FILTER_CHI_INFLATION}
+		available = { has_Arab_inflation = yes }		
+		x = -1
+		y = 2
+		relative_position_id = Arab_Trade
+		ai_will_do = {
+			factor = 3
+		}
+		completion_reward = {
+			every_other_country = {	
+				limit = {
+					if = { 
+						limit = { 
+							has_government = communism
+						}
+						not = {
+							has_government = fascism
+							has_government = monarchism
+						}
+					}
+					if = { 
+						limit = { 
+							OR = {
+								has_government = fascism
+								has_government = monarchism
+							}
+						}
+						not = {
+							has_government = communism
+						}
+					}						
+				}
+				random_select_amount = 3
+				add_opinion_modifier = { 
+					target = ROOT 
+					modifier = BUL_befriended_us
+				} 
+				reverse_add_opinion_modifier = {
+					target = ROOT
+					modifier = small_increase
+				}
+			}			
+		}
+	}	
+	focus = {
+		id = Arab_Jordanian_Petroleum_Company
+		icon = GFX_goal_generic_oil_factory
+		search_filters = { FOCUS_FILTER_INDUSTRY}
+		cost = 70 # Previously was: 70.0 
+		prerequisite = {
+			focus = Arab_Develop_Oil_Industry
+		}
+		x = 8
+		y = 2
+		ai_will_do = {
+			factor = 2
+		}
+		completion_reward = { 
+			add_ideas = Arab_oil
+		}
+
+	}
+	
+	focus = {
+		id = Arab_Road
+		icon = GFX_goal_generic_construct_infrastructure
+		cost = 35 # Previously was: 35.0 
+		search_filters = { FOCUS_FILTER_INFRASTRUCTURE}
+		x = 11
+		y = 0
+		ai_will_do = {
+			factor = 3
+		}
+		completion_reward = {
+			capital_scope = {
+				add_extra_state_shared_building_slots = 1
+				add_building_construction = {
+					type = infrastructure
+					level = 1
+					instant_build = yes
+				}
+			}	
+		}
+
+	}
+	
+	focus = {
+		id = Arab_land
+		icon = GFX_agrarian_reform
+		cost = 35 # Previously was: 35.0 
+		x = 12
+		y = 1
+		search_filters = { FOCUS_FILTER_INDUSTRY}
+		ai_will_do = {
+			factor = 2
+			modifier = {
+				add = -1
+				num_of_controlled_states < 2		
+			}
+		}
+		prerequisite = { focus = Arab_Road }
+		completion_reward = {
+			random_owned_controlled_state = {
+				add_extra_state_shared_building_slots = 1
+				add_building_construction = {
+					type = infrastructure
+					level = 1
+					instant_build = yes
+				}
+			}	
+		}
+	}
+	focus = {
+		id = Arab_recruitment
+		icon = GFX_goal_ger_augustprogram
+		prerequisite = { focus = Arab_land }
+		x = 0
+		y = 3
+		relative_position_id = Arab_land
+		cost = 32 # Previously was: 31.5 
+		search_filters = { FOCUS_FILTER_MANPOWER}
+		ai_will_do = {
+			factor = 2
+			modifier = {
+				add = -1
+				num_of_controlled_states < 2		
+			}
+		}
+
+		available = {
+		}
+
+		available_if_capitulated = yes
+
+		completion_reward = {
+			random_owned_controlled_state = {
+				add_extra_state_shared_building_slots = 1
+				add_building_construction = { 
+					type = recruitment_building
+					level = 1 
+					instant_build = yes 
+				}
+			}
+		}
+	}
+	
+	focus = {
+		id = Arab_construction
+		icon = GFX_focus_AFG_a_modern_economy
+		cost = 60
+		search_filters = { FOCUS_FILTER_INDUSTRY}
+		x = 10
+		y = 1
+		ai_will_do = {
+			factor = 2
+			modifier = {
+				add = -1
+				num_of_controlled_states < 2		
+			}
+		}
+		prerequisite = { focus = Arab_Road }
+		completion_reward = {
+			capital_scope = {
+				add_extra_state_shared_building_slots = 1
+				add_building_construction = {
+					type = industrial_complex
+					level = 1
+					instant_build = yes
+				}
+			}	
+		}
+
+	}
+	
+	focus = {
+		id = Arab_construction2
+		icon = GFX_goal_generic_construct_civ_factory
+		cost = 70 # Previously was: 70.0 
+		x = 11
+		y = 3
+		search_filters = { FOCUS_FILTER_INDUSTRY}
+		ai_will_do = {
+			factor = 2
+			modifier = {
+				add = -1
+				num_of_controlled_states < 2		
+			}
+		}
+		prerequisite = { focus = Arab_land }
+		completion_reward = {
+			random_owned_controlled_state = {
+				add_extra_state_shared_building_slots = 1
+				add_building_construction = {
+					type = industrial_complex
+					level = 1
+					instant_build = yes
+				}
+			}	
+		}
+
+	}
+
+	focus = {
+		id = Arab_Mining_Operations
+		icon = GFX_goal_generic_resource_extraction
+		cost = 91 # Previously was: 91.0 
+		search_filters = { FOCUS_FILTER_INDUSTRY}
+		prerequisite = {
+			focus = Arab_Develop_Oil_Industry
+		}
+		prerequisite = {
+			focus = Arab_construction
+		}
+		x = 10
+		y = 2
+		ai_will_do = {
+			factor = 2
+		}
+		completion_reward = {
+			unlock_decision_tooltip = {
+				decision = Arab_Mining
+				show_effect_tooltip = yes
+			}
+		}
+
+	}
+	
+	focus = {
+		id = Arab_Industry
+		icon = GFX_goal_generic_national_industrialization_effort
+		cost = 56 # Previously was: 56.0 
+		search_filters = { FOCUS_FILTER_INDUSTRY}
+		prerequisite = {
+			focus = Arab_Mining_Operations
+		}
+		prerequisite = {
+			focus = Arab_construction2
+		}
+		x = 10
+		y = 4
+		ai_will_do = {
+			factor = 2
+		}
+		completion_reward = {
+			add_tech_bonus = {
+				name = industrial_bonus
+				bonus = 0.25
+				uses = 2
+				category = industry
+			}
+		}
+	}
+	
+	focus = {
+		id = Arab_electrics
+		icon = GFX_focus_generic_electrification
+		cost = 38 # Previously was: 37.800000000000004 
+		prerequisite = {
+			focus = Arab_Industry
+		}
+		search_filters = { FOCUS_FILTER_RESEARCH}
+		x = 8
+		y = 5
+		ai_will_do = {
+			factor = 2
+		}
+		completion_reward = {
+			add_tech_bonus = {
+				name = electronics_bonus
+				bonus = 0.20
+				uses = 1
+				category = power_tech
+			}
+			random_owned_controlled_state = {
+				add_extra_state_shared_building_slots = 1
+				add_building_construction = {
+					type = power_plant
+					level = 1
+					instant_build = yes
+				}
+			}	
+		}
+	}
+	
+	focus = {
+		id = Arab_Steel
+		icon = GFX_goal_generic_steel_industry
+		cost = 70 # Previously was: 70.0 
+		x = 15
+		y = 5
+		search_filters = { FOCUS_FILTER_INDUSTRY}
+		ai_will_do = {
+			factor = 2
+			modifier = {
+				add = -1
+				num_of_controlled_states < 2		
+			}
+		}
+		prerequisite = {
+			focus = Arab_Industry
+		}
+		completion_reward = {
+			random_owned_controlled_state = {
+				add_extra_state_shared_building_slots = 1
+				add_building_construction = {
+					type = steel_refinery
+					level = 1
+					instant_build = yes
+				}
+			}	
+		}
+
+	}
+	focus = {
+		id = Arab_Market_Reforms
+		icon = GFX_focus_AFG_afghan_bank
+		cost = 63 # Previously was: 63.0 
+		prerequisite = {
+			focus = Arab_Industry
+		}
+		search_filters = { FOCUS_FILTER_CHI_INFLATION}
+		available = { has_Arab_inflation = yes }
+		x = 12
+		y = 5
+		ai_will_do = {
+			factor = 1
+			modifier = {
+				add = 2
+				has_idea = Arab_hyper_inflation_2			
+			}
+			modifier = {
+				add = 3
+				has_idea = Arab_hyper_inflation_3			
+			}
+			modifier = {
+				add = 4
+				has_idea = Arab_hyper_inflation_4			
+			}
+			modifier = {
+				add = 5
+				has_idea = Arab_hyper_inflation_5			
+			}
+		}
+		completion_reward = {
+			Arab_hyper_inflation_level_down = yes
+		}				
+		
+
+	}
+	focus = {
+		id = Arab_Arming
+		icon = GFX_goal_generic_construct_mil_factory
+		cost = 50 # Previously was: 70.0 
+		prerequisite = {
+			focus = Arab_Industry
+		}
+		prerequisite = { 
+			focus = Arab_equipment_effort_2			
+		}
+		search_filters = { FOCUS_FILTER_INDUSTRY}
+		x = 18
+		y = 5
+		ai_will_do = {
+			factor = 5
+		}
+
+		completion_reward = {
+			capital_scope = {
+				add_extra_state_shared_building_slots = 1
+				add_building_construction = {
+					type = arms_factory
+					level = 1
+					instant_build = yes
+				}
+			}		
+		}
+
+	}
+	
+	focus = {
+		id = Arab_War
+		icon = GFX_Prepare_the_Troops
+		cost = 46 # Previously was: 45.5 
+		prerequisite = {
+			focus = Arab_Arming
+		}
+		prerequisite = { 
+			focus = Arab_fort_capital			
+		}
+		search_filters = { FOCUS_FILTER_INDUSTRY}
+		available = {
+			OR = {
+				threat > 0.75
+				has_war = yes
+			}
+		}
+		x = 18
+		y = 6
+		ai_will_do = {
+			factor = 5
+		}
+		completion_reward = {
+			capital_scope = {
+				add_extra_state_shared_building_slots = 3
+				add_building_construction = {
+					type = arms_factory
+					level = 2
+					instant_build = yes
+				}
+			}		
+		}
+
+	}
+	
+	focus = {
+		id = Arab_Trade_More
+		icon = GFX_focus_PER_increase_oil_sales
+		cost = 56 # Previously was: 56.0 
+		search_filters = { FOCUS_FILTER_POLITICAL FOCUS_FILTER_CHI_INFLATION}
+		prerequisite = {
+			focus = Arab_Jordanian_Petroleum_Company
+		}
+		prerequisite = {
+			focus = Arab_Trade
+		}
+		prerequisite = {
+			focus = Arab_Mining_Operations
+		}
+		mutually_exclusive = { focus = Arab_Trade_less }
+		available = { has_Arab_inflation = yes }
+		x = 9
+		y = 3
+		ai_will_do = {
+			factor = 1
+			modifier = {
+				add = 2
+				has_idea = Arab_hyper_inflation_2			
+			}
+			modifier = {
+				add = 3
+				has_idea = Arab_hyper_inflation_3			
+			}
+			modifier = {
+				add = 4
+				has_idea = Arab_hyper_inflation_4			
+			}
+			modifier = {
+				add = 5
+				has_idea = Arab_hyper_inflation_5			
+			}
+		}
+		completion_reward = {
+			add_ideas = liberty_ethos_focus
+			Arab_hyper_inflation_level_down = yes
+		}
+
+	}
+	
+	focus = {
+		id = Arab_Trade_less
+		icon = GFX_focus_rom_parties_end
+		cost = 56 # Previously was: 56.0 
+		prerequisite = {
+			focus = Arab_Jordanian_Petroleum_Company
+		}
+		prerequisite = {
+			focus = Arab_Trade
+		}
+		prerequisite = {
+			focus = Arab_Mining_Operations
+		}
+		mutually_exclusive = { focus = Arab_Trade_More }
+		search_filters = { FOCUS_FILTER_INDUSTRY}
+		x = 7
+		y = 3
+		ai_will_do = {
+			factor = 2
+			modifier = {
+				add = -1
+				has_idea = Arab_hyper_inflation_2			
+			}
+			modifier = {
+				add = -2
+				has_idea = Arab_hyper_inflation_3			
+			}
+			modifier = {
+				add = -2
+				has_idea = Arab_hyper_inflation_4			
+			}
+			modifier = {
+				add = -2
+				has_idea = Arab_hyper_inflation_5			
+			}
+		}
+		completion_reward = {
+			add_ideas = Arab_less_export
+		}
+
+	}
+	focus = {
+		id = Arab_fuel
+		icon = GFX_goal_wirtschaftliche_forschungsgesellschaft
+		cost = 56 # Previously was: 56.0 
+		prerequisite = {
+			focus = Arab_Trade_More
+			focus = Arab_Trade_less
+		}
+		search_filters = { FOCUS_FILTER_INDUSTRY}
+		x = -1
+		y = 1
+		relative_position_id = Arab_Trade_More
+		ai_will_do = {
+			factor = 2
+		}
+		completion_reward = {
+			swap_ideas = {
+				remove_idea = Arab_oil
+				add_idea = Arab_oil2
+			}
+				
+		}
+
+	}
+###################
+#### Naval ########
+###################
+focus = {
+		id = Arab_Sea_Trade
+		icon = GFX_goal_generic_positive_trade_relations
+		x = 13
+		y = 0
+		cost = 49 # Previously was: 49.0 
+		search_filters = { FOCUS_FILTER_NAVY FOCUS_FILTER_CHI_INFLATION}
+		ai_will_do = {
+			factor = 1
+			modifier = {
+				add = 2
+				has_idea = Arab_hyper_inflation_2			
+			}
+			modifier = {
+				add = 3
+				has_idea = Arab_hyper_inflation_3			
+			}
+			modifier = {
+				add = 4
+				has_idea = Arab_hyper_inflation_4			
+			}
+			modifier = {
+				add = 5
+				has_idea = Arab_hyper_inflation_5			
+			}
+		}
+		available_if_capitulated = yes
+		available = {
+			has_country_flag = coastal_state
+			has_equipment = {
+			convoy > 9
+			}
+			has_Arab_inflation = yes
+		}
+		completion_reward = {
+			
+			navy_experience = 2
+			add_equipment_to_stockpile = {
+				type = convoy_1
+				amount = -10				
+			}
+			Arab_hyper_inflation_level_down = yes
+		}
+	}
+	
+focus = {
+		id = Arab_Trade_Fleet
+		icon = GFX_Passenger_Cruiser
+		x = 15
+		y = 0
+		search_filters = { FOCUS_FILTER_NAVY}
+		cost = 42 # Previously was: 42.0 
+		ai_will_do = {
+			factor = 2
+		}
+
+		available_if_capitulated = yes
+		available = {
+			has_country_flag = coastal_state
+		}
+
+		completion_reward = {
+			
+			navy_experience = 2
+			add_equipment_to_stockpile = {
+				type = convoy_1
+				amount = 20
+			}
+		}
+	}
+	
+focus = {
+		id = Arab_military_dockyards
+		icon = GFX_goal_generic_construct_naval_dockyard
+		prerequisite = { focus = Arab_Sea_Trade }
+		prerequisite = { focus = Arab_Trade_Fleet }
+		x = 14
+		y = 1
+		cost = 105 # Previously was: 105.0 
+		ai_will_do = {
+			factor = 3
+		}
+		search_filters = { FOCUS_FILTER_INDUSTRY FOCUS_FILTER_NAVY}
+		available_if_capitulated = yes
+
+
+		available = {
+			has_country_flag = coastal_state
+		}
+
+		complete_tooltip = {
+			add_extra_state_shared_building_slots = 1
+			add_building_construction = {
+				type = dockyard
+				level = 1
+				instant_build = yes
+			}
+		}
+
+		completion_reward = {
+			focus_add_dockyard_prioritize_home_area = yes
+		}
+	}
+	
+focus = {
+		id = Arab_surface_fleet
+		icon = GFX_goal_generic_build_navy
+		prerequisite = { focus = Arab_military_dockyards }
+		mutually_exclusive = { focus = Arab_subsurface_fleet }
+		search_filters = { FOCUS_FILTER_NAVY}
+		x = 15
+		y = 2
+		cost = 70 # Previously was: 70.0 
+		ai_will_do = {
+			factor = 1
+		}
+		available_if_capitulated = yes
+
+		completion_reward = {
+			
+			navy_experience = 25
+
+			add_tech_bonus = {
+				name = surface_fleet
+				bonus = 0.5
+				uses = 2
+				category = cl_tech
+				category = ca_tech
+
+			}
+		}
+	}
+
+focus = {
+		id = Arab_subsurface_fleet
+		icon = GFX_goal_generic_navy_submarine
+		prerequisite = { focus = Arab_military_dockyards }
+		mutually_exclusive = { focus = Arab_surface_fleet }
+		search_filters = { FOCUS_FILTER_NAVY}
+		x = 13
+		y = 2
+		cost = 70 # Previously was: 70.0 
+		ai_will_do = {
+			factor = 1
+		}
+		available_if_capitulated = yes
+
+		completion_reward = {
+			
+			navy_experience = 25
+
+			add_tech_bonus = {
+				name = subsurface_fleet
+				bonus = 0.5
+				ahead_reduction = 1
+				uses = 1
+				technology = early_submarine
+				technology = basic_submarine
+				technology = improved_submarine
+				technology = advanced_submarine
+			}
+		}
+	}
+
+	focus = {
+		id = Arab_advanced_subsurface_fleet
+		icon = GFX_goal_generic_navy_anti_submarine
+		prerequisite = { focus = Arab_subsurface_fleet }
+		search_filters = { FOCUS_FILTER_NAVY}
+		x = 13
+		y = 3
+		ai_will_do = {
+			factor = 1
+		}
+		available_if_capitulated = yes
+		cost = 84 # Previously was: 84.0 
+		completion_reward = {
+			add_tech_bonus = {
+				name = advanced_subsurface_fleet
+				bonus = 0.5
+				uses = 1
+				category = ss_tech
+			}
+		}
+	}	
+
+	focus = {
+		id = Arab_naval_doctrine
+		icon = GFX_goal_generic_navy_doctrines_tactics
+		prerequisite = { focus = Arab_subsurface_fleet focus = Arab_surface_fleet}
+		search_filters = { FOCUS_FILTER_NAVY}
+		x = 0
+		y = 3
+		relative_position_id = Arab_military_dockyards
+		ai_will_do = {
+			factor = 1
+		}
+		available_if_capitulated = yes
+		cost = 61 # Previously was: 60.89999999999999 
+		completion_reward = {
+			navy_experience = 25
+			add_tech_bonus = {
+				name = fleet_in_being_bonus
+				bonus = 0.2
+				uses = 2
+				category = naval_doctrine_capital
+				category = naval_doctrine_cruiser
+				category = naval_doctrine_submarine
+			}
+		}
+	}
+	
+###############
+##### AIR #####
+###############
+	focus = {
+		id = Arab_aviation_effort
+		icon = GFX_biplane
+		x = 18
+		y = 0
+		search_filters = { FOCUS_FILTER_AIRFORCE}
+		cost = 49 # Previously was: 49.0 
+		ai_will_do = {
+			factor = 2
+		}
+		available_if_capitulated = yes
+		complete_tooltip = {
+			air_experience = 25
+			if = { limit = { has_country_flag = aviation_effort_AB }
+				add_building_construction = {
+					type = air_base
+					level = 2
+					instant_build = yes
+				}
+			}			
+			add_tech_bonus = {
+				name = air_doc_bonus
+				bonus = 0.2
+				uses = 1
+				category = air_doctrine
+			}			
+		}
+
+		completion_reward = {
+			air_experience = 25
+
+			if = {
+				limit = {
+					capital_scope = {
+						NOT = {
+							free_building_slots = {
+								building = air_base
+								size > 1
+							}
+						}
+					}
+				}
+				random_owned_controlled_state = {
+					limit = {
+						free_building_slots = {
+							building = air_base
+							size > 1
+						}
+					}
+					add_building_construction = {
+						type = air_base
+						level = 2
+						instant_build = yes
+					}
+					ROOT = { set_country_flag = aviation_effort_AB }
+				}
+			}
+			if = {
+				limit = {
+					capital_scope = {
+						free_building_slots = {
+							building = air_base
+							size > 1
+						}
+					}
+				}
+				capital_scope = {
+					add_building_construction = {
+						type = air_base
+						level = 2
+						instant_build = yes
+					}
+					ROOT = { set_country_flag = aviation_effort_AB }
+				}
+			}
+			add_tech_bonus = {
+				name = air_doc_bonus
+				bonus = 0.2
+				uses = 1
+				category = air_doctrine
+			}
+		}
+	}
+
+	focus = {
+		id = Arab_fighter_focus
+		icon = GFX_goal_generic_air_fighter
+		prerequisite = { focus = Arab_aviation_effort }
+		mutually_exclusive = { focus = Arab_bomber_focus }
+		search_filters = { FOCUS_FILTER_AIRFORCE}
+		x = 17
+		y = 1
+		ai_will_do = {
+			factor = 2
+		}
+		cost = 70 # Previously was: 70.0 
+		available_if_capitulated = yes
+		completion_reward = {
+			add_tech_bonus = {
+				name = fighter_bonus
+				bonus = 0.2
+				uses = 2
+				technology = early_fighter
+				technology = fighter1
+				technology = fighter2
+				technology = fighter3
+				technology = heavy_fighter2
+				technology = heavy_fighter3
+			}
+		}
+	}
+
+	focus = {
+		id = Arab_bomber_focus
+		icon = GFX_goal_generic_air_bomber
+		prerequisite = { focus = Arab_aviation_effort }
+		mutually_exclusive = { focus = Arab_fighter_focus }
+		search_filters = { FOCUS_FILTER_AIRFORCE}
+		x = 19
+		y = 1
+		cost = 77 # Previously was: 77.0 
+		ai_will_do = {
+			factor = 2
+		}
+		available_if_capitulated = yes
+		completion_reward = {
+			add_tech_bonus = {
+				name = bomber_bonus
+				bonus = 0.2
+				uses = 2
+				technology = strategic_bomber2
+				technology = strategic_bomber3
+				category = tactical_bomber
+			}
+		}
+	}
+
+	focus = {
+		id = Arab_aviation_effort_2
+		icon = GFX_focus_generic_copy_plane_designs
+		prerequisite = { focus = Arab_bomber_focus focus = Arab_fighter_focus }
+		search_filters = { FOCUS_FILTER_AIRFORCE}
+		x = 18
+		y = 2
+		cost = 70 # Previously was: 70.0 
+		ai_will_do = {
+			factor = 2
+		}
+		available_if_capitulated = yes
+		complete_tooltip = {
+			air_experience = 25
+			if = { limit = { has_country_flag = aviation_effort_2_AB }
+				add_building_construction = {
+					type = air_base
+					level = 2
+					instant_build = yes
+				}
+			}
+			add_tech_bonus = {
+				name =  air_doc_bonus
+				bonus = 0.2
+				uses = 1
+				category = air_doctrine
+			}
+		}
+		completion_reward = {
+			air_experience = 25
+			if = {
+				limit = {
+					capital_scope = {
+						OR = {
+							NOT = { is_controlled_by = ROOT }
+							NOT = {
+								free_building_slots = {
+									building = air_base
+									size > 0
+								}
+							}
+						}
+					}
+				}
+				random_owned_controlled_state = {
+					limit = {
+						free_building_slots = {
+							building = air_base
+							size > 0
+						}
+					}
+					add_building_construction = {
+						type = air_base
+						level = 1
+						instant_build = yes
+					}
+					ROOT = { set_country_flag = aviation_effort_2_AB }
+				}
+			}
+			if = {
+				limit = {
+					capital_scope = {
+						is_controlled_by = ROOT
+						free_building_slots = {
+							building = air_base
+							size > 1
+						}
+					}
+				}
+				capital_scope = {
+					add_building_construction = {
+						type = air_base
+						level = 1
+						instant_build = yes
+					}				
+					ROOT = { set_country_flag = aviation_effort_2_AB }
+				}
+			}
+			if = {
+				limit = {
+					has_completed_focus = Arab_bomber_focus
+				}
+				capital_scope = {
+					add_extra_state_shared_building_slots = 1
+					add_building_construction = {
+						type = air_assembly
+						level = 1
+						instant_build = yes
+					}
+				}
+			}
+			if = {
+				limit = {
+					has_completed_focus = Arab_fighter_focus
+				}
+				capital_scope = {
+					add_extra_state_shared_building_slots = 1
+					add_building_construction = {
+						type = air_assembly
+						level = 1
+						instant_build = yes
+					}
+				}
+			}
+			add_tech_bonus = {
+				name =  air_doc_bonus
+				bonus = 0.2
+				uses = 1
+				category = air_doctrine
+			}
+		}
+	}
+
+	focus = {
+		id = Arab_CAS_effort
+		icon = GFX_goal_generic_CAS
+		prerequisite = { focus = Arab_aviation_effort_2 }
+		search_filters = { FOCUS_FILTER_AIRFORCE}
+		x = 19
+		y = 3
+		cost = 70 # Previously was: 70.0 
+		ai_will_do = {
+			factor = 2
+		}
+		available_if_capitulated = yes
+		completion_reward = {
+			add_tech_bonus = {
+				name = CAS_bonus
+				bonus = 0.2
+				ahead_reduction = 1
+				uses = 1
+				category = cas_bomber
+			}
+		}
+	}
+
+	focus = {
+		id = Arab_NAV_effort
+		icon = GFX_goal_generic_air_naval_bomber
+		prerequisite = { focus = Arab_aviation_effort_2 }
+		prerequisite = { focus = Arab_surface_fleet }
+		search_filters = { FOCUS_FILTER_AIRFORCE FOCUS_FILTER_NAVY}
+		x = 16
+		y = 3
+		cost = 70 # Previously was: 70.0 
+		ai_will_do = {
+			factor = 2
+		}
+		available_if_capitulated = yes
+		completion_reward = {
+			add_tech_bonus = {
+				name = nav_bomber_bonus
+				bonus = 0.2
+				ahead_reduction = 1
+				uses = 1
+				category = naval_bomber
+			}
+		}
+	}
+
+################
+#### Army ######
+################
+	focus = {
+		id = Arab_army_effort
+		icon = GFX_goal_generic_allies_build_infantry
+		search_filters = { FOCUS_FILTER_ARMY}
+		x = 22
+		y = 0
+		cost = 70 # Previously was: 70.0 
+		ai_will_do = {
+			factor = 3
+		}
+		available_if_capitulated = yes
+		completion_reward = {
+			army_experience = 5
+			add_tech_bonus = {
+				name = land_doc_bonus
+				bonus = 0.2
+				uses = 1
+				category = land_doctrine
+			}
+		}
+	}
+	focus = {
+		id = Arab_division_cmd
+		icon = GFX_focus_chi_army_reform
+		cost = 50 # Previously was: 50.4 
+		x = -2
+		y = 2
+		relative_position_id = Arab_army_effort
+		search_filters = { FOCUS_FILTER_CP}
+		prerequisite = {
+			focus = Arab_army_effort
+		}	
+		available = {
+		}
+		completion_reward = {
+			add_command_power = 33
+		}
+		ai_will_do = {
+			base = 2
+			modifier = {
+				factor = 0
+				command_power > 50
+			}
+		}
+	}
+	
+
+	focus = {
+		id = Arab_equipment_effort
+		icon = GFX_goal_generic_small_arms
+		prerequisite = { focus = Arab_army_effort }
+		search_filters = { FOCUS_FILTER_ARMY}
+		x = 21
+		y = 1
+		cost = 70 # Previously was: 70.0 
+		ai_will_do = {
+			factor = 3
+		}
+		available_if_capitulated = yes
+		completion_reward = {
+			add_tech_bonus = {
+				name = infantry_weapons_bonus
+				bonus = 0.2
+				uses = 1
+				category = infantry_weapons
+				category = artillery
+			}
+		}
+	}
+
+	focus = {
+		id = Arab_Horse_effort
+		icon = GFX_focus_generic_horse_studs
+		prerequisite = { focus = Arab_army_effort }
+		search_filters = { FOCUS_FILTER_ARMY}
+		x = 23
+		y = 1
+		ai_will_do = {
+			factor = 3
+		}
+		cost = 77 # Previously was: 77.0 
+		available_if_capitulated = yes
+		completion_reward = {
+			add_ideas = Arab_Horsemen
+		}
+	}
+
+	focus = {
+		id = Arab_doctrine_effort
+		icon = GFX_focus_PER_desert_training
+		prerequisite = { focus = Arab_army_effort }
+		search_filters = { FOCUS_FILTER_ARMY}
+		x = 22
+		y = 2
+		ai_will_do = {
+			factor = 3
+		}
+		cost = 70 # Previously was: 70.0 
+		available_if_capitulated = yes
+		completion_reward = {
+			army_experience = 5
+			add_tech_bonus = {
+				name = land_doc_bonus
+				bonus = 0.2
+				uses = 1
+				category = land_doctrine
+			}
+		}
+	}
+
+	focus = {
+		id = Arab_equipment_effort_2
+		icon = GFX_goal_generic_army_artillery
+		prerequisite = { focus = Arab_equipment_effort }
+		search_filters = { FOCUS_FILTER_ARMY}
+		x = 21
+		y = 3
+		ai_will_do = {
+			factor = 3
+		}
+		cost = 63 # Previously was: 63.0 
+		available_if_capitulated = yes
+		completion_reward = {
+			add_tech_bonus = {
+				name = infantry_artillery_bonus
+				bonus = 0.2
+				uses = 1
+				category = infantry_weapons
+				category = artillery
+			}
+		}
+	}
+
+	focus = {
+		id = Arab_motorization_effort
+		icon = GFX_Desert_Warfare
+		prerequisite = { focus = Arab_Horse_effort }
+		bypass = { has_tech = motorised_infantry }
+		search_filters = { FOCUS_FILTER_ARMY}
+		x = 23
+		y = 3
+		ai_will_do = {
+			factor = 2
+		}
+		cost = 84 # Previously was: 84.0 
+		available_if_capitulated = yes
+		completion_reward = {
+			add_tech_bonus = {
+				name = motorized_bonus
+				bonus = 0.2
+				technology = motorised_infantry
+			}
+			add_tech_bonus = {
+				name = Arab_Desert_bonus
+				bonus = 0.5
+				technology = desert_equipment
+			}
+		}
+	}
+
+	focus = {
+		id = Arab_doctrine_effort_2
+		icon = GFX_goal_generic_army_doctrines
+		prerequisite = { focus = Arab_doctrine_effort }
+		search_filters = { FOCUS_FILTER_ARMY}
+		x = 22
+		y = 4
+		cost = 70 # Previously was: 70.0 
+		ai_will_do = {
+			factor = 2
+		}
+		available_if_capitulated = yes
+		completion_reward = {
+			army_experience = 5
+			add_tech_bonus = {
+				name = land_doc_bonus
+				bonus = 0.2
+				uses = 1
+				category = land_doctrine
+			}
+		}
+	}
+
+	focus = {
+		id = Arab_Desert_training
+		icon = GFX_goal_desert_troops
+		prerequisite = { focus = Arab_equipment_effort_2 }
+		search_filters = { FOCUS_FILTER_ARMY}
+		x = 21
+		y = 5
+		ai_will_do = {
+			factor = 3
+		}
+		cost = 84 # Previously was: 84.0 
+		available_if_capitulated = yes
+		completion_reward = {
+			add_ideas = Arab_Heat
+		}
+	}
+
+	focus = {
+		id = Arab_armor_effort
+		icon = GFX_Sandy_Tanks
+		prerequisite = { focus = Arab_motorization_effort }
+		search_filters = { FOCUS_FILTER_ARMY}
+		x = 23
+		y = 5
+		ai_will_do = {
+			factor = 2
+		}
+		cost = 84 # Previously was: 84.0 
+		available_if_capitulated = yes
+		completion_reward = {
+			add_tech_bonus = {
+				name = armor_bonus
+				bonus = 0.2
+				uses = 2
+				category = armor_tech
+			}
+		}
+	}
+
+	focus = {
+		id = Arab_special_forces
+		icon = GFX_goal_generic_special_forces
+		prerequisite = { focus = Arab_Desert_training }
+		prerequisite = { focus = Arab_doctrine_effort_2 }
+		prerequisite = { focus = Arab_armor_effort }
+		search_filters = { FOCUS_FILTER_ARMY FOCUS_FILTER_AIRFORCE FOCUS_FILTER_NAVY}
+		x = 22
+		y = 6
+		ai_will_do = {
+			factor = 2
+		}
+		cost = 56 # Previously was: 56.0 
+		available_if_capitulated = yes
+		completion_reward = {
+			add_tech_bonus = {
+				name = special_forces_bonus
+				bonus = 0.1
+				uses = 1
+				technology = paratroopers
+				technology = paratroopers2
+				technology = marines
+				technology = marines2
+				technology = tech_mountaineers
+				technology = tech_mountaineers2
+			}
+			add_ideas = Arab_Elite
+		}
+	}	
+###############
+### Defense ###
+###############
+	focus = {
+		id = Arab_fort_capital
+		icon = GFX_goal_generic_fortify_city
+		search_filters = { FOCUS_FILTER_FORTIFICATION}
+		x = 10
+		y = 5
+		cost = 49 # Previously was: 49.0 
+		ai_will_do = {
+			factor = 3
+		}
+		available_if_capitulated = yes
+		available = {
+			OR = {
+				threat > 0.05
+				has_war = yes
+			}
+		}
+		completion_reward = {
+					capital_scope = {
+						add_building_construction = {
+						type = anti_air_building
+						level = 1
+						instant_build = yes
+						}
+					}	
+		}
+	}
+	
+	focus = {
+		id = Arab_forts
+		icon = GFX_goal_generic_defence
+		prerequisite = { focus = Arab_fort_capital }
+		search_filters = { FOCUS_FILTER_FORTIFICATION}
+		x = 10
+		y = 6
+		ai_will_do = {
+			factor = 1
+		}
+		cost = 56 # Previously was: 56.0 
+		available_if_capitulated = yes
+		available = {
+			OR = {
+				threat > 0.10
+				has_war = yes
+			}
+		}
+		completion_reward = {
+			add_ideas = Arab_deterrence
+			}
+	}
+	
+	focus = {
+		id = Arab_Elec_Fort
+		icon = GFX_goal_generic_radar
+		prerequisite = { focus = Arab_forts }
+		prerequisite = { focus = Arab_electrics }
+		mutually_exclusive = { focus = Arab_Walls }
+		search_filters = { FOCUS_FILTER_FORTIFICATION}
+		x = 8
+		y = 7
+		ai_will_do = {
+			factor = 1
+		}
+		cost = 63 # Previously was: 63.0 
+		available_if_capitulated = yes
+		available = {
+		has_tech = radio_technology
+			OR = {
+				threat > 0.10
+				has_war = yes
+			}
+		}
+		completion_reward = {
+				swap_ideas = { 
+				remove_idea = Arab_deterrence 
+				add_idea = Arab_deterrence2
+				}
+			}
+	}
+	
+	focus = {
+		id = Arab_Listen
+		icon = GFX_goal_generic_radar
+		prerequisite = { focus = Arab_Elec_Fort }
+		mutually_exclusive = { focus = Arab_Hide }
+		search_filters = { FOCUS_FILTER_FORTIFICATION}
+		x = 7
+		y = 8
+		ai_will_do = {
+			factor = 1
+		}
+		cost = 49 # Previously was: 49.0 
+		available_if_capitulated = yes
+		completion_reward = {
+				swap_ideas = { 
+				remove_idea = Arab_deterrence2
+				add_idea = Arab_deterrence2a
+				}
+			}
+	}
+	
+	focus = {
+		id = Arab_Hide
+		icon = GFX_focus_shadow_government
+		prerequisite = { focus = Arab_Elec_Fort }
+		mutually_exclusive = { focus = Arab_Listen }
+		search_filters = { FOCUS_FILTER_FORTIFICATION}
+		x = 9
+		y = 8
+		ai_will_do = {
+			factor = 1
+		}
+		cost = 49 # Previously was: 49.0 
+		available_if_capitulated = yes
+		completion_reward = {
+				swap_ideas = { 
+				remove_idea = Arab_deterrence2
+				add_idea = Arab_deterrence2b
+				}
+			}
+	}
+	
+	focus = {
+		id = Arab_Walls
+		icon = GFX_goal_generic_construct_military
+		prerequisite = { focus = Arab_forts }
+		mutually_exclusive = { focus = Arab_Elec_Fort }
+		search_filters = { FOCUS_FILTER_FORTIFICATION}
+		x = 12
+		y = 7
+		ai_will_do = {
+			factor = 1
+		}
+		cost = 63 # Previously was: 63.0 
+		available_if_capitulated = yes
+		available = {
+		has_tech = construction1
+			OR = {
+				threat > 0.10
+				has_war = yes
+			}
+		}
+		completion_reward = {
+			swap_ideas = { 
+				remove_idea = Arab_deterrence 
+				add_idea = Arab_deterrence3
+			}
+		}
+	}
+	
+	focus = {
+		id = Arab_Walls_ground
+		icon = GFX_goal_generic_construct_military
+		prerequisite = { focus = Arab_Walls }
+		mutually_exclusive = { focus = Arab_Walls_Air }
+		search_filters = { FOCUS_FILTER_FORTIFICATION FOCUS_FILTER_ARMY}
+		x = 11
+		y = 8
+		ai_will_do = {
+			factor = 1
+		}
+		cost = 49 # Previously was: 49.0 
+		available_if_capitulated = yes
+		completion_reward = {
+			swap_ideas = { 
+				remove_idea = Arab_deterrence3 
+				add_idea = Arab_deterrence3b
+			}
+		}
+	}
+	
+	focus = {
+		id = Arab_Walls_Air
+		icon = GFX_goal_fortify_city_AA
+		prerequisite = { focus = Arab_Walls }
+		mutually_exclusive = { focus = Arab_Walls_ground }
+		search_filters = { FOCUS_FILTER_FORTIFICATION}
+		x = 13
+		y = 8
+		ai_will_do = {
+			factor = 1
+		}
+		cost = 56 # Previously was: 56.0 
+		available_if_capitulated = yes
+		completion_reward = {
+			swap_ideas = { 
+				remove_idea = Arab_deterrence3 
+				add_idea = Arab_deterrence3a
+			}
+		}
+	}
+	
+##################
+### Polictical ###
+##################
+
+	focus = {
+		id = Arab_Establish
+		icon = GFX_focus_generic_improve_the_administration
+		x = 31
+		y = 0
+		cost = 54 # Previously was: 53.9 
+		available_if_capitulated = yes
+		search_filters = { FOCUS_FILTER_POLITICAL}
+		ai_will_do = {
+			factor = 2
+			modifier = {
+				factor = 0
+				date < 1937.6.6				
+			}
+		}
+		completion_reward = {
+			swap_ideas = { 
+				remove_idea = Arab_Minor
+				add_idea = Arab_Minor1
+			}
+		}
+	}
+	focus = {
+		id = Arab_modernise
+		icon = GFX_focus_research
+		prerequisite = { focus = Arab_Establish }
+		search_filters = { FOCUS_FILTER_RESEARCH}
+		x = 7
+		y = 1
+		available = {
+			OR = {		
+				num_of_factories > 14
+				is_ai = no
+			}
+		}
+		relative_position_id = Arab_Establish
+		cost = 54 # Previously was: 53.9 
+		available_if_capitulated = yes
+		ai_will_do = {
+			factor = 20
+		}
+		completion_reward = {
+			add_research_slot = 1
+			add_research_centre = yes
+			SLOT:electronics_folder = yes
+		}
+	}
+	
+##### Allied ####
+	focus = {
+		id = Arab_Allies
+		icon = GFX_goal_support_democracy
+		prerequisite = { focus = Arab_Establish }
+		mutually_exclusive = { focus = Arab_axis focus = Arab_sov focus = Arab_Indi }
+		search_filters = { FOCUS_FILTER_POLITICAL}
+		x = 32
+		y = 1
+		cost = 49 # Previously was: 49.0 
+		available_if_capitulated = yes
+		bypass = {
+			OR = {
+				is_subject_of = ENG
+				is_subject_of = FRA
+			}
+		}
+		ai_will_do = {
+			factor = 0
+			modifier = {
+				add = 5
+				OR = {
+					is_in_faction_with = ENG
+					is_subject_of = VIC
+					conservatism > 0.4
+					liberalism > 0.4
+				}
+			}
+		}
+		completion_reward = {		
+			add_ideas = Arab_democratic_drift
+			set_country_flag = democratic_on_the_rise
+		}
+	}
+
+	focus = {
+		id = Arab_Brit
+		icon = GFX_focus_chi_british_cooperation
+		prerequisite = { focus = Arab_Allies }
+		mutually_exclusive = { focus = Arab_France }
+		search_filters = { FOCUS_FILTER_POLITICAL}
+		x = 31
+		y = 2
+		cost = 49 # Previously was: 49.0 
+		available_if_capitulated = yes
+		bypass = {
+			is_subject_of = ENG
+		}
+		ai_will_do = {
+			factor = 0
+			modifier = {
+				add = 5
+				OR = {
+					is_subject_of = ENG					
+					conservatism > 0.4
+				}
+			}
+		}
+		completion_reward = {	
+			swap_ideas = { 
+				remove_idea = Arab_democratic_drift
+				add_idea = Arab_conservatism_drift
+			}
+			ENG = { 
+				add_opinion_modifier = {
+					target = ROOT
+					modifier = democratic_leanings_good
+				}
+			}
+		}
+	}
+	
+	focus = {
+		id = Arab_Brit_sub
+		icon = GFX_focus_CZE_german_puppet
+		prerequisite = { focus = Arab_Brit }
+		search_filters = {FOCUS_FILTER_TFV_AUTONOMY}
+		x = 31
+		y = 3
+		cost = 60 # Previously was: 59.5 
+		ai_will_do = {
+			factor = 2
+		}
+		available = {
+			ENG_will_arab = yes
+			is_subject = no
+			}
+		bypass = {
+			is_subject_of = ENG
+		}
+		completion_reward = {
+				ENG = { 
+					set_autonomy = { 
+						target = ROOT
+						autonomy_state = autonomy_colony
+					}
+				}
+
+			}
+			
+	}
+	
+	focus = {
+		id = Arab_Brit_Aid
+		icon = GFX_focus_generic_the_giant_wakes
+		prerequisite = { focus = Arab_Brit_sub }
+		search_filters = { FOCUS_FILTER_POLITICAL FOCUS_FILTER_INDUSTRY FOCUS_FILTER_CHI_INFLATION}
+		x = 31
+		y = 4
+		ai_will_do = {
+			factor = 5
+		}
+		cost = 50 # Previously was: 50.4 
+		available_if_capitulated = yes
+		available = {
+			ENG_will_arab = yes
+			}
+		completion_reward = {
+			add_offsite_building = { type = industrial_complex level = 2 }
+			swap_ideas = { 
+				remove_idea = Arab_Minor1
+				add_idea = Arab_Minor2
+			}
+			Arab_hyper_inflation_level_down = yes
+		}
+	}
+	
+	focus = {
+		id = Arab_France
+		icon = GFX_focus_chi_reach_out_to_france
+		prerequisite = { focus = Arab_Allies }
+		mutually_exclusive = { focus = Arab_Brit }
+		search_filters = { FOCUS_FILTER_POLITICAL}
+		x = 33
+		y = 2
+		cost = 49 # Previously was: 49.0 
+		available_if_capitulated = yes
+		bypass = {
+			OR = {
+				is_subject_of = FRA
+				is_subject_of = VIC
+			}
+		}
+		ai_will_do = {
+			factor = 0
+			modifier = {
+				add = 5
+				OR = {
+					is_subject_of = FRA
+					is_subject_of = VIC
+					liberalism > 0.4
+				}
+			}
+		}
+		completion_reward = {	
+			IF = { 
+				limit = { is_subject_of = VIC }
+				swap_ideas = { 
+					remove_idea = Arab_democratic_drift
+					add_idea = Arab_fascist_drift
+				}
+				GER = { 
+					add_opinion_modifier = {
+						target = ROOT
+						modifier = fascism_leanings_good
+					}
+				}	
+			}
+				
+			else = {
+				swap_ideas = { 
+					remove_idea = Arab_democratic_drift
+					add_idea = Arab_liberalism_drift
+				}
+				FRA = { 
+					add_opinion_modifier = {
+						target = ROOT
+						modifier = democratic_leanings_good
+					}
+				}	
+			}
+		}
+	}
+
+	focus = {
+		id = Arab_France_sub
+		icon = GFX_focus_CZE_german_puppet
+		prerequisite = { focus = Arab_France }
+		search_filters = {FOCUS_FILTER_TFV_AUTONOMY}
+		x = 33
+		y = 3
+		cost = 60 # Previously was: 59.5 
+		ai_will_do = {
+			factor = 2
+		}
+		available = {
+			FRA_will_arab = yes
+			is_subject = no
+		}	
+		bypass = {
+			OR = {
+				is_subject_of = FRA
+				is_subject_of = VIC
+			}
+		}
+		completion_reward = {
+				FRA = { 
+					set_autonomy = { 
+						target = ROOT
+						autonomy_state = autonomy_colony
+					}
+				}		
+			}
+	}
+	
+	focus = {
+		id = Arab_France_aid
+		icon = GFX_goal_generic_construct_naval_dockyard
+		prerequisite = { focus = Arab_France_sub }
+		search_filters = { FOCUS_FILTER_POLITICAL FOCUS_FILTER_INDUSTRY FOCUS_FILTER_CHI_INFLATION}
+		x = 33
+		y = 4
+		ai_will_do = {
+			factor = 5
+		}
+		cost = 49 # Previously was: 49.0 
+		available_if_capitulated = yes
+		available = {
+			OR = {
+				FRA_will_arab = yes
+				VIC_will_arab = yes
+			}
+		}
+	
+		completion_reward = {
+			add_offsite_building = { type = shipyard level = 1 }
+			add_offsite_building = { type = subyard level = 1 }
+			add_to_variable = { offsite/shipyard = 1 }
+			add_to_variable = { offsite/subyard = 1 }
+			swap_ideas = { 
+				remove_idea = Arab_Minor1
+				add_idea = Arab_Minor2
+			}	
+			if = {
+				limit = {
+					is_subject_of = FRA
+				}
+				Arab_hyper_inflation_level_down = yes
+			}
+		}					
+	}
+	
+	focus = {
+		id = Arab_allied_research
+		icon = GFX_goal_tfv_generic_tech_sharing
+		prerequisite = { focus = Arab_France_aid focus = Arab_Brit_Aid }
+		x = 32
+		y = 5
+		cost = 49 # Previously was: 49.0 
+		ai_will_do = {
+			factor = 3
+		}
+		available = {
+			is_in_faction_with = ENG
+		}
+		search_filters = { FOCUS_FILTER_RESEARCH}
+		available_if_capitulated = yes
+		completion_reward = {	
+			add_to_tech_sharing_group = commonwealth_research	
+		}
+	}
+	
+	focus = {
+		id = Arab_allied_Science
+		icon = GFX_focus_research
+		prerequisite = { focus = Arab_allied_research }
+		x = 32
+		y = 6
+		cost = 49 # Previously was: 49.0 
+		ai_will_do = {
+			factor = 3
+		}
+		available = {
+			OR = {		
+				num_of_factories > 14
+				is_ai = no
+			}
+		}
+		search_filters = { FOCUS_FILTER_RESEARCH}
+		available_if_capitulated = yes
+		completion_reward = {			
+			add_research_slot = 1
+			add_research_centre = yes
+			SLOT:infantry_folder = yes
+			SLOT:support_folder = yes
+			SLOT:ww1_land_doctrine_folder = yes
+			SLOT:land_doctrine_folder = yes
+		}
+	}
+	
+##### Axis ####
+	focus = {
+		id = Arab_axis
+		icon = GFX_goal_support_fascism
+		prerequisite = { focus = Arab_Establish }
+		mutually_exclusive = { focus = Arab_Allies focus = Arab_sov focus = Arab_Indi }
+		search_filters = { FOCUS_FILTER_POLITICAL}
+		x = 26
+		y = 1
+		cost = 49 # Previously was: 49.0 
+		available_if_capitulated = yes
+		ai_will_do = {
+			factor = 0
+			modifier = {
+				add = 4
+				OR = {
+					is_subject_of = GER
+					is_subject_of = ITA
+					is_in_faction_with = GER
+					is_in_faction_with = ITA
+					fascism > 0.4
+				}
+			}
+			modifier = {
+				add = 2
+				OR = {
+					fascism > 0.2
+					has_opinion = {
+						target = GER
+						value = 50
+					}
+					has_opinion = {
+						target = ITA
+						value = 50
+					}
+					
+				}
+			}
+			modifier = {
+				add = 1
+				OR = {
+					fascism > 0.1
+					has_opinion = {
+						target = GER
+						value = 25
+					}
+					has_opinion = {
+						target = ITA
+						value = 25
+					}
+					
+				}
+			}
+		}
+		completion_reward = {	
+				add_ideas = Arab_fascist_drift
+				set_country_flag = fascism_on_the_rise
+			}
+	}
+	
+	focus = {
+		id = Arab_Ger
+		icon = GFX_focus_chi_mission_to_germany
+		prerequisite = { focus = Arab_axis }
+		mutually_exclusive = { focus = Arab_Ita }
+		search_filters = { FOCUS_FILTER_POLITICAL}
+		x = 27
+		y = 2
+		cost = 49 # Previously was: 49.0 
+		available_if_capitulated = yes
+		ai_will_do = {
+			factor = 1
+			modifier = {
+				factor = 5
+				OR = {
+					is_subject_of = GER
+				}
+			}
+		}
+		completion_reward = {	
+			GER = { 
+				add_opinion_modifier = {
+					target = ROOT
+					modifier = fascism_leanings_good
+				}
+			}			
+		}
+	}
+
+	focus = {
+		id = Arab_Ger_sub
+		icon = GFX_focus_CZE_german_puppet
+		prerequisite = { focus = Arab_Ger }
+		search_filters = { FOCUS_FILTER_TFV_AUTONOMY}
+		x = 27
+		y = 3
+		cost = 60 # Previously was: 59.5 
+		ai_will_do = {
+			factor = 2
+		}
+		available = {
+			GER_will_arab = yes
+			is_subject = no
+			}
+		bypass = {
+			is_subject_of = GER
+		}
+		completion_reward = {
+				GER = { 
+					set_autonomy = { 
+						target = ROOT
+						autonomy_state = autonomy_satellite
+					}
+				}		
+			}
+	}
+	
+	focus = {
+		id = Arab_Ger_aid
+		icon = GFX_goal_nibelungen
+		prerequisite = { focus = Arab_Ger_sub }
+		search_filters = { FOCUS_FILTER_POLITICAL FOCUS_FILTER_INDUSTRY FOCUS_FILTER_CHI_INFLATION}
+		x = 26
+		y = 4
+		cost = 49 # Previously was: 49.0 
+		ai_will_do = {
+			factor = 3
+		}
+		available_if_capitulated = yes
+		available = {
+			GER_will_arab = yes
+			}
+		completion_reward = {
+			add_offsite_building = { type = arms_factory level = 1 }
+			add_offsite_building = { type = tank_assembly level = 1 }
+			add_to_variable = { offsite/tank_assembly = 1 }
+			swap_ideas = { 
+				remove_idea = Arab_Minor1
+				add_idea = Arab_Minor2
+			}
+			Arab_hyper_inflation_level_down = yes	
+		}
+	}
+	
+	focus = {
+		id = Arab_Ger_train
+		icon = GFX_goal_military_agreement_germany
+		prerequisite = { focus = Arab_Ger_sub }
+		prerequisite = { focus = Arab_officers }
+		search_filters = { FOCUS_FILTER_ARMY}
+		x = 27
+		y = 5
+		cost = 49 # Previously was: 49.0 
+		ai_will_do = {
+			factor = 2
+		}
+		available_if_capitulated = yes
+		available = {
+			GER_will_arab = yes
+			}
+		completion_reward = {
+			add_ideas = Arab_german_advisors
+			create_corps_commander = {
+				name = "Tobias Beisswenger"
+				picture = "gfx/leaders/Europe/Portrait_Europe_Generic_land_1.dds"
+				traits = { skilled_staffer }
+				skill = 2
+				attack_skill = 3
+				defense_skill = 1
+				planning_skill = 2
+				logistics_skill = 2
+			}
+		}
+	}
+	
+	focus = {
+		id = Arab_Ita
+		icon = GFX_focus_chi_reach_out_to_italy
+		prerequisite = { focus = Arab_axis }
+		mutually_exclusive = { focus = Arab_Ger }
+		search_filters = { FOCUS_FILTER_POLITICAL}
+		x = 25
+		y = 2
+		cost = 49 # Previously was: 49.0 
+		available_if_capitulated = yes
+		ai_will_do = {
+			factor = 1
+			modifier = {
+				factor = 5
+				OR = {
+					is_subject_of = ITA
+				}
+			}
+		}
+		completion_reward = {	
+			ITA = { 
+				add_opinion_modifier = {
+					target = ROOT
+					modifier = fascism_leanings_good
+				}
+			}
+		}
+	}
+	
+	focus = {
+		id = Arab_Ita_sub
+		icon = GFX_focus_CZE_german_puppet
+		prerequisite = { focus = Arab_Ita }
+		search_filters = { FOCUS_FILTER_TFV_AUTONOMY}
+		x = 25
+		y = 3
+		cost = 60 # Previously was: 59.5 
+		ai_will_do = {
+			factor = 2
+		}
+		available = {
+			ITA_will_arab = yes
+			is_subject = no
+			}
+		bypass = {
+			is_subject_of = ITA
+		}
+		completion_reward = {	
+				ITA = { 
+					set_autonomy = { 
+						target = ROOT
+						autonomy_state = autonomy_satellite
+					}
+				}		
+			}
+	}
+	
+	focus = {
+		id = Arab_Ita_Navy
+		icon = GFX_goal_generic_navy_cruiser
+		prerequisite = { focus = Arab_Ita_sub }
+		search_filters = { FOCUS_FILTER_POLITICAL FOCUS_FILTER_INDUSTRY FOCUS_FILTER_NAVY}
+		x = 24
+		y = 4
+		cost = 49 # Previously was: 49.0 
+		ai_will_do = {
+			factor = 3
+		}
+		available_if_capitulated = yes
+		available = {
+			ITA_will_arab = yes
+			has_country_flag = coastal_state
+		}
+		
+		completion_reward = {		
+				add_offsite_building = { type = dockyard level = 1 }
+				
+				swap_ideas = { 
+					remove_idea = Arab_Minor1
+					add_idea = Arab_Minor2
+				}			
+			}
+	}
+	
+	focus = {
+		id = Arab_Ita_Air
+		icon = GFX_focus_chi_flying_tigers
+		prerequisite = { focus = Arab_Ita_sub }
+		search_filters = { FOCUS_FILTER_AIRFORCE FOCUS_FILTER_TFV_AUTONOMY}
+		x = 25
+		y = 5
+		cost = 49 # Previously was: 49.0 
+		ai_will_do = {
+			factor = 3
+		}
+		available_if_capitulated = yes
+		available = {
+			ITA_will_arab = yes
+			}
+		completion_reward = {	
+			add_equipment_to_stockpile = {
+				type = cr_32_fighter_equipment_1
+				amount = 50
+				producer = ITA
+			}
+			add_equipment_to_stockpile = {
+				type = sm81_bomber_equipment_1
+				amount = 25
+				producer = ITA
+			}
+			add_autonomy_score = { value = -25 }
+		}
+	}
+##### Comintern ####
+	focus = {
+		id = Arab_sov
+		icon = GFX_goal_support_communism
+		prerequisite = { focus = Arab_Establish }
+		mutually_exclusive = { focus = Arab_axis focus = Arab_Allies focus = Arab_Indi }
+		search_filters = { FOCUS_FILTER_POLITICAL}
+		x = 29
+		y = 1
+		cost = 56 # Previously was: 56.0 
+		available_if_capitulated = yes
+		ai_will_do = {
+			factor = 0
+			modifier = {
+				add = 5
+				OR = {
+					is_subject_of = SOV
+					communism > 0.5
+				}
+			}
+		}
+		completion_reward = {
+			add_ideas = Arab_communist_drift
+			SOV = { 
+				add_opinion_modifier = {
+					target = ROOT
+					modifier = communism_leanings_good
+				}
+			}
+		}
+	}
+
+	focus = {
+		id = Arab_sov_sub
+		icon = GFX_focus_generic_soviet_politics
+		prerequisite = { focus = Arab_sov }
+		search_filters = { FOCUS_FILTER_TFV_AUTONOMY FOCUS_FILTER_CHI_INFLATION}
+		x = 29
+		y = 2
+		cost = 56 # Previously was: 56.0 
+		ai_will_do = {
+			factor = 2
+		}
+		available = {
+			SOV_will_arab = yes
+			OR ={
+				is_subject = no
+				is_subject_of = SOV
+			}
+		}
+		completion_reward = {	
+				SOV = { 
+					set_autonomy = { 
+						target = ROOT
+						autonomy_state = autonomy_puppet
+					}
+				}
+				Arab_hyper_inflation_level_down = yes
+			}
+	}
+	
+	focus = {
+		id = Arab_sov_stable
+		icon = GFX_goal_generic_soviet_construction
+		prerequisite = { focus = Arab_sov_sub }
+		search_filters = { FOCUS_FILTER_POLITICAL FOCUS_FILTER_INDUSTRY}
+		x = 29
+		y = 3
+		cost = 56 # Previously was: 56.0 
+		ai_will_do = {
+			factor = 3
+		}
+		available_if_capitulated = yes
+		available = {
+			SOV_will_arab = yes
+			}
+		completion_reward = {
+				add_offsite_building = { type = arms_factory level = 1 }
+				add_offsite_building = { type = industrial_complex level = 2 }
+				swap_ideas = { 
+					remove_idea = Arab_Minor1
+					add_idea = Arab_Minor_sov
+				}		
+			}
+	}
+	
+	focus = {
+		id = Arab_officers
+		icon = GFX_focus_generic_military_mission_red
+		prerequisite = { focus = Arab_sov_stable focus = Arab_Ita_sub focus = Arab_Ger_sub focus = Arab_Brit_sub focus = Arab_France_sub }
+		search_filters = { FOCUS_FILTER_CP}
+		x = 29
+		y = 4
+		cost = 64 # Previously was: 64.39999999999999 
+		ai_will_do = {
+			factor = 2
+		}
+		available_if_capitulated = yes
+		completion_reward = {
+			remove_ideas = CHI_incompetent_officers
+			}
+	}
+
+#### Independence #####
+	focus = {
+		id = Arab_Indi
+		icon = GFX_goal_tfv_strengthen_commonwealth_ties
+		prerequisite = { focus = Arab_Establish }
+		mutually_exclusive = { focus = Arab_axis focus = Arab_sov focus = Arab_Allies }
+		search_filters = { FOCUS_FILTER_POLITICAL}
+		x = 36
+		y = 1
+		cost = 56 # Previously was: 56.0 
+		available_if_capitulated = yes
+		ai_will_do = {
+			factor = 2
+			modifier = {
+				add = 2
+				OR = {
+					socialism > 0.5
+					monarchism > 0.4
+					is_subject = no
+				}
+			}
+		}
+		completion_reward = {	
+			add_ideas = idea_monarchist_1		
+			}
+	}
+	
+	focus = {
+		id = Arab_Indi_demo
+		icon = GFX_focus_generic_election
+		prerequisite = { focus = Arab_Indi }
+		mutually_exclusive = { focus = Arab_Indi_mono }
+		search_filters = { FOCUS_FILTER_POLITICAL}
+		x = 35
+		y = 2
+		cost = 60 # Previously was: 59.5 
+		available_if_capitulated = yes
+		ai_will_do = {
+			factor = 2
+			modifier = {
+				factor = 2				
+				socialism > 0.5
+			}
+		}
+		completion_reward = {		
+			remove_ideas = idea_monarchist_1
+			add_ideas = Arab_socialism_drift
+			}
+	}
+	
+	focus = {
+		id = Arab_Indi_mono
+		icon = GFX_focus_IRQ_a_new_caliph
+		prerequisite = { focus = Arab_Indi }
+		mutually_exclusive = { focus = Arab_Indi_demo }
+		search_filters = { FOCUS_FILTER_POLITICAL}
+		x = 37
+		y = 2
+		cost = 56 # Previously was: 56.0 
+		available_if_capitulated = yes
+		ai_will_do = {
+			factor = 3
+			modifier = {
+				add = 1				
+				monarchism > 0.5
+			}
+		}
+		completion_reward = {	
+			add_ideas = idea_monarchist_4
+			add_ideas = Arab_monarchist_drift
+			}
+	}
+	
+	focus = {
+		id = Arab_Indi_friends
+		icon = GFX_focus_PER_islamic_solidarity
+		prerequisite = { focus = Arab_Indi_mono focus = Arab_Indi_demo }
+		search_filters = { FOCUS_FILTER_POLITICAL}
+		x = 36
+		y = 3
+		cost = 88 # Previously was: 87.5 		
+		ai_will_do = {
+			factor = 1
+		}
+		completion_reward = {		
+			set_rule = { can_send_volunteers = yes }
+			swap_ideas = { 
+				remove_idea = Arab_Minor1
+				add_idea = Arab_minor_vol
+			}
+			every_country = { 
+				limit = { is_Arab/FLAG = yes }				
+				add_opinion_modifier = {
+					target = ROOT
+					modifier = large_increase
+				}	
+				
+			}
+		}
+	}
+	
+	focus = {
+		id = Arab_League
+		icon = GFX_focus_IRQ_arab_league
+		prerequisite = { focus = Arab_Indi_friends }
+		prerequisite = { focus = Arab_Indi_mono }
+		search_filters = { FOCUS_FILTER_POLITICAL}
+		x = 37
+		y = 4
+		cost = 52 # Previously was: 52.5 
+		ai_will_do = {
+			factor = 0
+		}
+		available = {
+			is_subject = no
+		}
+		completion_reward = {	
+		create_faction = Arabian_League
+		every_country = { 
+			limit = { 
+				is_Arab/FLAG = yes
+				is_in_faction = no
+				has_country_flag = Arab_ready
+				is_puppet = no
+				}
+			add_to_faction = Arabian_League		
+			}		
+		}
+	}
+	
+	focus = {
+		id = Arab_Science
+		icon = GFX_goal_tfv_generic_tech_sharing
+		prerequisite = { focus = Arab_Indi_friends }
+		prerequisite = { focus = Arab_Indi_demo }
+		search_filters = { FOCUS_FILTER_RESEARCH}
+		x = 35
+		y = 4
+		cost = 46 # Previously was: 46.199999999999996 
+		ai_will_do = {
+			factor = 0
+		}
+		completion_reward = {
+		add_to_tech_sharing_group = Arab_research		
+		every_country = { 
+			limit = { 
+				is_Arab/FLAG = yes
+				is_in_faction = no
+				has_country_flag = Arab_science_rdy	
+				is_puppet = no
+				}
+			add_to_tech_sharing_group = Arab_research			
+			}		
+		}
+	}
+### Late War ####
+	focus = {
+		id = Arab_War_Command
+		icon = GFX_goal_generic_position_armies
+		prerequisite = { focus = Arab_special_forces }
+		prerequisite = { focus = Arab_officers }
+		prerequisite = { focus = Arab_War }
+		search_filters = { FOCUS_FILTER_ARMY FOCUS_FILTER_NAVY FOCUS_FILTER_AIRFORCE FOCUS_FILTER_CP}
+		x = 29
+		y = 7
+		ai_will_do = {
+			factor = 5
+		}
+		cost = 56 # Previously was: 56.0 
+		available_if_capitulated = yes
+		completion_reward = {
+			air_experience = 25
+			navy_experience = 25
+			army_experience = 25
+			add_ideas = Arab_Command		
+		}
+	}
+	
+	focus = {
+		id = Arab_build_up
+		icon = GFX_goal_generic_construct_mil_factory
+		prerequisite = { focus = Arab_War_Command focus = Arab_Science focus = Arab_League}
+		search_filters = { FOCUS_FILTER_INDUSTRY}
+		x = 35
+		y = 8
+		ai_will_do = {
+			factor = 5
+		}
+		cost = 70 # Previously was: 70.0 
+		available_if_capitulated = yes
+		completion_reward = {
+			random_owned_controlled_state = {
+				add_extra_state_shared_building_slots = 2
+				add_building_construction = {
+					type = industrial_complex
+					level = 1
+					instant_build = yes
+				}
+				add_building_construction = {
+					type = arms_factory
+					level = 1
+					instant_build = yes
+				}
+			}
+	
+		}
+	}
+	focus = {
+		id = Arab_civ_focus
+		icon = GFX_goal_generic_construct_civ_factory
+		prerequisite = { focus = Arab_build_up}
+		mutually_exclusive = { focus = Arab_tech_focus }
+		mutually_exclusive = { focus = Arab_arms_focus }
+		mutually_exclusive = { focus = Arab_nav_air_focus }
+		search_filters = { FOCUS_FILTER_INDUSTRY}
+		x = 32
+		y = 9
+		ai_will_do = {
+			factor = 5
+		}
+		cost = 105 # Previously was: 105.0 
+		available_if_capitulated = yes
+		completion_reward = {
+			random_owned_controlled_state = {
+				add_extra_state_shared_building_slots = 2
+				add_building_construction = {
+					type = industrial_complex
+					level = 1
+					instant_build = yes
+				}
+			}
+			random_owned_controlled_state = {
+				add_extra_state_shared_building_slots = 2
+				add_building_construction = {
+					type = industrial_complex
+					level = 1
+					instant_build = yes
+				}
+			}
+			random_owned_controlled_state = {
+				add_extra_state_shared_building_slots = 2
+				add_building_construction = {
+					type = infrastructure
+					level = 1
+					instant_build = yes
+				}
+			}
+	
+		}
+	}
+	focus = {
+		id = Arab_econ_focus
+		icon = GFX_goal_generic_consumer_goods
+		prerequisite = { focus = Arab_civ_focus }
+		search_filters = { FOCUS_FILTER_CHI_INFLATION}
+		x = 32
+		y = 10
+		ai_will_do = {
+			factor = 5
+		}
+		cost = 105 # Previously was: 105.0 
+		available_if_capitulated = yes
+		completion_reward = {
+			Arab_hyper_inflation_level_down = yes
+		}
+	}
+	focus = {
+		id = Arab_tech_focus
+		icon = GFX_focus_generic_cryptologic_bomb
+		prerequisite = { focus = Arab_build_up}
+		mutually_exclusive = { focus = Arab_civ_focus }
+		mutually_exclusive = { focus = Arab_arms_focus }
+		mutually_exclusive = { focus = Arab_nav_air_focus }
+		search_filters = { FOCUS_FILTER_RESEARCH}
+		x = 34
+		y = 9
+		ai_will_do = {
+			factor = 5
+		}
+		cost = 105 # Previously was: 105.0 
+		available_if_capitulated = yes
+		completion_reward = {
+			add_tech_bonus = {
+				name = secret_bonus
+				bonus = 0.33
+				uses = 4
+				category = electronics
+				category = nuclear
+				category = rocketry				
+			}	
+		}
+	}
+	focus = {
+		id = Arab_tech_bonus
+		icon = GFX_focus_research2
+		prerequisite = { focus = Arab_tech_focus}
+		search_filters = { FOCUS_FILTER_RESEARCH}
+		x = 0
+		y = 1
+		relative_position_id = Arab_tech_focus
+		ai_will_do = {
+			factor = 5
+		}
+		available = {
+			OR = {		
+				num_of_factories > 14
+				is_ai = no
+			}
+		}
+		cost = 105 # Previously was: 105.0 
+		available_if_capitulated = yes
+		completion_reward = {
+			add_research_slot = 1
+			add_research_centre = yes
+			SLOT:artillery_folder = yes
+			SLOT:tank_techs_folder = yes
+			SLOT:air_techs_folder = yes
+		}
+	}
+	focus = {
+		id = Arab_arms_focus
+		icon = GFX_focus_generic_tank_production
+		prerequisite = { focus = Arab_build_up}
+		mutually_exclusive = { focus = Arab_civ_focus }
+		mutually_exclusive = { focus = Arab_tech_focus }
+		mutually_exclusive = { focus = Arab_nav_air_focus }
+		search_filters = { FOCUS_FILTER_INDUSTRY}
+		x = 36
+		y = 9
+		ai_will_do = {
+			factor = 5
+		}
+		cost = 105 # Previously was: 105.0 
+		available_if_capitulated = yes
+		completion_reward = {
+			random_owned_controlled_state = {
+				add_building_construction = {
+					type = arms_factory
+					level = 1
+					instant_build = yes
+				}
+			}
+			random_owned_controlled_state = {
+				add_building_construction = {
+					type = tank_assembly
+					level = 1
+					instant_build = yes
+				}
+			}			
+		}
+	}
+	focus = {
+		id = Arab_arms_focus2
+		icon = GFX_focus_generic_combined_arms
+		prerequisite = { focus = Arab_arms_focus }
+		search_filters = { FOCUS_FILTER_INDUSTRY}
+		x = 36
+		y = 10
+		ai_will_do = {
+			factor = 5
+		}
+		cost = 105 # Previously was: 105.0 
+		available_if_capitulated = yes
+		completion_reward = {
+			random_owned_controlled_state = {
+				add_extra_state_shared_building_slots = 1
+				add_building_construction = {
+					type = arms_factory
+					level = 1
+					instant_build = yes
+				}
+			}
+			random_owned_controlled_state = {
+				add_extra_state_shared_building_slots = 1
+				add_building_construction = {
+					type = arms_factory
+					level = 1
+					instant_build = yes
+				}
+			}
+			random_owned_controlled_state = {
+				add_extra_state_shared_building_slots = 1
+				add_building_construction = {
+					type = arms_factory
+					level = 1
+					instant_build = yes
+				}
+			}			
+		}
+	}
+	focus = {
+		id = Arab_nav_air_focus
+		icon = GFX_goal_generic_navy_carrier
+		prerequisite = { focus = Arab_build_up}
+		mutually_exclusive = { focus = Arab_civ_focus }
+		mutually_exclusive = { focus = Arab_tech_focus }
+		mutually_exclusive = { focus = Arab_arms_focus }
+		search_filters = { FOCUS_FILTER_INDUSTRY FOCUS_FILTER_AIRFORCE FOCUS_FILTER_NAVY}
+		x = 38
+		y = 9
+		ai_will_do = {
+			factor = 5
+		}
+		cost = 105 # Previously was: 105.0 
+		available_if_capitulated = yes
+		completion_reward = {
+				random_owned_controlled_state = {
+					limit = {
+						is_coastal = yes
+						free_building_slots = {
+							building = dockyard
+							size > 0
+							include_locked = yes
+						}
+					}
+					add_extra_state_shared_building_slots = 1
+					add_building_construction = {
+						type = dockyard
+						level = 1
+						instant_build = yes
+					}
+				}
+				random_owned_controlled_state = {
+					add_building_construction = {
+						type = air_base
+						level = 2
+						instant_build = yes
+					}
+				}	
+				random_owned_controlled_state = {
+					add_building_construction = {
+						type = anti_air_building
+						level = 1
+						instant_build = yes
+					}
+				}
+		}
+	}
+	focus = {
+		id = Arab_nav_air_leaders
+		icon = GFX_focus_generic_military_academy
+		prerequisite = { focus = Arab_nav_air_focus }
+		search_filters = { FOCUS_FILTER_AIRFORCE FOCUS_FILTER_NAVY}
+		x = 38
+		y = 10
+		ai_will_do = {
+			factor = 5
+		}
+		cost = 105 # Previously was: 105.0 
+		available_if_capitulated = yes
+		completion_reward = {
+			air_experience = 25
+			navy_experience = 25
+			create_navy_leader = {
+				name = "Abdul Abmed"
+				picture = "gfx/leaders/SAU/Portrait_Arabia_Generic_navy_3.dds"
+				traits = { superior_tactician }
+				skill = 3
+				attack_skill = 2
+				defense_skill = 2
+				maneuvering_skill = 3
+				coordination_skill = 3	
+			}
+			add_ace = {
+				name = "Timur"
+				surname = "al-Qudsi"
+				callsign = "Fox"
+				type = fighter_genius
+				is_female = no
+			}
+			add_ace = {
+				name = "Abdolsamad"
+				surname = "ibn Muhammad"
+				callsign = "Scorpion"
+				type = support_genius
+				is_female = no
+			}
+		}
+	}
+
+}

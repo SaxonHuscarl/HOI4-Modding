@@ -1,0 +1,1179 @@
+@LOCAL_OPERATION_EFFECT = 0.25
+operation_infiltrate_armed_forces_army = { ### 4 1/55
+	icon = GFX_operations_infiltrate_armed_forces
+	map_icon = GFX_operations_infiltrate_armed_forces_map
+	name = operation_infiltrate_armed_forces_army
+	desc = operation_infiltrate_armed_forces_army_desc
+	priority = 2
+
+	days = 90
+	network_strength = 35
+	operatives = 2
+	
+	allowed = {
+		has_done_agency_upgrade = upgrade_form_operations
+	}
+
+	visible = {
+		NOT = { has_country_flag = ui_hide_army_operations@FROM }
+		network_national_coverage = {
+			target = FROM
+			value > 0
+		}
+	}
+
+	available = {
+		set_temp_variable = { t = modifier@operation_army_max_asset }
+		add_to_temp_variable = { t = 1 }
+		custom_trigger_tooltip = {
+			tooltip = operation_max_asset_trigger
+			NOT = {
+				check_variable = { intel_army_asset_level@FROM = t }
+			}
+		}
+	}
+
+	equipment = {
+		support_equipment = 25
+		recon_equipment = 50
+	}
+	
+	ai_will_do = {
+		base = 0
+		modifier = {
+			add = 1250
+			
+			#OR = {
+				is_in_array = { ai_operations = token:operation_target_attache }
+			#}
+		}
+		modifier = {
+			add = num_asset
+			
+			set_temp_variable = { num_asset = intel_army_asset_level@FROM }
+			multiply_temp_variable = { num_asset = -250 }
+		}
+		modifier = {
+			add = asset_chance
+			
+			set_temp_variable = { num_asset = modifier@operation_army_keep_asset_chance }
+			multiply_temp_variable = { num_asset = -1000 }
+		}
+	}
+
+	awarded_tokens = {
+		token_army
+	}
+	risk_chance = 0.1
+	outcome_extra_chance = 0
+	risk_modifiers = { operation_infiltrate_risk operation_risk }
+	outcome_modifiers = { operation_infiltrate_outcome operation_outcome }
+	cost_modifiers = { operation_infiltrate_cost operation_cost }
+	
+	on_start = {
+		every_operative = {
+			add_to_temp_variable = { operative_outcome = leader_modifier@operation_infiltrate_outcome }
+		}
+		ROOT = {
+			set_temp_variable = { CRITICAL_SUCCESS = 25 }
+			set_temp_variable = { factor = modifier@operation_infiltrate_outcome }
+			add_to_temp_variable = { factor = modifier@operation_outcome }
+			add_to_temp_variable = { factor = operative_outcome }
+			subtract_from_temp_variable = { factor = FROM.modifier@enemy_operation_critical_success_chance }
+			add_to_temp_variable = { factor = 1 }
+			multiply_temp_variable = { CRITICAL_SUCCESS = factor }
+			
+			random = {
+				chance = CRITICAL_SUCCESS
+				
+				set_country_flag = operation_infiltrate_army_critical@FROM
+			}
+		}
+	}
+	outcome_execute = {
+		ROOT = {
+			
+			custom_effect_tooltip = {
+				localization_key = ADD_INTEL_TOKEN
+				TOKEN = token_army
+				MODIFIER = MODIFIER_ARMY_INTEL_FACTOR
+				AMOUNT = 5
+			}
+			
+			operation_add_army_asset = yes
+			
+			if = {
+				limit = {
+					has_country_flag = operation_infiltrate_army_critical@FROM
+				}
+				custom_effect_tooltip = CRITICAL_SUCCESS
+				army_experience = 10
+				add_intel = {
+					target = FROM
+					army_intel = 10
+				}
+				clr_country_flag = operation_infiltrate_army_critical@FROM
+			}
+			add_to_array = { ROOT.operation_completed = token:operation_infiltrate_armed_forces_army }
+			add_to_array = { ROOT.operation_completed_state = FROM.FROM }
+			add_to_array = { ROOT.operation_completed_target = FROM }
+			add_to_array = { ROOT.operation_completed_date = global.date }
+			
+		}
+	}
+
+	### THIS IS ONLY! TOOLTIP
+	outcome_potential = { 
+		ROOT = {
+			
+			set_temp_variable = { CRITICAL_SUCCESS = 25 }
+			set_temp_variable = { factor = modifier@operation_infiltrate_outcome }
+			add_to_temp_variable = { factor = modifier@operation_outcome }
+			subtract_from_temp_variable = { factor = FROM.modifier@enemy_operation_critical_success_chance }
+			add_to_temp_variable = { factor = 1 }
+			multiply_temp_variable = { CRITICAL_SUCCESS = factor }
+			
+			custom_effect_tooltip = {
+				localization_key = ADD_INTEL_TOKEN
+				TOKEN = token_army
+				MODIFIER = MODIFIER_ARMY_INTEL_FACTOR
+				AMOUNT = 5
+			}
+			
+			custom_effect_tooltip = OPERATION_OUTCOME_CRITICAL_SUCCESS
+			army_experience = 10
+			add_intel = {
+				target = FROM
+				army_intel = 10
+			}
+		}
+	}
+
+	phases = { #infiltration
+		infiltration_border = { base = 25 modifier = { factor = 0.1 ROOT = { is_neighbor_of = FROM } } }
+		infiltration_submarine = { base = 25 modifier = { factor = 0.1 ROOT = { has_navy_size = { size < 1 type = submarine } } } }
+		infiltration_paradrop = { base = 25 modifier = { factor = 0.1 ROOT = { has_equipment = { transport_plane_equipment < 1 } } } }
+		infiltration_diplomatic = {	base = 50 modifier = { factor = 0 FROM = { has_war_with = ROOT } } }
+	}
+	phases = { #infiltrate military
+		infiltrate_military_bribe = { base = 25 }
+		infiltrate_military_seduction = { base = 25 }
+		infiltrate_military_ideological_supporter = {
+			base = 25
+			modifier = {
+				FROM = { has_government = ROOT }
+				factor = 0
+			}
+		}
+	}
+	phases = { #exfiltration
+		exfiltration_air_pickup = { base = 25 modifier = { factor = 0.1 ROOT = { has_equipment = { transport_plane_equipment < 1 } } } }
+		exfiltration_border = { base = 30 modifier = { factor = 0.1 ROOT = { is_neighbor_of = FROM } } }
+		exfiltration_go_to_ground = { base = 30 }
+		exfiltration_submarine_pickup = { base = 25 modifier = { factor = 0.1 ROOT = { has_navy_size = { size < 1 type = submarine } } } }
+	}
+}
+
+operation_steal_tech_army = { ### 16 3/55
+	icon = GFX_operations_steal_blueprints
+	map_icon = GFX_operations_steal_blueprints_map
+	name = operation_steal_tech_army
+	desc = operation_steal_tech_army_desc
+	priority = 12
+
+	days = 70
+	network_strength = 40
+	operatives = 2
+
+	allowed = {
+		has_done_agency_upgrade = upgrade_form_operations
+	}
+
+	visible = {
+		NOT = { has_country_flag = ui_hide_army_operations@FROM }
+		network_strength = {
+			target = FROM
+			value > 25
+		}
+
+		has_operation_token = {
+			tag = FROM
+			token = token_army
+		}
+	}
+	available = {
+		custom_trigger_tooltip = {
+			tooltip = REQUIRE_ARMY_ASSET
+			
+			check_variable = { intel_army_asset_level@FROM > 0 }
+		}
+	}
+
+	equipment = {
+		radio_equipment = 50
+		recon_equipment = 75
+	}
+
+	required_tokens = { token_army }
+	
+	risk_chance = 0.2
+	outcome_extra_chance = 0
+	risk_modifiers = { operation_steal_tech_risk operation_risk }
+	outcome_modifiers = { operation_steal_tech_outcome operation_outcome }
+	cost_modifiers = { operation_steal_tech_cost operation_cost }
+
+	outcome_potential = {
+		custom_effect_tooltip = OPERATION_CHANCE_ARMY_TOKEN
+		
+		set_temp_variable = { bonus = 0.25 }
+		set_temp_variable = { factor = modifier@operation_steal_tech_bonus_factor }
+		add_to_temp_variable = { factor = 1 }
+		multiply_temp_variable = { bonus = factor }
+	
+		set_temp_variable = { aot_bonus = 0.25 }
+		set_temp_variable = { factor = modifier@operation_steal_tech_aot_factor }
+		add_to_temp_variable = { factor = 1 }
+		multiply_temp_variable = { aot_bonus = factor }
+		
+		set_temp_variable = { uses = 3 }
+		add_to_temp_variable = { uses = modifier@operation_steal_tech_uses }
+		
+		set_temp_variable = { CRITICAL_SUCCESS = 25 }
+		set_temp_variable = { factor = modifier@operation_outcome }
+		add_to_temp_variable = { factor = modifier@operation_steal_tech_outcome }
+		subtract_from_temp_variable = { factor = FROM.modifier@enemy_operation_critical_success_chance }
+		add_to_temp_variable = { factor = 1 }
+		multiply_temp_variable = { CRITICAL_SUCCESS = factor }
+		
+		custom_effect_tooltip = STEAL_TECH_ARMY_OUTCOME_POTENTIAL_TOOLTIP
+		FROM = {
+			add_timed_idea = {
+				idea = army_steal_tech_critical
+				days = 70
+			}
+		}
+	}
+	on_start = {
+		every_operative = {
+			add_to_temp_variable = { operative_outcome = leader_modifier@operation_steal_tech_outcome }
+			add_to_temp_variable = { operative_bonus = leader_modifier@operation_steal_tech_bonus_factor }
+			add_to_temp_variable = { operative_uses = leader_modifier@operation_steal_tech_uses }
+			add_to_temp_variable = { operative_asset = leader_modifier@operation_army_keep_asset_chance }
+		}
+		ROOT = {
+			set_temp_variable = { CRITICAL_SUCCESS = 25 }
+			set_temp_variable = { factor = modifier@operation_outcome }
+			add_to_temp_variable = { factor = modifier@operation_steal_tech_outcome }
+			add_to_temp_variable = { factor = operative_outcome }
+			subtract_from_temp_variable = { factor = FROM.modifier@enemy_operation_critical_success_chance }
+			add_to_temp_variable = { factor = 1 }
+			multiply_temp_variable = { CRITICAL_SUCCESS = factor }
+			
+			random = {
+				chance = CRITICAL_SUCCESS
+				
+				set_country_flag = operation_steal_tech_army_critical@FROM
+			}
+			
+			
+			set_temp_variable = { USE_ASSET_CHANCE = 1 }
+			subtract_from_temp_variable = { USE_ASSET_CHANCE = operative_asset }
+			subtract_from_temp_variable = { USE_ASSET_CHANCE = modifier@operation_army_keep_asset_chance }
+			multiply_temp_variable = { USE_ASSET_CHANCE = 100 }
+			random = {
+				chance = USE_ASSET_CHANCE
+				
+				set_country_flag = operation_steal_tech_army_use_asset@FROM
+				operation_remove_army_asset = yes
+			}
+			
+			
+			set_variable = { operation_steal_tech_army_bonus@FROM = 0.25 }
+			set_temp_variable = { factor = modifier@operation_steal_tech_bonus_factor }
+			add_to_temp_variable = { factor = mtth:decryption_operation_effect }
+			add_to_temp_variable = { factor = operative_bonus }
+			subtract_from_temp_variable = { factor = FROM.modifier@operation_army_enemy_effect }
+			add_to_temp_variable = { factor = 1 }
+			multiply_variable = { operation_steal_tech_army_bonus@FROM = factor }
+			
+			set_variable = { operation_steal_tech_army_ahead_of_time@FROM = 0.25 }
+			set_temp_variable = { factor = modifier@operation_steal_tech_aot_factor }
+			add_to_temp_variable = { factor = mtth:decryption_operation_effect }
+			subtract_from_temp_variable = { factor = FROM.modifier@operation_army_enemy_effect }
+			add_to_temp_variable = { factor = 1 }
+			multiply_variable = { operation_steal_tech_army_ahead_of_time@FROM = factor }
+			
+			set_variable = { operation_steal_tech_army_uses@FROM = 3 }
+			add_to_variable = { operation_steal_tech_army_uses@FROM = operative_uses }
+			add_to_variable = { operation_steal_tech_army_uses@FROM = modifier@operation_steal_tech_uses }
+		}
+	}
+	outcome_execute = {
+		ROOT = {
+			
+			if = {
+				limit = {
+					has_country_flag = operation_steal_tech_army_use_asset@FROM
+				}
+				custom_effect_tooltip = SUBTRACT_ARMY_ASSET
+				clr_country_flag = operation_steal_tech_army_use_asset@FROM
+			}
+			else = {
+				custom_effect_tooltip = OPERATION_KEEP_ASSET
+			}
+			
+			custom_effect_tooltip = STEAL_TECH_ARMY_TOOLTIP
+			if = {
+				limit = {
+					NOT = { is_in_array = { FROM.research_steal = ROOT } }
+				}
+				add_to_array = { FROM.research_steal_army = ROOT }
+			}
+			add_to_variable = { FROM.research_steal_uses_army@ROOT = operation_steal_tech_army_uses@FROM }
+			set_variable = { FROM.research_steal_bonus_army@ROOT = operation_steal_tech_army_bonus@FROM }
+			set_variable = { FROM.research_steal_ahead_of_time_army@ROOT = operation_steal_tech_army_ahead_of_time@FROM }
+			
+			clear_variable = operation_steal_tech_army_bonus@FROM
+			clear_variable = operation_steal_tech_army_ahead_of_time@FROM
+			clear_variable = operation_steal_tech_army_uses@FROM
+			
+			if = {
+				limit = {
+					has_country_flag = operation_steal_tech_army_critical@FROM
+				}
+				custom_effect_tooltip = CRITICAL_SUCCESS
+				FROM = {
+					add_timed_idea = {
+						idea = army_steal_tech_critical
+						days = 70
+					}
+				}
+				clr_country_flag = operation_steal_tech_army_critical@FROM
+			}
+		}
+	}
+
+	phases = { #infiltration
+		infiltration_border = { base = 25 modifier = { factor = 0.1 ROOT = { is_neighbor_of = FROM } } }
+		infiltration_submarine = { base = 25 modifier = { factor = 0.1 ROOT = { has_navy_size = { size < 1 type = submarine } } } }
+		infiltration_paradrop = { base = 25 modifier = { factor = 0.1 ROOT = { has_equipment = { transport_plane_equipment < 1 } } } }
+		infiltration_diplomatic = {	base = 50 modifier = { factor = 0 FROM = { has_war_with = ROOT } } }
+	}
+	phases = { #blueprint theft
+		steal_blueprints_bribe = { base = 33 }
+		steal_blueprints_seduction = { base = 33 }
+		steal_blueprints_middle_manager = { base = 33 }
+	}
+	phases = { #exfiltration
+		exfiltration_air_pickup = { base = 25 modifier = { factor = 0.1 ROOT = { has_equipment = { transport_plane_equipment < 1 } } } }
+		exfiltration_border = { base = 30 modifier = { factor = 0.1 ROOT = { is_neighbor_of = FROM } } }
+		exfiltration_go_to_ground = { base = 30 }
+		exfiltration_submarine_pickup = { base = 25 modifier = { factor = 0.1 ROOT = { has_navy_size = { size < 1 type = submarine } } } }
+	}
+}
+
+operation_target_army_leader = { ### 16 3/55
+	icon = GFX_operations_infiltrate_armed_forces
+	map_icon = GFX_operations_infiltrate_armed_forces_map
+	name = operation_target_army_leader
+	desc = operation_target_army_leader_desc
+	priority = 13
+
+	days = 70
+	network_strength = 50
+	operatives = 2
+
+	allowed = {
+		has_done_agency_upgrade = upgrade_form_operations
+	}
+
+	visible = {
+		NOT = { has_country_flag = ui_hide_army_operations@FROM }
+		network_strength = {
+			target = FROM
+			value > 25
+		}
+
+		has_operation_token = {
+			tag = FROM
+			token = token_army
+		}
+	}
+	available = {
+		custom_trigger_tooltip = {
+			tooltip = REQUIRE_ARMY_ASSET
+			
+			check_variable = { intel_army_asset_level@FROM > 0 }
+		}
+	}
+	
+	ai_will_do = {
+		base = 0
+		modifier = {
+			add = 1000
+			
+			is_in_array = { ai_operations = token:operation_target_attache }
+		}
+		modifier = {
+			add = 150
+			
+			check_variable = { ai_operations^0 = token:operation_target_attache }
+		}
+		modifier = {
+			add = 100
+			
+			check_variable = { ai_operations^1 = token:operation_target_attache }
+		}
+		modifier = {
+			add = 50
+			
+			check_variable = { ai_operations^2 = token:operation_target_attache }
+		}
+	}
+	selection_target_state = { #only front states targettable
+		custom_trigger_tooltip = {
+			tooltip = TARGET_ARMY_LEADER_STATE_TOOLTIP
+			CONTROLLER = {
+				PREV = {
+					any_neighbor_state = {
+						NOT = { is_controlled_by = PREV.PREV }
+					}
+				}
+			}
+		}
+	}
+	selection_target = {
+		targets = { FROM }
+	}
+	
+	equipment = {
+		SMG_equipment = 200
+		support_equipment = 50
+		radio_equipment = 50
+		recon_equipment = 50
+	}
+
+	required_tokens = { token_army }
+	risk_chance = 0.3
+	risk_modifiers = { operation_target_army_leader_risk operation_risk }
+	outcome_extra_chance = 0
+	outcome_modifiers = { operation_target_army_leader_outcome operation_outcome }
+	cost_modifiers = { operation_target_army_leader_cost operation_cost }
+	
+	outcome_potential = {
+		custom_effect_tooltip = OPERATION_CHANCE_ARMY_TOKEN
+
+		set_temp_variable = { CRITICAL_SUCCESS = 25 }
+		set_temp_variable = { factor = modifier@operation_outcome }
+		add_to_temp_variable = { factor = modifier@operation_target_army_leader_outcome }
+		subtract_from_temp_variable = { factor = FROM.modifier@enemy_operation_critical_success_chance }
+		add_to_temp_variable = { factor = 1 }
+		multiply_temp_variable = { CRITICAL_SUCCESS = factor }
+		
+		set_temp_variable = { days = 50 } #damage in this case is days
+		set_temp_variable = { factor = modifier@operation_target_army_leader_effect }
+		add_to_temp_variable = { factor = 1 }
+		multiply_temp_variable = { days = factor }
+		
+		set_temp_variable = { days_spread = days }
+		set_temp_variable = { factor = modifier@operation_target_army_leader_spread }
+		multiply_temp_variable = { days_spread = factor }
+		
+		
+		set_temp_variable = { critical = days }
+		multiply_temp_variable = { critical = 0.5 }
+		
+		custom_effect_tooltip = TARGET_ARMY_LEADER_OUTCOME_POTENTIAL_TOOLTIP
+		custom_effect_tooltip = TARGET_ARMY_LEADER_CRITICAL_OUTCOME_POTENTIAL_TOOLTIP
+	
+	}
+	on_start = {
+		every_operative = {
+			add_to_temp_variable = { operative_outcome = leader_modifier@operation_army_keep_asset_chance }
+			add_to_temp_variable = { operative_bonus = leader_modifier@operation_army_keep_asset_chance }
+			add_to_temp_variable = { operative_spread = leader_modifier@operation_army_keep_asset_chance }
+			add_to_temp_variable = { operative_asset = leader_modifier@operation_army_keep_asset_chance }
+		}
+		ROOT = {
+			set_temp_variable = { CRITICAL_SUCCESS = 25 }
+			set_temp_variable = { factor = modifier@operation_outcome }
+			add_to_temp_variable = { factor = operative_outcome }
+			add_to_temp_variable = { factor = modifier@operation_target_army_leader_outcome }
+			subtract_from_temp_variable = { factor = FROM.modifier@enemy_operation_critical_success_chance }
+			add_to_temp_variable = { factor = 1 }
+			multiply_temp_variable = { CRITICAL_SUCCESS = factor }
+			
+			random = {
+				chance = CRITICAL_SUCCESS
+				
+				set_country_flag = operation_target_army_leader_critical@FROM
+			}
+			
+			
+			set_temp_variable = { USE_ASSET_CHANCE = 1 }
+			subtract_from_temp_variable = { USE_ASSET_CHANCE = operative_asset }
+			subtract_from_temp_variable = { USE_ASSET_CHANCE = modifier@operation_army_keep_asset_chance }
+			multiply_temp_variable = { USE_ASSET_CHANCE = 100 }
+			random = {
+				chance = USE_ASSET_CHANCE
+				
+				set_country_flag = operation_target_army_leader_use_asset@FROM
+				operation_remove_army_asset = yes
+			}
+			
+			
+			set_variable = { operation_target_army_leader_damage@FROM = 50 } #damage in this case is days
+			set_temp_variable = { factor = modifier@operation_target_army_leader_effect }
+			add_to_temp_variable = { factor = mtth:decryption_operation_effect }
+			add_to_temp_variable = { factor = operative_bonus }
+			subtract_from_temp_variable = { factor = FROM.modifier@operation_army_enemy_effect }
+			add_to_temp_variable = { factor = 1 }
+			multiply_variable = { operation_target_army_leader_damage@FROM = factor }
+			
+			set_variable = { operation_target_army_leader_damage_spread@FROM = operation_target_army_leader_damage@FROM }
+			set_temp_variable = { factor = modifier@operation_target_army_leader_spread }
+			add_to_temp_variable = { factor = operative_spread }
+			multiply_variable = { operation_target_army_leader_damage_spread@FROM = factor }
+			round_variable = operation_target_army_leader_damage_spread@FROM
+			
+			
+			set_variable = { operation_target_army_leader_damage_critical@FROM = operation_target_army_leader_damage@FROM }
+			multiply_variable = { operation_target_army_leader_damage_critical@FROM = 0.5 }
+		}
+	}
+	outcome_execute = {
+		hidden_effect = {
+			FROM.FROM = {
+				ROOT = {
+					set_temp_variable = { local = mtth:network_strength_state }
+					divide_temp_variable = { local = 100 }
+					set_temp_variable = { network_strength_state = local }
+					multiply_temp_variable = { local = @LOCAL_OPERATION_EFFECT }
+					add_to_temp_variable = { local = PREV.modifier@local_operation_effect }
+					set_temp_variable = { local_effect = local }
+					
+					add_to_temp_variable = { local = 1 }
+					
+					multiply_variable = { operation_target_army_leader_damage@FROM = local }
+					multiply_variable = { operation_target_army_leader_damage_spread@FROM = local }
+					
+					## use these variables for tooltips & effects
+					set_temp_variable = { effect = operation_target_army_leader_damage@FROM }
+					multiply_temp_variable = { effect = local }
+					
+					set_temp_variable = { spread_effect = operation_target_army_leader_damage_spread@FROM }
+					multiply_temp_variable = { spread_effect = local }
+					
+				}
+			}
+		}
+		custom_effect_tooltip = LOCAL_OPERATION_EFFECT_TOOLTIP
+		
+		ROOT = {
+			if = {
+				limit = {
+					has_country_flag = operation_target_army_leader_use_asset@FROM
+				}
+				custom_effect_tooltip = SUBTRACT_ARMY_ASSET
+				clr_country_flag = operation_target_army_leader_use_asset@FROM
+			}
+			else = {
+				custom_effect_tooltip = OPERATION_KEEP_ASSET
+			}
+		}
+		FROM = {
+			hidden_effect = {
+				every_army_leader = {
+					limit = {
+						is_leading_army_group = yes
+					}
+					add_to_temp_variable = { army_group_leader = 1 }
+					meta_effect = {
+						text = {
+							add_unit_leader_trait = army_group_leader_[X]
+						}
+						X = "[?army_group_leader]"
+					}
+					set_variable = { army_group_leader_id = army_group_leader }
+				}
+			}
+			
+			every_army_leader = {
+				limit = {
+					check_variable = { num_units_in_state@FROM.FROM > 0 }
+					is_leading_army_group = no
+					
+					PREV = { #target the unit leader with the most units
+						NOT = {
+							any_army_leader = {
+								check_variable = { num_units_in_state@FROM.FROM > PREV.PREV.num_units_in_state@FROM.FROM }
+							}
+						}
+					}
+							
+				}
+				custom_effect_tooltip = TARGET_ARMY_LEADER_TOOLTIP
+				hidden_effect = {
+					unit_leader_event = { id = generic.180 days = 3 }
+				}
+				
+				#log = "[This.GetName] has units [?num_units_in_state@FROM.FROM] in [FROM.FROM.GetName] | [?leader_modifier@is_doing_focus] leader_modifier"
+				
+				if = {
+					limit = {
+						ROOT = { check_variable = { operation_target_army_leader_damage_spread@FROM > 0 } }
+					}
+					
+					custom_effect_tooltip = TARGET_ARMY_LEADER_SPREAD_TOOLTIP
+					PREV = {
+						every_army_leader = {
+							limit = {
+								is_assigned = yes
+								is_leading_army_group = no
+								NOT = { check_variable = { id = PREV.PREV.id } }
+								#log = "    [?leader_modifier@is_doing_focus] | [?PREV.PREV.leader_modifier@is_doing_focus]"
+								check_variable = { leader_modifier@is_doing_focus > 0 }
+								check_variable = { leader_modifier@is_doing_focus = PREV.PREV.leader_modifier@is_doing_focus }
+							}
+							#log = "    [This.GetName] is part of army group"
+							
+							unit_leader_event = { id = generic.181 days = 3 }
+							ROOT = {
+								meta_effect = {
+									text = {
+										PREV = {
+											add_timed_unit_leader_trait = {
+												trait = wounded
+												days = [DAYS]
+											}
+										}
+									}
+									DAYS = "[?ROOT.operation_target_army_leader_damage_spread@FROM]"
+								}
+							}
+						}
+					}
+				}
+				ROOT = {
+					meta_effect = {
+						text = {
+							PREV = {
+								add_timed_unit_leader_trait = {
+									trait = wounded
+									days = [DAYS]
+								}
+							}
+						}
+						DAYS = "[?ROOT.operation_target_army_leader_damage@FROM]"
+					}
+					
+					if = {
+						limit = {
+							has_country_flag = operation_target_army_leader_critical@FROM
+						}
+						custom_effect_tooltip = CRITICAL_SUCCESS
+						custom_effect_tooltip = TARGET_ARMY_LEADER_CRITICAL_TOOLTIP
+						meta_effect = {
+							text = {
+								PREV = {
+									add_timed_unit_leader_trait = {
+										trait = heavily_wounded
+										days = [DAYS]
+									}
+								}
+							}
+							DAYS = "[?ROOT.operation_target_army_leader_damage_critical@FROM]"
+						}
+						
+						clr_country_flag = operation_target_army_leader_critical@FROM
+					}
+				}
+			}
+			
+			hidden_effect = {
+				every_army_leader = {
+					limit = {
+						has_variable = army_group_leader_id
+					}
+					meta_effect = {
+						text = {
+							remove_unit_leader_trait = army_group_leader_[X]
+						}
+						X = "[?army_group_leader_id]"
+					}
+					clear_variable = army_group_leader_id
+				}
+			}
+		}
+		ROOT = {
+			clear_variable = operation_target_army_leader_damage@FROM
+			clear_variable = operation_target_army_leader_damage_spread@FROM
+			clear_variable = operation_target_army_leader_damage_critical@FROM
+		}
+		
+	}
+
+	phases = { #infiltration
+		infiltration_border = { base = 25 modifier = { factor = 0.1 ROOT = { is_neighbor_of = FROM } } }
+		infiltration_submarine = { base = 25 modifier = { factor = 0.1 ROOT = { has_navy_size = { size < 1 type = submarine } } } }
+		infiltration_paradrop = { base = 25 modifier = { factor = 0.1 ROOT = { has_equipment = { transport_plane_equipment < 1 } } } }
+		infiltration_diplomatic = {	base = 50 modifier = { factor = 0 FROM = { has_war_with = ROOT } } }
+	}
+	phases = {
+		target_leader_suitcase_bomb = { base = 33 }
+		target_leader_ambush = { base = 33 }
+		target_leader_sabotage_vehicle = { base = 33 }
+	}
+	phases = { #exfiltration
+		exfiltration_air_pickup = { base = 25 modifier = { factor = 0.1 ROOT = { has_equipment = { transport_plane_equipment < 1 } } } }
+		exfiltration_border = { base = 30 modifier = { factor = 0.1 ROOT = { is_neighbor_of = FROM } } }
+		exfiltration_go_to_ground = { base = 30 }
+		exfiltration_submarine_pickup = { base = 25 modifier = { factor = 0.1 ROOT = { has_navy_size = { size < 1 type = submarine } } } }
+	}
+}
+
+operation_target_attache = { ### 16 3/55
+	icon = GFX_operations_infiltrate_armed_forces
+	map_icon = GFX_operations_infiltrate_armed_forces_map
+	name = operation_target_attache
+	desc = operation_target_attache_desc
+	priority = 14
+
+	days = 70
+	network_strength = 50
+	operatives = 2
+	
+	allowed = {
+		has_done_agency_upgrade = upgrade_operation_target_attache
+		#has_done_agency_upgrade = upgrade_form_operations
+	}
+
+	visible = {
+		NOT = { has_country_flag = ui_hide_army_operations@FROM }
+		network_strength = {
+			target = FROM
+			value > 25
+		}
+
+		has_operation_token = {
+			tag = FROM
+			token = token_army
+		}
+		FROM = {
+			has_country_flag = sent_attache
+			any_other_country = {
+				has_attache_from = FROM
+			}
+		}
+	}
+	available = {
+		custom_trigger_tooltip = {
+			tooltip = REQUIRE_ARMY_ASSET
+			
+			check_variable = { intel_army_asset_level@FROM > 0 }
+		}
+	}
+
+	equipment = {
+		SMG_equipment = 200
+		support_equipment = 50
+		radio_equipment = 50
+		recon_equipment = 50
+	}
+
+	required_tokens = { token_army }
+	risk_chance = 0.25
+	risk_modifiers = { operation_target_attache_risk operation_risk }
+	outcome_extra_chance = 0
+	outcome_modifiers = { operation_target_attache_outcome operation_outcome }
+	cost_modifiers = { operation_target_attache_cost operation_cost }
+	
+	outcome_potential = {
+		custom_effect_tooltip = OPERATION_CHANCE_ARMY_TOKEN
+
+		set_temp_variable = { CRITICAL_SUCCESS = 25 }
+		set_temp_variable = { factor = modifier@operation_outcome }
+		add_to_temp_variable = { factor = modifier@operation_target_attache_outcome }
+		subtract_from_temp_variable = { factor = FROM.modifier@enemy_operation_critical_success_chance }
+		add_to_temp_variable = { factor = 1 }
+		multiply_temp_variable = { CRITICAL_SUCCESS = factor }
+		
+		set_temp_variable = { days = 90 } #damage in this case is days
+		set_temp_variable = { factor = modifier@operation_target_army_leader_effect }
+		add_to_temp_variable = { factor = 1 }
+		multiply_temp_variable = { days = factor }
+		
+		custom_effect_tooltip = TARGET_ATTACHE_OUTCOME_POTENTIAL_TOOLTIP
+		custom_effect_tooltip = TARGET_ATTACHE_CRITICAL_POTENTIAL_TOOLTIP
+	
+	}
+	on_start = {
+		FROM = {
+			if = {
+				limit = {
+					all_other_country = {
+						if = {
+							limit = {
+								has_attache_from = PREV
+							}
+							add_to_temp_variable = { num_attache = 1 }
+						}
+					}
+					check_variable = { num_attache > 1 }
+				}
+				every_other_country = {
+					limit = {
+						has_attache_from = PREV
+					}
+					
+					add_to_array = { PREV.attache_targets = THIS }
+				}
+			}
+			else = {
+				random_other_country = {
+					limit = {
+						has_attache_from = PREV
+					}
+					set_variable = { ROOT.attache_target@FROM = THIS }
+				}
+			}
+		}
+		random_operative = {
+			limit = {
+				check_variable = { num_attache > 1 }
+			}
+		
+			operative_leader_event = {
+				id = lar_operative_event.19
+				recipient = ROOT
+				originator = ROOT
+				set_from_from = ROOT
+				set_from = FROM
+				days = 1
+			}
+			
+		}
+		every_operative = {
+			add_to_temp_variable = { operative_asset = leader_modifier@operation_army_keep_asset_chance }
+		}
+		ROOT = {
+			set_temp_variable = { CRITICAL_SUCCESS = 25 }
+			set_temp_variable = { factor = modifier@operation_outcome }
+			add_to_temp_variable = { factor = modifier@operation_target_attache_outcome }
+			subtract_from_temp_variable = { factor = FROM.modifier@enemy_operation_critical_success_chance }
+			add_to_temp_variable = { factor = 1 }
+			multiply_temp_variable = { CRITICAL_SUCCESS = factor }
+			
+			random = {
+				chance = CRITICAL_SUCCESS
+				
+				set_country_flag = operation_target_attache_critical@FROM
+			}
+			
+			
+			set_temp_variable = { USE_ASSET_CHANCE = 1 }
+			subtract_from_temp_variable = { USE_ASSET_CHANCE = operative_asset }
+			subtract_from_temp_variable = { USE_ASSET_CHANCE = modifier@operation_army_keep_asset_chance }
+			multiply_temp_variable = { USE_ASSET_CHANCE = 100 }
+			random = {
+				chance = USE_ASSET_CHANCE
+				
+				set_country_flag = operation_target_attache_use_asset@FROM
+				operation_remove_army_asset = yes
+			}
+			
+			
+			set_variable = { operation_target_attache_damage@FROM = 90 } #damage in this case is days
+			set_temp_variable = { factor = modifier@operation_target_army_leader_effect }
+			add_to_temp_variable = { factor = mtth:decryption_operation_effect }
+			subtract_from_temp_variable = { factor = FROM.modifier@operation_army_enemy_effect }
+			add_to_temp_variable = { factor = 1 }
+			multiply_variable = { operation_target_attache_damage@FROM = factor }
+			
+		}
+	}
+	outcome_execute = {
+		ROOT = {
+			if = {
+				limit = {
+					has_country_flag = operation_target_attache_use_asset@FROM
+				}
+				custom_effect_tooltip = SUBTRACT_ARMY_ASSET
+				clr_country_flag = operation_target_attache_use_asset@FROM
+			}
+			else = {
+				custom_effect_tooltip = OPERATION_KEEP_ASSET
+			}
+		}
+		
+		hidden_effect = {
+			FROM = { set_temp_variable = { target_country = THIS } }
+			set_temp_variable = { attache_target = ROOT.attache_target@FROM }
+			set_temp_variable = { days = ROOT.operation_target_attache_damage@var:target_country }
+		}
+		
+		custom_override_tooltip = {
+			tooltip = TARGET_ATTACHE_TOOLTIP
+			var:attache_target = {
+				var:target_country = {
+					diplomatic_relation = {
+						country = PREV
+						relation = send_attache
+						active = no
+					}
+					
+				}
+			}
+		}
+		
+		if = {
+			limit = {
+				ROOT = { has_country_flag = operation_target_attache_critical@FROM }
+			}
+			custom_effect_tooltip = CRITICAL_SUCCESS
+			custom_effect_tooltip = TARGET_ATTACHE_CRITICAL_TOOLTIP
+			
+			ROOT = { clr_country_flag = operation_target_attache_critical@FROM }
+		}
+		else = {
+			hidden_effect = {
+				FROM = {
+					set_variable = { no_attache@var:attache_target = 1 }
+					meta_effect = {
+						text = {
+							country_event = { id = BI_on_action.450 days = [DAYS] }
+						}
+						DAYS = "[?days]"
+					}
+				}
+			}
+		}
+		ROOT = {
+			add_to_array = { ROOT.operation_completed = token:operation_target_attache }
+			add_to_array = { ROOT.operation_completed_state = FROM.FROM }
+			add_to_array = { ROOT.operation_completed_target = FROM }
+			add_to_array = { ROOT.operation_completed_date = global.date }
+		}
+			
+	}
+
+	phases = { #infiltration
+		infiltration_border = { base = 25 modifier = { factor = 0.1 ROOT = { is_neighbor_of = FROM } } }
+		infiltration_submarine = { base = 25 modifier = { factor = 0.1 ROOT = { has_navy_size = { size < 1 type = submarine } } } }
+		infiltration_paradrop = { base = 25 modifier = { factor = 0.1 ROOT = { has_equipment = { transport_plane_equipment < 1 } } } }
+		infiltration_diplomatic = {	base = 50 modifier = { factor = 0 FROM = { has_war_with = ROOT } } }
+	}
+	phases = { #blueprint theft
+		target_attache_suitcase_bomb = { base = 25 }
+		target_attache_ambush = { base = 25 }
+		target_attache_sabotage_vehicle = { base = 25 }
+	}
+	phases = { #exfiltration
+		exfiltration_air_pickup = { base = 25 modifier = { factor = 0.1 ROOT = { has_equipment = { transport_plane_equipment < 1 } } } }
+		exfiltration_border = { base = 30 modifier = { factor = 0.1 ROOT = { is_neighbor_of = FROM } } }
+		exfiltration_go_to_ground = { base = 30 }
+		exfiltration_submarine_pickup = { base = 25 modifier = { factor = 0.1 ROOT = { has_navy_size = { size < 1 type = submarine } } } }
+	}
+}
+
+operation_fortification_plans = { ### 16 3/55
+	icon = GFX_operations_steal_blueprints
+	map_icon = GFX_operations_steal_blueprints_map
+	name = operation_fortification_plans
+	desc = operation_fortification_plans_desc
+	priority = 15
+
+	days = 70
+	network_strength = 50
+	operatives = 2
+	
+	allowed = {
+		has_done_agency_upgrade = upgrade_form_operations
+	}
+
+	visible = {
+		NOT = { has_country_flag = ui_hide_army_operations@FROM }
+		network_strength = {
+			target = FROM
+			value > 25
+		}
+
+		has_operation_token = {
+			tag = FROM
+			token = token_army
+		}
+	}
+	available = {
+		custom_trigger_tooltip = {
+			tooltip = REQUIRE_ARMY_ASSET
+			
+			check_variable = { intel_army_asset_level@FROM > 0 }
+		}
+	}
+
+	equipment = {
+		SMG_equipment = 100
+		support_equipment = 50
+		radio_equipment = 100
+		recon_equipment = 150
+	}
+
+	selection_target_state = { #only fort states targettable
+		OR = {
+			bunker > 0
+			coastal_bunker > 0
+		}
+	}
+	selection_target = {
+		targets = { FROM }
+	}
+	
+	required_tokens = { token_army }
+	risk_chance = 0.25
+	outcome_extra_chance = 0
+	risk_modifiers = { operation_fortification_plans_risk operation_risk }
+	outcome_modifiers = { operation_fortification_plans_outcome operation_outcome }
+	cost_modifiers = { operation_fortification_plans_cost operation_cost }
+	
+	outcome_potential = {
+		custom_effect_tooltip = OPERATION_CHANCE_ARMY_TOKEN
+
+		set_temp_variable = { CRITICAL_SUCCESS = 25 }
+		set_temp_variable = { factor = modifier@operation_outcome }
+		add_to_temp_variable = { factor = modifier@operation_fortification_plans_outcome }
+		subtract_from_temp_variable = { factor = FROM.modifier@enemy_operation_critical_success_chance }
+		add_to_temp_variable = { factor = 1 }
+		multiply_temp_variable = { CRITICAL_SUCCESS = factor }
+	
+		set_temp_variable = { effect = -0.5 }
+		set_temp_variable = { spread_effect = -0.25 }
+		
+		custom_effect_tooltip = FORT_PLANS_OUTCOME_POTENTIAL_TOOLTIP
+		custom_effect_tooltip = FORT_PLANS_CRITICAL_OUTCOME_POTENTIAL_TOOLTIP
+	
+	}
+	on_start = {
+		every_operative = {
+			add_to_temp_variable = { operative_outcome = leader_modifier@operation_fortification_plans_outcome }
+		}
+		ROOT = {
+			set_temp_variable = { CRITICAL_SUCCESS = 25 }
+			set_temp_variable = { factor = modifier@operation_outcome }
+			add_to_temp_variable = { factor = modifier@operation_fortification_plans_outcome }
+			add_to_temp_variable = { factor = operative_outcome }
+			subtract_from_temp_variable = { factor = FROM.modifier@enemy_operation_critical_success_chance }
+			add_to_temp_variable = { factor = 1 }
+			multiply_temp_variable = { CRITICAL_SUCCESS = factor }
+			
+			random = {
+				chance = CRITICAL_SUCCESS
+				
+				set_country_flag = operation_fortification_plans_critical@FROM
+			}
+			
+			
+			set_temp_variable = { USE_ASSET_CHANCE = 1 }
+			subtract_from_temp_variable = { USE_ASSET_CHANCE = operative_asset }
+			subtract_from_temp_variable = { USE_ASSET_CHANCE = modifier@operation_army_keep_asset_chance }
+			multiply_temp_variable = { USE_ASSET_CHANCE = 100 }
+			random = {
+				chance = USE_ASSET_CHANCE
+				
+				set_country_flag = operation_fortification_plans_use_asset@FROM
+				operation_remove_army_asset = yes
+			}
+			
+			set_variable = { operation_fortification_plans_damage@FROM = -0.5 }
+			set_variable = { operation_fortification_plans_damage_spread@FROM = -0.25 }
+			
+		}
+	}
+	outcome_execute = {
+		hidden_effect = {
+			FROM.FROM = {
+				ROOT = {
+					set_temp_variable = { local = mtth:network_strength_state }
+					divide_temp_variable = { local = 100 }
+					set_temp_variable = { network_strength_state = local }
+					multiply_temp_variable = { local = @LOCAL_OPERATION_EFFECT }
+					add_to_temp_variable = { local = PREV.modifier@local_operation_effect }
+					set_temp_variable = { local_effect = local }
+					
+					add_to_temp_variable = { local = 1 }
+					
+					multiply_variable = { operation_fortification_plans_damage@FROM = local }
+					multiply_variable = { operation_fortification_plans_damage_spread@FROM = local }
+					
+					## use these variables for tooltips & effects
+					set_temp_variable = { effect = operation_fortification_plans_damage@FROM }
+					multiply_temp_variable = { effect = local }
+					
+				}
+			}
+		}
+		custom_effect_tooltip = LOCAL_OPERATION_EFFECT_TOOLTIP
+		
+		ROOT = {
+			if = {
+				limit = {
+					has_country_flag = operation_fortification_plans_use_asset@FROM
+				}
+				custom_effect_tooltip = SUBTRACT_ARMY_ASSET
+				clr_country_flag = operation_fortification_plans_use_asset@FROM
+			}
+			else = {
+				custom_effect_tooltip = OPERATION_KEEP_ASSET
+			}
+			
+			set_variable = { FROM.FROM.operation_fort = operation_fortification_plans_damage@FROM }
+			
+			custom_override_tooltip = {
+				tooltip = FORT_PLANS_TOOLTIP
+				FROM.FROM = {
+					add_dynamic_modifier = {
+						modifier = operation_fort_layout
+						days = 90
+					}
+				}
+			}
+			
+			if = {
+				limit = {
+					has_country_flag = operation_fortification_plans_critical@FROM
+				}
+				custom_effect_tooltip = CRITICAL_SUCCESS
+				
+				custom_override_tooltip = {
+					tooltip = FORT_PLANS_CRITICAL_TOOLTIP
+					FROM.FROM = {
+						add_dynamic_modifier = {
+							modifier = operation_fort_layout_critical
+							days = 90
+						}
+					}
+				}
+				ROOT = { clr_country_flag = operation_fortification_plans_critical@FROM }
+			}
+			
+			clear_variable = operation_fortification_plans_damage@FROM
+			clear_variable = operation_fortification_plans_damage_spread@FROM
+		}
+	}
+
+	phases = { #infiltration
+		infiltration_border = { base = 25 modifier = { factor = 0.1 ROOT = { is_neighbor_of = FROM } } }
+		infiltration_submarine = { base = 25 modifier = { factor = 0.1 ROOT = { has_navy_size = { size < 1 type = submarine } } } }
+		infiltration_paradrop = { base = 25 modifier = { factor = 0.1 ROOT = { has_equipment = { transport_plane_equipment < 1 } } } }
+		infiltration_diplomatic = {	base = 50 modifier = { factor = 0 FROM = { has_war_with = ROOT } } }
+	}
+	phases = { #blueprint theft
+		steal_blueprints_seduction = { base = 50 }
+		steal_blueprints_bribe = { base = 25 }
+	}
+	phases = { #exfiltration
+		exfiltration_air_pickup = { base = 25 modifier = { factor = 0.1 ROOT = { has_equipment = { transport_plane_equipment < 1 } } } }
+		exfiltration_border = { base = 30 modifier = { factor = 0.1 ROOT = { is_neighbor_of = FROM } } }
+		exfiltration_go_to_ground = { base = 30 }
+		exfiltration_submarine_pickup = { base = 25 modifier = { factor = 0.1 ROOT = { has_navy_size = { size < 1 type = submarine } } } }
+	}
+}

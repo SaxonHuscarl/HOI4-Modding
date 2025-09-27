@@ -1,0 +1,336 @@
+# befriend
+# conquer
+# antagonize
+# build_ship
+# build_army
+# unit_ratio
+# build_building
+# research_tech
+# garrison
+# protect
+# influence
+
+ITA_war_with_ETH = {
+	allowed = { tag = ITA }
+	enable = {
+		date > 1936.1.15
+		has_war_with = ETH
+		ETH = { is_in_faction = no }
+	}
+	abort_when_not_enabled = yes
+	
+	ai_strategy = { type = consider_weak id = "ETH"	value = 1000 }
+	ai_strategy = {
+		type = front_unit_request
+		value = 10
+		tag = ETH
+	}
+	
+	ai_strategy = {
+		type = front_control
+		
+		ratio = 0.2
+
+		tag = ETH
+		priority = 10 
+		ordertype = front 
+		manual_attack = no
+		execution_type = rush
+		execute_order = yes
+	}
+}
+
+ITA_default_defense = {
+	allowed = { tag = ITA }
+	enable = {
+		OR = {
+			has_war = yes
+			GER = { has_war_with = ENG }
+		}
+	}
+	abort = { always = no }
+
+	ai_strategy = {
+		type = put_unit_buffers
+		states = { 156 117 2 846 162 858 157 936 857 } 
+		ratio = 0.35
+		subtract_invasions_from_need = yes
+		subtract_fronts_from_need = yes
+		area = europe
+		area = north_africa
+	}
+}
+
+ITA_north_africa_garrison = {
+	allowed = { tag = ITA }
+	enable = {
+		OR = {
+			has_war = yes
+			GER = { has_war_with = ENG }
+		}
+	}
+	
+	abort_when_not_enabled = yes
+			
+	
+	ai_strategy = {
+		type = put_unit_buffers
+
+		ratio = 0.08
+
+		states = { 447 946 448 449 450 451 } #Tunisia: 458 665
+		subtract_invasions_from_need = no
+		subtract_fronts_from_need = yes
+		order_id = 8
+		area = north_africa
+	}
+}
+
+ITA_protect_IEA = {
+	allowed = { tag = ITA }
+	enable = {
+		ETH = { 
+			is_subject_of = ROOT 
+			has_capitulated = no
+		}
+		OR = {
+			GER = { has_war_with = ENG }
+			has_war_with = ENG
+			date > 1939.1.1
+		}
+	}
+	
+	abort = {
+		ETH = {
+			OR = {
+				has_capitulated = yes
+				exists = no
+				NOT = { is_subject_of = ROOT }
+			}
+		}
+	}
+			
+	ai_strategy = {
+		type = force_defend_ally_borders
+		id = "ETH"
+		value = 1
+	}
+}
+
+ITA_ignore_YUG = {
+	allowed = { tag = ITA }
+	enable = {
+		NOT = { has_completed_focus = ITA_expand_claims }
+		country_exists = YUG
+        date < 1941.6.4
+	}
+	abort = {
+		OR = {
+			date > 1941.6.4
+			has_completed_focus = ITA_expand_claims
+			NOT = {
+				country_exists = YUG
+			}
+		}		
+	}
+
+	ai_strategy = { type = ignore id = "YUG"  					value = 500 	}
+}
+
+ITA_antagonize_YUG = {
+	allowed = { tag = ITA }
+	enable = {
+		has_completed_focus = ITA_yugoslavia_war_goal
+		OR = {
+			has_completed_focus = ITA_expand_claims
+			date > 1941.6.4
+		}
+		country_exists = YUG
+	}
+	abort = {
+		NOT = {
+			country_exists = YUG
+		}
+	}
+	
+	ai_strategy = { type = antagonize id = "YUG"					value = 500 		}		
+}
+
+ITA_ignore_claims_TUR = {
+	allowed = { tag = ITA }
+	enable = {
+		OR = {
+			has_war_with_major = yes 
+			surrender_progress > 0 
+		}
+	}
+
+	abort_when_not_enabled = yes
+	
+	ai_strategy = {
+		type = ignore_claim
+		id = "TUR"			
+		value = 1
+	}
+	ai_strategy = {
+		type = ignore
+		id = "TUR"			
+		value = 300
+	}
+}
+
+ITA_dont_join_french_war_too_soon = {
+	allowed = { tag = ITA is_historical_focus_on = yes }
+	enable = {
+		date < 1940.6.10
+		GER = {
+			OR = { 
+				has_war_with = FRA 
+				has_war_with = POL 
+			}
+		}
+	}
+
+	abort = {
+		OR = { 
+			date > 1940.6.10
+			FRA = { surrender_progress > 0.6 }
+			844 = { is_controlled_by = GER }
+			#has_completed_focus = ITA_join_the_axis
+		}
+	}
+	
+	ai_strategy = {
+		type = alliance
+		id = GER
+		value = -500
+	}
+	
+}
+
+ITA_prepare_war_with_FRA = {
+	allowed = { tag = ITA }
+	enable = {
+		NOT = { has_global_flag = fall_of_france }
+		has_government = fascism
+		OR = {
+			GER = { has_war_with = FRA }
+			date > 1939.9.1
+		}
+		
+		FRA = { 
+			has_capitulated = no
+			is_in_faction_with = ENG
+		}
+	}
+	
+	abort = {
+		has_global_flag = fall_of_france
+		FRA = {
+			OR = { 
+				has_capitulated = yes 
+				NOT = { has_war_with = GER }
+				NOT = { has_war_with = ITA }
+			}
+		}
+	}
+			
+	
+	ai_strategy = {
+		type = conquer
+		id = "FRA"
+		value = 400
+	}
+}
+
+ITA_prepare_war_with_GRE = {
+	allowed = { tag = ITA }
+	enable = {
+		owns_state = 942
+	}
+	
+	abort = {
+		GRE = { has_capitulated = yes }
+	}
+			
+	
+	ai_strategy = {
+		type = conquer
+		id = "GRE"
+		value = 500
+	}
+	ai_strategy = {
+		type = consider_weak
+		id = "GRE"
+		value = 200
+	}
+}
+
+ITA_war_with_EGY = {
+	allowed = { tag = ITA }
+	enable = {
+		has_government = fascism 
+		OR = {
+			GER = { has_war_with = ENG }
+			has_war_with = EGY
+			has_war_with = ENG
+			date > 1939.1.1
+		}
+	}
+	abort = {
+		ENG = { has_capitulated = yes }
+	}
+	
+	ai_strategy = { type = front_armor_score id = ENG	value = 100 }
+	ai_strategy = { type = front_armor_score id = EGY	value = 100 }
+	
+	ai_strategy = { type = conquer id = "EGY"	value = 500 }
+	ai_strategy = { type = conquer id = "ENG"	value = 500 }
+	ai_strategy = { type = conquer id = "TUN"	value = 300 }
+	
+}
+ITA_stay_in_faction_HUN = {
+	allowed = { tag = ITA }
+    enable = {
+		is_in_faction = yes 
+		faction_leader = {
+			tag = HUN
+		}
+    }
+    abort_when_not_enabled = yes
+
+    ai_strategy = {
+        type = alliance
+        id = "HUN"     
+        value = 300000
+    }
+}
+
+ITA_ignore_claims_YUG = {
+	allowed = { tag = ITA is_historical_focus_on = yes }
+	enable = {
+		has_war = yes
+		country_exists = YUG
+		date < 1940.1.1
+		NOT = {
+			has_war_with_major = yes
+		}
+	}
+
+	abort = {
+		OR = {
+			NOT = { country_exists = YUG }
+			date > 1940.1.1
+			has_war_with_major = yes
+		}
+	}
+	
+	ai_strategy = {
+		type = ignore_claim
+		id = "YUG"			
+		value = 1
+	}		
+}
+
+
+### EOF ###

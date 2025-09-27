@@ -1,0 +1,1560 @@
+
+defined_text = {
+	name = BI_GetStartupUpdateButton
+	text = {
+		trigger = {
+			has_country_flag = { flag = BI_startup_content value = 1 }
+		}
+		localization_key = "GFX_tab_large"
+	}
+	text = {
+		trigger = {
+			NOT = { has_country_flag = { flag = BI_startup_content value = 1 } }
+		}
+		localization_key = "GFX_tab_large2"
+	}
+}
+defined_text = {
+	name = BI_GetStartupPerformanceButton
+	text = {
+		trigger = {
+			has_country_flag = { flag = BI_startup_content value = 2 }
+		}
+		localization_key = "GFX_tab_large"
+	}
+	text = {
+		trigger = {
+			NOT = { has_country_flag = { flag = BI_startup_content value = 2 } }
+		}
+		localization_key = "GFX_tab_large2"
+	}
+}
+defined_text = {
+	name = BI_GetStartupOptionsButton
+	text = {
+		trigger = {
+			has_country_flag = { flag = BI_startup_content value = 3 }
+		}
+		localization_key = "GFX_tab_large"
+	}
+	text = {
+		trigger = {
+			NOT = { has_country_flag = { flag = BI_startup_content value = 3 } }
+		}
+		localization_key = "GFX_tab_large2"
+	}
+}
+defined_text = {
+	name = BI_GetStartupAIOptionsButton
+	text = {
+		trigger = {
+			has_country_flag = { flag = BI_startup_content value = 3 }
+		}
+		localization_key = "GFX_tab_large"
+	}
+	text = {
+		trigger = {
+			NOT = { has_country_flag = { flag = BI_startup_content value = 3 } }
+		}
+		localization_key = "GFX_tab_large2"
+	}
+}
+######################################################################
+
+defined_text = {
+	name = GetAIFighterEquipmentState
+	text = {
+		trigger = {
+			has_country_flag = EAI_variant_in_progress/fighter_equipment
+		}
+		localization_key = "IN PROGRESS"
+	}
+	text = {
+		trigger = {
+			has_country_flag = EAI_variant_developed/fighter_equipment
+		}
+		localization_key = "DEVELOPED"
+	}
+	text = {
+		localization_key = "NO VARIANT"
+	}
+}
+defined_text = {
+	name = GetAIFighterEquipmentCost
+	text = {
+		trigger = {
+			set_temp_variable = { xp_cost = 15 }
+			set_temp_variable = { xp_ramp_cost = 10 }
+			
+			multiply_temp_variable = { xp_ramp_cost = EAI_fighter_equipment/equipment_level }
+			add_to_temp_variable = { xp_cost = xp_ramp_cost }
+			
+		}
+		localization_key = xpcost6845
+	}
+}
+@MANPOWER_THRESHOLD_OF_FIELDED_MP = 0.1
+@MANPOWER_THRESHOLD_OF_TOTAL_MP = 0.01
+@MANPOWER_THRESHOLD_OF_TOTAL_MP_MAX = 1000
+
+defined_text = {
+	name = GetAIManpowerI
+	text = {
+		trigger = {
+			
+			set_temp_variable = { manpower_fielded = max_available_manpower_k }
+			subtract_from_temp_variable = { manpower_fielded = manpower_k }
+			set_temp_variable = { manpower_fielded_threshold = manpower_fielded }
+			
+			multiply_temp_variable = { manpower_fielded_threshold = @MANPOWER_THRESHOLD_OF_FIELDED_MP }
+			
+			
+			set_temp_variable = { manpower_total = core_population_k }
+			multiply_temp_variable = { manpower_total = @MANPOWER_THRESHOLD_OF_TOTAL_MP }
+			if = { limit = { check_variable = { modifier@conscription_factor < 0 } }
+				set_temp_variable = { mp_ratio = modifier@conscription_factor }
+				add_to_temp_variable = { mp_ratio = 1 }
+				multiply_temp_variable = { manpower_total = mp_ratio }
+			}
+			
+			if = { limit = { check_variable = { manpower_total > @MANPOWER_THRESHOLD_OF_TOTAL_MP_MAX } }
+				set_temp_variable = { manpower_total = @MANPOWER_THRESHOLD_OF_TOTAL_MP_MAX }
+			}
+			
+			set_temp_variable = { manpower_total_threshold = manpower_total }
+			add_to_temp_variable = { manpower_total_threshold = manpower_fielded_threshold }
+			
+		}
+		localization_key = "AI_MANPOWER_VARIABLES"
+	}
+}
+@FUEL_SILO_PER_MOTORIZED = 3
+@FUEL_SILO_PER_ARMOR = 16
+@FUEL_SILO_PER_SHIP = 8
+@FUEL_SILO_PER_PLANE = 0.25
+
+@FUEL_SILO_PER_MIC = 3.5 
+@FUEL_SILO_PER_NIC = 15.0
+@FUEL_SILO_PER_CIC = 3.5
+@FUEL_SILO_PER_OIL = -12 
+
+defined_text = {
+	name = GetAIFuelSiloMot
+	text = {
+		trigger = {
+			set_temp_variable = { motorized = num_battalions_with_type@semi_motorized }
+			add_to_temp_variable = { motorized = num_battalions_with_type@motorized }
+			add_to_temp_variable = { motorized = num_battalions_with_type@mechanized }
+			
+			multiply_temp_variable = { motorized = @FUEL_SILO_PER_MOTORIZED }
+			
+		}
+		localization_key = motorized3400
+	}
+}
+defined_text = {
+	name = GetAIFuelSiloArm
+	text = {
+		trigger = {
+			set_temp_variable = { armor = num_armor }
+	
+			multiply_temp_variable = { armor = @FUEL_SILO_PER_ARMOR }
+		}
+		localization_key = armor7702
+	}
+}
+defined_text = {
+	name = GetAIFuelSiloShip
+	text = {
+		trigger = {
+			set_temp_variable = { ships = num_ships }
+	
+			multiply_temp_variable = { ships = @FUEL_SILO_PER_SHIP }
+		}
+		localization_key = ships7724
+	}
+}
+defined_text = {
+	name = GetAIFuelSiloPlanes
+	text = {
+		trigger = {
+			set_temp_variable = { planes = num_deployed_planes }
+	
+			multiply_temp_variable = { planes = @FUEL_SILO_PER_PLANE }
+		}
+		localization_key = planes4667
+	}
+}
+defined_text = {
+	name = GetAIFuelSiloMic
+	text = {
+		trigger = {
+			set_temp_variable = { mic = num_of_military_factories }
+	
+			multiply_temp_variable = { mic = @FUEL_SILO_PER_MIC }
+		}
+		localization_key = mic1127
+	}
+}
+defined_text = {
+	name = GetAIFuelSiloNic
+	text = {
+		trigger = {
+			set_temp_variable = { dock = num_of_naval_factories }
+	
+			multiply_temp_variable = { dock = @FUEL_SILO_PER_NIC }
+		}
+		localization_key = dock6815
+	}
+}
+defined_text = {
+	name = GetAIFuelSiloCic
+	text = {
+		trigger = {
+			set_temp_variable = { cic = num_of_civilian_factories }
+	
+			multiply_temp_variable = { cic = @FUEL_SILO_PER_CIC }
+		}
+		localization_key = cic2029
+	}
+}
+defined_text = {
+	name = GetAIFuelSiloOil
+	text = {
+		trigger = {
+			set_temp_variable = { oil = resource_produced@oil }
+			
+			set_temp_variable = { mod = 1 }
+			subtract_from_temp_variable = { mod = modifier@min_export }
+			
+			multiply_temp_variable = { oil = mod }
+			
+			multiply_temp_variable = { oil = @FUEL_SILO_PER_OIL }
+		}
+		localization_key = oil8602
+	}
+}
+
+@FUEL_PER_MOTORIZED = 14
+@FUEL_PER_ARMOR = 20
+@FUEL_PER_SHIP = 8
+@FUEL_PER_PLANE = 0.25
+
+@FUEL_PER_MIC = 0.2 
+@FUEL_PER_NIC = 0.2
+@FUEL_PER_CIC = 2.5
+@FUEL_PER_OIL = -10
+@FUEL_PER_OIL_IMPORT = -5
+
+@FUEL_RATIO_BONUS_START = 1.7
+@FUEL_RATIO_BONUS_STOP = 0.3
+@FUEL_RATIO_BONUS_MAX = 6.0
+@FUEL_RATIO_BONUS_FULL = 1.0
+
+defined_text = {
+	name = GetAIFuelMot
+	text = {
+		trigger = {
+			set_temp_variable = { motorized = num_battalions_with_type@semi_motorized }
+			add_to_temp_variable = { motorized = num_battalions_with_type@motorized }
+			add_to_temp_variable = { motorized = num_battalions_with_type@mechanized }
+			
+			multiply_temp_variable = { motorized = @FUEL_PER_MOTORIZED }
+			
+		}
+		localization_key = motorized3400
+	}
+}
+defined_text = {
+	name = GetAIFuelArm
+	text = {
+		trigger = {
+			set_temp_variable = { armor = num_armor }
+	
+			multiply_temp_variable = { armor = @FUEL_PER_ARMOR }
+		}
+		localization_key = armor7702
+	}
+}
+defined_text = {
+	name = GetAIFuelShip
+	text = {
+		trigger = {
+			set_temp_variable = { ships = num_ships }
+	
+			multiply_temp_variable = { ships = @FUEL_PER_SHIP }
+		}
+		localization_key = ships7724
+	}
+}
+defined_text = {
+	name = GetAIFuelPlanes
+	text = {
+		trigger = {
+			set_temp_variable = { planes = num_deployed_planes }
+	
+			multiply_temp_variable = { planes = @FUEL_PER_PLANE }
+		}
+		localization_key = planes4667
+	}
+}
+defined_text = {
+	name = GetAIFuelMic
+	text = {
+		trigger = {
+			set_temp_variable = { mic = num_of_military_factories }
+	
+			multiply_temp_variable = { mic = @FUEL_PER_MIC }
+		}
+		localization_key = mic1127
+	}
+}
+defined_text = {
+	name = GetAIFuelNic
+	text = {
+		trigger = {
+			set_temp_variable = { dock = num_of_naval_factories }
+	
+			multiply_temp_variable = { dock = @FUEL_PER_NIC }
+		}
+		localization_key = dock6815
+	}
+}
+defined_text = {
+	name = GetAIFuelCic
+	text = {
+		trigger = {
+			set_temp_variable = { cic = num_of_civilian_factories }
+	
+			multiply_temp_variable = { cic = @FUEL_PER_CIC }
+		}
+		localization_key = cic2029
+	}
+}
+defined_text = {
+	name = GetAIFuelOil
+	text = {
+		trigger = {
+			set_temp_variable = { oil = resource_produced@oil }
+			
+			set_temp_variable = { mod = 1 }
+			subtract_from_temp_variable = { mod = modifier@min_export }
+			set_temp_variable = { modfactor = 1 }
+			add_to_temp_variable = { modfactor = modifier@fuel_gain_factor }
+			
+			multiply_temp_variable = { oil = mod }
+			multiply_temp_variable = { oil = modfactor }
+			
+			multiply_temp_variable = { oil = @FUEL_PER_OIL }
+		}
+		localization_key = oil8602
+	}
+}
+defined_text = {
+	name = GetAIFuelOilImport
+	text = {
+		trigger = {
+			set_temp_variable = { oil = resource_imported@oil }
+			
+			set_temp_variable = { modfactor = 1 }
+			add_to_temp_variable = { modfactor = modifier@fuel_gain_factor }
+			multiply_temp_variable = { oil = modfactor }
+			
+			multiply_temp_variable = { oil = @FUEL_PER_OIL_IMPORT }
+		}
+		localization_key = oil8602
+	}
+}
+defined_text = {
+	name = GetAIFuelRatio
+	text = {
+		trigger = {
+			set_temp_variable = { refinery_factor = 1 }
+			add_to_temp_variable = { refinery_factor = modifier@fuel_gain_factor_from_states }
+			
+			set_temp_variable = { tempratio = @FUEL_RATIO_BONUS_START }
+			add_to_temp_variable = { tempratio = @FUEL_RATIO_BONUS_STOP }
+			set_temp_variable = { ratio_bonus = 1.05 }
+			subtract_from_temp_variable = { ratio_bonus = fuel_ratio }
+			multiply_temp_variable = { ratio_bonus = @FUEL_RATIO_BONUS_MAX }
+			divide_temp_variable = { ratio_bonus = tempratio }
+			
+			if = { limit = { fuel_ratio < @FUEL_RATIO_BONUS_STOP } add_to_temp_variable = { ratio_bonus = @FUEL_RATIO_BONUS_FULL}}
+			
+			if = { limit = { has_war = no } divide_temp_variable = { ratio_bonus = 10} }
+		}
+		localization_key = ratiobonus1469
+	}
+}
+
+@AIR_BASE_HOME_AREA_CAPACITY_TARGET = 0.5
+
+@AIR_BASE_HOME_AREA_BOMBING_TIME_DIV = 30
+
+### Targetting var:ai_main_air_enemy
+
+@AIR_BASE_ENEMY_DISTANCE = 65
+
+@AIR_BASE_TARGETED_NEED_OWN_AIRFORCE = 0.1 #this * num_deployed_planes 
+@AIR_BASE_TARGETED_NEED_OWN_CAS = 0.75 #this * num_CAS, active when the target has a border, TODO: change it to ai_main_army_enemy
+@AIR_BASE_TARGETED_NEED_ENEMY_AIRFORCE = 0.05 #this * ai_main_air_enemy^num_deployed_planes 
+@AIR_BASE_TARGETED_NEED_ENEMY_CAS = 0.1 #this * ai_main_air_enemy^num_CAS, tbh i think this isnt needed
+
+@AIR_BASE_TARGETED_NEED_RATIO_TO_MATCH = 0.8 #ai looks at enemy airbase capacity in range and wants to have at least this much capacity in comparison
+@AIR_BASE_TARGETED_NEED_RATIO_MAX = 2.0 
+ 
+@AIR_BASE_TARGETED_NEED_RATIO_FROM_IC = 0.002 #num available cic * this
+@AIR_BASE_TARGETED_NEED_RATIO_FROM_PLAYER = 0.1 #more focus on players
+
+defined_text = {
+	name = GetAITargetAirforceCapacity
+	text = {
+		trigger = {
+			######## AIRFORCE SIZE TARGET
+			set_temp_variable = { ai_target_airforce_capacity = num_deployed_planes }
+			multiply_temp_variable = { ai_target_airforce_capacity = @AIR_BASE_TARGETED_NEED_OWN_AIRFORCE }
+			
+			if = {
+				limit = {
+					var:ai_main_air_enemy = {
+						is_neighbor_of = ROOT 
+									
+						set_temp_variable = { ai_target_enemy_CAS = num_deployed_planes_with_type@CAS_equipment }
+						multiply_temp_variable = { ai_target_enemy_CAS = @AIR_BASE_TARGETED_NEED_OWN_CAS }
+						add_to_temp_variable = { ai_target_airforce_capacity = ai_target_enemy_CAS }
+
+					}
+				}
+				set_temp_variable = { ai_target_CAS = num_deployed_planes_with_type@CAS_equipment }
+				multiply_temp_variable = { ai_target_CAS = @AIR_BASE_TARGETED_NEED_OWN_CAS }
+				add_to_temp_variable = { ai_target_airforce_capacity = ai_target_CAS }
+			}
+				
+				
+			var:ai_main_air_enemy = {
+				set_temp_variable = { ai_target_enemy_airforce_capacity = num_deployed_planes }
+				multiply_temp_variable = { ai_target_enemy_airforce_capacity = @AIR_BASE_TARGETED_NEED_ENEMY_AIRFORCE }
+				add_to_temp_variable = { ai_target_airforce_capacity = ai_target_enemy_airforce_capacity }
+			}
+		}
+		localization_key = aitargetairforcecapacity9460
+	}
+}
+defined_text = {
+	name = GetAIAirbaseRest
+	text = {
+		trigger = {
+			set_temp_variable = { ai_distance_limit = @AIR_BASE_ENEMY_DISTANCE }
+			all_of_scopes = {
+				array = controlled_states 
+				
+				if = {
+					limit = {
+						check_variable = { days_since_last_strategic_bombing < 180 }
+					}
+					set_temp_variable = { ai_state_bombing_threat = @AIR_BASE_HOME_AREA_BOMBING_TIME_DIV }
+					
+					set_temp_variable = { last_bomb = days_since_last_strategic_bombing }
+					add_to_temp_variable = { last_bomb = 1 }
+					
+					divide_temp_variable = { ai_state_bombing_threat = last_bomb }
+					clamp_temp_variable = { var = ai_state_bombing_threat min = 0 }
+					add_to_temp_variable = { ai_bombing_threat = ai_state_bombing_threat }
+				}
+				if = {
+					limit = {
+						var:Root.ai_main_air_enemy = {
+							any_of_scopes = {
+								array = controlled_states
+								
+								check_variable = { distance_to@PREV.PREV < ai_distance_limit }
+							}
+						}
+					}
+					add_to_temp_array = { ai_airbase_region = this.id }
+					add_to_temp_variable = { ai_air_base_capacity = building_level@air_base }
+				}
+			}
+			set_temp_variable = { ai_air_base_capacity_TT = ai_air_base_capacity }
+			var:ai_main_air_enemy = {
+				all_of_scopes = {
+					array = controlled_states 
+					
+					if = {
+						limit = {
+							any_of_scopes = {
+								array = ai_airbase_region
+								
+								check_variable = { distance_to@PREV < ai_distance_limit }
+							}
+						}
+						add_to_temp_variable = { ai_enemy_air_base_capacity = building_level@air_base }
+					}
+				}
+			}
+			
+			divide_temp_variable = { ai_air_base_capacity = ai_enemy_air_base_capacity }
+			
+			
+			### Calculate wanted ratio to enemy 
+			
+			set_temp_variable = { ai_airbase_ratio_target = @AIR_BASE_TARGETED_NEED_RATIO_TO_MATCH }
+			
+			set_temp_variable = { ai_industry_ratio = num_of_civilian_factories_available_for_projects }
+			multiply_temp_variable = { ai_industry_ratio = @AIR_BASE_TARGETED_NEED_RATIO_FROM_IC }
+			add_to_temp_variable = { ai_airbase_ratio_target = ai_industry_ratio }
+			
+			if = { limit = { var:ai_main_air_enemy = { is_ai = no } } 
+				add_to_temp_variable = { ai_airbase_ratio_target = @AIR_BASE_TARGETED_NEED_RATIO_FROM_PLAYER }
+			}
+			
+			set_temp_variable = { ai_airbase_ratio_max = @AIR_BASE_TARGETED_NEED_RATIO_MAX }
+			clamp_temp_variable = { var = ai_airbase_ratio_target max = ai_airbase_ratio_max }
+			 
+			set_temp_variable = { ai_airbase_need = ai_air_base_capacity }
+			divide_temp_variable = { ai_airbase_need = ai_airbase_ratio_target }
+	
+				
+			divide_temp_variable = { ai_bombing_threat = controlled_states^num }
+		}
+		localization_key = aiairbasecapacityTT7463
+	}
+}
+defined_text = {
+	name = ai_GetEquipmentRatio
+	text = {
+		trigger = {
+			check_variable = { num_equipment@var:v > 0 }
+			set_temp_variable = { temp = num_equipment@var:v }
+			divide_temp_variable = { temp = num_equipment_in_armies@var:v }
+		}  
+		localization_key = temp21148
+	}
+	text = {
+		trigger = {
+			set_temp_variable = { temp = num_equipment_in_armies@var:v }
+			divide_temp_variable = { temp = num_target_equipment_in_armies@var:v }
+			set_temp_variable = { t = 1 }
+			subtract_from_temp_variable = { t = temp }
+		}  
+		localization_key = t29937
+	}
+}
+defined_text = {
+	name = ai_GetEquipmentDeficit
+	text = {
+		trigger = {
+			check_variable = { num_equipment@var:v > 0 }
+		}  
+		localization_key = numequipmentvarvG05171
+	}
+	text = {
+		trigger = {
+			set_temp_variable = { deficit = num_target_equipment_in_armies@var:v }
+			subtract_from_temp_variable = { deficit = num_equipment_in_armies@var:v }
+		}  
+		localization_key = deficitR03951
+	}
+}
+defined_text = {
+	name = ai_GetMICtoCICRatio
+	text = {
+		trigger = {
+			
+			set_temp_variable = { num_of_factories_and_queued@arms_factory = num_of_military_factories }
+			add_to_temp_variable = { num_of_factories_and_queued@arms_factory = ai_queued@arms_factory }
+			add_to_temp_variable = { num_of_factories_and_queued@arms_factory = 1 }
+			set_temp_variable = { num_of_factories_and_queued@industrial_complex = num_of_civilian_factories }
+			add_to_temp_variable = { num_of_factories_and_queued@industrial_complex = ai_queued@industrial_complex }
+			add_to_temp_variable = { num_of_factories_and_queued@industrial_complex = 1 }
+			
+			set_temp_variable = { ratio = num_of_factories_and_queued@arms_factory } #100
+			divide_temp_variable = { ratio = num_of_factories_and_queued@industrial_complex } #50 = 2
+			
+		}  
+		localization_key = ratio25147
+	}
+}
+defined_text = {
+	name = ai_GetNICtoMICRatio
+	text = {
+		trigger = {
+			
+			set_temp_variable = { num_of_factories_and_queued@arms_factory = num_of_military_factories }
+			add_to_temp_variable = { num_of_factories_and_queued@arms_factory = ai_queued@arms_factory }
+			add_to_temp_variable = { num_of_factories_and_queued@arms_factory = 1 }
+			set_temp_variable = { num_of_factories_and_queued@industrial_complex = num_of_civilian_factories }
+			add_to_temp_variable = { num_of_factories_and_queued@industrial_complex = ai_queued@industrial_complex }
+			add_to_temp_variable = { num_of_factories_and_queued@industrial_complex = 1 }
+			set_temp_variable = { num_of_factories_and_queued@dockyard = num_of_naval_factories }
+			add_to_temp_variable = { num_of_factories_and_queued@dockyard = ai_queued@dockyard }
+			add_to_temp_variable = { num_of_factories_and_queued@dockyard = 1 }
+		
+			set_temp_variable = { NIC_ratio = num_of_factories_and_queued@dockyard } #20
+			divide_temp_variable = { NIC_ratio = num_of_factories_and_queued@arms_factory } #100 = 0.2
+			
+		}  
+		localization_key = NICratio22148
+	}
+}
+defined_text = {
+	name = ai_GetBuildLines
+	text = {
+		trigger = {
+			
+			set_temp_variable = { t = num_of_civilian_factories_available_for_projects }
+			divide_temp_variable = { t = 24 }
+		}  
+		localization_key = t1370
+	}
+}
+
+defined_text = {
+	name = ai_GetDiffSettingName
+	text = {
+		trigger = {
+			check_variable = { v = 1 }
+		}  
+		localization_key = "Create new group"
+	}
+	text = {
+		trigger = {
+			NOT = { check_variable = { v = 1 } }
+			has_country_flag = setting_type_name
+		}    
+		localization_key = "AI_DIFF_SETTING_NAME_TEXT_EDIT"
+	}
+	text = {
+		trigger = {
+			check_variable = { name_array^num > 0 }
+		}  
+		localization_key = "AI_DIFF_SETTING_NAME_TEXT"
+	}
+	text = {
+		localization_key = "[THIS.GetFlag][THIS.GetName]"
+	}
+}
+defined_text = {
+	name = ai_GetDiffSettingNameEvent 
+	text = {
+		trigger = {
+			check_variable = { name_array^num > 0 }
+		}  
+		localization_key = "[Type1][Type2][Type3][Type4][Type5][Type6][Type7][Type8][Type9][Type10][Type11][Type12][Type13][Type14][Type15][Type16][Type17][Type18][Type19][Type20]" 
+	}
+	text = {
+		localization_key = "[THIS.GetFlag][THIS.GetName]"
+	}
+}
+
+defined_text = {
+	name = GetLetter
+	text = {
+		trigger = {
+			check_variable = { l = 1 }
+		}  
+		localization_key = "A"
+	}
+	text = {
+		trigger = {
+			check_variable = { l = 2 }
+		}  
+		localization_key = "B"
+	}
+	text = {
+		trigger = {
+			check_variable = { l = 3 }
+		}  
+		localization_key = "C"
+	}
+	text = {
+		trigger = {
+			check_variable = { l = 4 }
+		}  
+		localization_key = "D"
+	}
+	text = {
+		trigger = {
+			check_variable = { l = 5 }
+		}  
+		localization_key = "E"
+	}
+	text = {
+		trigger = {
+			check_variable = { l = 6 }
+		}  
+		localization_key = "F"
+	}
+	text = {
+		trigger = {
+			check_variable = { l = 7 }
+		}  
+		localization_key = "G"
+	}
+	text = {
+		trigger = {
+			check_variable = { l = 8 }
+		}  
+		localization_key = "H"
+	}
+	text = {
+		trigger = {
+			check_variable = { l = 9 }
+		}  
+		localization_key = "I"
+	}
+	text = {
+		trigger = {
+			check_variable = { l = 10 }
+		}  
+		localization_key = "J"
+	}
+	text = {
+		trigger = {
+			check_variable = { l = 11 }
+		}  
+		localization_key = "K"
+	}
+	text = {
+		trigger = {
+			check_variable = { l = 12 }
+		}  
+		localization_key = "L"
+	}
+	text = {
+		trigger = {
+			check_variable = { l = 13 }
+		}  
+		localization_key = "M"
+	}
+	text = {
+		trigger = {
+			check_variable = { l = 14 }
+		}  
+		localization_key = "N"
+	}
+	text = {
+		trigger = {
+			check_variable = { l = 15 }
+		}  
+		localization_key = "O"
+	}
+	text = {
+		trigger = {
+			check_variable = { l = 16 }
+		}  
+		localization_key = "P"
+	}
+	text = {
+		trigger = {
+			check_variable = { l = 17 }
+		}  
+		localization_key = "Q"
+	}
+	text = {
+		trigger = {
+			check_variable = { l = 18 }
+		}  
+		localization_key = "R"
+	}
+	text = {
+		trigger = {
+			check_variable = { l = 19 }
+		}  
+		localization_key = "S"
+	}
+	text = {
+		trigger = {
+			check_variable = { l = 20 }
+		}  
+		localization_key = "T"
+	}
+	text = {
+		trigger = {
+			check_variable = { l = 21 }
+		}  
+		localization_key = "U"
+	}
+	text = {
+		trigger = {
+			check_variable = { l = 22 }
+		}  
+		localization_key = "V"
+	}
+	text = {
+		trigger = {
+			check_variable = { l = 23 }
+		}  
+		localization_key = "W"
+	}
+	text = {
+		trigger = {
+			check_variable = { l = 24 }
+		}  
+		localization_key = "X"
+	}
+	text = {
+		trigger = {
+			check_variable = { l = 25 }
+		}  
+		localization_key = "Y"
+	}
+	text = {
+		trigger = {
+			check_variable = { l = 26 }
+		}  
+		localization_key = "Z"
+	}
+	text = {
+		trigger = {
+			check_variable = { l = 30 }
+		}  
+		localization_key = " "
+	}
+	text = {
+		trigger = {
+			check_variable = { l = 40 }
+		}  
+		localization_key = "1"
+	}
+	text = {
+		trigger = {
+			check_variable = { l = 41 }
+		}  
+		localization_key = "2"
+	}
+	text = {
+		trigger = {
+			check_variable = { l = 42 }
+		}  
+		localization_key = "3"
+	}
+	text = {
+		trigger = {
+			check_variable = { l = 43 }
+		}  
+		localization_key = "4"
+	}
+	text = {
+		trigger = {
+			check_variable = { l = 44 }
+		}  
+		localization_key = "5"
+	}
+	text = {
+		trigger = {
+			check_variable = { l = 45 }
+		}  
+		localization_key = "6"
+	}
+	text = {
+		trigger = {
+			check_variable = { l = 46 }
+		}  
+		localization_key = "7"
+	}
+	text = {
+		trigger = {
+			check_variable = { l = 47 }
+		}  
+		localization_key = "8"
+	}
+	text = {
+		trigger = {
+			check_variable = { l = 48 }
+		}  
+		localization_key = "9"
+	}
+	text = {
+		trigger = {
+			check_variable = { l = 49 }
+		}  
+		localization_key = "0"
+	}
+}
+
+defined_text = {
+	name = Type1
+	text = {
+		trigger = {
+			check_variable = { name_array^0 > 0 }
+			set_temp_variable = { l = name_array^0 }
+		}  
+		localization_key = "[GetLetter]"
+	}
+}
+defined_text = {
+	name = Type2
+	text = {
+		trigger = {
+			check_variable = { name_array^1 > 0 }
+			set_temp_variable = { l = name_array^1 }
+		}  
+		localization_key = "[GetLetter]"
+	}
+}
+defined_text = {
+	name = Type3
+	text = {
+		trigger = {
+			check_variable = { name_array^2 > 0 }
+			set_temp_variable = { l = name_array^2 }
+		}  
+		localization_key = "[GetLetter]"
+	}
+}
+defined_text = {
+	name = Type4
+	text = {
+		trigger = {
+			check_variable = { name_array^3 > 0 }
+			set_temp_variable = { l = name_array^3 }
+		}  
+		localization_key = "[GetLetter]"
+	}
+}
+defined_text = {
+	name = Type5
+	text = {
+		trigger = {
+			check_variable = { name_array^4 > 0 }
+			set_temp_variable = { l = name_array^4 }
+		}  
+		localization_key = "[GetLetter]"
+	}
+}
+defined_text = {
+	name = Type6
+	text = {
+		trigger = {
+			check_variable = { name_array^5 > 0 }
+			set_temp_variable = { l = name_array^5 }
+		}  
+		localization_key = "[GetLetter]"
+	}
+}
+defined_text = {
+	name = Type7
+	text = {
+		trigger = {
+			check_variable = { name_array^6 > 0 }
+			set_temp_variable = { l = name_array^6 }
+		}  
+		localization_key = "[GetLetter]"
+	}
+}
+defined_text = {
+	name = Type8
+	text = {
+		trigger = {
+			check_variable = { name_array^7 > 0 }
+			set_temp_variable = { l = name_array^7 }
+		}  
+		localization_key = "[GetLetter]"
+	}
+}
+defined_text = {
+	name = Type9
+	text = {
+		trigger = {
+			check_variable = { name_array^8 > 0 }
+			set_temp_variable = { l = name_array^8 }
+		}  
+		localization_key = "[GetLetter]"
+	}
+}
+defined_text = {
+	name = Type10
+	text = {
+		trigger = {
+			check_variable = { name_array^9 > 0 }
+			set_temp_variable = { l = name_array^9 }
+		}  
+		localization_key = "[GetLetter]"
+	}
+}
+defined_text = {
+	name = Type11
+	text = {
+		trigger = {
+			check_variable = { name_array^10 > 0 }
+			set_temp_variable = { l = name_array^10 }
+		}  
+		localization_key = "[GetLetter]"
+	}
+}
+defined_text = {
+	name = Type12
+	text = {
+		trigger = {
+			check_variable = { name_array^11 > 0 }
+			set_temp_variable = { l = name_array^11 }
+		}  
+		localization_key = "[GetLetter]"
+	}
+}
+defined_text = {
+	name = Type13
+	text = {
+		trigger = {
+			check_variable = { name_array^12 > 0 }
+			set_temp_variable = { l = name_array^12 }
+		}  
+		localization_key = "[GetLetter]"
+	}
+}
+defined_text = {
+	name = Type14
+	text = {
+		trigger = {
+			check_variable = { name_array^13 > 0 }
+			set_temp_variable = { l = name_array^13 }
+		}  
+		localization_key = "[GetLetter]"
+	}
+}
+defined_text = {
+	name = Type15
+	text = {
+		trigger = {
+			check_variable = { name_array^14 > 0 }
+			set_temp_variable = { l = name_array^14 }
+		}  
+		localization_key = "[GetLetter]"
+	}
+}
+defined_text = {
+	name = Type16
+	text = {
+		trigger = {
+			check_variable = { name_array^15 > 0 }
+			set_temp_variable = { l = name_array^15 }
+		}  
+		localization_key = "[GetLetter]"
+	}
+}
+defined_text = {
+	name = Type17
+	text = {
+		trigger = {
+			check_variable = { name_array^16 > 0 }
+			set_temp_variable = { l = name_array^16 }
+		}  
+		localization_key = "[GetLetter]"
+	}
+}
+defined_text = {
+	name = Type18
+	text = {
+		trigger = {
+			check_variable = { name_array^17 > 0 }
+			set_temp_variable = { l = name_array^17 }
+		}  
+		localization_key = "[GetLetter]"
+	}
+}
+defined_text = {
+	name = Type19
+	text = {
+		trigger = {
+			check_variable = { name_array^18 > 0 }
+			set_temp_variable = { l = name_array^18 }
+		}  
+		localization_key = "[GetLetter]"
+	}
+}
+defined_text = {
+	name = Type20
+	text = {
+		trigger = {
+			check_variable = { name_array^19 > 0 }
+			set_temp_variable = { l = name_array^19 }
+		}  
+		localization_key = "[GetLetter]"
+	}
+}
+
+defined_text = {
+	name = GetAllianceValue
+	text = {
+		trigger = {
+			set_temp_variable = { t1 = FROM.id }
+		}  
+		localization_key = ROOTaistrategyalliancevart19267
+	}
+}
+defined_text = {
+	name = GetBefriendValue
+	text = {
+		trigger = {
+			set_temp_variable = { t1 = FROM.id }
+		}  
+		localization_key = ROOTaistrategybefriendvart16370
+	}
+}
+defined_text = {
+	name = GetAntagonizeValue
+	text = {
+		trigger = {
+			set_temp_variable = { t1 = FROM.id }
+		}  
+		localization_key = ROOTaistrategyantagonizevart16699
+	}
+}
+defined_text = {
+	name = GetConquerValue
+	text = {
+		trigger = {
+			set_temp_variable = { t1 = FROM.id }
+		}  
+		localization_key = ROOTaistrategyconquervart18934
+	}
+}
+defined_text = {
+	name = GetContainValue
+	text = {
+		trigger = {
+			set_temp_variable = { t1 = FROM.id }
+		}  
+		localization_key = ROOTaistrategycontainvart18032
+	}
+}
+defined_text = {
+	name = GetDeclareWarValue
+	text = {
+		trigger = {
+			set_temp_variable = { t1 = FROM.id }
+		}  
+		localization_key = ROOTaistrategydeclarewarvart19518
+	}
+}
+defined_text = {
+	name = GetIgnoreValue
+	text = {
+		trigger = {
+			set_temp_variable = { t1 = FROM.id }
+		}  
+		localization_key = ROOTaistrategyignorevart16556
+	}
+}
+defined_text = {
+	name = GetProtectValue
+	text = {
+		trigger = {
+			set_temp_variable = { t1 = FROM.id }
+		}  
+		localization_key = ROOTaistrategyprotectvart17453
+	}
+}
+
+
+defined_text = {
+	name = GetAllianceValueFROM
+	text = {
+		trigger = {
+			set_temp_variable = { t1 = ROOT.id }
+		}  
+		localization_key = FROMaistrategyalliancevart11535
+	}
+}
+defined_text = {
+	name = GetBefriendValueFROM
+	text = {
+		trigger = {
+			set_temp_variable = { t1 = ROOT.id }
+		}  
+		localization_key = FROMaistrategybefriendvart19988
+	}
+}
+defined_text = {
+	name = GetAntagonizeValueFROM
+	text = {
+		trigger = {
+			set_temp_variable = { t1 = ROOT.id }
+		}  
+		localization_key = FROMaistrategyantagonizevart17474
+	}
+}
+defined_text = {
+	name = GetConquerValueFROM
+	text = {
+		trigger = {
+			set_temp_variable = { t1 = ROOT.id }
+		}  
+		localization_key = FROMaistrategyconquervart19103
+	}
+}
+defined_text = {
+	name = GetContainValueFROM
+	text = {
+		trigger = {
+			set_temp_variable = { t1 = ROOT.id }
+		}  
+		localization_key = FROMaistrategycontainvart14217
+	}
+}
+defined_text = {
+	name = GetDeclareWarValueFROM
+	text = {
+		trigger = {
+			set_temp_variable = { t1 = ROOT.id }
+		}  
+		localization_key = FROMaistrategydeclarewarvart14424
+	}
+}
+defined_text = { 
+	name = GetIgnoreValueFROM
+	text = {
+		trigger = {
+			set_temp_variable = { t1 = ROOT.id }
+		}  
+		localization_key = FROMaistrategyignorevart13710
+	}
+}
+defined_text = {
+	name = GetProtectValueFROM
+	text = {
+		trigger = {
+			set_temp_variable = { t1 = ROOT.id }
+		}  
+		localization_key = FROMaistrategyprotectvart1127
+	}
+}
+
+defined_text = {
+	name = aiGetRadarConstruction
+	text = {
+		trigger = {
+			has_variable = ai_construction/radar_station
+		}
+		localization_key = "AI_RADAR_CONSTRUCTION"
+	}
+	text = {
+		localization_key = ""
+	}
+}
+defined_text = {
+	name = aiGetFuelSiloConstruction
+	text = {
+		trigger = {
+			has_variable = ai_construction/fuel_silo
+		}
+		localization_key = "AI_FUEL_SILO_CONSTRUCTION"
+	}
+	text = {
+		localization_key = ""
+	}
+}
+defined_text = {
+	name = aiGetAirBaseConstruction
+	text = {
+		trigger = {
+			has_variable = ai_construction/air_base^0
+		}
+		localization_key = "AI_AIR_BASE_CONSTRUCTION"
+	}
+	text = {
+		localization_key = ""
+	}
+}
+defined_text = {
+	name = aiGetInfrastructureConstruction
+	text = {
+		trigger = {
+			has_variable = ai_construction/infrastructure
+		}
+		localization_key = "AI_INFRASTRUCTURE_CONSTRUCTION"
+	}
+	text = {
+		localization_key = ""
+	}
+}
+defined_text = {
+	name = aiGetAirAssemblyConstruction
+	text = {
+		trigger = {
+			has_variable = ai_construction/air_assembly
+		}
+		localization_key = "AI_AIR_ASSEMBLY_CONSTRUCTION"
+	}
+	text = {
+		localization_key = ""
+	}
+}
+
+defined_text = {
+	name = aiGetTemplateResearch
+	text = {
+		trigger = {
+			set_temp_variable = { t = global.days_passed }
+			subtract_from_temp_variable = { t = ai_template_techs_date^i }
+			always = yes
+		}
+		localization_key = ActivesincetY0days2323
+	}
+}
+defined_text = {
+	name = aiGetTemplateResearchMult
+	text = {
+		trigger = {
+	
+			meta_trigger = {
+				text = { 
+					set_temp_variable = { t = ai_tech_need/[X] } 
+				}
+				X = "[?v.GetTokenKey]"
+			}
+			always = yes
+		}
+		localization_key = TechScoreMultt6065
+	}
+}
+	
+defined_text = {
+	name = aiGetNumStateConstruction
+	text = {
+		trigger = {
+			var:ai_queue_location^i = {
+				set_temp_variable = { t = ai_queue_num@var:v }
+			}
+		}
+		localization_key = t7231
+	}
+}
+
+defined_text = { 
+	name = GetRegionDeployedPlanes
+	text = {
+		trigger = {
+			set_temp_variable = { reg = FROM.region }
+			ROOT = { 
+				all_of_scopes = {
+					array = global.region_states@var:reg
+					if = {
+						limit = {
+							any_of = {
+								array = global.front_states
+								
+								var:v = { check_variable = { distance_to@PREV < 100 } }
+							
+							}
+							CONTROLLER = { is_ally_with = ROOT }
+						}
+						#log = ThisGetNameNAMEbuildinglevelairbase5053
+						add_to_temp_variable = { air_capacity = building_level@air_base }
+					}
+				}
+				multiply_temp_variable = { air_capacity = 100 }
+				set_temp_variable = { ratio = mtth:num_deployed_planes_in_region }
+				divide_temp_variable = { ratio = air_capacity }
+			}
+		}
+		localization_key = DeployedPlanestarget7258
+	}
+}
+defined_text = { 
+	name = GetAIMapmodeTooltip
+	text = {
+		trigger = {
+			check_variable = { map_ai_building_slot_score = 0 }
+		}
+		localization_key = "ai_default_slot_score_tooltip"
+	}
+	text = {
+		trigger = {
+			check_variable = { map_ai_building_slot_score = 1 }
+		}
+		localization_key = "ai_resource_slot_score_tooltip"
+	}
+	text = {
+		trigger = {
+			check_variable = { map_ai_building_slot_score = 2 }
+		}
+		localization_key = "ai_radar_slot_score_tooltip"
+	}
+	text = {
+		trigger = {
+			check_variable = { map_ai_building_slot_score = 3 }
+		}
+		localization_key = "ai_airbase_slot_score_tooltips"
+	}
+	text = {
+		trigger = {
+			check_variable = { map_ai_building_slot_score = 4 }
+		}
+		localization_key = "ai_new_radar_slot_score_tooltip"
+	}
+	text = {
+		trigger = {
+			check_variable = { map_ai_building_slot_score = 5 }
+		}
+		localization_key = "ai_radar_states_tooltip"
+	}
+	
+	text = {
+		trigger = {
+			check_variable = { map_ai_building_slot_score = 6 }
+		}
+		localization_key = "ai_resource_built_tooltip"
+	}
+	text = {
+		trigger = {
+			check_variable = { map_ai_building_slot_score = 7 }
+		}
+		localization_key = "ai_airbase_built_tooltip"
+	}
+	text = {
+		trigger = {
+			check_variable = { map_ai_building_slot_score = 8 }
+		}
+		localization_key = "ai_radar_built_tooltip"
+	}
+	text = {
+		trigger = {
+			check_variable = { map_ai_building_slot_score = 9 }
+		}
+		localization_key = "ai_building_built_tooltip"
+	}
+}
+defined_text = { 
+	name = GetAIBuiltAll
+	text = {
+		trigger = {
+			set_temp_variable = { amount = 0 }
+			all_of = {
+				array = global.buildings
+				
+				add_to_temp_variable = { amount = FROM.ai_built@var:v }
+			}
+		}
+		localization_key = amount6813
+	}
+}
+
+defined_text = { 
+	name = GetCountryDefenceContainer
+	text = {
+		trigger = {
+			check_variable = { v = 1 } #country defense header
+		}
+		localization_key = "area_defence_header_entry"
+	}
+	text = {
+		trigger = {
+			OR = {
+				check_variable = { v = token:global }
+				check_variable = { v = token:europe }
+				check_variable = { v = token:africa }
+				check_variable = { v = token:middle_east }
+				check_variable = { v = token:asia }
+				check_variable = { v = token:north_america }
+				check_variable = { v = token:south_america }
+			}
+		}
+		localization_key = "area_defence_entry"
+	}
+	text = {
+		trigger = {
+			check_variable = { v = 2 } #country defense header
+		}
+		localization_key = "country_defence_header_entry"
+	}
+	text = {
+		trigger = {
+			
+		}
+		localization_key = "country_defence_entry"
+	}
+}
+
+defined_text = { 
+	name = GetCountryDefenceScriptStatus
+	text = {
+		trigger = {
+			var:ROOT.targeted_country = {
+				has_country_flag = ai_use_area_defense
+			}
+		}
+		localization_key = "AI_DEF_COUNTRY_TITLE_DISABLED"
+	}
+	text = {
+		trigger = {
+		}
+		localization_key = "AI_DEF_COUNTRY_TITLE"
+	}
+}
+defined_text = { 
+	name = GetCountryDefenceScriptStatusTooltip
+	text = {
+		trigger = {
+			var:ROOT.targeted_country = {
+				has_country_flag = ai_use_area_defense
+			}
+		}
+		localization_key = "AI_DEF_COUNTRY_TOOLTIP_DISABLED"
+	}
+}
+
+defined_text = { 
+	name = GetAIMapIconText
+	text = {
+		trigger = {
+			set_temp_variable = { region_target = region }
+			set_temp_variable = { continent = mtth:continent }
+			var:ROOT.targeted_country = {
+				set_temp_variable = { region_overwrite_score = ai_yes_front_region@var:region_target }
+				set_temp_variable = { region_score = ai_no_front_region@var:region_target }
+				set_temp_variable = { area_score = ai_no_front@var:continent }
+			}
+		}
+		localization_key = "AI_DEF_STATE_MAPICON_DEBUG"
+	}
+}
+defined_text = { 
+	name = GetAIMapIconButtonText
+	text = {
+		trigger = {
+			state = var:ROOT.region_centre_states^0 
+		}
+		localization_key = "Europe"
+	}
+	text = {
+		trigger = {
+			state = var:ROOT.region_centre_states^1 
+		}
+		localization_key = "Asia"
+	}
+	text = {
+		trigger = {
+			state = var:ROOT.region_centre_states^2 
+		}
+		localization_key = "Africa"
+	}
+	text = {
+		trigger = {
+			state = var:ROOT.region_centre_states^3 
+		}
+		localization_key = "Middle East"
+	}
+	text = {
+		trigger = {
+			state = var:ROOT.region_centre_states^4 
+		}
+		localization_key = "North America"
+	}
+	text = {
+		trigger = {
+			state = var:ROOT.region_centre_states^5 
+		}
+		localization_key = "South America"
+	}
+}
+defined_text = { 
+	name = GetAIMapModeInvasionTooltip
+	text = {
+		trigger = {
+			state = var:ROOT.region_centre_states^0 
+		}
+		localization_key = "Europe"
+	}
+	

@@ -1,0 +1,800 @@
+
+# use set_temp_variable = { add = 2 } before these to set the amount to add *in a single state*, if not set it defaults to 1
+
+#focus_add_industrial_complex_prioritize_owned
+#focus_add_industrial_complex_prioritize_home_area
+#focus_add_arms_factory_prioritize_owned
+#focus_add_arms_factory_prioritize_home_area
+#focus_add_dockyard_prioritize_owned
+#focus_add_dockyard_prioritize_home_area
+#focus_add_infrastructure_prioritize_owned
+#focus_add_infrastructure_prioritize_home_area
+
+
+# use set_temp_variable = { building = token:power_plant } before these to assign them a building type. only use buildings which use building slots
+
+#focus_add_building_prioritize_owned
+#focus_add_building_prioritize_home_area
+
+focus_add_building_prioritize_owned = {
+	set_temp_variable = { building_placed = 0 }
+	
+	if = {
+		limit = {
+			check_variable = { add = 0 }
+		}
+		set_temp_variable = { add = 1 }
+	}
+	
+	if = {
+		limit = {
+			OR = {
+				check_variable = { building = token:shipyard }
+				check_variable = { building = token:subyard }
+			}
+		}
+		random_owned_controlled_state = {
+			limit = {
+				is_coastal = yes
+				check_variable = { modifier@local_building_slots > 4 } #no islands
+			}
+			set_temp_variable = { building_placed = 1 }
+			add_extra_state_shared_building_slots = var:add
+			meta_effect = {
+				text = {
+					add_building_construction = {
+						type = [X]
+						level = var:add
+						instant_build = yes
+					}
+				}
+				X = "[?building.GetTokenKey]"
+			}
+		}
+		
+		if = { #FALLBACK to controlled state
+			limit = {
+				check_variable = { building_placed = 0 }
+			}
+			random_controlled_state = {
+				limit = {
+					is_coastal = yes
+				}
+				set_temp_variable = { building_placed = 1 }
+				add_extra_state_shared_building_slots = var:add
+				meta_effect = {
+					text = {
+						add_building_construction = {
+							type = [X]
+							level = var:add
+							instant_build = yes
+						}
+					}
+					X = "[?building.GetTokenKey]"
+				}
+			}
+			
+			if = {
+				limit = {
+					check_variable = { building_placed = 0 }
+				}
+				custom_effect_tooltip = FOCUS_BUILDING_COASTAL_NEEDED
+			}
+			
+		}
+	}
+	else = {
+		random_owned_controlled_state = {
+			limit = {
+				check_variable = { modifier@local_building_slots > 4 } #no islands
+			}
+			set_temp_variable = { building_placed = 1 }
+			add_extra_state_shared_building_slots = var:add
+			meta_effect = {
+				text = {
+					add_building_construction = {
+						type = [X]
+						level = var:add
+						instant_build = yes
+					}
+				}
+				X = "[?building.GetTokenKey]"
+			}
+		}
+		
+		if = { #FALLBACK to controlled state
+			limit = {
+				check_variable = { building_placed = 0 }
+			}
+			random_controlled_state = {
+				set_temp_variable = { building_placed = 1 }
+				add_extra_state_shared_building_slots = var:add
+				meta_effect = {
+					text = {
+						add_building_construction = {
+							type = [X]
+							level = var:add
+							instant_build = yes
+						}
+					}
+					X = "[?building.GetTokenKey]"
+				}
+			}
+			
+			if = {
+				limit = {
+					check_variable = { building_placed = 0 }
+				}
+				custom_effect_tooltip = FOCUS_BUILDING_STATE_NEEDED
+			}
+			
+		}
+	}
+	
+	set_temp_variable = { add = 0 }
+}
+
+focus_add_building_prioritize_home_area = {
+	set_temp_variable = { building_placed = 0 }
+
+	if = {
+		limit = {
+			check_variable = { add = 0 }
+		}
+		set_temp_variable = { add = 1 }
+	}
+	
+	if = {
+		limit = {
+			OR = {
+				check_variable = { building = token:shipyard }
+				check_variable = { building = token:subyard }
+			}
+		}
+		random_owned_controlled_state = {
+			limit = {
+				is_coastal = yes
+				is_in_home_area = yes
+			}
+			set_temp_variable = { building_placed = 1 }
+			add_extra_state_shared_building_slots = var:add
+			meta_effect = {
+				text = {
+					add_building_construction = {
+						type = [X]
+						level = var:add
+						instant_build = yes
+					}
+				}
+				X = "[?building.GetTokenKey]"
+			}
+		}
+		
+		if = { #FALLBACK to owned state
+			limit = {
+				check_variable = { building_placed = 0 }
+			}
+			random_owned_controlled_state = {
+				limit = {
+					is_coastal = yes
+					check_variable = { modifier@local_building_slots > 4 } #no islands
+				}
+				set_temp_variable = { building_placed = 1 }
+				add_extra_state_shared_building_slots = var:add
+				meta_effect = {
+					text = {
+						add_building_construction = {
+							type = [X]
+							level = var:add
+							instant_build = yes
+						}
+					}
+					X = "[?building.GetTokenKey]"
+				}
+				custom_effect_tooltip = FOCUS_HOME_AREA_NEEDED
+			}
+			
+			if = { #FALLBACK to controlled state
+				limit = {
+					check_variable = { building_placed = 0 }
+				}
+				random_controlled_state = {
+					limit = {
+						is_coastal = yes
+					}
+					set_temp_variable = { building_placed = 1 }
+					add_extra_state_shared_building_slots = var:add
+					meta_effect = {
+						text = {
+							add_building_construction = {
+								type = [X]
+								level = var:add
+								instant_build = yes
+							}
+						}
+						X = "[?building.GetTokenKey]"
+					}
+					custom_effect_tooltip = FOCUS_OWNED_NEEDED
+				}
+				
+				if = {
+					limit = {
+						check_variable = { building_placed = 0 }
+					}
+					custom_effect_tooltip = FOCUS_BUILDING_COASTAL_NEEDED
+				}
+			}
+			
+		}
+	}
+	else = {
+		random_owned_controlled_state = {
+			limit = {
+				is_in_home_area = yes
+				check_variable = { modifier@local_building_slots > 4 } #no islands
+			}
+			set_temp_variable = { building_placed = 1 }
+			add_extra_state_shared_building_slots = var:add
+			meta_effect = {
+				text = {
+					add_building_construction = {
+						type = [X]
+						level = var:add
+						instant_build = yes
+					}
+				}
+				X = "[?building.GetTokenKey]"
+			}
+		}
+		
+		if = { #FALLBACK to owned state
+			limit = {
+				check_variable = { building_placed = 0 }
+			}
+			random_owned_controlled_state = {
+				set_temp_variable = { building_placed = 1 }
+				add_extra_state_shared_building_slots = var:add
+				meta_effect = {
+					text = {
+						add_building_construction = {
+							type = [X]
+							level = var:add
+							instant_build = yes
+						}
+					}
+					X = "[?building.GetTokenKey]"
+				}
+				custom_effect_tooltip = FOCUS_HOME_AREA_NEEDED
+			}
+				
+			if = { #FALLBACK to controlled state
+				limit = {
+					check_variable = { building_placed = 0 }
+				}
+				random_controlled_state = {
+					set_temp_variable = { building_placed = 1 }
+					add_extra_state_shared_building_slots = var:add
+					meta_effect = {
+						text = {
+							add_building_construction = {
+								type = [X]
+								level = var:add
+								instant_build = yes
+							}
+						}
+						X = "[?building.GetTokenKey]"
+					}
+					custom_effect_tooltip = FOCUS_OWNED_NEEDED
+				}
+				
+				if = {
+					limit = {
+						check_variable = { building_placed = 0 }
+					}
+					custom_effect_tooltip = FOCUS_BUILDING_STATE_NEEDED
+				}
+			}
+		}
+	}
+	
+	set_temp_variable = { add = 0 }
+}
+
+focus_add_infrastructure_prioritize_owned = {
+	set_temp_variable = { building_placed = 0 }
+	
+	if = {
+		limit = {
+			check_variable = { add = 0 }
+		}
+		set_temp_variable = { add = 1 }
+	}
+	
+	random_owned_controlled_state = {
+		limit = {
+			check_variable = { modifier@local_building_slots > 4 } #no islands
+			
+			set_temp_variable = { l = infrastructure_level }
+			add_to_temp_variable = { l = add }
+			NOT = { check_variable = { l > 10 } }
+		}
+		set_temp_variable = { building_placed = 1 }
+		add_building_construction = {
+			type = infrastructure
+			level = var:add
+			instant_build = yes
+		}
+	}
+	
+	if = { #FALLBACK to controlled state
+		limit = {
+			check_variable = { building_placed = 0 }
+		}
+		random_controlled_state = {
+			limit = {
+				set_temp_variable = { l = infrastructure_level }
+				add_to_temp_variable = { l = add }
+				NOT = { check_variable = { l > 10 } }
+			}
+			set_temp_variable = { building_placed = 1 }
+			add_building_construction = {
+				type = infrastructure
+				level = var:add
+				instant_build = yes
+			}
+			custom_effect_tooltip = FOCUS_OWNED_NEEDED
+		}
+		
+		if = {
+			limit = {
+				check_variable = { building_placed = 0 }
+			}
+			#custom_effect_tooltip = FOCUS_INFRASTRUCTURE_STATE_NEEDED
+		}
+		
+	}
+	
+	set_temp_variable = { add = 0 }
+}
+
+focus_add_infrastructure_prioritize_home_area = {
+	set_temp_variable = { building_placed = 0 }
+	
+	if = {
+		limit = {
+			check_variable = { add = 0 }
+		}
+		set_temp_variable = { add = 1 }
+	}
+	
+	random_owned_controlled_state = {
+		limit = {
+			is_in_home_area = yes
+			check_variable = { modifier@local_building_slots > 4 } #no islands
+		
+			set_temp_variable = { l = infrastructure_level }
+			add_to_temp_variable = { l = add }
+			NOT = { check_variable = { l > 10 } }
+		}
+		set_temp_variable = { building_placed = 1 }
+		add_building_construction = {
+			type = infrastructure
+			level = var:add
+			instant_build = yes
+		}
+	}
+	
+	if = { #FALLBACK to owned state
+		limit = {
+			check_variable = { building_placed = 0 }
+		}
+		random_owned_controlled_state = {
+			limit = {
+				check_variable = { modifier@local_building_slots > 4 } #no islands
+				
+				set_temp_variable = { l = infrastructure_level }
+				add_to_temp_variable = { l = add }
+				NOT = { check_variable = { l > 10 } }
+			}
+			set_temp_variable = { building_placed = 1 }
+			add_building_construction = {
+				type = infrastructure
+				level = var:add
+				instant_build = yes
+			}
+			custom_effect_tooltip = FOCUS_HOME_AREA_NEEDED
+		}
+		
+		if = { #FALLBACK to controlled state
+			limit = {
+				check_variable = { building_placed = 0 }
+			}
+			random_controlled_state = {
+				limit = {
+					set_temp_variable = { l = infrastructure_level }
+					add_to_temp_variable = { l = add }
+					NOT = { check_variable = { l > 10 } }
+				}
+				set_temp_variable = { building_placed = 1 }
+				add_extra_state_shared_building_slots = var:add
+				add_building_construction = {
+					type = infrastructure
+					level = var:add
+					instant_build = yes
+				}
+				custom_effect_tooltip = FOCUS_OWNED_NEEDED
+			}
+			
+			if = {
+				limit = {
+					check_variable = { building_placed = 0 }
+				}
+				custom_effect_tooltip = FOCUS_INFRASTRUCTURE_STATE_NEEDED
+			}
+			
+		}
+	}
+	set_temp_variable = { add = 0 }
+}
+
+focus_add_industrial_complex_prioritize_owned = {
+	set_temp_variable = { building_placed = 0 }
+	
+	if = {
+		limit = {
+			check_variable = { add = 0 }
+		}
+		set_temp_variable = { add = 1 }
+	}
+	
+	random_owned_controlled_state = {
+		limit = {
+			check_variable = { modifier@local_building_slots > 4 } #no islands
+		}
+		set_temp_variable = { building_placed = 1 }
+		add_extra_state_shared_building_slots = var:add
+		add_building_construction = {
+			type = industrial_complex
+			level = var:add
+			instant_build = yes
+		}
+	}
+	
+	if = { #FALLBACK to controlled state
+		limit = {
+			check_variable = { building_placed = 0 }
+		}
+		random_controlled_state = {
+			set_temp_variable = { building_placed = 1 }
+			add_extra_state_shared_building_slots = var:add
+			add_building_construction = {
+				type = industrial_complex
+				level = var:add
+				instant_build = yes
+			}
+			custom_effect_tooltip = FOCUS_OWNED_NEEDED
+		}
+		
+		if = {
+			limit = {
+				check_variable = { building_placed = 0 }
+			}
+			custom_effect_tooltip = FOCUS_INDUSTRIAL_COMPLEX_STATE_NEEDED
+		}
+		
+	}
+	
+	set_temp_variable = { add = 0 }
+}
+
+focus_add_industrial_complex_prioritize_home_area = {
+	set_temp_variable = { building_placed = 0 }
+	
+	if = {
+		limit = {
+			check_variable = { add = 0 }
+		}
+		set_temp_variable = { add = 1 }
+	}
+	
+	random_owned_controlled_state = {
+		limit = {
+			is_in_home_area = yes
+			check_variable = { modifier@local_building_slots > 4 } #no islands
+		}
+		set_temp_variable = { building_placed = 1 }
+		add_extra_state_shared_building_slots = var:add
+		add_building_construction = {
+			type = industrial_complex
+			level = var:add
+			instant_build = yes
+		}
+	}
+	
+	if = { #FALLBACK to owned state
+		limit = {
+			check_variable = { building_placed = 0 }
+		}
+		random_owned_controlled_state = {
+			limit = {
+				check_variable = { modifier@local_building_slots > 4 } #no islands
+			}
+			set_temp_variable = { building_placed = 1 }
+			add_extra_state_shared_building_slots = var:add
+			add_building_construction = {
+				type = industrial_complex
+				level = var:add
+				instant_build = yes
+			}
+			custom_effect_tooltip = FOCUS_HOME_AREA_NEEDED
+		}
+		
+		if = { #FALLBACK to controlled state
+			limit = {
+				check_variable = { building_placed = 0 }
+			}
+			random_controlled_state = {
+				set_temp_variable = { building_placed = 1 }
+				add_extra_state_shared_building_slots = var:add
+				add_building_construction = {
+					type = industrial_complex
+					level = var:add
+					instant_build = yes
+				}
+				custom_effect_tooltip = FOCUS_OWNED_NEEDED
+			}
+			
+			if = {
+				limit = {
+					check_variable = { building_placed = 0 }
+				}
+				custom_effect_tooltip = FOCUS_INDUSTRIAL_COMPLEX_STATE_NEEDED
+			}
+			
+		}
+	}
+	set_temp_variable = { add = 0 }
+}
+
+
+focus_add_arms_factory_prioritize_owned = {
+	set_temp_variable = { building_placed = 0 }
+	
+	if = {
+		limit = {
+			check_variable = { add = 0 }
+		}
+		set_temp_variable = { add = 1 }
+	}
+	
+	random_owned_controlled_state = {
+		limit = {
+			check_variable = { modifier@local_building_slots > 4 } #no islands
+		}
+		set_temp_variable = { building_placed = 1 }
+		add_extra_state_shared_building_slots = var:add
+		add_building_construction = {
+			type = arms_factory
+			level = var:add
+			instant_build = yes
+		}
+	}
+	
+	if = { #FALLBACK to controlled state
+		limit = {
+			check_variable = { building_placed = 0 }
+		}
+		random_controlled_state = {
+			set_temp_variable = { building_placed = 1 }
+			add_extra_state_shared_building_slots = var:add
+			add_building_construction = {
+				type = arms_factory
+				level = var:add
+				instant_build = yes
+			}
+			custom_effect_tooltip = FOCUS_OWNED_NEEDED
+		}
+		
+		if = {
+			limit = {
+				check_variable = { building_placed = 0 }
+			}
+			custom_effect_tooltip = FOCUS_ARMS_FACTORY_STATE_NEEDED
+		}
+		
+	}
+	set_temp_variable = { add = 0 }
+}
+
+focus_add_arms_factory_prioritize_home_area = {
+	set_temp_variable = { building_placed = 0 }
+	
+	if = {
+		limit = {
+			check_variable = { add = 0 }
+		}
+		set_temp_variable = { add = 1 }
+	}
+	
+	random_owned_controlled_state = {
+		limit = {
+			is_in_home_area = yes
+			check_variable = { modifier@local_building_slots > 4 } #no islands
+		}
+		set_temp_variable = { building_placed = 1 }
+		add_extra_state_shared_building_slots = var:add
+		add_building_construction = {
+			type = arms_factory
+			level = var:add
+			instant_build = yes
+		}
+	}
+	
+	if = { #FALLBACK to owned state
+		limit = {
+			check_variable = { building_placed = 0 }
+		}
+		random_owned_controlled_state = {
+			limit = {
+				check_variable = { modifier@local_building_slots > 4 } #no islands
+			}
+			set_temp_variable = { building_placed = 1 }
+			add_extra_state_shared_building_slots = var:add
+			add_building_construction = {
+				type = arms_factory
+				level = var:add
+				instant_build = yes
+			}
+			custom_effect_tooltip = FOCUS_HOME_AREA_NEEDED
+		}
+		
+		if = { #FALLBACK to controlled state
+			limit = {
+				check_variable = { building_placed = 0 }
+			}
+			random_controlled_state = {
+				set_temp_variable = { building_placed = 1 }
+				add_extra_state_shared_building_slots = var:add
+				add_building_construction = {
+					type = arms_factory
+					level = var:add
+					instant_build = yes
+				}
+				custom_effect_tooltip = FOCUS_OWNED_NEEDED
+			}
+			
+			if = {
+				limit = {
+					check_variable = { building_placed = 0 }
+				}
+				custom_effect_tooltip = FOCUS_ARMS_FACTORY_STATE_NEEDED
+			}
+			
+		}
+	}
+	set_temp_variable = { add = 0 }
+}
+
+focus_add_dockyard_prioritize_owned = {
+	set_temp_variable = { building_placed = 0 }
+	
+	if = {
+		limit = {
+			check_variable = { add = 0 }
+		}
+		set_temp_variable = { add = 1 }
+	}
+	
+	random_owned_controlled_state = {
+		limit = {
+			is_coastal = yes
+			check_variable = { modifier@local_building_slots > 4 } #no islands
+		}
+		set_temp_variable = { building_placed = 1 }
+		add_extra_state_shared_building_slots = var:add
+		add_building_construction = {
+			type = dockyard
+			level = var:add
+			instant_build = yes
+		}
+	}
+	
+	if = { #FALLBACK to controlled state
+		limit = {
+			check_variable = { building_placed = 0 }
+		}
+		random_controlled_state = {
+			limit = {
+				is_coastal = yes
+			}
+			set_temp_variable = { building_placed = 1 }
+			add_extra_state_shared_building_slots = var:add
+			add_building_construction = {
+				type = dockyard
+				level = var:add
+				instant_build = yes
+			}
+			custom_effect_tooltip = FOCUS_OWNED_NEEDED
+		}
+			
+		if = {
+			limit = {
+				check_variable = { building_placed = 0 }
+			}
+			custom_effect_tooltip = FOCUS_DOCKYARD_COASTAL_NEEDED
+		}
+	}
+	set_temp_variable = { add = 0 }
+
+}
+focus_add_dockyard_prioritize_home_area = {
+	set_temp_variable = { building_placed = 0 }
+	
+	if = {
+		limit = {
+			check_variable = { add = 0 }
+		}
+		set_temp_variable = { add = 1 }
+	}
+	
+	random_owned_controlled_state = {
+		limit = {
+			is_coastal = yes
+			is_in_home_area = yes
+		}
+		set_temp_variable = { building_placed = 1 }
+		add_extra_state_shared_building_slots = var:add
+		add_building_construction = {
+			type = dockyard
+			level = var:add
+			instant_build = yes
+		}
+	}
+	
+	if = { #FALLBACK to owned state
+		limit = {
+			check_variable = { building_placed = 0 }
+		}
+		random_owned_controlled_state = {
+			limit = {
+				is_coastal = yes
+				check_variable = { modifier@local_building_slots > 4 } #no islands
+			}
+			set_temp_variable = { building_placed = 1 }
+			add_extra_state_shared_building_slots = var:add
+			add_building_construction = {
+				type = dockyard
+				level = var:add
+				instant_build = yes
+			}
+			custom_effect_tooltip = FOCUS_HOME_AREA_NEEDED
+		}
+		if = { #FALLBACK to controlled state
+			limit = {
+				check_variable = { building_placed = 0 }
+			}
+			random_controlled_state = {
+				limit = {
+					is_coastal = yes
+				}
+				set_temp_variable = { building_placed = 1 }
+				add_extra_state_shared_building_slots = var:add
+				add_building_construction = {
+					type = dockyard
+					level = var:add
+					instant_build = yes
+				}
+				custom_effect_tooltip = FOCUS_OWNED_NEEDED
+			}
+				
+			if = {
+				limit = {
+					check_variable = { building_placed = 0 }
+				}
+				custom_effect_tooltip = FOCUS_DOCKYARD_COASTAL_NEEDED
+			}
+		}
+	}
+	set_temp_variable = { add = 0 }
+
+}

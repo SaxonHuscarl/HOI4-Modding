@@ -1,0 +1,1780 @@
+
+ai_unit_leader_startup = {
+	set_variable = { GER.ai_armor_leader = 3 }
+	set_variable = { SOV.ai_armor_leader = 4 }
+	set_variable = { USA.ai_armor_leader = 3 }
+	set_variable = { ENG.ai_armor_leader = 2 }
+	set_variable = { JAP.ai_armor_leader = 1 }
+	set_variable = { ITA.ai_armor_leader = 1 }
+	set_variable = { FRA.ai_armor_leader = 2 }
+	
+	set_variable = { GER.ai_invasion_leader = 1 }
+	set_variable = { ITA.ai_invasion_leader = 1 }
+	set_variable = { ENG.ai_invasion_leader = 2 }
+	set_variable = { USA.ai_invasion_leader = 4 }
+	set_variable = { JAP.ai_invasion_leader = 3 }
+	set_variable = { FRA.ai_invasion_leader = 1 }
+}
+
+ai_determine_unit_leader_role = { #run on startup
+	every_army_leader = {
+		set_temp_variable = { determine_armor_leader_weight = mtth:determine_armor_leader_weight }
+		set_temp_variable = { determine_invasion_leader_weight = mtth:determine_invasion_leader_weight }
+		
+		add_to_array = { PREV.armor_leader = THIS }
+		add_to_array = { PREV.armor_leader_score = determine_armor_leader_weight }
+		
+		add_to_array = { PREV.invasion_leader = THIS }
+		add_to_array = { PREV.invasion_leader_score = determine_invasion_leader_weight }
+	}
+	
+	for_loop_effect = {
+		end = ai_armor_leader
+		
+		find_highest_in_array = {
+			array = armor_leader_score
+			value = highest_value
+			index = highest_index
+		}
+		add_to_array = { ai_armor_leader = armor_leader^highest_index }
+		log = "[?armor_leader^highest_index.GetName] HIGHEST ARMOR SCORE ([?armor_leader_score^highest_index])"
+		
+		remove_from_array = { armor_leader = armor_leader^highest_index }
+		remove_from_array = { armor_leader_score = armor_leader_score^highest_index }
+	}
+	
+	for_loop_effect = {
+		end = ai_invasion_leader
+		
+		find_highest_in_array = {
+			array = invasion_leader_score
+			value = highest_value
+			index = highest_index
+		}
+		add_to_array = { ai_invasion_leader = invasion_leader^highest_index }
+		log = "[?invasion_leader^highest_index.GetName] HIGHEST INVASION SCORE ([?invasion_leader_score^highest_index])"
+		
+		remove_from_array = { invasion_leader = invasion_leader^highest_index }
+		remove_from_array = { invasion_leader_score = invasion_leader_score^highest_index }
+	}
+	
+	clear_array = armor_leader
+	clear_array = armor_leader_score
+	clear_array = invasion_leader
+	clear_array = invasion_leader_score
+	
+	for_each_loop = {
+		array = ai_armor_leader
+		
+		var:v = { set_character_flag = ai_armor_leader }
+	}
+	for_each_loop = {
+		array = ai_invasion_leader
+		
+		var:v = { set_character_flag = ai_invasion_leader }
+	}
+}
+
+ai_update_army_trait_assignments = {
+	if = {
+		limit = {
+			OR = {
+				has_war = yes
+				has_global_flag = two_monthly_pulse
+			}
+		}
+			
+		for_each_loop = {
+			array = ai_armor_leader
+			
+			var:v = { 
+				if = {
+					limit = {
+						check_variable = { skill > 0 }
+					}
+					ai_armor_group_leader = yes 
+				}
+			}
+		}
+		
+		set_temp_variable = { highest_trait = 0 }
+		set_temp_variable = { highest_trait_score = 0 }
+		for_each_loop = {
+			array = ai_invasion_leader
+			
+			var:v = { 
+				if = {
+					limit = {
+						check_variable = { skill > 0 }
+					}
+					ai_invasion_group_leader = yes 
+				}
+			}
+		}
+		
+		## sort army leaders based on army_leader_score
+		
+		for_each_scope_loop = { array = army_leaders
+			
+			if = { 
+				limit = { 
+					is_assigned = yes
+					NOT = { 
+						has_character_flag = ai_armor_leader
+						has_character_flag = ai_invasion_leader
+					}
+				}
+
+				set_variable = { army_leader_score = skill_level }
+				add_to_variable = { army_leader_score = army_attack_level }
+				add_to_variable = { army_leader_score = army_defense_level }
+				add_to_variable = { army_leader_score = logistics_level }
+				add_to_variable = { army_leader_score = planning_level }
+				add_to_variable = { army_leader_score = num_basic_traits }
+			
+
+				for_each_loop = { array = ai_army_leaders_sorted
+
+					var:v = {
+						if = { limit = { check_variable = { PREV.army_leader_score > army_leader_score } }
+
+							add_to_temp_array = { array = ai_army_leaders_sorted index = i value = PREV.id }
+							set_temp_variable = { break = 1 }
+						}
+					}
+				}
+
+				if = { limit = { check_variable = { break = 0 } }
+					
+					add_to_temp_array = { array = ai_army_leaders_sorted value = THIS.id }
+				}
+				else = { set_temp_variable = { break = 0 } }
+			}
+		}
+		
+		set_temp_variable = { highest_trait = 0 }
+		set_temp_variable = { highest_trait_score = 0 }
+		for_each_loop = {
+			array = ai_army_leaders_sorted
+			
+			var:v = {
+				#log = "[This.GetName] | Score: [?army_leader_score]"
+				ai_default_army_trait_assignment = yes
+			}
+		}
+	}
+}
+
+ai_default_army_trait_assignment = {
+	if = {
+		limit = {
+			can_select_trait = infantry_expert
+		}
+		remove_unit_leader_trait = infantry_officer
+		
+		set_temp_variable = { score = mtth:infantry_expert_score }
+		
+		if = { limit = { check_variable = { score > highest_trait_score } }
+			set_temp_variable = { highest_trait_score = score }
+			set_temp_variable = { highest_trait = token:infantry_expert }
+		}
+	}
+	if = {
+		limit = {
+			can_select_trait = motorized_leader_II
+		}
+		
+		set_temp_variable = { score = mtth:motorized_expert_score }
+		
+		if = { limit = { check_variable = { score > highest_trait_score } }
+			set_temp_variable = { highest_trait_score = score }
+			set_temp_variable = { highest_trait = token:motorized_leader_II }
+		}
+	}
+	if = {
+		limit = {
+			can_select_trait = combined_arms_expert
+		}
+		
+		set_temp_variable = { score = mtth:combined_arms_expert_score }
+		
+		if = { limit = { check_variable = { score > highest_trait_score } }
+			set_temp_variable = { highest_trait_score = score }
+			set_temp_variable = { highest_trait = token:combined_arms_expert }
+		}
+	}
+	if = {
+		limit = {
+			can_select_trait = panzer_expert
+		}
+		remove_unit_leader_trait = armor_officer
+		
+		set_temp_variable = { score = mtth:panzer_expert_score }
+		
+		if = { limit = { check_variable = { score > highest_trait_score } }
+			set_temp_variable = { highest_trait_score = score }
+			set_temp_variable = { highest_trait = token:panzer_expert }
+		}
+	}
+	if = {
+		limit = {
+			can_select_trait = logistics_wizard_CC_II
+		}
+		
+		set_temp_variable = { score = mtth:logistics_wizard_CC_II_score }
+		
+		if = { limit = { check_variable = { score > highest_trait_score } }
+			set_temp_variable = { highest_trait_score = score }
+			set_temp_variable = { highest_trait = token:logistics_wizard_CC_II }
+		}
+	}
+	if = {
+		limit = {
+			can_select_trait = trench_warfare_specialist
+		}
+		
+		set_temp_variable = { score = mtth:trench_warfare_specialist_score }
+		
+		if = { limit = { check_variable = { score > highest_trait_score } }
+			set_temp_variable = { highest_trait_score = score }
+			set_temp_variable = { highest_trait = token:trench_warfare_specialist }
+		}
+	}
+	if = {
+		limit = {
+			can_select_trait = guerilla_fighter
+		}
+		
+		set_temp_variable = { score = mtth:guerilla_fighter_score }
+		
+		if = { limit = { check_variable = { score > highest_trait_score } }
+			set_temp_variable = { highest_trait_score = score }
+			set_temp_variable = { highest_trait = token:guerilla_fighter }
+		}
+	}
+	if = {
+		limit = {
+			can_select_trait = aggressive_assaulter
+		}
+		
+		set_temp_variable = { score = mtth:aggressive_assaulter_score }
+		
+		if = { limit = { check_variable = { score > highest_trait_score } }
+			set_temp_variable = { highest_trait_score = score }
+			set_temp_variable = { highest_trait = token:aggressive_assaulter }
+		}
+	}
+	if = {
+		limit = {
+			can_select_trait = unyielding_defender
+		}
+		
+		set_temp_variable = { score = mtth:unyielding_defender_score }
+		
+		if = { limit = { check_variable = { score > highest_trait_score } }
+			set_temp_variable = { highest_trait_score = score }
+			set_temp_variable = { highest_trait = token:unyielding_defender }
+		}
+	}
+	
+	if = {
+		limit = {
+			check_variable = { highest_trait_score > 0 }
+		}
+		#log = "    [?highest_trait.GetTokenKey]"
+			
+		meta_effect = {
+			text = {
+				add_unit_leader_trait = [X]
+			}
+			X = "[?highest_trait.GetTokenKey]"
+		}
+		set_temp_variable = { break = 1 }
+		
+	}
+}
+
+ai_armor_group_leader = {
+	# ai_armor_leader
+	
+	if = {
+		limit = {
+			can_select_trait = panzer_expert
+		}
+		remove_unit_leader_trait = armor_officer
+		add_unit_leader_trait = panzer_expert
+	}
+	if = {
+		limit = {
+			can_select_trait = combined_arms_expert
+		}
+		add_unit_leader_trait = combined_arms_expert
+	}
+	if = {
+		limit = {
+			can_select_trait = motorized_leader
+		}
+		add_unit_leader_trait = motorized_leader
+	}
+	if = {
+		limit = {
+			can_select_trait = motorized_leader_II
+		}
+		add_unit_leader_trait = motorized_leader_II
+	}
+	if = {
+		limit = {
+			can_select_trait = spearhead_specialist
+		}
+		add_unit_leader_trait = spearhead_specialist
+	}
+	
+	if = {
+		limit = {
+			has_trait = panzer_expert
+			has_trait = combined_arms_expert
+			has_trait = motorized_leader
+			has_trait = motorized_leader_II
+			has_trait = spearhead_specialist
+		}
+		ai_default_army_trait_assignment = yes
+	}
+}
+
+ai_invasion_group_leader = {
+	# ai_invasion_leader
+	
+	if = {
+		limit = {
+			NOT = { has_trait = naval_invader }
+		}
+		add_unit_leader_trait = naval_invader
+	}
+	else = {
+		
+		if = {
+			limit = {
+				can_select_trait = invader_ii
+			}
+			
+			set_temp_variable = { score = mtth:invader_ii_score }
+			
+			if = { limit = { check_variable = { score > highest_trait_score } }
+				set_temp_variable = { highest_trait_score = score }
+				set_temp_variable = { highest_trait = token:invader_ii }
+			}
+		}
+		if = {
+			limit = {
+				can_select_trait = naval_liason
+			}
+			
+			set_temp_variable = { score = mtth:naval_liason_score }
+			
+			if = { limit = { check_variable = { score > highest_trait_score } }
+				set_temp_variable = { highest_trait_score = score }
+				set_temp_variable = { highest_trait = token:naval_liason }
+			}
+		}
+		
+	}
+	
+	ai_default_army_trait_assignment = yes
+	
+}
+
+ai_update_naval_trait_assignments = {
+	every_navy_leader = {
+		limit = {
+			is_assigned = yes
+			
+			#check_variable = { num_max_traits > num_assigned_traits }
+		}
+		
+		if = {
+			limit = {
+				OR = {
+					check_variable = { num_ships_with_type@super_carrier > 0 }
+					check_variable = { num_ships_with_type@fleet_carrier > 0 }
+					check_variable = { num_ships_with_type@armored_carrier > 0 }
+					check_variable = { num_ships_with_type@light_carrier > 0 }
+					check_variable = { num_ships_with_type@escort_carrier > 0 }
+				}
+			}
+			ai_clear_escort_group_leader = yes
+			ai_clear_submarine_group_leader = yes
+			
+			ai_carrier_group_leader = yes
+			ai_battleship_group_leader = yes
+		}
+		else_if = {
+			limit = {
+				OR = {
+					check_variable = { num_ships_with_type@battleship > 0 }
+					check_variable = { num_ships_with_type@battle_cruiser > 0 }
+				}
+			}
+			ai_clear_carrier_group_leader = yes
+			ai_clear_submarine_group_leader = yes
+			
+			ai_battleship_group_leader = yes
+		}
+		else_if = {
+			limit = {
+				OR = {
+					check_variable = { num_ships_with_type@destroyer > 0 }
+					check_variable = { num_ships_with_type@destroyer_escort > 0 }
+					check_variable = { num_ships_with_type@large_cruiser > 0 }
+					check_variable = { num_ships_with_type@heavy_cruiser > 0 }
+					check_variable = { num_ships_with_type@light_cruiser > 0 }
+				}
+			}
+			ai_clear_carrier_group_leader = yes
+			ai_clear_battleship_group_leader = yes
+			ai_clear_submarine_group_leader = yes
+			
+			ai_escort_group_leader = yes
+		}
+		else_if = {
+			limit = {
+				OR = {
+					check_variable = { num_ships_with_type@patrol_submarine > 0 }
+					check_variable = { num_ships_with_type@coastal_submarine > 0 }
+					check_variable = { num_ships_with_type@lr_submarine > 0 }
+				}
+			}
+			ai_clear_carrier_group_leader = yes
+			ai_clear_battleship_group_leader = yes
+			ai_clear_escort_group_leader = yes
+			
+			ai_submarine_group_leader = yes
+		}
+	}
+}
+
+ai_carrier_group_leader = {
+	add_unit_leader_trait = air_controller
+	if = {
+		limit = {
+			can_select_trait = flight_deck_manager
+		}
+		add_unit_leader_trait = flight_deck_manager
+	}
+	if = {
+		limit = {
+			can_select_trait = fighter_director
+		}
+		add_unit_leader_trait = fighter_director
+	}
+}
+ai_battleship_group_leader = {
+	add_unit_leader_trait = ironside
+	if = {
+		limit = {
+			can_select_trait = big_guns_expert
+		}
+		add_unit_leader_trait = big_guns_expert
+	}
+	if = {
+		limit = {
+			can_select_trait = marksman
+		}
+		add_unit_leader_trait = marksman
+	}
+	if = {
+		limit = {
+			can_select_trait = safety_first
+		}
+		add_unit_leader_trait = safety_first
+	}
+	if = {
+		limit = {
+			can_select_trait = crisis_magician
+		}
+		add_unit_leader_trait = crisis_magician
+	}
+}
+ai_escort_group_leader = {
+	add_unit_leader_trait = fleet_protector
+	if = {
+		limit = {
+			can_select_trait = destroyer_leader
+		}
+		add_unit_leader_trait = destroyer_leader
+	}
+	if = {
+		limit = {
+			can_select_trait = hunter_killer
+		}
+		add_unit_leader_trait = hunter_killer
+	}
+	
+	if = {
+		limit = {
+			has_trait = hunter_killer
+		}
+		add_unit_leader_trait = spotter
+	}
+	if = {
+		limit = {
+			can_select_trait = spotter_II
+		}
+		add_unit_leader_trait = spotter_II
+	}
+	if = {
+		limit = {
+			can_select_trait = spotter_III
+		}
+		add_unit_leader_trait = spotter_III
+	}
+}
+ai_submarine_group_leader = {
+	add_unit_leader_trait = seawolf
+	if = {
+		limit = {
+			can_select_trait = seawolf_II
+		}
+		add_unit_leader_trait = seawolf_II
+	}
+	if = {
+		limit = {
+			can_select_trait = seawolf_III
+		}
+		add_unit_leader_trait = seawolf_III
+	}
+	
+	if = {
+		limit = {
+			has_trait = seawolf_III
+		}
+		add_unit_leader_trait = silent_hunter
+	}
+	if = {
+		limit = {
+			can_select_trait = loading_drill_master
+		}
+		add_unit_leader_trait = loading_drill_master
+	}
+}
+
+ai_clear_carrier_group_leader = {
+	remove_unit_leader_trait = air_controller
+	remove_unit_leader_trait = flight_deck_manager
+	remove_unit_leader_trait = fighter_director
+}
+ai_clear_battleship_group_leader = {
+	remove_unit_leader_trait = ironside
+	remove_unit_leader_trait = big_guns_expert
+	remove_unit_leader_trait = marksman
+	remove_unit_leader_trait = safety_first
+	remove_unit_leader_trait = crisis_magician
+}
+ai_clear_escort_group_leader = {
+	remove_unit_leader_trait = fleet_protector
+	remove_unit_leader_trait = destroyer_leader
+	remove_unit_leader_trait = hunter_killer
+	remove_unit_leader_trait = spotter
+	remove_unit_leader_trait = spotter_II
+	remove_unit_leader_trait = spotter_III
+}
+ai_clear_submarine_group_leader = {
+	remove_unit_leader_trait = seawolf
+	remove_unit_leader_trait = seawolf_II
+	remove_unit_leader_trait = seawolf_III
+	remove_unit_leader_trait = silent_hunter
+	remove_unit_leader_trait = loading_drill_master
+}
+	
+ai_max_iron_import = {
+	#temp variable ai_max_coal is available here
+	#it is equal to the amount of resources useable for resource production (no imports)
+	#it directly affect how many steel refineries the AI uses (which in turn will start importing if needed)
+	
+	set_temp_variable = { max_ic_import = num_owned_civilian_factories }
+	multiply_temp_variable = { max_ic_import = 0.2 }
+	# make it less likely to import a lot with high min_export as a lot of the steel will get wasted, and less with high CG
+	set_temp_variable = {m = 1.1}
+	subtract_from_temp_variable = {m = modifier@min_export}
+	set_temp_variable = { n = 1.1 }
+	subtract_from_temp_variable = {n= modifier@consumer_goods_expected_value}
+	multiply_temp_variable = {m = n}
+	#log = "[This.GetTag] | multiplier on imports [?m]"
+	multiply_temp_variable = {max_ic_import = m}
+
+	round_temp_variable = max_ic_import
+	
+	set_temp_variable = { max_iron_import = max_ic_import }
+	multiply_temp_variable = { max_iron_import = 32 }
+	
+	divide_temp_variable = { max_iron_import = iron_input }
+	add_to_temp_variable = {ai_max_iron = max_iron_import}
+}
+ai_max_coal_import = {
+	#temp variable ai_max_coal is available here
+	
+	set_temp_variable = { max_ic_import = num_owned_civilian_factories }
+	multiply_temp_variable = { max_ic_import = 0.15 }
+	# make it less likely to import a lot with high min_export as a lot of the steel will get wasted, and less with high CG
+	set_temp_variable = {m = 1.1}
+	subtract_from_temp_variable = {m = modifier@min_export}
+	set_temp_variable = { n = 1.1 }
+	subtract_from_temp_variable = {n= modifier@consumer_goods_expected_value}
+	multiply_temp_variable = {m = n}
+	multiply_temp_variable = {max_ic_import = m}
+
+	
+	set_temp_variable = { max_coal_import = max_ic_import }
+	multiply_temp_variable = { max_coal_import = 32 }
+	
+	
+	divide_temp_variable = { max_coal_import = coal_input }
+	add_to_temp_variable = {ai_max_coal = max_coal_import}
+}
+ai_max_bauxite_import = {
+	#temp variable ai_max_bauxite is available here
+	
+	set_temp_variable = { max_ic_import = num_owned_civilian_factories }
+	multiply_temp_variable = { max_ic_import = 0.4 }
+	# make it less likely to import a lot with high min_export as a lot of the alu will get wasted, and less with high CG
+	set_temp_variable = {m = 1.1}
+	subtract_from_temp_variable = {m = modifier@min_export}
+	set_temp_variable = { n = 1.1 }
+	subtract_from_temp_variable = {n= modifier@consumer_goods_expected_value}
+	multiply_temp_variable = {m = n}
+	multiply_temp_variable = {max_ic_import = m}
+
+	set_temp_variable = { max_bauxite_import = max_ic_import }
+	multiply_temp_variable = { max_bauxite_import = 32 }
+
+	divide_temp_variable = { max_bauxite_import = bauxite_input }
+	add_to_temp_variable = { ai_max_bauxite = max_bauxite_import }
+}
+d_ai_max_food_import = {
+	ai_max_food_import = yes
+}
+
+@BASE_RATIONS = 20
+@BASE_RATIONS_FROM_FOOD = 10
+ai_max_food_import = {
+	# set temp variable ai_max_food here, which is how many CIC the ai will use to import food
+	set_temp_variable = { update_frequency = 7 }
+	update_food_consumption = yes
+	
+	# Ai calc for imports
+	set_temp_variable = { food_target = food_usage }
+	multiply_temp_variable = { food_target = 1.07 } # try to import 7% more of the consumption
+	divide_temp_variable = { food_target = update_frequency?1 } # now its usage per day
+
+	# Calculate the amount of food needed to match the ration usage
+	subtract_from_temp_variable = { food_autarky = @BASE_RATIONS }
+	divide_temp_variable = { food_target = food_rations?10 }
+	multiply_temp_variable = { food_target = 1000 }
+
+	# Calculate national production. No imports.
+	set_temp_variable = { food_autarky = resource_produced@food }
+	add_to_temp_variable = { food_autarky = export_offset@food }
+	subtract_from_temp_variable = { food_autarky = resource_exported@food }
+
+	#log = "[This.GetTag] food target: [?food_target] | domestic production: [?food_autarky] | stockpile: [?food]"
+
+	if = {
+		limit = {
+			check_variable = { food_autarky > food_target } 
+		}
+		set_temp_variable = { ai_max_food = 0 } # don't import if there is enough autarky
+	}
+	else = {
+		subtract_from_temp_variable = { food_target = food_autarky } # After local production, how much do we need?
+
+		# How much stockpiled are we?
+		set_temp_variable = { bar = food }
+		divide_temp_variable = { bar = food_max }
+		#log =  "[This.GetName] Stockpile: [?bar|%]"
+		add_to_temp_variable = { bar = 1 } # bar ∈ [1,2]			
+		
+		# The more stockpile the less we want to import. Only above 35%
+		if = {
+			limit = {
+				check_variable = { bar > 1.35 }
+			}
+			divide_temp_variable = { food_target = bar }
+		}	
+		round_temp_variable = food_target		
+		set_temp_variable = { ai_max_food = food_target }
+	}
+	
+	#log = "[This.GetTag] needs extra [?ai_max_food] | is importing [?resource_imported@food]"	
+	#log = "-------------------------------------------------------------"
+}
+
+### AI GUI SCRIPTED EFFECTS
+
+d_ai_show_defence = {
+	if = {
+		limit = {
+			has_global_flag = ai_show_defence
+		}
+		clr_global_flag = ai_show_defence
+	}
+	else = {
+		set_global_flag = ai_show_defence
+	}
+}
+d_ai_show_advisor = {
+	if = {
+		limit = {
+			has_global_flag = ai_show_advisor
+		}
+		clr_global_flag = ai_show_advisor
+	}
+	else = {
+		set_global_flag = ai_show_advisor
+	}
+}
+d_ai_show_strategy = {
+	if = {
+		limit = {
+			has_global_flag = ai_show_strategy
+		}
+		clr_global_flag = ai_show_strategy
+	}
+	else = {
+		set_global_flag = ai_show_strategy
+	}
+}
+
+ai_update_air_production_UI  = {
+  set_variable = { ai_own_fighter_strength_ui = ai_own_fighter_strength }
+  set_variable = { ai_CAS_num_ui = ai_CAS_num }
+  set_variable = { ai_TAC_num_ui = ai_TAC_num }
+  set_variable = { ai_STRAT_num_ui = ai_STRAT_num }
+  set_variable = { ai_fighter_target_buffer_ui = ai_fighter_target_buffer } 
+  set_variable = { ai_enemy_fighter_strength_ui = ai_enemy_fighter_strength }
+  set_variable = { ai_CAS_weight_factor_ui = ai_CAS_weight_factor }
+  set_variable = { ai_TAC_weight_factor_ui = ai_TAC_weight_factor }
+  set_variable = { ai_STRAT_weight_factor_ui = ai_STRAT_weight_factor }
+  set_variable = { ai_enemy_fighter_ratio_cap_ui = ai_enemy_fighter_ratio_cap }
+  set_variable = { ai_max_weight_factor_ui = ai_max_weight_factor }
+  set_variable = { ai_fighter_buffer_ratio_ui = ai_fighter_buffer_ratio }
+}
+
+ai_clear_air_production_UI  = {
+  clear_variable = ai_own_fighter_strength_ui
+  clear_variable = ai_CAS_num_ui
+  clear_variable = ai_TAC_num_ui
+  clear_variable = ai_STRAT_num_ui
+  clear_variable = ai_fighter_target_buffer_ui
+  clear_variable = ai_enemy_fighter_strength_ui
+  clear_variable = ai_CAS_weight_factor_ui
+  clear_variable = ai_TAC_weight_factor_ui
+  clear_variable = ai_STRAT_weight_factor_ui 
+  clear_variable = ai_enemy_fighter_ratio_cap_ui
+  clear_variable = ai_max_weight_factor_ui
+  clear_variable = ai_fighter_buffer_ratio_ui
+}
+ai_check_piercing_value = {
+ 
+	set_temp_variable = { ai_max_piercing = 0 }
+
+	set_temp_variable = { temp = 64 }
+	add_to_temp_variable = { temp = ai_max_piercing }
+	if = { 
+		limit = { 
+			meta_trigger = {
+				text = {
+					estimated_intel_max_piercing = { tag = THIS value > [x] }
+				}
+				x = "[?temp|.0]"
+			}
+		}
+		add_to_temp_variable = { ai_max_piercing = 64 }
+	} 
+	
+	set_temp_variable = { temp = 32 }
+	add_to_temp_variable = { temp = ai_max_piercing }
+	if = { 
+		limit = { 
+			meta_trigger = {
+				text = {
+					estimated_intel_max_piercing = { tag = THIS value > [x] }
+				}
+				x = "[?temp|.0]"
+			}
+		}
+		add_to_temp_variable = { ai_max_piercing = 32 }
+	} 
+    
+	set_temp_variable = { temp = 16 }
+	add_to_temp_variable = { temp = ai_max_piercing }
+	if = { 
+		limit = { 
+			meta_trigger = {
+				text = {
+					estimated_intel_max_piercing = { tag = THIS value > [x] }
+				}
+				x = "[?temp|.0]"
+			}
+		}
+		add_to_temp_variable = { ai_max_piercing = 16 }
+	} 
+    
+	set_temp_variable = { temp = 8 }
+	add_to_temp_variable = { temp = ai_max_piercing }
+	if = { 
+		limit = { 
+			meta_trigger = {
+				text = {
+					estimated_intel_max_piercing = { tag = THIS value > [x] }
+				}
+				x = "[?temp|.0]"
+			}
+		}
+		add_to_temp_variable = { ai_max_piercing = 8 }
+	} 
+    
+	set_temp_variable = { temp = 4 }
+	add_to_temp_variable = { temp = ai_max_piercing }
+	if = { 
+		limit = { 
+			meta_trigger = {
+				text = {
+					estimated_intel_max_piercing = { tag = THIS value > [x] }
+				}
+				x = "[?temp|.0]"
+			}
+		}
+		add_to_temp_variable = { ai_max_piercing = 4 }
+	} 
+    
+	set_temp_variable = { temp = 2 }
+	add_to_temp_variable = { temp = ai_max_piercing }
+	if = { 
+		limit = { 
+			meta_trigger = {
+				text = {
+					estimated_intel_max_piercing = { tag = THIS value > [x] }
+				}
+				x = "[?temp|.0]"
+			}
+		}
+		add_to_temp_variable = { ai_max_piercing = 2 }
+	} 
+    
+	set_temp_variable = { temp = 1 }
+	add_to_temp_variable = { temp = ai_max_piercing }
+	if = { 
+		limit = { 
+			meta_trigger = {
+				text = {
+					estimated_intel_max_piercing = { tag = THIS value > [x] }
+				}
+				x = "[?temp|.0]"
+			}
+		}
+		add_to_temp_variable = { ai_max_piercing = 1 }
+	} 
+    
+	#log = "[?ai_max_piercing] MAX PIERCING"
+}
+
+ai_check_enemy_armor_value = {
+
+	if = {
+		limit = {
+			any_neighbor_country = {
+				ROOT = { estimated_intel_max_armor = { tag = PREV value > 3 } }
+			}
+		}
+			
+		set_temp_variable = { ai_max_neighbor_armor = 0 }
+
+		set_temp_variable = { temp = 64 }
+		add_to_temp_variable = { temp = ai_max_neighbor_armor }
+		if = { 
+			limit = { 
+				meta_trigger = {
+					text = {
+						any_neighbor_country = { 
+							ROOT = { estimated_intel_max_armor = { tag = PREV value > [x] } } 
+						}
+					}
+					x = "[?temp|.0]"
+				}
+			}
+			add_to_temp_variable = { ai_max_neighbor_armor = 64 }
+		} 
+		
+		set_temp_variable = { temp = 32 }
+		add_to_temp_variable = { temp = ai_max_neighbor_armor }
+		if = { 
+			limit = { 
+				meta_trigger = {
+					text = {
+						any_neighbor_country = { 
+							ROOT = { estimated_intel_max_armor = { tag = PREV value > [x] } } 
+						}
+					}
+					x = "[?temp|.0]"
+				}
+			}
+			add_to_temp_variable = { ai_max_neighbor_armor = 32 }
+		} 
+		
+		set_temp_variable = { temp = 16 }
+		add_to_temp_variable = { temp = ai_max_neighbor_armor }
+		if = { 
+			limit = { 
+				meta_trigger = {
+					text = {
+						any_neighbor_country = { 
+							ROOT = { estimated_intel_max_armor = { tag = PREV value > [x] } } 
+						}
+					}
+					x = "[?temp|.0]"
+				}
+			}
+			add_to_temp_variable = { ai_max_neighbor_armor = 16 }
+		} 
+		
+		set_temp_variable = { temp = 8 }
+		add_to_temp_variable = { temp = ai_max_neighbor_armor }
+		if = { 
+			limit = { 
+				meta_trigger = {
+					text = {
+						any_neighbor_country = { 
+							ROOT = { estimated_intel_max_armor = { tag = PREV value > [x] } } 
+						}
+					}
+					x = "[?temp|.0]"
+				}
+			}
+			add_to_temp_variable = { ai_max_neighbor_armor = 8 }
+		} 
+		
+		set_temp_variable = { temp = 4 }
+		add_to_temp_variable = { temp = ai_max_neighbor_armor }
+		if = { 
+			limit = { 
+				meta_trigger = {
+					text = {
+						any_neighbor_country = { 
+							ROOT = { estimated_intel_max_armor = { tag = PREV value > [x] } } 
+						}
+					}
+					x = "[?temp|.0]"
+				}
+			}
+			add_to_temp_variable = { ai_max_neighbor_armor = 4 }
+		} 
+		
+		set_temp_variable = { temp = 2 }
+		add_to_temp_variable = { temp = ai_max_neighbor_armor }
+		if = { 
+			limit = { 
+				meta_trigger = {
+					text = {
+						any_neighbor_country = { 
+							ROOT = { estimated_intel_max_armor = { tag = PREV value > [x] } } 
+						}
+					}
+					x = "[?temp|.0]"
+				}
+			}
+			add_to_temp_variable = { ai_max_neighbor_armor = 2 }
+		} 
+		
+		set_temp_variable = { temp = 1 }
+		add_to_temp_variable = { temp = ai_max_neighbor_armor }
+		if = { 
+			limit = { 
+				meta_trigger = {
+					text = {
+						any_neighbor_country = { 
+							ROOT = { estimated_intel_max_armor = { tag = PREV value > [x] } } 
+						}
+					}
+					x = "[?temp|.0]"
+				}
+			}
+			add_to_temp_variable = { ai_max_neighbor_armor = 1 }
+		} 
+		
+	}
+	
+	
+	
+	####################################################################################
+	
+	if = {
+		limit = {
+			has_war = yes 
+		}
+		
+		set_temp_variable = { temp = 64 }
+		add_to_temp_variable = { temp = ai_max_enemy_armor }
+		if = { 
+			limit = { 
+				meta_trigger = {
+					text = {
+						any_enemy_country = { ROOT = { estimated_intel_max_armor = { tag = PREV value > [x] } } }
+					}
+					x = "[?temp|.0]"
+				}
+			}
+			add_to_temp_variable = { ai_max_enemy_armor = 64 }
+		} 
+		
+		set_temp_variable = { temp = 32 }
+		add_to_temp_variable = { temp = ai_max_enemy_armor }
+		if = { 
+			limit = { 
+				meta_trigger = {
+					text = {
+						any_enemy_country = { ROOT = { estimated_intel_max_armor = { tag = PREV value > [x] } } }
+					}
+					x = "[?temp|.0]"
+				}
+			}
+			add_to_temp_variable = { ai_max_enemy_armor = 32 }
+		} 
+		
+		set_temp_variable = { temp = 16 }
+		add_to_temp_variable = { temp = ai_max_enemy_armor }
+		if = { 
+			limit = { 
+				meta_trigger = {
+					text = {
+						any_enemy_country = { ROOT = { estimated_intel_max_armor = { tag = PREV value > [x] } } }
+					}
+					x = "[?temp|.0]"
+				}
+			}
+			add_to_temp_variable = { ai_max_enemy_armor = 16 }
+		} 
+		
+		set_temp_variable = { temp = 8 }
+		add_to_temp_variable = { temp = ai_max_enemy_armor }
+		if = { 
+			limit = { 
+				meta_trigger = {
+					text = {
+						any_enemy_country = { ROOT = { estimated_intel_max_armor = { tag = PREV value > [x] } } }
+					}
+					x = "[?temp|.0]"
+				}
+			}
+			add_to_temp_variable = { ai_max_enemy_armor = 8 }
+		} 
+		
+		set_temp_variable = { temp = 4 }
+		add_to_temp_variable = { temp = ai_max_enemy_armor }
+		if = { 
+			limit = { 
+				meta_trigger = {
+					text = {
+						any_enemy_country = { ROOT = { estimated_intel_max_armor = { tag = PREV value > [x] } } }
+					}
+					x = "[?temp|.0]"
+				}
+			}
+			add_to_temp_variable = { ai_max_enemy_armor = 4 }
+		} 
+		
+		set_temp_variable = { temp = 2 }
+		add_to_temp_variable = { temp = ai_max_enemy_armor }
+		if = { 
+			limit = { 
+				meta_trigger = {
+					text = {
+						any_enemy_country = { ROOT = { estimated_intel_max_armor = { tag = PREV value > [x] } } }
+					}
+					x = "[?temp|.0]"
+				}
+			}
+			add_to_temp_variable = { ai_max_enemy_armor = 2 }
+		} 
+		
+		set_temp_variable = { temp = 1 }
+		add_to_temp_variable = { temp = ai_max_enemy_armor }
+		if = { 
+			limit = { 
+				meta_trigger = {
+					text = {
+						any_enemy_country = { ROOT = { estimated_intel_max_armor = { tag = PREV value > [x] } } }
+					}
+					x = "[?temp|.0]"
+				}
+			}
+			add_to_temp_variable = { ai_max_enemy_armor = 1 }
+		} 
+		
+	}
+	
+	#log = "[?ai_max_neighbor_armor] MAX NEIGHBOR ARMOR"
+	#log = "[?ai_max_enemy_armor] MAX ENEMY ARMOR"
+	
+	if = {
+		limit = {
+			check_variable = { ai_max_enemy_armor > ai_max_piercing }
+		}
+		set_country_flag = ai_superior_enemy_armor
+	}
+	else = {
+		clr_country_flag = ai_superior_enemy_armor
+	}
+	
+	if = {
+		limit = {
+			check_variable = { ai_max_neighbor_armor > ai_max_piercing }
+		}
+		set_country_flag = ai_superior_neighbor_armor
+	}
+	else = {
+		clr_country_flag = ai_superior_neighbor_armor
+	}
+	
+	
+}
+
+
+### OTHER
+
+d_all_research = {
+	every_country = {
+		add_research_slot = -10
+	}
+}
+
+d_all_advisors = {
+	every_country = {
+		every_character = {
+			remove_advisor_roles = yes
+		}
+	}
+}
+
+d_count_unit_leaders = {
+	every_country = {
+		set_temp_variable = { total_army_leaders = 0 }
+		set_temp_variable = { total_navy_leaders = 0 }
+		every_army_leader = {
+			add_to_temp_variable = { total_army_leaders = 1 }
+		}
+		set_temp_variable = { total_navy_leaders = 1 }
+		every_navy_leader = {
+			add_to_temp_variable = { total_navy_leaders = 1 }
+		}
+		log = "[This.GetTag] | [?total_army_leaders] TOTAL ARMY LEADER"
+		log = "[This.GetTag] | [?total_navy_leaders] TOTAL NAVY LEADER"
+			
+		add_to_temp_variable = { total_total_army_leaders = total_army_leaders }
+		add_to_temp_variable = { total_total_navy_leaders = total_navy_leaders }
+	}
+	
+		log = "[?total_total_army_leaders] total_total_army_leaders"
+		log = "[?total_total_navy_leaders] total_total_navy_leaders"
+			
+}
+d_count_research = {
+	set_temp_variable = { total_research = 0 }
+	every_country = {
+		add_to_temp_variable = { total_research = amount_research_slots }
+		log = "[This.GetTag] | [?amount_research_slots] SLOTS"
+	}
+		log = " "
+		log = "[?total_research] Research Slots"
+			
+}
+d_count_units = {
+	set_temp_variable = { total_units = 0 }
+	every_country = {
+		add_to_temp_variable = { total_units = num_divisions }
+		log = "[This.GetTag] | [?num_divisions] UNITS"
+	}
+		log = " "
+		log = "[?total_units] Units"
+}
+
+d_remove_opinion = {
+	every_country = {
+		every_other_country = {
+			remove_opinion_modifier = {
+				target = PREV
+				modifier = same_government
+			}
+			remove_opinion_modifier = {
+				target = PREV
+				modifier = similar_government
+			}
+			remove_opinion_modifier = {
+				target = PREV
+				modifier = different_government
+			}
+			PREV = {
+				remove_opinion_modifier = {
+					target = PREV
+					modifier = same_government
+				}
+				remove_opinion_modifier = {
+					target = PREV
+					modifier = similar_government
+				}
+				remove_opinion_modifier = {
+					target = PREV
+					modifier = different_government
+				}
+			}
+		}
+	}
+}
+d_ai_update_unit_leader_storage = {
+	if = {
+		limit = {
+			has_country_flag = ai_use_unit_leader_storage
+		}
+		
+		if = {
+			limit = { check_variable = { global.unit_leader_traits^num = 0 } }
+			set_temp_variable = { start_value = token:army_war_games }
+			set_temp_variable = { end_value = token:Purple_Heart }
+			clear_temp_array = unit_leader_traits
+			for_loop_effect = {
+				start = start_value
+				end = end_value
+				
+				add_to_array = { global.unit_leader_traits = v }
+			}
+		}
+		
+		if = {
+			limit = {
+				has_war = no
+			}
+			
+			random_army_leader = {
+				set_unit_leader_flag = { flag = stay value = 1 days = 1 }
+			}
+			random_navy_leader = {
+				set_unit_leader_flag = { flag = stay value = 1 days = 1 }
+			}
+			
+			if = {
+				limit = {
+					check_variable = { army_leaders^num > 1 }
+				}
+				every_army_leader = {
+					limit = { NOT = { has_unit_leader_flag = stay } }
+					ai_store_unit_leader_data_in_character = yes
+				}
+			}
+			if = {
+				limit = {
+					check_variable = { navy_leaders^num > 1 }
+				}
+				every_navy_leader = {
+					limit = { NOT = { has_unit_leader_flag = stay } }
+					ai_store_unit_leader_data_in_character = yes
+				}
+			}
+			
+			set_country_flag = ai_stored_leaders
+			
+			if = { limit = { NOT = { has_idea = ai_no_unit_leader } }
+				add_ideas = ai_no_unit_leader
+			}
+			
+		}
+		
+		else_if = {
+			limit = { has_country_flag = ai_stored_leaders }
+			
+			clr_country_flag = ai_stored_leaders
+			every_character = {
+				ai_extract_unit_leader_data_in_character = yes
+			}
+		}
+	}
+}		
+
+d_all_unit_leaders = {
+	every_country = {
+		every_unit_leader = {
+		
+			add_to_temp_variable = { total_num = 1 }
+			
+			if = {
+				limit = {
+					is_assigned = no
+				}
+				remove_unit_leader = yes
+				add_to_temp_variable = { num_retire = 1 }
+			}
+		}
+	}
+	log = "[?total_num] total_num"
+	log = "[?num_retire] num_retire"
+}
+
+
+ai_store_unit_leader_data_in_character = {
+	
+	character = {
+			
+		for_each_loop = {
+			array = unit_leader_traits
+			
+			if = {
+				limit = {
+					meta_trigger = {
+						text = {
+							has_trait = [X]
+						}
+						X = "[?v.GetTokenKey]"
+					}
+				}
+				add_to_array = { traits = v }
+			}
+		}
+		
+		set_variable = { unit_leader_skill = PREV.skill }
+		if = {
+			limit = {
+				is_army_leader = yes
+			}
+			set_character_flag = is_army_leader
+			
+			if = { #is field marshal
+				limit = { is_field_marshal = yes }
+				set_character_flag = is_field_marshal
+			}
+			
+			set_variable = { unit_leader_attack = PREV.attack_level }
+			set_variable = { unit_leader_defense = PREV.defense_level }
+			set_variable = { unit_leader_logistic = PREV.logistics_level }
+			set_variable = { unit_leader_planning = PREV.planning_level }
+		}
+		else_if = {
+			limit = {
+				is_navy_leader = yes
+			}
+			set_character_flag = is_navy_leader
+			
+			set_variable = { unit_leader_attack = PREV.attack_level }
+			set_variable = { unit_leader_defense = PREV.defense_level }
+			set_variable = { unit_leader_maneuver = PREV.maneuvering_level }
+			set_variable = { unit_leader_coordination = PREV.coordination_level }
+		}
+		
+		remove_unit_leader_role = yes
+	}
+			
+}
+
+ai_extract_unit_leader_data_in_character = {
+	if = {
+		limit = {
+			has_character_flag = is_field_marshal
+		}
+		meta_effect = {
+			text = {
+				add_field_marshal_role = {
+				  skill = [S]
+				  attack_skill = [A]
+				  defense_skill = [D]
+				  planning_skill = [P]
+				  logistics_skill = [L]
+				}
+			}
+			S = "[?unit_leader_skill]"
+			A = "[?unit_leader_attack]"
+			D = "[?unit_leader_defense]"
+			L = "[?unit_leader_logistic]"
+			P = "[?unit_leader_planning]"
+		}
+	}
+	else_if = {
+		limit = {
+			has_character_flag = is_army_leader
+		}
+		meta_effect = {
+			text = {
+				add_corps_commander_role = {
+				  skill = [S]
+				  attack_skill = [A]
+				  defense_skill = [D]
+				  planning_skill = [P]
+				  logistics_skill = [L]
+				}
+			}
+			S = "[?unit_leader_skill]"
+			A = "[?unit_leader_attack]"
+			D = "[?unit_leader_defense]"
+			L = "[?unit_leader_logistic]"
+			P = "[?unit_leader_planning]"
+		}
+	}
+	else_if = {
+		limit = {
+			has_character_flag = is_navy_leader
+		}
+		meta_effect = {
+			text = {
+				add_naval_commander_role = {
+				  skill = [S]
+				  attack_skill = [A]
+				  defense_skill = [D]
+				  maneuvering_skill = [M]
+				  coordination_skill = [C]
+				}
+			}
+			S = "[?unit_leader_skill]"
+			A = "[?unit_leader_attack]"
+			D = "[?unit_leader_defense]"
+			M = "[?unit_leader_maneuver]"
+			C = "[?unit_leader_coordination]"
+		}
+	}
+	
+	clear_variable = unit_leader_skill
+	clear_variable = unit_leader_attack
+	clear_variable = unit_leader_defense
+	clear_variable = unit_leader_logistic
+	clear_variable = unit_leader_planning
+	clear_variable = unit_leader_maneuver
+	clear_variable = unit_leader_coordination
+	
+	for_each_loop = {
+		array = traits
+		
+		meta_effect = {
+			text = {
+				add_unit_leader_trait = [X]
+			}
+			X = "[?v.GetTokenKey]"
+		}
+	}
+	clear_array = traits
+}
+
+
+d_ai_track_construction = {
+	if = {
+		limit = {
+			has_global_flag = ai_track_construction
+		}
+		clr_global_flag = ai_track_construction
+		log = "Stop tracking Construction queue"
+	}
+	else = {
+		set_global_flag = ai_track_construction
+		log = "Start tracking Construction queue"
+	}
+}
+d_ai_track_researched_techs = {
+	if = {
+		limit = {
+			has_global_flag = ai_track_researched_techs
+		}
+		clr_global_flag = ai_track_researched_techs
+		log = "Stop tracking researched techs"
+	}
+	else = {
+		set_global_flag = ai_track_researched_techs
+		log = "Start tracking researched techs"
+	}
+}
+d_ai_track_extra_fighter_production = {
+	if = {
+		limit = {
+			has_global_flag = ai_track_extra_fighter_production
+		}
+		clr_global_flag = ai_track_extra_fighter_production
+		log = "Stop tracking Extra Fighter Production"
+	}
+	else = {
+		set_global_flag = ai_track_extra_fighter_production
+		log = "Start tracking Extra Fighter Production"
+	}
+}
+
+d_ai_track_advisors = {
+	if = {
+		limit = {
+			has_global_flag = ai_track_advisors
+		}
+		clr_global_flag = ai_track_advisors
+		log = "Stop tracking Advisor picks"
+	}
+	else = {
+		set_global_flag = ai_track_advisors
+		log = "Start tracking Advisor picks"
+	}
+}
+
+d_ai_track_all = {
+	set_global_flag = ai_track_construction
+	set_global_flag = ai_track_researched_techs
+	set_global_flag = ai_track_extra_fighter_production
+	set_global_flag = ai_track_advisors
+	log = "Start tracking all"
+}
+
+ai_update_agency_strategies = {
+	if = {
+		limit = {
+			has_dlc = "La Resistance"
+		}
+			
+		if = {
+			limit = { #strategies for when ai already has an agency
+				has_intelligence_agency = yes 
+			}
+			
+			# has agency already, calculate IC to assign
+			
+			#ai_upgrade_intelligence_agency
+			
+			if = { # enable
+				limit = {
+					NOT = { has_country_flag = ai_upgrade_intelligence_agency }
+					date > 1940.1.1
+					num_of_civilian_factories > 125
+				}
+				set_country_flag = ai_upgrade_intelligence_agency
+				add_ai_strategy = {
+					type = intelligence_agency_usable_factories
+					value = 5
+				}
+			}
+			else_if = { #abort
+				limit = {
+					has_country_flag = ai_upgrade_intelligence_agency
+					num_of_civilian_factories < 120
+				}
+				clr_country_flag = ai_upgrade_intelligence_agency
+				add_ai_strategy = {
+					type = intelligence_agency_usable_factories
+					value = -5
+				}
+			}
+			
+			#ai_upgrade_intelligence_agency_as_spy_master
+			
+			if = { # enable
+				limit = {
+					NOT = { has_country_flag = ai_upgrade_intelligence_agency_as_spy_master }
+					is_spymaster = yes
+					num_of_civilian_factories > 150
+				}
+				set_country_flag = ai_upgrade_intelligence_agency_as_spy_master
+				add_ai_strategy = {
+					type = intelligence_agency_usable_factories
+					value = 5
+				}
+			}
+			else_if = { #abort
+				limit = {
+					has_country_flag = ai_upgrade_intelligence_agency_as_spy_master
+					OR = {
+						is_spymaster = no
+						num_of_civilian_factories < 140
+					}
+				}
+				clr_country_flag = ai_upgrade_intelligence_agency_as_spy_master
+				add_ai_strategy = {
+					type = intelligence_agency_usable_factories
+					value = -5
+				}
+			}
+			
+			#ai_more_upgrades_as_spymaster
+			
+			if = { # enable
+				limit = {
+					NOT = { has_country_flag = ai_more_upgrades_as_spymaster }
+					is_spymaster = yes
+				}
+				set_country_flag = ai_more_upgrades_as_spymaster
+				add_ai_strategy = {
+					type = agency_ai_base_num_factories_factor
+					value = -50
+				}
+				add_ai_strategy = {
+					type = agency_ai_per_upgrade_factories_factor
+					value = -25
+				}
+			}
+			else_if = { #abort
+				limit = {
+					has_country_flag = ai_more_upgrades_as_spymaster
+					is_spymaster = no
+				}
+				clr_country_flag = ai_more_upgrades_as_spymaster
+				add_ai_strategy = {
+					type = agency_ai_base_num_factories_factor
+					value = 50
+				}
+				add_ai_strategy = {
+					type = agency_ai_per_upgrade_factories_factor
+					value = 25
+				}
+			}
+		}
+		
+		else_if = { # strategy to create an agency
+			limit = {
+				NOT = { has_country_flag = ai_create_agency }
+				ai_can_form_agency = yes
+			}
+			
+			set_country_flag = ai_create_agency
+			add_ai_strategy = {
+				type = intelligence_agency_usable_factories
+				value = 5
+			}
+		
+		}
+	}
+}
+
+ai_templates_on_startup = {
+	if = {
+		limit = {
+			tag = AFG
+		}
+		delete_unit_template_and_units = { division_template = "Militia" disband = yes }
+	}
+	else_if = {
+		limit = {
+			tag = SWI
+		}
+		delete_unit_template_and_units = { division_template = "Grenzbrigade" disband = yes }
+	}
+}
+
+ui_show_ai_army_production = {
+	clear_array = ROOT.selected_ai_roles
+	var:ROOT.targeted_country = {
+		for_each_loop = {
+			array = ai_roles
+			
+			add_to_array = { ROOT.selected_ai_roles = v }
+		}
+	}
+}
+ui_show_ai_air_production = {
+	clear_array = ROOT.selected_ai_roles
+	var:ROOT.targeted_country = {
+		for_each_loop = {
+			array = ai_air_production
+			
+			add_to_array = { ROOT.selected_ai_roles = v }
+		}
+	}
+}
+ui_show_ai_navy_production = {
+	clear_array = ROOT.selected_ai_roles
+	var:ROOT.targeted_country = {
+		for_each_loop = {
+			array = ai_ship_roles
+			
+			if = {
+				limit = {
+					check_variable = { ai_ship_need@var:v > 0 }
+				}
+				add_to_array = { ROOT.selected_ai_roles = v }
+			}
+		}
+	}
+}
+
+ui_increase_ai_role_flat_click = {
+	if = {
+		limit = {
+			has_country_flag = ui_show_ai_navy_production
+		}
+		var:ROOT.targeted_country = {
+			add_to_variable = { ui_ai_ship_need@var:v = amount }
+		}
+	}
+	else_if = {
+		limit = {
+			has_country_flag = ui_show_ai_air_production
+		}
+		var:ROOT.targeted_country = {
+			add_to_variable = { ui_ai_air_need@var:v = amount }
+		}
+	}
+	else = {
+		var:ROOT.targeted_country = {
+			add_to_variable = { ui_ai_unit_need@var:v = amount }
+		}
+	}
+}
+ui_increase_ai_role_factor_click = {
+	if = {
+		limit = {
+			has_country_flag = ui_show_ai_navy_production
+		}
+		var:ROOT.targeted_country = {
+			add_to_variable = { ui_ai_ship_need_mult@var:v = amount }
+		}
+	}
+	else_if = {
+		limit = {
+			has_country_flag = ui_show_ai_air_production
+		}
+		var:ROOT.targeted_country = {
+			add_to_variable = { ui_ai_air_need_mult@var:v = amount }
+		}
+	}
+	else = {
+		var:ROOT.targeted_country = {
+			add_to_variable = { ui_ai_unit_need_mult@var:v = amount }
+		}
+	}
+}
+THIS_give_market_access_to_PREV = {
+	give_market_access = PREV
+	PREV = {
+		meta_effect = {
+			text = {
+				add_ai_strategy = {
+					type = diplo_action_desire
+					id = [X]
+					target = equipment_market_trade_desire
+					value = 60
+				}
+			}
+			X = "[Prev.GetTag]"
+		}
+	}
+	meta_effect = {
+		text = {
+			add_ai_strategy = {
+				type = diplo_action_desire
+				id = [X]
+				target = equipment_market_trade_desire
+				value = 60
+			}
+		}
+		X = "[Prev.GetTag]"
+	}
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,396 @@
+scripted_gui = {
+
+	BI_political_party_container = {
+		context_type = player_context
+		    
+		window_name = "BI_political_party_container"
+		parent_window_name = political_party_hook
+		
+		dynamic_lists = {
+			party_list = {
+				array = global.ideology_groups
+				change_scope = yes
+				entry_container = "political_party_iteration"
+			}
+		}
+		
+		dirty = ui_selected_law
+		
+		properties = {
+			status = {
+				frame = status
+			}
+			status_opp = {
+				frame = status_opp
+			}
+		}
+		
+		triggers = { 
+			drift_visible = {
+				check_variable = { current_party_ideology_group = v }
+			}
+			drift_opp_visible = {
+				NOT = { check_variable = { current_party_ideology_group = v } }
+			}
+			status_visible = {
+				check_variable = { current_party_ideology_group = v }
+				NOT = { check_variable = { last_change@var:v = 0 }  }
+				
+				if = {
+					limit = {
+						check_variable = { last_change@var:v > 0 }
+					}
+					set_temp_variable = { status = 2 } #increase
+				}
+				else = { 
+					set_temp_variable = { status = 3 } #decrease
+				}
+			}
+			status_opp_visible = {
+				NOT = { 
+					check_variable = { current_party_ideology_group = v } 
+					check_variable = { last_change@var:v = 0 } 
+				}
+				
+				if = {
+					limit = {
+						check_variable = { last_change@var:v > 0 }
+					}
+					set_temp_variable = { status_opp = 4 } #increase red
+				}
+				else = {
+					set_temp_variable = { status_opp = 1 } #decrease green
+				}
+			}
+			banned_visible = {
+				meta_trigger = {
+					text = {
+						has_country_flag = party_banned@[X]
+					}
+					X = "[?v.GetTokenKey]"
+				}
+			}
+			ruling_visible = {
+				check_variable = { current_party_ideology_group = v }
+			}
+		}
+		
+		effects = { 
+			drift_click = {
+				if = {
+					limit = {
+						NOT = { check_variable = { drift = 0 } }
+					}
+					custom_effect_tooltip = "party_drift_drift_tooltip"
+				}
+				if = {
+					limit = {
+						NOT = { check_variable = { ruling = 0 } }
+					}
+					custom_effect_tooltip = "party_drift_ruling_tooltip"
+				}
+				if = {
+					limit = {
+						NOT = { check_variable = { num_advisor@var:v = 0 } }
+					}
+					custom_effect_tooltip = "party_drift_advisor_tooltip"
+				}
+			}
+			drift_opp_click = {
+				if = {
+					limit = {
+						NOT = { check_variable = { drift = 0 } }
+					}
+					custom_effect_tooltip = "party_drift_drift_opposition_tooltip"
+				}
+				if = {
+					limit = {
+						NOT = { check_variable = { ruling = 0 } }
+					}
+					custom_effect_tooltip = "party_drift_ruling_opposition_tooltip"
+				}
+				if = {
+					limit = {
+						NOT = { check_variable = { num_advisor@var:v = 0 } }
+					}
+					custom_effect_tooltip = "party_drift_advisor_opposition_tooltip"
+				}
+				if = {
+					limit = {
+						NOT = { check_variable = { banned_drift@var:v = 0 } }
+					} 
+					custom_effect_tooltip = "party_banned_tooltip"
+				}
+				if = {
+					limit = {
+						is_in_array = { party_banned = v }
+					} 
+					custom_effect_tooltip = "party_banned_tooltip_text"
+				}
+			}
+		}
+	}
+        
+	BI_politics_tab = {
+		context_type = player_context
+		    
+		window_name = "BI_politics_tab"
+		parent_window_token = politics_tab
+        
+		visible = {
+		
+		}
+		    
+		#dirty = BI_politics_update
+			
+		effects = {
+			civ_fuel_background_click = {
+				MTT_get_civilian_fuel_use = yes
+			}
+			
+			allied_anger_test_click = { 
+				custom_effect_tooltip = allied_anger_TT_0				
+				custom_effect_tooltip = allied_anger_TT_1
+
+			} 
+		}
+		
+		triggers = {
+			no_faction_text_visible = {
+				is_in_faction = no 
+			}
+			civ_fuel_background_click_enabled = {
+				set_temp_variable = { daily_fuel = civilian_fuel_use }
+				multiply_temp_variable = { daily_fuel = 24 }
+			}
+			
+			allied_anger_bg_visible = {
+				has_country_flag = allied_anger_visible
+			}
+			allied_anger_visible = {
+				has_country_flag = allied_anger_visible
+			}
+			allied_anger_text_visible = {
+				has_country_flag = allied_anger_visible
+			}
+		}
+	}
+	
+	initialize_politics_tab = {
+		context_type = player_context
+		    
+		window_name = "politics_tab_overlay"
+		parent_window_token = politics_tab
+         
+		dirty = ui_overlay
+			
+		effects = {
+			button_click = {
+				add_to_variable = { ui_selected_law = 1 }
+			
+				set_variable = { ui_overlay = global.date }
+			}
+		}
+		
+		triggers = {
+			button_visible = {
+				NOT = { check_variable = { ui_overlay = global.date } }
+				set_temp_variable = { t = ui_overlay }
+				add_to_temp_variable = { t = 0.001  }
+				NOT = { check_variable = { t = global.date } }
+			}
+			text_visible = {
+				NOT = { check_variable = { ui_overlay = global.date } }
+				set_temp_variable = { t = ui_overlay }
+				add_to_temp_variable = { t = 0.001  }
+				NOT = { check_variable = { t = global.date } }
+			}
+		}
+	}
+	
+	initialize_refinery_tab = {
+		context_type = player_context
+		    
+		window_name = "refinery_tab_overlay"
+		parent_scripted_gui = BI_resource_conversion_window
+         
+		dirty = ui_refinery_overlay
+			
+		effects = {
+			button_click = {
+			
+				set_variable = { ui_refinery_overlay = global.date }
+				add_to_variable = { ui_refinery = 1 }
+			}  
+		}
+		
+		triggers = {
+			button_visible = {
+				NOT = { check_variable = { ui_refinery_overlay = global.date } }
+				set_temp_variable = { t = ui_refinery_overlay }
+				add_to_temp_variable = { t = 0.001  }
+				NOT = { check_variable = { t = global.date } }
+
+			}
+			text_visible = {
+				NOT = { check_variable = { ui_refinery_overlay = global.date } }
+				set_temp_variable = { t = ui_refinery_overlay }
+				add_to_temp_variable = { t = 0.001  }
+				NOT = { check_variable = { t = global.date } }
+			}
+		}
+	}
+	BI_allied_anger = {
+		context_type = player_context
+		    
+		window_name = "BI_allied_anger_container"
+		parent_window_token = national_focus
+		
+		visible = {
+			has_country_flag = debug_allied_anger
+		}
+		
+		dynamic_lists = {
+			allied_anger_list = {
+				array = allied_anger
+				change_scope = yes
+				entry_container = "allied_anger_entry"
+			}
+		}
+		
+		properties = {
+			trait = {
+				x = x
+				y = y
+				frame = trait_frame
+			}
+			icon = {
+				x = x_icon
+				y = y_icon
+			}
+			name = {
+				x = x_name
+				y = y_name
+			}
+		}
+		
+		effects = {
+			trait_click = {
+				if = {
+					limit = {
+						meta_trigger = {
+							text = {
+								has_country_flag = [V]
+							}
+							V = "[?v.GetTokenKey]"
+						}
+					}
+					effect_tooltip = {
+						meta_effect = {
+							text = {
+								[V] = yes
+							}
+							V = "[?v.GetTokenKey]"
+						}
+					}
+				}
+				else = {
+					meta_effect = {
+						text = {
+							[V] = yes
+							set_country_flag = [V]
+						}
+						V = "[?v.GetTokenKey]"
+					}
+				}
+			}
+		}
+		
+		triggers = {
+			enter_click_enabled = {
+				add_to_temp_array = { allied_anger = token:allied_anger_test_1 }
+				add_to_temp_array = { allied_anger = token:allied_anger_test_2 }
+				add_to_temp_array = { allied_anger = token:allied_anger_test_3 }
+			}
+			trait_click_enabled = {
+				if = {
+					limit = {
+						check_variable = { v = token:allied_anger_test_1 }
+					}
+					set_temp_variable = { x = 100 }
+					set_temp_variable = { y = 100 }
+				}
+				else_if = {
+					limit = {
+						check_variable = { v = token:allied_anger_test_2 }
+					}
+					set_temp_variable = { x = 200 }
+					set_temp_variable = { y = 200 }
+				}
+				else_if = {
+					limit = {
+						check_variable = { v = token:allied_anger_test_3 }
+					}
+					set_temp_variable = { x = 300 }
+					set_temp_variable = { y = 300 }
+				}
+				
+				set_temp_variable = { x_icon = x }
+				add_to_temp_variable = { x_icon = 9 }
+				set_temp_variable = { y_icon = y }
+				add_to_temp_variable = { y_icon = 4 }
+				set_temp_variable = { x_name = x }
+				add_to_temp_variable = { x_name = 39 }
+				set_temp_variable = { y_name = y }
+				add_to_temp_variable = { y_name = 12 }
+				
+				if = {
+					limit = {
+						NOT = {
+							meta_trigger = {
+								text = {
+									has_country_flag = [V]
+								}
+								V = "[?v.GetTokenKey]"
+							}
+						}
+					}
+					meta_trigger = {
+						text = {
+							[V] = yes
+						}
+						V = "[?v.GetTokenKey]"
+					}
+				}	
+				if = {
+					limit = {
+						meta_trigger = {
+							text = {
+								has_country_flag = [V]
+							}
+							V = "[?v.GetTokenKey]"
+						}
+					}
+					set_temp_variable = { trait_frame = 1 }
+				}
+				else_if = {
+					limit = {
+						meta_trigger = {
+							text = {
+								[V] = yes
+							}
+							V = "[?v.GetTokenKey]"
+						}
+					}
+					set_temp_variable = { trait_frame = 2 }
+				}
+				else = {
+					set_temp_variable = { trait_frame = 3 }
+				}
+			}
+		}
+		
+	}
+         
+}
+### EOF ###

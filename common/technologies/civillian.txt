@@ -1,0 +1,5167 @@
+technologies = {	
+# Vertical yearorder
+	@1930 = 0
+	@1935 = 2
+	@1935_1 = 3
+	@1936 = 4
+	@1937 = 6
+	@1937_1 = 8
+	@1938 = 10
+	@1938_1 = 12
+	@1939 = 14
+	@1939_1 = 16
+	@1940 = 18
+	@1941 = 20
+	@1941_1 = 22
+	@1942 = 24
+	@1943 = 26
+	@1943_1 = 28
+	@1944 = 30
+	@1945 = 32
+	@1946 = 34
+	@1950 = 35
+# Horizontal positions
+	@MEDICAL_1 = 0
+	@MEDICAL_2 = 1
+	@MEDICAL_3 = 2
+	
+	@FOOD_1 = 4
+	@FOOD_2 = 5
+	@FOOD_3 = 6
+	@FOOD_4 = 7
+	@FOOD_5 = 8
+	
+	@POL_TH = 16
+	@PLASTICS = 10
+	@WDF_ENG = 12
+	@FUEL_CAN = 14
+	@FUEL_SILO_1 = 15
+	@FUEL_REF = 16
+	@FUEL_SILO = 17
+	@OIL_PLT = 19
+	@OIL_COAL = 18
+	@RUB_PROC = 20
+	@chemical = 22
+	
+	@EXCAV = 30
+	@POWER_GRID = 28
+	@POWER_GRID_L = 27
+	@POWER_GRID_R = 29
+	@POWER_PLANT = 26
+	@POWER_PLANT_L = 25
+	@POWER_PLANT_R = 27
+	@ALM_IND = 32
+	@ALM_IND_L = 31 
+	@ALM_IND_R = 33
+	@WELD = 36
+	@STEEL_WRK = 34
+	@STEEL_WRK_L = 33
+	@STEEL_WRK_R = 35
+	@ALLOY = 36
+	
+	# ai
+	@R_PRIORITY = 1000 #excavation
+	
+	@F_PRIORITY_1 = 8000 #fuel
+	@F_PRIORITY_2 = 12000
+	@F_PRIORITY_3 = 16000
+	@REF_PRIORITY = 16000 #fuel refinery
+	@RUB_PRIORITY = 16000
+	
+	@ALU_PRIORITY = 20000
+	@STEEL_PRIORITY = 20000
+	
+	#this is still used by medical techs
+	@I_PRIORITY_1 = 1000
+	@I_PRIORITY_2 = 2000 
+	@I_PRIORITY_3 = 4000 
+	@I_PRIORITY_4 = 8000 
+	
+	@FOOD_PRIORITY = 5000
+	@FRIDGE_PRIORITY = 7000
+	
+	@PLASTIC_PRIORITY = 7000
+	@PLANT_PRIORITY = 5000
+	@GRID_PRIORITY = 5000
+	
+	## NEW MODIFIERS
+	
+	#steel_conversion_output - flat
+	#conversion_iron_input - flat
+	#conversion_coal_input - flat
+	
+	#aluminium_conversion_output - flat
+	#conversion_bauxite_input - flat
+	
+	#energy_production_factor - factor
+	#energy_coal_factor - factor, affects how much energy is gained from 1 coal/24 fuel/1 hydro building
+	#energy_fuel_factor - factor
+	#energy_hydro_factor - factor
+	
+	#energy_consumption_factor - factor
+
+	#food_need_civilian - factor
+	#food_need_military - factor
+	
+	
+	improved_glass_optics = {
+		allow = { has_country_flag = UNLOCK:raw_materials_folder} 
+
+		path = {
+			leads_to_tech = modern_microscopes
+			research_cost_coeff = 1
+		}
+		on_research_complete = {
+			set_temp_variable = { tech = token:improved_glass_optics }
+			on_resource_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = material_tech_tt
+			custom_effect_tooltip = medical_tech_tt
+		}		
+		research_cost = 0.5
+		start_year = 1930
+		folder = {
+			name = raw_materials_folder
+			position = { x = @MEDICAL_2 y = @1930 }
+		}
+		
+		ai_will_do = {
+			base = @I_PRIORITY_1
+			
+			modifier = {
+				factor = ai_mult
+				
+				ai_stability_factor_tech_need = yes
+			}
+			modifier = {
+				factor = ai_factor 
+				
+				set_temp_variable = { ai_factor = ai_material_tech_need } #AI TECH CATEGORY
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		
+		
+		categories = {
+			material_tech
+			medical_tech
+		}
+	}
+	
+	modern_microscopes = {
+		allow = { has_country_flag = UNLOCK:raw_materials_folder} 
+		sickness_chance = -0.03
+		path = {
+			leads_to_tech = improved_medical_research
+			research_cost_coeff = 1
+		}
+		on_research_complete = {
+			set_temp_variable = { tech = token:improved_glass_optics }
+			on_resource_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = material_tech_tt
+			custom_effect_tooltip = medical_tech_tt
+		}			
+		research_cost = 1.5
+		start_year = 1935
+		folder = {
+			name = raw_materials_folder
+			position = { x = @MEDICAL_2 y = @1935 }
+		}
+		
+		ai_will_do = {
+			base = @I_PRIORITY_1
+			
+			modifier = {
+				factor = ai_mult
+				
+				ai_stability_factor_tech_need = yes
+			}
+			modifier = {
+				factor = ai_factor 
+				
+				set_temp_variable = { ai_factor = ai_material_tech_need } #AI TECH CATEGORY
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		
+		categories = {
+			material_tech
+			medical_tech
+		}
+		
+	}
+	
+	improved_medical_research = {
+		allow = { has_country_flag = UNLOCK:raw_materials_folder} 
+		
+		sickness_chance = -0.10
+		path = {
+			leads_to_tech = antimicrobial_sulfa_drugs
+			research_cost_coeff = 1
+		}
+
+		path = {
+			leads_to_tech = immunization_advances
+			research_cost_coeff = 1
+		}
+
+		path = {
+			leads_to_tech = improved_blood_transfusions
+			research_cost_coeff = 1
+		}
+
+		research_cost = 1.5
+		start_year = 1936
+		folder = {
+			name = raw_materials_folder
+			position = { x = @MEDICAL_2 y = @1936 }
+		}
+
+		ai_will_do = {
+			base = @I_PRIORITY_1
+			
+			modifier = {
+				factor = ai_mult
+				
+				ai_stability_factor_tech_need = yes
+			}
+			modifier = {
+				factor = ai_factor 
+				
+				set_temp_variable = { ai_factor = ai_material_tech_need } #AI TECH CATEGORY
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		
+		on_research_complete = {
+			set_temp_variable = { tech = token:improved_medical_research }
+			on_resource_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = material_tech_tt
+			custom_effect_tooltip = medical_tech_tt
+		}
+		categories = {
+			material_tech
+			medical_tech
+		}
+	}
+	
+	improved_blood_transfusions = {
+		allow = { has_country_flag = UNLOCK:raw_materials_folder} 
+		
+		army_morale_factor = 0.02
+		wounded_chance_factor = -0.05
+
+		research_cost = 1.5
+		start_year = 1940
+		folder = {
+			name = raw_materials_folder
+			position = { x = @MEDICAL_2 y = @1940 }
+		}
+
+		ai_will_do = {
+			base = @I_PRIORITY_1
+			
+			modifier = {
+				factor = ai_factor 
+				
+				set_temp_variable = { ai_factor = ai_material_tech_need } #AI RESEARCH CATEGORY
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		
+		on_research_complete = {
+			set_temp_variable = { tech = token:improved_blood_transfusions }
+			on_resource_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = material_tech_tt
+			custom_effect_tooltip = medical_tech_tt
+			custom_effect_tooltip = civilian_tech_tt
+		}
+		categories = {
+			material_tech
+			medical_tech
+			civilian_tech
+		}
+	}
+
+	immunization_advances = {
+		allow = { has_country_flag = UNLOCK:raw_materials_folder} 
+		
+		sickness_chance = -0.05
+		monthly_population = 0.08
+		path = {
+			leads_to_tech = multiple_vaccines
+			research_cost_coeff = 1
+		}
+
+		research_cost = 1.5
+		start_year = 1937
+		folder = {
+			name = raw_materials_folder
+			position = { x = @MEDICAL_1 y = @1937 }
+		}
+
+		ai_will_do = {
+			base = @I_PRIORITY_1
+			
+			modifier = {
+				factor = ai_factor 
+				
+				set_temp_variable = { ai_factor = ai_material_tech_need } #AI RESEARCH CATEGORY
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		
+		on_research_complete = {
+			set_temp_variable = { tech = token:immunization_advances }
+			on_resource_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = material_tech_tt
+			custom_effect_tooltip = medical_tech_tt
+			custom_effect_tooltip = civilian_tech_tt
+		}
+		categories = {
+			material_tech
+			medical_tech
+			civilian_tech
+		}
+	}
+
+	multiple_vaccines = {
+		allow = { has_country_flag = UNLOCK:raw_materials_folder} 
+		
+		monthly_population = 0.08
+		category_all_DIV_HQ = {
+			casualty_trickleback = 0.01
+		}
+		path = {
+			leads_to_tech = vaccine_research_improvements
+			research_cost_coeff = 1
+		}
+		research_cost = 1.5
+		start_year = 1942
+		folder = {
+			name = raw_materials_folder
+			position = { x = @MEDICAL_1 y = @1942 }
+		}
+		ai_will_do = {
+			base = @I_PRIORITY_1
+			
+			modifier = {
+				factor = ai_factor 
+				
+				set_temp_variable = { ai_factor = ai_material_tech_need } #AI RESEARCH CATEGORY
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		
+		on_research_complete = {
+			set_temp_variable = { tech = token:multiple_vaccines }
+			on_resource_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = material_tech_tt
+			custom_effect_tooltip = medical_tech_tt
+			custom_effect_tooltip = civilian_tech_tt
+		}
+		categories = {
+			material_tech
+			medical_tech
+			civilian_tech
+		}
+	}
+
+	antimicrobial_sulfa_drugs = {
+		allow = { has_country_flag = UNLOCK:raw_materials_folder} 
+		
+		monthly_population = 0.05
+		stability_factor = 0.10
+		path = {
+			leads_to_tech = antibiotics
+			research_cost_coeff = 1
+		}
+
+		research_cost = 1.5
+		start_year = 1937
+		folder = {
+			name = raw_materials_folder
+			position = { x = @MEDICAL_3 y = @1937 }
+		}
+
+		ai_will_do = {
+			base = @I_PRIORITY_2
+			
+			modifier = {
+				factor = ai_mult
+				
+				ai_stability_factor_tech_need = yes
+			}
+			modifier = {
+				factor = ai_factor 
+				
+				set_temp_variable = { ai_factor = ai_material_tech_need } #AI RESEARCH CATEGORY
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		
+		on_research_complete = {
+			set_temp_variable = { tech = token:antimicrobial_sulfa_drugs }
+			on_resource_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = material_tech_tt
+			custom_effect_tooltip = medical_tech_tt
+		}
+		categories = {
+			material_tech
+			medical_tech
+		}
+	}
+
+	antibiotics = {
+		allow = { has_country_flag = UNLOCK:raw_materials_folder} 
+		
+		category_all_DIV_HQ = {
+			casualty_trickleback = 0.02
+		}
+		monthly_population = 0.07
+		path = {
+			leads_to_tech = healthcare_improvements
+			research_cost_coeff = 1
+		}
+
+		on_research_complete = {
+			set_temp_variable = { tech = token:antibiotics }
+			on_resource_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = material_tech_tt
+			custom_effect_tooltip = medical_tech_tt
+			custom_effect_tooltip = civilian_tech_tt
+		}
+
+		research_cost = 1.5
+		start_year = 1941
+		folder = {
+			name = raw_materials_folder
+			position = { x = @MEDICAL_3 y = @1941 }
+		}
+		ai_will_do = {
+			base = @I_PRIORITY_1
+			
+			modifier = {
+				factor = ai_mult
+				
+				ai_stability_factor_tech_need = yes
+			}
+			modifier = {
+				factor = ai_factor 
+				
+				set_temp_variable = { ai_factor = ai_material_tech_need } #AI RESEARCH CATEGORY
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		
+
+		categories = {
+			material_tech
+			medical_tech
+			civilian_tech
+		}
+	}
+	
+	vaccine_research_improvements = {
+		allow = { has_country_flag = UNLOCK:raw_materials_folder} 
+		
+		path = {
+			leads_to_tech = polio_vaccines
+			research_cost_coeff = 1
+		}
+		category_all_DIV_HQ = {
+			casualty_trickleback = 0.01
+		}
+		monthly_population = 0.07
+		sickness_chance = -0.02
+		research_cost = 1.5
+		start_year = 1944
+		folder = {
+			name = raw_materials_folder
+			position = { x = @MEDICAL_1 y = @1944 }
+		}
+
+		ai_will_do = {
+			base = @I_PRIORITY_1
+			
+			modifier = {
+				factor = ai_mult
+				
+				ai_stability_factor_tech_need = yes
+			}
+			modifier = {
+				factor = ai_factor 
+				
+				set_temp_variable = { ai_factor = ai_material_tech_need } #AI RESEARCH CATEGORY
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+
+		on_research_complete = {
+			set_temp_variable = { tech = token:vaccine_research_improvements }
+			on_resource_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = material_tech_tt
+			custom_effect_tooltip = medical_tech_tt
+			custom_effect_tooltip = civilian_tech_tt
+		}
+		categories = {
+			material_tech
+			medical_tech
+			civilian_tech
+		}
+		
+	}
+
+	polio_vaccines = {
+		allow = { has_country_flag = UNLOCK:raw_materials_folder} 
+		stability_factor = 0.10
+		stability_weekly = 0.001		
+		research_cost = 1.5
+		start_year = 1950
+		folder = {
+			name = raw_materials_folder
+			position = { x = @MEDICAL_1 y = @1950 }
+		}
+		on_research_complete = {
+			set_temp_variable = { tech = token:polio_vaccines }
+			on_resource_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = material_tech_tt
+			custom_effect_tooltip = medical_tech_tt
+			custom_effect_tooltip = civilian_tech_tt
+		}
+		ai_will_do = {
+			base = @I_PRIORITY_1
+			
+			modifier = {
+				factor = ai_mult
+				
+				ai_stability_factor_tech_need = yes
+			}
+			modifier = {
+				factor = ai_factor 
+				
+				set_temp_variable = { ai_factor = ai_material_tech_need } #AI RESEARCH CATEGORY
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+
+		categories = {
+			material_tech
+			medical_tech
+			civilian_tech
+		}
+		
+	}
+
+	healthcare_improvements = {
+		allow = { has_country_flag = UNLOCK:raw_materials_folder} 
+		monthly_population = 0.01
+		
+		category_all_DIV_HQ = {
+			casualty_trickleback = 0.02
+		}
+		path = {
+			leads_to_tech = fluoridated_water_supply
+			research_cost_coeff = 1
+		}
+
+		research_cost = 1
+		start_year = 1942
+		dependencies = {
+			computing_machine = 1
+		}
+		folder = {
+			name = raw_materials_folder
+			position = { x = @MEDICAL_3 y = @1942 }
+		}
+
+		ai_will_do = {
+			base = @I_PRIORITY_1
+			
+			modifier = {
+				factor = ai_mult
+				
+				ai_stability_factor_tech_need = yes
+			}
+			modifier = {
+				factor = ai_factor 
+				
+				set_temp_variable = { ai_factor = ai_material_tech_need } #AI RESEARCH CATEGORY
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		
+		on_research_complete = {
+			set_temp_variable = { tech = token:healthcare_improvements }
+			on_resource_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = material_tech_tt
+			custom_effect_tooltip = medical_tech_tt
+			custom_effect_tooltip = civilian_tech_tt
+		}
+		categories = {
+			material_tech
+			medical_tech
+			civilian_tech
+		}
+	}
+
+	fluoridated_water_supply = {
+		allow = { has_country_flag = UNLOCK:raw_materials_folder} 
+		
+		stability_factor = 0.10
+		stability_weekly = 0.001
+		research_cost = 1
+		start_year = 1945
+		folder = {
+			name = raw_materials_folder
+			position = { x = @MEDICAL_3 y = @1945 }
+		}
+
+		ai_will_do = {
+			base = @I_PRIORITY_4
+			
+			modifier = {
+				factor = ai_mult
+				
+				ai_stability_factor_tech_need = yes
+			}
+			modifier = {
+				factor = ai_factor 
+				
+				set_temp_variable = { ai_factor = ai_material_tech_need } #AI RESEARCH CATEGORY
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		
+		on_research_complete = {
+			set_temp_variable = { tech = token:fluoridated_water_supply }
+			on_resource_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = material_tech_tt
+			custom_effect_tooltip = medical_tech_tt
+			custom_effect_tooltip = civilian_tech_tt
+		}
+		categories = {
+			material_tech
+			medical_tech
+			civilian_tech
+		}
+	}
+	
+	##### FOOD ###########
+	environmental_recognition = {
+		allow = { has_country_flag = UNLOCK:raw_materials_folder} 
+		
+		path = {
+			leads_to_tech = commercial_refrigeration
+			research_cost_coeff = 1
+		}	
+		path = {
+			leads_to_tech = early_tractors
+			research_cost_coeff = 1
+		}
+		enable_building = {
+			building = farm
+			level = 1
+		}
+		on_research_complete = {	
+			set_temp_variable = { tech = token:environmental_recognition }
+			on_resource_tech_research_complete = yes
+			modify_building_resources = {
+				building = farm
+				resource = food
+				amount = 1
+			}
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = farming_tech_tt
+			custom_effect_tooltip = material_tech_tt
+		}
+		research_cost = 1.5
+		start_year = 1935
+		folder = {
+			name = raw_materials_folder
+			position = { x = @FOOD_2 y = @1935 }
+		}
+		
+		
+		ai_will_do = {
+			base = 0
+			
+			modifier = {
+				add = ai_base 
+				
+				set_temp_variable = { base = @FOOD_PRIORITY }
+				ai_industrial_farming_tech = yes 
+			}
+			modifier = {
+				factor = ai_factor 
+				
+				set_temp_variable = { ai_factor = ai_material_tech_need } #AI RESEARCH CATEGORY
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		
+		categories = {
+			material_tech
+			farming_tech
+		}
+		
+	}
+	
+	early_tractors = {
+		allow = { has_country_flag = UNLOCK:raw_materials_folder} 
+
+		research_cost = 1
+		start_year = 1936
+		folder = {
+			name = raw_materials_folder
+			position = { x = @FOOD_3 y = @1936 }
+		}
+		path = {
+			leads_to_tech = industral_farms_i
+			research_cost_coeff = 1
+		}
+		path = {
+			leads_to_tech = crop_farms_i
+			research_cost_coeff = 1
+		}
+		path = {
+			leads_to_tech = early_pesticides
+			research_cost_coeff = 1
+		}
+		
+		
+		ai_will_do = {
+			base = 0
+			
+			modifier = {
+				add = ai_base 
+				
+				set_temp_variable = { base = @FOOD_PRIORITY }
+				ai_industrial_farming_tech = yes 
+			}
+			modifier = {
+				factor = ai_factor 
+				
+				set_temp_variable = { ai_factor = ai_material_tech_need } #AI RESEARCH CATEGORY
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		
+		on_research_complete = {	
+			set_temp_variable = { tech = token:early_tractors }
+			on_resource_tech_research_complete = yes
+			modify_building_resources = {
+				building = farm
+				resource = food
+				amount = 1
+			}
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = farming_tech_tt
+			custom_effect_tooltip = material_tech_tt
+			custom_effect_tooltip = motorized_equipment_tt
+		}
+		
+		categories = {
+			material_tech
+			farming_tech
+			motorized_equipment
+		}
+		
+	}
+	early_pesticides = {
+		allow = { has_country_flag = UNLOCK:raw_materials_folder} 
+		food_resource_factor = 0.05
+		research_cost = 1
+		start_year = 1945
+		folder = {
+			name = raw_materials_folder
+			position = { x = @FOOD_3 y = @1945 }
+		}
+		
+		ai_will_do = {
+			base = 0
+			
+			modifier = {
+				add = ai_base 
+				
+				set_temp_variable = { base = @FOOD_PRIORITY }
+				ai_industrial_farming_tech = yes 
+			}
+			modifier = {
+				factor = ai_factor 
+				
+				set_temp_variable = { ai_factor = ai_material_tech_need } #AI RESEARCH CATEGORY
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		
+		on_research_complete = {
+			set_temp_variable = { tech = token:early_pesticides }
+			on_resource_tech_research_complete = yes
+			modify_building_resources = {
+				building = farm
+				resource = food
+				amount = 1
+			}
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = farming_tech_tt
+			custom_effect_tooltip = material_tech_tt
+			custom_effect_tooltip = synth_resources_tt
+		}
+		
+		categories = {
+			material_tech
+			farming_tech
+			synth_resources
+		}
+		
+	}
+	industral_farms_i = {
+		allow = { has_country_flag = UNLOCK:raw_materials_folder} 
+		xor = { crop_farms_i }
+		production_speed_farm_factor = -0.10
+		
+		path = {
+			leads_to_tech = industral_farms_ii
+			research_cost_coeff = 1
+		}
+		path = {
+			leads_to_tech = meat_farms_i
+			research_cost_coeff = 1
+		}
+		
+		research_cost = 1
+		start_year = 1937
+		folder = {
+			name = raw_materials_folder
+			position = { x = @FOOD_4 y = @1937 }
+		}
+		
+		ai_will_do = {
+			base = 0
+			
+			modifier = {
+				add = ai_base 
+				
+				set_temp_variable = { base = @FOOD_PRIORITY }
+				ai_industrial_farming_tech = yes 
+			}
+			modifier = {
+				factor = ai_factor 
+				
+				set_temp_variable = { ai_factor = ai_material_tech_need } #AI RESEARCH CATEGORY
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+			modifier = {
+				factor = 0
+				ai_cropping_focus_pick = yes
+			}
+		}
+		
+		on_research_complete = {	
+			set_temp_variable = { tech = token:industral_farms_i }
+			on_resource_tech_research_complete = yes
+			modify_building_resources = {
+				building = farm
+				resource = food
+				amount = 1
+			}
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = farming_tech_tt
+			custom_effect_tooltip = material_tech_tt
+		}
+		
+		categories = {
+			material_tech
+			farming_tech
+		}
+		
+	}
+	
+	crop_farms_i = {
+		allow = { has_country_flag = UNLOCK:raw_materials_folder}
+		xor = { industral_farms_i }	
+		production_speed_farm_factor = 0.05		
+
+		research_cost = 1
+		start_year = 1937
+		folder = {
+			name = raw_materials_folder
+			position = { x = @FOOD_2 y = @1937 }
+		}
+		path = {
+			leads_to_tech = crop_farms_ii
+			research_cost_coeff = 1
+		}
+		
+		ai_will_do = {
+			base = 0
+			
+			modifier = {
+				add = ai_base 
+				
+				set_temp_variable = { base = @FOOD_PRIORITY }
+				ai_industrial_farming_tech = yes 
+			}
+			modifier = {
+				factor = ai_factor 
+				
+				set_temp_variable = { ai_factor = ai_material_tech_need } #AI RESEARCH CATEGORY
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+			modifier = {
+				factor = 0
+				ai_cropping_focus_pick = no
+			}
+		}
+		on_research_complete = {
+			set_temp_variable = { tech = token:crop_farms_i }
+			on_resource_tech_research_complete = yes	
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = farming_tech_tt
+			custom_effect_tooltip = material_tech_tt
+		}
+		
+		categories = {
+			material_tech
+			farming_tech
+		}
+		
+	}
+	
+	meat_farms_i = {
+		allow = { has_country_flag = UNLOCK:raw_materials_folder} 
+		xor = { industral_farms_ii }
+		stability_factor = 0.03
+		food_need_civilian = 0.05
+		research_cost = 1
+		start_year = 1938
+		folder = {
+			name = raw_materials_folder
+			position = { x = @FOOD_5 y = @1938 }
+		}
+		path = {
+			leads_to_tech = meat_farms_ii
+			research_cost_coeff = 1
+		}
+		
+		ai_will_do = {
+			base = 0
+			
+			modifier = {
+				add = ai_base 
+				
+				set_temp_variable = { base = @FOOD_PRIORITY }
+				ai_industrial_farming_tech = yes 
+			}
+			modifier = {
+				factor = ai_factor 
+				
+				set_temp_variable = { ai_factor = ai_material_tech_need } #AI RESEARCH CATEGORY
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+			modifier = {
+				factor = 0
+				ai_livestock_focus_pick = no
+			}
+		}
+		on_research_complete = {	
+			set_temp_variable = { tech = token:meat_farms_i }
+			on_resource_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = farming_tech_tt
+			custom_effect_tooltip = material_tech_tt
+		}
+		
+		categories = {
+			material_tech
+			farming_tech
+		}
+		
+	}
+	
+	crop_farms_ii = {
+		allow = { has_country_flag = UNLOCK:raw_materials_folder} 
+		production_speed_farm_factor = 0.1
+		research_cost = 1
+		start_year = 1939
+		path = {
+			leads_to_tech = crop_farms_iii
+			research_cost_coeff = 1
+		}
+		folder = {
+			name = raw_materials_folder
+			position = { x = @FOOD_2 y = @1939 }
+		}
+		
+		ai_will_do = {
+			base = 0
+			
+			modifier = {
+				add = ai_base 
+				
+				set_temp_variable = { base = @FOOD_PRIORITY }
+				ai_industrial_farming_tech = yes 
+			}
+			modifier = {
+				factor = ai_factor 
+				
+				set_temp_variable = { ai_factor = ai_material_tech_need } #AI RESEARCH CATEGORY
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		on_research_complete = {	
+			set_temp_variable = { tech = token:crop_farms_ii }
+			on_resource_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = farming_tech_tt
+			custom_effect_tooltip = material_tech_tt
+		}
+		
+		categories = {
+			material_tech
+			farming_tech
+		}
+		
+	}
+	
+	meat_farms_ii = {
+		allow = { has_country_flag = UNLOCK:raw_materials_folder} 
+		stability_factor = 0.05
+		food_need_civilian = 0.03
+		research_cost = 1
+		start_year = 1940
+		folder = {
+			name = raw_materials_folder
+			position = { x = @FOOD_5 y = @1940 }
+		}
+		path = {
+			leads_to_tech = meat_farms_iii
+			research_cost_coeff = 1
+		}
+		ai_will_do = {
+			base = 0
+			
+			modifier = {
+				add = ai_base 
+				
+				set_temp_variable = { base = @FOOD_PRIORITY }
+				ai_industrial_farming_tech = yes 
+			}
+			modifier = {
+				factor = ai_factor 
+				
+				set_temp_variable = { ai_factor = ai_material_tech_need } #AI RESEARCH CATEGORY
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		on_research_complete = {	
+			set_temp_variable = { tech = token:meat_farms_ii }
+			on_resource_tech_research_complete = yes	
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = farming_tech_tt
+			custom_effect_tooltip = material_tech_tt
+		}
+		
+		categories = {
+			material_tech
+			farming_tech
+		}
+		
+	}
+	
+	industral_farms_ii = {
+		allow = { has_country_flag = UNLOCK:raw_materials_folder} 
+		xor = { meat_farms_i }
+
+		research_cost = 1
+		start_year = 1939
+		folder = {
+			name = raw_materials_folder
+			position = { x = @FOOD_4 y = @1939 }
+		}
+		path = {
+			leads_to_tech = industral_farms_iii
+			research_cost_coeff = 1
+		}
+		
+		ai_will_do = {
+			base = 0
+			
+			modifier = {
+				add = ai_base 
+				
+				set_temp_variable = { base = @FOOD_PRIORITY }
+				ai_industrial_farming_tech = yes 
+			}
+			modifier = {
+				factor = ai_factor 
+				
+				set_temp_variable = { ai_factor = ai_material_tech_need } #AI RESEARCH CATEGORY
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+			modifier = {
+				factor = 0
+				ai_livestock_focus_pick = yes
+			}
+		}
+		on_research_complete = {	
+			set_temp_variable = { tech = token:industral_farms_ii }
+			on_resource_tech_research_complete = yes	
+			modify_building_resources = {
+				building = farm
+				resource = food
+				amount = 1
+			}
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = farming_tech_tt
+			custom_effect_tooltip = material_tech_tt
+		}
+		
+		categories = {
+			material_tech
+			farming_tech
+		}
+		
+	}
+	
+	industral_farms_iii = {
+		allow = { has_country_flag = UNLOCK:raw_materials_folder} 
+		stability_factor = 0.03
+		research_cost = 1
+		start_year = 1942
+		folder = {
+			name = raw_materials_folder
+			position = { x = @FOOD_4 y = @1942 }
+		}
+		ai_will_do = {
+			base = 0
+			
+			modifier = {
+				add = ai_base 
+				
+				set_temp_variable = { base = @FOOD_PRIORITY }
+				ai_industrial_farming_tech = yes 
+			}
+			modifier = {
+				factor = ai_factor 
+				
+				set_temp_variable = { ai_factor = ai_material_tech_need } #AI RESEARCH CATEGORY
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		on_research_complete = {
+			set_temp_variable = { tech = token:industral_farms_iii }
+			on_resource_tech_research_complete = yes
+			modify_building_resources = {
+				building = farm
+				resource = food
+				amount = 1
+			}		
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = farming_tech_tt
+			custom_effect_tooltip = material_tech_tt
+		}
+		
+		categories = {
+			material_tech
+			farming_tech
+		}
+		
+	}
+	
+	crop_farms_iii = {
+		allow = { has_country_flag = UNLOCK:raw_materials_folder} 
+		production_speed_farm_factor = 0.05
+		research_cost = 1
+		start_year = 1942
+		folder = {
+			name = raw_materials_folder
+			position = { x = @FOOD_2 y = @1942 }
+		}
+		ai_will_do = {
+			base = 0
+			
+			modifier = {
+				add = ai_base 
+				
+				set_temp_variable = { base = @FOOD_PRIORITY }
+				ai_industrial_farming_tech = yes 
+			}
+			modifier = {
+				factor = ai_factor 
+				
+				set_temp_variable = { ai_factor = ai_material_tech_need } #AI RESEARCH CATEGORY
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		on_research_complete = {
+			set_temp_variable = { tech = token:crop_farms_iii }
+			on_resource_tech_research_complete = yes
+			modify_building_resources = {
+				building = farm
+				resource = food
+				amount = 1
+			}		
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = farming_tech_tt
+			custom_effect_tooltip = material_tech_tt
+		}
+		
+		categories = {
+			material_tech
+			farming_tech
+		}
+		
+	}
+	
+	meat_farms_iii = {
+		allow = { has_country_flag = UNLOCK:raw_materials_folder} 
+		stability_weekly = 0.001
+		production_speed_farm_factor = -0.05	
+		research_cost = 1
+		start_year = 1943
+		folder = {
+			name = raw_materials_folder
+			position = { x = @FOOD_5 y = @1943 }
+		}
+		ai_will_do = {
+			base = 0
+			
+			modifier = {
+				add = ai_base 
+				
+				set_temp_variable = { base = @FOOD_PRIORITY }
+				ai_industrial_farming_tech = yes 
+			}
+			modifier = {
+				factor = ai_factor 
+				
+				set_temp_variable = { ai_factor = ai_material_tech_need } #AI RESEARCH CATEGORY
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		on_research_complete = {	
+			set_temp_variable = { tech = token:meat_farms_iii }
+			on_resource_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = farming_tech_tt
+			custom_effect_tooltip = material_tech_tt
+		}
+		
+		categories = {
+			material_tech
+			farming_tech
+		}
+		
+	}
+	
+	commercial_refrigeration = {
+		allow = { has_country_flag = UNLOCK:raw_materials_folder} 
+
+		food_decay_factor = -0.10
+		research_cost = 1
+		start_year = 1936
+		folder = {
+			name = raw_materials_folder
+			position = { x = @FOOD_1 y = @1936 }
+		}
+		path = {
+			leads_to_tech = commercial_food_processing
+			research_cost_coeff = 1
+		}
+		ai_will_do = {
+			base = 0
+			
+			modifier = {
+				add = ai_base 
+				
+				set_temp_variable = { base = @FRIDGE_PRIORITY }
+				ai_refridgeration_tech = yes 
+			}
+			modifier = {
+				factor = ai_factor 
+				
+				set_temp_variable = { ai_factor = ai_material_tech_need } #AI RESEARCH CATEGORY
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		
+		on_research_complete = {	
+			set_temp_variable = { tech = token:commercial_refrigeration }
+			on_resource_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = material_tech_tt
+			custom_effect_tooltip = farming_tech_tt
+			custom_effect_tooltip = electronics_tt
+			custom_effect_tooltip = civilian_tech_tt
+		}
+		categories = {
+			material_tech
+			farming_tech
+			electronics
+			civilian_tech
+		}
+	}	
+	
+	commercial_food_processing = {
+		allow = { has_country_flag = UNLOCK:raw_materials_folder} 
+		
+		food_gain_factor = 0.05
+		path = {
+			leads_to_tech = vacuum_sealed_food
+			research_cost_coeff = 1
+		}
+
+		research_cost = 1.0
+		start_year = 1938
+		folder = {
+			name = raw_materials_folder
+			position = { x = @FOOD_1 y = @1938 }
+		}
+		on_research_complete = {
+			set_temp_variable = { tech = token:commercial_food_processing }
+			on_resource_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = farming_tech_tt
+			custom_effect_tooltip = civilian_tech_tt
+			custom_effect_tooltip = material_tech_tt
+		}
+		ai_will_do = {
+			base = 0
+			
+			modifier = {
+				add = ai_base 
+				
+				set_temp_variable = { base = @FRIDGE_PRIORITY }
+				ai_refridgeration_tech = yes 
+			}
+			modifier = {
+				factor = ai_factor 
+				
+				set_temp_variable = { ai_factor = ai_material_tech_need } #AI RESEARCH CATEGORY
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		
+
+		categories = {
+			farming_tech
+			civilian_tech
+			material_tech
+		}
+	}
+
+	vacuum_sealed_food = {
+		allow = { has_country_flag = UNLOCK:raw_materials_folder} 
+		food_decay_factor = -0.10
+		path = {
+			leads_to_tech = waste_management
+			research_cost_coeff = 1
+		}
+		
+		research_cost = 1.5
+		start_year = 1940
+		folder = {
+			name = raw_materials_folder
+			position = { x = @FOOD_1 y = @1940 }
+		}
+		on_research_complete = {
+			set_temp_variable = { tech = token:vacuum_sealed_food }
+			on_resource_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = farming_tech_tt
+			custom_effect_tooltip = material_tech_tt
+		}	
+		ai_will_do = {
+			base = 0
+			
+			modifier = {
+				add = ai_base 
+				
+				set_temp_variable = { base = @FRIDGE_PRIORITY }
+				ai_refridgeration_tech = yes 
+			}
+			modifier = {
+				factor = ai_factor 
+				
+				set_temp_variable = { ai_factor = ai_material_tech_need } #AI RESEARCH CATEGORY
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		
+		categories = {
+			farming_tech
+			material_tech
+		}
+		
+	}
+	
+	waste_management = {
+		allow = { has_country_flag = UNLOCK:raw_materials_folder} 
+		food_decay_factor = -0.10
+		resources_factor = 0.01
+		research_cost = 1.5
+		start_year = 1943
+		folder = {
+			name = raw_materials_folder
+			position = { x = @FOOD_1 y = @1943 }
+		}
+		
+		on_research_complete = {
+			set_temp_variable = { tech = token:waste_management }
+			on_resource_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = farming_tech_tt
+			custom_effect_tooltip = material_tech_tt
+		}	
+		ai_will_do = {
+			base = 0
+			
+			modifier = {
+				add = ai_base 
+				
+				set_temp_variable = { base = @FRIDGE_PRIORITY }
+				ai_refridgeration_tech = yes 
+			}
+			modifier = {
+				factor = ai_factor 
+				
+				set_temp_variable = { ai_factor = ai_material_tech_need } #AI RESEARCH CATEGORY
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		
+		categories = {
+			farming_tech
+			material_tech
+		}
+		
+	}
+	###############################
+	#### Other Resources
+	polymerization_theories = {
+		allow = { has_country_flag = UNLOCK:raw_materials_folder} 
+		path = {
+			leads_to_tech = plastics_i
+			research_cost_coeff = 1
+		}
+		path = {
+			leads_to_tech = chemical_industry_i
+			research_cost_coeff = 1
+		}
+		path = {
+			leads_to_tech = fuel_refining
+			research_cost_coeff = 1
+		}
+		path = {
+			leads_to_tech = wood_engines
+			research_cost_coeff = 1
+		}
+		path = {
+			leads_to_tech = synth_oil_experiments
+			research_cost_coeff = 1
+		}		
+		
+		research_cost = 1.5
+		start_year = 1921
+		folder = {
+			name = raw_materials_folder
+			position = { x = @POL_TH y = @1930 }
+		}
+		
+		ai_will_do = {
+			base = 1000
+			
+		}
+		on_research_complete = {
+			set_temp_variable = { tech = token:polymerization_theories }
+			on_resource_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = synth_resources_tt
+			custom_effect_tooltip = material_tech_tt
+		}		
+		
+		categories = {
+			synth_resources
+			material_tech
+		}
+		
+	}	
+	
+	plastics_i = {
+		allow = { has_country_flag = UNLOCK:raw_materials_folder} 
+		research_cost = 1.5
+		start_year = 1935
+
+		production_speed_buildings_factor = 0.02
+		production_speed_radar_station_factor = 0.04
+
+		folder = {
+			name = raw_materials_folder
+			position = { x = @PLASTICS y = @1935 }
+		}
+		path = {
+			leads_to_tech = plastics_ii
+			research_cost_coeff = 1
+		}		
+		ai_will_do = {
+			base = 0
+			
+			modifier = {
+				add = ai_base 
+				
+				set_temp_variable = { base = @PLASTIC_PRIORITY }
+				ai_plastic_tech = yes 
+			}
+			modifier = {
+				factor = ai_factor 
+				
+				set_temp_variable = { ai_factor = ai_material_tech_need } #AI RESEARCH CATEGORY
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		on_research_complete = {
+			set_temp_variable = { tech = token:plastics_i }
+			on_resource_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = synth_resources_tt
+			custom_effect_tooltip = material_tech_tt
+		}		
+		
+		categories = {
+			synth_resources
+			material_tech
+		}
+		
+	}	
+	plastics_ii = {
+		allow = { has_country_flag = UNLOCK:raw_materials_folder} 
+		
+		production_factory_efficiency_gain_factor = 0.04
+		industrial_capacity_factory = 0.04
+		production_lack_of_resource_penalty_factor = -0.02
+
+		research_cost = 1.5
+		start_year = 1938
+		folder = {
+			name = raw_materials_folder
+			position = { x = @PLASTICS y = @1938 }
+		}
+		path = {
+			leads_to_tech = plastics_iii
+			research_cost_coeff = 1.0
+		}
+		ai_will_do = {
+			base = 0
+			
+			modifier = {
+				add = ai_base 
+				
+				set_temp_variable = { base = @PLASTIC_PRIORITY }
+				ai_plastic_tech = yes 
+			}
+			modifier = {
+				factor = ai_factor 
+				
+				set_temp_variable = { ai_factor = ai_material_tech_need } #AI RESEARCH CATEGORY
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		
+		on_research_complete = {
+			set_temp_variable = { tech = token:plastics_ii }
+			on_resource_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = material_tech_tt
+			custom_effect_tooltip = synth_resources_tt
+		}
+		categories = {
+			material_tech
+			synth_resources
+		}
+	}
+	plastics_iii = {
+		allow = { has_country_flag = UNLOCK:raw_materials_folder } 
+
+		path = {
+			leads_to_tech = plastics_iv
+			research_cost_coeff = 1.0
+		}		
+
+		on_research_complete = {
+			add_equipment_bonus = {
+				name = nylon_tech_idea
+				
+				bonus = {
+					para_equipment = {
+						build_cost_ic = -0.12 instant = yes
+					}
+					infantry_uniforms = {
+						build_cost_ic = -0.06 instant = yes
+					}
+					garrison_equipment = {
+						build_cost_ic = -0.03 instant = yes
+					}
+					support_equipment = {
+						build_cost_ic = -0.03 instant = yes
+					}
+				}
+			}
+			
+			set_temp_variable = { tech = token:plastics_iii }
+			on_resource_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = synth_resources_tt
+			custom_effect_tooltip = material_tech_tt
+			custom_effect_tooltip = civilian_tech_tt
+		}
+
+		research_cost = 1.5
+		start_year = 1940
+		folder = {
+			name = raw_materials_folder
+			position = { x = @PLASTICS y = @1940 }
+		}
+
+		ai_will_do = {
+			base = 0
+			
+			modifier = {
+				add = ai_base 
+				
+				set_temp_variable = { base = @PLASTIC_PRIORITY }
+				ai_plastic_tech = yes 
+			}
+			modifier = {
+				factor = ai_factor 
+				
+				set_temp_variable = { ai_factor = ai_material_tech_need } #AI RESEARCH CATEGORY
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		
+		
+		categories = {
+			synth_resources
+			material_tech
+			civilian_tech
+		}
+	}	
+	plastics_iv = {
+		allow = { has_country_flag = UNLOCK:raw_materials_folder} 
+		path = {
+			leads_to_tech = plastics_v
+			research_cost_coeff = 1
+		}		
+
+		production_factory_efficiency_gain_factor = 0.08
+		industrial_capacity_factory = 0.08
+		production_lack_of_resource_penalty_factor = -0.04
+		production_speed_radar_station_factor = 0.04
+		production_speed_nuclear_reactor_factor = 0.08
+		production_speed_nuclear_reactor_heavy_water_factor = 0.08
+
+		research_cost = 1.75
+		start_year = 1943
+
+		folder = {
+			name = raw_materials_folder
+			position = { x = @PLASTICS y = @1943 }
+		}
+		
+		ai_will_do = {
+			base = 0
+			
+			modifier = {
+				add = ai_base 
+				
+				set_temp_variable = { base = @PLASTIC_PRIORITY }
+				ai_plastic_tech = yes 
+			}
+			modifier = {
+				factor = ai_factor 
+				
+				set_temp_variable = { ai_factor = ai_material_tech_need } #AI RESEARCH CATEGORY
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		on_research_complete = {
+			set_temp_variable = { tech = token:plastics_iv }
+			on_resource_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = synth_resources_tt
+			custom_effect_tooltip = material_tech_tt
+		}		
+		
+		categories = {
+			synth_resources
+			material_tech
+		}
+		
+		
+	}	
+	plastics_v = {
+		allow = { has_country_flag = UNLOCK:raw_materials_folder} 
+		
+		consumer_goods_expected_value = -0.01
+		stability_factor = 0.05
+
+		path = {
+			research_cost_coeff = 1
+		}
+		
+		research_cost = 2.0
+		start_year = 1946
+
+		folder = {
+			name = raw_materials_folder
+			position = { x = @PLASTICS y = @1946 }
+		}
+		
+		ai_will_do = {
+			base = 0
+			
+			modifier = {
+				add = ai_base 
+				
+				set_temp_variable = { base = @PLASTIC_PRIORITY }
+				ai_plastic_tech = yes 
+			}
+			modifier = {
+				factor = ai_factor 
+				
+				set_temp_variable = { ai_factor = ai_material_tech_need } #AI RESEARCH CATEGORY
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		on_research_complete = {
+			set_temp_variable = { tech = token:plastics_v }
+			on_resource_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = synth_resources_tt
+			custom_effect_tooltip = material_tech_tt
+			custom_effect_tooltip = civilian_tech_tt
+		}		
+		
+		categories = {
+			synth_resources
+			material_tech
+			civilian_tech
+		}
+		
+	}
+
+	
+	chemical_industry_i = {
+		allow = { has_country_flag = UNLOCK:raw_materials_folder} 
+		
+		local_supply_in_states = 0.03
+		local_supply_in_core_states = 0.03
+		production_speed_synthetic_refinery_factor = 0.1
+		production_speed_synthetic_rubber_refinery_factor = 0.1
+		industrial_capacity_factory = 0.02
+		
+		on_research_complete = {
+			set_temp_variable = { tech = token:chemical_industry_i }
+			on_resource_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = material_tech_tt
+			custom_effect_tooltip = construction_tech_tt
+			custom_effect_tooltip = synth_resources_tt
+			hidden_effect = {
+				if = { 
+					limit = { is_player = yes }
+					every_controlled_state = {
+						set_local_supply_in_states_modifier = yes
+						set_local_supply_in_core_states_modifier = yes
+					}
+				}
+			}
+		}
+		
+		path = {
+			leads_to_tech = chemical_industry_ii
+			research_cost_coeff = 1
+		}
+
+		research_cost = 1.25
+		start_year = 1938
+		folder = {
+			name = raw_materials_folder
+			position = { x = @chemical y = @1938 }
+		}
+
+		ai_will_do = {
+			base = 0
+			
+			modifier = {
+				add = ai_base 
+				
+				set_temp_variable = { base = @F_PRIORITY_1 }
+				ai_synthetic_oil_refinery_tech = yes 
+			}
+			modifier = {
+				factor = ai_factor 
+				
+				set_temp_variable = { ai_factor = ai_material_tech_need } #AI RESEARCH CATEGORY
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		
+
+		categories = {
+			material_tech
+			synth_resources
+			construction_tech
+		}
+	}
+	chemical_industry_ii = {
+		allow = { has_country_flag = UNLOCK:raw_materials_folder } 
+		local_supply_in_states = 0.04
+		local_supply_in_core_states = 0.04
+		production_lack_of_resource_penalty_factor = -0.01
+		production_speed_synthetic_refinery_factor = 0.1
+		production_speed_synthetic_rubber_refinery_factor = 0.1
+		industrial_capacity_factory = 0.03
+		
+		on_research_complete = {
+			set_temp_variable = { tech = token:chemical_industry_ii }
+			on_resource_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = material_tech_tt
+			custom_effect_tooltip = construction_tech_tt
+			custom_effect_tooltip = synth_resources_tt
+			hidden_effect = {
+				if = { 
+					limit = { is_player = yes }
+					every_controlled_state = {
+						set_local_supply_in_states_modifier = yes
+						set_local_supply_in_core_states_modifier = yes
+					}
+				}
+			}
+		}
+		path = {
+			leads_to_tech = chemical_industry_iii
+			research_cost_coeff = 1
+		}
+
+		research_cost = 1.25
+		start_year = 1940
+		folder = {
+			name = raw_materials_folder
+			position = { x = @chemical y = @1940 }
+		}
+
+		ai_will_do = {
+			base = 0
+			
+			modifier = {
+				add = ai_base 
+				
+				set_temp_variable = { base = @F_PRIORITY_1 }
+				ai_synthetic_oil_refinery_tech = yes 
+			}
+			modifier = {
+				factor = ai_factor 
+				
+				set_temp_variable = { ai_factor = ai_material_tech_need } #AI RESEARCH CATEGORY
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		
+		categories = {
+			material_tech
+			synth_resources
+			construction_tech
+		}
+	}
+
+	chemical_industry_iii = {
+		allow = { has_country_flag = UNLOCK:raw_materials_folder } 
+		
+		
+		local_supply_in_states = 0.05
+		local_supply_in_core_states = 0.05
+		production_lack_of_resource_penalty_factor = -0.02
+		production_speed_synthetic_refinery_factor = 0.1
+		production_speed_synthetic_rubber_refinery_factor = 0.1
+		industrial_capacity_factory = 0.04
+		
+		
+		on_research_complete = {
+			set_temp_variable = { tech = token:chemical_industry_iii }
+			on_resource_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = material_tech_tt
+			custom_effect_tooltip = construction_tech_tt
+			custom_effect_tooltip = synth_resources_tt
+			hidden_effect = {
+				if = { 
+					limit = { is_player = yes }
+					every_controlled_state = {
+						set_local_supply_in_states_modifier = yes
+						set_local_supply_in_core_states_modifier = yes
+					}
+				}
+			}
+		}
+		path = {
+			leads_to_tech = chemical_industry_iv
+			research_cost_coeff = 1
+		}
+
+		research_cost = 1.25
+		start_year = 1942
+		folder = {
+			name = raw_materials_folder
+			position = { x = @chemical y = @1942 }
+		}
+
+		ai_will_do = {
+			base = 0
+			
+			modifier = {
+				add = ai_base 
+				
+				set_temp_variable = { base = @F_PRIORITY_1 }
+				ai_synthetic_oil_refinery_tech = yes 
+			}
+			modifier = {
+				factor = ai_factor 
+				
+				set_temp_variable = { ai_factor = ai_material_tech_need } #AI RESEARCH CATEGORY
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		
+		categories = {
+			material_tech
+			synth_resources
+			construction_tech
+		}
+	}
+
+	chemical_industry_iv = {
+		allow = { has_country_flag = UNLOCK:raw_materials_folder } 
+		
+		local_supply_in_states = 0.06
+		local_supply_in_core_states = 0.06
+		production_lack_of_resource_penalty_factor = -0.02
+		production_factory_max_efficiency_factor = 0.03
+		production_speed_synthetic_refinery_factor = 0.1
+		production_speed_synthetic_rubber_refinery_factor = 0.1
+		industrial_capacity_factory = 0.05		
+		
+		on_research_complete = {
+			set_temp_variable = { tech = token:chemical_industry_iv }
+			on_resource_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = material_tech_tt
+			custom_effect_tooltip = construction_tech_tt
+			custom_effect_tooltip = synth_resources_tt
+			hidden_effect = {
+				if = { 
+					limit = { is_player = yes }
+					every_controlled_state = {
+						set_local_supply_in_states_modifier = yes
+						set_local_supply_in_core_states_modifier = yes
+					}
+				}
+			}
+		}
+		path = {
+			research_cost_coeff = 1
+		}
+
+		research_cost = 1.25
+		start_year = 1945
+		folder = {
+			name = raw_materials_folder
+			position = { x = @chemical y = @1945 }
+		}
+
+		ai_will_do = {
+			base = 0
+			
+			modifier = {
+				add = ai_base 
+				
+				set_temp_variable = { base = @F_PRIORITY_1 }
+				ai_synthetic_oil_refinery_tech = yes 
+			}
+			modifier = {
+				factor = ai_factor 
+				
+				set_temp_variable = { ai_factor = ai_material_tech_need } #AI RESEARCH CATEGORY
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		
+		categories = {
+			material_tech
+			synth_resources
+			construction_tech
+		}
+	}
+	##### Excavation
+	excavation1 = {
+		allow = { has_country_flag = UNLOCK:raw_materials_folder} 
+
+		resources_factor = 0.1
+		storage_output_factor = 0.1
+		path = {
+			leads_to_tech = excavation2
+			research_cost_coeff = 1
+		}
+		path = {
+			leads_to_tech = smelting_techniques
+			research_cost_coeff = 1
+		}
+		path = {
+			leads_to_tech = aluminium_industry_i
+			research_cost_coeff = 1
+		}
+		path = {
+			leads_to_tech = improved_power_grid_i
+			research_cost_coeff = 1
+		}
+		path = {
+			leads_to_tech = direct_chill_casting
+			research_cost_coeff = 1
+		}
+		path = {
+			leads_to_tech = improved_power_plant
+			research_cost_coeff = 1
+		}
+		research_cost = 1
+		start_year = 1930
+		folder = {
+			name = raw_materials_folder
+			position = { x = @EXCAV y = @1930 }
+		}
+
+		ai_will_do = {
+			base = 0
+			
+			modifier = {
+				add = ai_base 
+				
+				set_temp_variable = { base = @R_PRIORITY }
+				ai_excavation_tech = yes 
+			}
+			modifier = {
+				factor = ai_factor 
+				
+				set_temp_variable = { ai_factor = ai_material_tech_need } #AI TECH CATEGORY
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		
+		on_research_complete = {	
+			set_temp_variable = { tech = token:excavation1 }
+			on_resource_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = material_tech_tt
+			custom_effect_tooltip = excavation_tech_tt
+			custom_effect_tooltip = empty_line
+			
+			update_storage_output = yes
+		}
+		categories = {
+			material_tech
+			excavation_tech
+		}
+	}
+	excavation2 = {
+		allow = { has_country_flag = UNLOCK:raw_materials_folder} 
+
+		resources_factor = 0.07
+		storage_output_factor = 0.1
+
+		path = {
+			leads_to_tech = excavation3
+			research_cost_coeff = 1
+		}
+		research_cost = 1.5
+		start_year = 1936
+		folder = {
+			name = raw_materials_folder
+			position = { x = @EXCAV y = @1936 }
+		}
+
+		ai_will_do = {
+			base = 0
+			
+			modifier = {
+				add = ai_base 
+				
+				set_temp_variable = { base = @R_PRIORITY }
+				ai_excavation_tech = yes 
+			}
+			modifier = {
+				factor = ai_factor 
+				
+				set_temp_variable = { ai_factor = ai_material_tech_need } #AI TECH CATEGORY
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		on_research_complete = {
+			set_temp_variable = { tech = token:excavation2 }
+			on_resource_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = material_tech_tt
+			custom_effect_tooltip = excavation_tech_tt
+			custom_effect_tooltip = empty_line
+			
+			update_storage_output = yes
+		}
+		categories = {
+			material_tech
+			excavation_tech
+		}
+		
+	}
+	excavation3 = {
+		allow = { has_country_flag = UNLOCK:raw_materials_folder} 
+
+		resources_factor = 0.07
+		storage_output_factor = 0.1
+
+		path = {
+			leads_to_tech = excavation4
+			research_cost_coeff = 1
+		}
+
+		research_cost = 1.5
+		start_year = 1939
+		folder = {
+			name = raw_materials_folder
+			position = { x = @EXCAV y = @1939 }
+		}
+
+		ai_will_do = {
+			base = 0
+			
+			modifier = {
+				add = ai_base 
+				
+				set_temp_variable = { base = @R_PRIORITY }
+				ai_excavation_tech = yes 
+			}
+			modifier = {
+				factor = ai_factor 
+				
+				set_temp_variable = { ai_factor = ai_material_tech_need } #AI TECH CATEGORY
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		on_research_complete = {
+			set_temp_variable = { tech = token:excavation3 }
+			on_resource_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = material_tech_tt
+			custom_effect_tooltip = excavation_tech_tt
+			custom_effect_tooltip = empty_line
+			
+			update_storage_output = yes
+		}
+		categories = {
+			material_tech
+			excavation_tech
+		}
+		
+	}
+	excavation4 = {
+		allow = { has_country_flag = UNLOCK:raw_materials_folder} 
+
+		resources_factor = 0.07
+		storage_output_factor = 0.1
+
+		path = {
+			leads_to_tech = excavation5
+			research_cost_coeff = 1
+		}
+		research_cost = 1.75
+		start_year = 1941
+		folder = {
+			name = raw_materials_folder
+			position = { x = @EXCAV y = @1941 }
+		}
+
+		ai_will_do = {
+			base = 0
+			
+			modifier = {
+				add = ai_base 
+				
+				set_temp_variable = { base = @R_PRIORITY }
+				ai_excavation_tech = yes 
+			}
+			modifier = {
+				factor = ai_factor 
+				
+				set_temp_variable = { ai_factor = ai_material_tech_need } #AI TECH CATEGORY
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		on_research_complete = {
+			set_temp_variable = { tech = token:excavation4 }
+			on_resource_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = material_tech_tt
+			custom_effect_tooltip = excavation_tech_tt
+			custom_effect_tooltip = empty_line
+			
+			update_storage_output = yes
+		}
+		categories = {
+			material_tech
+			excavation_tech
+		}
+		
+	}
+	excavation5 = {
+		allow = { has_country_flag = UNLOCK:raw_materials_folder} 
+
+		resources_factor = 0.07
+		storage_output_factor = 0.1
+
+		path = {
+			leads_to_tech = excavation6
+			research_cost_coeff = 1
+		}
+
+		research_cost = 2
+		start_year = 1943
+		folder = {
+			name = raw_materials_folder
+			position = { x = @EXCAV y = @1943 }
+		}
+		ai_will_do = {
+			base = 0
+			
+			modifier = {
+				add = ai_base 
+				
+				set_temp_variable = { base = @R_PRIORITY }
+				ai_excavation_tech = yes 
+			}
+			modifier = {
+				factor = ai_factor 
+				
+				set_temp_variable = { ai_factor = ai_material_tech_need } #AI TECH CATEGORY
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		on_research_complete = {
+			set_temp_variable = { tech = token:excavation5 }
+			on_resource_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = material_tech_tt
+			custom_effect_tooltip = excavation_tech_tt
+			custom_effect_tooltip = empty_line
+			
+			update_storage_output = yes
+		}
+		categories = {
+			material_tech
+			excavation_tech
+		}
+		
+	}
+	excavation6 = {
+		allow = { has_country_flag = UNLOCK:raw_materials_folder} 
+
+		resources_factor = 0.07
+		storage_output_factor = 0.1
+
+
+		research_cost = 2
+		start_year = 1944
+		folder = {
+			name = raw_materials_folder
+			position = { x = @EXCAV y = @1944 }
+		}
+		ai_will_do = {
+			base = 0
+			
+			modifier = {
+				add = ai_base 
+				
+				set_temp_variable = { base = @R_PRIORITY }
+				ai_excavation_tech = yes 
+			}
+			modifier = {
+				factor = ai_factor 
+				
+				set_temp_variable = { ai_factor = ai_material_tech_need } #AI TECH CATEGORY
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		on_research_complete = {
+			set_temp_variable = { tech = token:excavation6 }
+			on_resource_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = material_tech_tt
+			custom_effect_tooltip = excavation_tech_tt
+			custom_effect_tooltip = empty_line
+			
+			update_storage_output = yes
+		}
+		categories = {
+			material_tech
+			excavation_tech
+		}
+		
+	}
+	
+	
+
+	direct_chill_casting = {
+		allow = { has_country_flag = UNLOCK:raw_materials_folder} 
+		aluminium_conversion_output = 4
+		aluminium_energy_cost = 3
+		research_cost = 0.75
+		start_year = 1935
+		folder = {
+			name = raw_materials_folder
+			position = { x = @ALM_IND y = @1935 }
+		}
+
+		ai_will_do = {
+			base = 0
+			
+			modifier = {
+				add = ai_base 
+				
+				set_temp_variable = { base = @ALU_PRIORITY }
+				ai_aluminium_refinery_tech = yes 
+			}
+			modifier = {
+				factor = ai_factor 
+				
+				set_temp_variable = { ai_factor = ai_material_tech_need } #AI TECH CATEGORY
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		
+		on_research_complete = {
+			set_temp_variable = { tech = token:direct_chill_casting }
+			on_resource_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = material_tech_tt
+			custom_effect_tooltip = construction_tech_tt
+		}
+		categories = {
+			material_tech
+			construction_tech
+		}
+	}
+	aluminium_industry_i = {
+		allow = { has_country_flag = UNLOCK:raw_materials_folder} 
+		conversion_bauxite_input = -1
+		production_speed_aluminium_refinery_factor = 0.05
+		research_cost = 0.75
+		start_year = 1937
+		folder = {
+			name = raw_materials_folder
+			position = { x = @ALM_IND y = @1937 }
+		}
+		path = {
+			leads_to_tech = aluminium_industry_ii_efficient
+			research_cost_coeff = 1
+		}
+		path = {
+			leads_to_tech = aluminium_industry_ii_output
+			research_cost_coeff = 1
+		}
+		ai_will_do = {
+			base = 0
+			
+			modifier = {
+				add = ai_base 
+				
+				set_temp_variable = { base = @ALU_PRIORITY }
+				ai_aluminium_refinery_tech = yes 
+			}
+			modifier = {
+				factor = ai_factor 
+				
+				set_temp_variable = { ai_factor = ai_material_tech_need } #AI TECH CATEGORY
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		on_research_complete = {
+			set_temp_variable = { tech = token:aluminium_industry_i }
+			on_resource_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = material_tech_tt
+			custom_effect_tooltip = construction_tech_tt
+		}
+		categories = {
+			material_tech
+			construction_tech
+		}
+		
+	}
+	aluminium_industry_ii_efficient = {
+		allow = { has_country_flag = UNLOCK:raw_materials_folder}
+		
+		xor = {aluminium_industry_ii_output}
+ 
+		conversion_bauxite_input = -1
+		aluminium_energy_cost = -1
+		path = {
+			leads_to_tech = aluminium_industry_iii
+			research_cost_coeff = 1
+		}
+		research_cost = 1.0
+		start_year = 1939
+		folder = {
+			name = raw_materials_folder
+			position = { x = @ALM_IND_L y = @1939_1 }
+		}
+
+		ai_will_do = {
+			base = 0
+			
+			modifier = {
+				add = ai_base 
+				
+				set_temp_variable = { base = @ALU_PRIORITY }
+				ai_aluminium_refinery_tech = yes 
+			}
+			modifier = {
+				factor = ai_factor 
+				
+				set_temp_variable = { ai_factor = ai_material_tech_need } #AI TECH CATEGORY
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+			modifier = {
+				factor = 0
+				ai_efficient_alumina_pick = no
+			}
+		}
+		on_research_complete = {
+			set_temp_variable = { tech = token:aluminium_industry_ii_efficient }
+			on_resource_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = material_tech_tt
+			custom_effect_tooltip = construction_tech_tt
+		}
+		categories = {
+			material_tech
+			construction_tech
+		}
+		
+	}
+	aluminium_industry_ii_output = {
+		allow = { has_country_flag = UNLOCK:raw_materials_folder} 
+
+		xor = {aluminium_industry_ii_efficient}
+
+		conversion_bauxite_input =  3
+		aluminium_energy_cost = 3
+		aluminium_conversion_output = 3
+		path = {
+			leads_to_tech = aluminium_industry_iii
+			research_cost_coeff = 1
+		}
+		research_cost = 1.0
+		start_year = 1939
+		folder = {
+			name = raw_materials_folder
+			position = { x = @ALM_IND_R y = @1939_1 }
+		}
+
+		ai_will_do = {
+			base = 0
+			
+			modifier = {
+				add = ai_base 
+				
+				set_temp_variable = { base = @ALU_PRIORITY }
+				ai_aluminium_refinery_tech = yes 
+			}
+			modifier = {
+				factor = ai_factor 
+				
+				set_temp_variable = { ai_factor = ai_material_tech_need } #AI TECH CATEGORY
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+			modifier = {
+				factor = 0
+				ai_efficient_alumina_pick = yes
+			}
+		}
+		on_research_complete = {
+			set_temp_variable = { tech = token:aluminium_industry_ii_output }
+			on_resource_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = material_tech_tt
+			custom_effect_tooltip = construction_tech_tt
+		}
+		categories = {
+			material_tech
+			construction_tech
+		}
+		
+	}
+	aluminium_industry_iii = {
+		allow = { has_country_flag = UNLOCK:raw_materials_folder} 
+		aluminium_energy_cost = -1
+		production_speed_aluminium_refinery_factor = 0.05
+		path = {
+			leads_to_tech = aluminium_industry_iv
+			research_cost_coeff = 1
+		}
+
+		research_cost = 0.75
+		start_year = 1942
+		folder = {
+			name = raw_materials_folder
+			position = { x = @ALM_IND y = @1942 }
+		}
+
+		ai_will_do = {
+			base = 0
+			
+			modifier = {
+				add = ai_base 
+				
+				set_temp_variable = { base = @ALU_PRIORITY }
+				ai_aluminium_refinery_tech = yes 
+			}
+			modifier = {
+				factor = ai_factor 
+				
+				set_temp_variable = { ai_factor = ai_material_tech_need } #AI TECH CATEGORY
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		on_research_complete = {
+			set_temp_variable = { tech = token:aluminium_industry_iii }
+			on_resource_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = material_tech_tt
+			custom_effect_tooltip = construction_tech_tt
+		}
+		categories = {
+			material_tech
+			construction_tech
+		}
+		
+	}
+	aluminium_industry_iv = {
+		allow = { has_country_flag = UNLOCK:raw_materials_folder} 
+		aluminium_conversion_output = 2
+		production_speed_aluminium_refinery_factor = 0.05
+		
+		research_cost = 0.5
+		start_year = 1945
+		folder = {
+			name = raw_materials_folder
+			position = { x = @ALM_IND y = @1945 }
+		}
+
+		ai_will_do = {
+			base = 0
+			
+			modifier = {
+				add = ai_base 
+				
+				set_temp_variable = { base = @ALU_PRIORITY }
+				ai_aluminium_refinery_tech = yes 
+			}
+			modifier = {
+				factor = ai_factor 
+				
+				set_temp_variable = { ai_factor = ai_material_tech_need } #AI TECH CATEGORY
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		on_research_complete = {
+			set_temp_variable = { tech = token:aluminium_industry_iv }
+			on_resource_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = material_tech_tt
+			custom_effect_tooltip = construction_tech_tt
+		}
+		categories = {
+			material_tech
+			construction_tech
+		}
+		
+	}
+
+
+	smelting_techniques = {
+		allow = { has_country_flag = UNLOCK:raw_materials_folder} 
+		conversion_iron_input = -2
+		research_cost = 0.75
+		start_year = 1936
+		folder = {
+			name = raw_materials_folder
+			position = { x = @STEEL_WRK y = @1936 }
+		}
+
+		ai_will_do = {
+			base = 0
+			
+			modifier = {
+				add = ai_base 
+				
+				set_temp_variable = { base = @STEEL_PRIORITY }
+				ai_steel_refinery_tech = yes 
+			}
+			modifier = {
+				factor = ai_factor 
+				
+				set_temp_variable = { ai_factor = ai_material_tech_need } #AI TECH CATEGORY
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		path = {
+			leads_to_tech = steel_industry_i_upgrade
+			research_cost_coeff = 1
+		}
+		path = {
+			leads_to_tech = steel_industry_i_new
+			research_cost_coeff = 1
+		}
+		on_research_complete = {
+			set_temp_variable = { tech = token:smelting_techniques }
+			on_resource_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = material_tech_tt
+			custom_effect_tooltip = construction_tech_tt
+		}
+		categories = {
+			material_tech
+			construction_tech
+		}
+		
+	}	
+	steel_industry_i_new = {
+		allow = { has_country_flag = UNLOCK:raw_materials_folder} 
+
+		xor = {steel_industry_i_upgrade}
+
+		artillery_production_capacity = 1
+		production_speed_steel_refinery_factor = 0.15
+		research_cost = 1.0
+		start_year = 1938
+		folder = {
+			name = raw_materials_folder
+			position = { x = @STEEL_WRK_L y = @1938_1 }
+		}
+		path = {
+			leads_to_tech = steel_industry_ii
+			research_cost_coeff = 1
+		}
+		path = {
+			leads_to_tech = submerged_arc_weld
+			research_cost_coeff = 1
+		}
+		ai_will_do = {
+			base = 0
+			
+			modifier = {
+				add = ai_base 
+				
+				set_temp_variable = { base = @STEEL_PRIORITY }
+				ai_steel_refinery_tech = yes 
+			}
+			modifier = {
+				factor = ai_factor 
+				
+				set_temp_variable = { ai_factor = ai_material_tech_need } #AI TECH CATEGORY
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+			modifier = {
+				factor = 0
+				
+				ai_new_steel_mills_pick = no
+			}
+		}
+		on_research_complete = {
+
+			add_tech_bonus = {
+				name = new_steel_bonus
+				uses = 1
+				bonus = 0.3
+				technology = electric_arc_furnace
+			}
+
+			set_temp_variable = { tech = token:steel_industry_i_new }
+			on_resource_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = material_tech_tt
+			custom_effect_tooltip = construction_tech_tt
+		}
+		categories = {
+			material_tech
+			construction_tech
+		}
+		
+	}
+	steel_industry_i_upgrade = {
+		allow = { has_country_flag = UNLOCK:raw_materials_folder} 
+
+		xor = {steel_industry_i_new}
+
+		steel_conversion_output = 2
+		artillery_production_capacity = 1
+		research_cost = 1.0
+		start_year = 1938
+		folder = {
+			name = raw_materials_folder
+			position = { x = @STEEL_WRK_R y = @1938_1 }
+		}
+		path = {
+			leads_to_tech = steel_industry_ii
+			research_cost_coeff = 1
+		}
+		path = {
+			leads_to_tech = submerged_arc_weld
+			research_cost_coeff = 1
+		}
+		ai_will_do = {
+			base = 0
+			
+			modifier = {
+				add = ai_base 
+				
+				set_temp_variable = { base = @STEEL_PRIORITY }
+				ai_steel_refinery_tech = yes 
+			}
+			modifier = {
+				factor = ai_factor 
+				
+				set_temp_variable = { ai_factor = ai_material_tech_need } #AI TECH CATEGORY
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+			modifier = {
+				factor = 0
+				
+				ai_new_steel_mills_pick = yes
+			}
+		}
+		on_research_complete = {
+
+			set_temp_variable = { tech = token:steel_industry_i_upgrade }
+			on_resource_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = material_tech_tt
+			custom_effect_tooltip = construction_tech_tt
+		}
+		categories = {
+			material_tech
+			construction_tech
+		}
+		
+	}
+	submerged_arc_weld = {
+		allow = { has_country_flag = UNLOCK:raw_materials_folder} 
+		production_factory_efficiency_gain_factor = 0.05
+		industrial_capacity_dockyard = 0.01
+		tank_production_capacity = 1
+		research_cost = 0.75
+		start_year = 1938
+		folder = {
+			name = raw_materials_folder
+			position = { x = @WELD y = @1939 }
+		}
+		ai_will_do = {
+			base = 0
+			
+			modifier = {
+				add = ai_base 
+				
+				set_temp_variable = { base = @STEEL_PRIORITY }
+				ai_steel_refinery_tech = yes 
+			}
+			modifier = {
+				factor = ai_factor 
+				
+				set_temp_variable = { ai_factor = ai_material_tech_need } #AI TECH CATEGORY
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		on_research_complete = {
+			set_temp_variable = { tech = token:submerged_arc_weld }
+			on_resource_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = material_tech_tt
+			custom_effect_tooltip = construction_tech_tt
+		}
+		categories = {
+			material_tech
+			construction_tech
+		}
+		
+	}
+	steel_industry_ii = {
+		allow = { has_country_flag = UNLOCK:raw_materials_folder} 
+		steel_conversion_output = 1
+		artillery_production_capacity = 1
+		production_speed_steel_refinery_factor = 0.05
+		research_cost = 1.0
+		start_year = 1940
+		folder = {
+			name = raw_materials_folder
+			position = { x = @STEEL_WRK y = @1940 }
+		}
+		path = {
+			leads_to_tech = electric_arc_furnace
+			research_cost_coeff = 1
+		}
+		path = {
+			leads_to_tech = heliarc_welding
+			research_cost_coeff = 1
+		}	
+		ai_will_do = {
+			base = 0
+			
+			modifier = {
+				add = ai_base 
+				
+				set_temp_variable = { base = @STEEL_PRIORITY }
+				ai_steel_refinery_tech = yes 
+			}
+			modifier = {
+				factor = ai_factor 
+				
+				set_temp_variable = { ai_factor = ai_material_tech_need } #AI TECH CATEGORY
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		on_research_complete = {
+
+			set_temp_variable = { tech = token:steel_industry_ii }
+			on_resource_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = material_tech_tt
+			custom_effect_tooltip = construction_tech_tt
+		}
+		categories = {
+			material_tech
+			construction_tech
+		}
+		
+	}
+	heliarc_welding = {
+		allow = { has_country_flag = UNLOCK:raw_materials_folder} 
+		industrial_capacity_dockyard = 0.05
+		production_factory_max_efficiency_factor = 0.02
+		production_speed_shipyard_factor = 0.05
+		tank_production_capacity = 1
+		research_cost = 1.25
+		start_year = 1941
+		folder = {
+			name = raw_materials_folder
+			position = { x = @WELD y = @1941 }
+		}
+	
+		ai_will_do = {
+			base = 0
+			
+			modifier = {
+				add = ai_base 
+				
+				set_temp_variable = { base = @STEEL_PRIORITY }
+				ai_steel_refinery_tech = yes 
+			}
+			modifier = {
+				factor = ai_factor 
+				
+				set_temp_variable = { ai_factor = ai_material_tech_need } #AI TECH CATEGORY
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		on_research_complete = {
+
+			set_temp_variable = { tech = token:heliarc_welding }
+			on_resource_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = material_tech_tt
+			custom_effect_tooltip = construction_tech_tt
+			custom_effect_tooltip = electronics_tt
+
+		}
+		categories = {
+			material_tech
+			construction_tech
+			electronics
+		}
+		
+	}	
+	electric_arc_furnace = {
+		allow = { has_country_flag = UNLOCK:raw_materials_folder} 
+		production_speed_steel_refinery_factor = 0.1
+		steel_energy_cost = 3
+		conversion_coal_input = -2
+		alloy_steel_output = 1
+		research_cost = 1.5
+		start_year = 1942
+		folder = {
+			name = raw_materials_folder
+			position = { x = @STEEL_WRK y = @1942 }
+		}
+		path = {
+			leads_to_tech = steel_industry_iii
+			research_cost_coeff = 1
+		}
+		path = {
+			leads_to_tech = alloy_steel
+			research_cost_coeff = 1
+		}
+		ai_will_do = {
+			base = 0
+			
+			modifier = {
+				add = ai_base 
+				
+				set_temp_variable = { base = @STEEL_PRIORITY }
+				ai_steel_refinery_tech = yes 
+			}
+			modifier = {
+				factor = ai_factor 
+				
+				set_temp_variable = { ai_factor = ai_material_tech_need } #AI TECH CATEGORY
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		on_research_complete = {
+			set_temp_variable = { tech = token:electric_arc_furnace }
+			on_resource_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = material_tech_tt
+			custom_effect_tooltip = construction_tech_tt
+			custom_effect_tooltip = electronics_tt
+		}
+		categories = {
+			material_tech
+			construction_tech
+			electronics
+		}
+		
+	}	
+	alloy_steel = {
+		allow = { has_country_flag = UNLOCK:raw_materials_folder} 
+		alloy_steel_input = 1
+		alloy_steel_output = 3
+		research_cost = 1.0
+		start_year = 1942
+		folder = {
+			name = raw_materials_folder
+			position = { x = @ALLOY y = @1942 }
+		}
+		
+		ai_will_do = {
+			base = 0
+			
+			modifier = {
+				add = ai_base 
+				
+				set_temp_variable = { base = @STEEL_PRIORITY }
+				ai_steel_refinery_tech = yes 
+			}
+			modifier = {
+				factor = ai_factor 
+				
+				set_temp_variable = { ai_factor = ai_material_tech_need } #AI TECH CATEGORY
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		on_research_complete = {
+			set_temp_variable = { tech = token:alloy_steel }
+			on_resource_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = material_tech_tt
+			custom_effect_tooltip = construction_tech_tt
+		}
+		categories = {
+			material_tech
+			construction_tech
+		}
+		
+	}	
+	steel_industry_iii = {
+		allow = { has_country_flag = UNLOCK:raw_materials_folder} 
+		steel_conversion_output = 1
+		artillery_production_capacity = 1
+		production_speed_steel_refinery_factor = 0.05
+		path = {
+			leads_to_tech = steel_industry_iv_coal
+			research_cost_coeff = 1
+		}
+		path = {
+			leads_to_tech = steel_industry_iv_iron
+			research_cost_coeff = 1
+		}
+
+		research_cost = 1.0
+		start_year = 1943
+		folder = {
+			name = raw_materials_folder
+			position = { x = @STEEL_WRK y = @1943 }
+		}
+		
+		ai_will_do = {
+			base = 0
+			
+			modifier = {
+				add = ai_base 
+				
+				set_temp_variable = { base = @STEEL_PRIORITY }
+				ai_steel_refinery_tech = yes 
+			}
+			modifier = {
+				factor = ai_factor 
+				
+				set_temp_variable = { ai_factor = ai_material_tech_need } #AI TECH CATEGORY
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		on_research_complete = {
+
+			set_temp_variable = { tech = token:steel_industry_iii }
+			on_resource_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = material_tech_tt
+			custom_effect_tooltip = construction_tech_tt
+		}
+		categories = {
+			material_tech
+			construction_tech
+		}
+		
+	}
+	steel_industry_iv_iron = {
+		allow = { has_country_flag = UNLOCK:raw_materials_folder} 
+
+		xor = {steel_industry_iv_coal}
+
+		conversion_iron_input = -2
+		conversion_coal_input = 1
+		alloy_steel_output = 1
+		research_cost = 1.0
+		start_year = 1944
+		folder = {
+			name = raw_materials_folder
+			position = { x = @STEEL_WRK_L y = @1944 }
+		}
+		
+		ai_will_do = {
+			base = 0
+			
+			modifier = {
+				add = ai_base 
+				
+				set_temp_variable = { base = @STEEL_PRIORITY }
+				ai_steel_refinery_tech = yes 
+			}
+			modifier = {
+				factor = ai_factor 
+				
+				set_temp_variable = { ai_factor = ai_material_tech_need } #AI TECH CATEGORY
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+			modifier = {
+				factor = 0
+				
+				ai_high_carbon_steel_pick = no
+			}
+		}
+		on_research_complete = {
+
+			set_temp_variable = { tech = token:steel_industry_iv_iron }
+			on_resource_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = material_tech_tt
+			custom_effect_tooltip = construction_tech_tt
+		}
+		categories = {
+			material_tech
+			construction_tech
+		}
+		
+	}
+	steel_industry_iv_coal = {
+		allow = { has_country_flag = UNLOCK:raw_materials_folder} 
+
+		xor = {steel_industry_iv_iron}
+
+		conversion_coal_input = -1
+		alloy_steel_output = 1
+		research_cost = 1.0
+		start_year = 1944
+		folder = {
+			name = raw_materials_folder
+			position = { x = @STEEL_WRK_R y = @1944 }
+		}
+		ai_will_do = {
+			base = 0
+			
+			modifier = {
+				add = ai_base 
+				
+				set_temp_variable = { base = @STEEL_PRIORITY }
+				ai_steel_refinery_tech = yes 
+			}
+			modifier = {
+				factor = ai_factor 
+				
+				set_temp_variable = { ai_factor = ai_material_tech_need } #AI TECH CATEGORY
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+			modifier = {
+				factor = 0
+				
+				ai_high_carbon_steel_pick = yes
+			}
+		}
+		on_research_complete = {
+
+			set_temp_variable = { tech = token:steel_industry_iv_coal }
+			on_resource_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = material_tech_tt
+			custom_effect_tooltip = construction_tech_tt
+		}
+		categories = {
+			material_tech
+			construction_tech
+		}
+		
+	}
+	
+
+	improved_power_plant = {
+		allow = { has_country_flag = UNLOCK:raw_materials_folder} 
+		energy_production_factor = 0.04
+		production_speed_power_plant_factor = 0.05
+
+		research_cost = 1.5
+		start_year = 1938
+		folder = {
+			name = raw_materials_folder
+			position = { x = @POWER_PLANT y = @1938 }
+		}
+		path = {
+			leads_to_tech = improved_power_plant_ii_new
+			research_cost_coeff = 1
+		}
+		path = {
+			leads_to_tech = improved_power_plant_ii_upgrade
+			research_cost_coeff = 1
+		}
+		
+		ai_will_do = {
+			base = 0
+			
+			modifier = {
+				add = ai_base 
+				
+				set_temp_variable = { base = @PLANT_PRIORITY }
+				ai_power_plant_tech = yes 
+			}
+			modifier = {
+				factor = ai_factor 
+				
+				set_temp_variable = { ai_factor = ai_material_tech_need } #AI TECH CATEGORY
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		
+		on_research_complete = {
+			set_temp_variable = { tech = token:improved_power_plant }
+			on_resource_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = material_tech_tt
+			custom_effect_tooltip = construction_tech_tt
+			custom_effect_tooltip = electronics_tt
+			custom_effect_tooltip = power_tech_tt
+		}
+		categories = {
+			material_tech
+			construction_tech
+			electronics
+			power_tech
+		}
+	}
+	improved_power_plant_ii_new = {
+		allow = { has_country_flag = UNLOCK:raw_materials_folder} 
+
+		xor = {improved_power_plant_ii_upgrade}
+
+		production_speed_power_plant_factor = 0.20
+		energy_fuel_fraction_cap = 0.10
+
+		research_cost = 1.5
+		start_year = 1941
+		folder = {
+			name = raw_materials_folder
+			position = { x = @POWER_PLANT_L y = @1941_1 }
+		}
+		path = {
+			leads_to_tech = improved_power_plant_iii
+			research_cost_coeff = 1
+		}
+		ai_will_do = {
+			base = 0
+			
+			modifier = {
+				add = ai_base 
+				
+				set_temp_variable = { base = @PLANT_PRIORITY }
+				ai_power_plant_tech = yes 
+			}
+			modifier = {
+				factor = ai_factor 
+				
+				set_temp_variable = { ai_factor = ai_material_tech_need } #AI TECH CATEGORY
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+			modifier = {
+				factor = 0
+				ai_new_power_plant_pick = no
+			}
+		}
+		on_research_complete = {
+			set_temp_variable = { tech = token:improved_power_plant_ii_new }
+			on_resource_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = material_tech_tt
+			custom_effect_tooltip = construction_tech_tt
+			custom_effect_tooltip = electronics_tt
+			custom_effect_tooltip = power_tech_tt
+		}
+		categories = {
+			material_tech
+			construction_tech
+			electronics
+			power_tech
+		}
+		
+	}
+	improved_power_plant_ii_upgrade = {
+		allow = { has_country_flag = UNLOCK:raw_materials_folder} 
+
+		xor = {improved_power_plant_ii_new}
+
+		energy_production_factor = 0.06
+		energy_fuel_fraction_cap = 0.10
+
+		research_cost = 1.5
+		start_year = 1941
+		folder = {
+			name = raw_materials_folder
+			position = { x = @POWER_PLANT_R y = @1941_1 }
+		}
+		path = {
+			leads_to_tech = improved_power_plant_iii
+			research_cost_coeff = 1
+		}
+		ai_will_do = {
+			base = 0
+			
+			modifier = {
+				add = ai_base 
+				
+				set_temp_variable = { base = @PLANT_PRIORITY }
+				ai_power_plant_tech = yes 
+			}
+			modifier = {
+				factor = ai_factor 
+				
+				set_temp_variable = { ai_factor = ai_material_tech_need } #AI TECH CATEGORY
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+			modifier = {
+				factor = 0
+				ai_new_power_plant_pick = yes
+			}
+		}
+		on_research_complete = {
+			set_temp_variable = { tech = token:improved_power_plant_ii_upgrade }
+			on_resource_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = material_tech_tt
+			custom_effect_tooltip = construction_tech_tt
+			custom_effect_tooltip = electronics_tt
+			custom_effect_tooltip = power_tech_tt
+		}
+		categories = {
+			material_tech
+			construction_tech
+			electronics
+			power_tech
+		}
+		
+	}
+	improved_power_plant_iii = {
+		allow = { has_country_flag = UNLOCK:raw_materials_folder} 
+		energy_production_factor = 0.06
+		production_speed_power_plant_factor = 0.05
+		energy_fuel_fraction_cap = 0.10
+
+		research_cost = 1.75
+		start_year = 1944
+		folder = {
+			name = raw_materials_folder
+			position = { x = @POWER_PLANT y = @1944 }
+		}
+
+		ai_will_do = {
+			base = 0
+			
+			modifier = {
+				add = ai_base 
+				
+				set_temp_variable = { base = @PLANT_PRIORITY }
+				ai_power_plant_tech = yes 
+			}
+			modifier = {
+				factor = ai_factor 
+				
+				set_temp_variable = { ai_factor = ai_material_tech_need } #AI TECH CATEGORY
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		on_research_complete = {
+			set_temp_variable = { tech = token:improved_power_plant_iii }
+			on_resource_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = material_tech_tt
+			custom_effect_tooltip = construction_tech_tt
+			custom_effect_tooltip = electronics_tt
+			custom_effect_tooltip = power_tech_tt
+		}
+		categories = {
+			material_tech
+			construction_tech
+			electronics
+			power_tech
+		}
+		
+	}
+	
+	improved_power_grid_i = {
+		allow = { has_country_flag = UNLOCK:raw_materials_folder} 
+		
+		energy_consumption_factor = -0.02
+		industry_air_damage_factor = 0.02
+
+		research_cost = 0.5
+		start_year = 1937
+		folder = {
+			name = raw_materials_folder
+			position = { x = @POWER_GRID y = @1937 }
+		}
+		path = {
+			leads_to_tech = improved_power_grid_ii
+			research_cost_coeff = 1
+		}
+		ai_will_do = {
+			base = 0
+			
+			modifier = {
+				add = ai_base 
+				
+				set_temp_variable = { base = @GRID_PRIORITY }
+				ai_energy_grid_tech = yes 
+			}
+			modifier = {
+				factor = ai_factor 
+				
+				set_temp_variable = { ai_factor = ai_material_tech_need } #AI TECH CATEGORY
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		on_research_complete = {
+			set_temp_variable = { tech = token:improved_power_grid_i }
+			on_resource_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = material_tech_tt
+			custom_effect_tooltip = construction_tech_tt
+			custom_effect_tooltip = electronics_tt
+			custom_effect_tooltip = power_tech_tt
+		}
+		categories = {
+			material_tech
+			construction_tech
+			electronics
+			power_tech
+		}
+		
+	}
+	improved_power_grid_ii = {
+		allow = { has_country_flag = UNLOCK:raw_materials_folder} 
+		
+		energy_consumption_factor = -0.03
+		industry_air_damage_factor = 0.03
+		path = {
+			leads_to_tech = improved_power_grid_iii_efficient
+			research_cost_coeff = 1
+		}
+		path = {
+			leads_to_tech = improved_power_grid_iii_output
+			research_cost_coeff = 1
+		}
+		research_cost = 1
+		start_year = 1940
+		folder = {
+			name = raw_materials_folder
+			position = { x = @POWER_GRID y = @1940}
+		}
+		ai_will_do = {
+			base = 0
+			
+			modifier = {
+				add = ai_base 
+				
+				set_temp_variable = { base = @GRID_PRIORITY }
+				ai_energy_grid_tech = yes 
+			}
+			modifier = {
+				factor = ai_factor 
+				
+				set_temp_variable = { ai_factor = ai_material_tech_need } #AI TECH CATEGORY
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		on_research_complete = {
+			set_temp_variable = { tech = token:improved_power_grid_ii }
+			on_resource_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = material_tech_tt
+			custom_effect_tooltip = construction_tech_tt
+			custom_effect_tooltip = electronics_tt
+			custom_effect_tooltip = power_tech_tt
+		}
+		categories = {
+			material_tech
+			construction_tech
+			electronics
+			power_tech
+		}
+		
+	}
+	improved_power_grid_iii_efficient = {
+		allow = { has_country_flag = UNLOCK:raw_materials_folder} 
+		
+		xor = {improved_power_grid_iii_output}
+		
+		energy_consumption_factor = -0.05
+		industry_air_damage_factor = 0.05
+		path = {
+			leads_to_tech = improved_power_grid_iv_efficient
+			research_cost_coeff = 1
+		}
+		research_cost = 1.5
+		start_year = 1943
+		folder = {
+			name = raw_materials_folder
+			position = { x = @POWER_GRID_L y = @1943_1 }
+		}
+
+		ai_will_do = {
+			base = 0
+			
+			modifier = {
+				add = ai_base 
+				
+				set_temp_variable = { base = @GRID_PRIORITY }
+				ai_energy_grid_tech = yes 
+			}
+			modifier = {
+				factor = ai_factor 
+				
+				set_temp_variable = { ai_factor = ai_material_tech_need } #AI TECH CATEGORY
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+			modifier = {
+				factor = 0
+				ai_high_voltage_pick = no
+			}
+		}
+		
+		on_research_complete = {
+			set_temp_variable = { tech = token:improved_power_grid_iii_efficient }
+			on_resource_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = material_tech_tt
+			custom_effect_tooltip = construction_tech_tt
+			custom_effect_tooltip = electronics_tt
+			custom_effect_tooltip = power_tech_tt
+		}
+		categories = {
+			material_tech
+			construction_tech
+			electronics
+			power_tech
+		}
+	}
+	improved_power_grid_iii_output = {
+		allow = { has_country_flag = UNLOCK:raw_materials_folder} 
+		
+		xor = {improved_power_grid_iii_efficient}
+		
+		energy_consumption_factor = 0.05
+		global_building_slots_factor = 0.1
+		stability_weekly = 0.001
+		industry_air_damage_factor = -0.05
+
+		path = {
+			leads_to_tech = improved_power_grid_iv_output
+			research_cost_coeff = 1
+		}
+		research_cost = 1.5
+		start_year = 1943
+		folder = {
+			name = raw_materials_folder
+			position = { x = @POWER_GRID_R y = @1943_1 }
+		}
+
+		ai_will_do = {
+			base = 0
+			
+			modifier = {
+				add = ai_base 
+				
+				set_temp_variable = { base = @GRID_PRIORITY }
+				ai_energy_grid_tech = yes 
+			}
+			modifier = {
+				factor = ai_factor 
+				
+				set_temp_variable = { ai_factor = ai_material_tech_need } #AI TECH CATEGORY
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+			modifier = {
+				factor = 0
+				ai_high_voltage_pick = yes
+			}
+		}
+		
+		on_research_complete = {
+			set_temp_variable = { tech = token:improved_power_grid_iii_output }
+			on_resource_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = material_tech_tt
+			custom_effect_tooltip = construction_tech_tt
+			custom_effect_tooltip = electronics_tt
+			custom_effect_tooltip = power_tech_tt
+		}
+		categories = {
+			material_tech
+			construction_tech
+			electronics
+			power_tech
+		}
+	}
+	improved_power_grid_iv_efficient = {
+		allow = { has_country_flag = UNLOCK:raw_materials_folder} 
+		
+		energy_consumption_factor = -0.05
+		
+		research_cost = 1.5
+		start_year = 1945
+		folder = {
+			name = raw_materials_folder
+			position = { x = @POWER_GRID_L y = @1945 }
+		}
+		ai_will_do = {
+			base = 0
+			
+			modifier = {
+				add = ai_base 
+				
+				set_temp_variable = { base = @GRID_PRIORITY }
+				ai_energy_grid_tech = yes 
+			}
+			modifier = {
+				factor = ai_factor 
+				
+				set_temp_variable = { ai_factor = ai_material_tech_need } #AI TECH CATEGORY
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		
+
+		on_research_complete = {
+			set_temp_variable = { tech = token:improved_power_grid_iv_efficient }
+			on_resource_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = material_tech_tt
+			custom_effect_tooltip = construction_tech_tt
+			custom_effect_tooltip = electronics_tt
+			custom_effect_tooltip = power_tech_tt
+		}
+		categories = {
+			material_tech
+			construction_tech
+			electronics
+			power_tech
+		}
+	}
+	improved_power_grid_iv_output = {
+		allow = { has_country_flag = UNLOCK:raw_materials_folder} 
+		
+		production_factory_max_efficiency_factor = 0.06
+		production_factory_efficiency_gain_factor = 0.12
+		industrial_capacity_dockyard = 0.02
+		
+		research_cost = 1.5
+		start_year = 1945
+		folder = {
+			name = raw_materials_folder
+			position = { x = @POWER_GRID_R y = @1945 }
+		}
+		ai_will_do = {
+			base = 0
+			
+			modifier = {
+				add = ai_base 
+				
+				set_temp_variable = { base = @GRID_PRIORITY }
+				ai_energy_grid_tech = yes 
+			}
+			modifier = {
+				factor = ai_factor 
+				
+				set_temp_variable = { ai_factor = ai_material_tech_need } #AI TECH CATEGORY
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		
+
+		on_research_complete = {
+			set_temp_variable = { tech = token:improved_power_grid_iv_output }
+			on_resource_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = material_tech_tt
+			custom_effect_tooltip = construction_tech_tt
+			custom_effect_tooltip = electronics_tt
+			custom_effect_tooltip = power_tech_tt
+		}
+		categories = {
+			material_tech
+			construction_tech
+			electronics
+			power_tech
+		}
+	}
+
+
+###################################
+	### Woodfired Engines
+	wood_engines = {
+		allow = { has_country_flag = UNLOCK:raw_materials_folder} 
+		
+		production_speed_industrial_complex_factor = -0.02
+		civilian_fuel_use_factor = -0.05
+		path = {
+			leads_to_tech = wood_engines2
+			research_cost_coeff = 1
+		}
+
+		research_cost = 0.75
+		start_year = 1935
+		folder = {
+			name = raw_materials_folder
+			position = { x = @WDF_ENG y = @1935 }
+		}
+
+		categories = {
+			material_tech
+			fuel_tech
+		}
+		on_research_complete = {
+			set_temp_variable = { tech = token:wood_engines }
+			on_resource_tech_research_complete = yes
+
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = material_tech_tt
+			custom_effect_tooltip = fuel_tech_tt
+		}
+		ai_will_do = {
+			base = 0
+		}
+		
+	}
+	
+	wood_engines2 = {
+		allow = { has_country_flag = UNLOCK:raw_materials_folder} 
+		
+		path = {
+			leads_to_tech = char_engines
+			research_cost_coeff = 1
+		}
+		
+		civilian_fuel_use_factor = -0.10
+		production_speed_industrial_complex_factor = -0.02
+		
+		research_cost = 1.2
+		start_year = 1936
+		folder = {
+			name = raw_materials_folder
+			position = { x = @WDF_ENG y = @1936 }
+		}
+		
+		categories = {
+			material_tech
+			fuel_tech
+		}
+
+		on_research_complete = {
+			set_temp_variable = { tech = token:wood_engines2 }
+			on_resource_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = material_tech_tt
+			custom_effect_tooltip = fuel_tech_tt
+		}
+
+		ai_will_do = {
+			base = 0
+		}
+		
+	}
+	
+	char_engines = {
+		allow = { has_country_flag = UNLOCK:raw_materials_folder} 
+		
+		on_research_complete = {
+			set_temp_variable = { tech = token:char_engines }
+			on_resource_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = material_tech_tt
+			custom_effect_tooltip = fuel_tech_tt
+		}
+		motorized = {
+			fuel_consumption_factor = -0.05
+		}
+		ss_motorized = {
+			fuel_consumption_factor = -0.05
+		}
+		guards_motorized = {
+			fuel_consumption_factor = -0.05
+		}
+		semi_motorized = {
+			fuel_consumption_factor = -0.05
+		}
+		ss_semi_motorized = {
+			fuel_consumption_factor = -0.05
+		}
+		mechanized = {
+			fuel_consumption_factor = -0.01
+		}
+		ss_mechanized = {
+			fuel_consumption_factor = -0.01
+		}
+		guards_mechanized = {
+			fuel_consumption_factor = -0.01
+		}
+		amphibious_mechanized = {
+			fuel_consumption_factor = -0.01
+		}
+		american_amph_lv = {
+			fuel_consumption_factor = -0.01
+		}
+
+		research_cost = 0.95
+		start_year = 1937
+		folder = {
+			name = raw_materials_folder
+			position = { x = @WDF_ENG y = @1937 }
+		}
+
+		categories = {
+			material_tech
+			fuel_tech
+		}
+
+		ai_will_do = {
+			base = 0
+		}
+		
+	}
+	##### Fuel Silos
+	fuel_silos = {
+		allow = { has_country_flag = UNLOCK:raw_materials_folder} 
+
+		enable_building = {
+			building = fuel_silo
+			level = 1
+		}
+		on_research_complete = {
+			set_temp_variable = { tech = token:fuel_silos }
+			on_resource_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = material_tech_tt
+			custom_effect_tooltip = fuel_tech_tt
+			custom_effect_tooltip = synth_resources_tt
+		}
+		research_cost = 0.75
+		start_year = 1936
+		folder = {
+			name = raw_materials_folder
+			position = { x = @FUEL_SILO_1 y = @1936 }
+		}
+		path = {
+			leads_to_tech = fuel_cans
+			research_cost_coeff = 1
+		}
+		categories = {
+			material_tech
+			synth_resources
+			fuel_tech
+		}
+
+		ai_will_do = {
+			base = 0
+			
+			modifier = {
+				add = ai_base
+				
+				set_temp_variable = { base = @F_PRIORITY_2 }
+				ai_fuel_silo_tech = yes 
+			}
+			modifier = {
+				factor = ai_factor 
+				
+				set_temp_variable = { ai_factor = ai_material_tech_need } #AI TECH CATEGORY
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		
+	}
+	
+	fuel_cans = {
+		allow = { has_country_flag = UNLOCK:raw_materials_folder} 
+
+		army_fuel_capacity_factor = 0.4
+
+		research_cost = 0.75
+		start_year = 1941
+		folder = {
+			name = raw_materials_folder
+			position = { x = @FUEL_CAN y = @1941 }
+		}
+		on_research_complete = {
+			set_temp_variable = { tech = token:fuel_cans }
+			on_resource_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = material_tech_tt
+			custom_effect_tooltip = fuel_tech_tt
+			custom_effect_tooltip = synth_resources_tt
+		}
+		categories = {
+			material_tech
+			synth_resources
+			fuel_tech
+		}
+		ai_will_do = {
+			base = @F_PRIORITY_2
+			
+			modifier = {
+				factor = ai_factor 
+				
+				set_temp_variable = { ai_factor = ai_material_tech_need } #AI TECH CATEGORY
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		
+	}
+	
+	fuel_silos2 = {
+		allow = { has_country_flag = UNLOCK:raw_materials_folder} 
+		
+		max_fuel_factor = 0.05
+		enable_building = {
+			building = fuel_silo
+			level = 2
+		}
+
+		research_cost = 0.6
+		start_year = 1936
+		folder = {
+			name = raw_materials_folder
+			position = { x = @FUEL_SILO_1 y = @1937_1 }
+		}
+		dependencies = {
+			excavation1 = 1
+		}
+		dependencies = {
+			fuel_silos = 1
+		}
+		on_research_complete = {
+			set_temp_variable = { tech = token:fuel_silos2 }
+			on_resource_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = material_tech_tt
+			custom_effect_tooltip = fuel_tech_tt
+			custom_effect_tooltip = synth_resources_tt
+		}
+		categories = {
+			material_tech
+			synth_resources
+			fuel_tech
+		}
+
+		ai_will_do = {
+			base = 0
+			
+			modifier = {
+				add = ai_base
+				
+				set_temp_variable = { base = @F_PRIORITY_1 }
+				ai_fuel_silo_tech = yes 
+			}
+			modifier = {
+				factor = ai_factor 
+				
+				set_temp_variable = { ai_factor = ai_material_tech_need } #AI TECH CATEGORY
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		
+	}
+	
+	fuel_silos3 = {
+		allow = { has_country_flag = UNLOCK:raw_materials_folder} 
+		
+		max_fuel_factor = 0.05
+		enable_building = {
+			building = fuel_silo
+			level = 3
+		}
+		dependencies = {
+			excavation2 = 1
+		}
+		dependencies = {
+			fuel_silos2 = 1
+		}
+		research_cost = 0.6
+		start_year = 1937
+		folder = {
+			name = raw_materials_folder
+			position = { x = @FUEL_SILO_1 y = @1939_1 }
+		}
+		on_research_complete = {
+			set_temp_variable = { tech = token:fuel_silos3 }
+			on_resource_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = material_tech_tt
+			custom_effect_tooltip = fuel_tech_tt
+			custom_effect_tooltip = synth_resources_tt
+		}
+		categories = {
+			material_tech
+			synth_resources
+			fuel_tech
+		}
+
+		ai_will_do = {
+			base = 0
+			
+			modifier = {
+				add = ai_base
+				
+				set_temp_variable = { base = @F_PRIORITY_1 }
+				ai_fuel_silo_tech = yes 
+			}
+			modifier = {
+				factor = ai_factor 
+				
+				set_temp_variable = { ai_factor = ai_material_tech_need } #AI TECH CATEGORY
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		
+	}
+	
+	fuel_silos4 = {
+		allow = { has_country_flag = UNLOCK:raw_materials_folder} 
+		
+		max_fuel_factor = 0.05
+		enable_building = {
+			building = fuel_silo
+			level = 4
+		}
+		on_research_complete = {
+			set_temp_variable = { tech = token:fuel_silos4 }
+			on_resource_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = material_tech_tt
+			custom_effect_tooltip = fuel_tech_tt
+			custom_effect_tooltip = synth_resources_tt
+		}
+		research_cost = 0.6
+		start_year = 1939
+		folder = {
+			name = raw_materials_folder
+			position = { x = @FUEL_SILO_1 y = @1941_1 }
+		}
+		dependencies = {
+			excavation3 = 1
+		}
+		dependencies = {
+			fuel_silos3 = 1
+		}
+		categories = {
+			material_tech
+			synth_resources
+			fuel_tech
+		}
+		ai_will_do = {
+			base = 0
+			
+			modifier = {
+				add = ai_base
+				
+				set_temp_variable = { base = @F_PRIORITY_1 }
+				ai_fuel_silo_tech = yes 
+			}
+			modifier = {
+				factor = ai_factor 
+				
+				set_temp_variable = { ai_factor = ai_material_tech_need } #AI TECH CATEGORY
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		
+	}
+	
+	fuel_silos5 = {
+		allow = { has_country_flag = UNLOCK:raw_materials_folder} 
+		
+		max_fuel_factor = 0.10
+		enable_building = {
+			building = fuel_silo
+			level = 5
+		}
+		on_research_complete = {
+			set_temp_variable = { tech = token:fuel_silos5 }
+			on_resource_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = material_tech_tt
+			custom_effect_tooltip = fuel_tech_tt
+			custom_effect_tooltip = synth_resources_tt
+		}
+		research_cost = 0.6
+		start_year = 1943
+		folder = {
+			name = raw_materials_folder
+			position = { x = @FUEL_SILO_1 y = @1943_1 }
+		}
+		dependencies = {
+			excavation4 = 1
+		}
+		dependencies = {
+			fuel_silos4 = 1
+		}
+
+		categories = {
+			material_tech
+			synth_resources
+			fuel_tech
+		}
+
+		ai_will_do = {
+			base = 0
+			
+			modifier = {
+				add = ai_base
+				
+				set_temp_variable = { base = @F_PRIORITY_1 }
+				ai_fuel_silo_tech = yes 
+			}
+			modifier = {
+				factor = ai_factor 
+				
+				set_temp_variable = { ai_factor = ai_material_tech_need } #AI TECH CATEGORY
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		
+	}
+	### Fuel Refining
+	fuel_refining = {
+		allow = { has_country_flag = UNLOCK:raw_materials_folder} 
+
+		fuel_gain_factor = 0.10
+		fuel_gain_factor_from_states = 0.10
+
+		path = {
+			leads_to_tech = fuel_refining2
+			research_cost_coeff = 1
+		}
+		path = {
+			leads_to_tech = fuel_silos
+			research_cost_coeff = 1
+		}
+		path = {
+			leads_to_tech = catalytic_cracking
+			research_cost_coeff = 1
+		}
+		research_cost = 3
+		start_year = 1935
+		folder = {
+			name = raw_materials_folder
+			position = { x = @FUEL_REF y = @1935 }
+		}
+		on_research_complete = {
+			set_temp_variable = { tech = token:fuel_refining }
+			on_resource_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = material_tech_tt
+			custom_effect_tooltip = fuel_tech_tt
+			custom_effect_tooltip = synth_resources_tt
+		}
+		categories = {
+			material_tech
+			synth_resources
+			fuel_tech
+		}
+
+		ai_will_do = {
+			base = 0
+		
+			modifier = {
+				add = ai_base 
+				
+				set_temp_variable = { base = @F_PRIORITY_3 }
+				ai_fuel_refining_tech = yes 
+			}
+			modifier = {
+				factor = ai_factor 
+				
+				set_temp_variable = { ai_factor = ai_material_tech_need } #AI TECH CATEGORY
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		
+	}
+	
+	fuel_refining2 = {
+		allow = { has_country_flag = UNLOCK:raw_materials_folder} 
+		
+		on_research_complete = {
+			set_temp_variable = { tech = token:fuel_refining2 }
+			on_resource_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = material_tech_tt
+			custom_effect_tooltip = fuel_tech_tt
+			custom_effect_tooltip = synth_resources_tt
+		}
+		fuel_gain_factor = 0.10
+		fuel_gain_factor_from_states = 0.10
+
+		path = {
+			leads_to_tech = fuel_refining3
+			research_cost_coeff = 1
+		}
+		path = {
+			leads_to_tech = fuel_silos2
+			research_cost_coeff = 1
+		}
+		path = {
+			leads_to_tech = commercial_catalytic_cracking
+			research_cost_coeff = 1
+		}
+
+		research_cost = 3
+		start_year = 1937
+		folder = {
+			name = raw_materials_folder
+			position = { x = @FUEL_REF y = @1937 }
+		}
+
+		categories = {
+			material_tech
+			synth_resources
+			fuel_tech
+		}
+
+		ai_will_do = {
+			base = 0
+		
+			modifier = {
+				add = ai_base 
+				
+				set_temp_variable = { base = @F_PRIORITY_3 }
+				ai_fuel_refining_tech = yes 
+			}
+			modifier = {
+				factor = ai_factor 
+				
+				set_temp_variable = { ai_factor = ai_material_tech_need } #AI TECH CATEGORY
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		
+	}
+	
+	fuel_refining3 = {
+		allow = { has_country_flag = UNLOCK:raw_materials_folder} 
+
+		fuel_gain_factor = 0.15
+		fuel_gain_factor_from_states = 0.15
+
+		path = {
+			leads_to_tech = fuel_refining4
+			research_cost_coeff = 1
+		}
+		path = {
+			leads_to_tech = fuel_silos3
+			research_cost_coeff = 1
+		}
+		research_cost = 3
+		start_year = 1939
+		folder = {
+			name = raw_materials_folder
+			position = { x = @FUEL_REF y = @1939 }
+		}
+		on_research_complete = {
+			set_temp_variable = { tech = token:fuel_refining3 }
+			on_resource_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = material_tech_tt
+			custom_effect_tooltip = fuel_tech_tt
+			custom_effect_tooltip = synth_resources_tt
+		}
+		categories = {
+			material_tech
+			synth_resources
+			fuel_tech
+		}
+		ai_will_do = {
+			base = 0
+		
+			modifier = {
+				add = ai_base 
+				
+				set_temp_variable = { base = @F_PRIORITY_3 }
+				ai_fuel_refining_tech = yes 
+			}
+			modifier = {
+				factor = ai_factor 
+				
+				set_temp_variable = { ai_factor = ai_material_tech_need } #AI TECH CATEGORY
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		
+
+	}
+	
+	fuel_refining4 = {
+		allow = { has_country_flag = UNLOCK:raw_materials_folder} 
+
+		fuel_gain_factor = 0.15
+		fuel_gain_factor_from_states = 0.15
+
+		path = {
+			leads_to_tech = fuel_refining5
+			research_cost_coeff = 1
+		}
+		path = {
+			leads_to_tech = fuel_silos4
+			research_cost_coeff = 1
+		}
+
+		research_cost = 3
+		start_year = 1941
+		folder = {
+			name = raw_materials_folder
+			position = { x = @FUEL_REF y = @1941 }
+		}
+		on_research_complete = {
+			set_temp_variable = { tech = token:fuel_refining4 }
+			on_resource_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = material_tech_tt
+			custom_effect_tooltip = fuel_tech_tt
+			custom_effect_tooltip = synth_resources_tt
+		}
+		categories = {
+			material_tech
+			synth_resources
+			fuel_tech
+		}
+
+		ai_will_do = {
+			base = 0
+		
+			modifier = {
+				add = ai_base 
+				
+				set_temp_variable = { base = @F_PRIORITY_3 }
+				ai_fuel_refining_tech = yes 
+			}
+			modifier = {
+				factor = ai_factor 
+				
+				set_temp_variable = { ai_factor = ai_material_tech_need } #AI TECH CATEGORY
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		
+	}
+	
+	fuel_refining5 = {
+		allow = { has_country_flag = UNLOCK:raw_materials_folder} 
+
+		fuel_gain_factor = 0.15
+		fuel_gain_factor_from_states = 0.15
+
+		research_cost = 3
+		start_year = 1943
+		folder = {
+			name = raw_materials_folder
+			position = { x = @FUEL_REF y = @1943 }
+		}
+		on_research_complete = {
+			set_temp_variable = { tech = token:fuel_refining5 }
+			on_resource_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = material_tech_tt
+			custom_effect_tooltip = fuel_tech_tt
+			custom_effect_tooltip = synth_resources_tt
+		}
+		path = {
+			leads_to_tech = fuel_silos5
+			research_cost_coeff = 1
+		}
+		path = {
+			leads_to_tech = fluid_catalytic_cracking
+			research_cost_coeff = 1
+		}
+
+		categories = {
+			material_tech
+			synth_resources
+			fuel_tech
+		}
+
+		ai_will_do = {
+			base = 0
+		
+			modifier = {
+				add = ai_base 
+				
+				set_temp_variable = { base = @F_PRIORITY_3 }
+				ai_fuel_refining_tech = yes 
+			}
+			modifier = {
+				factor = ai_factor 
+				
+				set_temp_variable = { ai_factor = ai_material_tech_need } #AI TECH CATEGORY
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		
+	}
+	
+	catalytic_cracking = {
+		allow = { has_country_flag = UNLOCK:raw_materials_folder} 
+		
+		oil_resource_factor = 0.07
+
+		research_cost = 0.95
+		start_year = 1936
+		folder = {
+			name = raw_materials_folder
+			position = { x = @FUEL_SILO y = @1936}
+		}
+
+		ai_will_do = {
+			base = 0
+		
+			modifier = {
+				add = ai_base 
+				
+				set_temp_variable = { base = @F_PRIORITY_3 }
+				ai_catalytic_cracking_tech = yes 
+			}
+			modifier = {
+				factor = ai_factor 
+				
+				set_temp_variable = { ai_factor = ai_material_tech_need } #AI TECH CATEGORY
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		
+		on_research_complete = {
+			set_temp_variable = { tech = token:catalytic_cracking }
+			on_resource_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = material_tech_tt
+			custom_effect_tooltip = fuel_tech_tt
+			custom_effect_tooltip = excavation_tech_tt
+		}
+		categories = {
+			material_tech
+			fuel_tech
+			excavation_tech
+		}
+	}
+
+	commercial_catalytic_cracking = {
+		allow = { has_country_flag = UNLOCK:raw_materials_folder} 
+		
+		oil_resource_factor = 0.08
+
+		dependencies = {
+			chemical_industry_i = 1
+		}
+		research_cost = 0.95
+		start_year = 1938
+		folder = {
+			name = raw_materials_folder
+			position = { x = @FUEL_SILO y = @1938_1 }
+		}
+
+		ai_will_do = {
+			base = 0
+		
+			modifier = {
+				add = ai_base 
+				
+				set_temp_variable = { base = @F_PRIORITY_2 }
+				ai_catalytic_cracking_tech = yes 
+			}
+			modifier = {
+				factor = ai_factor 
+				
+				set_temp_variable = { ai_factor = ai_material_tech_need } #AI TECH CATEGORY
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		
+		on_research_complete = {
+			set_temp_variable = { tech = token:commercial_catalytic_cracking }
+			on_resource_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = material_tech_tt
+			custom_effect_tooltip = fuel_tech_tt
+			custom_effect_tooltip = excavation_tech_tt
+		}
+		categories = {
+			material_tech
+			fuel_tech
+			excavation_tech
+		}
+	}
+
+	fluid_catalytic_cracking = {
+		allow = { has_country_flag = UNLOCK:raw_materials_folder} 
+		
+		oil_resource_factor = 0.10
+
+		dependencies = {
+			chemical_industry_iii = 1
+		}
+		research_cost = 0.95
+		start_year = 1943
+		folder = {
+			name = raw_materials_folder
+			position = { x = @FUEL_SILO y = @1943_1 }
+		}
+
+		ai_will_do = {
+			base = 0
+		
+			modifier = {
+				add = ai_base 
+				
+				set_temp_variable = { base = @F_PRIORITY_3 }
+				ai_catalytic_cracking_tech = yes 
+			}
+			modifier = {
+				factor = ai_factor 
+				
+				set_temp_variable = { ai_factor = ai_material_tech_need } #AI TECH CATEGORY
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		
+		on_research_complete = {
+			set_temp_variable = { tech = token:fluid_catalytic_cracking }
+			on_resource_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = material_tech_tt
+			custom_effect_tooltip = fuel_tech_tt
+			custom_effect_tooltip = excavation_tech_tt
+		}
+		categories = {
+			material_tech
+			fuel_tech
+			excavation_tech
+		}
+	}
+##### Synthetic Plants
+	synth_oil_experiments = {
+		allow = { has_country_flag = UNLOCK:raw_materials_folder} 
+
+		enable_building = {
+			building = synthetic_refinery
+			level = 2
+		}
+
+		fuel_gain_factor_from_states = -0.25
+		conversion_fuel_coal_input = -4
+
+		#production_oil_factor = 0.1 #Can increase oil output - not used though.
+
+		path = {
+			leads_to_tech = oil_plant
+			research_cost_coeff = 1
+		}
+		path = {
+			leads_to_tech = coal_liquid
+			research_cost_coeff = 1
+		}
+		path = {
+			leads_to_tech = rubber_processing
+			research_cost_coeff = 1
+		}
+		research_cost = 1.5
+		start_year = 1935
+		folder = {
+			name = raw_materials_folder
+			position = { x = @OIL_PLT y = @1935 }
+		}
+		on_research_complete = {
+			set_temp_variable = { tech = token:synth_oil_experiments }
+			on_resource_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = synth_resources_tt
+			custom_effect_tooltip = fuel_tech_tt
+			custom_effect_tooltip = material_tech_tt
+		}
+		categories = {
+			synth_resources
+			fuel_tech
+			material_tech
+		}
+
+		ai_will_do = {
+			base = 0
+			
+			modifier = {
+				add = ai_base
+				
+				set_temp_variable = { base = @REF_PRIORITY }
+				ai_synthetic_oil_refinery_tech = yes 
+			}
+			modifier = {
+				factor = ai_factor 
+				
+				set_temp_variable = { ai_factor = ai_material_tech_need } #AI TECH CATEGORY
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		
+	}
+	
+	oil_plant = {
+		allow = { has_country_flag = UNLOCK:raw_materials_folder} 
+		
+		fuel_gain_factor_from_states = 0.25
+		conversion_fuel_coal_input = 4
+		production_speed_synthetic_refinery_factor = 0.05
+		
+
+		path = {
+			leads_to_tech = improved_oil_plant
+			research_cost_coeff = 1
+		}
+
+		research_cost = 1.5
+		start_year = 1937
+		folder = {
+			name = raw_materials_folder
+			position = { x = @OIL_PLT y = @1937 }
+		}
+		on_research_complete = {
+			set_temp_variable = { tech = token:oil_plant }
+			on_resource_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = synth_resources_tt
+			custom_effect_tooltip = fuel_tech_tt
+			custom_effect_tooltip = material_tech_tt
+		}
+		categories = {
+			synth_resources
+			fuel_tech
+			material_tech
+		}
+
+		ai_will_do = {
+			base = 0
+			
+			modifier = {
+				add = ai_base
+				
+				set_temp_variable = { base = @REF_PRIORITY }
+				ai_synthetic_oil_refinery_tech = yes 
+			}
+			modifier = {
+				factor = ai_factor 
+				
+				set_temp_variable = { ai_factor = ai_material_tech_need } #AI TECH CATEGORY
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		
+	}
+	
+	improved_oil_plant = {
+		allow = { has_country_flag = UNLOCK:raw_materials_folder} 
+		
+		fuel_gain_factor_from_states = 0.25
+		conversion_fuel_coal_input = 4
+		fuel_energy_cost = 2
+		production_speed_synthetic_refinery_factor = 0.05
+		
+		enable_building = {
+			building = synthetic_refinery
+			level = 4
+		}
+
+		path = {
+			leads_to_tech = advanced_oil_plant
+			research_cost_coeff = 1
+		}
+
+		research_cost = 1.5
+		start_year = 1939
+		folder = {
+			name = raw_materials_folder
+			position = { x = @OIL_PLT y = @1939 }
+		}
+		on_research_complete = {
+			set_temp_variable = { tech = token:improved_oil_plant }
+			on_resource_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = synth_resources_tt
+			custom_effect_tooltip = fuel_tech_tt
+			custom_effect_tooltip = material_tech_tt
+		}
+		categories = {
+			synth_resources
+			fuel_tech
+			material_tech
+		}
+
+		ai_will_do = {
+			base = 0
+			
+			modifier = {
+				add = ai_base
+				
+				set_temp_variable = { base = @REF_PRIORITY }
+				ai_synthetic_oil_refinery_tech = yes 
+			}
+			modifier = {
+				factor = ai_factor 
+				
+				set_temp_variable = { ai_factor = ai_material_tech_need } #AI TECH CATEGORY
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		
+	}
+	
+	advanced_oil_plant = {
+		allow = { has_country_flag = UNLOCK:raw_materials_folder} 
+		
+		fuel_gain_factor_from_states = 0.25
+		conversion_fuel_coal_input = 4
+		fuel_energy_cost = 2
+		production_speed_synthetic_refinery_factor = 0.05
+		
+		path = {
+			leads_to_tech = oil_plant_processing
+			research_cost_coeff = 1
+		}
+
+		research_cost = 1.5
+		start_year = 1941
+		folder = {
+			name = raw_materials_folder
+			position = { x = @OIL_PLT y = @1941 }
+		}
+		on_research_complete = {
+			set_temp_variable = { tech = token:advanced_oil_plant }
+			on_resource_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = synth_resources_tt
+			custom_effect_tooltip = fuel_tech_tt
+			custom_effect_tooltip = material_tech_tt
+		}
+		categories = {
+			synth_resources
+			fuel_tech
+			material_tech
+		}
+
+		ai_will_do = {
+			base = 0
+			
+			modifier = {
+				add = ai_base
+				
+				set_temp_variable = { base = @REF_PRIORITY }
+				ai_synthetic_oil_refinery_tech = yes 
+			}
+			modifier = {
+				factor = ai_factor 
+				
+				set_temp_variable = { ai_factor = ai_material_tech_need } #AI TECH CATEGORY
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		
+	}
+	
+	oil_plant_processing = {
+		allow = { has_country_flag = UNLOCK:raw_materials_folder} 
+		
+		fuel_gain_factor_from_states = 0.25
+		conversion_fuel_coal_input = 4
+		fuel_energy_cost = 2
+		production_speed_synthetic_refinery_factor = 0.05
+		enable_building = {
+			building = synthetic_refinery
+			level = 6
+		}
+
+		path = {
+			leads_to_tech = oil_plant_processing2
+			research_cost_coeff = 1
+		}
+
+		research_cost = 1.5
+		start_year = 1943
+		folder = {
+			name = raw_materials_folder
+			position = { x = @OIL_PLT y = @1943 }
+		}
+		on_research_complete = {
+			set_temp_variable = { tech = token:oil_plant_processing }
+			on_resource_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = synth_resources_tt
+			custom_effect_tooltip = fuel_tech_tt
+			custom_effect_tooltip = material_tech_tt
+		}
+		categories = {
+			synth_resources
+			fuel_tech
+			material_tech
+		}
+
+		ai_will_do = {
+			base = 0
+			
+			modifier = {
+				add = ai_base
+				
+				set_temp_variable = { base = @REF_PRIORITY }
+				ai_synthetic_oil_refinery_tech = yes 
+			}
+			modifier = {
+				factor = ai_factor 
+				
+				set_temp_variable = { ai_factor = ai_material_tech_need } #AI TECH CATEGORY
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		
+	}
+	
+	oil_plant_processing2 = {
+		allow = { has_country_flag = UNLOCK:raw_materials_folder} 
+		
+		fuel_gain_factor_from_states = 0.25
+		conversion_fuel_coal_input = 8
+		fuel_energy_cost = 2
+		production_speed_synthetic_refinery_factor = 0.1
+
+		research_cost = 1.5
+		start_year = 1945
+		folder = {
+			name = raw_materials_folder
+			position = { x = @OIL_PLT y = @1945 }
+		}
+		on_research_complete = {
+			set_temp_variable = { tech = token:oil_plant_processing2 }
+			on_resource_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = synth_resources_tt
+			custom_effect_tooltip = fuel_tech_tt
+			custom_effect_tooltip = material_tech_tt
+		}
+		categories = {
+			synth_resources
+			fuel_tech
+			material_tech
+		}
+
+		ai_will_do = {
+			base = 0
+			
+			modifier = {
+				add = ai_base
+				
+				set_temp_variable = { base = @REF_PRIORITY }
+				ai_synthetic_oil_refinery_tech = yes 
+			}
+			modifier = {
+				factor = ai_factor 
+				
+				set_temp_variable = { ai_factor = ai_material_tech_need } #AI TECH CATEGORY
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		
+	}
+	#### Coal Liquefaction ###
+	coal_liquid = {
+		allow = { has_country_flag = UNLOCK:raw_materials_folder} 
+		fuel_energy_cost = -2
+		on_research_complete = {
+			set_temp_variable = { tech = token:coal_liquid }
+			on_resource_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = synth_resources_tt
+			custom_effect_tooltip = fuel_tech_tt
+			custom_effect_tooltip = material_tech_tt
+		}
+		categories = {
+			synth_resources
+			fuel_tech
+			material_tech
+		}
+		path = {
+			leads_to_tech = coal_liquid2
+			research_cost_coeff = 1
+		}
+		#production_oil_factor = 0.1 #Can increase oil output - not used though.
+
+		research_cost = 1.75
+		start_year = 1938
+		folder = {
+			name = raw_materials_folder
+			position = { x = @OIL_COAL y = @1938 }
+		}
+		
+		ai_will_do = {
+			factor = 0
+		}
+		
+		
+		show_effect_as_desc = yes
+	}
+	
+	coal_liquid2 = {
+		allow = { has_country_flag = UNLOCK:raw_materials_folder} 
+		conversion_fuel_coal_input = -2
+		fuel_energy_cost = -2
+
+		path = {
+			leads_to_tech = coal_liquid3
+			research_cost_coeff = 1
+		}
+
+		research_cost = 1.75
+		start_year = 1939
+		folder = {
+			name = raw_materials_folder
+			position = { x = @OIL_COAL y = @1939_1 }
+		}
+		on_research_complete = {
+			set_temp_variable = { tech = token:coal_liquid2 }
+			on_resource_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = synth_resources_tt
+			custom_effect_tooltip = fuel_tech_tt
+			custom_effect_tooltip = material_tech_tt
+		}
+		categories = {
+			synth_resources
+			fuel_tech
+			material_tech
+		}
+
+		ai_will_do = {
+			factor = 0
+		}
+		
+		
+		show_effect_as_desc = yes
+	}
+	
+	coal_liquid3 = {
+		allow = { has_country_flag = UNLOCK:raw_materials_folder} 
+		conversion_fuel_coal_input = -2
+		fuel_energy_cost = -4
+		fuel_gain_factor_from_states = 0.05
+
+		research_cost = 1.75
+		start_year = 1941	
+		folder = {
+			name = raw_materials_folder
+			position = { x = @OIL_COAL y = @1941_1 }
+		}
+		on_research_complete = {
+			set_temp_variable = { tech = token:coal_liquid3 }
+			on_resource_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = synth_resources_tt
+			custom_effect_tooltip = fuel_tech_tt
+			custom_effect_tooltip = material_tech_tt
+		}
+		categories = {
+			synth_resources
+			fuel_tech
+			material_tech
+		}
+
+		ai_will_do = {
+			factor = 0
+		}
+		
+		
+		show_effect_as_desc = yes
+	}
+	##### Rubber processing
+	rubber_processing = {
+		allow = { has_country_flag = UNLOCK:raw_materials_folder} 
+
+		enable_building = {
+			building = synthetic_rubber_refinery
+			level = 2
+		}
+		
+		on_research_complete = {
+			set_temp_variable = { tech = token:rubber_processing }
+			on_resource_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = synth_resources_tt
+			custom_effect_tooltip = material_tech_tt
+		}
+		
+		path = {
+			leads_to_tech = improved_rubber_processing
+			research_cost_coeff = 1
+		}
+
+		research_cost = 2.0
+		start_year = 1936
+
+		folder = {
+			name = raw_materials_folder
+			position = { x = @RUB_PROC y = @1936 }
+		}
+		
+		categories = {
+			material_tech
+			synth_resources
+		}
+
+		ai_will_do = {
+			base = 0
+			
+			modifier = {
+				add = ai_base
+				
+				set_temp_variable = { base = @RUB_PRIORITY }
+				ai_synthetic_rubber_refinery_tech = yes 
+			}
+			modifier = {
+				factor = ai_factor 
+				
+				set_temp_variable = { ai_factor = ai_material_tech_need } #AI TECH CATEGORY
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		
+
+		show_effect_as_desc = yes
+	}
+	
+	improved_rubber_processing = {
+		allow = { has_country_flag = UNLOCK:raw_materials_folder} 
+
+		production_speed_synthetic_rubber_refinery_factor = 0.08
+		rubber_conversion_output = 2
+		
+		enable_building = {
+			building = synthetic_rubber_refinery
+			level = 4
+		}
+
+
+		path = {
+			leads_to_tech = advanced_rubber_processing
+			research_cost_coeff = 1
+		}
+
+		research_cost = 1.5
+		start_year = 1940
+
+		folder = {
+			name = raw_materials_folder
+			position = { x = @RUB_PROC y = @1940 }
+		}
+		on_research_complete = {
+			set_temp_variable = { tech = token:improved_rubber_processing }
+			on_resource_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = synth_resources_tt
+			custom_effect_tooltip = material_tech_tt
+		}
+		categories = {
+			synth_resources
+			material_tech
+		}
+
+		ai_will_do = {
+			base = 0
+			
+			modifier = {
+				add = ai_base
+				
+				set_temp_variable = { base = @RUB_PRIORITY }
+				ai_synthetic_rubber_refinery_tech = yes 
+			}
+			modifier = {
+				factor = ai_factor 
+				
+				set_temp_variable = { ai_factor = ai_material_tech_need } #AI TECH CATEGORY
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		
+
+		show_effect_as_desc = yes
+	}
+	
+	advanced_rubber_processing = {
+		allow = { has_country_flag = UNLOCK:raw_materials_folder} 
+
+		production_speed_synthetic_rubber_refinery_factor = 0.08
+		rubber_conversion_output = 2
+		
+
+		path = {
+			leads_to_tech = modern_rubber_processing
+			research_cost_coeff = 1
+		}
+
+		research_cost = 1.5
+		start_year = 1942
+
+		folder = {
+			name = raw_materials_folder
+			position = { x = @RUB_PROC y = @1942 }
+		}
+		on_research_complete = {
+			set_temp_variable = { tech = token:advanced_rubber_processing }
+			on_resource_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = synth_resources_tt
+			custom_effect_tooltip = material_tech_tt
+		}
+		categories = {
+			synth_resources
+			material_tech
+		}
+
+		ai_will_do = {
+			base = 0
+			
+			modifier = {
+				add = ai_base
+				
+				set_temp_variable = { base = @RUB_PRIORITY }
+				ai_synthetic_rubber_refinery_tech = yes 
+			}
+			modifier = {
+				factor = ai_factor 
+				
+				set_temp_variable = { ai_factor = ai_material_tech_need } #AI TECH CATEGORY
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		
+
+
+		show_effect_as_desc = yes
+	}
+	
+	modern_rubber_processing = {
+		allow = { has_country_flag = UNLOCK:raw_materials_folder} 
+
+		production_speed_synthetic_rubber_refinery_factor = 0.08
+		rubber_conversion_output = 2
+		
+		research_cost = 1.5
+		start_year = 1944
+
+		folder = {
+			name = raw_materials_folder
+			position = { x = @RUB_PROC y = @1944 }
+		}
+		on_research_complete = {
+			set_temp_variable = { tech = token:advanced_rubber_processing }
+			on_resource_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = synth_resources_tt
+			custom_effect_tooltip = material_tech_tt
+		}
+		categories = {
+			synth_resources
+			material_tech
+		}
+
+		ai_will_do = {
+			base = 0
+			
+			modifier = {
+				add = ai_base
+				
+				set_temp_variable = { base = @RUB_PRIORITY }
+				ai_synthetic_rubber_refinery_tech = yes 
+			}
+			modifier = {
+				factor = ai_factor 
+				
+				set_temp_variable = { ai_factor = ai_material_tech_need } #AI TECH CATEGORY
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		
+
+		show_effect_as_desc = yes
+	}
+}

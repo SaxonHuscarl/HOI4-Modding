@@ -1,0 +1,422 @@
+
+allies_avoid_war_with_SOV = {
+	allowed = { OR = { tag = ENG tag = USA tag = FRA } }
+	
+	enable = {
+		OR = {
+			is_in_faction_with = ENG
+			is_in_faction_with = USA
+		}
+		NOT = { has_war_with = SOV }
+	}
+	
+	abort_when_not_enabled = yes
+		
+	ai_strategy = {
+		type = avoid_starting_wars
+		id = SOV
+		value = 10000
+	}
+}
+
+allies_crush_ethiopia = {
+	allowed = { OR = { tag = ENG tag = SAF } }
+	enable = {
+		has_war_with = ETH
+		is_in_faction_with = ENG
+		ETH = { is_puppet_of = ITA }
+	}
+	abort = {
+		NOT = { has_war_with = ETH } 
+	}
+	
+	ai_strategy = {
+		type = consider_weak
+		id = "ETH"
+		value = 500
+	}
+}
+
+CAN_research_rubber = { #needed to unlock a focus
+	allowed = { tag = CAN }
+	
+	enable = { has_completed_focus = CAN_war_bonds }
+	abort_when_not_enabled = yes
+	
+	ai_strategy = {
+		type = research_tech
+		id = synth_oil_experiments
+		value = 10000
+	}
+	ai_strategy = {
+		type = research_tech
+		id = rubber_processing
+		value = 10000
+	}
+}
+
+CW_offensive_against_ETH = {
+	allowed = {
+		OR = {
+			tag = RAJ
+			tag = ENG
+			tag = SAF
+			tag = FRA
+		}
+	}
+
+	# only allow invasion on europe on every third month
+
+	enable = {
+		has_war_with = ETH
+		
+		set_temp_variable = { days = global.num_days }
+		modulo_temp_variable = { days = 90 }
+		check_variable = { days > 60 }
+	}
+
+	abort_when_not_enabled = yes
+
+	ai_strategy = {
+		type = front_control
+
+		strategic_region = 17
+
+		ordertype = front
+		execute_order = yes
+		execution_type = careful
+	}
+	ai_strategy = {
+		type = front_control
+
+		strategic_region = 183
+
+		ordertype = front
+		execute_order = yes
+		execution_type = careful
+	}
+	ai_strategy = {
+		type = front_control
+
+		strategic_region = 244
+
+		ordertype = front
+		execute_order = yes
+		execution_type = careful
+	}
+}
+
+RAJ_war_with_ETH = {
+	allowed = { tag = RAJ }
+	enable = {
+		is_in_faction_with = ENG
+		OR = {
+			has_war_with = ETH
+			date > 1939.1.1
+			has_war_with = GER
+		}
+		NOT = {
+			has_country_flag = ai_ENG_no_help_against_ETH
+		}
+	}
+	abort = {
+		ETH = { 
+			OR = { 
+				has_capitulated = yes 
+				exists = no 
+				RAJ = { has_country_flag = ai_ENG_no_help_against_ETH }
+			}		
+		}
+	}
+	
+	ai_strategy = {
+		type = front_unit_request
+		area = north_africa
+		value = -100
+	}
+	ai_strategy = {
+		type = front_unit_request
+		state = 269
+		value = -50
+	}
+	ai_strategy = {
+		type = force_defend_ally_borders
+		target = africa
+		value = 1
+	}
+	ai_strategy = {
+		type = spare_unit_factor
+		value = 500
+	}
+	ai_strategy = {
+		type = front_unit_request
+		tag = ETH
+		value = 100
+	}
+	ai_strategy = {
+		type = conquer
+		id = ETH
+		value = 1000
+	}
+	
+	ai_strategy = {
+		type = put_unit_buffers
+		states = { 269 } #Somali
+		ratio = 0.1
+		area = east_africa
+		order_id = 1
+		subtract_invasions_from_need = no
+	}
+}
+
+CAN_defend_ENG = {
+	allowed = {
+		tag = CAN
+	}
+	
+	enable = { 
+		has_war = yes
+		surrender_progress < 0.15
+		is_in_faction_with = ENG
+		ENG = { 
+			has_capitulated = no
+		}
+	}
+	
+	abort = {
+		OR = {
+			has_war = no
+			ENG = { has_capitulated = yes }
+			surrender_progress > 0.2
+		}
+	}
+
+	ai_strategy = { type = garrison value = -100 }
+	
+	ai_strategy = {
+		type = put_unit_buffers
+		states = { 128 127 123 338 126 125 132 129 122 }
+		ratio = 0.9
+		area = britain
+		subtract_invasions_from_need = yes
+	}
+	
+
+}
+
+MAL_defend_singapore = {
+	allowed = {
+		tag = MAL
+	}
+	
+	enable = { 
+		has_capitulated = no
+	}
+	abort_when_not_enabled = yes
+
+	# Singapoore
+	
+	ai_strategy = {
+		type = put_unit_buffers
+		states = { 336 } #Singapore
+		ratio = 1
+		area = malay
+		subtract_invasions_from_need = yes
+	}
+
+}
+BRA_no_amazonas_units = {
+	allowed = { tag = BRA }
+	enable = {
+		controls_state = 495
+	}
+	abort_when_not_enabled = yes
+	
+	ai_strategy = {
+		type = front_unit_request
+		strategic_region = 163
+		value = -100
+	}
+	ai_strategy = {
+		type = front_unit_request
+		strategic_region = 124
+		value = -100
+	}
+	ai_strategy = {
+		type = front_unit_request
+		strategic_region = 201
+		value = -100
+	}
+	ai_strategy = {
+		type = front_unit_request
+		strategic_region = 223
+		value = -100
+	}
+}
+
+ARG_garrison_capital_at_peace = {
+	allowed = { tag = ARG }
+	enable = {
+		OR = {
+			has_war = no
+			has_country_flag = ai_ARG_supply
+		}
+	}
+	abort_when_not_enabled = yes
+	
+	ai_strategy = {
+		type = put_unit_buffers
+		states = { 278 } #Somali
+		ratio = 1
+		area = south_america
+		order_id = 10
+		subtract_invasions_from_need = no
+	}
+}
+IRE_support_ENG = {
+	allowed = { tag = IRE }
+	enable = {
+		democratic_govt = yes
+		is_in_faction = no
+		ENG = {
+			has_war_with = GER
+			democratic_govt = yes
+		}
+	}
+	abort = {
+		OR = {
+			is_in_faction = yes
+			ENG = { has_war = no }
+		}
+	}
+	
+	ai_strategy = {
+		type = send_lend_lease_desire
+		id = ENG
+		value = 10000
+	}
+}
+
+
+# Allies should ignore these nations:
+ALLIES_dont_join_soviet_polish_war = {
+	allowed = { OR = { tag = ENG tag = FRA tag = CAN tag = SAF tag = RAJ tag = AST tag = BUR tag = FRI tag = NZL tag = BMP tag = EGY tag = USA tag = LEB tag = SYR tag = JOR tag = HOL tag = NOR tag = BEL tag = DEN tag = POL } }
+	enable = {
+		is_in_faction_with = ENG
+		POL = { is_in_faction_with = ENG }
+		OR = {
+			POL = { has_war_with = SOV }
+			POL = { has_war_with = GER }
+		}
+		OR = {
+			has_war_with = GER
+			GER = { NOT = { is_in_faction_with = SOV } }
+		}
+	}
+	abort = {
+		SOV = { NOT = { has_war_with = POL } }
+	}
+	
+	ai_strategy = {
+		type = dont_join_wars_with
+		id = POL
+		target_country = SOV
+		value = 800
+	}
+	ai_strategy = {
+		type = dont_defend_ally_borders
+		id = "POL"
+		value = 800
+	}
+}
+
+# Strategies for war against Italy / Ethiopia
+ENG_war_with_ITA = {
+	allowed = { tag = ENG }
+	enable = {
+		is_in_faction_with = EGY
+	}
+	abort = {
+		OR = {
+			surrender_progress > 0.2 #egypt ~ 12%
+			ITA = { has_capitulated = yes }
+		}
+	}
+	
+	ai_strategy = { type = conquer id = "ITA"	value = 500 }
+	
+	ai_strategy = {
+		type = force_defend_ally_borders
+		id = EGY
+		value = 120
+	}
+}
+
+ALLIES_send_lend_lease = {
+	allowed = {
+		OR = { 
+			tag = CAN tag = USA tag = ENG tag = FRA tag = SAF tag = RAJ 
+			tag = BRA tag = IRE tag = SAF tag = AST tag = NZL tag = MEX 
+			tag = POL tag = HOL tag = BEL tag = RAJ tag = GRE tag = NOR 
+		}
+	}
+	
+	enable = { 
+		is_in_faction_with = ENG
+		SOV = { has_war_with = GER }
+	}
+	abort_when_not_enabled = yes
+
+	ai_strategy = {
+		type = send_lend_lease_desire
+		id = "SOV"
+		value = 100000
+	}
+	ai_strategy = {
+		type = support
+		id = "SOV"
+		value = 100000
+	}
+
+}
+
+ALLIES_iran_access = {
+	allowed = {
+		OR = { tag = CAN tag = USA tag = ENG tag = FRA tag = RAJ }
+	}
+	
+	enable = { 
+		is_in_faction_with = ENG
+		SOV = { has_war_with = GER }
+		PER = { is_subject_of = SOV }
+	}
+	abort_when_not_enabled = yes
+
+	ai_strategy = {
+		type = diplo_action_desire
+		id = PER
+		target = military_access
+		value = 1000
+	}
+
+}
+ALLIES_dont_attack_comintern_while_at_war = {
+	allowed = {
+		OR = { tag = CAN tag = USA tag = ENG tag = FRA tag = RAJ }
+	}
+	
+	enable = { 
+		is_in_faction_with = ENG
+		has_war_with = GER
+		SOV = { has_war_with = GER }
+		NOT = { has_war_with = SOV }
+	}
+	abort_when_not_enabled = yes
+
+	ai_strategy = {
+		type = front_unit_request
+		country_trigger = { is_in_faction_with = SOV }
+		value = -100
+	}
+
+}

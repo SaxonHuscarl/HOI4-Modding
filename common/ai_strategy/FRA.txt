@@ -1,0 +1,525 @@
+# befriend
+# conquer
+# antagonize
+# build_ship
+# build_army
+# unit_ratio
+# build_building
+# research_tech
+# garrison
+# protect
+# influence
+# invade
+# contain
+# area_priority
+
+FRA_free_france = {
+	allowed = { tag = FRA }
+	enable = {
+		has_capitulated = yes
+	}
+	abort = {
+		has_capitulated = no
+	}
+	
+	ai_strategy = {
+		type = put_unit_buffers
+		states = { 126 127 125 338 123 122 128 129 } #Southern England
+		ratio = 1
+		subtract_invasions_from_need = no
+		area = britain
+	}
+}
+	
+FRA_prio_europe = {
+	allowed = { tag = FRA }
+	enable = {
+		has_capitulated = no
+		OR = {
+			has_war_with = GER
+			has_war_with = ITA
+			has_war_with = SOV
+			has_war_with = SPR
+			has_war_with = SPA
+		}
+	}
+	abort = {
+		has_capitulated = yes
+	}
+	
+	ai_strategy = {
+		type = force_concentration_factor
+		value = -100  # Just don't
+	}
+	
+	ai_strategy = {
+		type = ignore
+		id = "ETH"
+		value = 300
+	}
+	ai_strategy = {
+		type = ignore
+		id = "JAP"
+		value = 100
+	}
+	ai_strategy = {
+		type = front_unit_request
+		strategic_region = 126
+		value = -100
+	}
+	#ai_strategy = {
+	#	type = front_unit_request
+	#	strategic_region = 17 #IEA
+	#	value = -1000
+	#}
+	ai_strategy = {
+		type = front_unit_request
+		strategic_region = 181
+		value = -1000
+	}
+	ai_strategy = {
+		type = front_unit_request
+		strategic_region = 85
+		value = -1000
+	}
+	ai_strategy = {
+		type = front_unit_request
+		strategic_region = 102
+		value = -1000
+	}
+	ai_strategy = {
+		type = front_unit_request
+		strategic_region = 140
+		value = -1000
+	}
+	ai_strategy = {
+		type = front_unit_request
+		strategic_region = 252
+		value = -1000
+	}
+	ai_strategy = {
+		type = front_unit_request
+		strategic_region = 121
+		value = -1000
+	}
+	ai_strategy = {
+		type = front_unit_request
+		strategic_region = 53
+		value = -1000
+	}
+	ai_strategy = {
+		type = front_unit_request
+		strategic_region = 163
+		value = -1000
+	}
+	ai_strategy = {
+		type = front_unit_request
+		strategic_region = 83
+		value = -1000
+	}
+	ai_strategy = {
+		type = front_unit_request
+		strategic_region = 165
+		value = -1000
+	}
+}
+
+CZE_stay_with_FRA = {
+	allowed = { tag = CZE }
+    enable = {
+		is_in_faction_with = FRA
+    }
+    abort = {
+		OR = {
+			FRA = { is_faction_leader = no }
+			has_global_flag = fall_of_france
+			has_government = fascism
+			has_government = communism
+		}
+    }
+
+	ai_strategy = {
+		type = alliance
+		id = "FRA"
+		value = 300000
+	}
+}
+
+POL_stay_with_FRA = {
+	allowed = { tag = POL }
+    enable = {
+		is_in_faction_with = FRA
+    }
+    abort = {
+		OR = {
+			FRA = { is_faction_leader = no }
+			has_global_flag = fall_of_france
+			has_government = fascism
+			has_government = communism
+		}
+    }
+	
+	ai_strategy = {
+		type = alliance
+		id = "FRA"
+		value = 300000
+	}
+}
+
+ROM_stay_with_FRA = {
+	allowed = { tag = ROM }
+    enable = {
+		is_in_faction_with = FRA
+    }
+    abort = {
+		OR = {
+			FRA = { is_faction_leader = no }
+			has_global_flag = fall_of_france
+			has_government = fascism
+			has_government = communism
+		}
+    }
+	
+	ai_strategy = {
+		type = alliance
+		id = "FRA"
+		value = 300000
+	}
+}
+
+YUG_stay_with_FRA = {
+	allowed = { tag = YUG }
+    enable = {
+		is_in_faction_with = FRA
+	}
+	abort = {
+		OR = {
+			FRA = { is_faction_leader = no }
+			has_global_flag = fall_of_france
+			has_government = fascism
+			has_government = communism
+		}
+	}
+	
+	ai_strategy = {
+		type = alliance
+		id = "FRA"
+		value = 300000
+	}
+}
+
+FRA_conquer_SPA = {
+	allowed = { tag = FRA }
+    enable = {
+		has_war_with = SPA
+		is_in_faction_with = SPR
+		NOT = { has_global_flag = fall_of_france }
+    }
+	abort = {
+		OR = {
+			GER = {
+				OR = {
+					has_war_with = CZE
+					is_justifying_wargoal_against = CZE
+					has_war_with = POL
+					is_justifying_wargoal_against = POL
+					has_completed_focus = GER_danzig_or_war
+				}
+			}
+			has_war_with = GER
+			has_war_with = SOV
+			has_war_with = ITA
+			SPA = { has_capitulated = yes }
+			has_global_flag = fall_of_france
+		}
+	}
+	
+	ai_strategy = {
+		type = conquer
+		id = "SPA"
+		value = 1000
+	}
+	ai_strategy = {
+		type = invade
+		id = "SPA"			
+		value = 1000
+	}
+}
+
+FRA_prepare_border_against_germany = {
+	allowed = { tag = FRA }
+	enable = {
+		# country_exists = POL
+		# FRA = { is_in_faction_with = ENG }
+		NOT = { has_global_flag = fall_of_france }
+		GER = {
+			OR = {
+				# France / Belgium
+				has_wargoal_against = FRA
+				has_wargoal_against = BEL
+				# Czechia
+				has_war_with = CZE
+				has_wargoal_against = CZE
+				focus_progress = {
+					focus = GER_demand_sudetenland
+					progress > 0.01
+				}
+				# Poland
+				has_war_with = POL
+				has_wargoal_against = POL
+				has_completed_focus = GER_danzig_or_war
+				focus_progress = {
+					focus = GER_danzig_or_war
+					progress > 0.01
+				}
+			}
+		}
+	}
+	abort = {
+		has_global_flag = fall_of_france
+	}
+	ai_strategy = {
+		type = prepare_for_war
+		id = "GER"
+		value = 1000
+	}
+    #ai_strategy = {
+	#	type = front_unit_request
+	#	tag = GER
+	#	value = 30
+	#}
+	
+	
+	ai_strategy = {
+		type = put_unit_buffers
+		order_id = 1
+		states = { 884 } # Paris
+		ratio = 0.15
+		area = france
+		subtract_invasions_from_need = no
+		subtract_fronts_from_need = yes
+	}
+}
+
+FRA_prepare_front_against_italy = {
+	allowed = { tag = FRA }
+	enable = {
+		NOT = { has_global_flag = fall_of_france }
+		OR = {
+			AND = {
+				has_war_with = GER 
+				ITA = { has_government = fascism }
+			}
+			ITA = { is_justifying_wargoal_against = ROOT }
+			ITA = { has_wargoal_against = ROOT }
+		}
+	}
+	abort = {
+		has_global_flag = fall_of_france
+	}
+    ai_strategy = {
+		type = prepare_for_war
+		id = ITA
+		value = 1000
+	}
+	#ai_strategy = {
+	#	type = front_unit_request
+	#	tag = ITA
+	#	value = 10
+	#}
+}
+
+FRA_prepare_for_hol_hole = {
+	allowed = { tag = FRA }
+	enable = {
+		NOT = { has_global_flag = fall_of_france }
+		has_war_with = GER
+		OR = {
+			is_in_faction_with = BEL
+			has_military_access_to = BEL
+		}
+		BEL = { has_capitulated = no }
+	}
+	abort = {
+		OR = {
+			has_global_flag = fall_of_france
+			BEL = { has_capitulated = yes }
+		}
+	}
+	
+	ai_strategy = {
+		type = put_unit_buffers
+		order_id = 2
+		states = { 774 6 29 } # Brussels
+		ratio = 0.15
+		area = benelux
+		area = france
+		subtract_invasions_from_need = no
+		subtract_fronts_from_need = yes
+	}
+}
+
+FRA_war_with_GER = {
+	allowed = { tag = FRA }
+	enable = {
+		has_war_with = GER
+	}
+	abort = {
+		has_global_flag = fall_of_france
+	}
+	
+    ai_strategy = {
+		type = garrison
+		value = -95
+	}
+    ai_strategy = {
+		type = conquer
+		id = GER
+		value = 1000
+	}
+    ai_strategy = {
+		type = conquer
+		id = ITA
+		value = 100
+	}
+}
+
+FRA_defend_poland_against_germany = {
+	allowed = { tag = FRA }
+	enable = {
+		NOT = { has_global_flag = fall_of_france }
+		country_exists = POL
+		FRA = { is_in_faction_with = ENG }
+		GER = { 
+			OR = { 
+				has_war_with = POL 
+				has_completed_focus = GER_danzig_or_war 
+			}
+		}
+	}
+	abort = {
+		POL = { has_capitulated = yes }
+	}
+	ai_strategy = { 
+		type = declare_war 
+		id = "GER" 
+		value = 500 
+	}
+	ai_strategy = {
+		type = alliance
+		id = "POL"			
+		value = 5000
+	}	
+}
+
+FRA_stay_defensive_on_maginot = {
+	allowed = { tag = FRA }
+    enable = {
+		date > 1939.1.1
+		NOT = { has_global_flag = fall_of_france }
+		NOT = { has_idea = FRA_attack_westwall_idea }
+		BEL = { has_capitulated = no }
+	}
+    abort = {
+		OR = {
+			has_capitulated = yes
+			has_global_flag = fall_of_france
+			BEL = { has_capitulated = yes }
+			date > 1941.1.1
+			has_idea = FRA_attack_westwall_idea
+		}
+    }
+	
+	ai_strategy = {
+		type = consider_weak
+		id = GER
+		value = -100
+	}
+}
+FRA_stay_defensive_on_alpine_line = {
+	allowed = { tag = FRA }
+    enable = {
+		date > 1939.1.1
+		NOT = { has_global_flag = fall_of_france }
+		NOT = { has_idea = FRA_attack_westwall_idea }
+		GER = { has_government = fascism }
+		BEL = { has_capitulated = no }
+	}
+    abort = {
+		OR = {
+			has_capitulated = yes
+			has_global_flag = fall_of_france
+			date > 1941.1.1
+			ITA = { surrender_progress > 0.1 }
+		}
+    }
+	
+	ai_strategy = {
+		type = consider_weak
+		id = ITA
+		value = -80
+	}
+}
+
+FRA_no_front_ENG = {
+	allowed = { tag = FRA }
+	enable = {
+		NOT = { is_in_faction_with = ENG }
+	}
+	abort = {
+		OR = {
+			is_in_faction_with = ENG
+			has_war_with = ENG
+		}
+	}
+ 
+	ai_strategy = {
+		type = front_unit_request
+		tag = ENG
+		value = -100
+	}
+}
+FRA_military_mission = {
+	allowed = {
+		tag = FRA 
+	}
+	enable = {
+		PER = {
+			not = { has_country_flag = french_recalled }
+		}
+	}
+	abort = {
+		PER = {
+			has_country_flag = french_recalled
+		}
+	}	
+	ai_strategy = {
+		type = diplo_action_acceptance
+		id = PER
+		target = market_access_rights
+		value = 45
+	}
+}
+FRA_military_mission_PER = {
+	allowed = {
+		tag = PER 
+	}
+	enable = {
+		PER = {
+			not = { has_country_flag = french_recalled }
+		}
+	}
+	abort = {
+		PER = {
+			has_country_flag = french_recalled
+		}
+	}	
+	ai_strategy = {
+		type = diplo_action_acceptance
+		id = FRA
+		target = market_access_rights
+		value = 30
+	}
+}
+
+

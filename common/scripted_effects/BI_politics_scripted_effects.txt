@@ -1,0 +1,858 @@
+#	Example:
+# 
+#	example_effect = {
+#		add_political_power = 66
+#		add_popularity = {
+#			ideology = fascism
+#			popularity = 0.33
+#		}
+#	}
+#
+#
+#	In a script file:
+#
+#	effect = {
+#		example_effect = yes
+#	}
+#
+
+update_political_party_change = {
+	for_each_loop = {
+		array = global.ideology_groups
+		
+	
+		set_variable = { last_change@var:v = party_popularity_100@var:v }
+		subtract_from_variable = { last_change@var:v = last_popularity@var:v }
+		set_variable = { last_popularity@var:v = party_popularity_100@var:v }
+	}
+	
+	d_check_assigned_advisors = yes
+}
+
+calculate_ruling_and_opposition_party_drift = {
+
+	if = {
+		limit = { 
+			tag = USA #USA is 2-party state
+		} 
+		
+		set_temp_variable = { drift_divisor@conservatism = 1 }
+		set_temp_variable = { drift_divisor@liberalism = 1 }
+	}
+	else_if = {
+		limit = { 
+			tag = ROM #iron guard is important
+		} 
+		set_temp_variable = { drift_divisor@fascism = 1 }
+	}
+	
+	if = {
+		limit = {
+			democratic_govt = yes
+		}
+		set_temp_variable = { drift_divisor@conservatism = 3 }
+		set_temp_variable = { drift_divisor@liberalism = 3 }
+		set_temp_variable = { drift_divisor@socialism = 3 }
+		set_temp_variable = { drift_divisor@agrarianism = 4 }
+	}
+	
+	if = { limit = { NOT = { has_dynamic_modifier = { 
+		modifier = ruling_party_modifier } } }
+		add_dynamic_modifier = {
+			modifier = ruling_party_modifier
+		}
+	}
+
+	set_temp_variable = { opposition_drift = modifier@opposition_party_drift }
+	add_to_temp_variable = { opposition_drift = num_advisor_apolitical }
+	
+	set_temp_variable = { mod = modifier@opposition_party_drift_factor }
+	add_to_temp_variable = { mod = 1 }
+	multiply_temp_variable = { opposition_drift = mod }
+
+	for_each_loop = {
+		array = global.ideology_groups
+		
+		set_variable = { drift@var:v = party_popularity@var:v }
+		clamp_variable = {
+			var = drift@var:v
+			min = 0.1
+			max = 0.5
+		}
+		divide_variable = { drift@var:v = drift_divisor@var:v?5 }
+		multiply_variable = { drift@var:v = opposition_drift }
+	}
+	
+	set_temp_variable = { ruling_drift = modifier@ruling_party_drift }
+	
+	set_temp_variable = { mod = modifier@ruling_party_drift_factor }
+	add_to_temp_variable = { mod = 1 }
+	
+	multiply_temp_variable = { ruling_drift = mod }
+	set_variable = { drift@var:current_party_ideology_group = ruling_drift }
+
+	add_to_variable = { drift@fascism = num_advisor@fascism }
+	add_to_variable = { drift@communism = num_advisor@communism }
+	add_to_variable = { drift@conservatism = num_advisor@conservatism }
+	add_to_variable = { drift@liberalism = num_advisor@liberalism }
+	add_to_variable = { drift@socialism = num_advisor@socialism }
+	add_to_variable = { drift@agrarianism = num_advisor@agrarianism }
+	add_to_variable = { drift@neutrality = num_advisor@neutrality }
+	add_to_variable = { drift@monarchism = num_advisor@monarchism }
+
+	for_each_loop = {
+		array = party_banned
+		
+		set_temp_variable = { value_from_factor = -0.5 }
+		multiply_temp_variable = { value_from_factor = drift@var:v }
+		clamp_temp_variable = { var = value_from_factor max = 0 }
+		
+		set_variable = { banned_drift@var:v = value_from_factor }
+	}
+}
+
+warn_for_mobilization = {
+	if = {
+		limit = {
+			NOT = { has_country_flag = notif_disable_mob_warning }
+			NOT = { has_country_flag = mobilization_warning }
+			NOT = { has_country_flag = mobilization_warning_on }
+			NOT = { has_idea = mob_general }
+			NOT = { has_variable = law_change_days@token:mobilization_laws }
+			
+			### MOB GENERAL TRIGGER 
+			can_take_mob_general =  yes
+		}
+		set_country_flag = mobilization_warning_on
+	}
+}
+keep_current_politics = {
+	set_variable = { save_fascism = party_popularity_100@fascism }
+	set_variable = { save_monarchism = party_popularity_100@monarchism }
+	set_variable = { save_agrarianism = party_popularity_100@agrarianism }
+	set_variable = { save_socialism = party_popularity_100@socialism }
+	set_variable = { save_liberalism = party_popularity_100@liberalism }
+	set_variable = { save_conservatism = party_popularity_100@conservatism }
+	set_variable = { save_neutrality = party_popularity_100@neutrality }
+	set_variable = { save_communism = party_popularity_100@communism }
+	
+	if = {
+		limit = { has_government = conservatism }
+		set_country_flag = {
+			flag = was_conservatism
+			value = 1
+			days = 1
+		}
+	}
+	else_if = {
+		limit = { has_government = agrarianism }
+		set_country_flag = {
+			flag = was_agrarianism
+			value = 1
+			days = 1
+		}
+	}
+	else_if = {
+		limit = { has_government = liberalism }
+		set_country_flag = {
+			flag = was_liberalism
+			value = 1
+			days = 1
+		}
+	}
+	else_if = {
+		limit = { has_government = socialism }
+		set_country_flag = {
+			flag = was_socialism
+			value = 1
+			days = 1
+		}
+	}
+	else_if = {
+		limit = { has_government = monarchism }
+		set_country_flag = {
+			flag = was_monarchism
+			value = 1
+			days = 1
+		}
+	}
+	else_if = {
+		limit = { has_government = fascism }
+		set_country_flag = {
+			flag = was_fascism
+			value = 1
+			days = 1
+		}
+	}
+	else_if = {
+		limit = { has_government = communism }
+		set_country_flag = {
+			flag = was_communism
+			value = 1
+			days = 1
+		}
+	}
+	else_if = {
+		limit = { has_government = neutrality }
+		set_country_flag = {
+			flag = was_neutrality
+			value = 1
+			days = 1
+		}
+	}
+	
+	country_event = { id = BI_on_action.30 hours = 1 }
+}
+
+##### Ruling Popularity Gain/Lose #####
+#Gain Popularity
+#Conservatism
+party_pop_change = {
+	if = {
+		limit = {
+			check_variable = { party_pop_change_ideology = "conservatism" }
+		}
+		add_popularity = {
+			ideology = conservatism
+			popularity = var:party_pop_change_value
+		}
+	}
+	else_if = {
+		limit = {
+			check_variable = { party_pop_change_ideology = "liberalism" }
+		}
+		add_popularity = {
+			ideology = liberalism
+			popularity = var:party_pop_change_value
+		}
+	}
+	else_if = {
+		limit = {
+			check_variable = { party_pop_change_ideology = "socialism" }
+		}
+		add_popularity = {
+			ideology = socialism
+			popularity = var:party_pop_change_value
+		}
+	}
+	else_if = {
+		limit = {
+			check_variable = { party_pop_change_ideology = "fascism" }
+		}
+		add_popularity = {
+			ideology = fascism
+			popularity = var:party_pop_change_value
+		}
+	}
+	else_if = {
+		limit = {
+			check_variable = { party_pop_change_ideology = "communism" }
+		}
+		add_popularity = {
+			ideology = communism
+			popularity = var:party_pop_change_value
+		}
+	}
+	else_if = {
+		limit = {
+			check_variable = { party_pop_change_ideology = "monarchism" }
+		}
+		add_popularity = {
+			ideology = monarchism
+			popularity = var:party_pop_change_value
+		}
+	}
+	else_if = {
+		limit = {
+			check_variable = { party_pop_change_ideology = "agrarianism" }
+		}
+		add_popularity = {
+			ideology = agrarianism
+			popularity = var:party_pop_change_value
+		}
+	}
+	else_if = {
+		limit = {
+			check_variable = { party_pop_change_ideology = "neutrality" }
+		}
+		add_popularity = {
+			ideology = neutrality
+			popularity = var:party_pop_change_value
+		}
+	}
+}
+
+
+democratic_bloc_pop_plus_5 = {
+	set_temp_variable = { liberalism_portion = party_popularity@liberalism }
+	set_temp_variable = { socialism_portion = party_popularity@socialism }
+	set_temp_variable = { conservatism_portion = party_popularity@conservatism }
+	#how much of the democratic bloc is made up of each party
+	divide_temp_variable = { liberalism_portion = democratic_bloc_popularity }
+	divide_temp_variable = { socialism_portion = democratic_bloc_popularity }
+	divide_temp_variable = { conservatism_portion = democratic_bloc_popularity }
+	#each ideology takes a portion of the 5%
+	multiply_temp_variable = { liberalism_portion = 0.05 }
+	multiply_temp_variable = { socialism_portion = 0.05 }
+	multiply_temp_variable = { conservatism_portion = 0.05 }
+
+	add_popularity = { ideology = liberalism popularity = liberalism_portion }
+	add_popularity = { ideology = socialism popularity = socialism_portion }
+	add_popularity = { ideology = conservatism popularity = conservatism_portion }
+}
+democratic_bloc_pop_plus_10 = {
+	set_temp_variable = { liberalism_portion = party_popularity@liberalism }
+	set_temp_variable = { socialism_portion = party_popularity@socialism }
+	set_temp_variable = { conservatism_portion = party_popularity@conservatism }
+	#how much of the democratic bloc is made up of each party
+	divide_temp_variable = { liberalism_portion = democratic_bloc_popularity }
+	divide_temp_variable = { socialism_portion = democratic_bloc_popularity }
+	divide_temp_variable = { conservatism_portion = democratic_bloc_popularity }
+	#each ideology takes a portion of the 10%
+	multiply_temp_variable = { liberalism_portion = 0.1 }
+	multiply_temp_variable = { socialism_portion = 0.1 }
+	multiply_temp_variable = { conservatism_portion = 0.1 }
+
+	add_popularity = { ideology = liberalism popularity = liberalism_portion }
+	add_popularity = { ideology = socialism popularity = socialism_portion }
+	add_popularity = { ideology = conservatism popularity = conservatism_portion }
+}
+democratic_bloc_pop_minus_5 = {
+	set_temp_variable = { liberalism_portion = party_popularity@liberalism }
+	set_temp_variable = { socialism_portion = party_popularity@socialism }
+	set_temp_variable = { conservatism_portion = party_popularity@conservatism }
+	#how much of the democratic bloc is made up of each party
+	divide_temp_variable = { liberalism_portion = democratic_bloc_popularity }
+	divide_temp_variable = { socialism_portion = democratic_bloc_popularity }
+	divide_temp_variable = { conservatism_portion = democratic_bloc_popularity }
+	#each ideology takes a portion of the 5%
+	multiply_temp_variable = { liberalism_portion = 0.05 }
+	multiply_temp_variable = { socialism_portion = 0.05 }
+	multiply_temp_variable = { conservatism_portion = 0.05 }
+
+	multiply_temp_variable = { liberalism_portion = -1}
+	multiply_temp_variable = { socialism_portion = -1 }
+	multiply_temp_variable = { conservatism_portion = -1 }
+
+	add_popularity = { ideology = liberalism popularity = liberalism_portion }
+	add_popularity = { ideology = socialism popularity = socialism_portion }
+	add_popularity = { ideology = conservatism popularity = conservatism_portion }
+}
+democratic_bloc_pop_minus_10 = {
+	set_temp_variable = { liberalism_portion = party_popularity@liberalism }
+	set_temp_variable = { socialism_portion = party_popularity@socialism }
+	set_temp_variable = { conservatism_portion = party_popularity@conservatism }
+	#how much of the democratic bloc is made up of each party
+	divide_temp_variable = { liberalism_portion = democratic_bloc_popularity }
+	divide_temp_variable = { socialism_portion = democratic_bloc_popularity }
+	divide_temp_variable = { conservatism_portion = democratic_bloc_popularity }
+	#each ideology takes a portion of the 10%
+	multiply_temp_variable = { liberalism_portion = 0.1 }
+	multiply_temp_variable = { socialism_portion = 0.1 }
+	multiply_temp_variable = { conservatism_portion = 0.1 }
+
+	multiply_temp_variable = { liberalism_portion = -1}
+	multiply_temp_variable = { socialism_portion = -1 }
+	multiply_temp_variable = { conservatism_portion = -1 }
+
+	add_popularity = { ideology = liberalism popularity = liberalism_portion }
+	add_popularity = { ideology = socialism popularity = socialism_portion }
+	add_popularity = { ideology = conservatism popularity = conservatism_portion }
+}
+democratic_bloc_pop_minus_15 = {
+	set_temp_variable = { liberalism_portion = party_popularity@liberalism }
+	set_temp_variable = { socialism_portion = party_popularity@socialism }
+	set_temp_variable = { conservatism_portion = party_popularity@conservatism }
+	#how much of the democratic bloc is made up of each party
+	divide_temp_variable = { liberalism_portion = democratic_bloc_popularity }
+	divide_temp_variable = { socialism_portion = democratic_bloc_popularity }
+	divide_temp_variable = { conservatism_portion = democratic_bloc_popularity }
+	#each ideology takes a portion of the 15%
+	multiply_temp_variable = { liberalism_portion = 0.15 }
+	multiply_temp_variable = { socialism_portion = 0.15 }
+	multiply_temp_variable = { conservatism_portion = 0.15 }
+
+	multiply_temp_variable = { liberalism_portion = -1}
+	multiply_temp_variable = { socialism_portion = -1 }
+	multiply_temp_variable = { conservatism_portion = -1 }
+
+	add_popularity = { ideology = liberalism popularity = liberalism_portion }
+	add_popularity = { ideology = socialism popularity = socialism_portion }
+	add_popularity = { ideology = conservatism popularity = conservatism_portion }
+}
+		
+reduce_agrarian_society_malus = {
+	if = {
+		limit = {
+			has_idea = agrarian_society_1
+		}
+		swap_ideas = {
+			remove_idea = agrarian_society_1
+			add_idea = agrarian_society_2
+		}
+	}
+	else_if = {
+		limit = {
+			has_idea = agrarian_society_2
+		}
+		swap_ideas = {
+			remove_idea = agrarian_society_2
+			add_idea = agrarian_society_3
+		}
+	}
+	else_if = {
+		limit = {
+			has_idea = agrarian_society_3
+		}
+		swap_ideas = {
+			remove_idea = agrarian_society_3
+			add_idea = agrarian_society_4
+		}
+	}
+	else_if = {
+		limit = {
+			has_idea = agrarian_society_4
+		}
+		swap_ideas = {
+			remove_idea = agrarian_society_4
+			add_idea = agrarian_society_5
+		}
+	}
+}
+
+add_ruling_pop = {
+	if = {
+		limit = {
+			has_government = fascism
+		}
+		add_popularity = {
+			ideology = fascism
+			popularity = var:pop
+		}
+	}
+	else_if = {
+		limit = {
+			has_government = communism
+		}
+		add_popularity = {
+			ideology = communism
+			popularity = var:pop
+		}
+	}
+	else_if = {
+		limit = {
+			has_government = liberalism
+		}
+		add_popularity = {
+			ideology = liberalism
+			popularity = var:pop
+		}
+	}
+	else_if = {
+		limit = {
+			has_government = conservatism
+		}
+		add_popularity = {
+			ideology = conservatism
+			popularity = var:pop
+		}
+	}
+	else_if = {
+		limit = {
+			has_government = socialism
+		}
+		add_popularity = {
+			ideology = socialism
+			popularity = var:pop
+		}
+	}
+	else_if = {
+		limit = {
+			has_government = monarchism
+		}
+		add_popularity = {
+			ideology = monarchism
+			popularity = var:pop
+		}
+	}
+	else_if = {
+		limit = {
+			has_government = agrarianism
+		}
+		add_popularity = {
+			ideology = agrarianism
+			popularity = var:pop
+		}
+	}
+	else_if = {
+		limit = {
+			has_government = neutrality
+		}
+		add_popularity = {
+			ideology = neutrality
+			popularity = var:pop
+		}
+	}
+}
+add_opposition_pop = {
+	if = { limit = { highest_liberals_opp = yes }
+		add_popularity = {
+			ideology = liberalism
+			popularity = var:pop
+		}
+	}
+	else_if = { limit = { highest_socialists_opp = yes }
+		add_popularity = {
+			ideology = socialism
+			popularity = var:pop
+		}
+	}
+	else_if = { limit = { highest_conservatives_opp = yes }
+		add_popularity = {
+			ideology = conservatism
+			popularity = var:pop
+		}
+	}
+	else_if = { limit = { highest_neutrals_opp = yes }
+		add_popularity = {
+			ideology = neutrality
+			popularity = var:pop
+		}
+	}
+	else_if = { limit = { highest_monarchists_opp = yes }
+		add_popularity = {
+			ideology = monarchism
+			popularity = var:pop
+		}
+	}
+	else_if = { limit = { highest_communists_opp = yes }
+		add_popularity = {
+			ideology = communism
+			popularity = var:pop
+		}
+	}
+	else_if = { limit = { highest_fascists_opp = yes }
+		add_popularity = {
+			ideology = fascism
+			popularity = var:pop
+		}
+	}
+}
+add_sale_relations = {
+	if = { 
+		limit = {
+			FROM = { has_opinion_modifier = past_sale_6 }
+		}
+		FROM = {
+			remove_opinion_modifier = {
+				target = ROOT
+				modifier = past_sale_6
+			}
+			add_opinion_modifier = {
+				target = ROOT
+				modifier = past_sale_7
+			}
+		}			
+	}
+	else_if = {
+		limit = {
+			FROM = { has_opinion_modifier = past_sale_5 }
+		}
+		FROM = {
+			remove_opinion_modifier = {
+				target = ROOT
+				modifier = past_sale_5
+			}
+			add_opinion_modifier = {
+				target = ROOT
+				modifier = past_sale_6
+			}
+		}			
+	}
+	else_if = {
+		limit = {
+			FROM = { has_opinion_modifier = past_sale_4 }
+		}
+		FROM = {
+			remove_opinion_modifier = {
+				target = ROOT
+				modifier = past_sale_4
+			}
+			add_opinion_modifier = {
+				target = ROOT
+				modifier = past_sale_5
+			}
+		}			
+	}
+	else_if = {
+		limit = {
+			FROM = { has_opinion_modifier = past_sale_3 }
+		}
+		FROM = {
+			remove_opinion_modifier = {
+				target = ROOT
+				modifier = past_sale_3
+			}
+			add_opinion_modifier = {
+				target = ROOT
+				modifier = past_sale_4
+			}
+		}			
+	}
+	else_if = {
+		limit = {
+			FROM = { has_opinion_modifier = past_sale_2 }
+		}
+		FROM = {
+			remove_opinion_modifier = {
+				target = ROOT
+				modifier = past_sale_2
+			}
+			add_opinion_modifier = {
+				target = ROOT
+				modifier = past_sale_3
+			}
+		}			
+	}
+	else_if = {
+		limit = {
+			FROM = { has_opinion_modifier = past_sale_1 }
+		}
+		FROM = {
+			remove_opinion_modifier = {
+				target = ROOT
+				modifier = past_sale_1
+			}
+			add_opinion_modifier = {
+				target = ROOT
+				modifier = past_sale_2
+			}
+		}			
+	}
+	else = {
+		FROM = {
+			add_opinion_modifier = {
+				target = ROOT
+				modifier = past_sale_1
+			}
+		}			
+	}
+}
+reverse_add_sale_relations = {
+	if = { 
+		limit = {
+			ROOT = { has_opinion_modifier = past_sale_6 }
+		}
+		ROOT = {
+			remove_opinion_modifier = {
+				target = FROM
+				modifier = past_sale_6
+			}
+			add_opinion_modifier = {
+				target = FROM
+				modifier = past_sale_7
+			}
+		}			
+	}
+	else_if = {
+		limit = {
+			ROOT = { has_opinion_modifier = past_sale_5 }
+		}
+		ROOT = {
+			remove_opinion_modifier = {
+				target = FROM
+				modifier = past_sale_5
+			}
+			add_opinion_modifier = {
+				target = FROM
+				modifier = past_sale_6
+			}
+		}			
+	}
+	else_if = {
+		limit = {
+			ROOT = { has_opinion_modifier = past_sale_4 }
+		}
+		ROOT = {
+			remove_opinion_modifier = {
+				target = FROM
+				modifier = past_sale_4
+			}
+			add_opinion_modifier = {
+				target = FROM
+				modifier = past_sale_5
+			}
+		}			
+	}
+	else_if = {
+		limit = {
+			ROOT = { has_opinion_modifier = past_sale_3 }
+		}
+		ROOT = {
+			remove_opinion_modifier = {
+				target = FROM
+				modifier = past_sale_3
+			}
+			add_opinion_modifier = {
+				target = FROM
+				modifier = past_sale_4
+			}
+		}			
+	}
+	else_if = {
+		limit = {
+			ROOT = { has_opinion_modifier = past_sale_2 }
+		}
+		ROOT = {
+			remove_opinion_modifier = {
+				target = FROM
+				modifier = past_sale_2
+			}
+			add_opinion_modifier = {
+				target = FROM
+				modifier = past_sale_3
+			}
+		}			
+	}
+	else_if = {
+		limit = {
+			ROOT = { has_opinion_modifier = past_sale_1 }
+		}
+		ROOT = {
+			remove_opinion_modifier = {
+				target = FROM
+				modifier = past_sale_1
+			}
+			add_opinion_modifier = {
+				target = FROM
+				modifier = past_sale_2
+			}
+		}			
+	}
+	else = {
+		ROOT = {
+			add_opinion_modifier = {
+				target = FROM
+				modifier = past_sale_1
+			}
+		}			
+	}
+}
+#Other ideas = 
+
+
+##### these all require a temp variable "opinion_target" to be set before using this. opinion_target will then apply the opinion modifier towards ROOT
+##### example how it looks like to have ITA get rejected claims opinion debuff towards GER (ITA likes GER less):
+
+# 		 	set_temp_variable = { opinion_target = ITA }
+# 		 	set_temp_variable = { opinion_weight = 2 } #how many times
+#			GER = { add_OPN_rejected_claims_to_PREV = yes }
+
+OPN_add_rejected_claims_to_PREV = {
+	if = {
+		limit = {
+			NOT = { has_country_flag = { flag = OPN_rejected_claims_@PREV value > 4 } }
+		}
+			
+		var:opinion_target = {
+			if = { limit = { has_country_flag = { flag = OPN_rejected_claims_@PREV value = 5 } }      set_temp_variable = { flag_value = 5 } set_temp_variable = { opinion_value = -96 } }
+			else_if = { limit = { has_country_flag = { flag = OPN_rejected_claims_@PREV value = 4 } } set_temp_variable = { flag_value = 4 } set_temp_variable = { opinion_value = -72 } }
+			else_if = { limit = { has_country_flag = { flag = OPN_rejected_claims_@PREV value = 3 } } set_temp_variable = { flag_value = 3 } set_temp_variable = { opinion_value = -48 } }
+			else_if = { limit = { has_country_flag = { flag = OPN_rejected_claims_@PREV value = 2 } } set_temp_variable = { flag_value = 2 } set_temp_variable = { opinion_value = -24 } }
+			else_if = { limit = { has_country_flag = { flag = OPN_rejected_claims_@PREV value = 1 } } set_temp_variable = { flag_value = 1 } set_temp_variable = { opinion_value = -18 } }
+		
+			set_temp_variable = { target_value = flag_value }
+			add_to_temp_variable = { target_value = opinion_weight?1 }
+			clamp_temp_variable = { var = target_value max = 5 }
+			
+			set_temp_variable = { num_increases = target_value }
+			subtract_from_temp_variable = { num_increases = flag_value }
+			
+			if = { limit = { check_variable = { target_value = 5 } }     set_temp_variable = { opinion_value = -96 } }
+			else_if = { limit = { check_variable = { target_value = 4 } } set_temp_variable = { opinion_value = -72 } }
+			else_if = { limit = { check_variable = { target_value = 3 } } set_temp_variable = { opinion_value = -48 } }
+			else_if = { limit = { check_variable = { target_value = 2 } } set_temp_variable = { opinion_value = -24 } }
+			else_if = { limit = { check_variable = { target_value = 1 } } set_temp_variable = { opinion_value = -18 } }
+			
+			custom_effect_tooltip = "add_rejected_our_claims_TT"
+		
+			for_loop_effect = {
+				end = num_increases 
+				
+				if = {
+					limit = {
+						has_country_flag = { flag = OPN_rejected_claims_@PREV value = 4 }
+					}
+					
+					remove_opinion_modifier = {
+						target = PREV
+						modifier = rejected_our_claims_4
+					}
+					add_opinion_modifier = {
+						target = PREV
+						modifier = rejected_our_claims_5
+					}
+					set_country_flag = { flag = OPN_rejected_claims_@PREV value = 5 days = 600 }
+				}
+				else_if = {
+					limit = {
+						has_country_flag = { flag = OPN_rejected_claims_@PREV value = 3 }
+					}
+					
+					remove_opinion_modifier = {
+						target = PREV
+						modifier = rejected_our_claims_3
+					}
+					add_opinion_modifier = {
+						target = PREV
+						modifier = rejected_our_claims_4
+					}
+					set_country_flag = { flag = OPN_rejected_claims_@PREV value = 4 days = 600 }
+				}
+				else_if = {
+					limit = {
+						has_country_flag = { flag = OPN_rejected_claims_@PREV value = 2 }
+					}
+					
+					remove_opinion_modifier = {
+						target = PREV
+						modifier = rejected_our_claims_2
+					}
+					add_opinion_modifier = {
+						target = PREV
+						modifier = rejected_our_claims_3
+					}
+					set_country_flag = { flag = OPN_rejected_claims_@PREV value = 3 days = 600 }
+				}
+				else_if = {
+					limit = {
+						has_country_flag = { flag = OPN_rejected_claims_@PREV value = 1 }
+					}
+					
+					remove_opinion_modifier = {
+						target = PREV
+						modifier = rejected_our_claims_1
+					}
+					add_opinion_modifier = {
+						target = PREV
+						modifier = rejected_our_claims_2
+					}
+					set_country_flag = { flag = OPN_rejected_claims_@PREV value = 2 days = 600 }
+				}
+				else_if = {
+					limit = {
+						NOT = { has_country_flag = OPN_rejected_claims_@PREV }
+					}
+					add_opinion_modifier = {
+						target = PREV
+						modifier = rejected_our_claims_1
+					}
+					set_country_flag = { flag = OPN_rejected_claims_@PREV value = 1 days = 600 }
+				}
+				
+			}		
+		}
+	}
+}
+
+

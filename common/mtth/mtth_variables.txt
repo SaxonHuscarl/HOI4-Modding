@@ -1,0 +1,643 @@
+
+# this mtth entries can be used as variables
+# example set_variable = { a = mtth:entry_name }
+# and define entry_name here
+#
+# entry_name = {
+# 	base = 50
+# 	
+# 	modifier = {
+# 		tag = GER
+# 		add = 50
+# 	}
+# }
+
+
+#################################
+### KEEP TEMP VARIABLE NAMES VERY SHORT IN HERE
+max_stability = {
+	base = 1.0
+	
+	modifier = { 
+		add = t1
+			
+		set_temp_variable = { t1 = modifier@stability_factor }
+		
+		if = {
+			limit = {
+				has_war = yes
+			}  
+			set_temp_variable = { t2 = -0.3 }
+			
+			if = {
+				limit = { has_offensive_war = yes }
+				add_to_temp_variable = { t2 = modifier@offensive_war_stability_factor }
+			}
+			if = {
+				limit = { has_defensive_war = yes }
+				add_to_temp_variable = { t2 = modifier@defensive_war_stability_factor }
+			}
+			add_to_temp_variable = { t2 = modifier@war_stability_factor }
+			clamp_temp_variable = { var = t2 max = 0 }
+			
+		}
+		add_to_temp_variable = { t1 = t2 }
+		
+		set_temp_variable = { t3 = 0.05 }
+		add_to_temp_variable = { t3 = modifier@party_popularity_stability_factor }
+		multiply_temp_variable = { t3 = party_popularity@ruling_party }
+		
+		add_to_temp_variable = { t1 = t3 }
+		
+		clamp_temp_variable = { var = t1 max = 0 }
+	}
+}
+
+max_war_support = {
+	base = 1.0
+	
+	modifier = { 
+		add = t1
+		
+		set_temp_variable = { t1 = modifier@war_support_factor }
+		
+		add_to_temp_variable = { t1 = has_bombing_war_support }
+		add_to_temp_variable = { t1 = has_convoys_war_support }
+		add_to_temp_variable = { t1 = has_casualties_war_support }
+
+		if = {
+			limit = {
+				has_offensive_war = yes
+			} 
+			add_to_temp_variable = { t1 = -0.2 }
+		}
+		if = {
+			limit = {
+				has_defensive_war = yes
+			}
+			add_to_temp_variable = { t1 = 0.3 }
+		}
+		
+		clamp_temp_variable = { var = t1 max = 0 }
+	}
+}
+
+max_radar_level = {
+	base = 0 
+	
+	modifier = {
+		add = t1 
+		
+		if = { limit = { has_tech = advanced_centimetric_radar }
+			set_temp_variable = { t1 = 6 }
+		}
+		else_if = { limit = { has_tech = improved_centimetric_radar }
+			set_temp_variable = { t1 = 5 }
+		}
+		else_if = { limit = { has_tech = centimetric_radar }
+			set_temp_variable = { t1 = 4 }
+		}
+		else_if = { limit = { has_tech = improved_decimetric_radar }
+			set_temp_variable = { t1 = 3 }
+		}
+		else_if = { limit = { has_tech = decimetric_radar }
+			set_temp_variable = { t1 = 2 }
+		}
+		else_if = { limit = { has_tech = radio_detection }
+			set_temp_variable = { t1 = 1 }
+		}
+	}
+}
+
+democratic_popularity = {
+	base = 0 
+	
+	modifier = {
+		add = t1 
+		
+		set_temp_variable = { t1 = party_popularity@conservatism }
+		add_to_temp_variable = { t1 = party_popularity@liberalism }
+		add_to_temp_variable = { t1 = party_popularity@socialism }
+		add_to_temp_variable = { t1 = party_popularity@agrarianism }
+	}
+}
+
+stability_weekly_from_decisions = {
+
+	modifier = {
+		add = t1 
+		
+		if = { limit = { has_decision = rethink_goverment }
+			add_to_temp_variable = { t1 = 0.01 }
+		}
+		if = { limit = { has_decision = prevent_government_collapse_at_any_cost }
+			add_to_temp_variable = { t1 = 0.02 }
+		}
+		if = { limit = { has_decision = promises_of_peace }
+			add_to_temp_variable = { t1 = 0.01 }
+		}
+		if = { limit = { has_decision = more_civilian_goods }
+			add_to_temp_variable = { t1 = 0.01 }
+		}
+		if = { limit = { has_decision = focus_on_peoples_problems }
+			add_to_temp_variable = { t1 = 0.01 }
+		}
+		if = { limit = { has_decision = war_propaganda }
+			add_to_temp_variable = { t1 = 0.003 }
+		}
+		if = { limit = { has_decision = we_fight_united }
+			add_to_temp_variable = { t1 = 0.006 }
+		}
+		if = { limit = { has_decision = justify_our_war }
+			add_to_temp_variable = { t1 = -0.01 }
+		}
+		if = { limit = { has_decision = manifest_our_destiny }
+			add_to_temp_variable = { t1 = 0.001 }
+		}
+		if = { limit = { has_decision = unite_people_under_goverment }
+			add_to_temp_variable = { t1 = 0.02 }
+		}
+		if = { limit = { has_decision = decrease_unemployment }
+			add_to_temp_variable = { t1 = 0.008 }
+		}
+		if = { limit = { has_decision = improve_worker_conditions }
+			add_to_temp_variable = { t1 = 0.01 }
+		}
+		
+	}
+}
+stability_weekly_from_laws = {
+	base = 0 
+	
+	modifier = {
+		add = t1 
+		
+		if = { limit = { has_idea = bonds_peace }
+			add_to_temp_variable = { t1 = 0.0005 }
+		}
+		else_if = { limit = { has_idea = bonds_war_domestic }
+			add_to_temp_variable = { t1 = -0.001 }
+		}
+		else_if = { limit = { has_idea = bonds_war_international }
+			add_to_temp_variable = { t1 = -0.002 }
+		}
+		else_if = { limit = { has_idea = bonds_war_public }
+			add_to_temp_variable = { t1 = -0.0025 }
+		}
+		else_if = { limit = { has_idea = bonds_state_requisition }
+			add_to_temp_variable = { t1 = -0.003 }
+		}
+		else_if = { limit = { has_idea = bonds_print }
+			add_to_temp_variable = { t1 = -0.005 }
+		}
+		
+		if = { limit = { has_idea = cons_volunteer }
+			add_to_temp_variable = { t1 = 0.0005 }
+		}
+		else_if = { limit = { has_idea = cons_expanded_draft }
+			add_to_temp_variable = { t1 = -0.0005 }
+		}
+		else_if = { limit = { has_idea = cons_extensive_draft }
+			add_to_temp_variable = { t1 = -0.001 }
+		}
+		else_if = { limit = { has_idea = cons_barrel }
+			add_to_temp_variable = { t1 = -0.0015 }
+		}
+		
+		if = { limit = { has_idea = low_economic_mobilisation }
+			add_to_temp_variable = { t1 = -0.001 }
+		}
+		else_if = { limit = { has_idea = partial_economic_mobilisation }
+			add_to_temp_variable = { t1 = -0.002 }
+		}
+		else_if = { limit = { has_idea = war_economy }
+			add_to_temp_variable = { t1 = -0.003 }
+		}
+		else_if = { limit = { has_idea = tot_economic_mobilisation }
+			add_to_temp_variable = { t1 = -0.005 }
+		}
+		
+		if = { limit = { has_idea = edu_low }
+			add_to_temp_variable = { t1 = 0.0005 }
+		}
+		else_if = { limit = { has_idea = edu_high }
+			add_to_temp_variable = { t1 = 0.001 }
+		}
+		else_if = { limit = { has_idea = edu_excellent }
+			add_to_temp_variable = { t1 = 0.0015 }
+		}
+		
+		if = { limit = { has_idea = fdi_encouraged }
+			add_to_temp_variable = { t1 = -0.002 }
+		}
+		else_if = { limit = { has_idea = fdi_allowed }
+			add_to_temp_variable = { t1 = -0.001 }
+		}
+		else_if = { limit = { has_idea = fdi_regulated }
+			add_to_temp_variable = { t1 = 0.001 }
+		}
+		else_if = { limit = { has_idea = fdi_banned }
+			add_to_temp_variable = { t1 = 0.002 }
+		}
+		
+		if = { limit = { has_idea = very_low_civ_fuel_usage }
+			add_to_temp_variable = { t1 = -0.002 }
+		}
+		else_if = { limit = { has_idea = low_civ_fuel_usage }
+			add_to_temp_variable = { t1 = -0.001 }
+		}
+		else_if = { limit = { has_idea = medium_civ_fuel_usage }
+			add_to_temp_variable = { t1 = 0.001 }
+		}
+		else_if = { limit = { has_idea = high_civ_fuel_usage }
+			add_to_temp_variable = { t1 = 0.002 }
+		}
+
+		if = { limit = { has_idea = labor_none }
+			add_to_temp_variable = { t1 = 0.001 }
+		}
+		else_if = { limit = { has_idea = labor_encouraged }
+			add_to_temp_variable = { t1 = -0.001 }
+		}
+		else_if = { limit = { has_idea = labor_homefront }
+			add_to_temp_variable = { t1 = -0.001 }
+		}
+		
+		if = { limit = { has_idea = age_17 }
+			add_to_temp_variable = { t1 = -0.0005 }
+		}
+		else_if = { limit = { has_idea = age_16 }
+			add_to_temp_variable = { t1 = -0.001 }
+		}
+		else_if = { limit = { has_idea = age_15 }
+			add_to_temp_variable = { t1 = -0.0015 }
+		}
+		else_if = { limit = { has_idea = age_14 }
+			add_to_temp_variable = { t1 = -0.002 }
+		}
+		else_if = { limit = { has_idea = age_13 }
+			add_to_temp_variable = { t1 = -0.0025 }
+		}
+		else_if = { limit = { has_idea = age_12 }
+			add_to_temp_variable = { t1 = -0.003 }
+		}
+		else_if = { limit = { has_idea = age_11 }
+			add_to_temp_variable = { t1 = -0.0035 }
+		}
+		else_if = { limit = { has_idea = age_10 }
+			add_to_temp_variable = { t1 = -0.004 }
+		}
+		
+		if = { limit = { has_idea = private_control }
+			add_to_temp_variable = { t1 = 0.001 }
+		}
+		else_if = { limit = { has_idea = key_industries }
+			add_to_temp_variable = { t1 = 0.0005 }
+		}
+		else_if = { limit = { has_idea = planned_economy }
+			add_to_temp_variable = { t1 = -0.002 }
+		}
+		else_if = { limit = { has_idea = stalin_economy }
+			add_to_temp_variable = { t1 = -0.002 }
+		}
+		
+		if = { limit = { has_idea = press_censored }
+			add_to_temp_variable = { t1 = 0.001 }
+		}
+		else_if = { limit = { has_idea = press_state }
+			add_to_temp_variable = { t1 = 0.002 }
+		}
+		
+		if = { limit = { has_idea = security_liberty_first }
+			add_to_temp_variable = { t1 = 0.001 }
+		}
+		else_if = { limit = { has_idea = security_major_restrictions }
+			add_to_temp_variable = { t1 = -0.001 }
+		}
+		else_if = { limit = { has_idea = security_police_state }
+			add_to_temp_variable = { t1 = -0.001 }
+		}
+		else_if = { limit = { has_idea = security_martial_law }
+			add_to_temp_variable = { t1 = -0.002 }
+		}
+		
+		if = { limit = { has_idea = tariffs_none }
+			add_to_temp_variable = { t1 = 0.0005 }
+		}
+		else_if = { limit = { has_idea = tariffs_average }
+			add_to_temp_variable = { t1 = -0.0005 }
+		}
+		else_if = { limit = { has_idea = tariffs_high }
+			add_to_temp_variable = { t1 = -0.001 }
+		}
+		else_if = { limit = { has_idea = tariffs_extreme }
+			add_to_temp_variable = { t1 = -0.002 }
+		}
+		
+		if = { limit = { has_idea = tax_minimal }
+			add_to_temp_variable = { t1 = 0.004 }
+		}
+		else_if = { limit = { has_idea = tax_low }
+			add_to_temp_variable = { t1 = 0.002 }
+		}
+		else_if = { limit = { has_idea = tax_high }
+			add_to_temp_variable = { t1 = -0.002 }
+		}
+		else_if = { limit = { has_idea = tax_extreme }
+			add_to_temp_variable = { t1 = -0.004 }
+		}
+		
+		if = { limit = { has_country_flag = has_closed_economy }
+			add_to_temp_variable = { t1 = -0.001 }
+		}
+	}
+}
+	
+##### CIVILIAN FACTORY STUFF 
+
+num_of_owned_civilian_factories = {
+	base = 0 
+	
+	modifier = {
+		add = a1 
+		
+		set_num_of_owned_civilian_factories = yes
+	}
+}
+num_of_civilian_factories_from_export = {
+	base = 0 
+	
+	modifier = {
+		add = b1 
+		
+		set_num_of_civilian_factories_from_export = yes
+	}
+		
+}
+num_of_civilian_factories_for_import = {
+	base = 0 
+	
+	modifier = { 
+		add = c1
+		
+		set_num_of_civilian_factories_for_import = yes
+	}
+}
+num_of_civilian_factories_from_subject = {
+	base = 0 
+	
+	modifier = { 
+		add = d1
+		
+		set_num_of_civilian_factories_from_subject = yes 
+	}
+}
+num_of_civilian_factories_for_master = {
+	base = 0 
+	
+	modifier = { 
+		add = e1
+		
+		set_num_of_civilian_factories_for_master = yes 
+	}
+}
+
+total_marine = {
+	base = 0 
+	
+	modifier = {
+		add = t1 
+		
+		set_temp_variable = { t1 = num_battalions_with_type@marine }
+		add_to_temp_variable = { t1 = num_battalions_with_type@marine_assault }
+		
+	}
+}
+
+total_motorized = {
+	base = 0 
+	
+	modifier = {
+		add = t1 
+		
+		set_temp_variable = { t1 = num_battalions_with_type@semi_motorized }
+		add_to_temp_variable = { t1 = num_battalions_with_type@semi_motorized_assault }
+		add_to_temp_variable = { t1 = num_battalions_with_type@motorized }
+		add_to_temp_variable = { t1 = num_battalions_with_type@motorized_assault }
+		
+		add_to_temp_variable = { t1 = num_battalions_with_type@ss_semi_motorized }
+		add_to_temp_variable = { t1 = num_battalions_with_type@ss_semi_motorized_assault }
+		add_to_temp_variable = { t1 = num_battalions_with_type@ss_motorized }
+		add_to_temp_variable = { t1 = num_battalions_with_type@ss_motorized_assault }
+		
+		add_to_temp_variable = { t1 = num_battalions_with_type@guards_motorized }
+		add_to_temp_variable = { t1 = num_battalions_with_type@guards_motorized_assault }
+	
+	}
+}
+
+total_mechanized = {
+	base = 0 
+	
+	modifier = {
+		add = t1 
+		
+		set_temp_variable = { t1 = num_battalions_with_type@mechanized }
+		add_to_temp_variable = { t1 = num_battalions_with_type@mechanized_assault }
+		
+		add_to_temp_variable = { t1 = num_battalions_with_type@ss_mechanized }
+		add_to_temp_variable = { t1 = num_battalions_with_type@ss_mechanized_assault }
+		
+		add_to_temp_variable = { t1 = num_battalions_with_type@guards_mechanized }
+		add_to_temp_variable = { t1 = num_battalions_with_type@guards_mechanized_assault }
+	
+	}
+}
+
+max_industrial_complex = {
+	base = 10
+	
+	modifier = {
+		add = 6
+		has_tech = construction1
+	}
+	modifier = {
+		add = 6
+		has_tech = construction2
+	}
+	modifier = {
+		add = 6
+		has_tech = construction3
+	}
+	modifier = {
+		add = 6
+		has_tech = construction4
+	}
+	modifier = {
+		add = 6
+		has_tech = construction5
+	}
+}
+max_arms_factory = {
+	base = 10
+	
+	modifier = {
+		add = 10
+		has_tech = military_production_i
+	}
+	modifier = {
+		add = 10
+		has_tech = military_production_ii
+	}
+	modifier = {
+		add = 10
+		has_tech = military_production_iii
+	}
+}
+max_dockyard = {
+	base = 5
+	
+	modifier = {
+		add = 1
+		has_tech = port_infra
+	}
+	modifier = {
+		add = 3
+		has_tech = port_infra2
+	}
+	modifier = {
+		add = 3
+		has_tech = port_infra3
+	}
+	modifier = {
+		add = 3
+		has_tech = port_infra4
+	}
+	modifier = {
+		add = 5
+		has_tech = port_infra5
+	}
+}
+
+continent = {
+	base = 0
+	
+	modifier = {
+		add = var:cont
+		
+		if = {
+			limit = {
+				is_on_continent = europe
+			}
+			set_temp_variable = { cont = token:europe }
+		}
+		else_if = {
+			limit = {
+				is_on_continent = asia
+			}
+			set_temp_variable = { cont = token:asia }
+		}
+		else_if = {
+			limit = {
+				is_on_continent = middle_east
+			}
+			set_temp_variable = { cont = token:middle_east }
+		}
+		else_if = {
+			limit = {
+				is_on_continent = africa
+			}
+			set_temp_variable = { cont = token:africa }
+		}
+		else_if = {
+			limit = {
+				is_on_continent = north_america
+			}
+			set_temp_variable = { cont = token:north_america }
+		}
+		else_if = {
+			limit = {
+				is_on_continent = south_america
+			}
+			set_temp_variable = { cont = token:south_america }
+		}
+	}
+}
+
+	
+operative_mission = { # OPERATIVE SCOPE
+	base = 0
+	
+	modifier = { 
+		add = var:mission
+			
+		if = {
+			limit = {
+				operative_leader_mission = build_intel_network
+			}
+			set_temp_variable = { mission = token:build_intel_network }
+		}
+		if = {
+			limit = {
+				operative_leader_mission = counter_intelligence
+			}
+			set_temp_variable = { mission = token:counter_intelligence }
+		}
+		if = {
+			limit = {
+				operative_leader_mission = root_out_resistance
+			}
+			set_temp_variable = { mission = token:root_out_resistance }
+		}
+		if = {
+			limit = {
+				operative_leader_mission = boost_ideology
+			}
+			set_temp_variable = { mission = token:boost_ideology }
+		}
+		if = {
+			limit = {
+				operative_leader_mission = control_trade
+			}
+			set_temp_variable = { mission = token:control_trade }
+		}
+		if = {
+			limit = {
+				operative_leader_mission = diplomatic_pressure
+			}
+			set_temp_variable = { mission = token:diplomatic_pressure }
+		}
+		if = {
+			limit = {
+				operative_leader_mission = propaganda
+			}
+			set_temp_variable = { mission = token:propaganda }
+		}
+		
+	}
+	
+}
+decryption_operation_effect = { # ROOT = actor, FROM = target
+	base = 0
+	
+	modifier = { 
+		add = var:decryption
+		
+		if = {
+			limit = {
+				is_fully_decrypted = FROM
+			}
+			set_temp_variable = { decryption = 0.07 }
+		}
+		if = {
+			limit = {
+				is_active_decryption_bonuses_enabled = FROM
+			}
+			add_to_temp_variable = { decryption = 0.25 }
+		}
+	}
+			
+}
+### EOF ###
+			
+		

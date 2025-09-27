@@ -1,0 +1,148 @@
+
+@AI_OIL_IMPORTANCE = 2.0 
+@AI_RUBBER_IMPORTANCE = 5.0
+@AI_TUNGSTEN_IMPORTANCE = 2.0 
+@AI_ALUMINIUM_IMPORTANCE = 1.5
+@AI_STEEL_IMPORTANCE = 1.0
+@AI_CHROMIUM_IMPORTANCE = 4.0
+
+@AI_ADVISOR_SCORE_PER_DAY = 0.7
+
+@AI_ADVISOR_SCORE_MAX = 100
+
+ai_check_advisor_score = {
+	set_temp_variable = { days_since_last = global.date }
+	subtract_from_temp_variable = { days_since_last = ai_last_advisor_pick_date }
+	#multiply_temp_variable = { days_since_last = 24 }
+	multiply_temp_variable = { days_since_last = 1000 }
+	divide_temp_variable = { days_since_last = 24 }
+	
+	multiply_temp_variable = { days_since_last = @AI_ADVISOR_SCORE_PER_DAY }
+	
+	clamp_temp_variable = { var = days_since_last max = 100 }
+	#log = "[?days_since_last] final score"
+}
+
+ai_check_stability_need = {
+	set_temp_variable = { stability_score = ai_stability_need }
+	divide_temp_variable = { stability_score = cost?1 }
+	multiply_temp_variable = { stability_score = weight?100 }
+} 
+
+ai_check_war_support_need = {
+	set_temp_variable = { war_support_score = ai_war_support_need }
+	divide_temp_variable = { war_support_score = cost?1 }
+	multiply_temp_variable = { war_support_score = weight?100 }
+} 
+	
+EAI_resource_prospecting/oil = {
+	OR = {
+		check_variable = { resource_imported@oil > 8 }
+		fuel_ratio < 0.5
+		AND = {
+			major_country = yes 
+			fuel_ratio < 0.75 
+		}
+	}
+}
+EAI_resource_prospecting/rubber = {
+	OR = {
+		check_variable = { resource_imported@rubber > 8 }
+		check_variable = { resource@rubber < 0 }
+	}
+}
+EAI_resource_prospecting/tungsten = {
+	multiply_temp_variable = { score = @AI_TUNGSTEN_IMPORTANCE }
+	
+	OR = {
+		check_variable = { resource_imported@tungsten > 8 }
+		check_variable = { resource@tungsten < 0 }
+	}
+}
+EAI_resource_prospecting/aluminium = {
+	OR = {
+		check_variable = { resource_imported@bauxite > 32 }
+		check_variable = { resource@bauxite < 0 }
+	}	
+}
+EAI_resource_prospecting/steel = {
+	OR = {
+		check_variable = { resource_imported@iron > 32 }
+		check_variable = { resource@iron < 0 }
+	}
+}
+EAI_resource_prospecting/chromium = {
+	OR = {
+		check_variable = { resource_imported@chromium > 8 }
+		check_variable = { resource@chromium < 0 }
+	}
+}
+
+ai_resource_prospecting/oil = {
+	multiply_temp_variable = { score = @AI_OIL_IMPORTANCE }
+	
+	OR = {
+		check_variable = { resource_imported@oil > 8 }
+		fuel_ratio < 0.5
+		AND = {
+			major_country = yes 
+			fuel_ratio < 0.75 
+		}
+	}
+}
+ai_resource_prospecting/rubber = {
+	multiply_temp_variable = { score = @AI_RUBBER_IMPORTANCE }
+	
+	OR = {
+		check_variable = { resource_imported@rubber > 8 }
+		check_variable = { resource@rubber < 0 }
+	}
+}
+ai_resource_prospecting/tungsten = {
+	multiply_temp_variable = { score = @AI_TUNGSTEN_IMPORTANCE }
+	
+	OR = {
+		check_variable = { resource_imported@tungsten > 8 }
+		check_variable = { resource@tungsten < 0 }
+	}
+}
+ai_resource_prospecting/aluminium = {
+	multiply_temp_variable = { score = @AI_ALUMINIUM_IMPORTANCE }
+	
+	OR = {
+		check_variable = { resource_imported@bauxite > 32 }
+		check_variable = { resource@bauxite < 0 }
+	}	
+}
+ai_resource_prospecting/bauxite = {
+	multiply_temp_variable = { score = @AI_ALUMINIUM_IMPORTANCE }
+	
+	OR = {
+		check_variable = { resource_imported@bauxite > 32 }
+		check_variable = { resource@bauxite < 0 }
+	}	
+}
+ai_resource_prospecting/steel = {
+	multiply_temp_variable = { score = @AI_STEEL_IMPORTANCE }
+	
+	OR = {
+		check_variable = { resource_imported@iron > 32 }
+		check_variable = { resource@iron < 0 }
+	}
+}
+ai_resource_prospecting/coal = {
+	multiply_temp_variable = { score = @AI_STEEL_IMPORTANCE }
+	
+	OR = {
+		check_variable = { resource_imported@coal > 32 }
+		check_variable = { resource@coal < 0 }
+	}
+}
+ai_resource_prospecting/chromium = {
+	multiply_temp_variable = { score = @AI_CHROMIUM_IMPORTANCE }
+	
+	OR = {
+		check_variable = { resource_imported@chromium > 8 }
+		check_variable = { resource@chromium < 0 }
+	}
+}

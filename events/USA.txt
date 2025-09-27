@@ -1,0 +1,3313 @@
+﻿###########################
+# USA Events
+###########################
+add_namespace = usa
+###########################
+
+# Amelia Earhart wants to join the USAAC
+country_event = {
+	id = usa.1
+	title = usa.1.t
+	desc = usa.1.d
+	picture = GFX_report_event_usa_amelia_earhart_airplane
+
+	is_triggered_only = yes
+	fire_only_once = yes
+	
+	trigger = {
+		#tag = USA #EOA
+		NOT = { has_global_flag = earhart_disappeared }
+		has_war = yes
+	}
+	
+	option = { # Let her join
+		name = usa.1.a
+		add_political_power = -10
+		add_ace = {
+			name = "Amelia"
+			surname = "Earhart"
+			callsign = "Revenant"
+			type = fighter_genius
+			is_female = yes
+		}
+		set_country_flag = amelia_active_ace
+	}
+	option = { # Refuse
+		name = usa.1.b
+	}
+}
+country_event = {
+	id = usa.2
+	title = usa.2.t
+	desc = usa.2.d
+	picture = GFX_report_event_dc
+
+	is_triggered_only = yes
+
+	option = { # 
+		name = usa.2.a	
+		set_temp_variable = { usa_power = usa_anger }
+		set_temp_variable = { usa_command = usa_power }
+		multiply_temp_variable = { usa_command = usa_command }
+		multiply_temp_variable = { usa_power = 25 }
+		add_command_power = usa_command	
+		add_political_power = usa_power
+		add_war_support = 0.05
+	}
+}
+
+# Pearl Harbor Struck
+country_event = {
+	id = usa.3
+	title = usa.3.t
+	desc = usa.3.d
+	picture = GFX_report_event_pearl_harbor_gfxaddon
+	is_triggered_only = yes
+	fire_only_once = yes
+
+	trigger = {
+		tag = USA
+	}
+
+	immediate = {
+		hidden_effect = {
+			JAP = {
+				set_temp_variable = { pearl_chance = global.event_random }
+				if = {
+					limit = {
+						check_variable = {
+							#4+ Could be fun
+							pearl_score > 3
+						}
+					}
+					if = {
+						limit = { check_variable = { pearl_chance > 75 } }
+						set_country_flag = pearl_BOOM
+					}
+					else_if = {
+						limit = { check_variable = { pearl_chance > 40 } }
+						set_country_flag = pearl_good
+					}
+					else_if = {
+						limit = { check_variable = { pearl_chance > 10 } }
+						set_country_flag = pearl_historical
+					}
+					else = {
+						set_country_flag = pearl_poor
+					}
+				}
+				else_if = {
+					limit = {
+						#2 - 3
+						check_variable = {
+							pearl_score > 1
+						}
+					}
+					if = {
+						limit = { check_variable = { pearl_chance > 90 } }
+						set_country_flag = pearl_BOOM
+					}
+					else_if = {
+						limit = { check_variable = { pearl_chance > 50 } }
+						set_country_flag = pearl_good
+					}
+					else_if = {
+						limit = { check_variable = { pearl_chance > 10 } }
+						set_country_flag = pearl_historical
+					}
+					else_if = {
+						limit = { check_variable = { pearl_chance > 2 } }
+						set_country_flag = pearl_poor
+					}
+					else = {
+						set_country_flag = pearl_wipeout
+					}
+				}
+				else_if = {
+					limit = {
+						#-1 - 1
+						check_variable = {
+							pearl_score > -2
+						}
+					}
+					if = {
+						limit = { check_variable = { pearl_chance > 99 } }
+						set_country_flag = pearl_BOOM
+					}
+					else_if = {
+						limit = { check_variable = { pearl_chance > 80 } }
+						set_country_flag = pearl_good
+					}
+					else_if = {
+						limit = { check_variable = { pearl_chance > 30 } }
+						set_country_flag = pearl_historical
+					}
+					else_if = {
+						limit = { check_variable = { pearl_chance > 5 } }
+						set_country_flag = pearl_poor
+					}
+					else = {
+						set_country_flag = pearl_wipeout
+					}
+				}
+				else_if = {
+					limit = {
+						#-3 - -2
+						check_variable = {
+							pearl_score > -4
+						}
+					}
+					if = {
+						limit = { check_variable = { pearl_chance > 95 } }
+						set_country_flag = pearl_good
+					}
+					else_if = {
+						limit = { check_variable = { pearl_chance > 55 } }
+						set_country_flag = pearl_historical
+					}
+					else_if = {
+						limit = { check_variable = { pearl_chance > 10 } }
+						set_country_flag = pearl_poor
+					}
+					else = {
+						set_country_flag = pearl_wipeout
+					}
+				}
+				else_if = {
+					limit = {
+						#less than -3 you fool!
+						check_variable = {
+							pearl_score < -3
+						}
+					}
+					if = {
+						limit = { check_variable = { pearl_chance > 99 } }
+						set_country_flag = pearl_good
+					}
+					else_if = {
+						limit = { check_variable = { pearl_chance > 70 } }
+						set_country_flag = pearl_historical
+					}
+					else_if = {
+						limit = { check_variable = { pearl_chance > 25 } }
+						set_country_flag = pearl_poor
+					}
+					else = {
+						set_country_flag = pearl_wipeout
+					}
+				}
+				country_event = { id = japan.27 hours = 9 }
+				news_event = {
+					id = worldnews.7
+					hours = 12
+				}
+			}
+			if = { 
+				limit = {
+					has_global_flag = pearl_panzeroo
+				}
+				event_target:panzeroo_target = { country_event = blackiceevents.13 }
+			}
+		}
+	}
+
+	option = {
+		name = usa.3.a
+		trigger = {
+			JAP = {
+				has_country_flag = pearl_wipeout
+			}
+		}
+			JAP = {
+				destroy_ships = {
+					type = nrm_ship_hull_submarine
+					count = 9
+				}
+				destroy_ships = {
+					type = nrm_ship_hull_destroyer
+					count = 2
+				}
+				destroy_ships = {
+					type = nrm_ship_hull_cruiser
+					count = 1
+				}
+				add_equipment_to_stockpile = {
+					type = cv_fighter_equipment
+					amount = -59
+					producer = JAP
+				}
+				add_equipment_to_stockpile = {
+					type = cv_nav_bomber_equipment
+					amount = -27
+					producer = JAP
+				}
+				air_experience = 15
+				navy_experience = 15
+				declare_war_on = {
+					target = ENG
+					type = annex_everything
+				}
+				declare_war_on = {
+					target = USA
+					type = annex_everything
+				}
+				#if = {
+				#	limit = {
+				#		PHI = { is_subject_of = USA }
+				#	}
+				#	declare_war_on = {
+				#		target = PHI
+				#		type = annex_everything
+				#	}
+				#}
+				if = {
+					limit = { is_ai = yes }
+					if = {
+						limit = {
+							INS = { is_subject_of = HOL }
+						}
+						declare_war_on = {
+							target = HOL
+							type = annex_everything
+						}
+					}
+				}
+			}
+			USA = {
+				add_war_support = 0.25
+				random_list = {
+					10 = {
+						destroy_ships = {
+							type = nrm_ship_hull_capital
+							count = 1
+						}
+					}
+					20 = {
+						destroy_ships = {
+							type = nrm_ship_hull_capital
+							count = 2
+						}
+					}
+					10 = {
+						destroy_ships = {
+							type = nrm_ship_hull_capital
+							count = 3
+						}
+					}
+				}
+				random_list = {
+					10 = {
+					}
+					20 = {
+						destroy_ships = {
+							type = nrm_ship_hull_cruiser
+							count = 1
+						}
+					}
+				}
+				destroy_ships = {
+					type = nrm_ship_hull_destroyer
+					count = 1
+				}
+				add_equipment_to_stockpile = {
+					type = fighter_equipment
+					amount = -48
+					producer = USA
+				}
+				add_equipment_to_stockpile = {
+					type = interceptor_equipment
+					amount = -10
+					producer = USA
+				}
+				add_equipment_to_stockpile = {
+					type = tac_bomber_equipment
+					amount = -24
+					producer = USA
+				}
+				add_equipment_to_stockpile = {
+					type = transport_plane_equipment
+					amount = -1
+					producer = USA
+				}
+				add_equipment_to_stockpile = {
+					type = cv_fighter_equipment
+					amount = -16
+					producer = USA
+				}	
+				add_equipment_to_stockpile = {
+					type = nav_bomber_equipment
+					amount = -22
+					producer = USA
+				}
+				add_equipment_to_stockpile = {
+					type = cv_nav_bomber_equipment
+					amount = -3
+					producer = USA
+				}					
+				add_timed_idea = {
+					idea = USA_navy_shock
+					days = 30
+				}
+			}
+			629 = {
+				damage_building = {
+					type = air_base
+					damage = 1
+				}
+			}
+	}
+	option = {
+		name = usa.3.b
+		trigger = {
+			JAP = {
+				has_country_flag = pearl_poor
+			}
+		}
+			JAP = {
+				destroy_ships = {
+					type = nrm_ship_hull_submarine
+					count = 6
+				}
+				destroy_ships = {
+					type = nrm_ship_hull_destroyer
+					count = 1
+				}
+				add_equipment_to_stockpile = {
+					type = cv_fighter_equipment
+					amount = -29
+					producer = JAP
+				}
+				add_equipment_to_stockpile = {
+					type = cv_nav_bomber_equipment
+					amount = -8
+					producer = JAP
+				}
+				air_experience = 20
+				navy_experience = 20
+				declare_war_on = {
+					target = ENG
+					type = annex_everything
+				}
+				declare_war_on = {
+					target = USA
+					type = annex_everything
+				}
+				#if = {
+				#	limit = {
+				#		PHI = { is_subject_of = USA }
+				#	}
+				#	declare_war_on = {
+				#		target = PHI
+				#		type = annex_everything
+				#	}
+				#}
+				if = {
+					limit = { is_ai = yes }
+					if = {
+						limit = {
+							INS = { is_subject_of = HOL }
+						}
+						declare_war_on = {
+							target = HOL
+							type = annex_everything
+						}
+					}
+				}
+			}
+			USA = {
+				add_war_support = 0.25
+				random_list = {
+					10 = {
+						destroy_ships = {
+							type = nrm_ship_hull_capital
+							count = 2
+						}
+					}
+					20 = {
+						destroy_ships = {
+							type = nrm_ship_hull_capital
+							count = 3
+						}
+					}
+					10 = {
+						destroy_ships = {
+							type = nrm_ship_hull_capital
+							count = 4
+						}
+					}
+				}
+				random_list = {
+					10 = {
+					}
+					20 = {
+						destroy_ships = {
+							type = nrm_ship_hull_cruiser
+							count = 1
+						}
+					}
+					10 = {
+						destroy_ships = {
+							type = nrm_ship_hull_cruiser
+							count = 2
+						}
+					}
+				}
+				destroy_ships = {
+					type = nrm_ship_hull_destroyer
+					count = 2
+				}
+				add_equipment_to_stockpile = {
+					type = fighter_equipment
+					amount = -88
+					producer = USA
+				}
+				add_equipment_to_stockpile = {
+					type = interceptor_equipment
+					amount = -14
+					producer = USA
+				}
+				add_equipment_to_stockpile = {
+					type = tac_bomber_equipment
+					amount = -42
+					producer = USA
+				}
+				add_equipment_to_stockpile = {
+					type = transport_plane_equipment
+					amount = -1
+					producer = USA
+				}
+				add_equipment_to_stockpile = {
+					type = cv_fighter_equipment
+					amount = -27
+					producer = USA
+				}	
+				add_equipment_to_stockpile = {
+					type = nav_bomber_equipment
+					amount = -26
+					producer = USA
+				}
+				add_equipment_to_stockpile = {
+					type = cv_nav_bomber_equipment
+					amount = -3
+					producer = USA
+				}					
+				add_timed_idea = {
+					idea = USA_navy_shock
+					days = 60
+				}
+			}
+			629 = {
+				damage_building = {
+					type = air_base
+					damage = 2
+				}
+				damage_building = {
+					type = naval_base
+					province = 4180
+					damage = 1
+				}
+			}
+	}
+	option = {
+		name = usa.3.c
+		trigger = {
+			JAP = {
+				has_country_flag = pearl_historical
+			}
+		}
+			JAP = {
+				destroy_ships = {
+					type = nrm_ship_hull_submarine
+					count = 4
+				}
+				add_equipment_to_stockpile = {
+					type = cv_fighter_equipment
+					amount = -29
+					producer = JAP
+				}
+				air_experience = 25
+				navy_experience = 25
+				declare_war_on = {
+					target = ENG
+					type = annex_everything
+				}
+				declare_war_on = {
+					target = USA
+					type = annex_everything
+				}
+				#if = {
+				#	limit = {
+				#		PHI = { is_subject_of = USA }
+				#	}
+				#	declare_war_on = {
+				#		target = PHI
+				#		type = annex_everything
+				#	}
+				#}
+				if = {
+					limit = { is_ai = yes }
+					if = {
+						limit = {
+							INS = { is_subject_of = HOL }
+						}
+						declare_war_on = {
+							target = HOL
+							type = annex_everything
+						}
+					}
+				}
+			}
+			USA = {
+				add_war_support = 0.25
+				random_list = {
+					10 = {
+						destroy_ships = {
+							type = nrm_ship_hull_capital
+							count = 3
+						}
+					}
+					20 = {
+						destroy_ships = {
+							type = nrm_ship_hull_capital
+							count = 4
+						}
+					}
+					10 = {
+						destroy_ships = {
+							type = nrm_ship_hull_capital
+							count = 5
+						}
+					}
+				}
+				random_list = {
+					10 = {
+						destroy_ships = {
+							type = nrm_ship_hull_cruiser
+							count = 1
+						}
+					}
+					20 = {
+						destroy_ships = {
+							type = nrm_ship_hull_cruiser
+							count = 2
+						}
+					}
+					10 = {
+						destroy_ships = {
+							type = nrm_ship_hull_cruiser
+							count = 3
+						}
+					}
+				}
+				destroy_ships = {
+					type = nrm_ship_hull_destroyer
+					count = 4
+				}
+				add_equipment_to_stockpile = {
+					type = fighter_equipment
+					amount = -108
+					producer = USA
+				}
+				add_equipment_to_stockpile = {
+					type = interceptor_equipment
+					amount = -18
+					producer = USA
+				}
+				add_equipment_to_stockpile = {
+					type = tac_bomber_equipment
+					amount = -54
+					producer = USA
+				}
+				add_equipment_to_stockpile = {
+					type = transport_plane_equipment
+					amount = -3
+					producer = USA
+				}
+				add_equipment_to_stockpile = {
+					type = cv_fighter_equipment
+					amount = -42
+					producer = USA
+				}	
+				add_equipment_to_stockpile = {
+					type = nav_bomber_equipment
+					amount = -35
+					producer = USA
+				}
+				add_equipment_to_stockpile = {
+					type = cv_nav_bomber_equipment
+					amount = -8
+					producer = USA
+				}					
+				add_timed_idea = {
+					idea = USA_navy_shock
+					days = 90
+				}
+			}
+			629 = {
+				damage_building = {
+					type = infrastructure
+					damage = 1
+				}
+				damage_building = {
+					type = air_base
+					damage = 3
+				}
+				damage_building = {
+					type = naval_base
+					province = 4180
+					damage = 2
+				}
+			}
+			632 = {
+				damage_building = {
+					type = infrastructure
+					damage = 1
+				}
+				damage_building = {
+					type = naval_base
+					province = 13047
+					damage = 1
+				}
+			}
+		
+	}
+	option = {
+		name = usa.3.e
+		trigger = {
+			JAP = {
+				has_country_flag = pearl_good
+			}
+		}
+			JAP = {
+				destroy_ships = {
+					type = nrm_ship_hull_submarine
+					count = 3
+				}
+				add_equipment_to_stockpile = {
+					type = cv_fighter_equipment
+					amount = -25
+					producer = JAP
+				}
+				air_experience = 30
+				navy_experience = 30
+				declare_war_on = {
+					target = ENG
+					type = annex_everything
+				}
+				declare_war_on = {
+					target = USA
+					type = annex_everything
+				}
+				#if = {
+				#	limit = {
+				#		PHI = { is_subject_of = USA }
+				#	}
+				#	declare_war_on = {
+				#		target = PHI
+				#		type = annex_everything
+				#	}
+				#}
+				if = {
+					limit = { is_ai = yes }
+					if = {
+						limit = {
+							INS = { is_subject_of = HOL }
+						}
+						declare_war_on = {
+							target = HOL
+							type = annex_everything
+						}
+					}
+				}
+				set_state_controller = 632
+			}
+			USA = {
+				add_war_support = 0.25
+				random_list = {
+					10 = {
+					}
+					20 = {
+						destroy_ships = {
+							type = nrm_ship_hull_carrier
+							count = 1
+						}
+					}
+				}
+				random_list = {
+					10 = {
+						destroy_ships = {
+							type = nrm_ship_hull_capital
+							count = 4
+						}
+					}
+					20 = {
+						destroy_ships = {
+							type = nrm_ship_hull_capital
+							count = 5
+						}
+					}
+					10 = {
+						destroy_ships = {
+							type = nrm_ship_hull_capital
+							count = 6
+						}
+					}
+				}
+				random_list = {
+					10 = {
+						destroy_ships = {
+							type = nrm_ship_hull_cruiser
+							count = 2
+						}
+					}
+					20 = {
+						destroy_ships = {
+							type = nrm_ship_hull_cruiser
+							count = 3
+						}
+					}
+					10 = {
+						destroy_ships = {
+							type = nrm_ship_hull_cruiser
+							count = 4
+						}
+					}
+				}
+				destroy_ships = {
+					type = nrm_ship_hull_destroyer
+					count = 6
+				}
+				destroy_ships = {
+					type = nrm_ship_hull_submarine
+					count = 1
+				}
+				add_equipment_to_stockpile = {
+					type = fighter_equipment
+					amount = -118
+					producer = USA
+				}
+				add_equipment_to_stockpile = {
+					type = interceptor_equipment
+					amount = -28
+					producer = USA
+				}
+				add_equipment_to_stockpile = {
+					type = tac_bomber_equipment
+					amount = -74
+					producer = USA
+				}
+				add_equipment_to_stockpile = {
+					type = transport_plane_equipment
+					amount = -3
+					producer = USA
+				}
+				add_equipment_to_stockpile = {
+					type = cv_fighter_equipment
+					amount = -52
+					producer = USA
+				}	
+				add_equipment_to_stockpile = {
+					type = nav_bomber_equipment
+					amount = -55
+					producer = USA
+				}
+				add_equipment_to_stockpile = {
+					type = cv_nav_bomber_equipment
+					amount = -15
+					producer = USA
+				}
+				add_equipment_to_stockpile = {
+					type = quad_engine_bomber_equipment
+					amount = -5
+					producer = USA
+				}	
+				add_timed_idea = {
+					idea = USA_navy_shock
+					days = 120
+				}
+			}
+			629 = {
+				damage_building = {
+					type = infrastructure
+					damage = 2
+				}
+				damage_building = {
+					type = air_base
+					damage = 4
+				}
+				damage_building = {
+					type = naval_base
+					province = 4180
+					damage = 4
+				}
+				remove_building = {
+					type = naval_base
+					province = 4180
+					level = 1
+				}
+			}
+			632 = {
+				damage_building = {
+					type = infrastructure
+					damage = 2
+				}
+				damage_building = {
+					type = naval_base
+					province = 13047
+					damage = 1
+				}
+				if = {
+					limit = { JAP = { is_ai = yes } }
+					create_unit = {
+						division = "name = \"18 Tokubetsu Rikensentai\" division_template = \"Rikusentai\" start_experience_factor = 0.5"
+						owner = JAP
+					}
+				}
+			}			
+	}
+	option = {
+		name = usa.3.f
+		trigger = {
+			JAP = {
+				has_country_flag = pearl_BOOM
+			}
+		}
+			JAP = {
+				destroy_ships = {
+					type = nrm_ship_hull_submarine
+					count = 3
+				}
+				add_equipment_to_stockpile = {
+					type = cv_fighter_equipment
+					amount = -22
+					producer = JAP
+				}
+				air_experience = 35
+				navy_experience = 35
+				declare_war_on = {
+					target = ENG
+					type = annex_everything
+				}
+				declare_war_on = {
+					target = USA
+					type = annex_everything
+				}
+				#if = {
+				#	limit = {
+				#		PHI = { is_subject_of = USA }
+				#	}
+				#	declare_war_on = {
+				#		target = PHI
+				#		type = annex_everything
+				#	}
+				#}
+				if = {
+					limit = { is_ai = yes }
+					if = {
+						limit = {
+							INS = { is_subject_of = HOL }
+						}
+						declare_war_on = {
+							target = HOL
+							type = annex_everything
+						}
+					}
+				}
+				set_state_controller = 632
+			}
+			USA = {
+				add_war_support = 0.25
+				random_list = {
+					10 = {
+						destroy_ships = {
+							type = nrm_ship_hull_carrier
+							count = 1
+						}
+					}
+					20 = {
+						destroy_ships = {
+							type = nrm_ship_hull_carrier
+							count = 2
+						}
+					}
+				}
+				random_list = {
+					10 = {
+						destroy_ships = {
+							type = nrm_ship_hull_capital
+							count = 5
+						}
+					}
+					20 = {
+						destroy_ships = {
+							type = nrm_ship_hull_capital
+							count = 6
+						}
+					}
+					10 = {
+						destroy_ships = {
+							type = nrm_ship_hull_capital
+							count = 7
+						}
+					}
+				}
+				random_list = {
+					10 = {
+						destroy_ships = {
+							type = nrm_ship_hull_cruiser
+							count = 4
+						}
+					}
+					20 = {
+						destroy_ships = {
+							type = nrm_ship_hull_cruiser
+							count = 5
+						}
+					}
+					10 = {
+						destroy_ships = {
+							type = nrm_ship_hull_cruiser
+							count = 6
+						}
+					}
+				}
+				destroy_ships = {
+					type = nrm_ship_hull_destroyer
+					count = 12
+				}
+				destroy_ships = {
+					type = nrm_ship_hull_submarine
+					count = 2
+				}
+				add_equipment_to_stockpile = {
+					type = fighter_equipment
+					amount = -158
+					producer = USA
+				}
+				add_equipment_to_stockpile = {
+					type = interceptor_equipment
+					amount = -48
+					producer = USA
+				}
+				add_equipment_to_stockpile = {
+					type = tac_bomber_equipment
+					amount = -94
+					producer = USA
+				}
+				add_equipment_to_stockpile = {
+					type = transport_plane_equipment
+					amount = -3
+					producer = USA
+				}
+				add_equipment_to_stockpile = {
+					type = cv_fighter_equipment
+					amount = -82
+					producer = USA
+				}	
+				add_equipment_to_stockpile = {
+					type = nav_bomber_equipment
+					amount = -65
+					producer = USA
+				}
+				add_equipment_to_stockpile = {
+					type = cv_nav_bomber_equipment
+					amount = -35
+					producer = USA
+				}
+				add_equipment_to_stockpile = {
+					type = quad_engine_bomber_equipment
+					amount = -15
+					producer = USA
+				}	
+				add_timed_idea = {
+					idea = USA_navy_shock
+					days = 150
+				}
+			}
+			629 = {
+				remove_building = {
+					type = infrastructure
+					level = 1
+				}
+				damage_building = {
+					type = infrastructure
+					damage = 2
+				}
+				remove_building = {
+					type = air_base
+					level = 1
+				}
+				damage_building = {
+					type = air_base
+					damage = 4
+				}
+				damage_building = {
+					type = naval_base
+					province = 4180
+					damage = 6
+				}
+				remove_building = {
+					type = naval_base
+					province = 4180
+					level = 2
+				}
+			}
+			632 = {
+				damage_building = {
+					type = infrastructure
+					damage = 3
+				}
+				damage_building = {
+					type = naval_base
+					province = 13047
+					damage = 2
+				}
+				if = {
+					limit = { JAP = { is_ai = yes } }
+					create_unit = {
+						division = "name = \"18 Tokubetsu Rikensentai\" division_template = \"Rikusentai\" start_experience_factor = 0.5"
+						owner = JAP
+					}
+					create_unit = {
+						division = "name = \"14 Tokubetsu Rikensentai\" division_template = \"Rikusentai\" start_experience_factor = 0.5"
+						owner = JAP
+					}
+				}
+			}
+	}
+}
+
+# Destroyers for Bases
+country_event = {
+	id = usa.4
+	title = usa.4.t
+	desc = usa.4.d
+	picture = GFX_report_event_destroyers_for_bases
+
+	is_triggered_only = yes
+	
+	option = {
+		name = usa.4.a
+		custom_effect_tooltip = usa.4.a.tt
+		hidden_effect = {
+			if = {
+				limit = {
+					has_dlc = "Man the Guns"
+				}
+				ENG = {	
+					load_oob = "ENG_destroyers_for_bases_mtg"
+				}
+			}
+			else = {
+				ENG = {	load_oob = "ENG_destroyers_for_bases" }
+			}
+			ENG = {
+				if = { limit = { 696 = { is_controlled_by = ENG } }
+					remove_state_core = 696
+				}
+				if = { limit = { 331 = { is_controlled_by = ENG } }
+					remove_state_core = 331
+				}
+				if = { limit = { 308 = { is_controlled_by = ENG } } 
+					remove_state_core = 308
+				}
+				if = { limit = { 693 = { is_controlled_by = ENG } } 
+					remove_state_core = 693
+				}
+				if = { limit = { 689 = { is_controlled_by = ENG } } 
+					remove_state_core = 689
+				}
+				if = { limit = { 691 = { is_controlled_by = ENG } } 
+					remove_state_core = 691
+				}
+			}
+			if = {
+				limit = {
+					has_dlc = "Man the Guns"
+				}
+				CAN = { 
+					load_oob = "CAN_destroyers_for_bases_mtg"
+				}
+			}
+			else = {
+				CAN = { load_oob = "CAN_destroyers_for_bases" }
+			}
+		}
+		USA = {
+			if = { limit = { 696 = { is_controlled_by = ENG } }
+				transfer_state = 696
+			}
+			if = { limit = { 331 = { is_controlled_by = ENG } }
+				transfer_state = 331
+			}
+			if = { limit = { 308 = { is_controlled_by = ENG } } 
+				transfer_state = 308
+			}
+			if = { limit = { 693 = { is_controlled_by = ENG } } 
+				transfer_state = 693
+			}
+			if = { limit = { 689 = { is_controlled_by = ENG } } 
+				transfer_state = 689
+			}
+			if = { limit = { 691 = { is_controlled_by = ENG } } 
+				transfer_state = 691
+			}
+			add_opinion_modifier = {
+				target = ROOT
+				modifier = destroyers_for_bases_opinion
+			}
+		}
+	}
+
+	option = {
+		name = usa.4.b
+		USA = { country_event = { id = usa.5 days = 1 } }
+		ai_chance = { factor = 0 }
+	}
+}
+
+# Britain refuses offer
+country_event = {
+	id = usa.5
+	title = usa.5.t
+	desc = usa.5.d
+	picture = GFX_report_event_usa_destroyers
+
+	is_triggered_only = yes
+	
+	option = { 
+		name = usa.5.a
+	}
+}
+
+# Election of 1936: Roosevelt vs Alf Landon
+country_event = {
+	id = usa.6
+	title = usa.6.t
+	desc = usa.6.d
+	picture = GFX_report_event_usa_election_generic
+
+	is_triggered_only = yes
+	fire_only_once = yes
+
+	trigger = {
+		tag = USA
+		democratic_govt = yes
+		check_variable = { global.days_passed < 365 } # 1937-01-01
+		check_variable = { global.days_passed > 2 } # 1936-01-02
+		NOT = { has_country_flag = USA_1936_election }
+	}
+	
+	option = { 	
+		name = usa.6.a
+		ai_chance = {
+			factor = 75
+		}		
+		if = {
+			limit = { NOT = { has_idea = new_deal } }
+			add_timed_idea = { 
+				idea = new_deal
+				days = 400
+			}
+		}
+		add_political_power = 25
+		set_country_flag = USA_1936_election
+	}
+
+	option = { 
+		name = usa.6.b
+		ai_chance = {
+			factor = 25
+			modifier = {
+				factor = 0
+				is_historical_focus_on = yes
+			}
+		}
+		
+		set_politics = {
+			ruling_party = conservatism
+			elections_allowed = yes
+		}
+		
+		if = {
+			limit = {
+				has_idea = standard_oil_california
+			}
+			add_political_power = 50
+		}
+		
+		if = {
+			limit = {
+				NOT = { has_idea = standard_oil_california }
+			}
+			add_ideas = standard_oil_california
+		}
+		
+		add_ideas = USA_frank_knox_political_advisor
+		add_ideas = USA_alf_m_landon_head_of_state
+		remove_ideas = USA_john_nance_garner_political_advisor
+		deactivate_advisor = USA_franklin_delano_roosevelt_head_of_state
+		add_country_leader_role = { 
+			character = USA_alf_m_landon
+			promote_leader = yes
+			country_leader = {
+				ideology = rep_party_us 
+				expire = "1965.1.1.1" 
+				traits = { 
+					conservative
+					staunch_constitutionalist
+				} 
+			} 
+		}
+		set_country_flag = USA_1936_election
+	}
+}
+
+# Election of 1940: Roosevelt vs Wendell Willkie
+country_event = {
+	id = usa.7
+	title = usa.7.t
+	desc = usa.7.d
+	picture = GFX_report_event_usa_election_roosevelt_wilkie
+
+	is_triggered_only = yes
+	fire_only_once = yes
+
+	trigger = {
+		tag = USA
+		has_government = liberalism #Roosevelt in charge
+		check_variable = { global.days_passed < 1827 } # 1941-01-01
+		check_variable = { global.days_passed > 1766 } # 1940-11-01
+		NOT = { has_country_flag = USA_1940_election }
+	}
+	
+	option = {
+		name = usa.7.a
+		ai_chance = {
+			factor = 75
+		}
+		
+		add_political_power = 100
+		add_ideas = USA_henry_wallace_political_advisor
+		remove_ideas = USA_john_nance_garner_political_advisor
+		set_country_flag = USA_1940_election
+	}
+
+	option = {
+		name = usa.7.b
+		ai_chance = {
+			factor = 25
+			modifier = {
+				factor = 0
+				is_historical_focus_on = yes
+			}
+		}
+		
+		set_politics = {
+			ruling_party = conservatism
+			elections_allowed = yes
+		}
+		
+		remove_ideas = new_deal
+		add_war_support = -0.1
+		add_timed_idea = { 
+			idea = wilkies_new_deal
+			days = 400
+		}
+		add_country_leader_role = { 
+			character = USA_wendell_willkie
+			country_leader = {
+				ideology = moderate 
+				expire = "1965.1.1.1" 
+				traits = { 
+					conservative
+					business_tycoon
+				} 
+			} 
+		}
+		USA_wendell_willkie = {
+			promote_character = yes
+		}
+		
+		add_ideas = USA_charles_mcnary_political_advisor
+		add_ideas = USA_wendell_willkie_head_of_state
+		deactivate_advisor = USA_franklin_delano_roosevelt_head_of_state
+		remove_ideas = USA_john_nance_garner_political_advisor
+		#remove_ideas = great_depression
+		set_country_flag = USA_1940_election
+	}
+}
+
+# Election of 1940: Roosevelt vs Landon (Incumbent)
+country_event = {
+	id = usa.8
+	title = usa.8.t
+	desc = usa.8.d
+	picture = GFX_report_event_usa_election_landon_roosevelt
+
+	is_triggered_only = yes
+	fire_only_once = yes
+
+	trigger = {
+		tag = USA
+		has_government = conservatism #Landon in charge
+		check_variable = { global.days_passed > 1766 } # 1940-11-01
+		check_variable = { global.days_passed < 1827 } # 1941-01-01
+		NOT = { has_country_flag = USA_1940_election }
+	}
+	
+	option = { 
+		name = usa.8.a
+		add_political_power = -40
+		add_stability = 0.1
+		#remove_ideas = great_depression
+		set_country_flag = USA_1940_election
+	}
+
+	option = { 
+		name = usa.8.b
+		
+		set_politics = {
+			ruling_party = liberalism
+			elections_allowed = yes
+		}
+		if = {
+			limit = {NOT={has_idea = new_deal } }
+			add_timed_idea = { 
+				idea = new_deal
+				days = 400
+			}
+		}
+		#retire_country_leader = yes
+		#remove_ideas = great_depression
+		remove_ideas = USA_alf_m_landon_head_of_state
+		activate_advisor = USA_franklin_delano_roosevelt_head_of_state
+		add_ideas = USA_henry_wallace_political_advisor
+		remove_ideas = USA_frank_knox_political_advisor
+		set_country_flag = USA_1940_election
+		
+	}
+}
+
+# Election of 1944: Roosevelt vs Thomas E. Dewey
+country_event = {
+	id = usa.9
+	title = usa.9.t
+	desc = usa.9.d
+	picture = GFX_report_event_usa_election_roosevelt_dewey
+
+	is_triggered_only = yes
+	fire_only_once = yes
+
+	trigger = {
+		tag = USA
+		has_government = liberalism #Roosevelt in charge
+		check_variable = { global.days_passed > 3227 } # 1944-11-01
+		check_variable = { global.days_passed < 3288 } # 1945-01-01
+		NOT = { has_country_flag = USA_1944_election }
+	}
+	
+	option = {
+		name = usa.9.a
+		ai_chance = {
+			factor = 75
+		}
+		add_political_power = 10
+		set_country_flag = USA_1944_election
+	}
+
+	option = { 
+		name = usa.9.b
+		ai_chance = {
+			factor = 25
+			modifier = {
+				factor = 0
+				is_historical_focus_on = yes
+			}
+		}
+		set_country_flag = USA_1944_election
+		
+		remove_ideas = new_deal
+		
+		set_politics = {
+			ruling_party = conservatism
+			elections_allowed = yes
+		}
+		
+		add_ideas = USA_john_bricker_influence_minister
+		add_ideas = USA_dewey_head_of_state
+		remove_ideas = USA_henry_wallace_political_advisor
+		deactivate_advisor = USA_franklin_delano_roosevelt_head_of_state
+		add_country_leader_role = { 
+			character = USA_dewey
+			country_leader = {
+				ideology = moderate 
+				expire = "1965.1.1.1" 
+				traits = { 
+					conservative
+					effective_leader
+				} 
+			} 
+		}
+		USA_dewey = {
+			promote_character = yes
+		}
+	}
+}
+
+# Election of 1944: Roosevelt vs Incumbent Willkie
+country_event = {
+	id = usa.10
+	title = usa.10.t
+	desc = usa.10.d
+	picture = GFX_report_event_usa_election_generic
+
+	is_triggered_only = yes
+	fire_only_once = yes
+
+	trigger = {
+		tag = USA
+		has_government = conservatism #Willkie in charge
+		NOT = { has_idea = new_deal }
+		check_variable = { global.days_passed > 3227 } # 1944-11-01
+		check_variable = { global.days_passed < 3288 } # 1945-01-01
+		NOT = { has_country_flag = USA_1944_election }
+	}
+	
+	option = { 
+		name = usa.10.a
+		add_political_power = 10
+		set_country_flag = USA_1944_election
+	}
+
+	option = { 
+		name = usa.10.b
+		if = {
+			limit = { NOT = { has_idea = new_deal } }
+			add_timed_idea = { 
+				idea = new_deal
+				days = 400
+			}
+		}
+		set_country_flag = USA_1944_election
+		set_politics = {
+			ruling_party = liberalism
+			elections_allowed = yes
+		}
+		activate_advisor = USA_franklin_delano_roosevelt_head_of_state
+		add_ideas = USA_henry_wallace_political_advisor
+		remove_ideas = USA_wendell_willkie_head_of_state
+		remove_ideas = USA_charles_mcnary_political_advisor
+		
+		if = {
+			limit = { has_idea = wilkies_new_deal }
+			remove_ideas = wilkies_new_deal
+		}
+		
+		remove_country_leader_role = {
+			character = USA_wendell_willkie
+			ideology = rep_party_us
+		}
+	}
+}
+
+# Election of 1944: Roosevelt vs MacArthur
+country_event = {
+	id = usa.11
+	title = usa.11.t
+	desc = usa.11.d
+	picture = GFX_report_event_usa_election_roosevelt_macarthur
+
+	is_triggered_only = yes
+	fire_only_once = yes
+
+	trigger = {
+		tag = USA
+		has_government = liberalism
+			check_variable = { global.days_passed > 3227 } # 1944-11-01
+			check_variable = { global.days_passed < 3288 } # 1945-01-01
+		OR = {
+			has_war = no
+			has_country_flag = macarthur_candidate
+		}
+		NOT = { has_country_flag = USA_1944_election }
+	}
+	
+	option = {
+		name = usa.11.a
+		ai_chance = {
+			factor = 25
+		}	
+		add_political_power = 10
+		set_country_flag = USA_1944_election
+	}
+
+	option = { 
+		name = usa.11.b
+		ai_chance = {
+			factor = 25
+			modifier = {
+				factor = 0
+				is_historical_focus_on = yes
+			}
+		}
+		set_country_flag = USA_1944_election
+		remove_ideas = new_deal
+		set_politics = {
+			ruling_party = conservatism
+			elections_allowed = yes
+		}
+		add_ideas = USA_john_bricker_influence_minister
+		add_ideas = USA_douglas_macarthur_head_of_state
+		deactivate_advisor = USA_franklin_delano_roosevelt_head_of_state
+		remove_ideas = USA_henry_wallace_political_advisor
+		add_country_leader_role = { 
+			character = USA_douglas_macarthur
+			country_leader = {
+				ideology = nationalistic 
+				expire = "1965.1.1.1" 
+				traits = { 
+					conservative
+				war_hero
+				} 
+			} 
+		}
+		USA_douglas_macarthur = {
+			promote_character = yes
+			remove_unit_leader_role = yes
+		}
+	}
+}
+
+# Election of 1944: MacArthur Candidate?
+country_event = {
+	id = usa.12
+	title = usa.12.t
+	desc = usa.12.d
+	picture = GFX_report_event_usa_macarthur_speech
+
+	is_triggered_only = yes
+	fire_only_once = yes
+
+	trigger = {
+		tag = USA
+		democratic_govt = yes
+		check_variable = { global.days_passed > 3196 } # 1944-10-01
+		check_variable = { global.days_passed < 3288 } # 1945-01-01
+		has_war = yes
+	}
+	
+	option = { 
+		name = usa.12.a
+		country_event = { id = usa.9 days = 32 }
+		ai_chance = {
+			base = 30
+			modifier = {
+				factor = 0
+				is_historical_focus_on = yes
+			}
+		}
+	}
+
+	option = { 
+		name = usa.12.b
+		country_event = { id = usa.11 days = 32 }
+		set_country_flag = USA_1944_mcarthur
+	}
+}
+
+# Roosevelt Dies
+country_event = {
+	id = usa.13
+	title = usa.13.t
+	desc = usa.13.d
+	picture = GFX_report_event_usa_funeral
+
+	trigger = {
+		#tag = USA #EOA
+		has_country_flag = USA_1944_election
+		date > 1945.4.1
+		has_government = liberalism
+	}
+
+	is_triggered_only = yes
+	fire_only_once = yes
+	
+	option = {
+		name = usa.13.a
+		add_political_power = -40
+		add_stability = -0.05
+		kill_country_leader = yes
+		set_country_flag = roosevelt_dead
+		remove_ideas = USA_harry_truman_political_advisor
+		add_ideas = USA_harry_truman_head_of_state
+		add_country_leader_role = { 
+			character = USA_harry_truman
+			country_leader = {
+				ideology = dem_party_us 
+				expire = "1965.1.1.1" 
+				traits = { 
+					liberal
+					tough_guy
+				} 
+			} 
+		}
+		USA_harry_truman = {
+			promote_character = yes
+		}
+	}
+}
+# Roosevelt Good Neighbour Speech
+country_event = {
+	id = usa.14
+	title = usa.14.t
+	desc = usa.14.d
+	picture = GFX_report_event_dc
+
+	trigger = {	
+		has_government = liberalism
+	}
+
+	is_triggered_only = yes
+	major = yes
+	
+	option = {
+		name = usa.14.a
+		trigger = {
+			tag = USA
+		}
+		add_political_power = 10
+		effect_tooltip = {
+			every_other_country = {
+				limit = {
+					has_opinion_modifier = monroe_doctrine_interventionism
+				}
+				remove_opinion_modifier = {
+					target = USA
+					modifier = monroe_doctrine_interventionism
+				}
+			}
+		}
+	}
+	option = {
+		name = usa.14.b
+		trigger = {
+			NOT = { tag = USA }
+			has_country_flag = monroe_doctrine
+		}	
+		if = {
+			limit = {
+				has_opinion_modifier = monroe_doctrine_interventionism
+			}
+			remove_opinion_modifier = {
+				target = USA
+				modifier = monroe_doctrine_interventionism
+			}
+		}
+		else = {
+			add_opinion_modifier = {
+				target = USA
+				modifier = monroe_doctrine_nieghbour
+			}
+		}
+	}
+	option = {
+		name = usa.14.c
+		trigger = {
+			NOT = { 
+				tag = USA 
+				has_country_flag = monroe_doctrine
+			}
+		}
+	}
+}
+# American Conference for the Maintenance of Peace meets at Buenos Aires
+country_event = {
+	id = usa.15
+	title = usa.15.t
+	desc = usa.15.d
+	picture = GFX_report_event_dc
+
+	trigger = {	
+	}
+
+	is_triggered_only = yes
+	major = yes
+	show_major = {
+		OR = {
+			tag = USA
+			has_country_flag = monroe_doctrine
+		}
+	}
+	
+	option = {
+		name = usa.15.a
+		add_timed_idea = {
+			idea = USA_conference
+			days = 22
+		}
+	}
+}
+# USA option to intervene in war
+# Hidden event to get scopes set up
+country_event = {
+	id = usa.16
+
+	is_triggered_only = yes
+	
+	hidden = yes  #timeout
+    timeout_days = 1
+
+	immediate = {
+		save_event_target_as = being_attacked
+		USA = {
+			country_event = { id = usa.17 }
+		}
+	}
+}
+
+# USA option to intervene in war 
+country_event = {
+	id = usa.17
+	title = usa.17.t
+	desc = usa.17.d
+	picture = GFX_report_event_usa_fdr_speech_map
+
+	is_triggered_only = yes
+	
+	#Intervene ultimatum war
+	option = { 
+		name = usa.17.a
+	
+		#Need to use FROM FROM scope since the one sending the event is the nation under attack
+		ai_chance = {
+			factor = 20			
+			modifier = {
+				factor = 0.2
+				FROM = {
+					FROM = {
+						strength_ratio = {
+							tag = USA
+							ratio > 0.8
+						}
+					}
+				}
+			}		
+		}
+
+		custom_effect_tooltip = usa.17.a_tt
+		FROM = {
+			FROM = {
+				country_event = { id = usa.18 days = 2 }
+			}
+		}
+	}
+	#Don't Intervene
+	option = {
+		name = usa.17.b
+
+		ai_chance = {
+			factor = 5
+			modifier = {
+				factor = 0
+				FROM = {
+					FROM = {
+						strength_ratio = {
+							tag = USA
+							ratio < 0.5
+						}
+					}
+				}
+			}
+		}
+	}
+}
+# Country response to USA intervening
+country_event = {
+	id = usa.18
+	title = usa.18.t
+	desc = usa.18.d
+	picture = GFX_report_event_japanese_soldiers_hong_kong
+
+	is_triggered_only = yes
+	
+	#Go to war with USA
+	option = { 
+		name = usa.18.a
+
+		ai_chance = {
+			factor = 10
+			modifier = {
+				factor = 0.5
+				strength_ratio = {
+					tag = USA
+					ratio < 0.7
+				}
+				is_in_faction = yes
+			}
+			modifier = {
+				factor = 5
+				strength_ratio = {
+					tag = USA
+					ratio > 0.7
+				}
+			}
+		}
+
+		event_target:being_attacked = {
+			FROM = {
+				add_to_war = {
+					targeted_alliance = PREV
+					enemy = ROOT
+				}
+			}
+		}
+
+		#ROOT = {
+		#	declare_war_on = {
+		#		target = FROM
+		#	}
+		#}
+		hidden_effect = {
+			news_event = { id = news.157 days = 2 }
+		}
+	}
+	#Back down
+	option = {
+		name = usa.18.b
+
+		ai_chance = { 
+			factor = 10
+			modifier = {
+				factor = 10
+				strength_ratio = {
+					tag = USA
+					ratio < 0.7
+				}
+				is_in_faction = no
+			}			
+		}
+
+		custom_effect_tooltip = usa.18.b_tt
+		hidden_effect = {
+			event_target:being_attacked = { white_peace = ROOT }
+			news_event = { id = news.158 days = 2 }
+		}
+	}
+}
+# American Conference for the Maintenance of Peace ends
+news_event = {
+	id = usa.19
+	title = usa.19.t
+	desc = usa.19.d
+	picture = GFX_news_event_generic_negotiations_gfxaddon
+
+	trigger = {	
+	}
+
+	is_triggered_only = yes
+	major = yes
+	
+	option = {
+		name = usa.19.a
+		trigger = {
+			tag = USA
+		}
+		clr_country_flag = pan_america
+		if = {
+			limit = {
+				has_country_flag = conference_prep
+			}
+			add_ideas = { USA_protector }
+		}
+		add_political_power = 25
+		every_other_country = {
+			limit = {
+				has_country_flag = monroe_doctrine
+			}
+			reverse_add_opinion_modifier = {
+				target = USA
+				modifier = pan_american_goodwill
+			}		
+		}
+		add_tech_bonus = {
+			bonus = 0.02
+			name = league_science
+			uses = 1
+			category = industry
+			category = electronics
+		}
+		hidden_effect = {
+			clr_country_flag = conference_prep
+			country_event = { id = usa.21 days = 731 }
+		}
+	}
+	option = {
+		name = usa.19.b
+		trigger = {
+			tag = ARG
+		}
+		add_political_power = 25
+		
+		every_other_country = {
+			limit = {
+				OR = {
+					has_country_flag = monroe_doctrine
+					tag = USA
+				}
+			}
+			reverse_add_opinion_modifier = {
+				target = ARG
+				modifier = pan_american_goodwill
+			}		
+		}
+		add_tech_bonus = {
+			bonus = 0.05
+			name = league_science
+			uses = 1
+			category = industry
+			category = electronics
+		}		
+	}
+	option = {
+		name = usa.19.a
+		trigger = {
+			NOT = { 
+				tag = USA 
+				tag = ARG
+			}
+			has_country_flag = monroe_doctrine
+		}
+		every_other_country = {
+			limit = {
+				OR = {
+					has_country_flag = monroe_doctrine
+					tag = USA
+				}
+			}
+			reverse_add_opinion_modifier = {
+				target = PREV
+				modifier = pan_american_goodwill
+			}		
+		}
+		add_tech_bonus = {
+			bonus = 0.02
+			name = league_science
+			uses = 1
+			category = industry
+			category = electronics
+		}
+	}
+	option = {
+		name = usa.19.e
+		trigger = {
+			NOT = { 
+				tag = USA 
+				tag = ARG
+				has_country_flag = monroe_doctrine
+			}
+		}
+	}
+}
+# US supports democracy 
+country_event = {
+	id = usa.20
+	title = usa.20.t
+	desc = usa.20.d
+	picture = GFX_report_event_usa_election_generic
+
+	is_triggered_only = yes
+
+	immediate = {
+		set_country_flag = usa_influence_fired
+	}
+
+	option = {
+		name = usa.20.a		
+		custom_effect_tooltip = usa.20.a_tt
+	}
+}
+# The Lima Conference
+country_event = {
+	id = usa.21
+	title = usa.21.t
+	desc = usa.21.d
+	picture = GFX_report_event_dc
+
+	trigger = {	
+	}
+
+	is_triggered_only = yes
+	major = yes
+	
+	option = {
+		name = usa.19.a
+		trigger = {
+			tag = USA
+		}
+		clr_country_flag = lima_conference
+		if = {
+			limit = {
+				has_country_flag = conference_prep
+			}
+			swap_ideas = {
+				remove_idea = USA_protector
+				add_idea = USA_protector_II
+			}
+		}
+		add_political_power = 25
+		every_other_country = {
+			limit = {
+				has_country_flag = monroe_doctrine
+			}
+			reverse_add_opinion_modifier = {
+				target = USA
+				modifier = pan_american_goodwill
+			}		
+		}
+		add_tech_bonus = {
+			bonus = 0.05
+			name = league_science
+			uses = 1
+			category = industry
+			category = electronics
+		}
+		clr_country_flag = conference_prep
+	}
+	option = {
+		name = usa.19.b
+		trigger = {
+			tag = PRU
+		}
+		add_political_power = 25
+		
+		every_other_country = {
+			limit = {
+				OR = {
+					has_country_flag = monroe_doctrine
+					tag = USA
+				}
+			}
+			reverse_add_opinion_modifier = {
+				target = PRU
+				modifier = pan_american_goodwill
+			}		
+		}
+		add_tech_bonus = {
+			bonus = 0.1
+			name = league_science
+			uses = 1
+			category = industry
+			category = electronics
+		}		
+	}
+	option = {
+		name = usa.19.a
+		trigger = {
+			NOT = { 
+				tag = USA 
+				tag = PRU
+			}
+			has_country_flag = monroe_doctrine
+		}
+		every_other_country = {
+			limit = {
+				OR = {
+					has_country_flag = monroe_doctrine
+					tag = USA
+				}
+			}
+			reverse_add_opinion_modifier = {
+				target = PREV
+				modifier = pan_american_goodwill
+			}	
+		}
+		add_tech_bonus = {
+			bonus = 0.05
+			name = league_science
+			uses = 1
+			category = industry
+			category = electronics
+		}
+	}
+	option = {
+		name = usa.19.e
+		trigger = {
+			NOT = { 
+				tag = USA 
+				tag = PRU
+				has_country_flag = monroe_doctrine
+			}
+		}
+	}
+}
+# Battle of Brisbane
+country_event = {
+	id = usa.22
+	title = usa.22.t
+	desc = usa.22.d
+	picture = GFX_report_event_aussie_america
+	trigger = {
+		USA = {
+			is_ally_with = AST
+		}
+	}
+
+	is_triggered_only = yes
+	major = yes
+	minor_flavor = yes	
+	show_major = {
+		OR = {
+			is_in_faction_with = AST
+			is_in_faction_with = USA
+		}
+	}
+	option = {
+		name = usa.22.a
+		trigger = {
+			tag = USA
+		}
+		add_opinion_modifier = {
+			target = AST
+			modifier = protest_action_light
+		}
+	}
+	option = {
+		name = usa.22.b
+		trigger = {
+			tag = AST
+		}
+		add_opinion_modifier = {
+			target = USA
+			modifier = protest_action
+		}
+		add_manpower = -1
+	}
+	option = {
+		name = usa.22.b
+		trigger = {
+			NOT = {
+				tag = AST
+				tag = USA
+			}
+		}
+		if = {
+			limit = {
+				OR = {
+					is_subject_of = ENG
+					tag = ENG
+				}
+			}
+			add_opinion_modifier = {
+				target = USA
+				modifier = protest_action_light
+			}
+		}
+	}
+}
+# US extends influence to protection. Will meddle in wars
+country_event = {
+	id = usa.23
+	title = usa.23.t
+	desc = usa.23.d
+	picture = GFX_report_event_usa_fdr_speech_map
+
+	is_triggered_only = yes
+
+	option = {
+		name = usa.23.a
+		custom_effect_tooltip = usa.23.a_tt
+	}
+
+}
+# USA asked to send pilots to the BCATP
+country_event = {
+	id = usa.24
+	title = usa.24.t
+	desc = usa.24.d
+	picture = GFX_report_event_usa_amelia_earhart_airplane
+
+	is_triggered_only = yes
+	fire_only_once = yes
+	
+	trigger = {
+	
+	}
+	
+	option = { # agree
+		name = usa.24.a
+		set_country_flag = pilots_sent	
+		ai_chance = { 
+			factor = 10
+		}
+			
+	}
+	option = { # send trainers as well
+		name = usa.24.b
+		ai_chance = { 
+			factor = 1
+		}
+		set_variable = { train_planes = 1 }
+		set_country_flag = pilots_sent	
+		set_country_flag = send_trainers
+	}
+	option = { # Refuse
+		name = usa.24.c
+	}
+}
+country_event = {
+	id = usa.53
+	title = usa.53.t
+	desc = usa.53.d
+	picture = GFX_report_event_
+
+	is_triggered_only = yes
+	fire_only_once = yes
+	
+	trigger = {
+		#tag = USA #EOA
+		is_ai = yes
+		OR = {
+			threat > 0.3
+			has_war = yes
+		}
+	}
+	
+	option = {
+		name = usa.53.a
+		
+		hidden_effect = {
+			add_manpower = 1000000
+			random_owned_controlled_state = {
+				limit = {
+					arms_factory > 0
+					NOT = { has_state_category = tiny_island }
+					NOT = { has_state_category = small_island }
+					free_building_slots = {
+						building = arms_factory
+						size > 2
+						include_locked = yes
+					}
+					
+				}
+				add_extra_state_shared_building_slots = 3
+					add_building_construction = {
+						type = arms_factory
+						level = 3
+						instant_build = yes
+					}
+				}
+			random_owned_controlled_state = {
+				limit = {
+					arms_factory > 0
+					NOT = { has_state_category = tiny_island }
+					NOT = { has_state_category = small_island }
+					free_building_slots = {
+						building = arms_factory
+						size > 2
+						include_locked = yes
+					}
+					
+				}
+				add_extra_state_shared_building_slots = 3
+				add_building_construction = {
+					type = arms_factory
+					level = 3
+					instant_build = yes
+				}
+			}
+			random_owned_controlled_state = {
+				limit = {
+					arms_factory > 0
+					NOT = { has_state_category = tiny_island }
+					NOT = { has_state_category = small_island }
+					free_building_slots = {
+						building = arms_factory
+						size > 2
+						include_locked = yes
+					}
+				}
+				add_extra_state_shared_building_slots = 3
+				add_building_construction = {
+					type = arms_factory
+					level = 3
+					instant_build = yes
+				}
+			}
+		}
+	}
+}
+country_event = {
+	id = usa.54
+	title = usa.54.t
+	desc = usa.54.d
+	picture = GFX_report_event_
+
+	is_triggered_only = yes
+	fire_only_once = yes
+	
+	trigger = {
+		#tag = USA #EOA
+		is_ai = yes
+		
+			OR = {
+			threat > 0.6
+			has_war = yes
+		}
+	}
+	
+	option = {
+		name = usa.54.a
+		
+		hidden_effect = {
+			add_manpower = 2000000
+			random_owned_controlled_state = {
+				limit = {
+					arms_factory > 0
+					NOT = { has_state_category = tiny_island }
+					NOT = { has_state_category = small_island }
+					free_building_slots = {
+						building = arms_factory
+						size > 2
+						include_locked = yes
+					}
+					
+				}
+				add_extra_state_shared_building_slots = 3
+				add_building_construction = {
+					type = arms_factory
+					level = 3
+					instant_build = yes
+				}
+			}
+			random_owned_controlled_state = {
+				limit = {
+					arms_factory > 0
+					NOT = { has_state_category = tiny_island }
+					NOT = { has_state_category = small_island }
+					free_building_slots = {
+						building = arms_factory
+						size > 2
+						include_locked = yes
+					}
+					
+				}
+				add_extra_state_shared_building_slots = 3
+				add_building_construction = {
+					type = arms_factory
+					level = 3
+					instant_build = yes
+				}
+			}
+			random_owned_controlled_state = {
+				limit = {
+					arms_factory > 0
+					NOT = { has_state_category = tiny_island }
+					NOT = { has_state_category = small_island }
+					free_building_slots = {
+						building = arms_factory
+						size > 2
+						include_locked = yes
+					}
+					
+				}
+				add_extra_state_shared_building_slots = 3
+				add_building_construction = {
+					type = arms_factory
+					level = 3
+					instant_build = yes
+				}
+			}
+			random_owned_controlled_state = {
+				limit = {
+					arms_factory > 0
+					NOT = { has_state_category = tiny_island }
+					NOT = { has_state_category = small_island }
+					free_building_slots = {
+						building = arms_factory
+						size > 2
+						include_locked = yes
+					}
+					
+				}
+				add_extra_state_shared_building_slots = 3
+				add_building_construction = {
+					type = arms_factory
+					level = 3
+					instant_build = yes
+				}
+			}
+			random_owned_controlled_state = {
+				limit = {
+					arms_factory > 0
+					NOT = { has_state_category = tiny_island }
+					NOT = { has_state_category = small_island }
+					free_building_slots = {
+						building = arms_factory
+						size > 2
+						include_locked = yes
+					}
+					
+				}
+				add_extra_state_shared_building_slots = 3
+				add_building_construction = {
+					type = arms_factory
+					level = 3
+					instant_build = yes
+				}
+			}
+			random_owned_controlled_state = {
+				limit = {
+					arms_factory > 0
+					NOT = { has_state_category = tiny_island }
+					NOT = { has_state_category = small_island }
+					free_building_slots = {
+						building = arms_factory
+						size > 2
+						include_locked = yes
+					}
+					
+				}
+				add_extra_state_shared_building_slots = 3
+				add_building_construction = {
+					type = arms_factory
+					level = 3
+					instant_build = yes
+				}
+			}
+		}
+	}
+}
+country_event = {
+	id = usa.55
+	title = usa.55.t
+	desc = usa.55.d
+	picture = GFX_report_event_
+
+	fire_only_once = yes
+	is_triggered_only = yes
+	
+	trigger = {
+		#tag = USA #EOA
+		is_ai = yes
+		has_war = yes
+	}
+	
+	option = {
+		name = usa.55.a
+		
+		hidden_effect = {
+			add_manpower = 2000000
+			random_owned_controlled_state = {
+				limit = {
+					arms_factory > 0
+					NOT = { has_state_category = tiny_island }
+					NOT = { has_state_category = small_island }
+					free_building_slots = {
+						building = arms_factory
+						size > 2
+						include_locked = yes
+					}
+				}
+				add_extra_state_shared_building_slots = 3
+				add_building_construction = {
+					type = arms_factory
+					level = 3
+					instant_build = yes
+				}
+			}
+			random_owned_controlled_state = {
+				limit = {
+					arms_factory > 0
+					NOT = { has_state_category = tiny_island }
+					NOT = { has_state_category = small_island }
+					free_building_slots = {
+						building = arms_factory
+						size > 2
+						include_locked = yes
+					}
+				}
+				add_extra_state_shared_building_slots = 3
+				add_building_construction = {
+					type = arms_factory
+					level = 3
+					instant_build = yes
+				}
+			}
+			random_owned_controlled_state = {
+				limit = {
+					arms_factory > 0
+					NOT = { has_state_category = tiny_island }
+					NOT = { has_state_category = small_island }
+					free_building_slots = {
+						building = arms_factory
+						size > 2
+						include_locked = yes
+					}
+				}
+				add_extra_state_shared_building_slots = 3
+				add_building_construction = {
+					type = arms_factory
+					level = 3
+					instant_build = yes
+				}
+			}
+			random_owned_controlled_state = {
+				limit = {
+					arms_factory > 0
+					NOT = { has_state_category = tiny_island }
+					NOT = { has_state_category = small_island }
+					free_building_slots = {
+						building = arms_factory
+						size > 2
+						include_locked = yes
+					}
+				}
+				add_extra_state_shared_building_slots = 3
+				add_building_construction = {
+					type = arms_factory
+					level = 3
+					instant_build = yes
+				}
+			}
+			random_owned_controlled_state = {
+				limit = {
+					arms_factory > 0
+					NOT = { has_state_category = tiny_island }
+					NOT = { has_state_category = small_island }
+					free_building_slots = {
+						building = arms_factory
+						size > 2
+						include_locked = yes
+					}
+				}
+				add_extra_state_shared_building_slots = 3
+				add_building_construction = {
+					type = arms_factory
+					level = 3
+					instant_build = yes
+				}
+			}
+			random_owned_controlled_state = {
+				limit = {
+					arms_factory > 0
+					NOT = { has_state_category = tiny_island }
+					NOT = { has_state_category = small_island }
+					free_building_slots = {
+						building = arms_factory
+						size > 2
+						include_locked = yes
+					}
+				}
+				add_extra_state_shared_building_slots = 3
+				add_building_construction = {
+					type = arms_factory
+					level = 3
+					instant_build = yes
+				}
+			}
+			random_owned_controlled_state = {
+				limit = {
+					arms_factory > 0
+					NOT = { has_state_category = tiny_island }
+					NOT = { has_state_category = small_island }
+					free_building_slots = {
+						building = arms_factory
+						size > 2
+						include_locked = yes
+					}
+				}
+				add_extra_state_shared_building_slots = 3
+				add_building_construction = {
+					type = arms_factory
+					level = 3
+					instant_build = yes
+				}
+			}
+			random_owned_controlled_state = {
+				limit = {
+					arms_factory > 0
+					NOT = { has_state_category = tiny_island }
+					NOT = { has_state_category = small_island }
+					free_building_slots = {
+						building = arms_factory
+						size > 2
+						include_locked = yes
+					}
+				}
+				add_extra_state_shared_building_slots = 3
+				add_building_construction = {
+					type = arms_factory
+					level = 3
+					instant_build = yes
+				}
+			}
+			random_owned_controlled_state = {
+				limit = {
+					arms_factory > 0
+					NOT = { has_state_category = tiny_island }
+					NOT = { has_state_category = small_island }
+					free_building_slots = {
+						building = arms_factory
+						size > 2
+						include_locked = yes
+					}
+				}
+				add_extra_state_shared_building_slots = 3
+				add_building_construction = {
+					type = arms_factory
+					level = 3
+					instant_build = yes
+				}
+			}
+			random_owned_controlled_state = {
+				limit = {
+					arms_factory > 0
+					NOT = { has_state_category = tiny_island }
+					NOT = { has_state_category = small_island }
+					free_building_slots = {
+						building = arms_factory
+						size > 2
+						include_locked = yes
+					}
+				}
+				add_extra_state_shared_building_slots = 3
+				add_building_construction = {
+					type = arms_factory
+					level = 3
+					instant_build = yes
+				}
+			}
+			random_owned_controlled_state = {
+				limit = {
+					arms_factory > 0
+					NOT = { has_state_category = tiny_island }
+					NOT = { has_state_category = small_island }
+					free_building_slots = {
+						building = arms_factory
+						size > 2
+						include_locked = yes
+					}
+				}
+				add_extra_state_shared_building_slots = 3
+				add_building_construction = {
+					type = arms_factory
+					level = 3
+					instant_build = yes
+				}
+			}
+			random_owned_controlled_state = {
+				limit = {
+					arms_factory > 0
+					NOT = { has_state_category = tiny_island }
+					NOT = { has_state_category = small_island }
+					free_building_slots = {
+						building = arms_factory
+						size > 2
+						include_locked = yes
+					}
+				}
+				add_extra_state_shared_building_slots = 3
+				add_building_construction = {
+					type = arms_factory
+					level = 3
+					instant_build = yes
+				}
+			}
+		}
+	}
+}
+country_event = {
+	id = usa.58
+	title = usa.58.t
+	desc = usa.58.d
+	picture = GFX_report_event_british_artillery
+
+	fire_only_once = no
+	is_triggered_only = yes
+	
+	trigger = {
+		#tag = USA #EOA
+		is_ai = yes
+		surrender_progress > 0.5
+		NOT = { has_idea = USA_homeland_defense }
+		NOT = { has_country_flag = cooldown_homeland }
+	}
+	
+	option = {
+		name = usa.58.a
+		set_country_flag = { flag = cooldown_homeland days = 150 value = 1 }
+		if  = { limit = { num_divisions < 50 }
+		hidden_effect = {
+			load_oob = "USA_defences"
+		} }
+		if = { limit = { NOT = { has_country_flag = homeland_triggered } }
+		add_manpower = 5500000 }
+		set_country_flag = homeland_triggered
+		add_timed_idea = { idea = USA_homeland_defense days = 90 }
+	}
+}
+
+country_event = {
+	id = usa.73
+	title = usa.73.t
+	desc = usa.73.d
+	picture = GFX_report_event_USA_pittsburgh_flood_gfxaddon
+	fire_only_once = yes
+	is_triggered_only = yes
+	
+	
+	option = {
+		name = usa.73.a
+			add_timed_idea = {
+				idea = USA_pitsburg_flood
+				days = 600
+			}
+			360={
+				damage_building = {
+					type = industrial_complex
+					damage = 6
+				}
+				damage_building = {
+					type = steel_refinery
+					damage = 2
+				}
+			}
+			#add_resource = {
+			#	type = steel
+			#	amount = -50
+			#	state = 360
+			#}
+	}
+}
+country_event = {
+	id = usa.74
+	title = usa.74.t
+	desc = usa.74.d
+	picture = GFX_report_event_cbc_gfxaddon
+	
+	fire_only_once = yes
+	is_triggered_only = yes
+	hidden=yes
+	
+	trigger = {
+		#tag = USA #EOA
+		OR={
+			has_war_with = GER
+			has_war_with = JAP
+		}
+	}
+	
+	
+	option = {
+		name = usa.74.a
+			remove_ideas=USA_past_neurtrality_act36
+	}
+}
+
+country_event = { #SOV asking the Allies for help
+	id = usa.76
+	title = usa.76.t
+	desc = usa.76.d
+	picture = GFX_report_event_merchant_ship_01
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = usa.76.a
+		
+		if = {
+			limit = {tag = USA}
+			SOV = { add_ideas = SOV_USA_aid}
+			hidden_effect = {
+				add_ideas = USA_lend_lease_act_idea_sov
+			}
+		}
+		if = {
+			limit = {tag = ENG}
+			SOV = { add_ideas = SOV_ENG_aid}
+		}
+		
+	}
+}
+
+country_event = { # US Torpedo Idea reduction
+	id = usa.77
+	title = usa.77.t
+
+	is_triggered_only = yes
+	
+	hidden = yes  #timeout
+    timeout_days = 1
+
+	immediate = {
+		USA = {
+			swap_ideas = {
+				remove_idea = USA_torpedo_detonator_penalty_timed
+				add_idea = USA_torpedo_detonator_penalty_timed_2
+			}
+			hidden_effect = {
+				country_event = {
+					id = usa.78
+					days = 240
+				}
+			}
+		}
+	}
+}
+
+country_event = { # US Torpedo Idea removal
+	id = usa.78
+	title = usa.78.t
+
+	is_triggered_only = yes
+	
+	hidden = yes  #timeout
+    timeout_days = 1
+
+	immediate = {
+		USA = {
+			remove_ideas = USA_torpedo_detonator_penalty_timed_2
+		}
+	}
+}
+
+# Pearl Harbor Gambit report for JAP
+country_event = {
+	id = usa.79
+	title = usa.79.t
+	desc = usa.79.d
+	picture = GFX_report_event_usa_pearl_harbor_airphoto
+	is_triggered_only = yes
+	fire_only_once = yes
+	
+	option = {
+		name = usa.79.a
+		if = {
+			limit = {
+				is_ai = yes
+				NOT = {
+					has_war_with = USA
+				}
+			}
+			add_timed_idea = { idea = JAP_tora_tora_tora_idea days = 120 }
+			JAP_pearl_score = yes
+			USA = {
+				country_event = { id = usa.3 days = 1 hours = 4 }
+			}
+		}
+	}
+}
+country_event = { # aftermath of court packing
+	id = usa.80
+	title = usa.80.t
+
+	is_triggered_only = yes
+	
+	hidden = yes  #timeout
+    timeout_days = 1
+
+	immediate = {
+		USA = {
+			swap_ideas = {
+				remove_idea = USA_court_packing_idea
+				add_idea = USA_court_packing_aftermath
+			}
+		}
+	}
+}
+
+country_event = { #Recover From Great Depression - STILL USED FOR LOOP
+	id = usa.83
+	title = "Addressing the Great Depression"
+
+	is_triggered_only = yes
+	
+	hidden = yes  #timeout
+    timeout_days = 1
+
+	immediate = {
+		USA_recovery_from_the_great_depression = yes
+		hidden_effect = {
+			if = {
+				limit = {
+					OR = {
+						has_idea = great_depression_recovery_5
+						has_idea = great_depression_recovery_4
+						has_idea = great_depression_recovery_3
+						has_idea = great_depression_recovery_2
+						has_idea = great_depression_recovery_1
+						#Added to stop it firing once idea removed
+					}
+				}
+				country_event = {
+					id = usa.83
+					days = 200
+				}
+			}
+		}
+	}
+}
+country_event = { #Tied to Housing Authority Focus
+    id = usa.85
+
+    is_triggered_only = yes
+    
+    hidden = yes  #timeout
+    timeout_days = 1
+    trigger = {
+        has_war = no
+        check_variable = {housing < 28}
+    }
+        
+        
+    immediate = {
+		if = {
+			limit = {
+				check_variable = {
+					var = housing
+					value = 28
+					compare = greater_than_or_equals
+				}
+			}
+			clear_variable = housing
+		}
+		else_if = {
+			limit = {
+				check_variable = {housing < 28}
+			}
+			
+			country_event = { id = usa.85 days = 30 }
+			add_to_variable = { housing = 1 }
+			random_owned_controlled_state = {
+				limit = {
+					is_core_of = USA
+					is_fully_controlled_by = USA
+					NOT = { has_state_category = tiny_island }
+					NOT = { has_state_category = small_island }
+				}
+				add_extra_state_shared_building_slots = 1
+				add_building_construction = {
+					type = industrial_complex
+					level = 1
+					instant_build = yes
+				}
+			}
+		}
+    }
+}
+country_event = { #Army Corps of Engineers mils
+    id = usa.86
+	title = "USACE Projects"
+    is_triggered_only = yes
+    
+    hidden = yes  #timeout
+    timeout_days = 1
+    trigger = {
+        check_variable = {USA_expanding_mils < 25}
+    }
+        
+        
+    immediate = {
+        country_event = { id = usa.86 days = 7 }
+        add_to_variable = { USA_expanding_mils = 1 }
+        random_owned_controlled_state = {
+			limit = {
+				is_core_of = USA
+				is_fully_controlled_by = USA
+				NOT = { has_state_category = tiny_island }
+				NOT = { has_state_category = small_island }
+			}
+			add_extra_state_shared_building_slots = 1
+			add_building_construction = {
+				type = arms_factory
+				level = 1
+				instant_build = yes
+			}
+		}
+    }
+}
+country_event = { #Further expansion of US mils
+    id = usa.87
+	title = "Arsenal of Democracy"
+    is_triggered_only = yes
+    
+    hidden = yes  #timeout
+    timeout_days = 1
+    trigger = {
+        has_war = yes
+        check_variable = {USA_expanding_mils2 < 32}
+    }
+        
+        
+    immediate = {
+        country_event = { id = usa.87 days = 7 }
+        add_to_variable = { USA_expanding_mils2 = 1 }
+        random_owned_controlled_state = {
+			limit = {
+				is_core_of = USA
+				is_fully_controlled_by = USA
+				NOT = { has_state_category = tiny_island }
+				NOT = { has_state_category = small_island }
+			}
+			add_extra_state_shared_building_slots = 2
+			add_building_construction = {
+				type = arms_factory
+				level = 2
+				instant_build = yes
+			}
+		}
+    }
+}
+news_event = { #Churchill Addresses US Congress
+    id = usa.88
+	title = "UK Prime Minister Addresses Congress"
+	picture = GFX_news_event_churchill_addresses_congress
+	desc = usa.88.d
+	is_triggered_only = yes
+    trigger = {
+		OR = {
+			tag = USA
+			tag = ENG
+		}
+		OR = {
+			has_war_with = GER
+			has_war_with = ITA
+			has_war_with = JAP
+			has_war_with = SOV
+		}
+		AND = {
+			ENG = {
+				is_ally_with = USA
+			}
+			USA = {
+				is_ally_with = ENG
+			}
+		}
+		#global.days_passed > 2186 #Dec. 26 1941
+    }
+        
+    option = { # Let her join
+		name = usa.1.a
+	}
+} 
+
+country_event = { #Event for ENG. We are getting invaded, should we ask for US assistance?
+    id = usa.99 
+	title = usa.99.t
+	desc = usa.99.desc
+	picture = GFX_report_event_british_flag
+	
+	is_triggered_only = yes
+	
+	trigger = {
+		threat > 0.33
+		USA = {
+			democratic_govt = yes
+			is_in_faction = no
+			has_war = no
+		}
+		exists = yes 
+		surrender_progress > 0.1
+		is_faction_leader = yes
+		democratic_govt = yes
+		OR = {
+			has_war_with = GER
+			has_war_with = ITA
+		}
+		any_enemy_country = {
+			OR = {
+				tag = GER
+				is_in_faction_with = GER
+			}
+			OR = {
+				divisions_in_state = { size > 0 state = 123 }
+				divisions_in_state = { size > 0 state = 338 }
+				divisions_in_state = { size > 0 state = 127 }
+				divisions_in_state = { size > 0 state = 126 }
+				divisions_in_state = { size > 0 state = 125 }
+				divisions_in_state = { size > 0 state = 129 }
+				divisions_in_state = { size > 0 state = 128 }
+				divisions_in_state = { size > 0 state = 122 }
+				divisions_in_state = { size > 0 state = 132 }
+				divisions_in_state = { size > 0 state = 130 }
+				divisions_in_state = { size > 0 state = 131 }
+				divisions_in_state = { size > 0 state = 121 }
+				divisions_in_state = { size > 0 state = 133 }
+				divisions_in_state = { size > 0 state = 136 }
+				divisions_in_state = { size > 0 state = 120 }
+			}
+		}
+	}
+	
+	option = { #Ask for US assistance
+		name = "Thank God for Sea Lion"
+		ai_chance = { factor = 100 }
+		
+		USA = { 
+			country_event = { id = usa.100 hours = 12 }
+			custom_effect_tooltip = needs_approval
+		}
+		
+		effect_tooltip = {
+			
+			ENG = {
+				add_war_support = 0.1
+				
+				add_to_faction = USA 
+				
+				every_enemy_country = {
+					limit = {
+						OR = {
+							divisions_in_state = { size > 0 state = 123 }
+							divisions_in_state = { size > 0 state = 338 }
+							divisions_in_state = { size > 0 state = 127 }
+							divisions_in_state = { size > 0 state = 126 }
+							divisions_in_state = { size > 0 state = 125 }
+							divisions_in_state = { size > 0 state = 129 }
+							divisions_in_state = { size > 0 state = 128 }
+							divisions_in_state = { size > 0 state = 122 }
+							divisions_in_state = { size > 0 state = 132 }
+							divisions_in_state = { size > 0 state = 130 }
+							divisions_in_state = { size > 0 state = 131 }
+							divisions_in_state = { size > 0 state = 121 }
+							divisions_in_state = { size > 0 state = 133 }
+							divisions_in_state = { size > 0 state = 136 }
+							divisions_in_state = { size > 0 state = 120 }
+						}
+					}
+					USA = {
+						add_to_war = { 
+							targeted_alliance = ENG 
+							enemy = PREV 
+							hostility_reason = asked_to_join
+						}
+					}
+				}
+			}
+		}
+		
+	}
+	
+	option = { #We are fine
+		name = "It is of no concern"
+	
+	}
+}
+
+country_event = { #Sealion -> US gets option to join the war
+    id = usa.100
+	title = usa.100.t
+	desc = usa.100.desc
+	picture = GFX_report_event_british_flag
+	
+    is_triggered_only = yes
+	fire_only_once = yes
+    
+	option = { #yes
+		name = "Britain is not allowed to fall"
+		ai_chance = { base = 100 }
+	
+		hidden_effect = {
+			news_event = usa.101
+		}
+		
+		ENG = {
+			add_war_support = 0.1
+			
+			add_to_faction = USA 
+			
+			every_enemy_country = {
+				limit = {
+					OR = {
+						divisions_in_state = { size > 0 state = 123 }
+						divisions_in_state = { size > 0 state = 338 }
+						divisions_in_state = { size > 0 state = 127 }
+						divisions_in_state = { size > 0 state = 126 }
+						divisions_in_state = { size > 0 state = 125 }
+						divisions_in_state = { size > 0 state = 129 }
+						divisions_in_state = { size > 0 state = 128 }
+						divisions_in_state = { size > 0 state = 122 }
+						divisions_in_state = { size > 0 state = 132 }
+						divisions_in_state = { size > 0 state = 130 }
+						divisions_in_state = { size > 0 state = 131 }
+						divisions_in_state = { size > 0 state = 121 }
+						divisions_in_state = { size > 0 state = 133 }
+						divisions_in_state = { size > 0 state = 136 }
+						divisions_in_state = { size > 0 state = 120 }
+					}
+				}
+				USA = {
+					add_to_war = { 
+						targeted_alliance = ENG 
+						enemy = PREV 
+						hostility_reason = asked_to_join
+					}
+				}
+			}
+		}
+	
+		complete_national_focus = USA_new_war_coming
+		complete_national_focus = USA_prepare_intervention
+		#complete_national_focus = USA_limited_intervention
+		
+	}
+	
+	option = { #no
+		name = "This isnt our War"
+		ai_chance = { base = 0 }
+		
+		add_political_power = -75
+		add_war_support = -0.1
+		
+		ENG = {
+			add_opinion_modifier = {
+				target = USA 
+				modifier = betrayed_alliance
+			}
+		} 
+	}
+}
+
+news_event = {
+    id = usa.101
+	title = usa.101.t
+	desc = usa.101.desc
+	picture = GFX_news_event_generic_usa_treaty
+	
+    is_triggered_only = yes
+	major = yes
+	fire_for_sender = no 
+	
+	option = {
+		name = "This changes nothing"
+		trigger = {
+			has_war_with = ENG 
+		}
+	}
+	
+	option = { 
+		name = "This changes everything"
+		trigger = {
+			OR = {
+				is_in_faction_with = ENG 
+				tag = ENG 
+				is_subject_of = ENG 
+			}
+		}
+	}
+	
+	option = {
+		name = "Another senseless escalation of this conflict"
+		trigger = {
+			NOT = {
+				has_war_with = ENG 
+				is_in_faction_with = ENG 
+				tag = ENG 
+				is_subject_of = ENG 
+			}
+		}
+	}
+}
+    
+### EOF ###

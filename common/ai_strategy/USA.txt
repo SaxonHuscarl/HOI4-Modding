@@ -1,0 +1,550 @@
+# befriend
+# conquer
+# antagonize
+# build_ship
+# build_army
+# unit_ratio
+# build_building
+# research_tech
+# garrison
+# protect
+# influence
+# invade
+# contain
+# area_priority
+
+USA_defend_britain = {
+	allowed = {
+		tag = USA
+	}
+	
+	enable = { 
+		surrender_progress < 0.15
+		is_in_faction_with = ENG
+		ENG = { 
+			has_capitulated = no
+		}
+	}
+	
+	abort = {
+		OR = {
+			has_war = no
+			ENG = { has_capitulated = yes }
+			surrender_progress > 0.2
+		}
+	}
+
+	ai_strategy = {
+		type = put_unit_buffers
+		states = { 128 127 123 338 126 125 132 129 }
+		ratio = 0.35
+		area = europe
+		order_id = 3
+		subtract_invasions_from_need = yes
+		subtract_fronts_from_need = yes
+	}
+	
+	# Britain
+	ai_strategy = {
+		type = theatre_distribution_demand_increase
+		id = 125
+		value = 10 
+	}
+
+	ai_strategy = {
+		type = front_unit_request
+		area = britain
+		value = 100
+	}
+}
+
+USA_buffer_australia = {
+	allowed = {
+		tag = USA
+	}
+	
+	enable = { 
+		surrender_progress < 0.2
+		is_in_faction_with = AST
+		AST = { 
+			has_capitulated = no
+		}
+	}
+	
+	abort = {
+		OR = {
+			has_war = no
+			AST = { has_capitulated = yes }
+			surrender_progress > 0.25
+		}
+	}
+
+	ai_strategy = {
+		type = put_unit_buffers
+		states = { 521 285 517 520 522 519 }
+		ratio = 0.07
+		area = asia
+		order_id = 4
+		subtract_invasions_from_need = yes
+		subtract_fronts_from_need = yes
+	}
+	
+	ai_strategy = {
+		type = theatre_distribution_demand_increase
+		id = 285
+		value = 5 
+	}
+
+}
+
+USA_pacific_garrison = {
+	allowed = { tag = USA }
+
+	enable = {
+		always = yes
+	}
+	abort = { always = no }
+
+	
+	# Hawaii
+	ai_strategy = {
+		type = theatre_distribution_demand_increase
+		id = 629
+		value = 3
+	}
+	ai_strategy = {
+		type = put_unit_buffers
+
+		ratio = 0.15
+
+		states = { 629 631 630 632 642 643 639 633 684 725 646 648 645 647 727 }
+		subtract_invasions_from_need = no
+		order_id = 8
+		area = pacific
+	}
+	ai_strategy = {
+		type = naval_invasion_supremacy_weight
+		value = 30
+	}
+}
+USA_buffer_pacific = {
+	allowed = { tag = USA }
+
+	enable = {
+		OR = {
+			date > 1941.1.1
+			has_war = yes
+		}
+	}
+	abort = { always = no }
+
+	
+	# Hawaii
+	ai_strategy = {
+		type = put_unit_buffers
+
+		ratio = 0.1
+
+		states = { 629 631 630 632 642 643 639 633 684 725 646 648 645 647 727 }
+		subtract_invasions_from_need = yes
+		subtract_fronts_from_need = yes
+		order_id = 8
+		area = asia
+	}
+	
+	# Singapore
+	ai_strategy = {
+		type = put_unit_buffers
+
+		ratio = 0.1
+
+		states = { 336 870 }
+		subtract_invasions_from_need = yes
+		subtract_fronts_from_need = yes
+		order_id = 9
+		area = asia
+	}
+	
+	# Phillipines
+	ai_strategy = {
+		type = put_unit_buffers
+
+		ratio = 0.1
+
+		states = { 627 327 623 }
+		subtract_invasions_from_need = yes
+		subtract_fronts_from_need = yes
+		order_id = 10
+		area = asia
+	}
+}
+
+USA_buffer_africa = {
+	allowed = { tag = USA }
+
+	enable = {
+		is_in_faction_with = SAF
+	}
+	abort_when_not_enabled = yes
+	
+	# North Africa
+	ai_strategy = {
+		type = put_unit_buffers
+
+		ratio = 0.05
+
+		states = { 458 460 459 }
+		subtract_invasions_from_need = yes
+		subtract_fronts_from_need = yes
+		order_id = 11
+		area = africa
+		area = europe
+	}
+}
+
+USA_buffer_india = {
+	allowed = { tag = USA }
+
+	enable = {
+		is_in_faction_with = RAJ
+	}
+	abort_when_not_enabled = yes
+	
+	# Singapore
+	ai_strategy = {
+		type = put_unit_buffers
+
+		ratio = 0.15
+
+		states = { 430 431 426 424 423 425 429 428 427 436 438 437 439 }
+		subtract_invasions_from_need = yes
+		subtract_fronts_from_need = yes
+		area = asia
+		order_id = 12
+	}
+	
+}
+
+USA_ignore_neighbours = {
+	allowed = { tag = USA }
+	enable = {
+		NOT = { 
+			OR = {
+				has_war_with = MEX
+				has_war_with = CAN
+			}
+		}
+	}
+	abort = {
+		OR = {
+			has_war_with = MEX
+			has_war_with = CAN
+		}
+	}
+	
+	ai_strategy = {
+		type = ignore
+		id = "CAN"			
+		value = 2000
+	}
+	ai_strategy = {
+		type = front_unit_request
+		tag = "CAN"			
+		value = -200
+	}
+	ai_strategy = {
+		type = front_unit_request
+		tag = "MEX"			
+		value = -200
+	}
+	ai_strategy = {
+		type = ignore
+		id = "MEX"			
+		value = 2000
+	}
+
+}
+	
+USA_save_the_aussies = {
+	allowed = { tag = USA }
+	enable = {
+		democratic_govt = yes
+		is_in_faction = no
+		has_war = no
+
+		has_opinion = {
+			target = AST
+			value > 0 # not if we hate AST
+		}
+		AST = {
+			has_war_with = JAP
+			democratic_govt = yes		
+			surrender_progress > 0.15
+		}
+	}
+	abort = {
+		OR = {
+			has_war_with = AST
+			is_in_faction_with = JAP
+			JAP = {	
+				NOT = { has_war_with = AST } 
+			}
+		}
+	}
+	
+	ai_strategy = { #yes, guarantee countries!!! thatll surely help
+		type = contain
+		id = "JAP"			
+		value = 200
+	}
+	
+	ai_strategy = {
+		type = protect
+		id = "AST"			
+		value = 200
+	}
+}
+
+USA_join_allies = {
+	reversed = yes
+	enable_reverse = { is_in_faction = no }
+	enable = {
+		is_faction_leader = yes
+		#NOT = {
+		#	original_tag = ENG 
+		#}
+	}
+	abort_when_not_enabled = yes
+	
+	targets = { CHI SOV GER JAP FRA }
+	
+	ai_strategy = {
+		type = alliance
+		id = "USA"			
+		value = -5000
+	}
+}
+
+USA_early_game_production = {
+	allowed = { tag = USA }
+	enable = {
+		date < 1941.1.1
+		amount_manpower_in_deployment_queue < 50000
+	}
+	abort_when_not_enabled = yes
+	
+	ai_strategy = {
+		type = equipment_stockpile_surplus_ratio
+		value = 50
+	}
+}
+
+USA_dont_be_afraid_lol = {
+	allowed = { tag = USA }
+	enable = {
+		OR = {
+			has_war_with = ITA 
+			has_war_with = GER 
+		}
+	}
+	abort = {
+		has_war = no
+	}
+	
+	ai_strategy = {
+		type = consider_weak
+		id = "ITA"			
+		value = 100
+	}
+	ai_strategy = {
+		type = consider_weak
+		id = "HUN"			
+		value = 200
+	}
+	ai_strategy = {
+		type = consider_weak
+		id = "ROM"			
+		value = 200
+	}
+	ai_strategy = {
+		type = consider_weak
+		id = "BUL"			
+		value = 200
+	}
+	ai_strategy = {
+		type = consider_weak
+		id = "CRO"			
+		value = 200
+	}
+	ai_strategy = {
+		type = consider_weak
+		id = "GER"			
+		value = 50
+	}
+	ai_strategy = {
+		type = consider_weak
+		id = "JAP"			
+		value = 50
+	}
+}
+
+#USA_dont_join_european_war = {
+#	enable = {
+#		tag = USA
+#		democratic_govt = yes
+#		is_in_faction_with = ENG
+#		has_war_with = JAP
+#		ENG = { has_war_with = GER }
+#		GER = { is_ai = yes }
+#	}
+#	abort = {
+#		OR = {
+#			has_war_with = GER
+#			NOT = { has_war_with = JAP }
+#		}
+#	}
+#	
+#	ai_strategy = {
+#		type = dont_join_wars_with
+#		id = ENG
+#		target_country = GER
+#		value = 500
+#	}
+#	
+#	ai_strategy = {
+#		type = dont_join_wars_with
+#		id = ENG
+#		target_country = ITA
+#		value = 500
+#	}
+#	
+#	ai_strategy = {
+#		type = dont_join_wars_with
+#		id = ENG
+#		target_country = HUN
+#		value = 500
+#	}
+#	
+#	ai_strategy = {
+#		type = dont_join_wars_with
+#		id = ENG
+#		target_country = ROM
+#		value = 500
+#	}
+#}
+
+USA_save_india = { # in the case where japan has beaten china and is moving on india we should step up
+	allowed = { tag = USA }
+	enable = {
+		democratic_govt = yes
+		is_in_faction = yes
+		has_war = yes
+
+		JAP = {	
+			has_war_with = RAJ 
+		}
+		RAJ = {
+			is_in_faction_with = ENG
+			surrender_progress > 0.05
+		}
+	}
+	abort = {
+		OR = {
+			has_war_with = RAJ
+			is_in_faction_with = JAP
+			JAP = {	
+				NOT = { has_war_with = RAJ } 
+			}
+		}
+	}
+	
+	ai_strategy = {
+		type = contain
+		id = "JAP"			
+		value = 200
+	}
+	
+	ai_strategy = {
+		type = protect
+		id = "RAJ"			
+		value = 200
+	}
+}
+
+USA_actually_go_to_war = { 
+	allowed = { tag = USA }
+	enable = {
+		has_war = yes 
+		surrender_progress < 0.2
+	}
+	abort_when_not_enabled = yes
+	
+	ai_strategy = {
+		type = spare_unit_factor
+		value = 500
+	}
+	ai_strategy = {
+		type = garrison
+		value = -1000
+	}
+}
+
+USA_war_with_GER = { 
+	allowed = { tag = USA }
+	enable = {
+		has_war_with = GER
+	}
+	abort_when_not_enabled = yes
+	
+	ai_strategy = { 
+		type = front_armor_score 
+		id = GER 
+		value = 500
+	}
+	ai_strategy = {
+		type = conquer
+		id = GER
+		value = 800
+	}
+	ai_strategy = {
+		type = theatre_distribution_demand_increase
+		id = 15
+		value = 10 
+	}
+}
+USA_war_with_ITA = { 
+	allowed = { tag = USA }
+	enable = {
+		has_war_with = ITA
+	}
+	abort_when_not_enabled = yes
+	
+	ai_strategy = { 
+		type = front_armor_score 
+		id = ITA 
+		value = 50
+	}
+	ai_strategy = {
+		type = conquer
+		id = ITA
+		value = 300
+	}
+}
+USA_war_with_JAP = { 
+	allowed = { tag = USA }
+	enable = {
+		has_war_with = JAP
+	}
+	abort_when_not_enabled = yes
+	
+	ai_strategy = { 
+		type = front_armor_score 
+		id = JAP 
+		value = -100
+	}
+	ai_strategy = {
+		type = conquer
+		id = JAP
+		value = 500
+	}
+}

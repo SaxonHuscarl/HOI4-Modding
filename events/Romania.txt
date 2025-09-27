@@ -1,0 +1,306 @@
+﻿###########################
+# Romanian Events
+###########################
+
+add_namespace = romania
+
+# Soviet Union demands Bessarabia
+country_event = {
+	id = romania.1
+	title = romania.1.t
+	desc = romania.1.d
+	picture = GFX_report_event_generic_read_write
+	
+	is_triggered_only = yes
+	
+	fire_only_once = yes
+	
+	option = { # Accept demands
+		name = romania.1.a
+		ai_chance = {
+			factor = 90
+			modifier = { # Don't accept if in a faction that can protect them
+				factor = 0
+				OR = {
+					any_other_country = {
+						is_major = yes
+						NOT = { tag = SOV }
+						NOT = { tag = GER tag = ITA } #they gave bessarabia with romania in the faction
+						OR = {
+							is_in_faction_with = ROM
+							has_guaranteed = ROM
+						}
+					}
+					has_idea = anti_soviet_pact
+				}
+				is_historical_focus_on = no #Romania will still cede on historical
+			}
+		}
+		set_country_flag = bessarabia_ceded
+		set_temp_variable = { pop = -0.20 }
+		add_ruling_pop = yes
+		if = {
+			limit = {
+				NOT = { has_government = fascism }
+			}
+			ROM_iron_guard_huge_loyalty_decrease = yes
+		}
+		SOV = {
+			country_event = { days = 1 id = soviet.4 }
+		}
+		ROM = {
+			country_event = { days = 1 id = BICE_romania.82 } 
+		}
+	}
+	option = { # Refuse
+		name = romania.1.b
+		ai_chance = {
+			base = 0
+			modifier = {
+				add = 10
+				is_in_faction = yes
+				NOT = { is_in_faction_with = SOV }
+			}
+			modifier = {
+				is_historical_focus_on = yes
+				factor = 0
+			}
+		}
+		SOV = {
+			country_event = { days = 1 id = soviet.5 }
+			effect_tooltip = {
+				create_wargoal = {
+					type = take_state
+					target = ROM
+					generator = { 78 80 939 }
+				}
+			}
+		}
+	}
+}
+
+# Second Vienna Award - Northern Transylvania
+country_event = {
+	id = romania.2
+	title = romania.2.t
+	desc = romania.2.d
+	picture = GFX_report_event_second_vienna_award_pact
+	
+	is_triggered_only = yes
+	
+	option = { # Accept demands
+		name = romania.2.a
+		ai_chance = {
+			factor = 100 # historical mod
+			modifier = { # Don't accept if in a faction that can protect them
+				factor = 0
+				OR = {
+					is_in_faction_with = ENG
+					is_in_faction_with = FRA
+					is_in_faction_with = SOV
+				}
+			}
+		}
+		if = {
+			limit = {
+				NOT = { has_government = fascism }
+			}
+			ROM_iron_guard_huge_loyalty_decrease = yes
+		}
+		HUN = {
+			country_event = { days = 1 id = hungary.2 }
+		}
+		set_country_flag = second_vienna_accepted_north
+		hidden_effect = {
+			BUL = {
+				country_event = { days = 5 id = bulgaria.4 }
+			}
+		}
+	}
+	option = { # Refuse
+		name = romania.2.b
+		ai_chance = { 
+			factor = 0 
+			modifier = {
+				factor = 0
+				is_historical_focus_on = yes
+			}
+		}
+		HUN = {
+			country_event = { days = 1 id = hungary.4 }
+			effect_tooltip = { add_state_claim = 76 }
+		}
+		GER = {
+			country_event = { days = 1 id = germany.21 }
+			effect_tooltip = {
+				create_wargoal = {
+					type = take_state
+					target = ROM
+					generator = { 76 938 }
+				}
+			}
+		}
+	}
+}
+
+# Second Vienna Award - All of Transylvania
+country_event = {
+	id = romania.3
+	title = romania.2.t
+	desc = romania.3.d
+	picture = GFX_report_event_second_vienna_award_pact
+	
+	is_triggered_only = yes
+	
+	option = { # Accept demands
+		name = romania.2.a
+		ai_chance = {
+			factor = 100
+			modifier = { # Don't accept if in a faction that can protect them
+				factor = 0
+				OR = {
+					is_in_faction_with = ENG
+					is_in_faction_with = FRA
+					is_in_faction_with = SOV
+				}
+			}
+		}
+		if = {
+			limit = {
+				NOT = { has_government = fascism }
+			}
+			ROM_iron_guard_catastrophic_loyalty_decrease = yes
+		}
+		HUN = {
+			country_event = { days = 1 id = hungary.3 }
+		}
+		set_country_flag = second_vienna_accepted_all
+		hidden_effect = {
+			BUL = {
+				country_event = { days = 5 id = bulgaria.4 }
+			}
+		}
+	}
+	option = { # Refuse
+		name = romania.2.b
+		ai_chance = { 
+			factor = 0
+			modifier = { 
+				factor = 0 
+				is_historical_focus_on = yes 
+			}  # historical mod
+		}
+		
+		HUN = {
+			country_event = { days = 1 id = hungary.5 }
+			effect_tooltip = {
+				add_state_claim = 76
+				add_state_claim = 83
+				add_state_claim = 84
+			}
+		}
+		GER = {
+			country_event = { days = 1 id = germany.21 }
+			effect_tooltip = {
+				create_wargoal = {
+					type = take_state
+					target = ROM
+					generator = { 76 83 84 }
+				}
+			}
+		}
+	}
+}
+
+# Second Vienna Award - No Concessions
+country_event = {
+	id = romania.4
+	title = romania.4.t
+	desc = romania.4.d
+	picture = GFX_report_event_handshake_gfxaddon
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = romania.4.a
+	}
+}
+
+# Treaty of Craiova - Bulgaria Demands Territory
+country_event = {
+	id = romania.5
+	title = romania.5.t
+	desc = romania.5.d
+	picture = GFX_report_event_german_slovak_treaty
+	
+	is_triggered_only = yes
+	
+	option = { # Accept
+		name = romania.5.a
+		ai_chance = { factor = 90 }
+		if = {
+			limit = {
+				NOT = { has_government = fascism }
+			}
+			ROM_iron_guard_medium_loyalty_decrease = yes
+			add_popularity = {
+				ideology = monarchism
+				popularity = -0.05
+			}
+		}
+		effect_tooltip = {
+			BUL = { transfer_state = 77 }
+		}
+		BUL = {
+			country_event = { days = 1 id = bulgaria.1 }
+		}
+	}
+	option = { # Refuse
+		name = romania.5.b
+		ai_chance = { 
+			factor = 10
+			modifier = {
+				factor = 0
+				is_historical_focus_on = yes
+				NOT = {
+					#is_in_faction_with = GER
+					is_in_faction_with = SOV
+					is_in_faction_with = ENG
+				}
+			}
+			modifier = {
+				factor = 10
+				OR = {
+				#is_in_faction_with = GER -Germany allows Bulgaria to demand, this doesnt make sense here
+				is_in_faction_with = SOV
+				is_in_faction_with = ENG
+				}
+			}
+		}
+		BUL = {
+			country_event = { days = 1 id = bulgaria.2 }
+		}
+	}
+}
+
+country_event = {
+	id = romania.7
+	hidden = yes
+	is_triggered_only = yes
+	timeout_days = 1
+	trigger = {
+		check_variable = { oil_reduced < 18 }
+	}
+
+	immediate = {
+		add_to_variable = { oil_reduced = 1 }
+		46 = {
+			add_resource = {
+				type = oil
+				amount = -1
+			}
+		}
+	}	
+	option = {
+	}
+}

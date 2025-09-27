@@ -1,0 +1,687 @@
+﻿add_namespace = ecu_border_conflict_won_attacker
+country_event = {
+	id = ecu_border_conflict_won_attacker.1
+	title = wtt_border_conflict_won_attacker.1.t
+	desc = wtt_border_conflict_won_attacker.1.desc
+	
+	picture = GFX_report_event_chinese_soldiers_city_ruin
+
+	is_triggered_only = yes
+
+	immediate = {
+		save_event_target_as = our_country
+		FROM = { save_event_target_as = our_state }
+		FROM.FROM = { save_event_target_as = their_country }
+		FROM.FROM.FROM = { save_event_target_as = their_state }
+		remove_targeted_decision = { target = event_target:their_country decision = WTT_border_conflict_time_until_cancelled }
+	}
+	
+	option = {
+		name = wtt_border_conflict_won_attacker.1.a
+		add_political_power = 15
+		army_experience = 5
+		add_tech_bonus = {
+			name = border_conflict_won
+			category = land_doctrine
+			bonus = 0.05
+		}	
+		if = {
+			limit = {
+				tag = ECU
+			}
+			add_state_claim = 490
+		}
+	}	
+}
+
+add_namespace = ecu_border_conflict_won_defender
+
+country_event = {
+	id = ecu_border_conflict_won_defender.1
+	title = wtt_border_conflict_won_defender.1.t
+	desc = wtt_border_conflict_won_defender.1.desc
+	
+	picture = GFX_report_event_chinese_soldiers_mountain
+
+	is_triggered_only = yes
+
+	immediate = {
+		hidden_effect = {
+			save_event_target_as = our_country
+			FROM = {
+				save_event_target_as = our_state
+				clr_state_flag = border_incident_active
+			}
+			FROM.FROM = { save_event_target_as = their_country }
+			FROM.FROM.FROM = {
+				save_event_target_as = their_state
+				clr_state_flag = border_incident_active
+			}
+			set_country_flag = show_effect_tooltips
+			clear_variable = attacker_state_vs_@FROM.FROM
+			clear_variable = defender_state_vs_@FROM.FROM
+			remove_targeted_decision = { target = event_target:their_country decision = WTT_border_conflict_time_until_cancelled }
+		}
+	}
+	
+	#Same effect as attacker. Tooltip for their effects
+	option = {
+		name = wtt_border_conflict_won_defender.1.a
+		add_political_power = 15
+		army_experience = 5
+		add_tech_bonus = {
+			name = border_conflict_won
+			category = land_doctrine
+			bonus = 0.05
+		}	
+		if = {
+			limit = { has_country_flag = show_effect_tooltips }
+			event_target:their_country = {
+				effect_tooltip = {
+					add_political_power = -15
+					army_experience = 5
+				}
+			}
+			clr_country_flag = show_effect_tooltips
+		}
+	}	
+}
+
+add_namespace = ecu_border_conflict_lost_attacker
+
+country_event = {
+	id = ecu_border_conflict_lost_attacker.1
+	title = wtt_border_conflict_lost_attacker.1.t
+	desc = wtt_border_conflict_lost_attacker.1.desc
+	
+	picture = GFX_report_event_dead_soldiers
+
+	is_triggered_only = yes
+
+	immediate = {
+		save_event_target_as = our_country
+		FROM = { save_event_target_as = our_state }
+		FROM.FROM = { save_event_target_as = their_country }
+		FROM.FROM.FROM = { save_event_target_as = their_state }
+		set_country_flag = show_effect_tooltips
+		remove_targeted_decision = { target = event_target:their_country decision = WTT_border_conflict_time_until_cancelled }
+	}
+	
+	#Same effect as defender. Tooltip for their effects	
+	option = {
+		name = wtt_border_conflict_lost_attacker.1.a
+		add_political_power = -15
+		army_experience = 5
+		if = {
+			limit = { has_country_flag = show_effect_tooltips }
+			event_target:their_country = {
+				effect_tooltip = {
+					add_political_power = 15
+					army_experience = 5
+					add_tech_bonus = {
+						name = border_conflict_won
+						category = land_doctrine
+						bonus = 0.05
+					}	
+				}
+			}
+			clr_country_flag = show_effect_tooltips
+		}
+	}	
+}
+
+add_namespace = ecu_border_conflict_lost_defender
+
+country_event = {
+	id = ecu_border_conflict_lost_defender.1
+	title = wtt_border_conflict_lost_defender.1.t
+	desc = wtt_border_conflict_lost_defender.1.desc
+	
+	picture = GFX_report_event_dead_soldiers
+
+	is_triggered_only = yes
+
+	immediate = {
+		hidden_effect = {
+			save_event_target_as = our_country
+			FROM = {
+				save_event_target_as = our_state
+				clr_state_flag = border_incident_active
+			}
+			FROM.FROM = { save_event_target_as = their_country }
+			FROM.FROM.FROM = {
+				save_event_target_as = their_state
+				clr_state_flag = border_incident_active
+			}
+			set_country_flag = show_effect_tooltips
+			clear_variable = attacker_state_vs_@FROM.FROM
+			clear_variable = defender_state_vs_@FROM.FROM
+			remove_targeted_decision = { target = event_target:their_country decision = WTT_border_conflict_time_until_cancelled }
+		}
+	}
+	
+	#Same effect as attacker. Tooltip for their effects
+	option = {
+		name = wtt_border_conflict_lost_defender.1.a
+		if = {
+			limit = { has_country_flag = show_effect_tooltips }
+			effect_tooltip = {
+				add_political_power = 15
+				army_experience = 5
+				add_tech_bonus = {
+					name = border_conflict_won
+					category = land_doctrine
+					bonus = 0.05
+				}					
+			}
+			clr_country_flag = show_effect_tooltips
+		}
+	}	
+}
+
+add_namespace = ecu_border_conflict_canceled_attacker
+
+country_event = {
+	id = ecu_border_conflict_canceled_attacker.1
+	title = wtt_border_conflict_canceled_attacker.1.t
+	desc = wtt_border_conflict_canceled_attacker.1.desc
+	
+	picture = GFX_report_event_chinese_soldiers_mountain
+
+	is_triggered_only = yes
+
+	immediate = {
+		save_event_target_as = our_country
+		FROM = { save_event_target_as = our_state }
+		FROM.FROM = { save_event_target_as = their_country }
+		FROM.FROM.FROM = { save_event_target_as = their_state }
+		set_country_flag = show_effect_tooltips
+	}
+	
+	option = {
+		name = wtt_border_conflict_canceled_attacker.1.a
+		army_experience = 3
+		add_political_power = 5
+		if = {
+			limit = { has_country_flag = show_effect_tooltips }
+			event_target:their_country = {
+				effect_tooltip = {
+					army_experience = 3
+					add_political_power = 5
+				}
+			}
+			clr_country_flag = show_effect_tooltips
+		}
+	}	
+}
+
+
+
+
+add_namespace = ecuador
+
+#########Communist Coup
+country_event = {
+	id = ecuador.1
+	title = ecuador.1.t
+	desc = ecuador.1.d
+	picture = GFX_report_event_communist_police_clash
+	major = yes
+	is_triggered_only = yes
+	option = {
+		name = ecuador.1.a
+		trigger = {
+			NOT = {
+				TAG = ECU
+			}
+		}
+	}
+	option = {
+		name = ecuador.1.a
+		trigger = {
+			TAG = ECU
+		}
+		set_politics = {
+			ruling_party = communism
+			last_election = "1933.12.15"
+			election_frequency = 84
+			elections_allowed = yes
+		}
+		add_popularity = {
+			ideology = communism
+			popularity = 0.12
+		}
+		hidden_effect = {
+			country_event = { days = 45 random_days = 100 id = ecuador.2 }
+			country_event = { days = 291 id = ecuador.6 }
+		}
+	}
+}
+
+#dispute american Mines rights
+country_event = {
+	id = ecuador.2
+	title = ecuador.2.t
+	desc = ecuador.2.d
+	picture = GFX_report_event_communists_cheer
+	is_triggered_only = yes
+	option = {
+		name = ecuador.2.a
+		ai_chance = { factor = 100 }
+		USA = {
+			country_event = { days = 1 id = ecuador.3 }
+		}
+	}
+	option = {
+		name = ecuador.2.b
+		ai_chance = { factor = 0 }
+	}
+}
+#dispute american Mines rights america recieves complaint
+country_event = {
+	id = ecuador.3
+	title = ecuador.3.t
+	desc = ecuador.3.d
+	picture = GFX_report_event_communists_cheer
+	is_triggered_only = yes
+	option = {
+		name = ecuador.3.a
+		ai_chance = { factor = 100 }
+		ECU = {
+			country_event = { days = 1 id = ecuador.4 }
+			add_opinion_modifier = {
+				target = USA
+				modifier = refused_help
+			}
+		}
+	}
+	option = {
+		name = ecuador.3.b
+		ai_chance = { factor = 0 }
+		add_political_power = -25
+		ECU = {
+			country_event = { days = 1 id = ecuador.5 }
+		}
+	}
+}
+#dispute american Mines rights america refuses
+country_event = {
+	id = ecuador.4
+	title = ecuador.4.t
+	desc = ecuador.4.d
+	picture = GFX_report_event_dc
+	is_triggered_only = yes
+	option = {
+		name = ecuador.4.a
+		effect_tooltip = {
+			add_opinion_modifier = {
+				target = USA
+				modifier = refused_help
+			}
+		}
+	}
+}
+#dispute american Mines rights america agrees
+country_event = {
+	id = ecuador.5
+	title = ecuador.5.t
+	desc = ecuador.5.d
+	picture = GFX_report_event_dc
+	is_triggered_only = yes
+	option = {
+		name = ecuador.5.a
+		add_political_power = 25
+	}
+}
+#End the Coup?
+country_event = {
+	id = ecuador.6
+	title = ecuador.6.t
+	desc = ecuador.6.d
+	picture = GFX_report_event_election_vote
+	is_triggered_only = yes
+	option = {
+		name = ecuador.6.a
+		ai_chance = { factor = 100 }
+		set_politics = {
+			ruling_party = liberalism
+			last_election = "1933.12.15"
+			election_frequency = 84
+			elections_allowed = yes
+		}	
+		add_popularity = {
+			ideology = liberalism
+			popularity = 0.1
+		}		
+	}
+	option = {
+		name = ecuador.6.b
+		ai_chance = { factor = 0 }		
+	}
+}
+#border skirmish in 38
+country_event = {
+	id = ecuador.7
+	is_triggered_only = yes
+	hidden = yes
+	immediate = {
+		start_border_war = {
+		change_state_after_war = no
+			attacker = {
+				state = 305
+				num_provinces = 1
+				on_win = ecu_border_conflict_won_attacker.1
+				on_lose = ecu_border_conflict_lost_attacker.1
+				on_cancel = ecu_border_conflict_canceled_attacker.1
+			}
+							
+			defender = {
+				state = 490
+				num_provinces = 1
+				on_win = ecu_border_conflict_won_defender.1
+				on_lose = ecu_border_conflict_lost_defender.1
+				on_cancel = ecu_border_conflict_canceled_attacker.1
+			}
+		}
+	}
+	option = {
+		name = ecuador.6.a
+	
+	}
+
+}
+#ECU/PRU war
+country_event = {
+	id = ecuador.8
+	title = ecuador.8.t
+	desc = ecuador.8.d
+	picture = GFX_report_event_americans_fighting_in_pacific_jungles
+	is_triggered_only = yes
+	major = yes
+	immediate = {
+		hidden_effect = {
+			random_list = {
+				seed = global.daily_random
+				50 = {
+					ECU = {									
+						declare_war_on = {
+							target = PRU
+							type = take_state
+							generator = { 490 } #
+						}
+					}
+				}
+				50 = {
+					PRU = {										
+						declare_war_on = {
+							target = ECU
+							type = take_state
+							generator = { 305 } #
+						}
+					}
+				}
+			}
+			ECU = {
+				add_ideas = neutrality_war
+				set_country_flag = ECU_PRU_war	
+			}
+			PRU = {
+				add_ideas = neutrality_war
+				set_country_flag = ECU_PRU_war	
+			}				
+			USA = {
+				diplomatic_relation = {
+					country = ECU
+					relation = guarantee
+					active = no
+				}		
+				diplomatic_relation = {
+					country = PRU
+					relation = guarantee
+					active = no
+				}
+			}
+		}
+	}
+	option = {
+		name = ecuador.8.a
+		trigger = {
+			not = {
+				tag = ECU
+				tag = PRU
+			}
+		}
+	}
+	option = {
+		name = ecuador.8.b
+		trigger = {
+			OR = {
+				tag = ECU
+				tag = PRU
+			}
+		}
+	}
+}
+#ECU folds
+country_event = {
+	id = ecuador.9
+	title = ecuador.9.t
+	desc = ecuador.9.d
+	picture = GFX_report_event_americans_fighting_in_pacific_jungles
+	is_triggered_only = yes
+	immediate = {
+		clr_country_flag = ECU_PRU_war
+	}
+	trigger = {
+		has_country_flag = ECU_PRU_war
+		surrender_progress > 0.18
+	}
+	option = {
+		name = ecuador.9.a #peace
+		ai_chance = { factor = 100 }
+		custom_effect_tooltip = needs_approval
+		effect_tooltip = {
+			PRU = {	
+				white_peace = {
+					tag = ECU
+				}
+			}
+			305 = {
+				add_extra_state_shared_building_slots = -1
+			}
+			490 = {
+				add_extra_state_shared_building_slots = 1
+			}
+			add_political_power = -50
+		}
+		hidden_effect = {
+			PRU = { country_event = ecuador.10 }
+		}
+	}
+	option = {
+		name = ecuador.9.b #fight on
+		ai_chance = { factor = 0 }
+		PRU = {
+			remove_ideas = neutrality_war
+		}
+	}
+}
+country_event = {
+	id = ecuador.10
+	title = ecuador.10.t
+	desc = ecuador.10.d
+	picture = GFX_report_event_americans_fighting_in_pacific_jungles
+	is_triggered_only = yes
+	immediate = {
+		clr_country_flag = ECU_PRU_war
+	}
+	option = {
+		name = ecuador.10.a #peace
+		ai_chance = { factor = 100 }
+		PRU = {
+			white_peace = {
+				tag = ECU
+			}
+		}
+		305 = {
+			add_extra_state_shared_building_slots = -1
+		}
+		490 = {
+			add_extra_state_shared_building_slots = 1
+		}
+		ECU = {
+			add_political_power = -50
+			hidden_effect = {
+				swap_ideas = {
+					remove_idea = neutrality_war
+					add_idea = neutrality_idea
+				}
+			}
+		}
+		hidden_effect = {
+			swap_ideas = {
+				remove_idea = neutrality_war
+				add_idea = neutrality_idea
+			}
+			BRA = {
+				country_event = { id = ecuador.11 days = 182 }
+			}
+		}
+	}
+	option = {
+		name = ecuador.10.b #fight on
+		ai_chance = { factor = 0 }
+		ECU = {
+			remove_ideas = neutrality_war
+		}
+		reverse_add_opinion_modifier = {
+			target = USA
+			modifier = condemn_aggression
+		}
+		reverse_add_opinion_modifier = {
+			target = BRA
+			modifier = condemn_aggression
+		}	
+		reverse_add_opinion_modifier = {
+			target = ARG
+			modifier = condemn_aggression
+		}
+		reverse_add_opinion_modifier = {
+			target = CHL
+			modifier = condemn_aggression
+		}		
+	}
+}
+#Rio Protocol
+country_event = {
+	id = ecuador.11
+	title = ecuador.11.t
+	desc = ecuador.11.d
+	picture = GFX_report_event_generic_sign_treaty2
+	is_triggered_only = yes
+	major = yes
+
+	option = {
+		name = ecuador.11.a #little busy
+		trigger = {
+			has_war = yes
+			NOT = {
+				TAG = USA
+				TAG = BRA
+				TAG = CHL
+				TAG = PRU
+				TAG = ECU
+				TAG = ARG
+			}
+		}
+	}
+	option = {
+		name = ecuador.11.b #good
+		trigger = {
+			has_war = no
+			NOT = {
+				TAG = USA
+				TAG = BRA
+				TAG = CHL
+				TAG = PRU
+				TAG = ECU
+				TAG = ARG
+			}
+		}
+	}
+	option = {
+		name = ecuador.11.c #Observer
+		trigger = {
+			OR = {
+				TAG = USA
+				TAG = BRA
+				TAG = CHL
+				TAG = ARG
+			}
+		}
+		add_political_power = 5
+		diplomatic_relation = {
+			country = ECU
+			relation = guarantee
+			active = yes
+		}		
+		diplomatic_relation = {
+			country = PRU
+			relation = guarantee
+			active = yes
+		}			
+	}
+	option = {
+		name = ecuador.11.e #good
+		trigger = {
+			OR = {
+				TAG = PRU
+				TAG = ECU
+			}
+		}
+	}
+}
+#Ecuador supports Italy
+news_event = {
+	id = ecuador.12
+	title = ecuador.12.t
+	desc = ecuador.12.d
+	picture = GFX_news_event_league_of_nations
+	is_triggered_only = yes
+	major = yes
+	option = {
+		name = ecuador.12.a
+		trigger = {
+			tag = ECU
+		}
+		add_opinion_modifier = {
+			target = ITA
+			modifier = offered_support
+		}
+		add_popularity = {
+			ideology = fascism
+			popularity = 0.03
+		}
+	}
+	option = {
+		name = ecuador.12.b
+		trigger = {
+			tag = ITA
+		}
+		add_opinion_modifier = {
+			target = ECU
+			modifier = offered_support
+		}
+		add_political_power = 2
+	}
+	option = {
+		name = ecuador.12.c
+		trigger = {
+			NOT = {
+				tag = ITA
+				tag = ECU
+			}
+		}
+	}
+}
+### EOF ###

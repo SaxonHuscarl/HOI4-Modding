@@ -1,0 +1,4709 @@
+@MAX_DECISION_CP_COST = 120
+
+political_actions = {
+	ai_airbase_1 = {
+		
+		visible = { always = no }
+		
+		days_remove = var:ai_airbase_1_days
+		
+		remove_effect = {
+			var:ai_airbase_1 = {
+				add_building_construction = {
+					type = air_base
+					level = 1
+					instant_build = yes
+				}
+				add_to_variable = { ai_built@air_base = 1 }
+				subtract_from_variable = { ai_queue_num@air_base = 1 }
+			}
+			add_to_variable = { ai_built@air_base = 1 }
+			
+			clear_variable = ai_airbase_1
+			clear_variable = ai_airbase_1_days
+		}
+	}
+	ai_airbase_2 = {
+		
+		visible = { always = no }
+		
+		days_remove = var:ai_airbase_2_days
+		
+		remove_effect = {
+			var:ai_airbase_2 = {
+				add_building_construction = {
+					type = air_base
+					level = 1
+					instant_build = yes
+				}
+				add_to_variable = { ai_built@air_base = 1 }
+				subtract_from_variable = { ai_queue_num@air_base = 1 }
+			}
+			add_to_variable = { ai_built@air_base = 1 }
+			
+			clear_variable = ai_airbase_2
+			clear_variable = ai_airbase_2_days
+		}
+	}
+	ai_airbase_3 = {
+		
+		visible = { always = no }
+		
+		days_remove = var:ai_airbase_3_days
+		
+		remove_effect = {
+			var:ai_airbase_3 = {
+				add_building_construction = {
+					type = air_base
+					level = 1
+					instant_build = yes
+				}
+				add_to_variable = { ai_built@air_base = 1 }
+				subtract_from_variable = { ai_queue_num@air_base = 1 }
+			}
+			add_to_variable = { ai_built@air_base = 1 }
+			
+			clear_variable = ai_airbase_3
+			clear_variable = ai_airbase_3_days
+		}
+	}
+	
+	ai_increase_debug_need = {
+		allowed = { }
+
+		visible = {
+			is_ai = yes
+			NOT = { check_variable = { resource@placeholder_1 = -100 } }
+
+			num_of_military_factories > 2
+			num_of_civilian_factories > 2
+		}
+
+		cost = 0
+
+		days_re_enable = 7
+
+		complete_effect = {
+			add_to_variable = { ai_debug_equipment_fix = 1 }
+			if = {
+				limit = {
+					check_variable = { resource@placeholder_1 = 0 }
+					
+					check_variable = { ai_save_equipment < 500000 }
+				}
+				
+				if = {
+					limit = {
+						check_variable = { ai_save_equipment_increase > 2 }
+					}
+					add_ai_strategy = {
+						type = save_equipment
+						id = ai_debug_equipment
+						value = 10000
+					}
+					add_to_variable = { ai_save_equipment = 10000 }
+					clear_variable = ai_save_equipment_increase
+				}
+				else = {
+					add_ai_strategy = {
+						type = save_equipment
+						id = ai_debug_equipment
+						value = 5000
+					}
+					add_to_variable = { ai_save_equipment = 5000 }
+				}
+				
+				
+				add_to_variable = { ai_save_equipment_increase = 1 }
+			}
+			else_if = {
+				limit = {
+					check_variable = { resource@placeholder_1 < -100 }
+				}
+				set_temp_variable = { div = resource@placeholder_1 }
+				multiply_temp_variable = { div = -1 }
+				divide_temp_variable = { div = 100 }
+				
+				set_temp_variable = { t = ai_save_equipment }
+				divide_temp_variable = { t = div }
+				round_temp_variable = t
+				
+				set_temp_variable = { change = t }
+				subtract_from_temp_variable = { change = ai_save_equipment }
+				
+				set_variable = { ai_save_equipment = t }
+				
+				meta_effect = {
+					text = {
+						add_ai_strategy = {
+							type = save_equipment
+							id = ai_debug_equipment
+							value = [X]
+						}
+					}
+					X = "[?change]"
+				}
+				
+				clear_variable = ai_save_equipment_increase
+			}
+		}
+
+		ai_will_do = {
+			factor = 500
+		}
+	}
+	ai_clear_debug_eq = {
+		allowed = { }
+
+		visible = {
+			is_ai = yes
+			has_equipment = {
+				ai_debug_equipment > 0
+			}
+		}
+
+		cost = 0
+
+		days_re_enable = 2
+
+		complete_effect = {
+			add_equipment_to_stockpile = {
+				type = ai_debug_equipment
+				amount = -10000
+			}
+		}
+
+		ai_will_do = {
+			factor = 500
+		}
+	}
+	
+	targeted_race_for_the_bomb = {
+		icon = generic_research
+
+		allowed = {
+			always = no
+		}
+
+		available = {
+			#Target is FROM
+			has_tech = atomic_research
+			NOT = { 
+				has_global_flag = first_nuke_dropped 
+				has_idea = race_for_the_bomb
+			}
+		}
+
+		#target_trigger = {
+		#	#Target is FROM
+		#	FROM = {
+		# 		NOT = { is_in_faction_with = ROOT }
+		#		has_tech = nuclear_reactor
+		#		nuclear_reactor > 0
+		#	}
+		#}
+
+		visible = {
+            #Target is FROM
+            has_tech = atomic_research
+			NOT = { 
+				has_global_flag = first_nuke_dropped 
+				has_idea = race_for_the_bomb
+			}
+            FROM = {
+        		NOT = { is_in_faction_with = ROOT }
+				has_tech = nuclear_reactor
+				nuclear_reactor > 0
+			}
+		}
+
+		complete_effect = {
+			set_country_flag = racing_for_the_bomb
+			add_ideas = race_for_the_bomb
+		}
+
+		ai_will_do = {
+			factor = 1
+			modifier = {
+				factor = 0
+				any_other_country = { has_tech = nukes }
+			}
+		}
+	}
+	rethink_goverment = {# ST recovery when ST < 0.3 and no civs
+		icon = decision_revolt
+
+		available = {
+			has_stability < 0.4	
+			has_war = no
+		}
+
+		visible = {
+			has_stability < 0.4	
+			has_war = no
+			num_of_civilian_factories_available_for_projects < 11
+		}
+
+		fire_only_once = no
+
+		modifier = {
+			stability_weekly = 0.01 #10% 
+			consumer_goods_expected_value = 0.08
+			political_power_gain = -1.5
+			research_speed_factor = -0.50
+			max_command_power = -90
+			opposition_party_drift = 0.05
+		}
+
+		days_remove = 70
+		days_re_enable = 90
+
+		cost = 50
+
+		complete_effect = {
+			add_stability = 0.05
+			
+			#Update AI Stability logic
+			if = { limit = { is_ai = yes }
+				ai_check_stability_need = yes 
+			}
+		}
+
+		ai_will_do = {
+			base = 0
+			modifier = {
+				add = stability_score
+				set_temp_variable = { weight = 60 }
+				set_temp_variable = { cost = 50 }
+				ai_check_stability_need = yes
+			}
+		}
+	}
+	
+	prevent_government_collapse_at_any_cost = {# ST recovery when ST < 0.3
+		icon = decision_revolt
+
+		available = {
+			has_stability < 0.4	
+			has_war = no
+		}
+
+		visible = {
+			has_stability < 0.4	
+			has_war = no
+			num_of_civilian_factories_available_for_projects > 10
+		}
+
+		fire_only_once = no
+
+		modifier = {
+			stability_weekly = 0.02 #20% 
+			consumer_goods_expected_value = 0.08
+			industrial_capacity_factory = -0.1
+			political_power_gain = -1
+			production_factory_max_efficiency_factor = -0.04
+			production_factory_efficiency_gain_factor = -0.04
+		}
+
+		days_remove = 70
+		days_re_enable = 90
+
+		cost = 50
+
+		complete_effect = {
+			add_stability = 0.05
+			
+			#Update AI Stability logic
+			if = { limit = { is_ai = yes }
+				ai_check_stability_need = yes 
+			}
+		}
+
+		ai_will_do = {
+			base = 0
+			modifier = {
+				add = stability_score
+				set_temp_variable = { weight = 60 }
+				set_temp_variable = { cost = 50 }
+				ai_check_stability_need = yes
+			}
+		}
+	}
+
+	promises_of_peace = {# Conversion WS to ST.
+		icon = generic_political_discourse
+
+		available = {
+			has_war = no
+			has_war_support > 0.3
+			NOT = {
+				has_idea = foreign_interventionism
+				has_idea = foreign_warmonger
+			}
+		}
+
+		visible = {
+			has_war = no
+			has_war_support > 0.3
+		}
+
+		#remove_trigger = {
+		#	has_war = yes
+		#}
+
+		fire_only_once = no
+		
+		modifier = { 
+			stability_weekly = 0.01 #12.8%
+			war_support_weekly = -0.006 #-7.7%
+			
+			custom_modifier_tooltip = "INSTANTLY_REMOVED_AT_WAR"
+		}
+
+		days_remove = 90
+		days_re_enable = 90
+
+		cost = 50
+
+		complete_effect = {
+			#Update AI Stability logic
+			if = { limit = { is_ai = yes }
+				ai_check_stability_need = yes 
+			}
+		}
+
+		ai_will_do = {
+			base = 0
+			modifier = {
+				add = stability_score
+				set_temp_variable = { cost = 50 }
+				ai_check_stability_need = yes
+			}
+			modifier = {
+				factor = has_war_support
+			}
+		}
+	}
+	
+	focus_on_peoples_problems = {# Short time ST maintain
+		icon = generic_welfare
+
+		available = {
+			has_war = no
+			has_stability > 0.3
+		}
+
+		visible = {
+			has_war = no
+			has_stability > 0.3
+		}
+
+		#remove_trigger = {
+		#	has_war = yes
+		#}
+
+		fire_only_once = no
+
+		modifier = {
+			stability_weekly = 0.01 #10%
+			political_power_gain = -0.1
+			
+			custom_modifier_tooltip = "INSTANTLY_REMOVED_AT_WAR"
+		}
+
+		days_remove = 70
+		days_re_enable = 90
+
+		cost = 50
+
+		complete_effect = {
+			 
+			#Update AI Stability logic
+			if = { limit = { is_ai = yes }
+				ai_check_stability_need = yes 
+			}
+			else_if = {
+				limit = { 
+					tag = SOV
+				}
+				subtract_from_variable = { tractor_stockpile = stab_tractors tooltip = tractor_removed_tt}
+			}
+		}
+
+		ai_will_do = {
+			base = 0
+			modifier = {
+				add = stability_score
+				set_temp_variable = { weight = 105 }
+				set_temp_variable = { cost = 50 }
+				ai_check_stability_need = yes
+			}
+			
+		}
+	}
+	POL_go_allies_again = {
+	
+		icon = generic_industry
+
+		allowed = {
+			original_tag = POL
+		}
+
+		available = {
+			has_war = yes
+			surrender_progress > 0.7
+			#num_of_controlled_states < 2
+		}
+		
+		activation = {
+			surrender_progress > 0.7
+			has_capitulated = no
+			has_war_with = GER
+			ENG = { has_war_with = GER }
+		}
+		
+		fire_only_once = yes
+		
+		is_good = yes
+
+		visible = {
+			
+		}
+		
+		days_remove = 1
+		days_mission_timeout = 1
+		
+		complete_effect = {
+			ENG = { add_to_faction = POL }
+			POL = { remove_ideas = POL_never_surrender }
+		}
+	}
+}
+
+economy_decisions = {
+
+	enforce_rationing = {
+	
+		icon = POL_looming_peasants_strike
+
+		cost = 15
+
+		days_remove = 120
+
+		visible = {
+			has_war = yes
+		}
+
+		modifier = {
+			war_support_weekly = -0.001
+			stability_weekly = -0.002
+			food_need_civilian = -0.15
+			opposition_party_drift = 0.03
+			compliance_growth = -0.25
+		}
+	} 
+	sell_stockpiles = {
+	
+		allowed = { always = no }
+		on_map_mode = decision_view_only state_target = yes
+		
+		icon = GFX_decision_trade
+
+		cost = 15
+
+		days_re_enable = 50
+
+		visible = {
+			check_variable = { food > 0 }
+		}
+		available = {
+			NOT = { has_country_flag = food_distibuted }
+			set_temp_variable = { food_fraction = food }
+			divide_temp_variable = { food_fraction = food_max }
+			custom_trigger_tooltip = {
+				tooltip = food_over_25_TT
+				check_variable = { food_fraction > 0.25 }
+			}
+		}
+		complete_effect = {
+			set_temp_variable = { food_sold = food_max }
+			divide_temp_variable = { food_sold = 10 }
+			subtract_from_variable = { food = food_sold tooltip = food_sold_tt }
+			add_cic = food_max
+		}
+	} 
+	celebrate_holiday = {
+	
+		allowed = { always = no }
+		on_map_mode = decision_view_only state_target = yes
+		
+		icon = POL_looming_peasants_strike
+
+		cost = 15
+
+		days_remove = 90
+
+		visible = {
+			check_variable = { food > 0 }
+		}
+		available = {
+			NOT = { has_country_flag = food_distibuted }
+			set_temp_variable = { food_fraction = food }
+			divide_temp_variable = { food_fraction = food_max }
+			custom_trigger_tooltip = {
+				tooltip = food_over_5_TT
+				check_variable = { food_fraction > 0.05 }
+			}
+		}
+		complete_effect = {
+			set_country_flag = food_distibuted
+		}
+		remove_effect = {
+			clr_country_flag = food_distibuted
+		}
+		modifier = {
+			stability_weekly = 0.001
+			food_need_civilian = 0.06
+			compliance_growth = 0.02
+		}
+	} 
+	food_relief = {
+	
+		allowed = { always = no }
+		on_map_mode = decision_view_only state_target = yes
+		
+		icon = GFX_decision_generic_welfare
+
+		cost = 15
+
+		days_remove = 80
+
+		visible = {
+			check_variable = { food > 0 }
+		}
+		available = {
+			NOT = { has_country_flag = food_distibuted }
+			set_temp_variable = { food_fraction = food }
+			divide_temp_variable = { food_fraction = food_max }
+			custom_trigger_tooltip = {
+				tooltip = food_over_10_TT
+				check_variable = { food_fraction > 0.1 }
+			}
+		}
+		complete_effect = {
+			set_country_flag = food_distibuted
+		}
+		remove_effect = {
+			clr_country_flag = food_distibuted
+		}
+		modifier = {
+			political_power_factor = 0.07
+			food_need_total = 0.05
+			compliance_growth = 0.01
+		}
+	}
+	troop_rations = {
+	
+		allowed = { always = no }
+		on_map_mode = decision_view_only state_target = yes
+		
+		icon = GFX_decision_category_military_operation
+
+		cost = 15
+
+		days_remove = 60
+
+		visible = {
+			check_variable = { food > 0 }
+			has_war = yes
+		}
+		available = {
+			NOT = { has_country_flag = food_distibuted }
+			set_temp_variable = { food_fraction = food }
+			divide_temp_variable = { food_fraction = food_max }
+			custom_trigger_tooltip = {
+				tooltip = food_over_10_TT
+				check_variable = { food_fraction > 0.1 }
+			}
+		}
+		complete_effect = {
+			set_country_flag = food_distibuted
+		}
+		remove_effect = {
+			clr_country_flag = food_distibuted
+		}
+		modifier = {
+			army_morale_factor = 0.1
+			food_need_military = 0.07
+		}
+	}	
+	more_civilian_goods = {# Conversion Cons Goods to ST.
+		icon = generic_consumer_goods
+
+		available = {
+			
+		}
+
+		visible = {
+			num_of_civilian_factories_available_for_projects > 10
+		}
+
+		fire_only_once = no
+
+		modifier = {
+			stability_weekly = 0.01 #10%
+			consumer_goods_expected_value = 0.04
+		}
+
+		days_remove = 70
+		days_re_enable = 90
+
+		cost = 50
+
+		complete_effect = {
+			
+			#Update AI Stability logic
+			if = { limit = { is_ai = yes }
+				ai_check_stability_need = yes 
+			}
+			else_if = {
+				limit = { 
+					tag = SOV
+				}
+				subtract_from_variable = { tractor_stockpile = stab_tractors tooltip = tractor_removed_tt}
+			}
+		}
+
+		ai_will_do = {
+			base = 0
+			modifier = {
+				add = stability_score
+				set_temp_variable = { weight = 50 }
+				set_temp_variable = { cost = 50 }
+				ai_check_stability_need = yes
+			}
+		}
+	}
+}
+
+propaganda_efforts = {
+	
+	war_propaganda_casualties = { 
+
+		icon = generic_prepare_civil_war
+
+		available = {
+			has_casualties_war_support < 0
+		}
+
+		visible = {
+			has_war = yes
+		}
+
+		days_remove = 180
+		
+		cost = 100
+
+		modifier = {
+			weekly_casualties_war_support = 0.006
+		}
+
+		ai_will_do = {
+			base = 0
+			modifier = {
+				add = ai_add
+				
+				has_casualties_war_support < -0.05
+				has_war_support < 0.9
+				set_temp_variable = { ai_add = has_casualties_war_support }
+				multiply_temp_variable = { ai_add = -100 }
+			}
+		}
+	}
+	
+	war_propaganda_convoys = { 
+
+		icon = GFX_decision_generic_naval
+
+		available = {
+			has_convoys_war_support < 0
+		}
+
+		visible = {
+			has_war = yes
+		}
+
+		days_remove = 180
+		
+		cost = 100
+
+		modifier = {
+			weekly_convoys_war_support = 0.006
+		}
+
+		ai_will_do = {
+			base = 0
+			modifier = {
+				add = ai_add
+				
+				has_convoys_war_support < -0.05
+				has_war_support < 0.9
+				set_temp_variable = { ai_add = has_convoys_war_support }
+				multiply_temp_variable = { ai_add = -100 }
+			}
+		}
+	}
+	
+	war_propaganda_bombing = { 
+
+		icon = GFX_decision_generic_air
+		
+		available = {
+			has_bombing_war_support < 0
+		}
+
+		visible = {
+			has_war = yes
+		}
+
+		days_remove = 180
+		
+		cost = 100
+
+		modifier = {
+			weekly_bombing_war_support = 0.006
+		}
+
+		ai_will_do = {
+			base = 0
+			modifier = {
+				add = ai_add
+				
+				has_bombing_war_support < -0.05
+				has_war_support < 0.9
+				set_temp_variable = { ai_add = has_bombing_war_support }
+				multiply_temp_variable = { ai_add = -100 }
+			}
+		}
+	}
+	
+	unite_people_under_goverment = {	# Short time high ST gain if ST > 0.3, short, high cost
+		icon = generic_political_address
+
+		available = {
+			NOT = { has_country_flag = war_propaganda_campaign_running }
+			has_stability > 0.3
+		}
+
+		visible = {
+			has_war = yes
+			has_stability > 0.3
+			has_civil_war = no
+		}
+
+		fire_only_once = no
+		cost = 30
+		
+		days_remove = 45
+		days_re_enable = 270
+
+		modifier = {
+			war_support_weekly = 0.02 #12.8%
+			stability_weekly = 0.02 #12.8%
+			political_power_factor = 0.1
+		}
+
+		complete_effect = {
+			set_country_flag = unite_people_under_goverment
+			
+			#Update AI Stability logic
+			if = { limit = { is_ai = yes }
+				ai_check_stability_need = yes 
+			}
+		}
+		
+		remove_effect = {
+			clr_country_flag = unite_people_under_goverment
+		}
+
+		ai_will_do = {
+			base = 0
+			modifier = {
+				add = stability_score
+				set_temp_variable = { weight = 150 }
+				set_temp_variable = { cost = 30 }
+				ai_check_stability_need = yes
+			}
+		}
+	}
+	
+	heroic_tales = {
+		icon = generic_prepare_civil_war
+
+		available = {
+			has_defensive_war = yes
+		}
+
+		visible = {
+			NOT = { has_idea = press_free }
+			has_defensive_war = yes
+		}
+
+		fire_only_once = no
+		cost = 75
+		
+		days_remove = 90
+		days_re_enable = 210
+
+		modifier = {
+			war_support_weekly = 0.01
+			war_stability_factor = 0.05
+		}
+
+		complete_effect = {
+
+			#Update AI War Support logic
+			if = { limit = { is_ai = yes }
+				ai_check_war_support_need = yes 
+			}
+		}
+		
+		remove_effect = {
+
+		}
+		
+		ai_will_do = {
+			base = 0
+			modifier = {
+				add = war_support_score
+				set_temp_variable = { cost = 75 }
+				ai_check_war_support_need = yes
+			}
+		}
+	}
+	demonise_opponents = {
+		icon = generic_speech
+
+		available = {
+			has_defensive_war = yes
+		}
+
+		visible = {
+			has_war = yes
+			NOT = { 
+				has_idea = press_free 
+				has_idea = press_regulated 
+			}
+		}
+
+		fire_only_once = no
+		cost = 75
+		
+		days_remove = 120
+		days_re_enable = 180
+
+		modifier = {
+			war_support_weekly = 0.01 #~17%
+			war_stability_factor = 0.05
+			war_support_factor = 0.05
+		}
+
+		complete_effect = {
+
+			#Update AI War Support logic
+			if = { limit = { is_ai = yes }
+				ai_check_war_support_need = yes 
+			}
+		}
+		
+		remove_effect = {
+
+		}
+		
+		ai_will_do = {
+			base = 0
+			modifier = {
+				add = war_support_score
+				add_to_temp_variable = { weight = 150 }
+				set_temp_variable = { cost = 75 }
+				ai_check_war_support_need = yes
+			}
+		}
+	}
+	assured_victory = {
+		icon = generic_nationalism
+
+		available = {		
+			has_war = yes
+		}
+
+		visible = {
+			has_war = yes
+			has_idea = press_state
+		}
+
+		fire_only_once = no
+		cost = 125
+		
+		days_remove = 150
+		days_re_enable = 240
+
+		modifier = {
+			war_support_weekly = 0.01
+			war_support_factor = 0.05
+			party_popularity_stability_factor = 0.10
+			ruling_party_drift = 0.01
+		}
+
+		complete_effect = {
+
+			#Update AI War Support logic
+			if = { limit = { is_ai = yes }
+				ai_check_war_support_need = yes 
+			}
+		}
+		
+		remove_effect = {
+			add_war_support = 0.05
+		}
+		
+		ai_will_do = {
+			base = 0
+			modifier = {
+				add = war_support_score
+				add_to_temp_variable = { weight = 1.5 }
+				set_temp_variable = { cost = 125 }
+				ai_check_war_support_need = yes
+			}
+		}
+	}
+	war_propaganda = {
+		icon = generic_prepare_civil_war
+
+		available = {
+			NOT = { has_country_flag = war_propaganda_campaign_running }
+			threat > 0.3
+		}
+
+		visible = {
+			threat > 0.25
+		}
+
+		fire_only_once = no
+		cost = 100
+		
+		days_remove = 90
+		days_re_enable = 90
+
+		modifier = {
+			war_support_weekly = 0.01
+			stability_weekly = 0.003
+		}
+
+		complete_effect = {
+			set_country_flag = war_propaganda_campaign_running
+		}
+		
+		remove_effect = {
+			clr_country_flag = war_propaganda_campaign_running
+		}
+		
+		complete_effect = {
+			
+			#Update AI War Support logic
+			if = { limit = { is_ai = yes }
+				ai_check_war_support_need = yes 
+			}
+		}
+
+		ai_will_do = {
+			base = 0
+			modifier = {
+				add = war_support_score
+				set_temp_variable = { cost = 100 }
+				ai_check_war_support_need = yes
+			}
+			
+		}
+	}
+	we_fight_united = {# +WS if in war and have high ST
+		icon = generic_military
+
+		available = {
+			NOT = { has_country_flag = we_fight_united }
+			has_stability > 0.3
+			has_war = yes
+		}
+
+		visible = {
+			has_war = yes
+			has_war_support < 1
+		}
+
+		fire_only_once = no
+		cost = 100
+		
+		days_remove = 90
+		days_re_enable = 100
+
+		modifier = {
+			war_support_weekly = 0.01
+			political_power_factor = 0.15
+			stability_weekly = 0.006
+		}
+
+		complete_effect = {
+			set_country_flag = we_fight_united
+			
+			#Update AI War Support logic
+			if = { limit = { is_ai = yes }
+				ai_check_war_support_need = yes 
+			}
+		}
+		remove_effect = {
+			clr_country_flag = we_fight_united
+		}
+
+		ai_will_do = {
+			base = 0
+			modifier = {
+				add = war_support_score
+				set_temp_variable = { weight = 125 }
+				set_temp_variable = { cost = 100 }
+				ai_check_war_support_need = yes
+			}
+			
+		}
+	}
+	preliminary_war_propaganda = {	# Preliminary war propaganda, while threat is small, no war
+		icon = generic_prepare_civil_war
+
+		available = {
+			has_war = no
+			has_war_support < 0.3
+		}
+
+		visible = {
+			threat > 0.02
+			threat < 0.3
+			has_war = no
+		}
+
+		fire_only_once = no
+		cost = 50
+		
+		days_remove = 135
+		days_re_enable = 160
+
+		modifier = {
+			war_support_weekly = 0.005
+			political_power_factor = -0.05
+		}
+
+		complete_effect = {
+			#Update AI War Support logic
+			if = { limit = { is_ai = yes }
+				ai_check_war_support_need = yes 
+			}
+		}
+		remove_effect = {
+		}
+
+		ai_will_do = {
+			base = 0
+			modifier = {
+				add = war_support_score
+				set_temp_variable = { weight = 90 }
+				set_temp_variable = { cost = 50 }
+				ai_check_war_support_need = yes
+			}
+		}
+	}
+	#Justify our war, if offensive war and low WS
+	justify_our_war = {
+		icon = generic_prepare_civil_war
+
+		available = {
+			has_war = yes
+			has_offensive_war = yes
+			has_war_support < 0.5
+		}
+
+		visible = {
+			has_offensive_war = yes
+			has_war_support < 0.5
+		}
+
+		fire_only_once = no
+		cost = 150
+		
+		days_remove = 70
+		days_re_enable = 90
+
+		modifier = {
+			war_support_weekly = 0.01
+			political_power_factor = -0.15
+			stability_weekly = -0.01
+		}
+
+		complete_effect = {
+			#Update AI War Support logic
+			if = { limit = { is_ai = yes }
+				ai_check_war_support_need = yes 
+			}
+		}
+		
+		ai_will_do = {
+			base = 0
+			modifier = {
+				add = war_support_score
+				set_temp_variable = { weight = 60 }
+				set_temp_variable = { cost = 150 }
+				ai_check_war_support_need = yes
+			}
+		}
+	}	
+	#Propaganda campaign against a country in offensive that has caused a lot of tension and started a war
+	war_propaganda_against_warmonger = {
+		icon = generic_prepare_civil_war
+		allowed = {
+            always = no
+        }
+		
+		available = {
+			NOT = { has_country_flag = war_propaganda_campaign_running }
+			FROM = {
+				OR = {
+					has_offensive_war = yes
+					is_justifying_wargoal_against = ROOT
+				}
+			}
+		}
+
+		visible = {
+			FROM = {
+				NOT = { 
+					has_government = ROOT
+				}
+				OR = {
+					AND = {
+						has_offensive_war = yes
+						has_added_tension_amount > 5
+					}
+					is_justifying_wargoal_against = ROOT
+					has_offensive_war_with = ROOT
+				}
+			}
+		}
+
+		#target_trigger = {
+		#	FROM = {
+		#		NOT = { 
+		#			is_neighbor_of = ROOT 
+		#			has_government = ROOT
+		#		}
+		#		OR = {
+		#			AND = {
+		#				NOT = { has_government = ROOT }
+		#				has_offensive_war = yes
+		#				has_added_tension_amount > 15
+		#			}
+		#			is_justifying_wargoal_against = ROOT
+		#			has_offensive_war_with = ROOT
+		#		}
+		#	}
+		#}
+
+		days_remove = 90
+
+		fire_only_once = yes
+		cost = 75
+
+		modifier = {
+			war_support_weekly = 0.008
+		}
+
+		complete_effect = {
+			set_country_flag = { flag = war_propaganda_campaign_running value = 1 days = 90 }
+			
+			#Update AI War Support logic
+			if = { limit = { is_ai = yes }
+				ai_check_war_support_need = yes 
+			}
+		}
+		
+		remove_effect = {
+			clr_country_flag = war_propaganda_campaign_running
+			
+			set_temp_variable = { FROM_ws_amount = 0 }
+			
+			#Amount of damage done
+			add_to_temp_variable = { FROM_ws_amount = From.num_occupied_states }
+			
+			#Tension created
+			set_temp_variable = { tempvar = From.has_added_tension_amount }
+			if = {
+				limit = { 
+					check_variable = { tempvar > 99 }
+				}
+				set_temp_variable = { tempvar = 100 }
+			}
+			add_to_temp_variable = { FROM_ws_amount = tempvar }
+			
+			#Size
+			add_to_temp_variable = { FROM_ws_amount = From.num_controlled_states }
+			
+			divide_temp_variable = { FROM_ws_amount = 2000 }	
+			
+			custom_effect_tooltip = FROM_PROPAGANDA_AMOUNT
+			add_war_support = FROM_ws_amount
+		}
+		
+		ai_will_do = {
+			base = 0
+			modifier = {
+				add = war_support_score
+				add_to_temp_variable = { weight = From.num_occupied_states }
+				add_to_temp_variable = { weight = From.has_added_tension_amount }
+				add_to_temp_variable = { weight = From.num_controlled_states }
+				add_to_temp_variable = { weight = 75 }
+				set_temp_variable = { cost = 75 }
+				ai_check_war_support_need = yes
+			}
+		}
+	}
+	
+	#Clash of gods
+	manifest_our_destiny  = {
+		icon = generic_prepare_civil_war
+
+		available = {
+			NOT = { has_country_flag = manifest_our_destiny  }
+			has_war = yes
+			is_major = yes
+			has_war_with_major = yes
+		}
+
+		visible = {
+			has_war_support > 0.7
+			has_stability > 0.7
+			has_war = yes
+			is_major = yes
+			has_war_with_major = yes
+		}
+
+		fire_only_once = no
+		cost = 175
+		
+		days_remove = 90
+		days_re_enable = 180 #Changed from THIRTY
+
+		modifier = {
+			army_core_attack_factor = 0.05
+			army_core_defence_factor = 0.05
+			war_support_weekly = 0.001
+			stability_weekly = 0.001
+		}
+
+		complete_effect = {
+			set_country_flag = manifest_our_destiny 
+		}
+		
+		remove_effect = {
+			clr_country_flag = manifest_our_destiny 
+		}
+
+		ai_will_do = {
+			base = 0
+			modifier = {
+				add = ai_add
+				set_temp_variable = { ai_add = surrender_progress }
+				multiply_temp_variable = { ai_add = 2000 }
+			}
+		}
+	}
+	
+	Military_Parade = {
+		icon = GFX_decision_generic_tank
+		available = {
+			check_variable = { command_power > 50 }
+			custom_trigger_tooltip = {
+				tooltip = Military_Parade_tt 
+				if = {
+					limit = {
+						is_ai = no 
+					}
+					var:original_capital = {
+						ROOT = {
+							divisions_in_state = {
+								size > 0
+								state = PREV
+							}
+						}
+					}
+				}
+			
+			}
+		}
+		fixed_random_seed = no
+		
+		highlight_states = { 
+			highlight_state_targets = {
+				state = var:Root.original_capital
+			}
+		}
+		
+		fire_only_once = no
+		cost = 0
+		
+		days_remove = 30
+		days_re_enable = 50
+		
+		modifier = {
+			civilian_factory_use = 5
+			command_power_gain = -0.25
+			opposition_party_drift = 0.01
+		}
+		
+		visible = {
+			has_variable = original_capital
+			var:original_capital = { is_controlled_by = ROOT }
+		}
+
+		complete_effect = {
+			#set_temp_variable = { cost = 50 }
+			#set_temp_variable = { mod = modifier@military_parade_cost }
+			#add_to_temp_variable = { mod = 1 }
+			#multiply_temp_variable = { cost = mod }
+			#set_temp_variable = { limit = @MAX_DECISION_CP_COST }
+			#clamp_temp_variable = { var = cost max = limit }
+			#multiply_temp_variable = { cost = -1 }
+			if = {
+				limit = { 
+					tag = SOV
+					is_ai = no
+				}
+				subtract_from_variable = { tractor_stockpile = stab_tractors tooltip = tractor_removed_tt}
+			}
+			hidden_effect = {
+				add_command_power = -50
+			}
+		}
+		
+		remove_effect = { 
+			var:original_capital = {
+				set_temp_variable = { Root.population = state_population_k }
+				if = { 	
+					limit = {
+						state = 896
+					}
+					add_to_temp_variable = { population = 841.state_population_k }
+				}
+				divide_temp_variable = { population = 200 }
+				
+				set_temp_variable = { state_value = state_strategic_value }
+				if = { 	
+					limit = {
+						state = 896
+					}
+					add_to_temp_variable = { state_value = 841.state_strategic_value }
+				}
+				multiply_temp_variable = { state_value = 0.15 }
+			}
+			clamp_temp_variable = { var = population min = 5 max = 30 }
+			clamp_temp_variable = { var = state_value min = 5 max = 30 }
+			add_to_temp_variable = { pp_gain = population }
+			add_to_temp_variable = { pp_gain = state_value }
+			
+			set_temp_variable = { war_score = any_war_score }
+			multiply_temp_variable = { war_score = 0.15 }
+			add_to_temp_variable = { pp_gain = war_score }
+			if = {
+				limit = {
+					has_country_flag = { flag = Military_Parade value = 1 days < 60 }
+				}
+				multiply_temp_variable = { pp_gain = 0.5 } 
+			}
+			else_if = {
+				limit = {
+					has_country_flag = { flag = Military_Parade value = 1 days < 70 }
+				}
+				multiply_temp_variable = { pp_gain = 0.6 } 
+			}
+			else_if = {
+				limit = {
+					has_country_flag = { flag = Military_Parade value = 1 days < 80 }
+				}
+				multiply_temp_variable = { pp_gain = 0.7 } 
+			}
+			else_if = {
+				limit = {
+					has_country_flag = { flag = Military_Parade value = 1 days < 90 }
+				}
+				multiply_temp_variable = { pp_gain = 0.8 } 
+			}
+			else_if = {
+				limit = {
+					has_country_flag = { flag = Military_Parade value = 1 days < 100 }
+				}
+				multiply_temp_variable = { pp_gain = 0.9 } 
+			}
+			set_temp_variable = { mod = modifier@military_parade_effect }
+			add_to_temp_variable = { mod = 1 }
+			multiply_temp_variable = { pp_gain = mod }
+			custom_effect_tooltip = Military_Effect_tt
+			add_political_power = pp_gain
+			set_country_flag = { flag = Military_Parade value = 1 days = 100 }
+			hidden_effect = {
+			### We might want the political swing to not impact these ideologies, my thought is authoritarian ideologies will tend to use military might to gain power, it also represents a small cost in taking the action			  
+				random_list = {
+					30 = {
+						add_popularity = {
+							ideology = fascism
+							popularity = 0.02
+						}
+					}
+					20 = { #communism and jingoism are NOT best buds and communists simply weren't excited by military might, unless they were in power
+						if = {
+							limit = { has_government = communism }
+							add_popularity = {
+								ideology = communism
+								popularity = 0.02
+							}
+						}
+						else = {
+							add_popularity = {
+								ideology = communism
+								popularity = -0.02
+							}								
+						}							
+					}
+					20 = {
+						add_popularity = {
+							ideology = neutrality
+							popularity = 0.02
+						}
+					}
+					5 = {
+						if = {
+							limit = { NOT = { has_government = communism } }
+							add_popularity = {
+								ideology = monarchism
+								popularity = 0.02
+							}
+						}
+					}
+					5 = {
+						add_war_support = 0.01
+					}
+					5 = {
+						add_war_support = 0.02
+					}
+					5 = {
+						add_war_support = 0.03
+					}
+					5 = {
+						add_war_support = 0.04
+					}
+					5 = {
+						add_war_support = 0.05
+					}
+				}
+			}
+		}
+		
+		ai_will_do = {
+			base = 25 		
+			modifier = {
+				factor = 0
+				OR = {
+					has_political_power > 160
+					political_power_daily > 2
+				}
+			}
+			modifier = {	## at this point its better to build instead of waste all the civ on parades
+				factor = 0
+				num_of_civilian_factories_available_for_projects < 15
+			}
+			modifier = {
+				factor = 0
+				has_war = yes
+				OR = {
+					has_political_power > 160
+					political_power_daily > 1
+				}
+			}
+		}
+		
+		custom_cost_trigger = {
+			#set_temp_variable = { cost = 50 }
+			#set_temp_variable = { mod = modifier@military_parade_cost }
+			#add_to_temp_variable = { mod = 1 }
+			#multiply_temp_variable = { cost = mod }
+			#set_temp_variable = { limit = @MAX_DECISION_CP_COST }
+			#clamp_temp_variable = { var = cost max = limit }
+			command_power > 50
+		}
+		custom_cost_text = cp_atleast_50
+	}
+	
+	Military_Parade_targeted = {
+		icon = GFX_decision_generic_tank
+		allowed = {
+            always = no
+        }
+		
+		available = {
+			check_variable = { command_power > 50 }
+			custom_trigger_tooltip = {
+				tooltip = Military_Parade_targeted_tt 
+				var:From.original_capital = {
+					ROOT = {
+						divisions_in_state = {
+							size > 0
+							state = PREV
+						}
+					}
+				}
+			}
+		}
+		
+		visible = {
+			NOT = { tag = FROM }
+		}
+		
+		fixed_random_seed = no
+
+		fire_only_once = no
+		cost = 0
+		
+		days_remove = 30
+		days_re_enable = -1 #country specific
+		
+		modifier = {
+			civilian_factory_use = 5
+			command_power_gain = -0.25
+			opposition_party_drift = 0.01
+		}
+
+		complete_effect = {
+			hidden_effect = {
+				#set_temp_variable = { cost = 50 }
+				#set_temp_variable = { mod = modifier@military_parade_cost }
+				#add_to_temp_variable = { mod = 1 }
+				#multiply_temp_variable = { cost = mod }
+				#multiply_temp_variable = { cost = -1 }
+				add_command_power = -50
+			}
+			
+		}
+		 
+		highlight_states = { 
+			highlight_state_targets = {
+				state = var:From.original_capital
+			}
+		}
+		
+		remove_effect = { 
+			
+			set_temp_variable = { parade_gain = FROM.pp_gain }
+			
+			if = {
+				limit = {
+					has_country_flag = { flag = Military_Parade value = 1 days < 60 }
+				}
+				multiply_temp_variable = { parade_gain = 0.5 } 
+			}
+			else_if = {
+				limit = {
+					has_country_flag = { flag = Military_Parade value = 1 days < 70 }
+				}
+				multiply_temp_variable = { parade_gain = 0.6 } 
+			}
+			else_if = {
+				limit = {
+					has_country_flag = { flag = Military_Parade value = 1 days < 80 }
+				}
+				multiply_temp_variable = { parade_gain = 0.7 } 
+			}
+			else_if = {
+				limit = {
+					has_country_flag = { flag = Military_Parade value = 1 days < 90 }
+				}
+				multiply_temp_variable = { parade_gain = 0.8 } 
+			}
+			else_if = {
+				limit = {
+					has_country_flag = { flag = Military_Parade value = 1 days < 100 }
+				}
+				multiply_temp_variable = { parade_gain = 0.9 } 
+			}
+			
+			set_country_flag = { flag = Military_Parade value = 1 days = 100 }
+			custom_effect_tooltip = Military_Effect_targeted_tt
+			add_political_power = parade_gain
+			hidden_effect = {
+				### We might want the political swing to not impact these ideologies, my thought is authoritarian ideologies will tend to use military might to gain power, it also represents a small cost in taking the action			  
+				random_list = {
+					30 = {
+						add_popularity = {
+							ideology = fascism
+							popularity = 0.02
+						}
+					}
+					20 = { #communism and jingoism are NOT best buds and communists simply weren't excited by military might, unless they were in power
+						if = {
+							limit = { has_government = communism }
+							add_popularity = {
+								ideology = communism
+								popularity = 0.02
+							}
+						}
+						else = {
+							add_popularity = {
+								ideology = communism
+								popularity = -0.02
+							}								
+						}							
+					}
+					20 = {
+						add_popularity = {
+							ideology = neutrality
+							popularity = 0.02
+						}
+					}
+					5 = {
+						if = {
+							limit = { NOT = { has_government = communism } }
+							add_popularity = {
+								ideology = monarchism
+								popularity = 0.02
+							}
+						}
+					}
+					5 = {
+						add_war_support = 0.01
+					}
+					5 = {
+						add_war_support = 0.02
+					}
+					5 = {
+						add_war_support = 0.03
+					}
+					5 = {
+						add_war_support = 0.04
+					}
+					5 = {
+						add_war_support = 0.05
+					}
+				}
+			}
+			FROM = { 
+				set_country_flag = enemy_parade  
+				clear_variable = pp_gain
+			}
+			hidden_effect = {
+				remove_targeted_decision = {
+					decision = Military_Parade_targeted
+					target = FROM 
+				}
+			}
+		}
+		
+		ai_will_do = {
+			base = 50 #high priority; can only be done once per target with high gains
+			modifier = {
+				factor = 2
+				command_power > 50
+			}
+			modifier = {
+				factor = 0.01 #pick the best ones
+				any_enemy_country = {
+					check_variable = { pp_gain > From.pp_gain }
+				}
+			}		
+			modifier = {
+				factor = 0
+				OR = {
+					has_political_power > 160
+					political_power_daily > 1.5
+				}
+			}		
+		}
+		
+		custom_cost_trigger = {
+			#set_temp_variable = { cost = 50 }
+			#set_temp_variable = { mod = modifier@military_parade_cost }
+			#add_to_temp_variable = { mod = 1 }
+			#multiply_temp_variable = { cost = mod }
+			command_power > 50
+		}
+		custom_cost_text = cp_atleast_50
+	}
+}
+
+operations = {
+	add_spy = {
+		icon = onmap_recruit_operative	
+		
+		allowed = { has_dlc = "La Resistance" }
+		
+		available = {
+			hidden_trigger = { command_power > 74.9 }
+		}
+
+		visible = {
+			has_intelligence_agency = yes
+			#not = { has_country_flag = spy_recruited } #not needed due to fire_only_once
+			has_done_agency_upgrade = upgrade_form_operations
+		}
+
+		fire_only_once = yes
+		
+		days_remove = 90
+		
+		modifier = {
+            agency_upgrade_time = 0.5
+        }
+		
+		remove_effect = {
+			#set_country_flag = spy_recruited
+			add_ideas = more_spy
+        }
+		
+		ai_will_do = {
+			base = 50
+			modifier = {
+				add = -45
+				has_political_power < 80
+				is_major = no			
+			}
+		}
+		complete_effect = {
+			hidden_effect = {
+				add_command_power = -75 
+			}
+		}		
+		custom_cost_trigger = {
+			command_power > 74.9
+		}
+		custom_cost_text = cp_atleast_75
+	}
+	War_games_navy = {
+		icon = GFX_decision_generic_naval
+		fixed_random_seed = no
+		allowed = { always = no }
+		on_map_mode = decision_view_only state_target = yes
+		available = {
+			has_navy_size = { size > 0 }
+			set_temp_variable = { cost = 75 }
+			set_temp_variable = { mod = modifier@war_games_cost }
+			add_to_temp_variable = { mod = 1 }
+			multiply_temp_variable = { cost = mod }
+			set_temp_variable = { limit = @MAX_DECISION_CP_COST }
+			clamp_temp_variable = { var = cost max = limit }
+			hidden_trigger = { command_power > cost }
+		}
+		visible = {
+			has_country_flag = coastal_state
+		}
+
+		fire_only_once = no
+		#cost = 25
+		
+		days_remove = 70
+		days_re_enable = 50
+		
+		modifier = {
+			experience_gain_navy = 0.14
+		}
+
+		complete_effect = {
+			hidden_effect = {
+				set_temp_variable = { cost = 75 }
+				set_temp_variable = { mod = modifier@war_games_cost }
+				add_to_temp_variable = { mod = 1 }
+				multiply_temp_variable = { cost = mod }
+				set_temp_variable = { limit = @MAX_DECISION_CP_COST }
+				clamp_temp_variable = { var = cost max = limit }
+				multiply_temp_variable = { cost = -1 }
+				add_command_power = cost 
+				
+				every_navy_leader = {
+					set_unit_leader_flag = { 
+						flag = has_navy_games
+						value = 1
+						days = 70
+					}
+				}
+			}
+			
+		}
+		
+		remove_effect = { 
+			navy_experience = 5
+			
+			if = { limit = { has_idea = officer_train_none }
+				set_temp_variable = { xp_mult = 0.8 }
+			}
+			else_if = { limit = { has_idea = officer_train_high }
+				set_temp_variable = { xp_mult = 1.1 }
+			}
+			else_if = { limit = { has_idea = officer_train_elite }
+				set_temp_variable = { xp_mult = 1.2 }
+			}
+					
+			if = {
+				limit = {
+					has_country_flag = navy_war_games_leader
+				}
+				random_navy_leader = {
+					limit = { has_trait = navy_war_games }
+					
+					set_temp_variable = { xp_gained = 100 }
+					
+					set_temp_variable = { per_level = 50 }
+					multiply_temp_variable = { per_level = skill_level }
+					clamp_temp_variable = { var = per_level max = 150 }
+					add_to_temp_variable = { xp_gained = per_level }
+					
+					set_temp_variable = { xp_random = global.daily_random }
+					multiply_temp_variable = { xp_random = 100 }
+					add_to_temp_variable = { xp_gained = xp_random }
+					multiply_temp_variable = { xp_gained = xp_mult?1 }
+					
+					meta_effect = {
+						text = {
+							gain_xp = [X]
+						}
+						X = "[?xp_gained]"
+					}
+					remove_unit_leader_trait = navy_war_games
+					ROOT = { clr_country_flag = navy_war_games_leader }
+				}
+			}
+			else = {
+				random_navy_leader = {
+					set_temp_variable = { xp_gained = 100 }
+					
+					set_temp_variable = { per_level = 50 }
+					multiply_temp_variable = { per_level = skill_level }
+					clamp_temp_variable = { var = per_level max = 150 }
+					add_to_temp_variable = { xp_gained = per_level }
+					
+					set_temp_variable = { xp_random = global.daily_random }
+					multiply_temp_variable = { xp_random = 100 }
+					add_to_temp_variable = { xp_gained = xp_random }
+					multiply_temp_variable = { xp_gained = xp_mult?1 }
+					
+					meta_effect = {
+						text = {
+							gain_xp = [X]
+						}
+						X = "[?xp_gained]"
+					}
+				}
+			}
+			#random_navy_leader = {
+			#	limit = {
+			#		not = { has_trait = Master_theoretician }
+			#	}
+			#	add_unit_leader_trait = Master_theoretician
+			#}
+			if = {
+				limit = {
+					has_dynamic_modifier = {
+						modifier = red_fleet_purged
+					}
+				}
+				custom_effect_tooltip = navy_purge_change_TT
+				random_list = {
+					20 = {
+						add_to_variable = { nav_purge_xp = 0.01 tooltip = nav_purge_xp_TT }
+					}
+					15 = {
+						add_to_variable = { nav_purge_accident = -0.01 tooltip = nav_purge_accident_TT }
+					}
+					10 = {
+						add_to_variable = { nav_purge_sortie = 0.01 tooltip = nav_purge_sortie_TT }
+					}
+					15 = {
+						add_to_variable = { nav_purge_org = 0.01 tooltip = nav_purge_org_TT }
+					}
+					5 = {
+						add_to_variable = { nav_purge_hit = 0.01 tooltip = nav_purge_hit_TT }
+					}
+					5 = {
+						add_to_variable = { nav_purge_strike = 0.01 tooltip = nav_purge_strike_TT }
+					}
+					5 = {
+						add_to_variable = { nav_purge_retreat = 0.01 tooltip = nav_purge_retreat_TT }
+					}
+				}
+			}
+			
+		}
+		custom_cost_trigger = {
+			set_temp_variable = { cost = 75 }
+			set_temp_variable = { mod = modifier@war_games_cost }
+			add_to_temp_variable = { mod = 1 }
+			multiply_temp_variable = { cost = mod }
+			set_temp_variable = { limit = @MAX_DECISION_CP_COST }
+			clamp_temp_variable = { var = cost max = limit }
+			command_power > cost
+		}
+		custom_cost_text = cp_atleast
+	}
+	War_games_Airforce = {
+		icon = GFX_decision_generic_air
+		allowed = { always = no }
+		on_map_mode = decision_view_only state_target = yes
+		fixed_random_seed = no
+		available = {
+			has_deployed_air_force_size = { size > 0 }
+			set_temp_variable = { cost = 60 }
+			set_temp_variable = { mod = modifier@war_games_cost }
+			add_to_temp_variable = { mod = 1 }
+			multiply_temp_variable = { cost = mod }
+			set_temp_variable = { limit = @MAX_DECISION_CP_COST }
+			clamp_temp_variable = { var = cost max = limit }
+			hidden_trigger = { command_power > cost }
+		}
+
+		fire_only_once = no
+		#cost = 25
+		
+		days_remove = 70
+		days_re_enable = 50
+		
+		modifier = {
+			experience_gain_air = 0.14
+		}
+
+		complete_effect = {
+			hidden_effect = {
+				set_temp_variable = { cost = 60 }
+				set_temp_variable = { mod = modifier@war_games_cost }
+				add_to_temp_variable = { mod = 1 }
+				multiply_temp_variable = { cost = mod }
+				set_temp_variable = { limit = @MAX_DECISION_CP_COST }
+				clamp_temp_variable = { var = cost max = limit }
+				multiply_temp_variable = { cost = -1 }
+				add_command_power = -50 
+			}
+		}
+		
+		remove_effect = { 
+			air_experience = 5
+			custom_effect_tooltip = War_games_Airforce_tt
+			hidden_effect = {
+				random_list = {
+					10 = {
+						add_ace = {
+							name = Wing
+							surname = "Alpha"
+							callsign = Leader
+							type = gamer_ace
+							is_female = no
+						}
+					}
+					10 = {
+						add_ace = {
+							name = Wing
+							surname = "Beta"
+							callsign = Leader
+							type = gamer_ace
+							is_female = no
+						}
+					}
+					10 = {
+						add_ace = {
+							name = Wing
+							surname = "Delta"
+							callsign = Leader
+							type = gamer_ace
+							is_female = no
+						}
+					}
+					10 = {
+						add_ace = {
+							name = Wing
+							surname = "Gamma"
+							callsign = Leader
+							type = gamer_ace
+							is_female = no
+						}
+					}
+					10 = {
+						add_ace = {
+							name = Wing
+							surname = "Theta"
+							callsign = Leader
+							type = gamer_ace
+							is_female = no
+						}
+					}
+					## no ace for you
+					50 = { } 
+				}
+			}
+			if = {
+				limit = {
+					has_dynamic_modifier = {
+						modifier = red_air_purged
+					}
+				}
+				custom_effect_tooltip = air_purge_change_TT
+				random_list = {
+					25 = {
+						add_to_variable = { air_purge_xp = 0.01 tooltip = air_purge_xp_TT }
+					}
+					25 = {
+						add_to_variable = { air_purge_xp_max = 1 tooltip = air_purge_xp_max_TT }
+					}
+					10 = {
+						add_to_variable = { air_purge_sup = 0.01 tooltip = air_purge_sup_TT }
+					}
+					15 = {
+						add_to_variable = { air_purge_escort = 0.01 tooltip = air_purge_escort_TT }
+					}
+					5 = {
+						add_to_variable = { air_purge_intercept = 0.01 tooltip = air_purge_intercept_TT }
+					}
+					30 = {
+						add_to_variable = { air_purge_ace = 0.01 tooltip = air_purge_ace_TT }
+					}
+					20 = {
+						add_to_variable = { air_purge_accident = -0.01 tooltip = air_purge_accident_TT }
+					}
+				}
+			}				
+		}
+		custom_cost_trigger = {
+			set_temp_variable = { cost = 60 }
+			set_temp_variable = { mod = modifier@war_games_cost }
+			add_to_temp_variable = { mod = 1 }
+			multiply_temp_variable = { cost = mod }
+			set_temp_variable = { limit = @MAX_DECISION_CP_COST }
+			clamp_temp_variable = { var = cost max = limit }
+			command_power > cost
+		}
+		custom_cost_text = cp_atleast
+	}
+	War_games_Army = {
+		icon = GFX_decision_generic_tank
+		allowed = { always = no }
+		on_map_mode = decision_view_only state_target = yes
+		available = {
+			num_divisions > 0
+			set_temp_variable = { cost = 75 }
+			set_temp_variable = { mod = modifier@war_games_cost }
+			add_to_temp_variable = { mod = 1 }
+			multiply_temp_variable = { cost = mod }
+			set_temp_variable = { limit = @MAX_DECISION_CP_COST }
+			clamp_temp_variable = { var = cost max = limit }
+			hidden_trigger = { command_power > cost }
+		}
+		fixed_random_seed = no
+		fire_only_once = no
+		#cost = 25
+		
+		days_remove = 70
+		days_re_enable = 50
+		
+		modifier = {
+			experience_gain_army = 0.14
+		}
+
+		complete_effect = {
+			hidden_effect = {
+				set_temp_variable = { cost = 75 }
+				set_temp_variable = { mod = modifier@war_games_cost }
+				add_to_temp_variable = { mod = 1 }
+				multiply_temp_variable = { cost = mod }
+				set_temp_variable = { limit = @MAX_DECISION_CP_COST }
+				clamp_temp_variable = { var = cost max = limit }
+				multiply_temp_variable = { cost = -1 }
+				add_command_power = cost
+				
+				every_army_leader = {
+					set_unit_leader_flag = { 
+						flag = has_army_games
+						value = 1
+						days = 70
+					}
+				}
+			}
+		}
+		
+		remove_effect = { 
+			army_experience = 5
+			
+			if = { limit = { has_idea = officer_train_none }
+				set_temp_variable = { xp_mult = 0.8 }
+			}
+			else_if = { limit = { has_idea = officer_train_high }
+				set_temp_variable = { xp_mult = 1.1 }
+			}
+			else_if = { limit = { has_idea = officer_train_elite }
+				set_temp_variable = { xp_mult = 1.2 }
+			}
+					
+			if = {
+				limit = {
+					has_country_flag = army_war_games_leader
+				}
+				random_army_leader = {
+					limit = { has_trait = army_war_games }
+					
+					set_temp_variable = { xp_gained = 100 }
+					
+					set_temp_variable = { per_level = 50 }
+					multiply_temp_variable = { per_level = skill_level }
+					clamp_temp_variable = { var = per_level max = 150 }
+					add_to_temp_variable = { xp_gained = per_level }
+					
+					set_temp_variable = { xp_random = global.daily_random }
+					multiply_temp_variable = { xp_random = 100 }
+					add_to_temp_variable = { xp_gained = xp_random }
+					multiply_temp_variable = { xp_gained = xp_mult?1 }
+					
+					meta_effect = {
+						text = {
+							gain_xp = [X]
+						}
+						X = "[?xp_gained]"
+					}
+					remove_unit_leader_trait = army_war_games
+					ROOT = { clr_country_flag = army_war_games_leader }
+				}
+			}
+			else = {
+				random_army_leader = {
+					set_temp_variable = { xp_gained = 100 }
+					
+					set_temp_variable = { per_level = 50 }
+					multiply_temp_variable = { per_level = skill_level }
+					clamp_temp_variable = { var = per_level max = 150 }
+					add_to_temp_variable = { xp_gained = per_level }
+					
+					set_temp_variable = { xp_random = global.daily_random }
+					multiply_temp_variable = { xp_random = 100 }
+					add_to_temp_variable = { xp_gained = xp_random }
+					multiply_temp_variable = { xp_gained = xp_mult?1 }
+					
+					meta_effect = {
+						text = {
+							gain_xp = [X]
+						}
+						X = "[?xp_gained]"
+					}
+				}
+			}
+			if = {
+				limit = {
+					has_dynamic_modifier = {
+						modifier = red_army_purged
+					}
+				}
+				custom_effect_tooltip = army_purge_change_TT
+				random_list = {
+					10 = {
+						add_to_variable = { army_purge_defence = 0.01 tooltip = army_purge_defence_TT }
+					}
+					20 = {
+						add_to_variable = { army_purge_org = 0.03 tooltip = army_purge_org_TT }
+					}
+					5 = {
+						add_to_variable = { army_purge_morale = 0.01 tooltip = army_purge_morale_TT }
+					}
+					5 = {
+						add_to_variable = { army_purge_breakthough = 0.01 tooltip = army_purge_breakthough_TT }
+					}
+				}
+			}
+		}
+		
+		custom_cost_trigger = {
+			set_temp_variable = { cost = 75 }
+			set_temp_variable = { mod = modifier@war_games_cost }
+			add_to_temp_variable = { mod = 1 }
+			multiply_temp_variable = { cost = mod }
+			set_temp_variable = { limit = @MAX_DECISION_CP_COST }
+			clamp_temp_variable = { var = cost max = limit }
+			command_power > cost
+		}
+		custom_cost_text = cp_atleast
+	}
+	
+	train_command = {
+		icon = generic_officer
+		ai_will_do = {
+			factor = 1
+		}
+		available = {
+			hidden_trigger = {  
+				has_army_experience > 49.9 
+				OR = {
+					has_air_experience > 14.9
+					has_navy_experience > 14.9
+				}
+			}			
+		}
+
+		visible = {
+			not = { 
+				has_idea = CHI_incompetent_officers 
+				has_idea = cmd_increase10
+			}
+		}
+
+		fire_only_once = no		
+		
+		days_remove = 25
+		days_re_enable = 100
+		
+		modifier = {
+			training_time_army_factor = 0.25
+			planning_speed = -0.10
+			military_leader_cost_factor = 0.50 
+		}
+
+		complete_effect = {
+			if = {
+				limit = { has_navy_experience > 14.9 }
+				hidden_effect = {
+					army_experience = -50
+					navy_experience = -15
+				}
+			}
+			else = {
+				hidden_effect = {
+					army_experience = -50
+					air_experience = -15
+				}
+			}
+		}
+		remove_effect = {
+			if = {
+				limit = { has_idea = cmd_increase9 }
+				swap_ideas = {
+					add_idea = cmd_increase10
+					remove_idea = cmd_increase9
+				}
+			}
+			else_if = {
+				limit = { has_idea = cmd_increase8 }
+				swap_ideas = {
+					add_idea = cmd_increase9
+					remove_idea = cmd_increase8
+				}
+			}
+			else_if = {
+				limit = { has_idea = cmd_increase7 }
+				swap_ideas = {
+					add_idea = cmd_increase8
+					remove_idea = cmd_increase7
+				}
+			}
+			else_if = {
+				limit = { has_idea = cmd_increase6 }
+				swap_ideas = {
+					add_idea = cmd_increase7
+					remove_idea = cmd_increase6
+				}
+			}
+			else_if = {
+				limit = { has_idea = cmd_increase5 }
+				swap_ideas = {
+					add_idea = cmd_increase6
+					remove_idea = cmd_increase5
+				}
+			}		
+			else_if = {
+				limit = { has_idea = cmd_increase4 }
+				swap_ideas = {
+					add_idea = cmd_increase5
+					remove_idea = cmd_increase4
+				}
+			}
+			else_if = {
+				limit = { has_idea = cmd_increase3 }
+				swap_ideas = {
+					add_idea = cmd_increase4
+					remove_idea = cmd_increase3
+				}				
+			}	
+			else_if = {
+				limit = { has_idea = cmd_increase2 }
+				swap_ideas = {
+					add_idea = cmd_increase3
+					remove_idea = cmd_increase2
+				}				
+			}
+			else_if = {
+				limit = { has_idea = cmd_increase1 }
+				swap_ideas = {
+					add_idea = cmd_increase2
+					remove_idea = cmd_increase1
+				}				
+			}
+			else_if = {
+				limit = { has_idea = cmd_increase }
+				swap_ideas = {
+					add_idea = cmd_increase1
+					remove_idea = cmd_increase
+				}				
+			}
+			else = {
+				add_ideas = cmd_increase
+			}
+			if = {
+				limit = {
+					has_dynamic_modifier = {
+						modifier = officers_purged
+					}	
+				}
+				custom_effect_tooltip = officer_purge_change_TT
+				add_to_variable = { officers_purged_train = -0.01 tooltip = officers_purged_train_TT }				
+				add_to_variable = { officers_purged_mobilization = 0.01 tooltip = officers_purged_mobilization_TT }
+				add_to_variable = { officers_purged_command = 0.02 tooltip = officers_purged_command_TT }
+				add_to_variable = { officers_purged_experience = 0.01 tooltip = officers_purged_experience_TT }
+				add_to_variable = { officers_purged_experience_cap = 1 tooltip = officers_purged_experience_cap_TT }			
+			}
+		}
+		
+		ai_will_do = {
+			factor = 1
+			modifier = {
+				factor = 0 
+				OR = {
+					has_army_experience < 200
+					has_air_experience < 200
+					has_navy_experience < 200
+				}
+				NOT = { tag = SOV }
+			}
+		}
+		
+		custom_cost_trigger = {
+			has_army_experience > 49.9 
+			OR = {
+				has_air_experience > 14.9
+				has_navy_experience > 14.9
+			}
+		}
+		custom_cost_text = army_navy_air_xp
+	}
+	
+}
+
+war_measures = {
+@CIV_TRUCKS_FROM_CIV_FUEL = 0.7
+@TRUCKS_FROM_CIV_FUEL = 0.05
+
+@CIV_CARS_FROM_CIV_FUEL = 1.5
+@CARS_FROM_CIV_FUEL = 0.15
+
+@CIV_MOTORCYCLES_FROM_CIV_FUEL = 0.6
+@MOTORCYCLES_FROM_CIV_FUEL = 0.1
+
+@REQUISITE_FACTOR_PER_COMPLETE = -0.27
+@REQUISITE_DECISION_MAX_AMOUNT = 3
+
+	requisition_trucks = {
+		icon = motorized_operation
+		allowed = { always = no }
+		
+		visible = {
+			has_capitulated = no
+			NOT = { has_country_flag = requisition_trucks_done }
+		}
+		state_target = yes
+		on_map_mode = decision_view_only state_target = yes
+
+		fire_only_once = no
+
+		days_re_enable = 180
+		cost = 50
+		
+		days_remove = 90
+		
+		modifier = {
+            industrial_capacity_factory = -0.04
+			political_power_factor = -0.05
+			opposition_party_drift = 0.02
+        }
+
+		complete_effect = {
+			add_war_support = -0.03
+			add_to_variable = { num_requisition_trucks = 1 }
+		}
+		
+		remove_effect = {
+			set_temp_variable = { t1 = civilian_fuel_use }
+			set_temp_variable = { mod = modifier@civilian_fuel_use_factor }
+			add_to_temp_variable = { mod = 1 }
+			divide_temp_variable = { t1 = mod }
+			multiply_temp_variable = { t1 = 24 }
+			
+			set_temp_variable = { factor = num_requisition_trucks }
+			multiply_temp_variable = { factor = @REQUISITE_FACTOR_PER_COMPLETE }
+			add_to_temp_variable = { factor = 1 }
+		
+		 	multiply_temp_variable = { t1 = factor }
+			clamp_temp_variable = { var = t1 min = 10 }
+			
+			set_temp_variable = { t2 = t1 }
+		 	multiply_temp_variable = { t1 = @CIV_TRUCKS_FROM_CIV_FUEL }
+			multiply_temp_variable = { t2 = @TRUCKS_FROM_CIV_FUEL }
+			
+			add_equipment_to_stockpile = {
+				type = civilian_motorized_equipment
+				amount = t1
+				producer = CIV
+			}
+			add_equipment_to_stockpile = {
+				type = motorized_equipment_1
+				amount = t2
+			}
+			
+			if = {
+				limit = {
+					check_variable = { num_requisition_trucks = @REQUISITE_DECISION_MAX_AMOUNT }
+				}
+				clear_variable = num_requisition_trucks
+				set_country_flag = requisition_trucks_done
+			}
+        } 
+		
+		ai_will_do = {
+			factor = 0
+		}
+	}
+	
+	requisition_cars = {
+		icon = motorized_operation
+		allowed = { always = no }
+
+		visible = {
+			has_capitulated = no
+			NOT = { has_country_flag = requisition_cars_done }
+		}
+		state_target = yes
+		on_map_mode = decision_view_only state_target = yes
+
+		fire_only_once = no
+		cost = 50
+		
+		days_re_enable = 180
+		days_remove = 90
+		
+		modifier = {
+            industrial_capacity_factory = -0.04
+			political_power_factor = -0.05
+			opposition_party_drift = 0.02
+        }
+
+		complete_effect = {
+			add_war_support = -0.025
+			add_to_variable = { num_requisition_cars = 1 }
+		}
+		
+		remove_effect = {
+			set_temp_variable = { t1 = civilian_fuel_use }
+			set_temp_variable = { mod = modifier@civilian_fuel_use_factor }
+			add_to_temp_variable = { mod = 1 }
+			divide_temp_variable = { t1 = mod }
+			multiply_temp_variable = { t1 = 24 }
+			
+			set_temp_variable = { factor = num_requisition_cars }
+			multiply_temp_variable = { factor = @REQUISITE_FACTOR_PER_COMPLETE }
+			add_to_temp_variable = { factor = 1 }
+		
+		 	multiply_temp_variable = { t1 = factor }
+			clamp_temp_variable = { var = t1 min = 10 }
+			
+			set_temp_variable = { t2 = t1 }
+		 	multiply_temp_variable = { t1 = @CIV_CARS_FROM_CIV_FUEL }
+			multiply_temp_variable = { t2 = @CARS_FROM_CIV_FUEL }
+			
+			add_equipment_to_stockpile = {
+				type = civilian_motorized_lia_equipment
+				amount = t1
+				producer = CIV
+			}
+			add_equipment_to_stockpile = {
+				type = motorized_lia_equipment_01
+				amount = t2
+			}
+			
+			if = {
+				limit = {
+					check_variable = { num_requisition_cars = @REQUISITE_DECISION_MAX_AMOUNT }
+				}
+				clear_variable = num_requisition_cars
+				set_country_flag = requisition_cars_done
+			}
+         }
+		
+		ai_will_do = {
+			factor = 0
+		}
+	}
+	
+	requisition_motorcycles = {
+		icon = motorized_operation
+		allowed = { always = no }
+
+		visible = {
+			has_capitulated = no
+			NOT = { has_country_flag = requisition_motorcycles_done }
+		}
+		state_target = yes
+		on_map_mode = decision_view_only state_target = yes
+
+		fire_only_once = no
+		cost = 50
+		
+		days_re_enable = 180
+		days_remove = 90
+		
+		modifier = {
+            industrial_capacity_factory = -0.04
+			political_power_factor = -0.05
+			opposition_party_drift = 0.01
+        }
+
+		complete_effect = {
+			add_war_support = -0.03
+			add_to_variable = { num_requisition_motorcycles = 1 }
+		}
+		
+		remove_effect = {
+			set_temp_variable = { t1 = civilian_fuel_use }
+			set_temp_variable = { mod = modifier@civilian_fuel_use_factor }
+			add_to_temp_variable = { mod = 1 }
+			divide_temp_variable = { t1 = mod }
+			multiply_temp_variable = { t1 = 24 }
+			
+			set_temp_variable = { factor = num_requisition_motorcycles }
+			multiply_temp_variable = { factor = @REQUISITE_FACTOR_PER_COMPLETE }
+			add_to_temp_variable = { factor = 1 }
+		
+		 	multiply_temp_variable = { t1 = factor }
+			clamp_temp_variable = { var = t1 min = 10 }
+			
+			set_temp_variable = { t2 = t1 }
+		 	multiply_temp_variable = { t1 = @CIV_MOTORCYCLES_FROM_CIV_FUEL }
+			multiply_temp_variable = { t2 = @MOTORCYCLES_FROM_CIV_FUEL }
+			
+			add_equipment_to_stockpile = {
+				type = civilian_recon_mot_equipment
+				amount = t1
+				producer = CIV
+			}
+			add_equipment_to_stockpile = {
+				type = recon_mot_equipment_0
+				amount = t2
+			}
+			
+			if = {
+				limit = {
+					check_variable = { num_requisition_motorcycles = @REQUISITE_DECISION_MAX_AMOUNT }
+				}
+				clear_variable = num_requisition_motorcycles
+				set_country_flag = requisition_motorcycles_done
+			}
+        }
+		
+		ai_will_do = {
+			factor = 0	
+		}
+	}
+	
+	collect_metals = {
+		icon = tungsten
+
+		visible = {
+			has_capitulated = no
+		}
+
+		fire_only_once = no
+		cost = 50
+		
+		days_remove = 180
+		days_re_enable = 1
+		
+		complete_effect = {
+			add_dynamic_modifier = {
+				modifier = scrap_metals_collected
+				days = 180 # will be removed after this many days passes
+			}
+			custom_effect_tooltip = scrap_metals_collected_TT
+			set_temp_variable = { steel_temp = civilian_fuel_use }
+			multiply_temp_variable = { steel_temp = 0.75 }
+			round_temp_variable = steel_temp
+			clamp_temp_variable = { var = steel_temp min = 5 }
+			set_variable = { steel_col = steel_temp tooltip = steel_col_TT }
+
+			set_temp_variable = { tungsten_temp = civilian_fuel_use }
+			divide_temp_variable = { tungsten_temp = 4.5 }
+			round_temp_variable = tungsten_temp
+			clamp_temp_variable = { var = tungsten_temp min = 2 }
+			set_variable = { tungsten_col = tungsten_temp tooltip = tungsten_col_TT }			
+
+			set_temp_variable = { aluminium_temp = civilian_fuel_use }
+			divide_temp_variable = { aluminium_temp = 4 }
+			round_temp_variable = aluminium_temp
+			clamp_temp_variable = { var = aluminium_temp min = 2 }
+			set_variable = { aluminium_col = aluminium_temp tooltip = aluminium_col_TT }	
+			
+			set_temp_variable = { chromium_temp = civilian_fuel_use }
+			divide_temp_variable = { chromium_temp = 3 }
+			round_temp_variable = chromium_temp
+			clamp_temp_variable = { var = chromium_temp min = 3 }
+			set_variable = { chromium_col = chromium_temp tooltip = chromium_col_TT }
+			
+		}
+		remove_effect = {
+			clear_variable = steel_col
+			clear_variable = tungsten_col
+			clear_variable = aluminium_col
+			clear_variable = chromium_col
+
+		}
+		ai_will_do = {
+			base = 0
+			modifier = {
+				add = 50
+				ai_needs_recycled_metals = yes
+			}
+		}
+	}
+	
+	round_up_horses = {
+		icon = generic_cavalry
+		allowed = { always = no }
+
+		visible = {
+			has_capitulated = no
+		}
+		state_target = yes
+		on_map_mode = decision_view_only state_target = yes
+
+		fire_only_once = no
+		cost = 50
+		
+		days_re_enable = 180 #blaze it
+		days_remove = 90
+		
+		modifier = {
+			industrial_capacity_factory = -0.04
+			opposition_party_drift = 0.01
+        }
+
+		complete_effect = {
+			add_war_support = -0.02
+		}
+		
+		remove_effect = {
+			set_temp_variable = { round_up_horses_temp = round_up_horses }
+			if = {
+				limit = {
+					NOT = { has_variable = round_up_horses }
+				}
+				
+				set_variable = { round_up_horses = 2000 }
+				set_temp_variable = { round_up_horses_temp = 2000 }
+			}
+			add_equipment_to_stockpile = {
+				type = horse_equipment_0
+				amount = round_up_horses_temp
+			}
+			subtract_from_variable = { round_up_horses = 400 }
+			if = {
+				limit = {
+					check_variable = { round_up_horses = 0 }
+				}
+				clear_variable = round_up_horses
+			}
+        }
+		
+		ai_will_do = {
+			factor = 0
+		}
+	}	
+	emergency_factory_conversion_defensive = {
+
+		icon = generic_factory
+		allowed = {
+		}
+		available = {
+			num_of_civilian_factories > 5 #Change this if amount of factories change
+		}
+
+		fire_only_once = no
+
+		days_re_enable = 90
+
+		cost = 100
+
+		complete_effect = {
+			replace_civ_with_arms_factories = yes
+			if = {
+				limit = {
+					has_offensive_war = yes 
+				}
+				add_war_support = -0.04
+				add_stability = -0.025
+			}
+			else = {
+				add_war_support = -0.03
+			}
+		}
+		ai_will_do = {
+			factor = 0
+		}
+	}
+
+	desperate_defense = {
+
+		icon = generic_protection
+
+		available = {
+			surrender_progress > 0.5
+		}
+
+		visible = {
+			surrender_progress > 0
+			has_capitulated = no
+		}
+
+		fire_only_once = no
+
+		days_remove = 45
+		days_re_enable = 360
+
+		cost = 50
+		
+		ai_will_do = {
+			base = 0
+			modifier = {
+				add = 100 
+				surrender_progress > 0.55	
+				num_divisions > 0
+			}
+		}
+
+		modifier = {
+			army_defence_factor = 0.2
+			dig_in_speed_factor = 0.5
+		}
+
+		complete_effect = {
+
+		}
+	}
+}
+
+foreign_politics = {
+	give_refuge_ger = {
+
+		icon = generic_research
+
+        allowed = {
+            OR = {
+                original_tag = ENG
+                original_tag = USA
+                original_tag = FRA
+                original_tag = CAN
+            }
+        }
+        cost = 60
+        fire_only_once = yes
+        
+        days_remove = -1
+
+		cosmetic_tag = GER
+		cosmetic_ideology = fascism
+		
+		visible = {	
+            NOT = { has_government = fascism }
+            NOT = { has_government = communism }
+		}
+
+        modifier = {
+			research_speed_factor = 0.020
+            civilian_intel_to_others = 8
+			army_intel_to_others = 2
+			navy_intel_to_others = 2
+			airforce_intel_to_others = 2
+        }
+
+        remove_trigger = {
+			has_capitulated = yes
+        }
+
+        ai_will_do = {
+			factor = 3
+		}
+    }
+    give_refuge_ita = {
+
+    	icon = generic_research
+
+        allowed = {
+            OR = {
+                original_tag = ENG
+                original_tag = USA
+                original_tag = FRA
+                original_tag = CAN
+            }
+        }
+		cosmetic_tag = ITA_MONARCHY
+		cosmetic_ideology = fascism
+		
+		visible = {	
+            NOT = { has_government = fascism }
+            NOT = { has_government = communism }
+		}
+        cost = 40
+        fire_only_once = yes
+        days_remove = -1
+
+
+        modifier = {
+            research_speed_factor = 0.015
+            civilian_intel_to_others = 6
+			army_intel_to_others = 2
+			navy_intel_to_others = 2
+			airforce_intel_to_others = 2
+        }
+
+        remove_trigger = {
+			has_capitulated = yes
+        }
+        ai_will_do = {
+			factor = 3
+		}
+    }
+	object_to_attaches = {
+
+		allowed = {
+            always = no
+        }
+        
+        fire_only_once = no
+		cost = 50
+		
+        days_re_enable = 30
+
+        available = {
+        }
+
+        visible = {
+        	has_war = yes
+        	has_capitulated = no
+        	NOT = { has_war_with = FROM }
+			FROM = {
+        		NOT = { has_country_flag = rejected_withdrawing_attache }
+        		NOT = { has_country_flag = rejected_withdrawing_attache@ROOT }
+        		NOT = { has_country_flag = object_attache_going_on }
+        	}
+        	any_enemy_country = {
+				has_attache_from = FROM
+			}
+		}
+
+		#target_trigger = {
+		#	NOT = { has_war_with = FROM }
+		#	#FROM = { has_sent_attache = yes } # Make such trigger to optimize if it becomes a performance problem again.
+		#	any_enemy_country = {
+		#		has_attache_from = FROM
+		#	}				
+		#}
+
+        complete_effect = {
+			FROM = { country_event = { id = generic.14 hours = 6 } }
+			hidden_effect = {
+				FROM = { set_country_flag = object_attache_going_on }
+			}
+		}
+		
+		ai_will_do = {
+			factor = 50
+		}
+	}
+	#From is licensing to ROOT
+	seek_closer_bonds_to_license_owner = {
+
+		allowed = {
+            always = no
+        }
+        
+        fire_only_once = no
+		cost = 50
+		
+		days_remove = 120 
+		
+        days_re_enable = 180
+
+        available = {
+			FROM = {
+				is_licensing_any_to = ROOT
+				has_opinion = {
+					target = ROOT
+					value > 19.9
+				}
+			}
+        }
+
+        visible = {
+        	FROM = {
+				is_licensing_any_to = ROOT
+        	}
+		}
+
+        complete_effect = {
+			FROM = {
+				country_event = { id = licenses.4 days = 1 }
+				custom_effect_tooltip = needs_approval
+				
+				add_opinion_modifier = {
+					target = ROOT
+					modifier = license_cooperation
+				}
+			}
+			effect_tooltip = {
+				add_relation_modifier = {
+					target = FROM
+					modifier = close_cooperation
+				}
+			}
+		}
+		
+		remove_effect = {
+			remove_relation_modifier = {
+				target = FROM
+				modifier = close_cooperation
+			}
+		}
+		
+		ai_will_do = {
+			factor = 0
+		}
+	}
+}
+
+economy_decisions = {
+	army_construction = {# Use the Army to help build as a minor
+		icon = generic_construction
+
+
+		visible = {
+			num_of_civilian_factories < 21
+			has_war = no
+		}
+
+		fire_only_once = no
+        available = {
+			hidden_trigger = { command_power > 24.9 }
+			num_divisions > 0
+			threat < 0.99
+        }
+		
+		custom_cost_trigger = {
+			command_power > 24.9
+		}
+		custom_cost_text = cp_atleast_25
+		
+		#remove_trigger = {
+		#	has_war = yes
+		#}		
+		modifier = {
+			mobilization_speed = -0.75
+			production_speed_buildings_factor = 0.1
+			custom_modifier_tooltip = "INSTANTLY_REMOVED_AT_WAR"
+		}
+
+		days_remove = 100
+		days_re_enable = 100
+
+		complete_effect = {
+			hidden_effect = {
+				add_command_power = -25
+			}
+		}
+		
+		ai_will_do = {
+			base = 0
+			modifier = {
+				add = 10
+				is_subject = yes
+			}
+			modifier = {
+				add = 5
+				is_subject = yes
+				OVERLORD = { is_ai = no }
+			}
+		}
+	}
+	return_land = {# loose building slots for stab
+		icon = hol_draw_up_staff_plans
+		allowed = { has_dlc = "Waking the Tiger" }
+
+		available = {
+			has_stability < 0.45	
+			any_owned_state = {
+				free_building_slots = {
+					building = dummy_1
+					size > 1
+				}
+			}
+		}
+
+		visible = {
+			is_ai = no
+			num_of_civilian_factories_available_for_projects > 0
+			has_stability < 0.5
+			has_civil_war = no
+		}
+
+		fire_only_once = no
+		cost = 35
+		
+		modifier = {
+			stability_weekly = 0.006 
+			civilian_factory_use = 1
+			ruling_party_drift = 0.01
+		}
+ 
+		days_remove = 100
+		days_re_enable = 60
+
+		complete_effect = {
+			random_owned_controlled_state = {
+				limit = { is_in_home_area = yes }
+				add_extra_state_shared_building_slots = -1
+			}
+		}
+		
+		ai_will_do = { 
+			factor = 0
+		}
+	}	
+	decrease_unemployment = {# Long time ST if ST < 0.4, cheap
+		icon = generic_factory
+
+		available = {
+			has_stability < 0.6	
+		}
+
+		visible = {
+			num_of_civilian_factories_available_for_projects > 10
+			has_stability < 0.6
+			has_civil_war = no
+			not = {
+				has_idea = FRA_inflation3
+				has_idea = FRA_inflation2
+				has_idea = FRA_inflation1
+				has_idea = Arab_hyper_inflation_5
+			}
+		}
+
+		fire_only_once = no
+		cost = 25
+		
+		modifier = {
+			stability_weekly = 0.008 #11.4%
+			consumer_goods_expected_value = 0.02
+		}
+ 
+		days_remove = 100
+		days_re_enable = 60
+
+		complete_effect = {
+				
+			#Update AI Stability logic
+			if = { limit = { is_ai = yes }
+				ai_check_stability_need = yes 
+			}
+			else_if = {
+				limit = { 
+					tag = SOV
+				}
+				subtract_from_variable = { tractor_stockpile = stab_tractors tooltip = tractor_removed_tt}
+			}
+		}
+		
+		ai_will_do = { 
+			base = 0
+			modifier = {
+				add = stability_score
+				set_temp_variable = { weight = 60 }
+				set_temp_variable = { cost = 25 }
+				ai_check_stability_need = yes
+			}
+		}
+	}
+	
+	improve_worker_conditions = {# ST solid gain, cheap, long
+		icon = generic_political_rally
+
+		available = {
+			has_stability < 0.8
+			if = {
+				limit = { 
+					tag = SOV
+					is_ai = no
+				}
+				NOT = { has_idea = trotsky_sighted }
+			}
+		}
+
+		visible = {
+			has_stability < 0.85
+			has_civil_war = no
+		}
+
+		fire_only_once = no
+
+		modifier = {
+			stability_weekly = 0.01 #17.1%
+			industrial_capacity_factory = -0.05
+			industrial_capacity_factory_factor = -0.05
+		}
+
+		days_remove = 120
+		days_re_enable = 120
+
+		cost = 75
+
+		remove_effect = {
+			#add_to_variable = { worker_mood = -3 tooltip = minus_3_workmood }
+			set_temp_variable = { pop = 0.02 }
+			add_ruling_pop = yes 
+		}
+		
+		complete_effect = {
+		
+			#Update AI Stability logic
+			if = { limit = { is_ai = yes }
+				ai_check_stability_need = yes 
+			}
+		}
+
+		ai_will_do = {
+			base = 0
+			modifier = {
+				add = stability_score
+				set_temp_variable = { weight = 125 }
+				set_temp_variable = { cost = 75 }
+				ai_check_stability_need = yes
+			}
+		}
+	}
+	
+	train_the_workforce = {
+		icon = eng_trade_unions_support
+
+        allowed = {
+            #always = no
+        }
+
+        fire_only_once = no
+		cost = 75
+		
+        days_re_enable = 360
+
+        available = {
+			has_tech = schools_work
+        }
+
+        visible = {
+            num_of_civilian_factories > 14
+			num_of_controlled_states > 4
+		}
+		
+		days_remove = 90
+		
+		modifier = {
+			production_factory_efficiency_gain_factor = 0.1
+			production_factory_max_efficiency_factor = 0.06
+			research_speed_factor = -0.03
+		}
+		
+		complete_effect = {
+		
+		}
+
+        remove_effect = {
+			#add_to_variable = { worker_mood = -3 tooltip = minus_3_workmood }
+			#set_temp_variable = { pop = 0.02 }
+			#add_ruling_pop = yes 
+			
+			add_stability = 0.05
+			add_war_support = 0.05
+		}
+		
+		ai_will_do = {
+			base = 0
+		}
+    }
+	
+	minor_capital_shipyard_construction = {
+		allowed = {
+			NOT = {
+				tag = ITA
+				tag = JAP
+				tag = GER
+				tag = SOV
+				tag = FRA
+				tag = USA
+				tag = ENG
+			}
+		}
+	
+		icon = generic_merge_plant_ship
+
+		available = {
+			num_of_factories > 20
+			num_of_civilian_factories_available_for_projects > 19
+			num_of_naval_factories > 9
+			has_tech = port_infra
+		}
+		cost = 50
+		days_remove = 450
+		ai_will_do = {
+			base = 0
+		}
+		visible = {
+			num_of_naval_factories > 4
+			not = { has_country_flag = minor_capital_shipyard_gained }
+		}
+		modifier = { 
+			civilian_factory_use = 20
+			production_speed_buildings_factor = -0.1
+		}
+		remove_effect = { 
+			set_country_flag = minor_capital_shipyard_gained
+			random_owned_controlled_state = {
+				limit = {
+					dockyard > 0
+					is_core_of = ROOT
+					is_fully_controlled_by = ROOT
+					is_coastal = yes
+					NOT = { has_state_category = tiny_island }
+					NOT = { has_state_category = small_island }
+				}
+				add_extra_state_shared_building_slots = 2
+				add_building_construction = {
+					type = shipyard_capital_building
+					level = 1
+					instant_build = yes
+				}
+				add_building_construction = {
+					type = shipyard
+					level = 1
+					instant_build = yes
+				}
+			}
+		}			
+		
+	}
+	
+	infrastructure_building_slot = {
+		icon = hol_draw_up_staff_plans
+
+        allowed = {
+        }
+
+        fire_only_once = no
+		cost = 50
+		
+        days_re_enable = 30
+
+        available = {
+            #Always true if visible is also true
+        }
+
+        visible = {
+			is_ai = no
+			has_war = no
+			any_owned_state = {
+            	NOT = { has_state_flag = infrastructure_building_slot_flag }
+            	is_fully_controlled_by = ROOT
+				free_building_slots = {
+					building = infrastructure
+					size < 1
+				}
+            }
+		}
+
+        complete_effect = {
+			if = {
+				limit = { 
+					tag = SOV
+				}
+				set_temp_variable = { tractor_temp = farm_tractors }
+				divide_temp_variable = { tractor_temp = 2 }
+				subtract_from_variable = { tractor_stockpile = tractor_temp tooltip = tractor_removed_tt}
+			}
+			hidden_effect = {
+				random_owned_controlled_state = {
+					limit = {
+						free_building_slots = {
+							building = industrial_complex
+							size > 1
+							include_locked = yes
+						}
+						NOT = { has_state_flag = infrastructure_building_slot }
+					}
+					save_event_target_as = state
+					set_temp_variable = { region_state = region }
+					every_state = {
+						limit = {
+							check_variable = { region = Prev.region }
+							is_controlled_by_ROOT_or_ally = yes
+						}
+						add_extra_state_shared_building_slots = 1
+						set_state_flag = infrastructure_building_slot
+					}
+				}
+			}
+			effect_tooltip = {
+				meta_effect = {
+					text = {
+						custom_effect_tooltip = STRATEGICREGION_[X]
+					}
+					X = "[?region_state]"
+				}
+				every_state = {
+					limit = {
+						check_variable = { region = event_target:state.region }
+						is_controlled_by_ROOT_or_ally = yes
+					}
+					add_extra_state_shared_building_slots = 1
+					set_state_flag = war_building_slot_flag
+				}
+			}
+				
+		}
+		
+		ai_will_do = {
+			base = 0
+			#modifier = {
+			#	add = 10
+			#	any_owned_state = { free_building_slots = { building = industrial_complex size < 1 include_locked = no } }
+			#	has_stability > 0.80
+			#}
+		}
+    }
+
+    war_building_slot = {
+    	icon = hol_draw_up_staff_plans
+
+        allowed = { 
+        }
+
+        fire_only_once = no
+		cost = 30
+		
+        available = {
+           #Always true if visible is true
+        }
+
+        visible = {
+			is_ai = no
+            has_war = yes
+        	any_owned_state = {
+            	NOT = { has_state_flag = war_building_slot_flag }
+            	is_fully_controlled_by = ROOT
+            }
+		}
+
+       complete_effect = {
+			hidden_effect = {
+				random_owned_controlled_state = {
+					limit = {
+						free_building_slots = {
+							building = industrial_complex
+							size > 1
+							include_locked = yes
+						}
+						NOT = { has_state_flag = war_building_slot_flag }
+					}
+					save_event_target_as = state
+					set_temp_variable = { region_state = region }
+					every_state = {
+						limit = {
+							check_variable = { region = Prev.region }
+							is_controlled_by_ROOT_or_ally = yes
+						}
+						add_extra_state_shared_building_slots = 2
+						set_state_flag = war_building_slot_flag
+					}
+				}
+			}
+			effect_tooltip = {
+				meta_effect = {
+					text = {
+						custom_effect_tooltip = STRATEGICREGION_[X]
+					}
+					X = "[?region_state]"
+				}
+				every_state = {
+					limit = {
+						check_variable = { region = event_target:state.region }
+						is_controlled_by_ROOT_or_ally = yes
+					}
+					add_extra_state_shared_building_slots = 2
+					set_state_flag = war_building_slot_flag
+				}
+			}
+				
+		}
+		
+		ai_will_do = {
+			base = 0
+			#modifier = {
+			#	add = 10
+			#	any_owned_state = { free_building_slots = { building = industrial_complex size < 1 include_locked = no } }
+			#	has_stability > 0.80
+			#}
+		}
+    }
+}
+
+foreign_support = {
+
+###  #  # ###  #   #  ##      ###   ##   ##  ###  
+#  # #  # #  # ## ## #  #     #  # #  # #  # #  # 
+###  #  # ###  # # # ####     ###  #  # #### #  # 
+#  # #  # #  # #   # #  #     #  # #  # #  # #  # 
+###   ##  #  # #   # #  #     #  #  ##  #  # ###  
+
+	 ##  #    ##   ## ### 
+	#  # #   #  # #   #   
+	#    #   #  #  #  ##  
+	#  # #   #  #   # #   
+	 ##  ###  ##  ##  ###
+	CHI_close_burma_road = {
+		allowed = {
+			always = no
+			#Everyone
+		}
+		
+		available = {
+			OR = {
+				288 = { is_controlled_by_ROOT_or_subject = yes has_state_flag = CHI_needed_for_burma_road } #Mengzi
+				640 = { is_controlled_by_ROOT_or_subject = yes has_state_flag = CHI_needed_for_burma_road } #Puer
+				
+				325 = { is_controlled_by_ROOT_or_subject = yes has_state_flag = CHI_needed_for_burma_road } #Burma
+				747 = { is_controlled_by_ROOT_or_subject = yes has_state_flag = CHI_needed_for_burma_road } #Rakhine State
+			}			
+		}
+
+		visible = {
+			is_subject = no
+			check_variable = { global.CHI_burma_road_current_level > 0 }
+			OR = {
+				288 = { is_controlled_by_ROOT_or_subject = yes has_state_flag = CHI_needed_for_burma_road } #Mengzi
+				640 = { is_controlled_by_ROOT_or_subject = yes has_state_flag = CHI_needed_for_burma_road } #Puer
+				
+				325 = { is_controlled_by_ROOT_or_subject = yes has_state_flag = CHI_needed_for_burma_road } #Burma
+				747 = { is_controlled_by_ROOT_or_subject = yes has_state_flag = CHI_needed_for_burma_road } #Rakhine State
+			}	
+		}
+
+		fire_only_once = no
+		cost = 0
+
+		ai_will_do = {
+			factor = 1
+			modifier = {
+				factor = 0
+				check_variable = { global.CHI_burma_road_current_level > 0 }
+				any_of_scopes = {
+					array = global.chinese_nations
+					
+					check_variable = { CHI_burma_road_current_level > 0 }
+					OR = {
+						is_subject = no
+						is_subject_of = ROOT
+						is_in_faction_with = ROOT
+					}
+					NOT = { has_war_with = ROOT }
+				}
+			}
+			modifier = {
+				factor = 200
+				check_variable = { global.CHI_burma_road_current_level > 0 }
+				any_of_scopes = {
+					array = global.chinese_nations
+					
+					check_variable = { CHI_burma_road_current_level > 0 }
+					OR = {
+						has_war_with = ROOT
+						AND = {
+							is_subject = yes
+							NOT = { is_subject_of = ROOT }
+							NOT = { is_in_faction_with = ROOT }
+						}
+					}
+				}
+			}
+		}
+
+		complete_effect = {
+			hidden_effect = {
+				every_state = {
+					limit = {
+						has_state_flag = CHI_needed_for_burma_road
+						is_controlled_by_ROOT_or_subject = yes
+					}
+					set_state_flag = CHI_burma_road_closed_state
+				}
+			}
+			set_global_flag = CHI_burma_road_closed
+			clear_variable = global.CHI_burma_road_current_level
+			for_each_scope_loop = {
+				array = global.chinese_nations
+				tooltip = CHI_burma_road_array_TT
+				
+				if = { 	
+					limit = {
+						check_variable = { CHI_burma_road_current_level = 0 }
+					}
+					set_temp_variable = { temp = CHI_burma_road_current_level }
+					multiply_temp_variable = { temp = -1 }
+				}
+				hidden_effect = { add_offsite_building = { type = arms_factory level = temp } }
+				
+				country_event = { id = wtt_burma_road.2 }
+				custom_effect_tooltip = close_burma_road_explanation
+			}
+		}
+	}
+	###  ###  ##  ###  ### #  # 
+	#  # #   #  # #  # #   ## # 
+	###  ##  #  # ###  ##  # ## 
+	#  # #   #  # #    #   #  # 
+	#  # ###  ##  #    ### #  # 
+	CHI_reopen_burma_road = {
+		allowed = {
+			#Everyone
+			always = no
+		}
+
+		available = {
+			has_global_flag = CHI_burma_road_closed
+			OR = {
+				288 = { is_controlled_by_ROOT_or_subject = yes has_state_flag = CHI_needed_for_burma_road } #Mengzi
+				640 = { is_controlled_by_ROOT_or_subject = yes has_state_flag = CHI_needed_for_burma_road } #Puer
+				
+				325 = { is_controlled_by_ROOT_or_subject = yes has_state_flag = CHI_needed_for_burma_road } #Burma
+				747 = { is_controlled_by_ROOT_or_subject = yes has_state_flag = CHI_needed_for_burma_road } #Rakhine State
+			}	
+		}
+
+		visible = {
+			has_global_flag = CHI_burma_road_closed
+			is_subject = no
+			OR = {
+				288 = { is_controlled_by_ROOT_or_subject = yes has_state_flag = CHI_needed_for_burma_road } #Mengzi
+				640 = { is_controlled_by_ROOT_or_subject = yes has_state_flag = CHI_needed_for_burma_road } #Puer
+				
+				325 = { is_controlled_by_ROOT_or_subject = yes has_state_flag = CHI_needed_for_burma_road } #Burma
+				747 = { is_controlled_by_ROOT_or_subject = yes has_state_flag = CHI_needed_for_burma_road } #Rakhine State
+			}	
+			any_of_scopes = {
+				array = global.chinese_nations
+					
+				check_variable = { CHI_burma_road_closed_level > 0 }
+				NOT = { has_war_with = ROOT }
+			}
+		}
+
+		fire_only_once = no
+		cost = 0
+
+		modifier = {
+		}
+
+		ai_will_do = {
+			factor = 1
+			modifier = {
+				factor = 200
+				any_of_scopes = {
+					array = global.chinese_nations
+					
+					check_variable = { CHI_burma_road_closed_level > 0 }
+					OR = {
+						is_subject = no
+						is_subject_of = ROOT
+						is_in_faction_with = ROOT
+					}
+					NOT = { has_war_with = ROOT }
+				}
+			}
+			modifier = {
+				factor = 0
+				any_of_scopes = {
+					array = global.chinese_nations
+					
+					check_variable = { CHI_burma_road_closed_level > 0 }
+					OR = {
+						has_war_with = ROOT
+						AND = {
+							is_subject = yes
+							NOT = { is_subject_of = ROOT }
+							NOT = { is_in_faction_with = ROOT }
+						}
+					}
+				}
+			}
+		}
+
+		complete_effect = {
+			every_state = {
+				limit = {
+					has_state_flag = CHI_burma_road_closed_state
+					OR = {
+						is_controlled_by = ROOT
+						is_controlled_by_ROOT_or_subject = yes
+					}
+				}
+				custom_effect_tooltip = CHI_burma_road_reopen_state
+				clr_state_flag = CHI_burma_road_closed_state
+			}
+
+			if = {
+				limit = {
+					OR = {
+						288 = {
+							has_state_flag = CHI_burma_road_closed_state							
+							is_controlled_by_ROOT_or_subject = no
+						}
+						640 = {
+							has_state_flag = CHI_burma_road_closed_state							
+							is_controlled_by_ROOT_or_subject = no
+						}
+						325 = {
+							has_state_flag = CHI_burma_road_closed_state							
+							is_controlled_by_ROOT_or_subject = no
+						}
+						747 = {
+							has_state_flag = CHI_burma_road_closed_state							
+							is_controlled_by_ROOT_or_subject = no
+						}
+					}
+				}
+				for_each_scope_loop = {
+					array = global.chinese_nations
+					tooltip = CHI_burma_road_array_TT
+					
+					country_event = { id = wtt_burma_road.3 } #We opened our part of the road
+				}
+			}
+			else = {
+				#Road is fully reopened
+				for_each_scope_loop = {
+					array = global.chinese_nations
+					tooltip = CHI_burma_road_array_TT
+					
+					country_event = { id = wtt_burma_road.4 } 
+				}
+				hidden_effect = {					
+					add_offsite_building = { type = arms_factory level = CHI_burma_road_current_level }
+				}
+			}
+		}
+	}
+#   ### ###   ##      ###   ##   ##  ###  
+#   #   #  # #  #     #  # #  # #  # #  # 
+#   ##  #  # #  #     ###  #  # #### #  # 
+#   #   #  # #  #     #  # #  # #  # #  # 
+### ### ###   ##      #  #  ##  #  # ###  
+	
+	 ##  #    ##   ## ### 
+	#  # #   #  # #   #   
+	#    #   #  #  #  ##  
+	#  # #   #  #   # #   
+	 ##  ###  ##  ##  ###
+	CHI_close_ledo_road = {
+		allowed = {
+			always = no
+			#Everyone
+		}
+		available = {
+			FROM.FROM = { is_controlled_by_ROOT_or_subject = yes }
+ 		}
+
+ 		visible = {
+			has_global_flag = CHI_ledo_road_completed
+			NOT = { has_global_flag = CHI_close_ledo_road }
+ 			is_subject = no
+ 		}
+		
+		fire_only_once = no
+		cost = 0
+
+		ai_will_do = {
+			factor = 1
+			modifier = {
+				factor = 0
+				any_of_scopes = {
+					array = global.chinese_nations
+					
+					check_variable = { CHI_ledo_road_current_level > 0 }
+					OR = {
+						is_subject = no
+						is_subject_of = ROOT
+						is_in_faction_with = ROOT
+					}
+					NOT = { has_war_with = ROOT }
+				}
+			}
+			modifier = {
+				factor = 200
+				any_of_scopes = {
+					array = global.chinese_nations
+					
+					check_variable = { CHI_ledo_road_current_level > 0 }
+					OR = {
+						has_war_with = ROOT
+						AND = {
+							is_subject = yes
+							NOT = { is_subject_of = ROOT }
+							NOT = { is_in_faction_with = ROOT }
+						}
+					}
+				}
+			}
+		}
+
+		complete_effect = {
+			hidden_effect = {
+				every_state = {
+					limit = {
+						has_state_flag = CHI_needed_for_ledo_road
+						OR = {
+							is_controlled_by = ROOT
+							CONTROLLER = { is_subject_of = ROOT }
+						}
+					}
+					set_state_flag = CHI_ledo_road_closed_state
+				}
+			}
+			random_country = {
+				#Country that had the route
+				limit = { check_variable = { CHI_ledo_road_current_level > 0 } }
+				hidden_effect = {					
+					set_variable = { tempvar = 0 }
+					subtract_from_variable = { var = tempvar value = CHI_ledo_road_current_level }
+
+					add_offsite_building = { type = arms_factory level = tempvar }
+					#In case we need to reopen
+					set_variable = { CHI_ledo_road_closed_level = CHI_ledo_road_current_level }
+					set_variable = { CHI_ledo_road_current_level = 0 }
+					clear_variable = tempvar
+				}
+				country_event = { id = wtt_ledo_road.2 }
+				custom_effect_tooltip = close_ledo_road_explanation # Prints the contents of the CHI_ledo_road_current_level variable
+			}
+		}
+	}
+
+	###  ###  ##  ###  ### #  # 
+	#  # #   #  # #  # #   ## # 
+	###  ##  #  # ###  ##  # ## 
+	#  # #   #  # #    #   #  # 
+	#  # ###  ##  #    ### #  # 
+	CHI_reopen_ledo_road = {
+		allowed = {
+			#Everyone
+			always = no
+		}
+		state_target = yes 
+		
+ 		available = {
+			FROM.FROM = { is_controlled_by_ROOT_or_subject = yes has_state_flag = CHI_ledo_road_closed_state }
+ 		}
+		visible = {
+			has_global_flag = CHI_close_ledo_road
+ 			is_subject = no
+			FROM.FROM = { has_state_flag = CHI_ledo_road_closed_state }
+			any_of_scopes = {
+				array = global.chinese_nations
+					
+				check_variable = { CHI_ledo_road_closed_level > 0 }
+				NOT = { has_war_with = ROOT }
+			}
+ 		}
+
+		fire_only_once = no
+		cost = 0
+
+		ai_will_do = {
+			factor = 1
+			modifier = {
+				factor = 200
+				any_of_scopes = {
+					array = global.chinese_nations
+					
+					check_variable = { CHI_ledo_road_closed_level > 0 }
+					OR = {
+						is_subject = no
+						is_subject_of = ROOT
+						is_in_faction_with = ROOT
+					}
+					NOT = { has_war_with = ROOT }
+				}
+			}
+			modifier = {
+				factor = 0
+				any_of_scopes = {
+					array = global.chinese_nations
+					
+					check_variable = { CHI_ledo_road_closed_level > 0 }
+					OR = {
+						has_war_with = ROOT
+						AND = {
+							is_subject = yes
+							NOT = { is_subject_of = ROOT }
+							NOT = { is_in_faction_with = ROOT }
+						}
+					}
+				}
+			}
+		}
+
+		complete_effect = {
+			every_state = {
+				limit = {
+					has_state_flag = CHI_ledo_road_closed_state
+					OR = {
+						is_controlled_by = ROOT
+						CONTROLLER = {
+							OR = {
+								is_subject_of = ROOT
+								check_variable = { CHI_ledo_road_closed_level > 0 }
+							}
+						}
+					}
+				}
+				custom_effect_tooltip = CHI_ledo_road_reopen_state
+				clr_state_flag = CHI_ledo_road_closed_state
+			}
+
+			random_country = {
+				limit = { check_variable = { CHI_ledo_road_closed_level > 0 } }
+				if = {
+					limit = {
+						any_state = {
+							has_state_flag = CHI_ledo_road_closed_state							
+							NOT = { is_controlled_by = ROOT }
+							CONTROLLER = {
+								NOT = { is_subject_of = ROOT }
+								NOT = { check_variable = { CHI_ledo_road_closed_level > 0 } }
+							}
+						}
+					}
+					country_event = { id = wtt_ledo_road.3 } #We opened our part of the road
+				}
+				else = {
+					#Road is fully reopened
+					if = {
+						limit = { NOT = { tag = ROOT } }
+						country_event = { id = wtt_ledo_road.4 }
+					}
+					hidden_effect = {					
+						add_offsite_building = { type = arms_factory level = CHI_ledo_road_closed_level }
+						set_variable = { CHI_ledo_road_current_level = CHI_ledo_road_closed_level }
+						clear_variable = CHI_ledo_road_closed_level
+					}
+					custom_effect_tooltip = reopen_ledo_road_explanation # Prints the contents of the CHI_ledo_road_closed_level variable
+				}
+			}
+		}
+	}
+
+### #  # ###     #  # #  # #   # ###  
+ #  #  # #       #  # #  # ## ## #  # 
+ #  #### ##      #### #  # # # # ###  
+ #  #  # #       #  # #  # #   # #    
+ #  #  # ###     #  #  ##  #   # #
+
+	 ##  #    ##   ## ### 
+	#  # #   #  # #   #   
+	#    #   #  #  #  ##  
+	#  # #   #  #   # #   
+	 ##  ###  ##  ##  ### 
+ 	CHI_close_the_hump = {
+ 		allowed = {
+			always = no
+ 			#Everyone
+ 		}
+		state_target = yes 
+		
+ 		available = {
+			FROM.FROM = { is_controlled_by_ROOT_or_subject = yes }
+ 		}
+
+ 		visible = {
+			has_global_flag = CHI_the_hump_completed
+			NOT = { has_global_flag = CHI_close_the_hump }
+ 			is_subject = no
+			#any_of_scopes = {
+			#	array = global.chinese_nations
+			#		
+ 			#	check_variable = { CHI_the_hump_current_level > 0 }
+ 			#	NOT = { is_in_faction_with = ROOT }
+ 			#	NOT = { tag = ROOT }
+ 			#}
+ 		}
+
+ 		fire_only_once = no
+ 		cost = 0
+
+ 		ai_will_do = {
+ 			factor = 1
+			modifier = {
+				factor = 0
+				any_of_scopes = {
+					array = global.chinese_nations
+					
+					check_variable = { CHI_the_hump_current_level > 0 }
+					OR = {
+						is_subject = no
+						is_subject_of = ROOT
+						is_in_faction_with = ROOT
+					}
+					NOT = { has_war_with = ROOT }
+				}
+			}
+			modifier = {
+				factor = 200
+				any_of_scopes = {
+					array = global.chinese_nations
+					
+					check_variable = { CHI_the_hump_current_level > 0 }
+					OR = {
+						has_war_with = ROOT
+						AND = {
+							is_subject = yes
+							NOT = { is_subject_of = ROOT }
+							NOT = { is_in_faction_with = ROOT }
+						}
+					}
+				}
+			}
+ 		}
+
+ 		complete_effect = {
+ 			hidden_effect = {
+ 				every_state = {
+ 					limit = {
+ 						has_state_flag = CHI_needed_for_the_hump
+ 						OR = {
+ 							is_controlled_by = ROOT
+ 							CONTROLLER = { is_subject_of = ROOT }
+ 						}
+ 					}
+ 					set_state_flag = CHI_the_hump_closed_state
+ 				}
+ 			}
+			set_global_flag = CHI_close_the_hump
+ 			random_country = {
+ 				#Country that had the route
+ 				limit = { check_variable = { CHI_the_hump_current_level > 0 } }
+ 				hidden_effect = {					
+ 					set_variable = { tempvar = 0 }
+ 					subtract_from_variable = { var = tempvar value = CHI_the_hump_current_level }
+
+ 					add_offsite_building = { type = arms_factory level = tempvar }
+ 					#In case we need to reopen
+ 					set_variable = { CHI_the_hump_closed_level = CHI_the_hump_current_level }
+ 					set_variable = { CHI_the_hump_current_level = 0 }
+ 					clear_variable = tempvar
+ 				}
+ 				country_event = { id = wtt_the_hump.2 }
+				custom_effect_tooltip = close_the_hump_explanation # Prints the contents of the CHI_the_hump_current_level variable
+ 			}
+ 		}
+ 	}
+
+ 	###  ###  ##  ###  ### #  # 
+ 	#  # #   #  # #  # #   ## # 
+ 	###  ##  #  # ###  ##  # ## 
+ 	#  # #   #  # #    #   #  # 
+ 	#  # ###  ##  #    ### #  # 
+ 	CHI_reopen_the_hump = {
+ 		allowed = {
+ 			#Everyone
+			always = no
+ 		}
+		state_target = yes 
+		
+ 		available = {
+			FROM.FROM = { is_controlled_by_ROOT_or_subject = yes has_state_flag = CHI_the_hump_closed_state }
+ 		}
+
+ 		visible = {
+			has_global_flag = CHI_close_the_hump
+ 			is_subject = no
+			FROM.FROM = { has_state_flag = CHI_the_hump_closed_state }
+ 			any_of_scopes = {
+				array = global.chinese_nations
+					
+ 				check_variable = { CHI_the_hump_closed_level > 0 }
+ 				NOT = { has_war_with = ROOT }
+ 			}
+ 		}
+
+ 		fire_only_once = no
+ 		cost = 0
+
+ 		modifier = {
+ 		}
+
+ 		ai_will_do = {
+ 			factor = 1
+			modifier = {
+				factor = 200
+				any_of_scopes = {
+					array = global.chinese_nations
+					
+					check_variable = { CHI_the_hump_closed_level > 0 }
+					OR = {
+						is_subject = no
+						is_subject_of = ROOT
+						is_in_faction_with = ROOT
+					}
+					NOT = { has_war_with = ROOT }
+				}
+			}
+			modifier = {
+				factor = 0
+				any_of_scopes = {
+					array = global.chinese_nations
+					
+					check_variable = { CHI_the_hump_closed_level > 0 }
+					OR = {
+						has_war_with = ROOT
+						AND = {
+							is_subject = yes
+							NOT = { is_subject_of = ROOT }
+							NOT = { is_in_faction_with = ROOT }
+						}
+					}
+				}
+			}
+ 		}
+
+ 		complete_effect = {
+ 			every_state = {
+ 				limit = {
+ 					has_state_flag = CHI_the_hump_closed_state
+ 					OR = {
+ 						is_controlled_by = ROOT
+ 						CONTROLLER = {
+ 							OR = {
+ 								is_subject_of = ROOT
+ 								check_variable = { CHI_the_hump_closed_level > 0 }
+ 							}
+ 						}
+ 					}
+ 				}
+ 				custom_effect_tooltip = CHI_the_hump_reopen_state
+ 				clr_state_flag = CHI_the_hump_closed_state
+ 			}
+
+ 			random_country = {
+ 				limit = { check_variable = { CHI_the_hump_closed_level > 0 } }
+ 				if = {
+ 					limit = {
+ 						any_state = {
+ 							has_state_flag = CHI_the_hump_closed_state							
+ 							NOT = { is_controlled_by = ROOT }
+ 							CONTROLLER = {
+ 								NOT = { is_subject_of = ROOT }
+ 								NOT = { check_variable = { CHI_the_hump_closed_level > 0 } }
+ 							}
+ 						}
+ 					}
+ 					country_event = { id = wtt_the_hump.3 } #We opened our part of the road
+ 				}
+ 				else = {
+ 					#Road is fully reopened
+ 					if = {
+ 						limit = { NOT = { tag = ROOT } }
+ 						country_event = { id = wtt_the_hump.4 }
+ 					}
+ 					hidden_effect = {					
+ 						add_offsite_building = { type = arms_factory level = CHI_the_hump_closed_level }
+ 						set_variable = { CHI_the_hump_current_level = CHI_the_hump_closed_level }
+ 						clear_variable = CHI_the_hump_closed_level
+ 					}
+					custom_effect_tooltip = reopen_the_hump_explanation # Prints the contents of the CHI_the_hump_closed_level variable
+ 				}
+ 			}
+ 		}
+ 	}
+
+#  #  ##  #  #  ##  ###     ###   ##  #  # ### ### 
+#  # #  # ## # #  #  #      #  # #  # #  #  #  #   
+#### #### # ## #  #  #      ###  #  # #  #  #  ##  
+#  # #  # #  # #  #  #      #  # #  # #  #  #  #   
+#  # #  # #  #  ##  ###     #  #  ##   ##   #  ### 
+
+	 ##  #    ##   ## ### 
+	#  # #   #  # #   #   
+	#    #   #  #  #  ##  
+	#  # #   #  #   # #   
+	 ##  ###  ##  ##  ###
+	CHI_close_hanoi_route = {
+		allowed = {
+			#Everyone
+			always = no
+		}
+		available = {
+			FROM.FROM = { is_controlled_by_ROOT_or_subject = yes }
+ 		}
+
+ 		visible = {
+			has_global_flag = CHI_guarantee_the_hanoi_route_completed
+ 			is_subject = no
+ 		}
+
+		fire_only_once = no
+		cost = 0
+
+		modifier = {
+		}
+
+		ai_will_do = {
+			factor = 1
+			modifier = {
+				factor = 0
+				any_of_scopes = {
+					array = global.chinese_nations
+					
+					check_variable = { CHI_hanoi_route_current_level > 0 }
+					OR = {
+						is_subject = no
+						is_subject_of = ROOT
+						is_in_faction_with = ROOT
+					}
+					NOT = { has_war_with = ROOT }
+				}
+			}
+			modifier = {
+				factor = 200
+				any_of_scopes = {
+					array = global.chinese_nations
+					
+					check_variable = { CHI_hanoi_route_current_level > 0 }
+					OR = {
+						has_war_with = ROOT
+						AND = {
+							is_subject = yes
+							NOT = { is_subject_of = ROOT }
+							NOT = { is_in_faction_with = ROOT }
+						}
+					}
+				}
+			}
+		}
+
+		complete_effect = {
+			hidden_effect = {
+				every_state = {
+					limit = {
+						has_state_flag = CHI_needed_for_hanoi_route
+						OR = {
+							is_controlled_by = ROOT
+							CONTROLLER = { is_subject_of = ROOT }
+						}
+					}
+					set_state_flag = CHI_hanoi_route_closed_state
+				}
+			}
+			random_country = {
+				#Country that had the route
+				limit = { check_variable = { CHI_hanoi_route_current_level > 0 } }
+				hidden_effect = {					
+					set_variable = { tempvar = 0 }
+					subtract_from_variable = { var = tempvar value = CHI_hanoi_route_current_level }
+
+					add_offsite_building = { type = arms_factory level = tempvar }
+					#In case we need to reopen
+					set_variable = { CHI_hanoi_route_closed_level = CHI_hanoi_route_current_level }
+					set_variable = { CHI_hanoi_route_current_level = 0 }
+					clear_variable = tempvar
+				}
+				country_event = { id = wtt_hanoi_route.2 }
+				custom_effect_tooltip = close_hanoi_route_explanation # Prints the contents of the CHI_hanoi_route_current_level variable
+			}
+		}
+	}
+}
+
+### #  # ###  #  #  ### ### ###  #   #    ###  #### #     ##   ##   ##  ### ###  ##  #  #
+ #  ## # #  # #  # #     #  #  #  # #     #  # #    #    #  # #  # #  #  #   #  #  # ## #
+ #  # ## #  # #  #   #   #  ###    #      ###  ##   #    #  # #    ####  #   #  #  # # ##
+ #  #  # #  # #  #    #  #  #  #   #      #  # #    #    #  # #  # #  #  #   #  #  # #  #
+### #  # ###   ##  ###   #  #  #   #      #  # #### ####  ##   ##  #  #  #  ###  ##  #  #
+
+@INDUSTRY_EVAC_BASE_EFFICIENCY = 0.5 #base % of buildings to move
+
+@INDUSTRY_EVAC_DAYS_BASE = 40
+@INDUSTRY_EVAC_DAYS_FROM_DISTANCE = 0.007
+@INDUSTRY_EVAC_DAYS_FROM_AMOUNT = 4.0
+@INDUSTRY_EVAC_DAYS_MAX = 100
+@INDUSTRY_EVAC_DAYS_MIN = 10
+
+industry_relocation = {
+	industry_evacuation_decision = {
+		icon = move_industry
+		allowed = {
+			always = no 
+		}
+		
+        available = {
+			hidden_trigger = { command_power > 4.99 }
+        }
+		custom_cost_trigger = {
+			command_power > 4.99
+		}
+		custom_cost_text = cp_atleast_5
+		
+        state_target = yes
+        #target_array = controlled_states
+        #target_trigger = {
+        #    FROM = { 
+		#		always = yes
+        ##    }
+        #}
+        visible = {
+			controls_state = FROM
+			OR = {
+				check_variable = { FROM.non_damaged_building_level@industrial_complex > 0 }
+				check_variable = { FROM.non_damaged_building_level@arms_factory > 0 }
+				check_variable = { FROM.non_damaged_building_level@tank_assembly > 0 }
+				check_variable = { FROM.non_damaged_building_level@engine_assembly > 0 }
+				check_variable = { FROM.non_damaged_building_level@artillery_assembly > 0 }
+				check_variable = { FROM.non_damaged_building_level@air_assembly > 0 }
+			}
+        }
+		ai_will_do = {
+			factor = 0
+			modifier = {
+				add = ai_add
+				FROM = {
+					any_neighbor_state = {
+						OR = {
+							CONTROLLER = { has_war_with = ROOT }
+							AND = { is_owned_by = ROOT NOT = { is_fully_controlled_by = ROOT } }
+						}
+					}
+					
+					set_temp_variable = { ai_add = 1 }
+					
+					set_temp_variable = { cic = non_damaged_building_level@industrial_complex }
+					multiply_temp_variable = { cic = 1.5 }
+					add_to_temp_variable = { ai_add = cic }
+					
+					set_temp_variable = { mic = non_damaged_building_level@arms_factory }
+					multiply_temp_variable = { mic = 2.0 }
+					add_to_temp_variable = { ai_add = mic }
+				}
+			}
+		}
+        fire_only_once = no
+        cost = 0
+		
+        days_re_enable = 1 
+		days_remove = industry_evac_days_remove
+		
+		cancel_trigger = {
+			NOT = { controls_state = FROM }
+			hidden_trigger = {
+				NOT = { FROM = { has_state_flag = industry_evac_in_progress } }
+			}
+		}
+		
+		cancel_effect = {
+			FROM = {
+				clr_state_flag = industry_evac_in_progress
+				 
+				add_building_construction = {
+					type = industrial_complex
+					level = num_move_CIC
+					instant_build = yes
+				}
+				add_building_construction = {
+					type = arms_factory
+					level = num_move_MIC
+					instant_build = yes
+				}
+				add_building_construction = {
+					type = tank_assembly
+					level = num_move_TANK
+					instant_build = yes
+				}
+				add_building_construction = {
+					type = engine_assembly
+					level = num_move_TRUCK
+					instant_build = yes
+				}
+				add_building_construction = {
+					type = artillery_assembly
+					level = num_move_ARTY
+					instant_build = yes
+				}
+				add_building_construction = {
+					type = air_assembly
+					level = num_move_AIR
+					instant_build = yes
+				}
+				clear_variable = num_move_CIC
+				clear_variable = num_move_MIC
+				clear_variable = num_move_TANK
+				clear_variable = num_move_TRUCK
+				clear_variable = num_move_SMALL
+				clear_variable = num_move_ARTY
+				clear_variable = num_move_AIR
+			}
+			remove_targeted_decision = {
+				decision = industry_evacuation_decision
+				target = FROM
+			}
+		}
+
+		complete_effect = {
+			hidden_effect = { add_command_power = -5 }
+			
+			set_temp_variable = { efficiency = @INDUSTRY_EVAC_BASE_EFFICIENCY }
+			add_to_temp_variable = { efficiency = ROOT.modifier@industry_evac_efficiency }
+			
+			hidden_effect = {
+				random_scope_in_array = {
+					array = SOV.soviet_evac_site
+					
+					set_temp_variable = { target_state = This.id }
+				}
+			}
+			set_temp_variable = { temp = target_state }
+			set_variable = { From.target_state = temp }
+			random_owned_controlled_state = {
+				limit = {
+					state = FROM 
+				}
+				if = {
+					limit = {
+						check_variable = { non_damaged_building_level@industrial_complex > 0 }
+					}
+					
+					set_temp_variable = { num_move = non_damaged_building_level@industrial_complex }
+					multiply_temp_variable = { num_move = efficiency }
+					add_to_temp_variable = { total = num_move }
+					
+					set_variable = { num_move_CIC = num_move }
+					round_variable = num_move_CIC
+					remove_building = {
+						type = industrial_complex
+						level = num_move
+					}
+				}
+				if = {
+					limit = {
+						check_variable = { non_damaged_building_level@arms_factory > 0 }
+					}
+					
+					set_temp_variable = { num_move = non_damaged_building_level@arms_factory }
+					multiply_temp_variable = { num_move = efficiency }
+					add_to_temp_variable = { total = num_move }
+					
+					set_variable = { num_move_MIC = num_move }
+					round_variable = num_move_MIC
+					remove_building = {
+						type = arms_factory
+						level = num_move
+					}
+				}
+				if = {
+					limit = {
+						check_variable = { non_damaged_building_level@tank_assembly > 0 }
+					}
+					
+					set_temp_variable = { num_move = non_damaged_building_level@tank_assembly }
+					multiply_temp_variable = { num_move = efficiency }
+					add_to_temp_variable = { total = num_move }
+					
+					set_variable = { num_move_TANK = num_move }
+					round_variable = num_move_TANK
+					remove_building = {
+						type = tank_assembly
+						level = num_move
+					}
+				}
+				if = {
+					limit = {
+						check_variable = { non_damaged_building_level@engine_assembly > 0 }
+					}
+					
+					set_temp_variable = { num_move = non_damaged_building_level@engine_assembly }
+					multiply_temp_variable = { num_move = efficiency }
+					add_to_temp_variable = { total = num_move }
+					
+					set_variable = { num_move_TRUCK = num_move }
+					round_variable = num_move_TRUCK
+					remove_building = {
+						type = engine_assembly
+						level = num_move
+					}
+				}
+				if = {
+					limit = {
+						check_variable = { non_damaged_building_level@artillery_assembly > 0 }
+					}
+					
+					set_temp_variable = { num_move = non_damaged_building_level@artillery_assembly }
+					multiply_temp_variable = { num_move = efficiency }
+					add_to_temp_variable = { total = num_move }
+					
+					set_variable = { num_move_ARTY = num_move }
+					round_variable = num_move_ARTY
+					remove_building = {
+						type = artillery_assembly
+						level = num_move
+					}
+				}
+				if = {
+					limit = {
+						check_variable = { non_damaged_building_level@air_assembly > 0 }
+					}
+					
+					set_temp_variable = { num_move = non_damaged_building_level@air_assembly }
+					multiply_temp_variable = { num_move = efficiency }
+					add_to_temp_variable = { total = num_move }
+					
+					set_variable = { num_move_AIR = num_move }
+					round_variable = num_move_AIR
+					remove_building = {
+						type = air_assembly
+						level = num_move
+					}
+				}
+			
+			}
+			custom_effect_tooltip = empty_space
+			
+			set_temp_variable = { industry_evac_days_remove = @INDUSTRY_EVAC_DAYS_BASE } 
+			multiply_temp_variable = { total = @INDUSTRY_EVAC_DAYS_FROM_AMOUNT }
+			add_to_temp_variable = { industry_evac_days_remove = total }
+			
+			var:target_state = { set_temp_variable = { distance = distance_to@FROM } }
+			multiply_temp_variable = { distance = @INDUSTRY_EVAC_DAYS_FROM_DISTANCE }
+			add_to_temp_variable = { industry_evac_days_remove = distance }
+			
+			set_temp_variable = { factor = modifier@industry_evac_time_factor }
+			add_to_temp_variable = { factor = 1 }
+			multiply_temp_variable = { industry_evac_days_remove = factor }
+			
+			set_temp_variable = { max_value = @INDUSTRY_EVAC_DAYS_MAX }
+			set_temp_variable = { min_value = @INDUSTRY_EVAC_DAYS_MIN }
+			clamp_temp_variable = { var = industry_evac_days_remove min = min_value max = max_value }
+			set_temp_variable = { temp = industry_evac_days_remove }
+			set_variable = { industry_evac_days_remove = temp }
+			
+			FROM = { set_state_flag = industry_evac_in_progress }
+		}
+		
+		remove_effect = {
+			
+			if = {
+				limit = { 
+					FROM = { has_state_flag = industry_evac_in_progress } 
+				}
+			
+				var:FROM.target_state = { 
+					if = {
+						limit = {
+							check_variable = { FROM.num_move_CIC > 0 }
+						}
+						add_building_construction = {
+							type = industrial_complex
+							level = FROM.num_move_CIC
+							instant_build = yes
+						}
+					}
+					if = {
+						limit = {
+							check_variable = { FROM.num_move_MIC > 0 }
+						}
+						add_building_construction = {
+							type = arms_factory
+							level = FROM.num_move_MIC
+							instant_build = yes
+						}
+					}
+					if = {
+						limit = {
+							check_variable = { FROM.num_move_TANK > 0 }
+						}
+						add_building_construction = {
+							type = tank_assembly
+							level = FROM.num_move_TANK
+							instant_build = yes
+						}
+					}
+					if = {
+						limit = {
+							check_variable = { FROM.num_move_TRUCK > 0 }
+						}
+						add_building_construction = {
+							type = engine_assembly
+							level = FROM.num_move_TRUCK
+							instant_build = yes
+						}
+					}
+					if = {
+						limit = {
+							check_variable = { FROM.num_move_ARTY > 0 }
+						}
+						add_building_construction = {
+							type = artillery_assembly
+							level = FROM.num_move_ARTY
+							instant_build = yes
+						}
+					}
+					if = {
+						limit = {
+							check_variable = { FROM.num_move_AIR > 0 }
+						}
+						add_building_construction = {
+							type = air_assembly
+							level = FROM.num_move_AIR
+							instant_build = yes
+						}
+					}
+				}
+				FROM = {
+					clr_state_flag = industry_evac_in_progress
+					clear_variable = num_move_CIC
+					clear_variable = num_move_MIC
+					clear_variable = num_move_TANK
+					clear_variable = num_move_TRUCK
+					clear_variable = num_move_SMALL
+					clear_variable = num_move_ARTY
+					clear_variable = num_move_AIR
+				}
+				
+			}
+			else = {
+				effect_tooltip = {
+					
+					set_temp_variable = { efficiency = @INDUSTRY_EVAC_BASE_EFFICIENCY }
+					add_to_temp_variable = { efficiency = ROOT.modifier@industry_evac_efficiency }
+					
+					random_scope_in_array = {
+						array = SOV.soviet_evac_site
+						
+						set_temp_variable = { t = THIS }
+					}
+					var:t = {
+						if = {
+							limit = {
+								check_variable = { FROM.non_damaged_building_level@industrial_complex > 0 }
+							}
+							
+							set_temp_variable = { num_move = FROM.non_damaged_building_level@industrial_complex }
+							multiply_temp_variable = { num_move = efficiency }
+							
+							add_building_construction = {
+								type = industrial_complex
+								level = num_move
+								instant_build = yes
+							}
+						}
+						if = {
+							limit = {
+								check_variable = { FROM.non_damaged_building_level@arms_factory > 0 }
+							}
+							
+							set_temp_variable = { num_move = FROM.non_damaged_building_level@arms_factory }
+							multiply_temp_variable = { num_move = efficiency }
+							
+							add_building_construction = {
+								type = arms_factory
+								level = num_move
+								instant_build = yes
+							}
+						}
+						if = {
+							limit = {
+								check_variable = { FROM.non_damaged_building_level@tank_assembly > 0 }
+							}
+							
+							set_temp_variable = { num_move = FROM.non_damaged_building_level@tank_assembly }
+							multiply_temp_variable = { num_move = efficiency }
+							
+							add_building_construction = {
+								type = tank_assembly
+								level = num_move
+								instant_build = yes
+							}
+						}
+						if = {
+							limit = {
+								check_variable = { FROM.non_damaged_building_level@engine_assembly > 0 }
+							}
+							
+							set_temp_variable = { num_move = FROM.non_damaged_building_level@engine_assembly }
+							multiply_temp_variable = { num_move = efficiency }
+							
+							add_building_construction = {
+								type = engine_assembly
+								level = num_move
+								instant_build = yes
+							}
+						}
+						if = {
+							limit = {
+								check_variable = { FROM.non_damaged_building_level@artillery_assembly > 0 }
+							}
+							
+							set_temp_variable = { num_move = FROM.non_damaged_building_level@artillery_assembly }
+							multiply_temp_variable = { num_move = efficiency }
+							
+							add_building_construction = {
+								type = artillery_assembly
+								level = num_move
+								instant_build = yes
+							}
+						}
+						if = {
+							limit = {
+								check_variable = { FROM.non_damaged_building_level@air_assembly > 0 }
+							}
+							
+							set_temp_variable = { num_move = FROM.non_damaged_building_level@air_assembly }
+							multiply_temp_variable = { num_move = efficiency }
+							
+							add_building_construction = {
+								type = air_assembly
+								level = num_move
+								instant_build = yes
+							}
+						}
+					}
+			
+				}
+			}
+		}
+	}
+}

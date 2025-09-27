@@ -1,0 +1,3526 @@
+
+@ECONOMY_SWITCH_PER_BUILDING = 0.2
+@ECONOMY_SWITCH_BASE_DAYS = 20
+
+@MOBILIZATION_SWITCH_MAX_PROGRESS_BASE = 14 
+@MOBILIZATION_SWITCH_DEPLOYMENT_MP_FOR_DIVISION = 12000 
+@MOBILIZATION_SWITCH_MAX_PROGRESS_DIVISIONS_FACTOR = 0.275 #multiplies num^divisions and adds it to the max progress required for final law change
+
+@MOBILIZATION_SWITCH_MAX_DURATION = 30 #28 days max to switch
+
+@CADET_TRAINING_SWITCH_MAX_PROGRESS_BASE = 20 
+@CADET_TRAINING_SWITCH_MAX_PROGRESS_DIVISIONS_FACTOR = 0.5 #multiplies num^divisions and adds it to the max progress required for final law change
+
+@OFFICER_TRAINING_SWITCH_MAX_PROGRESS_BASE = 20 
+@OFFICER_TRAINING_SWITCH_MAX_PROGRESS_DIVISIONS_FACTOR = 0.5 #multiplies num^divisions and adds it to the max progress required for final law change
+
+law_visible_trigger = { #v = law token; law_category = category token
+
+	if = {
+		limit = {
+			check_variable = { law_category = token:bonds }
+			NOT = { has_idea = var:v }
+		}
+			
+		if = {
+			limit = {
+				check_variable = { v = token:bonds_war_domestic }
+			}
+			OR = {
+				has_government = fascism
+				has_government = monarchism
+				has_government = neutrality
+			}
+		}
+		else_if = {
+			limit = {
+				OR = { 
+					check_variable = { v = token:bonds_war_international }
+					check_variable = { v = token:bonds_war_public }
+				}
+			}
+			OR = { 
+				democratic_govt = yes
+				has_government = monarchism
+			}
+		}
+		else_if = {
+			limit = {
+				check_variable = { v = token:bonds_state_requisition }
+			}
+			OR = { 
+				has_government = fascism
+				has_government = communism
+				has_government = monarchism
+				has_government = neutrality
+			}
+		}
+	}
+	
+	else_if = {
+		limit = {
+			OR = {
+				check_variable = { v = token:edu_soviets }
+				check_variable = { v = token:stalin_economy }
+				check_variable = { v = token:SWI_citizen_militia_1 }
+				check_variable = { v = token:SWI_citizen_militia_2 }
+				check_variable = { v = token:isolation }
+				check_variable = { v = token:undisturbed_isolation }
+				check_variable = { v = token:KMT_corrupted_government }
+				check_variable = { v = token:KMT_corrupted_government_lesser }
+				check_variable = { v = token:KMT_corrupted_government_wartime }
+				check_variable = { v = token:KMT_corrupted_government_wartime_lesser }
+				check_variable = { v = token:PRC_guerrilla_warfare }
+				check_variable = { v = token:propaganda_recruits }
+				
+			}
+		}
+		has_idea = var:v
+	}
+	else_if = {
+		limit = {
+			check_variable = { v = token:foreign_legion }
+		}
+		OR = {
+			original_tag = FRA
+			original_tag = ENG
+		}
+	}
+	
+}
+
+law_allowed_to_remove_trigger = {
+
+	if = {
+		limit = {
+			check_variable = { law_category = token:economy }
+		}
+			
+		if = {
+			limit = {
+				has_idea = undisturbed_isolation
+			}
+			OR = {
+				threat > 0.5
+				has_war = yes
+			}
+		}
+		else_if = {
+			limit = {
+				has_idea = isolation
+			}
+			
+			if = {
+				limit = {
+					tag = USA
+				}
+				OR = {
+					threat > 0.75
+					has_war = yes
+				}
+			}
+			else_if = {
+				limit = {
+					tag = TUR
+				}
+				OR = {
+					threat > 0.40
+					has_war = yes
+					has_completed_focus = TUR_free_market_economy
+				}	
+			}
+			else_if = {
+				limit = {
+					tag = CAN
+				}
+				OR = {
+					threat > 0.1
+					has_war = yes
+					has_completed_focus = CAN_defence_of_canada_regulations
+				}
+			}	
+			else = {
+				OR = {
+					threat > 0.5
+					has_war = yes
+				}
+			}
+		}	
+		else_if = {
+			limit = {
+				OR = {
+					has_idea = KMT_corrupted_government
+					has_idea = KMT_corrupted_government_lesser
+					has_idea = KMT_corrupted_government_wartime
+					has_idea = KMT_corrupted_government_wartime_lesser
+				}
+			}
+		
+			has_completed_focus = KMT_monetary_reform
+		}
+		else_if = {
+			limit = {
+				has_idea = PRC_guerrilla_warfare
+			}
+		
+			has_country_flag = prc_nation_founded
+		}
+	}
+	else_if = {
+		limit = {
+			check_variable = { law_category = token:conscription_law }
+			has_idea = SWI_citizen_militia_1
+		}
+		
+		has_completed_focus = SWI_join_the_allies
+		has_completed_focus = SWI_join_france
+		has_completed_focus = SWI_jump_into_action 
+	}
+	
+	else_if = {
+		limit = {
+			check_variable = { law_category = token:education }
+			has_idea = edu_soviets
+		}
+		
+		has_country_flag = purge_over
+	}
+	
+	else_if = {
+		limit = {
+			check_variable = { law_category = token:nationalization }
+			has_idea = stalin_economy
+		}
+		
+		has_completed_focus = SOV_relax_economic_control
+	}
+	
+	else_if = {
+		limit = {
+			check_variable = { law_category = token:conscription_law }
+			has_idea = propaganda_recruits
+		}
+		
+		has_country_flag = prc_nation_founded
+	}
+	
+	else_if = {
+		limit = {
+			check_variable = { law_category = token:security }
+			has_idea = security_martial_law
+		}
+	
+		OR = {
+			threat > 0.5
+			has_war = yes
+		}
+	}
+	
+}
+
+law_select_trigger = {
+	set_temp_variable = { trigger_true = 0 }
+	law_allowed_to_remove_trigger = yes
+	law_duration = yes
+	
+}
+
+law_duration = {
+	if = {
+		limit = {
+			OR = {
+				check_variable = { law_category = token:economy }
+				check_variable = { law_category = token:mobilization_laws }
+				check_variable = { law_category = token:cadet_training_standards }
+				check_variable = { law_category = token:officer_training_standards }
+			}
+		}
+		set_temp_variable = { law_change_system = 1 }
+		
+		# calculate days for law change
+		
+		if = {
+			limit = {
+				check_variable = { law_category = token:economy }
+			}
+					 
+			set_temp_variable = { duration = num_of_factories }
+			multiply_temp_variable = { duration = @ECONOMY_SWITCH_PER_BUILDING }
+			add_to_temp_variable = { duration = @ECONOMY_SWITCH_BASE_DAYS }
+			round_temp_variable = duration
+		}
+		else_if = {
+			limit = {
+				check_variable = { law_category = token:mobilization_laws }
+			}	
+			
+			set_temp_variable = { duration = @MOBILIZATION_SWITCH_MAX_PROGRESS_BASE }
+			
+			set_temp_variable = { t = num_divisions }
+			set_temp_variable = { d = amount_manpower_in_deployment_queue }
+			if = { limit = { check_variable = { d < 0 } } 
+				set_temp_variable = { d = 2000000 }
+			}
+			divide_temp_variable = { d = @MOBILIZATION_SWITCH_DEPLOYMENT_MP_FOR_DIVISION }
+			add_to_temp_variable = { t = d }
+			multiply_temp_variable = { t = @MOBILIZATION_SWITCH_MAX_PROGRESS_DIVISIONS_FACTOR }
+			round_temp_variable = t
+			
+			add_to_temp_variable = { duration = t }
+			clamp_temp_variable = { var = duration min = @MOBILIZATION_SWITCH_MAX_PROGRESS_BASE max = @MOBILIZATION_SWITCH_MAX_DURATION }
+		}
+		else_if = {
+			limit = {
+				check_variable = { law_category = token:cadet_training_standards }
+			}
+					
+			set_temp_variable = { duration = @CADET_TRAINING_SWITCH_MAX_PROGRESS_BASE }
+			
+			set_temp_variable = { t = num_divisions }
+			multiply_temp_variable = { t = @CADET_TRAINING_SWITCH_MAX_PROGRESS_DIVISIONS_FACTOR }
+			round_temp_variable = t
+			
+			add_to_temp_variable = { duration = t }
+		}
+		else_if = {
+			limit = {
+				check_variable = { law_category = token:officer_training_standards }
+			}
+					
+			set_temp_variable = { duration = @OFFICER_TRAINING_SWITCH_MAX_PROGRESS_BASE }
+						
+			set_temp_variable = { t = num_divisions }
+			multiply_temp_variable = { t = @OFFICER_TRAINING_SWITCH_MAX_PROGRESS_DIVISIONS_FACTOR }
+			round_temp_variable = t
+			
+			add_to_temp_variable = { duration = t }
+		}
+		
+	}
+}
+
+
+has_unsupported_economic_law = {
+	if = {
+		limit = {
+			has_idea = partial_economic_mobilisation
+		}
+		has_idea = partial_economic_mobilisation
+		has_war_support < 0.25
+	}
+	else_if = {
+		limit = {
+			has_idea = war_economy
+		}
+		has_idea = war_economy
+		has_war_support < 0.5
+	}
+	else_if = {
+		limit = {
+			has_idea = tot_economic_mobilisation
+		}
+		has_idea = tot_economic_mobilisation
+		has_war_support < 0.8
+	}
+	else = {
+		always = no
+	}
+}
+has_supported_economic_law = {
+	if = {
+		limit = {
+			has_idea = partial_economic_mobilisation
+		}
+		OR = {
+			has_war_support > 0.25
+			NOT = { has_idea = partial_economic_mobilisation }
+		}
+	}
+	else_if = {
+		limit = {
+			has_idea = war_economy
+		}
+		OR = {
+			has_war_support > 0.5
+			NOT = { has_idea = war_economy }
+		}
+	}
+	else_if = {
+		limit = {
+			has_idea = tot_economic_mobilisation
+		}
+		OR = {
+			has_war_support > 0.8
+			NOT = { has_idea = tot_economic_mobilisation }
+		}
+	}
+}
+
+has_unsupported_manpower_law = {
+	if = {
+		limit = {
+			has_idea = age_18
+		}
+		has_idea = age_18
+
+		hidden_trigger = {
+			is_chinese_nations/FLAG = no
+			NOT = { tag = ENG } 
+		}
+		
+		has_war_support < 0.15
+	}
+	else_if = {
+		limit = {
+			has_idea = age_17
+		}	
+		has_idea = age_17
+			
+		hidden_trigger = { 
+			is_chinese_nations/FLAG = no		
+			NOT = { tag = FRA tag = ENG } 
+		}
+		
+		has_war_support < 0.2
+		NOT = { has_government = communism }
+		NOT = { has_government = fascism }
+	}
+	else_if = {
+		limit = {
+			has_idea = age_16
+		}
+		has_idea = age_16
+		
+		has_war_support < 0.25
+		NOT = { has_government = communism }
+		NOT = { has_government = fascism }
+		is_chinese_nations/FLAG = no		
+	}
+	else_if = {
+		limit = {
+			has_idea = age_15
+		}
+		has_idea = age_15
+		
+		has_war_support < 0.3
+		NOT = { has_government = communism }
+		NOT = { has_government = fascism }
+		is_chinese_nations/FLAG = no	
+	}
+	else_if = {
+		limit = {
+			has_idea = age_14
+		}
+		has_idea = age_14
+	}
+	else_if = {
+		limit = {
+			has_idea = age_13
+		}
+		has_idea = age_13
+	}
+	else_if = {
+		limit = {
+			has_idea = age_12
+		}
+		has_idea = age_12
+	}
+	else_if = {
+		limit = {
+			has_idea = age_11
+		}
+		has_idea = age_11
+	}
+	else_if = {
+		limit = {
+			has_idea = age_10
+		}
+		has_idea = age_10
+	}
+	else = {
+		always = no
+	}
+}
+has_supported_manpower_law = {
+	if = {
+		limit = {
+			has_idea = age_18
+		}
+		OR = {
+			has_war_support > 0.15
+			NOT = { has_idea = age_18 }
+		}
+	}
+	else_if = {
+		limit = {
+			has_idea = age_17
+		}	
+		OR = {
+			has_war_support > 0.20
+			NOT = { has_idea = age_17 }
+		}
+	}
+	else_if = {
+		limit = {
+			has_idea = age_16
+		}
+		OR = {
+			has_war_support > 0.25
+			NOT = { has_idea = age_16 }
+		}
+	}
+	else_if = {
+		limit = {
+			has_idea = age_15
+		}
+		OR = {
+			has_war_support > 0.3
+			NOT = { has_idea = age_15 }
+		}
+	}
+	else_if = {
+		limit = {
+			has_idea = age_14
+		}
+		NOT = { has_idea = age_14 }
+	}
+	else_if = {
+		limit = {
+			has_idea = age_13
+		}
+		NOT = { has_idea = age_13 }
+	}
+	else_if = {
+		limit = {
+			has_idea = age_12
+		}
+		NOT = { has_idea = age_12 }
+	}
+	else_if = {
+		limit = {
+			has_idea = age_11
+		}
+		NOT = { has_idea = age_11 }
+	}
+	else_if = {
+		limit = {
+			has_idea = age_10
+		}
+		NOT = { has_idea = age_10 }
+	}
+}
+
+has_unsupported_conscription_law = {
+	if = {
+		limit = {
+			has_idea = cons_one
+		}
+		has_idea = cons_one
+
+		hidden_trigger = { 
+			is_chinese_nations/FLAG = no
+			NOT = { tag = ENG } 
+		}
+		
+		has_war_support < 0.1
+	}
+	else_if = {
+		limit = {
+			has_idea = cons_two
+			}	
+			hidden_trigger = { 
+				NOT = { 				
+					tag = FRA tag = ENG 
+				}
+				is_chinese_nations/FLAG = no
+			}
+			has_idea = cons_two
+			has_war_support < 0.25
+			NOT = { has_government = communism }
+			NOT = { has_government = fascism }
+	}
+	else_if = {
+		limit = {
+			has_idea = cons_three
+		}
+		has_idea = cons_three
+		has_war_support < 0.4
+		NOT = { has_government = communism }
+		NOT = { has_government = fascism }
+		is_chinese_nations/FLAG = no
+	}
+	else_if = {
+		limit = {
+			has_idea = cons_expanded_draft
+		}
+		has_idea = cons_expanded_draft
+		has_war_support < 0.5
+		NOT = { has_government = communism }
+		NOT = { has_government = fascism }
+		is_chinese_nations/FLAG = no
+	}
+	else_if = {
+		limit = {
+			has_idea = cons_extensive_draft
+		}
+		has_idea = cons_extensive_draft
+	}
+	else_if = {
+		limit = {
+			has_idea = cons_barrel
+		}
+		has_idea = cons_barrel
+	}
+	else = { 
+		always = no
+	}
+}
+has_supported_conscription_law = {
+	if = {
+		limit = {
+			has_idea = cons_one
+		}
+		OR = {
+			has_war_support > 0.1
+			NOT = { has_idea = cons_one }
+		}
+	}
+	else_if = {
+		limit = {
+			has_idea = cons_two
+		}	
+		OR = {
+			has_war_support > 0.25
+			NOT = { has_idea = cons_two }
+		}
+	}
+	else_if = {
+		limit = {
+			has_idea = cons_three
+		}
+		OR = {
+			has_war_support > 0.40
+			NOT = { has_idea = cons_three }
+		}
+	}
+	else_if = {
+		limit = {
+			has_idea = cons_expanded_draft
+		}
+		OR = {
+			has_war_support > 0.50
+			NOT = { has_idea = cons_expanded_draft }
+		}
+	}
+	else_if = {
+		limit = {
+			has_idea = cons_extensive_draft
+		}
+		NOT = { has_idea = cons_extensive_draft }
+	}
+	else_if = {
+		limit = {
+			has_idea = cons_barrel
+		}
+		NOT = { has_idea = cons_barrel }
+	}
+}
+####################
+### LAW TRIGGERS ###
+####################
+
+can_take_mob_reserve = {
+	set_temp_variable = { cost = 30 }
+	check_variable = { law_change_days@token:mobilization_laws = 0 }
+}
+
+can_take_mob_standing = {
+	set_temp_variable = { cost = 30 }
+	check_variable = { law_change_days@token:mobilization_laws = 0 }
+	NOT = { has_idea = undisturbed_isolation }
+	
+	OR = {
+		has_war_support > 0.6
+		custom_trigger_tooltip = {
+			tooltip = low_economic_mobilisation_or_higher
+			
+			check_variable = { law_level@token:economy > 2 }
+		}
+		if = {
+			limit = {
+				NOT = {
+					has_government = fascism
+					has_government = communism
+					has_government = monarchism
+				}
+			}
+			threat > 0.2
+		}
+		else_if = {
+			limit = {
+				OR = {
+					has_government = fascism
+					has_government = communism
+					has_government = monarchism
+				}
+			}
+			threat > 0.15
+		}
+		has_war = yes
+		custom_trigger_tooltip = {
+			tooltip = is_justifying_wargoal
+			check_variable = { justifying_wargoal_targets^num > 0 }
+		}
+		if = {
+			limit = {
+				has_idea = CHI_nine_power_treaty
+			}
+			has_idea = CHI_nine_power_treaty
+		}
+		else = {
+			hidden_trigger = { always = no }
+		}
+		any_claim = yes #checks if someone is justifying on us or has a wargoal on us
+	}
+}
+
+can_take_mob_limited = {	
+	set_temp_variable = { cost = 30 }
+	check_variable = { law_change_days@token:mobilization_laws = 0 }
+	
+	OR = {
+		custom_trigger_tooltip = {
+			tooltip = partial_economic_mobilisation_or_higher
+			
+			check_variable = { law_level@token:economy > 3 }
+		}
+		threat > 0.3
+		has_war = yes
+		custom_trigger_tooltip = {
+			tooltip = is_justifying_wargoal
+			check_variable = { justifying_wargoal_targets^num > 0 }
+		}
+		if = {
+			limit = {
+				has_idea = CHI_nine_power_treaty
+			}
+			has_idea = CHI_nine_power_treaty
+		}
+		else = {
+			hidden_trigger = { always = no }
+		}
+		any_claim = yes #checks if someone is justifying on us or has a wargoal on us
+	}
+	if = {
+		limit = {
+			tag = CAN
+		}
+		has_completed_focus = CAN_army_mobilzation
+	}
+}
+
+#if you edit this also change warn_for_mobilization scripted effect
+can_take_mob_general = {
+	set_temp_variable = { cost = 30 }
+	check_variable = { law_change_days@token:mobilization_laws = 0 }
+	
+	OR = {
+		threat > 0.5
+		has_war = yes
+		custom_trigger_tooltip = {
+			tooltip = is_justifying_wargoal
+			check_variable = { justifying_wargoal_targets^num > 0 }
+		}
+		if = {
+			limit = {
+				has_idea = CHI_nine_power_treaty
+			}
+			has_idea = CHI_nine_power_treaty
+		}
+		else = {
+			hidden_trigger = { always = no }
+		}
+		any_claim = yes #checks if someone is justifying on us or has a wargoal on us
+		#any_other_country = {
+		#	OR = {
+		#		has_war_with = ROOT #checked via has_war
+		#		is_justifying_wargoal_against = ROOT #checked via any_claim
+		#		has_wargoal_against = ROOT #checked via any_claim
+		#		custom_trigger_tooltip = { #checked via array
+		#			tooltip = is_justifying_wargoal
+		#			ROOT = { 	
+		#				is_justifying_wargoal_against = PREV
+		#			}
+		#		}
+		#	}
+		#}
+	}
+	if = {
+		limit = {
+			tag = JAP
+		}
+		has_completed_focus = JAP_mobilization_law
+	}
+	else_if = {
+		limit = {
+			tag = CAN
+		}
+		has_completed_focus = CAN_army_mobilzation
+	}
+			
+}
+
+can_level_up_mobilization = { #does not include general mob
+	
+	#set_temp_variable = { next = law_level@token:mobilization_laws }
+	#add_to_temp_variable = { next = 1 }
+	#check_variable = { next < 4 }
+	
+	#set_temp_variable = { t = global.law@token:mobilization_laws^next }
+	
+	#meta_trigger = { #so this was a waste of time
+	#	text = { can_take_[X] = yes }
+	#	X = "[?t.GetTokenKey]"
+	#}
+	
+	if = {
+		limit = {
+			has_idea = mob_reserve
+		}
+		can_take_mob_standing = yes
+	}
+	else_if = {
+		limit = {
+			has_idea = mob_standing
+		}
+		can_take_mob_limited = yes
+	}
+	else_if = {
+		limit = {
+			has_idea = mob_limited
+		}
+		can_take_mob_general = yes
+	}
+	
+}
+
+can_level_up_economy = {
+	set_temp_variable = { law_category = token:economy }
+	law_allowed_to_remove_trigger = yes
+	
+	set_temp_variable = { next = law_level@var:law_category }
+	add_to_temp_variable = { next = 1 }
+	check_variable = { next < 6 }
+	
+	meta_trigger = {
+		text = { can_take_[X] = yes }
+		X = "[?global.law@var:law_category^next.GetTokenKey]"
+	}
+}
+
+can_take_undisturbed_isolation = {
+	set_temp_variable = { cost = 100 }
+	check_variable = { law_change_days@token:economy = 0 }
+	
+}
+can_take_isolation = {
+	set_temp_variable = { cost = 100 }
+	check_variable = { law_change_days@token:economy = 0 }
+	
+}
+
+can_take_civilian_economy = {
+	set_temp_variable = { cost = 75 }
+	check_variable = { law_change_days@token:economy = 0 }
+	
+}
+
+can_take_low_economic_mobilisation = {
+	set_temp_variable = { cost = 100 }
+	check_variable = { law_change_days@token:economy = 0 }
+	
+	OR = {
+		has_war = yes
+		threat > 0.15
+		has_government = fascism	
+		has_government = communism	
+		has_government = monarchism
+		
+	}
+	if = {
+		limit = {
+			original_tag = HUN
+		}
+		NOT = { has_idea = trianon_restrictions }
+	}
+	if = {
+		limit = {
+			original_tag = USA
+		}
+		has_completed_focus = USA_prepare_intervention
+		OR = {
+			AND = {
+				has_war_support > 0.3
+				congress_high_support_trigger = yes
+			}
+			has_defensive_war = yes
+		}
+	}
+}
+
+can_take_partial_economic_mobilisation = {
+	set_temp_variable = { cost = 125 }
+	check_variable = { law_change_days@token:economy = 0 }
+	
+	OR = {	
+		has_war = yes
+		threat > 0.3
+		
+		has_government = fascism	
+		has_government = communism	
+		if = {
+			limit = {
+				has_government = monarchism 
+			}
+			AND = {
+				monarchism > 0.80
+				threat > 0.20
+			}
+		}
+		else = {
+			hidden_trigger = { always = no }
+		}
+	}
+	if = {
+		limit = {
+			original_tag = HUN
+		}
+		OR = {
+			has_completed_focus = HUN_secret_rearmament_focus
+			AND = {
+				NOT = { has_idea = trianon_restrictions }
+				NOT = { has_idea = trianon_restrictions_bled_agreement }
+			}
+		}
+	}
+
+	if = {
+		limit = {
+			original_tag = SOV
+		}
+		custom_trigger_tooltip = {
+				tooltip = SOV_part_econ_tractors
+				check_variable = { tractors_produced > part_econ_tractors_target }
+		}
+
+		custom_trigger_tooltip = {
+			tooltip = SOV_part_econ_farms
+			NOT = {
+				has_idea = SOV_pre_industry_farms
+				has_idea = SOV_pre_industry_farms_II
+				has_idea = SOV_pre_industry_farms_III
+			}
+		}
+	}
+	if = {
+		limit = {
+			has_defensive_war = no
+			original_tag = USA		}
+		has_completed_focus = USA_limited_intervention
+		OR = {
+			AND = {
+				has_war_support > 0.5
+				congress_high_support_trigger = yes
+			}
+			has_defensive_war = yes
+		}
+	}
+}
+
+can_take_war_economy = {
+	set_temp_variable = { cost = 150 }
+	check_variable = { law_change_days@token:economy = 0 }
+	
+	OR = {
+		if = {
+			limit = {
+				has_government = fascism
+			}
+			threat > 0.4
+		}
+		else_if = {
+			limit = {
+				has_government = communism
+			}
+			if = {
+				limit = {
+					original_tag = SOV
+				}
+				custom_trigger_tooltip = {
+						tooltip = SOV_war_economy_tractors
+						check_variable = { tractors_produced > war_economy_tractors_target }
+				}
+				custom_trigger_tooltip = {
+					tooltip = SOV_war_economy_farms
+					NOT = {
+						has_idea = SOV_pre_industry_farms_IV
+						has_idea = SOV_pre_industry_farms_V
+						has_idea = SOV_pre_industry_farms_VI
+						has_idea = SOV_pre_industry_farms_VII
+					}
+				}
+			}
+			else = {
+				threat > 0.4
+			}
+		}
+		else_if = {
+			limit = {
+				NOT = {
+					has_government = fascism
+					has_government = communism
+				}
+			}
+			threat > 0.5
+		}
+		else = {
+			hidden_trigger = { always = no }
+		}
+		any_enemy_country = {
+			ic_ratio = { 
+				tag = ROOT 
+				ratio > 0.5
+			}
+		}
+	}
+	
+	if = {
+		limit = {
+			original_tag = HUN
+		}
+		NOT = { has_idea = trianon_restrictions }
+		NOT = { has_idea = trianon_restrictions_bled_agreement }
+	}
+	if = {
+		limit = {
+			original_tag = USA
+		}
+		has_completed_focus = USA_total_mobilisation
+		OR = {
+			AND = {
+				has_war_support > 0.75
+				congress_high_support_trigger = yes
+			}
+			has_defensive_war = yes
+		}
+	}	
+}
+
+can_take_tot_economic_mobilisation = {
+	set_temp_variable = { cost = 200 }
+	check_variable = { law_change_days@token:economy = 0 }
+	
+	has_idea = war_economy
+	threat > 0.75
+	any_enemy_country = {
+		ic_ratio = { 
+			tag = ROOT 
+			ratio > 0.6
+		}
+	}
+	if = {
+		limit = {
+			original_tag = HUN
+		}
+		NOT = { has_idea = trianon_restrictions }
+		NOT = { has_idea = trianon_restrictions_bled_agreement }
+	}
+	if = {
+		limit = {
+			original_tag = USA
+		}
+		has_completed_focus = USA_manifest_destiny
+		OR = {
+			AND = {
+				has_war_support > 0.9
+				congress_high_support_trigger = yes
+			}
+			has_defensive_war = yes
+		}
+	}
+	if = {
+		limit = {
+			original_tag = GER
+		}
+		has_completed_focus = GER_Total_Krieg
+	}
+}
+
+can_take_KMT_corrupted_government = {
+	set_temp_variable = { cost = 0 }
+	
+}
+can_take_KMT_corrupted_government_lesser = {
+	set_temp_variable = { cost = 0 }
+	
+}
+can_take_KMT_corrupted_government_wartime = {
+	set_temp_variable = { cost = 0 }
+	
+}
+can_take_KMT_corrupted_government_wartime_lesser = {
+	set_temp_variable = { cost = 0 }
+	
+}
+can_take_PRC_guerrilla_warfare = {
+	set_temp_variable = { cost = 0 }
+	
+}
+
+#CONSCRIPTION
+can_take_cons_volunteer = {
+	set_temp_variable = { cost = 50 }
+	not = { has_government = communism }
+	has_war = no
+	custom_trigger_tooltip = {
+		tooltip = age_18_or_lower 
+		OR = {
+			has_idea  = age_19 
+			has_idea  = age_18
+		}		
+	}
+}
+can_take_cons_one = {
+	set_temp_variable = { cost = 100 }
+	if = {
+		limit = {
+			not = { has_idea = cons_volunteer }
+		}
+		has_war = no
+	}
+	if = {
+		limit = {
+			tag = BUL
+		}
+		not = { has_idea = BUL_second_national_catastrophe }
+	}
+	if = {
+		limit = {
+			tag = BUL
+		}
+		not = { has_idea = BUL_second_national_catastrophe }
+	}
+	if = {
+		limit = {
+			tag = USA
+		}
+		OR = {
+			has_completed_focus = USA_selective_training_act
+			has_completed_focus = USA_total_mobilisation
+		}
+	}
+	if = {
+		limit = {
+			original_tag = AST
+		}
+		has_completed_focus = AST_establish_conscription
+	}
+	if = {
+		limit = {
+			original_tag = CAN
+			has_dlc = "Together for Victory"
+		}
+		has_completed_focus = CAN_commit_to_the_war
+	}
+	if = {
+		limit = {
+			original_tag = RAJ
+			has_dlc = "Together for Victory"
+		}
+		or = {
+			is_subject = no
+			has_completed_focus = RAJ_an_indian_sandhurst
+		}
+	}
+	if = {
+		limit = {
+			original_tag = HUN
+		}
+		OR = {
+			has_completed_focus = HUN_secret_rearmament_focus
+			AND = {
+				NOT = { has_idea = trianon_restrictions }
+				NOT = { has_idea = trianon_restrictions_bled_agreement }
+			}
+		}
+	}
+}
+
+can_take_cons_two = {
+	set_temp_variable = { cost = 125 }
+	OR = {
+		has_government = fascism
+		has_government = communism
+		has_government = monarchism
+		has_government = neutrality
+		AND = {
+			has_war = yes
+			enemies_strength_ratio > 0.3
+		}					
+	}
+	if = {
+		limit = {
+			tag = BUL
+		}
+		not = { has_idea = BUL_second_national_catastrophe }
+	}
+	if = {
+		limit = {
+			tag = USA
+		}
+		OR = {
+			has_completed_focus = USA_selective_training_act
+			has_completed_focus = USA_total_mobilisation
+		}
+	}
+	if = {
+		limit = {
+			original_tag = AST
+		}
+		has_completed_focus = AST_establish_conscription
+	}
+	if = {
+		limit = {
+			original_tag = CAN
+			has_dlc = "Together for Victory"
+		}
+		has_completed_focus = CAN_commit_to_the_war
+	}
+	if = {
+		limit = {
+			original_tag = RAJ
+			has_dlc = "Together for Victory"
+		}
+		or = {
+			is_subject = no
+			has_completed_focus = RAJ_indian_gentlemen_officers
+		}
+	}
+	if = {
+		limit = {
+			original_tag = HUN
+		}
+		NOT = { has_idea = trianon_restrictions }
+		NOT = { has_idea = trianon_restrictions_bled_agreement }
+	}
+}
+
+can_take_cons_three = {
+	set_temp_variable = { cost = 150 }
+	OR = {
+		has_government = fascism
+		has_government = communism
+		has_government = monarchism
+		has_government = neutrality
+		AND = {
+			has_war = yes
+			enemies_strength_ratio > 0.3
+		}					
+	}
+	if = {
+		limit = {
+			tag = BUL
+		}
+		not = { has_idea = BUL_second_national_catastrophe }
+	}
+	if = {
+		limit = {
+			tag = USA
+		}
+		OR = {
+			has_completed_focus = USA_selective_training_act
+			has_completed_focus = USA_total_mobilisation
+		}
+	}
+	if = {
+		limit = {
+			original_tag = AST
+		}
+		has_completed_focus = AST_defence_act
+	}
+	if = {
+		limit = {
+			original_tag = CAN
+			has_dlc = "Together for Victory"
+		}
+		has_completed_focus = CAN_commit_to_the_war
+	}
+	if = {
+		limit = {
+			original_tag = RAJ
+			has_dlc = "Together for Victory"
+		}
+		or = {
+			is_subject = no
+			has_completed_focus = RAJ_indian_gentlemen_officers
+		}
+	}
+	if = {
+		limit = {
+			original_tag = HUN
+		}
+		NOT = { has_idea = trianon_restrictions }
+		NOT = { has_idea = trianon_restrictions_bled_agreement }
+	}
+}
+
+can_take_cons_expanded_draft = {
+	set_temp_variable = { cost = 150 }
+	has_war = yes
+	enemies_strength_ratio > 0.5
+	has_war_support > 0.5 
+	custom_trigger_tooltip = {
+		tooltip = tax_average_or_higher 
+		
+		check_variable = { law_level@token:taxes > 1 }
+	}
+	if = {
+		limit = {
+			tag = USA
+		}
+		OR = {
+			has_completed_focus = USA_selective_training_act
+			has_completed_focus = USA_total_mobilisation
+		}
+	}
+	if = {
+		limit = {
+			original_tag = AST
+		}
+		has_completed_focus = AST_defence_act
+	}
+	if = {
+		limit = {
+			original_tag = CAN
+			has_dlc = "Together for Victory"
+		}
+		has_completed_focus = CAN_commit_to_the_war
+	}
+	if = {
+		limit = {
+			original_tag = RAJ
+			has_dlc = "Together for Victory"
+		}
+		or = {
+			is_subject = no
+			has_completed_focus = RAJ_indian_gentlemen_officers
+		}
+	}
+	if = {
+		limit = {
+			original_tag = HUN
+		}
+		NOT = { has_idea = trianon_restrictions }
+		NOT = { has_idea = trianon_restrictions_bled_agreement }
+	}
+}
+
+can_take_cons_extensive_draft = {
+	set_temp_variable = { cost = 175 }
+	has_idea = cons_expanded_draft
+	has_war = yes
+	enemies_strength_ratio > 0.8
+	OR = {
+		has_war_support > 0.6
+		surrender_progress > 0
+	}
+	custom_trigger_tooltip = {
+		tooltip = tax_average_or_higher 
+		
+		check_variable = { law_level@token:taxes > 1 }
+	}
+	custom_trigger_tooltip = {
+		tooltip = age_15_or_higher 
+		
+		check_variable = { law_level@token:age_laws > 3 }
+	}	
+}
+
+
+can_take_cons_barrel = {
+	set_temp_variable = { cost = 200 }
+	has_idea  = cons_extensive_draft
+	has_war = yes
+	enemies_strength_ratio > 1
+	OR = {
+		has_war_support > 0.7
+		surrender_progress > 0
+	}
+	custom_trigger_tooltip = {
+		tooltip = tax_average_or_higher 
+		
+		check_variable = { law_level@token:taxes > 1 }
+	}
+	custom_trigger_tooltip = {
+		tooltip = age_12_or_higher 
+		
+		check_variable = { law_level@token:age_laws > 6 }
+	}	
+}
+can_take_SWI_citizen_militia_1 = {
+
+}
+can_take_SWI_citizen_militia_2 = {
+
+}
+can_take_propaganda_recruits = {
+
+}
+
+can_level_up_conscription = {
+	
+	set_temp_variable = { next = law_level@token:conscription_law }
+	add_to_temp_variable = { next = 1 }
+	check_variable = { next < 7 }
+	
+	meta_trigger = {
+		text = { can_take_[X] = yes }
+		X = "[?global.law@token:conscription_law^next.GetTokenKey]"
+	}
+	
+}
+
+#MANPOWER
+can_take_age_19 = {
+	set_temp_variable = { cost = 25 }
+
+}
+
+can_take_age_18 = {
+	set_temp_variable = { cost = 50 }
+
+}
+
+can_take_age_17 = {
+	set_temp_variable = { cost = 75 }
+	custom_trigger_tooltip = {
+		tooltip = cons_one_or_higher
+		NOT = { has_idea = cons_volunteer }
+	}
+}
+
+can_take_age_16 = {
+	set_temp_variable = { cost = 100 }
+	has_war = yes
+	custom_trigger_tooltip = {
+		tooltip = cons_three_or_higher
+		
+		check_variable = { law_level@token:conscription_law > 2 }
+	}
+	
+	if = {
+		limit = {
+			original_tag = AST
+		}
+		has_completed_focus = AST_establish_conscription
+	}
+	if = {
+		limit = {
+			original_tag = CAN
+			has_dlc = "Together for Victory"
+		}
+		has_completed_focus = CAN_commit_to_the_war
+	}
+	if = {
+		limit = {
+			original_tag = RAJ
+			has_dlc = "Together for Victory"
+		}
+		or = {
+			is_subject = no
+			has_completed_focus = RAJ_indian_gentlemen_officers
+		}
+	}
+	if = {
+		limit = {
+			original_tag = HUN
+		}
+		OR = {
+			has_completed_focus = HUN_secret_rearmament_focus
+			AND = {
+				NOT = { has_idea = trianon_restrictions }
+				NOT = { has_idea = trianon_restrictions_bled_agreement }
+			}
+		}
+	}
+}
+
+can_take_age_15 = {
+	set_temp_variable = { cost = 110 }
+	has_war = yes
+	custom_trigger_tooltip = {
+		tooltip = cons_three_or_higher
+		
+		check_variable = { law_level@token:conscription_law > 2 }
+	}
+	if = {
+		limit = {
+			original_tag = AST
+		}
+		has_completed_focus = AST_establish_conscription
+	}
+	if = {
+		limit = {
+			original_tag = CAN
+			has_dlc = "Together for Victory"
+		}
+		has_completed_focus = CAN_commit_to_the_war
+	}
+	if = {
+		limit = {
+			original_tag = RAJ
+			has_dlc = "Together for Victory"
+		}
+		or = {
+			is_subject = no
+			has_completed_focus = RAJ_indian_gentlemen_officers
+		}
+	}
+	if = {
+		limit = {
+			original_tag = HUN
+		}
+		OR = {
+			has_completed_focus = HUN_secret_rearmament_focus
+			AND = {
+				NOT = { has_idea = trianon_restrictions }
+				NOT = { has_idea = trianon_restrictions_bled_agreement }
+			}
+		}
+	}
+}
+
+can_take_age_14 = {
+	set_temp_variable = { cost = 120 }
+	has_war = yes
+	custom_trigger_tooltip = {
+		tooltip = cons_expanded_draft_or_higher
+		
+		check_variable = { law_level@token:conscription_law > 3 }
+	}
+	if = {
+		limit = {
+			original_tag = AST
+		}
+		has_completed_focus = AST_defence_act
+	}
+	if = {
+		limit = {
+			original_tag = CAN
+			has_dlc = "Together for Victory"
+		}
+		has_completed_focus = CAN_commit_to_the_war
+	}
+	if = {
+		limit = {
+			original_tag = RAJ
+			has_dlc = "Together for Victory"
+		}
+		or = {
+			is_subject = no
+			has_completed_focus = RAJ_indian_gentlemen_officers
+		}
+	}
+	if = {
+		limit = {
+			original_tag = HUN
+		}
+		OR = {
+			has_completed_focus = HUN_secret_rearmament_focus
+			AND = {
+				NOT = { has_idea = trianon_restrictions }
+				NOT = { has_idea = trianon_restrictions_bled_agreement }
+			}
+		}
+	}
+}
+
+can_take_age_13 = {
+	set_temp_variable = { cost = 130 }
+	has_war = yes
+	OR = {
+		has_war_support > 0.4
+		surrender_progress > 0
+	}
+	custom_trigger_tooltip = {
+		tooltip = cons_expanded_draft_or_higher
+		
+		check_variable = { law_level@token:conscription_law > 3 }
+	}
+	if = {
+		limit = {
+			original_tag = AST
+		}
+		has_completed_focus = AST_defence_act
+	}
+	if = {
+		limit = {
+			original_tag = CAN
+			has_dlc = "Together for Victory"
+		}
+		has_completed_focus = CAN_commit_to_the_war
+	}
+	if = {
+		limit = {
+			original_tag = RAJ
+			has_dlc = "Together for Victory"
+		}
+		or = {
+			is_subject = no
+			has_completed_focus = RAJ_indian_gentlemen_officers
+		}
+	}
+	if = {
+		limit = {
+			original_tag = HUN
+		}
+		NOT = { has_idea = trianon_restrictions }
+		NOT = { has_idea = trianon_restrictions_bled_agreement }
+	}
+}
+
+can_take_age_12 = {
+	set_temp_variable = { cost = 140 }
+	OR = {
+		has_war_support > 0.5
+		surrender_progress > 0
+	}
+	has_war = yes
+	custom_trigger_tooltip = {
+		tooltip = cons_expanded_draft_or_higher
+		
+		check_variable = { law_level@token:conscription_law > 3 }
+	}
+	if = {
+		limit = {
+			original_tag = AST
+		}
+		has_completed_focus = AST_defence_act
+	}
+	if = {
+		limit = {
+			original_tag = CAN
+			has_dlc = "Together for Victory"
+		}
+		has_completed_focus = CAN_commit_to_the_war
+	}
+	if = {
+		limit = {
+			original_tag = RAJ
+			has_dlc = "Together for Victory"
+		}
+		or = {
+			is_subject = no
+			has_completed_focus = RAJ_indian_gentlemen_officers
+		}
+	}
+	if = {
+		limit = {
+			original_tag = HUN
+		}
+		NOT = { has_idea = trianon_restrictions }
+		NOT = { has_idea = trianon_restrictions_bled_agreement }
+	}
+}
+
+can_take_age_11 = {
+	set_temp_variable = { cost = 150 }
+	has_war = yes
+	OR = {
+		has_war_support > 0.6
+		surrender_progress > 0
+	}
+	custom_trigger_tooltip = {
+		tooltip = cons_extensive_draft_or_higher
+		
+		check_variable = { law_level@token:conscription_law > 4 }
+	}
+	if = {
+		limit = {
+			original_tag = AST
+		}
+		has_completed_focus = AST_defence_act
+	}
+	if = {
+		limit = {
+			original_tag = CAN
+			has_dlc = "Together for Victory"
+		}
+		has_completed_focus = CAN_commit_to_the_war
+	}
+	if = {
+		limit = {
+			original_tag = RAJ
+			has_dlc = "Together for Victory"
+		}
+		or = {
+			is_subject = no
+			has_completed_focus = RAJ_indian_gentlemen_officers
+		}
+	}
+	if = {
+		limit = {
+			original_tag = HUN
+		}
+		NOT = { has_idea = trianon_restrictions }
+		NOT = { has_idea = trianon_restrictions_bled_agreement }
+	}
+}
+
+can_take_age_10 = {
+	set_temp_variable = { cost = 150 }
+	has_war = yes
+	OR = {
+		has_war_support > 0.7
+		surrender_progress > 0
+	}
+	custom_trigger_tooltip = {
+		tooltip = cons_extensive_draft_or_higher
+		
+		check_variable = { law_level@token:conscription_law > 4 }
+	}
+	if = {
+		limit = {
+			original_tag = AST
+		}
+		has_completed_focus = AST_defence_act
+	}
+	if = {
+		limit = {
+			original_tag = CAN
+			has_dlc = "Together for Victory"
+		}
+		has_completed_focus = CAN_commit_to_the_war
+	}
+	if = {
+		limit = {
+			original_tag = RAJ
+			has_dlc = "Together for Victory"
+		}
+		or = {
+			is_subject = no
+			has_completed_focus = RAJ_indian_gentlemen_officers
+		}
+	}
+	if = {
+		limit = {
+			original_tag = HUN
+		}
+		NOT = { has_idea = trianon_restrictions }
+		NOT = { has_idea = trianon_restrictions_bled_agreement }
+	}
+}
+
+can_level_up_manpower = {
+	
+	set_temp_variable = { next = law_level@token:age_laws }
+	add_to_temp_variable = { next = 1 }
+	check_variable = { next < 10 }
+	
+	meta_trigger = {
+		text = { can_take_[X] = yes }
+		X = "[?global.law@token:age_laws^next.GetTokenKey]"
+	}
+}
+
+can_take_bonds_peace = {
+	set_temp_variable = { cost = 50 }
+	hidden_trigger = {
+		NOT = {
+			has_idea = bonds_basic
+			has_idea = bonds_war_international
+			has_idea = bonds_war_domestic
+			has_idea = bonds_state_requisition
+			has_idea = bonds_war_public
+			has_idea = bonds_print
+		}	
+	}
+}
+
+can_take_bonds_basic = {
+	set_temp_variable = { cost = 50 }
+	hidden_trigger = {
+		NOT = {
+			has_idea = bonds_war_international
+			has_idea = bonds_war_domestic
+			has_idea = bonds_state_requisition
+			has_idea = bonds_war_public
+			has_idea = bonds_print
+		}	
+	}
+}
+
+can_take_bonds_war_domestic = {
+	set_temp_variable = { cost = 100 }
+	has_idea = bonds_basic
+	has_war = yes
+	hidden_trigger = {
+		NOT = {
+			has_idea = bonds_war_international
+			has_idea = bonds_state_requisition
+			has_idea = bonds_war_public
+			has_idea = bonds_print
+		}
+	}
+}
+
+can_take_bonds_war_international = {
+	set_temp_variable = { cost = 100 }
+	has_idea = bonds_basic
+	has_war = yes
+	hidden_trigger = {
+		NOT = {
+			has_idea = bonds_war_domestic
+			has_idea = bonds_state_requisition
+			has_idea = bonds_war_public
+			has_idea = bonds_print
+		}		
+    }		
+}
+
+can_take_bonds_war_public = {
+	set_temp_variable = { cost = 150 }
+	has_idea = bonds_war_international
+	has_war = yes
+	hidden_trigger = {
+		NOT = {
+			has_idea = bonds_print
+		}
+	}	
+}
+
+can_take_bonds_state_requisition = {
+	set_temp_variable = { cost = 150 }
+	if = {
+		limit = {
+			has_government = communism
+		}
+		has_idea = bonds_basic
+	}
+	else = {
+		has_idea = bonds_war_domestic
+	}
+	has_war = yes
+	
+	hidden_trigger = {
+		NOT = {
+			has_idea = bonds_print
+		}	
+	}
+}
+
+can_take_bonds_print = {
+	set_temp_variable = { cost = 200 }
+	OR = {
+		has_idea = bonds_state_requisition
+		has_idea = bonds_war_public
+	}
+	has_war = yes
+}
+	
+can_level_up_bonds = {
+	if = {
+		limit = {
+			has_idea = bonds_peace
+		}
+		can_take_bonds_basic = yes
+	}
+	else_if = {
+		limit = {
+			has_idea = bonds_basic
+		}
+		OR = {
+			can_take_bonds_war_domestic = yes
+			can_take_bonds_war_international = yes
+		}
+	}
+	else_if = {
+		limit = {
+			has_idea = bonds_war_domestic
+		}
+		can_take_bonds_state_requisition = yes
+	}
+	else_if = {
+		limit = {
+			has_idea = bonds_war_international
+		}
+		can_take_bonds_war_public = yes
+	}
+	else_if = {
+		limit = {
+			OR = {
+				has_idea = bonds_state_requisition
+				has_idea = bonds_war_public
+			}
+		}
+		can_take_bonds_print = yes
+	}
+}
+	
+can_take_train_none = {
+	set_temp_variable = { cost = 50 }
+
+}	
+
+can_take_train_low = { 
+	set_temp_variable = { cost = 50 }
+	
+	if = {
+		limit = { 
+			OR = {
+				tag = SOV
+				tag = MON
+				tag = SIK
+				tag = TAN
+			}
+															
+		}	
+		has_dynamic_modifier = {
+			modifier = officers_purged 	
+		}
+	}
+}
+
+can_take_train_medium = {
+	set_temp_variable = { cost = 75 }
+	
+	custom_trigger_tooltip = {
+		tooltip = tax_low_or_higher 
+		NOT = { has_idea = tax_minimal }
+	}
+	if = {
+		limit = { 
+			OR = {
+				tag = SOV
+				tag = MON
+				tag = SIK
+				tag = TAN
+			}										
+		}
+		has_dynamic_modifier = {
+			modifier = officers_purged 	
+		}
+	}
+	else_if = {
+		limit = {
+			tag = AST
+		}
+		has_completed_focus = AST_revitalise_the_army
+	}
+}
+
+can_take_train_high = {
+	set_temp_variable = { cost = 100 }
+	
+	custom_trigger_tooltip = {
+		tooltip = tax_average_or_higher 
+		
+		check_variable = { law_level@token:taxes > 1 }
+	}
+	if = {
+		limit = { 
+			OR = {
+				tag = SOV
+				tag = MON
+				tag = SIK
+				tag = TAN
+			}
+			has_dynamic_modifier = {
+				modifier = officers_purged 	
+			}									
+		}	
+		custom_trigger_tooltip = {
+			tooltip = SOV_has_not_officers_purged_tt
+			NOT = { 
+				has_dynamic_modifier = {
+					modifier = officers_purged 	
+				}
+			}					
+		}
+	}
+	else_if = {
+		limit = {
+			tag = AST
+		}
+		has_completed_focus = AST_revitalise_the_army
+	}
+}
+
+can_take_train_elite = {
+	set_temp_variable = { cost = 150 }
+	
+	custom_trigger_tooltip = {
+		tooltip = tax_high_or_higher 
+		
+		check_variable = { law_level@token:taxes > 2 }
+	}
+	custom_trigger_tooltip = {
+		tooltip = officer_train_low_or_higher 
+		NOT = { has_idea = officer_train_none }
+	}
+	if = {
+		limit = { 
+			OR = {
+				tag = SOV
+				tag = MON
+				tag = SIK
+				tag = TAN
+			}
+			has_dynamic_modifier = {
+				modifier = officers_purged 	
+			}								
+		}
+		custom_trigger_tooltip = {
+			tooltip = SOV_has_not_officers_purged_tt
+			NOT = { 
+				has_dynamic_modifier = {
+					modifier = officers_purged 	
+				} 
+			}							
+		}
+	}
+	else_if = {
+		limit = {
+			tag = AST
+		}
+		has_completed_focus = AST_revitalise_the_army
+	}
+}
+
+can_level_up_cadet_training = {
+	
+	set_temp_variable = { next = law_level@token:cadet_training_standards }
+	add_to_temp_variable = { next = 1 }
+	check_variable = { next < 5 }
+	
+	meta_trigger = {
+		text = { can_take_[X] = yes }
+		X = "[?global.law@token:cadet_training_standards^next.GetTokenKey]"
+	}
+	
+}
+
+can_take_free_trade = {
+	set_temp_variable = { cost = 100 }
+	if = {
+		limit = {
+			is_subject = no
+		}
+		NOT = {
+			has_government = fascism
+			has_government = communism
+			has_government = monarchism
+			has_government = neutrality
+		}
+		NOT = {
+			has_idea = tariffs_extreme
+			has_idea = tariffs_high
+		}
+	}
+}
+can_take_export_focus = {
+	set_temp_variable = { cost = 100 }
+	if = {
+		limit = {
+			is_subject = no
+		}
+		NOT = { 
+			has_idea = tariffs_extreme 
+		}
+	}
+}
+can_take_limited_exports = {
+	set_temp_variable = { cost = 125 }
+	if = {
+		limit = {
+			is_chinese_nations/FLAG	= yes
+		}
+		not = { has_idea = CHI_nine_power_treaty }
+	}
+	NOT = {
+		has_idea = tariffs_none
+		has_idea = private_control
+	}
+}
+can_take_closed_economy = {
+	set_temp_variable = { cost = 150 }
+	is_subject = no
+	if = {
+		limit = {
+			is_chinese_nations/FLAG = yes
+		}
+		not = { has_idea = CHI_nine_power_treaty }
+	}
+	has_war = yes
+	OR = { 
+		has_government = fascism
+		has_government = communism
+		has_government = monarchism
+		has_government = neutrality
+	}
+	NOT = { 
+		has_idea = private_control 
+		has_idea = press_free
+	}
+	custom_trigger_tooltip = {
+		tooltip = war_economy_or_higher 
+		
+		check_variable = { law_level@token:economy > 4 }
+	}
+	custom_trigger_tooltip = {
+		tooltip = tariffs_average_or_higher
+		
+		check_variable = { law_level@token:tariffs > 1 }
+	}
+	NOT = { has_opinion_modifier = MR_pact }
+}
+
+can_take_tax_minimal = {
+	set_temp_variable = { cost = 125 }
+	NOT = { 
+		has_government = communism 
+		has_government = monarchism 
+		has_government = fascism 
+	}
+	
+	NOT = {	has_idea = planned_economy }
+	
+	has_idea = edu_minimal
+	
+	has_idea = officer_train_none
+	
+	custom_trigger_tooltip = {
+		tooltip = train_low_or_lower
+		
+		check_variable = { law_level@token:cadet_training_standards < 2 }
+	}
+		
+}
+can_take_tax_low = {
+	set_temp_variable = { cost = 125 }
+	custom_trigger_tooltip = {
+		tooltip = edu_low_or_lower
+		
+		OR = {
+			has_idea = edu_minimal
+			has_idea = edu_low
+		}
+	}
+	custom_trigger_tooltip = {
+		tooltip = train_medium_or_lower
+		
+		check_variable = { law_level@token:cadet_training_standards < 3 } 
+	}
+	custom_trigger_tooltip = {
+		tooltip = officer_train_low_or_lower
+		
+		check_variable = { law_level@token:officer_training_standards < 2 } 
+	}
+	
+}
+can_take_tax_average = {
+	set_temp_variable = { cost = 100 }
+	NOT = { 
+		has_idea  = edu_excellent 
+		has_idea  = train_elite 
+		has_idea  = officer_train_elite 
+	}
+	if = {
+		limit = {
+			tag = TUR
+		}
+		OR = {
+			has_completed_focus = TUR_administration
+			has_completed_focus = TUR_authoritarianism
+			has_completed_focus = TUR_modern_taxation
+			has_completed_focus = TUR_miltary_cillivan_government
+			has_completed_focus = TUR_wealth_tax
+			has_completed_focus = TUR_soviet_tilt
+		}
+	}
+} 
+can_take_tax_high = {
+	set_temp_variable = { cost = 125 }
+	NOT = {
+		has_government = conservatism
+	}
+	if = {
+		limit = {
+			tag = TUR
+		}
+		OR = {
+			has_completed_focus = TUR_administration
+			has_completed_focus = TUR_authoritarianism
+			has_completed_focus = TUR_modern_taxation
+			has_completed_focus = TUR_miltary_cillivan_government
+			has_completed_focus = TUR_wealth_tax
+			has_completed_focus = TUR_soviet_tilt
+		}
+	}
+}
+can_take_tax_extreme = {
+	set_temp_variable = { cost = 125 }
+	OR = { 
+		has_government = fascism
+		has_government = communism
+		has_government = monarchism
+		has_government = neutrality
+	}
+	NOT = {
+		has_idea  = private_control
+	}
+}
+
+can_take_tariffs_none = {
+	set_temp_variable = { cost = 125 }
+	NOT = {
+		has_government = fascism
+		has_government = communism
+		has_government = neutrality
+		has_government = monarchism
+		has_government = agrarianism
+	}
+	OR = {
+		has_country_flag = has_free_trade
+		has_country_flag = has_export_focus
+	}
+}
+can_take_tariffs_low = {
+	set_temp_variable = { cost = 100 }
+	NOT = {
+		has_government = communism
+		has_government = fascism
+	}
+	OR = {
+		has_country_flag = has_free_trade
+		has_country_flag = has_export_focus
+		has_country_flag = has_limited_exports
+	}
+}
+can_take_tariffs_average = {
+	set_temp_variable = { cost = 100 }
+	
+}
+can_take_tariffs_high = {
+	set_temp_variable = { cost = 100 }
+	if = {
+		limit = {
+			tag = IRE
+		}
+		OR = {
+			has_idea = IRE_trade_war
+			has_idea = IRE_trade_war2
+		}
+	}
+	else_if = {
+		limit = {
+			tag = AST
+			OR = {
+				has_government = conservatism
+				has_government = agrarianism
+			}
+		}
+		has_completed_focus = AST_country
+	}
+	else = {
+		OR = {
+			has_country_flag = has_export_focus
+			has_country_flag = has_limited_exports
+			has_country_flag = has_closed_economy
+		}
+		if = {
+			limit = {
+				democratic_govt = yes
+			}
+			any_enemy_country = {
+				ic_ratio = { 
+					tag = ROOT 
+					ratio > 0.7
+				}
+			}
+		}
+		else_if = {
+			limit = { 
+				NOT = { democratic_govt = yes }
+			}
+			custom_trigger_tooltip = {
+				tooltip = partial_economic_mobilisation_or_higher
+				
+				check_variable = { law_level@token:economy > 3 }
+			}
+		}
+	}
+}
+can_take_tariffs_extreme = {
+	set_temp_variable = { cost = 125 }
+	OR = { 
+		has_government = fascism
+		has_government = communism
+		has_government = monarchism
+		has_government = neutrality
+	}
+	OR = {
+		has_country_flag = has_limited_exports
+		has_country_flag = has_closed_economy
+	}
+	if = {
+		limit = {
+			NOT = { democratic_govt = yes }
+		}
+		custom_trigger_tooltip = {
+			tooltip = partial_economic_mobilisation_or_higher
+			
+			check_variable = { law_level@token:economy > 3 }
+		}
+	}
+}
+
+can_take_press_free = {
+	set_temp_variable = { cost = 75 }
+	NOT = {
+		has_government = fascism
+		has_government = neutrality
+		has_government = communism
+		has_government = monarchism
+		has_idea = security_police_state
+		has_idea = security_major_restrictions
+	}
+	if = {
+		limit = {
+			tag = SWI
+		}
+		NOT = {
+			has_completed_focus = SWI_limited_censorship_of_the_press
+		}
+	}
+}
+can_take_press_regulated = {
+	set_temp_variable = { cost = 100 }
+	NOT = { 
+		has_idea = security_police_state 
+		has_government = communism 
+		has_government = fascism
+	}
+	if = {
+		limit = {
+			original_tag = USA
+		}
+		congress_high_support_trigger = yes
+	}
+	if = {
+		limit = {
+			original_tag = CAN
+		}
+		has_completed_focus = CAN_war_measures
+	}
+}
+can_take_press_censored = {
+	set_temp_variable = { cost = 125 }
+	OR = {
+		AND = {
+			democratic_govt = yes
+			has_war = yes
+		}
+		has_government = fascism
+		has_government = communism
+		has_government = monarchism	
+		has_government = neutrality
+		if = {
+			limit = {
+				tag = SWI
+			}
+			has_completed_focus = SWI_tighten_press_censorship
+		}
+		else = { hidden_trigger = { always = no } }
+	}
+	if = {
+		limit = {
+			original_tag = USA
+		}
+		congress_high_support_trigger = yes
+	}
+	if = {
+		limit = {
+			is_in_faction_with = ENG
+		}
+		NOT = { has_completed_focus = CW_hearts }
+		if = {
+			limit = {
+				original_tag = CAN
+			}
+			has_completed_focus = CAN_war_measures
+		}
+	}
+}
+can_take_press_state = {
+	set_temp_variable = { cost = 150 }
+	OR = { 
+		has_government = fascism
+		has_government = communism
+		has_government = monarchism
+		has_government = neutrality
+	}
+	NOT = {
+		has_idea = security_liberty_first
+		has_idea = security_minor_restrictions
+	}
+	if = {
+		limit = {
+			original_tag = USA
+		}
+		congress_high_support_trigger = yes
+	}
+}
+
+can_take_edu_minimal = {
+	set_temp_variable = { cost = 125 }
+	if = {
+		limit = {
+			tag = HUN
+		}
+		NOT = { has_completed_focus = HUN_revisionist_education }
+	}
+}
+can_take_edu_soviets = {
+	set_temp_variable = { cost = 125 }
+	
+}
+can_take_edu_low = {
+	set_temp_variable = { cost = 125 }
+	custom_trigger_tooltip = {
+		tooltip = tax_low_or_higher 
+		
+		check_variable = { law_level@token:taxes > 0 }
+	}
+}
+can_take_edu_high = {
+	set_temp_variable = { cost = 250 }
+	custom_trigger_tooltip = {
+		tooltip = tax_average_or_higher 
+		
+		check_variable = { law_level@token:taxes > 1 }
+	}	
+}
+can_take_edu_excellent = {
+	set_temp_variable = { cost = 250 }
+	if = {
+		limit = {
+			tag = ENG
+			has_completed_focus = ENG_Pelican
+		}
+	}
+	else = {
+		custom_trigger_tooltip = {
+			tooltip = tax_high_or_higher 
+			
+			check_variable = { law_level@token:taxes > 2 }
+		}
+	}
+}
+can_take_fdi_encouraged = {
+	set_temp_variable = { cost = 100 }
+	NOT = {
+		has_government = fascism
+		has_government = communism
+		has_government = neutrality
+		has_government = monarchism
+	}
+	NOT = { has_idea = tariffs_high }
+	OR = {
+		has_country_flag = has_free_trade
+		has_country_flag = has_export_focus
+		has_country_flag = has_limited_exports
+	}
+}
+can_take_fdi_allowed = {
+	set_temp_variable = { cost = 100 }
+	NOT = { has_government = communism }
+}
+can_take_fdi_regulated = {
+	set_temp_variable = { cost = 100 }
+	if = {
+		limit = {
+			is_chinese_nations/FLAG = yes
+		}
+		not = { has_idea = CHI_nine_power_treaty }
+	}
+	NOT = {
+		has_government = liberalism
+	}
+}
+can_take_fdi_banned = {
+	set_temp_variable = { cost = 100 }
+	if = {
+		limit = {
+			is_chinese_nations/FLAG = yes
+		}
+		not = { has_idea = CHI_nine_power_treaty }
+	}
+	OR = { 
+		has_government = fascism
+		has_government = communism
+		has_government = monarchism
+		has_government = neutrality
+	}
+	NOT = {
+		has_idea = tariffs_none
+	}
+	OR = {
+		has_country_flag = has_export_focus
+		has_country_flag = has_limited_exports
+		has_country_flag = has_closed_economy
+	}
+}
+can_take_labor_none = {
+	set_temp_variable = { cost = 125 }
+	OR = {
+		has_government = monarchism
+		has_government = conservatism
+		has_government = neutrality
+	}	
+}
+can_take_labor_allowed = {
+	set_temp_variable = { cost = 125 }
+	has_idea = labor_none
+}
+can_take_labor_encouraged = {
+	set_temp_variable = { cost = 125 }
+	if = {
+		limit = {
+			tag = TUR
+		}
+		has_completed_focus = TUR_womens_work
+	}
+	else_if = {
+		limit = {
+			tag = CAN
+		}
+		has_completed_focus = CAN_women
+	}
+	else = {
+		has_idea = labor_allowed
+		is_major = yes
+		has_war_support > 0.4
+	}
+}
+can_take_labor_homefront = {
+	set_temp_variable = { cost = 150 }
+	has_idea = labor_encouraged
+	AND = {
+		has_war = yes
+		is_major = yes
+		custom_trigger_tooltip = {
+			tooltip = war_economy_or_higher
+			
+			check_variable = { law_level@token:economy > 4 }
+		}
+		
+		has_war_support > 0.8
+	}
+	if = {
+		limit = {
+			OR = {
+				democratic_govt = yes
+				has_government = monarchism
+			}
+		}
+		surrender_progress > 0.25
+	}
+	if = {
+		limit = {
+			tag = TUR
+		}
+		has_completed_focus = TUR_womens_work
+	}	
+}
+can_take_foreign_isolationism = {
+	set_temp_variable = { cost = 150 }
+	OR = {
+		has_idea = undisturbed_isolation
+		has_idea = isolation
+	}
+}
+can_take_foreign_neutral = {
+	set_temp_variable = { cost = 75 }
+	is_in_faction = no
+	NOT = {
+		has_idea = undisturbed_isolation
+		has_idea = isolation
+	}
+}
+can_take_foreign_cooperative = {
+	set_temp_variable = { cost = 75 }
+	NOT = {
+		has_idea = undisturbed_isolation
+		has_idea = isolation
+	}
+}
+can_take_foreign_interventionism = {
+	set_temp_variable = { cost = 75 }
+	OR = {
+		has_government = fascism
+		has_government = communism
+		has_government = monarchism
+		has_government = neutrality
+		has_war_support > 0.6
+		is_faction_leader = yes 
+	}
+	NOT = {
+		has_idea = undisturbed_isolation
+		has_idea = isolation
+	}
+}
+can_take_foreign_warmonger = {
+	set_temp_variable = { cost = 75 }
+	has_war_support > 0.6
+	OR = { 
+		has_government = fascism
+		has_government = communism
+		has_government = monarchism
+		has_government = neutrality
+	}
+	NOT = {
+		has_idea = undisturbed_isolation
+		has_idea = isolation
+	}
+}
+can_take_private_control = {
+	set_temp_variable = { cost = 200 }
+	if = { 
+		limit = {
+			is_subject = no
+		}
+		NOT = {
+			has_government = fascism
+			has_government = communism
+			has_government = monarchism
+			has_government = neutrality
+			has_government = socialism
+			has_idea = tax_extreme
+			has_idea = press_state
+		}
+	}
+	else = {
+		overlord = {
+			NOT = {	
+				has_government = fascism
+				has_government = communism
+				has_government = monarchism
+				has_government = neutrality
+				has_government = socialism
+			}
+		}
+	}
+}
+can_take_key_industries = {
+	set_temp_variable = { cost = 200 }
+}
+can_take_major_industries = {
+	set_temp_variable = { cost = 200 }
+	OR = {
+		has_government = fascism
+		has_government = communism
+		has_government = monarchism
+		has_government = neutrality
+		AND = {
+			OR = {
+				has_government = liberalism
+				has_government = socialism
+			}
+			has_war = yes
+			any_enemy_country = {
+				ic_ratio = { 
+					tag = ROOT 
+					ratio > 0.8
+				}
+			}
+		}
+		if = {
+			limit = {
+				tag = TUR
+			}
+			has_completed_focus = TUR_planned_industry
+		}
+	}
+}
+can_take_planned_economy = {
+	set_temp_variable = { cost = 200 }
+	OR = { 
+		has_government = fascism
+		has_government = communism
+		has_government = neutrality
+	}
+	NOT = {
+		has_idea = tax_minimal
+		has_idea = press_free
+	}
+}
+can_take_stalin_economy = {
+	set_temp_variable = { cost = 200 }
+
+}
+can_take_foreign_none = {
+	set_temp_variable = { cost = 150 }
+
+}
+can_take_foreign_volunteers = {
+	set_temp_variable = { cost = 150 }
+	has_war = yes
+}
+can_take_foreign_encouraged = {
+	set_temp_variable = { cost = 150 }
+	if = {
+		limit = {	
+			tag = ENG
+		}
+		OR = {
+			has_war = yes
+			has_completed_focus = ENG_Burma
+		}
+	}
+	else = {
+		has_war = yes
+	}
+}
+can_take_foreign_legion = {
+	set_temp_variable = { cost = 150 }
+	if = {
+		limit = {	
+			tag = ENG
+		}
+		OR = {
+			has_war = yes
+			has_completed_focus = ENG_Burma
+		}
+	}
+	else = {
+		has_war = yes
+	}
+}
+can_take_foreign_conscript = {
+	set_temp_variable = { cost = 150 }
+	OR = {
+		has_government = monarchism
+		has_government = fascism
+		has_government = communism
+		has_government = neutrality
+	}
+	has_war = yes
+}
+can_take_security_liberty_first = {
+	set_temp_variable = { cost = 75 }
+	NOT = {
+		has_government = communism
+		has_government = fascism
+		has_government = monarchism
+		has_government = neutrality
+		has_idea = press_state
+		has_idea = press_censored
+	}
+}
+can_take_security_minor_restrictions = {
+	set_temp_variable = { cost = 75 }
+	NOT = {
+		has_government = communism
+		has_government = fascism
+		has_government = monarchism
+		has_government = neutrality
+		has_idea = press_state
+	}
+}
+can_take_security_major_restrictions = {
+	set_temp_variable = { cost = 75 }
+	NOT = { has_idea = press_free }
+	OR = {
+		AND = {
+			democratic_govt = yes
+			has_war = yes
+		}
+		has_government = fascism
+		has_government = communism
+		has_government = neutrality
+		has_government = monarchism
+		if = {
+			limit = {
+				tag = TUR
+			}
+			has_completed_focus = TUR_martial_law
+		}
+		else = {
+			hidden_trigger = { always = no }
+		}
+	}
+}
+can_take_security_police_state = {
+	set_temp_variable = { cost = 75 }
+	OR = {
+		has_government = communism
+		has_government = fascism
+		has_government = monarchism
+		has_government = neutrality
+	}
+	NOT = {
+		has_idea = press_free
+		has_idea = press_regulated
+	}
+}
+can_take_security_martial_law = {
+	set_temp_variable = { cost = 75 }
+	
+	OR = {
+		has_government = communism
+		has_government = fascism
+		has_government = monarchism
+		has_government = neutrality
+	}
+	NOT = {
+		has_idea = press_free
+		has_idea = press_regulated
+	}
+	
+}
+
+can_take_officer_train_none = {
+	set_temp_variable = { cost = 100 }
+}
+can_take_officer_train_low = {
+	set_temp_variable = { cost = 100 }
+	
+	custom_trigger_tooltip = {
+		tooltip = tax_low_or_higher 
+		
+		check_variable = { law_level@token:taxes > 0 }
+	}
+	
+	set_temp_variable = { trigger = 1 }
+	custom_trigger_tooltip = {
+		tooltip = upper_average_trigger_TT
+		check_variable = { upper_average > trigger }
+	}
+	if = {
+		limit = {
+			NOT = { tag = SIA }
+		}
+		custom_trigger_tooltip = {
+			tooltip = num_skill_2_trigger_TT
+			check_variable = { num_skill_2 > 4 }
+		}
+	}
+	if = {
+		limit = { #Visible only when not true
+			OR = {
+				tag = SOV
+				tag = MON
+				tag = SIK
+				tag = TAN
+			}
+			has_dynamic_modifier = {
+				modifier = officers_purged 	
+			}
+		}	
+		custom_trigger_tooltip = {
+			tooltip = SOV_has_not_officers_purged_tt
+			NOT = { 
+				has_dynamic_modifier = {
+					modifier = officers_purged 	
+				} 
+			}							
+		}
+	}	
+}
+can_take_officer_train_high = {
+	set_temp_variable = { cost = 100 }
+	
+	set_temp_variable = { trigger = 2 }
+	custom_trigger_tooltip = {
+		tooltip = upper_average_trigger_TT
+		check_variable = { upper_average > trigger }
+	}
+	if = {
+		limit = {
+			NOT = { tag = SIA }
+		}
+		custom_trigger_tooltip = {
+			tooltip = num_skill_3_trigger_TT
+			check_variable = { num_skill_3 > 4 }
+		}
+	}
+	else = {
+		has_completed_focus = SIA_yuwachon_taharn
+	}
+	custom_trigger_tooltip = {
+		tooltip = tax_average_or_higher 
+		
+		check_variable = { law_level@token:taxes > 1 }
+	}
+	if = {
+		limit = {
+			tag = CHI 
+		}
+		NOT = { has_idea = CHI_incompetent_officers }
+	}
+	
+	if = {
+		limit = { #Visible only when not true
+			OR = {
+				tag = SOV
+				tag = MON
+				tag = SIK
+				tag = TAN
+			}
+			has_dynamic_modifier = {
+				modifier = officers_purged 	
+			}
+		}	
+		custom_trigger_tooltip = {
+			tooltip = SOV_has_not_officers_purged_tt
+			NOT = { 
+				has_dynamic_modifier = {
+					modifier = officers_purged 	
+				} 
+			}							
+		}
+	}
+	if = {
+		limit = {
+			original_tag = USA
+		}
+		has_completed_focus = USA_army_incompetence
+	}	
+}
+can_take_officer_train_elite = {
+	set_temp_variable = { cost = 100 }
+	
+	set_temp_variable = { trigger = 3 }
+	custom_trigger_tooltip = {
+		tooltip = upper_average_trigger_TT
+		check_variable = { upper_average > trigger }
+	}
+	custom_trigger_tooltip = { 
+		tooltip = num_skill_4_trigger_TT
+		check_variable = { num_skill_4 > 4 }
+	}
+	custom_trigger_tooltip = {
+		tooltip = tax_high_or_higher 
+		
+		check_variable = { law_level@token:taxes > 2 }
+	}
+	if = {
+		limit = {
+			tag = CHI 
+		}
+		NOT = { has_idea = CHI_incompetent_officers }
+	}
+	
+	if = {
+		limit = { #Visible only when not true
+			OR = {
+				tag = SOV
+				tag = MON
+				tag = SIK
+				tag = TAN
+			}
+			has_dynamic_modifier = {
+				modifier = officers_purged 	
+			}
+		}	
+		custom_trigger_tooltip = {
+			tooltip = SOV_has_not_officers_purged_tt
+			NOT = { 
+				has_dynamic_modifier = {
+					modifier = officers_purged 	
+				} 
+			}							
+		}
+	}
+	if = {
+		limit = {
+			original_tag = USA
+		}
+		has_completed_focus = USA_army_incompetence
+	}	
+}
+
+can_take_very_low_civ_fuel_usage = {
+	set_temp_variable = { cost = 125 }
+	
+	NOT = {
+		has_idea = security_liberty_first
+		has_idea = security_minor_restrictions
+		has_idea = civilian_economy
+	}	
+}
+can_take_low_civ_fuel_usage = {
+	set_temp_variable = { cost = 100 }
+	
+	NOT = {
+		has_idea = security_liberty_first
+		has_idea = civilian_economy
+	}	
+}
+can_take_normal_civ_fuel_usage = {
+	set_temp_variable = { cost = 90 }
+	
+}
+can_take_medium_civ_fuel_usage = {
+	set_temp_variable = { cost = 85 }
+	
+	fuel_ratio > 0.1
+}
+can_take_high_civ_fuel_usage = {
+	set_temp_variable = { cost = 85 }
+	
+	fuel_ratio > 0.1
+}
+
+can_take_extravagant_diet = {
+	set_temp_variable = { cost = 420 }
+
+}
+can_take_modern_diet = {
+	set_temp_variable = { cost = 420 }
+	hidden_trigger = {
+		NOT = {
+			has_idea = extravagant_diet
+		}	
+	}
+}
+can_take_basic_diet = {
+	set_temp_variable = { cost = 420 }
+	hidden_trigger = {
+		OR = {
+			has_idea = subsistence_diet
+			has_idea = poor_diet
+		}	
+	}
+}
+can_take_poor_diet = {
+	set_temp_variable = { cost = 420 }
+	hidden_trigger = {
+		has_idea = subsistence_diet	
+	}
+}
+can_take_subsistence_diet = {
+	hidden_trigger = {
+		always = no
+	}
+}
+
+
+
+
+#### SPIRITS
+
+can_political_loyalty_spirit = {
+	set_temp_variable = { army_xp_cost = 75 }
+
+	OR = {
+		has_government = fascism
+		has_government = neutrality
+		has_government = monarchism
+	}
+
+}
+
+can_inventive_leadership_spirit = {
+	set_temp_variable = { army_xp_cost = 75 }
+
+}
+can_theatre_training_spirit = {
+	set_temp_variable = { army_xp_cost = 75 }
+	
+	has_tech = trench_warfare
+}
+can_generic_academy = {
+	set_temp_variable = { army_xp_cost = 75 }
+	
+	if = { #visible trigger
+		limit = {
+			NOT = { is_interesting = no }
+		}
+		set_temp_variable = { allowed = 0 }
+	}
+}
+can_officer_academy = {
+	set_temp_variable = { army_xp_cost = 100 }
+	
+	if = { #visible trigger
+		limit = {
+			NOT = { is_interesting = yes }
+		}
+		set_temp_variable = { allowed = 0 }
+	}
+}
+can_boot_academy = {
+	set_temp_variable = { army_xp_cost = 100 }
+	
+	if = { #visible trigger
+		limit = {
+			NOT = { is_interesting = yes }
+		}
+		set_temp_variable = { allowed = 0 }
+	}
+}
+can_research_academy = {
+	set_temp_variable = { army_xp_cost = 100 }
+	
+	if = { #visible trigger
+		limit = {
+			NOT = { is_interesting = yes }
+		}
+		set_temp_variable = { allowed = 0 }
+	}
+	
+	amount_research_slots > 4
+}
+can_aux_academy = {
+	set_temp_variable = { army_xp_cost = 100 }
+	
+	if = { #visible trigger
+		limit = {
+			NOT = { is_interesting = yes }
+		}
+		set_temp_variable = { allowed = 0 }
+	}
+}
+can_attack_academy = {
+	set_temp_variable = { army_xp_cost = 100 }
+	
+	if = { #visible trigger
+		limit = {
+			NOT = { is_interesting = yes }
+		}
+		set_temp_variable = { allowed = 0 }
+	}
+}
+can_defend_academy = {
+	set_temp_variable = { army_xp_cost = 100 }
+	
+	if = { #visible trigger
+		limit = {
+			NOT = { is_interesting = yes }
+		}
+		set_temp_variable = { allowed = 0 }
+	}
+}
+can_logistics_academy = {
+	set_temp_variable = { army_xp_cost = 100 }
+	
+	if = { #visible trigger
+		limit = {
+			NOT = { is_interesting = yes }
+		}
+		set_temp_variable = { allowed = 0 }
+	}
+}
+can_plans_academy = {
+	set_temp_variable = { army_xp_cost = 100 }
+	
+	if = { #visible trigger
+		limit = {
+			NOT = { is_interesting = yes }
+		}
+		set_temp_variable = { allowed = 0 }
+	}
+	
+}
+can_Per_academy = {
+	set_temp_variable = { army_xp_cost = 200 }
+	
+	if = { #visible trigger
+		limit = {
+			NOT = { original_tag = PER }
+		}
+		set_temp_variable = { allowed = 0 }
+	}
+	
+	has_government = monarchism
+	has_completed_focus = PER_war_school
+	
+}
+can_NZL_academy = {
+	set_temp_variable = { army_xp_cost = 175 }
+	
+	if = { #visible trigger
+		limit = {
+			NOT = { original_tag = NZL }
+		}
+		set_temp_variable = { allowed = 0 }
+	}
+	
+	has_completed_focus = NZL_bi_imperial_defence_college
+	
+}
+can_AST_duntroon = {
+	set_temp_variable = { army_xp_cost = 175 }
+	
+	if = { #visible trigger
+		limit = {
+			NOT = { original_tag = AST }
+		}
+		set_temp_variable = { allowed = 0 }
+	}
+	
+	has_completed_focus = AST_return_to_duntroon
+	
+}
+can_AST_kapooka = {
+	set_temp_variable = { army_xp_cost = 175 }
+	
+	if = { #visible trigger
+		limit = {
+			NOT = { original_tag = AST }
+		}
+		set_temp_variable = { allowed = 0 }
+	}
+	
+	has_completed_focus = AST_return_to_duntroon
+	
+}
+can_arab_academy = {
+	set_temp_variable = { army_xp_cost = 200 }
+	
+	if = { #visible trigger
+		limit = {
+			NOT = { is_Arab = yes }
+		}
+		set_temp_variable = { allowed = 0 }
+	}
+	
+	has_government = monarchism
+}
+
+
+can_professional_officer_corps_spirit = {
+	set_temp_variable = { army_xp_cost = 75 }
+
+	has_tech = battlefield_commissions
+}
+can_elevated_engineering_corps_spirit = {
+	set_temp_variable = { army_xp_cost = 75 }
+	
+	has_tech = operational_support
+	has_tech = brigade_doctrine
+}
+can_proper_heritage_spirit = {
+	set_temp_variable = { army_xp_cost = 75 }
+	
+	has_tech = cavalry_exploitation
+}
+can_quick_improvisation_spirit = {
+	set_temp_variable = { army_xp_cost = 75 }
+	
+	has_tech = corps_hq 
+}
+can_relief_of_command_spirit = {
+	set_temp_variable = { army_xp_cost = 75 }
+	
+	democratic_govt = yes
+}
+can_ideological_loyalty_spirit = {
+	set_temp_variable = { army_xp_cost = 75 }
+	
+	has_government = communism
+}
+can_state_serves_the_military_spirit = {
+	set_temp_variable = { army_xp_cost = 75 }
+	
+	has_government = fascism
+}
+can_mobile_warfare_army_spirit = {
+	set_temp_variable = { army_xp_cost = 75 }
+	 
+	has_tech = mobile_training_doc
+}
+can_superior_firepower_army_spirit = {
+	set_temp_variable = { army_xp_cost = 75 }
+	
+	has_tech = artillery_training_doc
+}
+can_grand_battleplan_army_spirit = {
+	set_temp_variable = { army_xp_cost = 75 }
+	
+	has_tech = elite_forces
+}
+can_mass_assault_army_spirit = {
+	set_temp_variable = { army_xp_cost = 75 }
+	
+	has_tech = infantry_training_doc
+}
+
+
+can_static_warfare_spirit = {
+	set_temp_variable = { army_xp_cost = 75 }
+	
+	has_tech = fortress_trenches
+}
+can_flexible_organization_spirit = {
+	set_temp_variable = { army_xp_cost = 75 }
+	
+	has_tech = improved_combined_doc
+}
+can_aggressive_reconnaisance_spirit = {
+	set_temp_variable = { army_xp_cost = 75 }
+	
+	has_tech = recon_training_doc
+}
+can_reserve_officers_spirit = {
+	set_temp_variable = { army_xp_cost = 75 }
+	
+	OR = {
+		has_idea = officer_train_elite
+		has_idea = officer_train_high
+	}
+}
+can_victory_or_death_spirit = {
+	set_temp_variable = { army_xp_cost = 75 }
+	
+	has_tech = infantry_training_doc
+}
+can_maneuver_warfare_spirit = {
+	set_temp_variable = { army_xp_cost = 75 }
+	
+	has_tech = armor_training_doc
+}
+can_smoke_and_fire_spirit = {
+	set_temp_variable = { army_xp_cost = 75 }
+	
+	has_tech = artillery_training_doc
+}
+can_logistical_focus_spirit = {
+	set_temp_variable = { army_xp_cost = 75 }
+	
+	has_tech = supply_organisation_doc
+}
+can_operational_reserve_spirit = {
+	set_temp_variable = { army_xp_cost = 75 }
+	
+	has_tech = medical_evacuation
+}
+
+can_instilled_aggression_spirit = {
+	set_temp_variable = { navy_xp_cost = 75 }
+}
+can_calculated_restraint_spirit = {
+	set_temp_variable = { navy_xp_cost = 75 }
+
+}
+can_signals_training_spirit = {
+	set_temp_variable = { navy_xp_cost = 75 }
+
+}
+can_best_of_the_best_naval_academy_spirit = {
+	set_temp_variable = { navy_xp_cost = 75 }
+
+}
+can_naval_academy_scholarships_spirit = {
+	set_temp_variable = { navy_xp_cost = 75 }
+
+}
+can_fleet_in_being_academy_spirit = {
+	set_temp_variable = { navy_xp_cost = 75 }
+	
+	has_tech = nrm_fleet_coordination
+}
+can_trade_interdiction_academy_spirit = {
+	set_temp_variable = { navy_xp_cost = 75 }
+	
+	has_tech = nrm_submarine_tactics_improved
+}
+can_base_strike_academy_spirit = {
+	set_temp_variable = { navy_xp_cost = 75 }
+	
+	has_tech = nrm_carrier_development
+}
+
+can_jeune_ecole_spirit = {
+	set_temp_variable = { navy_xp_cost = 75 }
+
+}
+can_big_gun_club_spirit = {
+	set_temp_variable = { navy_xp_cost = 75 }
+
+}
+can_aviation_enthusiasts_spirit = {
+	set_temp_variable = { navy_xp_cost = 75 }
+
+}
+can_cruiser_warfare_spirit = {
+	set_temp_variable = { navy_xp_cost = 75 }
+
+}
+can_wolfpacks_spirit = {
+	set_temp_variable = { navy_xp_cost = 75 }
+
+}
+can_flexible_contracts_spirit = {
+	set_temp_variable = { navy_xp_cost = 75 }
+
+}
+can_integrated_designers_spirit = {
+	set_temp_variable = { navy_xp_cost = 75 }
+
+}
+can_naval_reform_spirit = {
+	set_temp_variable = { navy_xp_cost = 75 }
+
+}
+can_naval_refit_yards_spirit = {
+	set_temp_variable = { navy_xp_cost = 75 }
+
+}
+
+can_close_combat_navy_spirit = {
+	set_temp_variable = { navy_xp_cost = 75 }
+
+}
+can_night_fighting_spirit = {
+	set_temp_variable = { navy_xp_cost = 75 }
+	
+	OR = {
+		tag = JAP
+		has_tech = improved_naval_radar
+		has_tech = surface_fc_radar
+	}
+}
+can_surprise_attacks_spirit = {
+	set_temp_variable = { navy_xp_cost = 75 }
+	
+	has_tech = nrm_independent_cruiser_operation
+}
+can_efficient_communications_spirit = {
+	set_temp_variable = { navy_xp_cost = 75 }
+
+}
+can_surface_raiders_spirit = {
+	set_temp_variable = { navy_xp_cost = 75 }
+	
+	has_tech = nrm_ti_capital_raiders
+}
+can_decisive_battle_spirit = {
+	set_temp_variable = { navy_xp_cost = 75 }
+	
+	has_tech = nrm_db_battleline_tactics
+}
+can_fleet_in_being_navy_spirit = {
+	set_temp_variable = { navy_xp_cost = 75 }
+	
+	has_tech = nrm_fib_patrol_operation
+}
+can_base_strike_navy_spirit = {
+	set_temp_variable = { navy_xp_cost = 75 }
+	
+	OR = {
+		has_tech = nrm_fib_forward_basing
+		has_tech = nrm_db_combined_carrier
+	}
+}
+can_inclimate_weather_experience_spirit = {
+	set_temp_variable = { navy_xp_cost = 75 }
+
+}
+can_brave_commanders_spirit = {
+	set_temp_variable = { navy_xp_cost = 75 }
+
+}
+
+
+### AIR
+
+
+can_independent_air_force_spirit = {
+	set_temp_variable = { air_xp_cost = 75 }
+
+}
+can_industrial_destruction_spirit = {
+	set_temp_variable = { air_xp_cost = 75 }
+	
+	has_tech = air_superiority
+}
+can_dive_bombing_spirit = {
+	set_temp_variable = { air_xp_cost = 75 }
+	
+	has_tech = formation_flying
+}
+can_material_destruction_spirit = {
+	set_temp_variable = { air_xp_cost = 75 }
+	
+	has_tech = force_rotation
+}
+can_industry_liasons_spirit = {
+	set_temp_variable = { air_xp_cost = 75 }
+
+}
+can_effective_training_programs_spirit = {
+	set_temp_variable = { air_xp_cost = 75 }
+	
+	democratic_govt = yes
+}
+can_air_crew_surveys_spirit = {
+	set_temp_variable = { air_xp_cost = 75 }
+
+}
+
+can_battlefield_air_interdiction_spirit = {
+	set_temp_variable = { air_xp_cost = 75 }
+
+}
+can_cag_night_fighting_spirit = {
+	set_temp_variable = { air_xp_cost = 75 }
+	
+	has_tech = advanced_centimetric_radar
+	has_tech = improved_avionics
+}
+can_veteran_air_instructors_spirit = {
+	set_temp_variable = { air_xp_cost = 75 }
+	
+	democratic_govt = yes
+}
+can_centralized_control_spirit = {
+	set_temp_variable = { air_xp_cost = 75 }
+
+}
+can_steel_wings_steel_hearts_spirit = {
+	set_temp_variable = { air_xp_cost = 75 }
+	
+	has_government = communism
+}
+can_home_defence_spirit = {
+	set_temp_variable = { air_xp_cost = 75 }
+
+}
+can_air_power_projection_spirit = {
+	set_temp_variable = { air_xp_cost = 75 }
+
+}
+can_massed_strike_spirit = {
+	set_temp_variable = { air_xp_cost = 75 }
+	
+	has_tech = force_rotation
+}
+can_continuous_strike_spirit = {
+	set_temp_variable = { air_xp_cost = 75 }
+	
+	has_tech = formation_flying
+}
+can_strategic_strike_spirit = {
+	set_temp_variable = { air_xp_cost = 75 }
+	
+	has_tech = air_superiority
+}
+
+
+
+
+
+

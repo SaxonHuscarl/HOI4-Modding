@@ -1,0 +1,1150 @@
+﻿###########################
+# turkey Events
+###########################
+
+add_namespace = turkey
+
+# President dies
+country_event = {
+	id = turkey.1
+	title = turkey.1.t
+	desc = turkey.1.d
+	picture = GFX_report_event_generic_funeral
+
+	fire_only_once = yes
+	is_triggered_only = yes
+
+	trigger = {
+	}
+
+
+	option = {
+		name = turkey.1.a
+		kill_ideology_leader = socialism
+		hidden_effect = {
+			set_country_flag = ataturk_path
+		}
+		
+	}
+}
+#Turkey asks FRA to buy some tanks
+country_event = {
+	id = turkey.2
+	title = turkey.2.t
+	desc = turkey.2.d
+	picture = GFX_news_event_polish_tanks_01_gfxaddon
+
+	is_triggered_only = yes
+
+	option = { #send the full 100
+		name = turkey.2.a
+		ai_chance = {
+			base = 50
+			modifier = {
+				add = -50
+				has_war = yes
+			}
+		}
+		send_equipment = {
+			equipment = trm_infantry_tank_chassis
+			amount = 100
+			target = FRA
+		}
+		custom_effect_tooltip = one_year_TT
+		add_offsite_building = { type = industrial_complex level = 2 }	
+		hidden_effect = {
+			set_country_flag = onehundred_tanks
+			TUR = {
+				country_event = turkey.5
+			}
+			country_event = { id = turkey.6 days = 365 }
+		}
+	}
+	option = { #send 50
+		name = turkey.2.b
+		ai_chance = {
+			base = 10
+			modifier = {
+				add = -10
+				has_war = yes
+			}
+		}
+		send_equipment = {
+			equipment = trm_infantry_tank_chassis
+			amount = 50
+			target = FRA
+		}
+		custom_effect_tooltip = 270_days_TT
+		add_offsite_building = { type = industrial_complex level = 1 }	
+		hidden_effect = {
+			set_country_flag = fifty_tanks
+			TUR = {
+				country_event = turkey.5
+			}
+			country_event = { id = turkey.6 days = 270 }
+		}		
+	}
+	option = { #no deal
+		name = turkey.2.c
+		ai_chance = {
+			base = 0
+			modifier = {
+				add = 100
+				has_war = yes
+			}
+		}
+		hidden_effect = {
+			TUR = {
+				country_event = turkey.7
+			}
+		}		
+	}	
+	
+}
+country_event = {
+	id = turkey.3
+	title = turkey.3.t
+	desc = turkey.3.d
+	picture = GFX_news_event_polish_tanks_01_gfxaddon
+
+	is_triggered_only = yes
+
+	option = {
+		name = turkey.3.a
+	}
+}
+# Montreux Flavor
+country_event = {
+	id = turkey.4
+	title = turkey.4.t
+	desc = turkey.4.d
+	picture = GFX_report_event_turkish_straits
+	
+	minor_flavor = yes
+	
+	is_triggered_only = yes
+
+	option = {
+		name = turkey.4.a
+	}
+}
+#Tank Sale Agreed
+country_event = {
+	id = turkey.5
+	title = turkey.5.t
+	desc = {
+		text = turkey.5.df100
+		trigger = {
+			FROM = { 
+				TAG = FRA
+				has_country_flag = onehundred_tanks
+			}
+		}
+	}
+	desc = {
+		text = turkey.5.df50
+		trigger = {
+			FROM = { 
+				TAG = FRA
+				has_country_flag = fifty_tanks
+			}
+		}
+	}
+	desc = {
+		text = turkey.5.de
+		trigger = {
+			FROM = { 
+				OR = {
+					TAG = ENG
+					TAG = USA
+					TAG = GER
+				}
+			}
+		}
+	}
+	picture = GFX_news_event_polish_tanks_01_gfxaddon
+	is_triggered_only = yes
+
+	option = {
+		name = turkey.5.a
+		trigger = {
+			FROM = { 
+				TAG = FRA
+				has_country_flag = onehundred_tanks
+			}
+		}
+		add_timed_idea = {
+			idea = TUR_100_tanks
+			days = 365
+		}		
+	}
+	option = {
+		name = turkey.5.a
+		trigger = {
+			FROM = { 
+				TAG = FRA
+				has_country_flag = fifty_tanks
+			}
+		}
+		add_timed_idea = {
+			idea = TUR_50_tanks
+			days = 270
+		}		
+	}
+	option = {
+		name = turkey.5.a
+		trigger = {
+			FROM = { 
+				TAG = ENG
+				has_country_flag = sixteen_tanks
+				NOT = { has_country_flag = threehundo_tanks }
+			}
+		}
+		add_political_power = -100		
+	}
+	option = {
+		name = turkey.5.a
+		trigger = {
+			FROM = { 
+				TAG = ENG
+				has_country_flag = threehundo_tanks
+			}
+		}
+		add_timed_idea = {
+			idea = TUR_300_tanks
+			days = 365
+		}			
+	}
+	option = {
+		name = turkey.5.a
+		trigger = {
+			FROM = { 
+				TAG = USA
+			}
+		}
+		add_timed_idea = {
+			idea = TUR_200_tanks
+			days = 365
+		}		
+	}
+	option = {
+		name = turkey.5.a
+		trigger = {
+			FROM = { 
+				TAG = GER
+			}
+		}
+		add_timed_idea = {
+			idea = TUR_50_tanks
+			days = 180
+		}	
+	}
+}
+#tank civs taken away
+country_event = {
+	id = turkey.6
+	hidden = yes
+
+	is_triggered_only = yes
+	immediate = {
+		if = {
+			limit = {
+				has_country_flag = onehundred_tanks
+			}
+			add_offsite_building = { type = industrial_complex level = -2 }	
+			clr_country_flag = onehundred_tanks
+		}
+		if = {
+			limit = {
+				has_country_flag = fifty_tanks
+			}
+			add_offsite_building = { type = industrial_complex level = -1 }	
+			clr_country_flag = fifty_tanks
+		}
+		if = {
+			limit = {
+				has_country_flag = planes_bought
+			}
+			add_offsite_building = { type = industrial_complex level = -1 }	
+			clr_country_flag = planes_bought
+		}		
+	}
+
+}
+#tank sale refused
+country_event = {
+	id = turkey.7
+	title = turkey.7.t
+	desc = turkey.7.d
+	picture = GFX_report_event_asian_politicians
+
+	is_triggered_only = yes
+
+	option = {
+		name = turkey.7.a
+	}
+}
+#Turkey wants to Buy tanks from UK
+country_event = {
+	id = turkey.8
+	title = turkey.2.t
+	desc = turkey.8.d
+	picture = GFX_report_event_asian_politicians
+
+	is_triggered_only = yes
+
+	option = { #agreed
+		name = turkey.2.a
+		ai_chance = {
+			base = 100
+			modifier = {
+				add = -80
+				has_war = yes
+			}
+		}
+		send_equipment = {
+			equipment = trm_light_tank_chassis
+			amount = 16
+			target = ENG
+		}
+		add_political_power = 100
+		hidden_effect = {
+			set_country_flag = sixteen_tanks
+			TUR = {
+				country_event = { id = turkey.5	days = 2 }			
+			}
+		}
+	}
+	option = { #no Deal
+		name = turkey.2.c
+		ai_chance = {
+			base = 0
+			modifier = {
+				add = 100
+				has_war = yes
+			}
+		}
+		hidden_effect = {
+			TUR = {
+				country_event = turkey.7
+			}
+		}
+	}
+}
+#Turkey wants to Buy tanks from UK #2
+country_event = {
+	id = turkey.9
+	title = turkey.2.t
+	desc = turkey.9.d
+	picture = GFX_report_event_asian_politicians
+
+	is_triggered_only = yes
+
+	option = { #agreed
+		name = turkey.2.a
+		ai_chance = {
+			base = 100
+			modifier = {
+				add = -20
+				has_war = yes
+			}
+		}
+		send_equipment = {
+			equipment = trm_light_tank_chassis
+			amount = 166
+			target = TUR
+		}
+		send_equipment = {
+			equipment = trm_infantry_tank_chassis
+			amount = 180
+			target = TUR
+		}
+		add_offsite_building = { type = industrial_complex level = 4 } #not timed since its hard to justify at this point although historically did happen
+		hidden_effect = {
+			set_country_flag = threehundo_tanks
+			TUR = {
+				country_event = turkey.5
+			}
+		}
+	}
+	option = { #no Deal
+		name = turkey.2.c
+		ai_chance = {
+			base = 0
+			modifier = {
+				add = 5
+				has_war = yes
+			}
+		}
+		hidden_effect = {
+			TUR = {
+				country_event = turkey.7
+			}
+		}
+	}
+}
+country_event = {
+	id = turkey.10
+	title = turkey.10.t
+	desc = turkey.10.d
+	picture = GFX_report_event_asian_politicians
+
+	is_triggered_only = yes
+
+	option = {
+		name = turkey.10.a
+	}
+}
+
+country_event = {
+	id = turkey.11
+	title = turkey.11.t
+	desc = turkey.11.d
+	picture = GFX_report_event_molotov_ribbentrop_pact
+
+	is_triggered_only = yes
+
+	option = {
+		name = turkey.11.a
+	}
+}
+#Turkey wants to Buy tanks from USA
+country_event = {
+	id = turkey.12
+	title = turkey.2.t
+	desc = turkey.12.d
+	picture = GFX_report_event_asian_politicians
+
+	is_triggered_only = yes
+
+	option = { #agreed
+		name = turkey.2.a
+		ai_chance = {
+			base = 100
+			modifier = {
+				add = -20
+				has_war = yes
+			}
+		}
+		send_equipment = {
+			equipment = trm_light_tank_chassis
+			amount = 220
+			target = USA
+		}
+		send_equipment = {
+			equipment = trm_medium_tank_chassis
+			amount = 25
+			target = USA
+		}
+		add_offsite_building = { type = industrial_complex level = 3 } #not timed since its hard to justify at this point although historically did happen
+		hidden_effect = {
+			TUR = {
+				country_event = { id = turkey.5 days = 3 }
+			}
+		}
+	}
+	option = { #no Deal
+		name = turkey.2.c
+		ai_chance = {
+			base = 0
+			modifier = {
+				add = 5
+				has_war = yes
+			}
+		}
+		hidden_effect = {
+			TUR = {
+				country_event = turkey.7
+			}
+		}
+	}
+}
+#Turkey wants to Buy tanks from GER
+country_event = {
+	id = turkey.13
+	title = turkey.2.t
+	desc = turkey.13.d
+	picture = GFX_report_event_asian_politicians
+
+	is_triggered_only = yes
+
+	option = { #agreed
+		name = turkey.2.a
+		ai_chance = {
+			base = 90
+			modifier = {
+				add = -20
+				has_war = yes
+			}
+		}
+		send_equipment = {
+			equipment = trm_medium_tank_chassis
+			amount = 22
+			target = TUR
+		}
+		send_equipment = {
+			equipment = trm_medium_tank_cs_chassis
+			amount = 15
+			target = TUR
+		}
+		add_offsite_building = { type = industrial_complex level = 1 } #not timed since its hard to justify at this point although historically did happen
+		hidden_effect = {
+			TUR = {
+				country_event = turkey.5
+			}
+		}
+	}
+	option = { #no Deal
+		name = turkey.2.c
+		ai_chance = {
+			base = 0
+			modifier = {
+				add = 5
+				has_war = yes
+			}
+		}
+		hidden_effect = {
+			TUR = {
+				country_event = turkey.7
+			}
+		}
+	}
+}
+#Turkey wants to Buy Planes from FRA
+country_event = {
+	id = turkey.14
+	title = turkey.14.t
+	desc = turkey.14.d
+	picture = GFX_report_event_asian_politicians
+
+	is_triggered_only = yes
+
+	option = { #agreed
+		name = turkey.2.a
+		trigger = {
+			OR = {
+				is_ai = yes
+				has_equipment = { fighter_equipment > 25 }
+			}
+		}
+		ai_chance = {
+			base = 90
+			modifier = {
+				add = -70
+				has_war = yes
+			}
+		}
+		send_equipment = {
+			equipment = fighter_equipment
+			amount = 25
+			target = TUR
+		}	
+		add_offsite_building = { type = industrial_complex level = 2 }
+		hidden_effect = {
+			set_country_flag = planes_bought
+			country_event = { id = turkey.6 days = 150 }
+			TUR = {
+				country_event = turkey.15
+			}
+		}
+		
+	}
+	option = { #no Deal
+		name = turkey.2.c
+		ai_chance = {
+			base = 0
+			modifier = {
+				add = 55
+				has_war = yes
+			}
+		}
+		hidden_effect = {
+			TUR = {
+				country_event = turkey.7
+			}
+		}
+	}
+	option = { #let me disband, come back in a day
+		name = turkey.14.a
+		trigger = {
+			OR = {
+				is_ai = no
+				has_equipment = { fighter_equipment < 25 }
+			}
+		}
+		hidden_effect = {
+			country_event = { id = turkey.14 days = 1 }
+		}
+	}
+}
+#Plane Sale Approved
+country_event = {
+	id = turkey.15
+	title = turkey.5.t
+	desc = turkey.15.d
+	picture = GFX_report_event_asian_politicians
+
+	is_triggered_only = yes
+
+	option = { 
+		name = turkey.5.a
+		add_timed_idea = {
+			idea = TUR_planes
+			days = 150
+		}	
+	}
+}
+#Turkey wants to Buy Planes from USA
+country_event = {
+	id = turkey.16
+	title = turkey.14.t
+	desc = turkey.14.d
+	picture = GFX_report_event_asian_politicians
+
+	is_triggered_only = yes
+
+	option = { #agreed
+		name = turkey.2.a
+		trigger = {
+			OR = {
+				is_ai = yes
+				has_equipment = { fighter_equipment > 25 }
+			}
+		}
+		ai_chance = {
+			base = 90
+			modifier = {
+				add = -70
+				has_war = yes
+			}
+		}
+		send_equipment = {
+			equipment = fighter_equipment
+			amount = 25
+			target = TUR
+		}	
+		add_offsite_building = { type = industrial_complex level = 2 }
+		hidden_effect = {
+			set_country_flag = planes_bought
+			country_event = { id = turkey.6 days = 150 }
+			TUR = {
+				country_event = turkey.15
+			}
+		}
+		
+	}
+	option = { #no Deal
+		name = turkey.2.c
+		ai_chance = {
+			base = 0
+			modifier = {
+				add = 55
+				has_war = yes
+			}
+		}
+		hidden_effect = {
+			TUR = {
+				country_event = turkey.7
+			}
+		}
+	}
+	option = { #let me disband, come back in a day
+		name = turkey.14.a
+		trigger = {
+			OR = {
+				is_ai = no
+				has_equipment = { fighter_equipment < 25 }
+			}
+		}
+		hidden_effect = {
+			country_event = { id = turkey.16 days = 1 }
+		}
+	}
+}
+#Joint Naval Excercises
+country_event = {
+	id = turkey.17
+	title = turkey.17.t
+	desc = turkey.17.d
+	picture = GFX_report_event_asian_politicians
+
+	is_triggered_only = yes
+
+	option = { #sounds good
+		name = turkey.17.a
+		ai_chance = {
+			base = 75
+		}
+		navy_experience = 15
+		random_navy_leader = {
+			limit = {
+				NOT = { has_trait = Master_theoretician }
+			}
+			add_unit_leader_trait = Master_theoretician
+		}	
+		if = {
+			limit = {
+				tag = SOV
+			}
+			custom_effect_tooltip = navy_purge_change_TT
+			add_to_variable = { nav_purge_sortie = 0.01 tooltip = nav_purge_sortie_TT}
+		}
+		TUR = {
+			navy_experience = 25
+			random_navy_leader = {
+				limit = {
+					NOT = { has_trait = Master_theoretician }
+				}
+				add_unit_leader_trait = Master_theoretician
+				add_coordination = 1
+			}
+			add_tech_bonus = {
+				name = TUR_naval_warfare
+				bonus = 0.10
+				uses = 1
+				category = naval_doctrine
+			}
+			hidden_effect = {
+				country_event = turkey.18
+			}
+		}
+	}
+	option = { #no
+		name = turkey.17.b
+		ai_chance = {
+			base = 0
+		}
+	}
+}
+#Naval Excercises approved
+country_event = {
+	id = turkey.18
+	title = turkey.18.t
+	desc = turkey.18.d
+	picture = GFX_report_event_asian_politicians
+
+	is_triggered_only = yes
+
+	option = { 
+		name = turkey.18.a	
+	}
+}
+#Greece Friend?
+country_event = {
+	id = turkey.19
+	title = turkey.19.t
+	desc = turkey.19.d
+	picture = GFX_report_event_hatay
+
+	is_triggered_only = yes
+
+	option = { 
+		name = turkey.19.a	
+		ai_chance = {
+			factor = 90
+		}
+		remove_state_core = 868
+		remove_state_core = 341
+		add_political_power = 75
+	}
+	option = { 
+		name = turkey.19.a	
+		ai_chance = {
+			factor = 10
+		}
+		reverse_add_opinion_modifier = { target = TUR modifier = border_conflict_problems }
+	}
+}
+#Clodius Agreement
+country_event = {
+	id = turkey.20
+	title = turkey.20.t
+	desc = turkey.20.d
+	picture = GFX_report_event_dealmaking
+
+	is_triggered_only = yes
+
+	option = { 
+		name = turkey.20.a	
+		give_resource_rights = { receiver = GER state = 339 }
+		TUR = {
+			add_offsite_building = { type = industrial_complex level = 1 }	
+			black_market_better = yes
+		}
+	}
+
+}
+#Clodius Agreement style 2
+country_event = {
+	id = turkey.21
+	title = turkey.20.t
+	desc = turkey.20.d
+	picture = GFX_report_event_dealmaking
+
+	is_triggered_only = yes
+
+	option = { 
+		name = turkey.20.a	
+		give_resource_rights = { receiver = GER state = 339 }
+		TUR = {
+			add_offsite_building = { type = industrial_complex level = 2 }	
+			GER = {
+				send_equipment = {
+					equipment = infantry_equipment
+					amount = 1000
+					target = TUR
+				}
+				send_equipment = {
+					equipment = infantry_uniforms
+					amount = 750
+					target = TUR
+				}
+				send_equipment = {
+					equipment = artillery_equipment
+					amount = 500
+					target = TUR
+				}
+			}
+		}
+	}
+
+}
+# Claim Hatay - France Folds
+country_event = {
+	id = turkey.22
+	title = turkey.22.t
+	desc = turkey.22.d
+	picture = GFX_report_event_hatay
+
+	is_triggered_only = yes
+
+	option = {
+		name = turkey.22.a
+		821 = {
+			add_core_of = TUR
+			remove_core_of = HAT
+		}
+		transfer_state = 821
+		add_opinion_modifier = {
+			target = FRA
+			modifier = small_increase
+		}
+		hidden_effect = {
+			remove_opinion_modifier = {
+				target = FRA
+				modifier = tiny_increase
+			}
+		}
+	}
+}
+
+# Claim Hatay - France Rejects Demand
+country_event = {
+	id = turkey.23
+	title = turkey.23.t
+	desc = turkey.23.d
+	picture = GFX_report_event_hatay
+
+	is_triggered_only = yes
+
+	option = {
+		name = turkey.23.a
+		TUR = {
+			add_opinion_modifier = {
+				target = GER
+				modifier = backed_our_cause
+			}
+			add_opinion_modifier = {
+				target = FRA
+				modifier = HUN_stubborn_fools
+			}			
+			diplomatic_relation = {
+				country = GER
+				relation = docking_rights
+				active = yes
+			}
+			add_ai_strategy = {
+				type = befriend 
+				id = GER
+				value = 200
+			}
+			add_ai_strategy = {
+				type = support
+				id = GER
+				value = 200
+			}
+		}
+	}
+}
+# Turkey wants a guarantee for support
+country_event = {
+	id = turkey.24
+	title = turkey.24.t
+	desc = turkey.24.d
+	picture = GFX_report_event_hatay
+
+	is_triggered_only = yes
+
+	option = {
+		trigger = { tag = ENG }
+		name = turkey.24.a	
+		give_guarantee = TUR	
+		TUR = {
+			add_ai_strategy = {
+				type = befriend 
+				id = ENG
+				value = 200
+			}
+			add_ai_strategy = {
+				type = support
+				id = ENG
+				value = 200
+			}
+		}
+	}
+	option = {
+		trigger = { tag = FRA }
+		name = turkey.24.a	
+		TUR = {
+			add_ai_strategy = {
+				type = befriend 
+				id = FRA
+				value = 200
+			}
+			add_ai_strategy = {
+				type = support
+				id = FRA
+				value = 200
+			}
+		}
+	}
+	option = {
+		name = turkey.24.b
+		reverse_add_opinion_modifier = {
+				target = TUR
+				modifier = HUN_stubborn_fools
+		}			
+	}
+}
+# Turkey wants a NAP
+country_event = {
+	id = turkey.25
+	title = turkey.25.t
+	desc = turkey.25.d
+	picture = GFX_report_event_hatay
+
+	is_triggered_only = yes
+
+	option = {
+		name = turkey.25.a	
+		diplomatic_relation = {
+			country = TUR
+			relation = non_aggression_pact
+			active = yes
+		}
+		TUR = {
+			diplomatic_relation = {
+				country = GER
+				relation = non_aggression_pact
+				active = yes
+			}
+			add_ai_strategy = {
+				type = befriend 
+				id = GER
+				value = 200
+			}
+			add_ai_strategy = {
+				type = support
+				id = GER
+				value = 200
+			}
+		}
+	}
+	option = {
+		name = turkey.25.a
+		reverse_add_opinion_modifier = {
+			target = TUR
+			modifier = HUN_stubborn_fools
+		}			
+	}
+}
+# Turkey and France Friendship Treaty
+country_event = {
+	id = turkey.26
+	title = turkey.26.t
+	desc = turkey.26.d
+	picture = GFX_report_event_hatay
+	major = yes
+	minor_flavor = yes
+
+	is_triggered_only = yes
+
+	option = {
+		name = turkey.26.a	
+		trigger = {
+			tag = TUR
+		}
+		add_opinion_modifier = {
+			target = FRA
+			modifier = friendship_treaty
+		}
+	}
+	option = {
+		name = turkey.26.a	
+		trigger = {
+			tag = FRA
+		}
+		add_opinion_modifier = {
+			target = TUR
+			modifier = friendship_treaty
+		}
+	}
+	option = {
+		name = turkey.26.b	
+		trigger = {
+			NOT = {
+				tag = TUR
+				tag = FRA
+			}
+		}
+	}
+}
+# Abdulmejid II dies
+country_event = {
+	id = turkey.100
+	title = turkey.100.t
+	desc = turkey.100.d
+	picture = GFX_report_event_state_funeral_2_gfxaddon
+
+	is_triggered_only = yes
+	fire_only_once = yes
+
+	immediate = {
+		set_country_flag = abdulmejid_dead
+	}
+	
+
+	option = {
+		name = turkey.100.a
+		kill_ideology_leader = monarchism
+		remove_ideas = TUR_abdulmejid_ii_head_of_state
+		TUR_abdulmejid_ii = { kill_character = yes }
+		#add_ideas = ahmed_iv
+		
+		add_advisor_role = { 
+			character = TUR_ahmed_iv 
+			advisor = { 
+				#allowed = { tag = TUR } 
+				slot = head_of_state 
+				idea_token = TUR_ahmed_iv_head_of_state
+				#available = {
+				#	OR = {
+				#		has_government = monarchism
+				#		democratic_govt = yes
+				#	}
+				#}
+				traits = { popular_figurehead monarchist }		
+			} 
+			activate = yes 
+		}
+		add_country_leader_role = { 
+			character = TUR_ahmed_iv
+			country_leader = {
+				#picture = "gfx/leaders/TUR/ahmed_iv.dds"
+				expire = "1956.6.4"
+				ideology = emiratism
+				traits = {
+					monarchist
+					silent_workhorse
+				}
+			}
+		}
+		TUR_ahmed_iv = {
+			promote_character = yes
+		}
+	}	
+}
+
+country_event = {
+    id = turkey.104 #forcing france
+    title = turkey.104.t
+    desc = turkey.104.d
+    picture = GFX_report_event_generic_read_write
+   fire_only_once = yes 
+	is_triggered_only = yes
+	
+    option = {
+        name = turkey.104.a #YES COUNTRY IT IS
+        
+		ai_chance = {
+			factor = 100
+		}
+
+  		HAT={
+  			transfer_state = 821
+			add_state_core = 821		
+		}
+		if = {
+			limit = {
+				has_dlc = "Together for Victory"
+			}
+			set_autonomy = {
+				target = HAT
+				autonomous_state = autonomy_colony
+				freedom_level = 0.20
+			}
+		}
+		else = {
+			puppet = HAT
+		}
+		HAT = {
+			set_politics = {
+				ruling_party = socialism
+				last_election = "1938.9.2"
+				election_frequency = 48
+				elections_allowed = yes
+			}
+			add_popularity = {
+				ideology = socialism
+				popularity = 0.35
+			}
+			give_military_access = TUR
+  		}
+		TUR = {
+			set_country_flag = HAT_formed
+			add_opinion_modifier = {
+				target = FRA
+				modifier = tiny_increase
+			}
+		}
+		SYR = {
+			add_opinion_modifier = {
+				target = FRA
+				modifier = protest_action_strong
+			}
+		}		
+		hidden_effect = {
+			country_event = { id = sadabat.31 days = 994 }
+		}
+    }
+    option = {
+        name = turkey.104.b        
+        ai_chance = { factor = 0 }
+		reverse_add_opinion_modifier = {
+			target = TUR
+			modifier = HUN_stubborn_fools
+		} 
+		TUR = {
+			add_opinion_modifier = {
+				target = GER
+				modifier = backed_our_cause
+			}
+			diplomatic_relation = {
+				country = GER
+				relation = docking_rights
+				active = yes
+			}
+		}
+    }
+}
+### EOF ###

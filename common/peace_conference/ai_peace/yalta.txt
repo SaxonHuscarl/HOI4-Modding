@@ -1,0 +1,283 @@
+# Scripted AI desire for peace actions
+
+# *** How to access data from the peace action ***
+# ROOT - Negotiator country
+# FROM - Taker country
+# FROM.FROM - Giver country
+# FROM.FROM.FROM - State (if peace action refers to a state)
+# You might have to use e.g. ROOT.FROM to access the variable from inside another scope
+
+# Peace actions
+    # take_states
+    # puppet
+    # force_government
+    # liberate
+
+peace_ai_desires = {
+    
+	YALTA_no_puppet_GER = { 
+		peace_action_type = { puppet liberate force_government }
+        enable = {
+			has_global_flag = is_yalta_pc
+            ROOT = { tag = SOV }
+            ROOT.FROM = { tag = GER }
+        }
+        ai_desire = -150
+    }
+	
+	SOV_no_aspirations_in_middle_east = { 
+		peace_action_type = { take_states puppet liberate force_government }
+        enable = {
+			has_global_flag = is_yalta_pc
+            ROOT = { tag = SOV }
+            FROM.FROM.FROM = { 
+				OR = {
+					is_on_continent = middle_east
+					is_on_continent = africa
+				}
+			}
+        }
+        ai_desire = -150
+    }
+	
+	SOV_no_aspirations_west_of_DDR = { 
+		peace_action_type = { take_states puppet liberate force_government }
+        enable = {
+			has_global_flag = is_yalta_pc
+            ROOT = { tag = SOV }
+            FROM.FROM.FROM = { 
+				OR = {
+					is_core_of = BEL
+					is_core_of = HOL
+					is_core_of = LUX
+					is_core_of = FRA
+					is_core_of = DEN
+					AND = {
+						is_core_of = GRE
+						NOT = { is_core_of = BUL }
+					}
+				}
+			}
+        }
+        ai_desire = -150
+    }
+    
+    SOV_dont_take_POL_states = {
+        peace_action_type = { take_states }
+        enable = {
+			has_global_flag = is_yalta_pc
+            ROOT = { tag = SOV }
+            ROOT.FROM.FROM = { tag = POL }
+        }
+        ai_desire = -150
+    }
+    SOV_POL_claims = {
+        peace_action_type = { take_states }
+        enable = {
+			has_global_flag = is_yalta_pc
+            ROOT = { tag = SOV }
+			ROOT.FROM = { tag = POL }
+			FROM.FROM.FROM = {
+				is_core_of = POL
+			}
+        }
+        ai_desire = 200
+    }
+	
+	
+    SOV_leave_GER_other_zones_alone = {
+        peace_action_type = { take_states puppet liberate force_government }
+        enable = {
+			has_global_flag = is_yalta_pc
+            ROOT = { tag = SOV }
+			NOT = { FROM = { tag = SOV } }
+            FROM.FROM.FROM = { 
+				OR = {
+					is_claimed_by = ENG
+					is_claimed_by = FRA
+					is_claimed_by = USA
+				}
+			}
+        }
+        ai_desire = -150
+    }
+    ENG_leave_GER_other_zones_alone = {
+        peace_action_type = { take_states puppet liberate force_government }
+        enable = {
+			has_global_flag = is_yalta_pc
+            ROOT = { tag = ENG }
+			NOT = { FROM = { tag = ENG } }
+            FROM.FROM.FROM = { 
+				OR = {
+					is_claimed_by = SOV
+					is_claimed_by = FRA
+					is_claimed_by = USA
+				}
+			}
+        }
+        ai_desire = -150
+    }
+    FRA_leave_GER_other_zones_alone = {
+        peace_action_type = { take_states puppet liberate force_government }
+        enable = {
+			has_global_flag = is_yalta_pc
+            ROOT = { tag = FRA }
+			NOT = { FROM = { tag = FRA } }
+            FROM.FROM.FROM = { 
+				OR = {
+					is_claimed_by = SOV
+					is_claimed_by = ENG
+					is_claimed_by = USA
+				}
+			}
+        }
+        ai_desire = -150
+    }
+    USA_leave_GER_other_zones_alone = {
+        peace_action_type = { take_states puppet liberate force_government }
+        enable = {
+			has_global_flag = is_yalta_pc
+            ROOT = { tag = USA }
+			NOT = { FROM = { tag = USA } }
+            FROM.FROM.FROM = { 
+				OR = {
+					is_claimed_by = SOV
+					is_claimed_by = ENG
+					is_claimed_by = FRA
+				}
+			}
+        }
+        ai_desire = -150
+    }
+	
+    
+    SOV_take_GER_zone = {
+        peace_action_type = { take_states }
+        enable = {
+			has_global_flag = is_yalta_pc
+            ROOT = { is_in_faction_with = SOV }
+			ROOT.FROM = { tag = SOV }
+			
+            FROM.FROM.FROM = { 
+				is_claimed_by = SOV
+			}
+        }
+        ai_desire = 250
+    }
+    FRA_take_GER_zone = {
+        peace_action_type = { take_states }
+        enable = {
+			has_global_flag = is_yalta_pc
+            ROOT = { is_in_faction_with = FRA }
+			ROOT.FROM = { tag = FRA }
+			
+            FROM.FROM.FROM = { 
+				is_claimed_by = FRA
+			}
+        }
+        ai_desire = 250
+    }
+    ENG_take_GER_zone = {
+        peace_action_type = { take_states }
+        enable = {
+			has_global_flag = is_yalta_pc
+            ROOT = { is_in_faction_with = ENG }
+			ROOT.FROM = { tag = ENG }
+			
+            FROM.FROM.FROM = { 
+				is_claimed_by = ENG
+			}
+        }
+        ai_desire = 250
+    }
+    USA_take_GER_zone = {
+        peace_action_type = { take_states }
+        enable = {
+			has_global_flag = is_yalta_pc
+            ROOT = { is_in_faction_with = USA }
+			ROOT.FROM = { tag = USA }
+			
+            FROM.FROM.FROM = { 
+				is_claimed_by = USA
+			}
+        }
+        ai_desire = 250
+    }
+	
+    ENG_only_switch_ITA = {
+        peace_action_type = { puppet force_government }
+        enable = {
+			#has_global_flag = is_yalta_pc
+            ROOT = { NOT = { tag = ENG } is_in_faction_with = ENG }
+			
+			FROM.FROM = { tag = ITA }
+        }
+        ai_desire = -2000
+    }
+	
+    ALLIES_only_one_puppet_once = {
+        peace_action_type = { puppet }
+        enable = {
+			#has_global_flag = is_yalta_pc
+            ROOT = { is_in_faction_with = ENG }
+			
+			NOT = { 
+				FROM.FROM = { 
+					pc_is_puppeted_by = ROOT 
+				} 
+			}
+			
+			FROM.FROM = { 
+				OR = {
+					pc_is_puppeted_by = ROOT 
+					pc_is_forced_government = yes
+				}
+			}
+        }
+        ai_desire = -2000
+    }
+	
+    ALLIES_only_one_force_once = {
+        peace_action_type = { force_government }
+        enable = {
+			#has_global_flag = is_yalta_pc
+            ROOT = { is_in_faction_with = ENG }
+			
+			NOT = { 
+				FROM.FROM = { 
+					pc_is_forced_government_by = ROOT 
+				} 
+			}
+			
+			FROM.FROM = { 
+				OR = {
+					pc_is_puppeted_by = ROOT 
+					pc_is_forced_government = yes
+				}
+			}
+        }
+        ai_desire = -2000
+    }
+	
+    ENG_switch_ITA = {
+        peace_action_type = { puppet }
+        enable = {
+			#has_global_flag = is_yalta_pc
+            ROOT = { tag = ENG }
+			ROOT.FROM = { tag = ENG }
+			
+			ROOT.FROM.FROM = { tag = ITA }
+        }
+        ai_desire = 250
+    }
+	
+    SOV_dont_interfere_ITA = {
+        peace_action_type = { take_states puppet liberate force_government }
+        enable = {
+			#has_global_flag = is_yalta_pc
+            ROOT = { tag = SOV }
+            ROOT.FROM.FROM = { tag = ITA }
+        }
+        ai_desire = -150
+    }
+}

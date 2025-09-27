@@ -1,0 +1,42 @@
+#
+on_actions = {
+	on_startup = {
+		effect = { 
+			if = {
+				limit = { 
+					has_dlc = "By Blood Alone" 
+				}
+				
+				SWI = { 
+					SWI_find_democratic_planes_seller = yes 
+				} 
+			}
+		}
+	}
+	on_declare_war = { 
+   	# Disable LoN if more members go to war with each other 
+		effect = {
+			IF = {
+				limit = {
+					NOT = { has_global_flag = LoN_disbanded_flag }
+					FROM = {
+						# is_major = yes 
+						has_country_flag = league_member
+						NOT = {
+							tag = POL
+							tag = FIN
+						}
+					}
+					ROOT = {
+						is_major = yes 
+						has_country_flag = league_member						
+					}
+				}
+				set_global_flag = LoN_disbanded_flag
+				set_variable = { global.LoN_attacker_country = ROOT }
+				set_variable = { global.LoN_defender_country = FROM }
+				news_event = { id = bba_news.0 hours = 4 random_hours = 8}
+			}
+		}
+	}
+}

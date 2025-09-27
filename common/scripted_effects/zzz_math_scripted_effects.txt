@@ -1,0 +1,156 @@
+# Written By Potato. Dont edit unless you know math.
+
+# Math Extension for BICE
+
+math_sqrt = {
+  ## Babylon SQRT, sqrt_in and sqrt_out
+
+  if = {
+		limit = {
+			check_variable = { sqrt_in < 0.001 }
+		}
+		set_variable = { sqrt_out = 0 }
+	}
+	else = {
+  
+	  # initial guess, speeds up convergence
+    if = {
+      limit = {
+        check_variable = { sqrt_in < 1 }
+      }
+      set_temp_variable = { x = 0.5 }
+    }    
+    else_if = {
+      limit = {
+        check_variable = { sqrt_in < 100 }
+      }
+      set_temp_variable = { x = 6 }
+    }
+    else_if = {
+      limit = {
+        check_variable = { sqrt_in < 10000 }
+      }
+      set_temp_variable = { x = 30 }
+    }
+    else = {
+      set_temp_variable = { x = 700 }
+    }
+	  set_temp_variable = { t = 0 }
+		while_loop_effect = {
+			limit = {
+				check_variable = { t < 4 }
+			}
+			add_to_temp_variable = { t = 1 }
+			set_temp_variable = { y = sqrt_in }
+			divide_temp_variable = { y = x }
+			add_to_temp_variable = { x = y }
+			divide_temp_variable = { x = 2 }
+		}
+		set_variable = { sqrt_out = x }
+	}
+  #log = "Sqrt([?sqrt_in]) = [?sqrt_out]"
+}
+
+math_cubrt = {
+  ## Babylon CUBIC ROOT, cubrt_in and cubrt_out
+
+  if = {
+		limit = {
+			check_variable = { cubrt_in < 0.001 }
+		}
+		set_variable = { cubrt_out = 0 }
+	}
+	else = {
+  
+	  # initial guess, speeds up convergence
+    if = {
+      limit = {
+        check_variable = { cubrt_in < 1 }
+      }
+      set_temp_variable = { x = 0.6 }
+    }    
+    else_if = {
+      limit = {
+        check_variable = { cubrt_in < 100 }
+      }
+      set_temp_variable = { x = 3 }
+    }
+    else_if = {
+      limit = {
+        check_variable = { cubrt_in < 10000 }
+      }
+      set_temp_variable = { x = 10 }
+    }
+    else = {
+      set_temp_variable = { x = 30 }
+    }
+	  set_temp_variable = { t = 0 }
+		while_loop_effect = {
+			limit = {
+				check_variable = { t < 8 }
+			}
+			add_to_temp_variable = { t = 1 }
+			set_temp_variable = { y = cubrt_in }
+			divide_temp_variable = { y = x }
+      divide_temp_variable = { y = x }
+			add_to_temp_variable = { x = y }
+			divide_temp_variable = { x = 2 }
+		}
+		set_variable = { cubrt_out = x }
+	}
+  #log = "CubRoot([?cubrt_in]) = [?cubrt_out]"
+}
+
+math_exp = {
+  ## Iterative method e^x, exp_in and exp_out. Quick for small |exp_in|, longer for larger ones. valid values are -7 < exp_in < 14.5
+  
+  if = {
+    limit = {
+      check_variable = { exp_in < 0 }
+    }
+    set_temp_variable = { k = exp_in }
+    multiply_temp_variable = { k = 2.5 }
+    subtract_from_temp_variable = { k = 5 }
+    multiply_temp_variable = { k = -1 }
+  }
+  else = {
+    set_temp_variable = { k = exp_in }
+    multiply_temp_variable = { k = 2 }
+    add_to_temp_variable = { k = 4 }
+  }
+  
+  if = {
+		limit = {
+			check_variable = { exp_in < -7 }
+		}
+		set_variable = { exp_out = 0 }
+	}
+  else_if = {
+    limit = {
+      check_variable = { exp_in > 14.5 }
+    }
+    set_variable = { exp_out = 2000000 }
+  }
+	else = {
+    set_temp_variable = { t = 0 }
+    set_temp_variable = { x = 1 }
+    set_temp_variable = { x1 = 0 }
+		while_loop_effect = {
+			limit = {
+				check_variable = { t < k }
+			}
+			add_to_temp_variable = { t = 1 }
+			set_temp_variable = { y = exp_in }
+			divide_temp_variable = { y = t }
+      set_temp_variable = { d = x }
+      subtract_from_temp_variable = { d = x1 }
+      multiply_temp_variable = { y = d }
+      set_temp_variable = { x1 = x }
+			add_to_temp_variable = { x = y }
+      #log = "[?x]"
+		}
+		set_variable = { exp_out = x }
+	}
+  #log = "Exp([?exp_in]) = [?exp_out]"
+}
+

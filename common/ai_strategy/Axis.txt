@@ -1,0 +1,153 @@
+
+ROM_stay_with_GER = {
+	allowed = { tag = ROM }
+	
+    enable = {
+		is_in_faction_with = GER
+    }
+    abort = {
+		NOT = { is_in_faction_with = GER }
+    }
+
+    ai_strategy = {
+        type = alliance
+        id = "GER"     
+        value = 300000
+    }
+}
+
+HUN_stay_with_GER = {
+	allowed = { tag = HUN }
+    enable = {
+		is_in_faction_with = GER
+    }
+    abort = {
+		NOT = { is_in_faction_with = GER }
+    }
+
+    ai_strategy = {
+        type = alliance
+        id = "GER"     
+        value = 300000
+    }
+}
+
+BUL_stay_with_GER = {
+	allowed = { tag = BUL }
+    enable = {
+		is_in_faction_with = GER
+    }
+    abort = {
+		NOT = { is_in_faction_with = GER }
+    }
+
+    ai_strategy = {
+        type = alliance
+        id = "GER"     
+        value = 300000
+    }
+}
+
+AXIS_dont_attack_SOV_before_GER = {
+	allowed = { OR = { tag = ITA tag = ROM tag = HUN tag = SLO tag = DEN tag = BUL tag = CRO } }
+    enable = {
+		is_in_faction_with = GER
+		NOT = { GER = { has_war_with = SOV } }
+    }
+    abort = {
+		OR = {
+			NOT = { is_in_faction_with = GER }
+			GER = { has_war_with = SOV }
+		}
+    }
+
+	ai_strategy = {
+		type = avoid_starting_wars
+		id = SOV
+		value = 2000
+	}
+}
+
+
+AXIS_war_with_YUG = {
+	allowed = { OR = { tag = GER tag = ITA} }
+    enable = {
+		is_in_faction_with = GER
+		OR = {
+			AND = {
+				has_country_flag = ai_prepare_YUG
+				NOT = { has_war_with = YUG }
+			}
+			AND = { # ITA preparing faster to not lose Zara
+				tag = ITA
+				date > 1941.4.1
+				NOT = { is_in_faction_with = YUG }
+			}
+		}
+    }
+    abort = { 
+		OR = {
+			has_war_with = YUG
+			YUG = { has_capitulated = yes }
+		}
+    }
+
+    ai_strategy = {
+        type = prepare_for_war
+        id = YUG
+        value = 200
+    }
+    ai_strategy = {
+        type = conquer
+        id = YUG
+        value = 100
+    }
+	ai_strategy = {
+		type = front_control
+
+		ratio = 0.1
+
+		tag = YUG
+		priority = 10
+		ordertype = front
+		execution_type = balanced
+		execute_order = yes
+	}
+}
+AXIS_war_with_YUG_minors = {
+	allowed = { OR = { tag = HUN tag = ROM tag = BUL } }
+    enable = {
+		has_country_flag = ai_prepare_YUG
+		is_in_faction_with = GER
+		NOT = { has_war_with = YUG }
+    }
+    abort = { 
+		OR = {
+			has_war_with = YUG
+			YUG = { has_capitulated = yes }
+		}
+    }
+
+    ai_strategy = {
+        type = prepare_for_war
+        id = YUG
+        value = 200
+    }
+    ai_strategy = {
+        type = conquer
+        id = YUG
+        value = 100
+    }
+	ai_strategy = {
+		type = front_control
+
+		ratio = 0.33
+
+		tag = YUG
+		priority = 10
+		ordertype = front
+		execution_type = balanced
+		execute_order = yes
+	}
+}
+

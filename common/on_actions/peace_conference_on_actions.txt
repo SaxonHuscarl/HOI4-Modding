@@ -1,0 +1,417 @@
+on_actions = {
+	on_weekly_SOV = {
+		effect = {
+			if = { #autocomple puppet focuses for SOV
+				limit = {
+					always = no #its not really needed, SOV ai does fine without
+					is_ai = yes
+				}
+					
+				if = {
+					limit = {
+						FIN = {
+							has_war_with = SOV
+							surrender_progress > 0.5
+						}
+						NOT = { has_completed_focus = SOV_subdue_white_bear }
+					}
+					complete_national_focus = SOV_subdue_white_bear
+				}
+				if = {
+					limit = {
+						ROM = {
+							has_war_with = SOV
+							surrender_progress > 0.5
+						}
+						NOT = { has_completed_focus = SOV_subdue_lynx }
+					}
+					complete_national_focus = SOV_subdue_lynx
+				}
+				if = {
+					limit = {
+						NOT = { has_completed_focus = SOV_red_eagle }
+						97 = { is_fully_controlled_by_ROOT_or_ally = yes }
+						98 = { is_fully_controlled_by_ROOT_or_ally = yes }
+						839 = { is_fully_controlled_by_ROOT_or_ally = yes }
+						85 = { is_fully_controlled_by_ROOT_or_ally = yes }
+						86 = { is_fully_controlled_by_ROOT_or_ally = yes }
+						87 = { is_fully_controlled_by_ROOT_or_ally = yes }
+						10 = { is_fully_controlled_by_ROOT_or_ally = yes }
+						862 = { is_fully_controlled_by_ROOT_or_ally = yes }
+						92 = { is_fully_controlled_by_ROOT_or_ally = yes }
+						90 = { is_fully_controlled_by_ROOT_or_ally = yes }
+						88 = { is_fully_controlled_by_ROOT_or_ally = yes }
+						67 = { is_fully_controlled_by_ROOT_or_ally = yes }
+						66 = { is_fully_controlled_by_ROOT_or_ally = yes }
+						893 = { is_fully_controlled_by_ROOT_or_ally = yes }
+						894 = { is_fully_controlled_by_ROOT_or_ally = yes }
+						63 = { is_fully_controlled_by_ROOT_or_ally = yes }
+						5 = { is_fully_controlled_by_ROOT_or_ally = yes }
+						188 = { is_fully_controlled_by_ROOT_or_ally = yes }
+					}
+					complete_national_focus = SOV_red_eagle
+				}
+				if = {
+					limit = {
+						NOT = { has_completed_focus = SOV_red_wolf }
+						73 = { is_fully_controlled_by_ROOT_or_ally = yes }
+						664 = { is_fully_controlled_by_ROOT_or_ally = yes }
+						71 = { is_fully_controlled_by_ROOT_or_ally = yes }
+						70 = { is_fully_controlled_by_ROOT_or_ally = yes }
+						941 = { is_fully_controlled_by_ROOT_or_ally = yes }
+						72 = { is_fully_controlled_by_ROOT_or_ally = yes }
+						75 = { is_fully_controlled_by_ROOT_or_ally = yes }
+						843 = { is_fully_controlled_by_ROOT_or_ally = yes }
+						74 = { is_fully_controlled_by_ROOT_or_ally = yes }
+						9 = { is_fully_controlled_by_ROOT_or_ally = yes }
+						69 = { is_fully_controlled_by_ROOT_or_ally = yes }
+					}
+					complete_national_focus = SOV_red_wolf
+				}
+				if = {
+					limit = {
+						BUL = {
+							has_war_with = SOV
+							surrender_progress > 0.5
+						}
+						NOT = { has_completed_focus = SOV_subdue_lion }
+					}
+					complete_national_focus = SOV_subdue_lion
+				}
+				if = {
+					limit = {
+						HUN = {
+							has_war_with = SOV
+							surrender_progress > 0.5
+						}
+						NOT = { has_completed_focus = SOV_subdue_turul }
+					}
+					complete_national_focus = SOV_subdue_turul
+				}
+			}
+		}
+	}
+	
+	# ROOT is winner, FROM is loser (called for all winners against all losers)
+	on_before_peace_conference_start = {
+		effect = {
+			if = {
+				limit = {
+					has_global_flag = yalta_agreed
+					ROOT = {
+						OR = {
+							is_in_faction_with = SOV
+							is_in_faction_with = ENG
+						}
+					}
+					FROM = {
+						is_in_faction_with = GER
+					}
+				}
+				#clr_global_flag = yalta_agreed
+				set_global_flag = is_yalta_pc
+				
+				if = {
+					limit = {
+						ROOT = { tag = POL }
+						POL = { exists = yes is_in_faction_with = ENG }
+						NOT = { POL = { is_subject_of = SOV } }
+					}
+					SOV = {
+						set_autonomy = {
+							target = POL
+							autonomous_state = autonomy_integrated_puppet
+							end_wars = no
+							end_civil_wars = no
+						}
+					}
+					GER = {
+						set_state_owner = 97
+					}
+					SOV = {
+						set_state_controller = 97
+					}
+					GER = {
+						set_state_owner = 72
+					}
+					SOV = {
+						set_state_controller = 72
+					}
+				}
+				
+				if = {
+					limit = {
+						ROOT = { tag = BEL }
+					}
+					transfer_state = 887
+				}
+				
+				if = {
+					limit = { #BUL can be either winner or looser depending on if SOV puppeted them already
+						OR = {
+							ROOT = { tag = BUL }
+							FROM = { tag = BUL }
+						}
+					}
+					GRE = {
+						transfer_state = 731
+						transfer_state = 184
+					}
+				}
+				
+				if = {
+					limit = {
+						YUG = { exists = yes }
+						CRO = { exists = yes is_in_faction_with = GER }
+					}
+					YUG = {
+						annex_country = {
+							target = CRO
+						}
+						transfer_state = 736
+						transfer_state = 102
+						transfer_state = 913
+						transfer_state = 914
+						transfer_state = 109
+						transfer_state = 103
+						transfer_state = 902
+						transfer_state = 900
+						transfer_state = 163
+						transfer_state = 104
+						transfer_state = 908
+						transfer_state = 901
+						transfer_state = 902
+						transfer_state = 915
+						transfer_state = 45
+						transfer_state = 906
+						transfer_state = 917
+						transfer_state = 107
+						transfer_state = 903
+						transfer_state = 105
+						transfer_state = 108
+						transfer_state = 907
+						transfer_state = 904
+						transfer_state = 905
+						transfer_state = 106
+						transfer_state = 916
+					}
+				}
+				
+				if = {
+					limit = {
+						ROOT = { tag = SOV }
+					}
+					SOV = {
+						add_state_core = 5
+						add_state_core = 840
+						add_state_core = 96
+						add_state_core = 95
+						add_state_core = 94
+						add_state_core = 93
+						add_state_core = 91
+						add_state_core = 89
+						add_state_core = 842
+						add_state_core = 188
+						add_state_core = 73
+					}	
+				}
+				
+				if = {
+					limit = {
+						ROOT = { tag = POL }
+					}
+					POL = {
+						add_state_core = 894
+						add_state_core = 893
+						add_state_core = 63
+						add_state_core = 66
+						add_state_core = 67
+						add_state_core = 839	
+						remove_state_core = 840
+						remove_state_core = 96
+						remove_state_core = 95
+						remove_state_core = 94
+						remove_state_core = 93
+						remove_state_core = 91
+						remove_state_core = 89
+						remove_state_core = 72
+					}	
+				}
+				
+				if = {
+					limit = {
+						FROM = { tag = GER }
+					}
+					GER = {
+						every_state = {
+							limit = {
+								is_core_of = GER
+							}
+							remove_core_of = GER
+						}
+						every_state = {
+							limit = {
+								is_claimed_by = GER
+							}
+							remove_claim_by = GER
+						}
+					}
+					FRA = {
+						add_state_claim = 895
+						add_state_claim = 42
+						add_state_claim = 899
+						add_state_claim = 50
+					}
+					ENG = {
+						add_state_claim = 51
+						add_state_claim = 56
+						add_state_claim = 57
+						add_state_claim = 58
+						add_state_claim = 59
+					}
+					USA = {
+						add_state_claim = 52
+						add_state_claim = 53
+						add_state_claim = 54
+						add_state_claim = 55
+						add_state_claim = 841
+					}
+					SOV = {
+						add_state_claim = 60
+						add_state_claim = 64
+						add_state_claim = 61
+						add_state_claim = 896
+						add_state_claim = 65
+						add_state_claim = 68
+						add_state_claim = 62
+					}
+				}
+			}
+		}
+	}
+	
+	# ROOT is winner, FROM is loser (called for all winners against all losers)
+	on_peaceconference_started = {
+		effect = {
+			log = "on_peaceconference_started"
+		}
+	}
+	
+	# ROOT is winner, FROM is loser (called for all winners against all losers)
+	on_peaceconference_ended = {
+		effect = {	
+			if = {
+				limit = { #after yalta peace conference has fired
+					has_global_flag = is_yalta_pc
+				}
+				
+				clr_global_flag = is_yalta_pc
+				
+				if = {
+					limit = {
+						ROOT = { 
+							tag = POL 
+							is_subject_of = SOV
+						}
+					}
+					
+					POL = { #remove soviet core and claim from suwalki, bryansk
+						if = {
+							limit = {
+								controls_state = 842
+							}
+							842 = { remove_core_of = SOV }
+						}
+						if = {
+							limit = {
+								controls_state = 97
+							}
+							97 = { 
+								remove_core_of = SOV
+								remove_claim_by = SOV 
+							}
+						}
+					}
+				}
+			}
+				
+			#IEA
+			if = {
+				limit = { 
+					ROOT = {
+						original_tag = ITA
+					}
+					FROM = { original_tag = ETH }
+				}
+				ITA = { country_event = { id = italy.30 days = 1 } }
+			}
+			
+			if = {
+				limit = {
+					original_tag = GER
+					FROM = { original_tag = HOL }
+				}
+				remove_ideas = HOL_german_defectors_2
+			}
+			
+			#chinese continue the fight
+			if = {
+				limit = { 
+					ROOT = {
+						original_tag = JAP
+					}
+					FROM = { original_tag = CHI }
+				}
+				if = {
+					limit = {
+						JAP = { is_ai = yes }
+						MAN = { is_ai = yes }
+						MEN = { is_ai = yes }
+					}
+					MAN = {
+						add_equipment_to_stockpile = {
+							type = garrison_equipment
+							amount = 10000
+							producer = JAP
+						}
+						add_equipment_to_stockpile = {
+							type = infantry_uniforms
+							amount = 5000
+							producer = JAP
+						}
+						add_equipment_to_stockpile = {
+							type = infantry_equipment
+							amount = 5000
+							producer = JAP
+						}
+					}
+					MEN = {
+						add_equipment_to_stockpile = {
+							type = garrison_equipment
+							amount = 10000
+							producer = JAP
+						}
+						add_equipment_to_stockpile = {
+							type = infantry_uniforms
+							amount = 5000
+							producer = JAP
+						}
+						add_equipment_to_stockpile = {
+							type = infantry_equipment
+							amount = 5000
+							producer = JAP
+						}
+					}
+				}
+			}			
+			#Peace Conference in Europe. Axis Defeated, Historical (Yalta, etc)
+			#if = {
+			#	limit = {
+			#	
+			#	}
+			#}
+			
+		}
+	}
+
+}

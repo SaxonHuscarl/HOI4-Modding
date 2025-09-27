@@ -1,0 +1,324 @@
+
+d_print_topbar_loc = {
+	for_each_loop = {
+		array = topbar_menu@0
+		
+		log = "[?v.GetTokenKey]: XX"
+		log = "[?v.GetTokenKey]_text: XX"
+		log = "[?v.GetTokenKey]_title: XX"
+	}
+}
+
+update_topbar_menu_category = {
+	
+	set_variable = { subcategory_selected = topbar_menu_v }
+	
+	log = "update category"
+	set_temp_variable = { next_index = topbar_menu_i }
+	for_each_loop = {
+		array = subcategory
+		
+		add_to_temp_variable = { next_index = 3 }
+		
+		log = "run subcategory [?v.GetTokenKey]"
+		if = {
+			limit = {
+				check_variable = { topbar_menu@var:topbar_i^num < next_index }
+			}
+			add_to_array = { topbar_menu@var:topbar_i = 0 }
+			add_to_array = { topbar_menu@var:topbar_i = 0 }
+			add_to_array = { topbar_menu@var:topbar_i = 0 }
+		}
+		
+		add_to_array = { array = topbar_menu@var:topbar_i value = v index = next_index }
+		
+		set_temp_variable = { remove_shift = next_index }
+		add_to_temp_variable = { remove_shift = 1 }
+		remove_from_array = { array = topbar_menu@var:topbar_i index = remove_shift }
+		
+	}
+}
+
+update_topbar_menu = {
+	clear_array = topbar_menu@var:topbar_i
+	
+	add_to_array = { topbar_menu@var:topbar_i = token:topbar_stability } 
+	add_to_array = { topbar_menu@var:topbar_i = token:topbar_war_support }
+	add_to_array = { topbar_menu@var:topbar_i = token:topbar_stability_weekly }
+	add_to_array = { topbar_menu@var:topbar_i = token:topbar_war_support_weekly }
+	add_to_array = { topbar_menu@var:topbar_i = token:topbar_casualties }
+	add_to_array = { topbar_menu@var:topbar_i = token:topbar_surrender_limit }
+	add_to_array = { topbar_menu@var:topbar_i = token:topbar_surrender_progress }
+	add_to_array = { topbar_menu@var:topbar_i = token:topbar_warscore }
+	add_to_array = { topbar_menu@var:topbar_i = token:topbar_core_population }
+	add_to_array = { topbar_menu@var:topbar_i = token:topbar_population }
+	add_to_array = { topbar_menu@var:topbar_i = token:topbar_civilian_fuel } 
+	add_to_array = { topbar_menu@var:topbar_i = token:topbar_menu_food }
+	add_to_array = { topbar_menu@var:topbar_i = token:topbar_consumer_goods }
+	add_to_array = { topbar_menu@var:topbar_i = token:topbar_min_consumer_goods }
+	add_to_array = { topbar_menu@var:topbar_i = token:topbar_political_power_factor }
+	add_to_array = { topbar_menu@var:topbar_i = token:topbar_political_power_daily }
+	add_to_array = { topbar_menu@var:topbar_i = token:topbar_research_speed }
+	add_to_array = { topbar_menu@var:topbar_i = token:topbar_conscription }
+	add_to_array = { topbar_menu@var:topbar_i = token:topbar_conscription_factor }
+	add_to_array = { topbar_menu@var:topbar_i = token:topbar_menu_fuel }
+	#add_to_array = { topbar_menu@var:topbar_i = token:topbar_fuel }
+	#add_to_array = { topbar_menu@var:topbar_i = token:topbar_fuel_storage }
+	#add_to_array = { topbar_menu@var:topbar_i = token:topbar_party_popularity }
+	add_to_array = { topbar_menu@var:topbar_i = token:topbar_command_power_daily }
+	add_to_array = { topbar_menu@var:topbar_i = token:topbar_command_power_factor }
+	add_to_array = { topbar_menu@var:topbar_i = token:topbar_field_strength }
+	add_to_array = { topbar_menu@var:topbar_i = token:topbar_army_strength }
+	add_to_array = { topbar_menu@var:topbar_i = token:topbar_air_strength }
+	add_to_array = { topbar_menu@var:topbar_i = token:topbar_navy_strength }
+	add_to_array = { topbar_menu@var:topbar_i = token:topbar_menu_resource_total } 
+	add_to_array = { topbar_menu@var:topbar_i = token:topbar_menu_resource_imported }
+	add_to_array = { topbar_menu@var:topbar_i = token:topbar_menu_resource_exported }
+	add_to_array = { topbar_menu@var:topbar_i = token:topbar_menu_resource_produced }
+	add_to_array = { topbar_menu@var:topbar_i = token:topbar_menu_resource_consumed }
+	add_to_array = { topbar_menu@var:topbar_i = token:topbar_menu_refineries }
+	add_to_array = { topbar_menu@var:topbar_i = token:topbar_menu_assemblies }
+	
+	if = {
+		limit = {
+			has_tech = guards_infantry_tech
+		}
+		add_to_array = { topbar_menu@var:topbar_i = token:topbar_guards }
+	}
+}
+
+topbar_assign_information = {
+
+	if = {
+		limit = {
+			OR = {
+			
+				check_variable = { topbar_menu_v = token:topbar_menu_fuel }
+				check_variable = { topbar_menu_v = token:topbar_menu_food }
+				check_variable = { topbar_menu_v = token:topbar_menu_refineries }
+				check_variable = { topbar_menu_v = token:topbar_menu_assemblies }
+				check_variable = { topbar_menu_v = token:topbar_menu_resource_total }
+				check_variable = { topbar_menu_v = token:topbar_menu_resource_produced }
+				check_variable = { topbar_menu_v = token:topbar_menu_resource_imported }
+				check_variable = { topbar_menu_v = token:topbar_menu_resource_exported }
+				check_variable = { topbar_menu_v = token:topbar_menu_resource_consumed }
+			}
+		}
+		
+		if = {
+			limit = {
+				check_variable = { subcategory_selected = topbar_menu_v }
+			}
+			clear_variable = subcategory_selected
+			clear_array = subcategory
+			
+			update_topbar_menu = yes
+		}
+		else = {
+			update_topbar_menu = yes
+			
+			clear_array = subcategory
+			clear_variable = subcategory_selected
+			
+			if = {
+				limit = {
+					check_variable = { topbar_menu_v = token:topbar_menu_food }
+				}
+					
+				add_to_array = { subcategory = token:topbar_food_current }
+				add_to_array = { subcategory = token:topbar_food_estimated_storage }
+				add_to_array = { subcategory = token:topbar_food_balance }
+				add_to_array = { subcategory = token:topbar_food_income }
+				add_to_array = { subcategory = token:topbar_food_need }
+				
+				update_topbar_menu_category = yes
+				
+			}	
+			else_if = {
+				limit = {
+					check_variable = { topbar_menu_v = token:topbar_menu_fuel }
+				}
+					
+				add_to_array = { subcategory = token:topbar_fuel }
+				add_to_array = { subcategory = token:topbar_fuel_storage }
+				add_to_array = { subcategory = token:topbar_fuel_per_oil }
+				
+				update_topbar_menu_category = yes
+				
+			}	
+			else_if = {
+				limit = { 
+					check_variable = { topbar_menu_v = token:topbar_menu_refineries }
+				}
+							
+				add_to_array = { subcategory = token:topbar_steel_refinery_active }
+				add_to_array = { subcategory = token:topbar_steel_refinery_inactive }
+				add_to_array = { subcategory = token:topbar_steel_refinery_damaged }
+				add_to_array = { subcategory = token:topbar_aluminium_refinery_active }
+				add_to_array = { subcategory = token:topbar_aluminium_refinery_inactive }
+				add_to_array = { subcategory = token:topbar_aluminium_refinery_damaged }
+				add_to_array = { subcategory = token:topbar_fuel_refinery_active }
+				add_to_array = { subcategory = token:topbar_fuel_refinery_inactive }
+				add_to_array = { subcategory = token:topbar_fuel_refinery_damaged }
+				add_to_array = { subcategory = token:topbar_rubber_refinery_active }
+				add_to_array = { subcategory = token:topbar_rubber_refinery_inactive }
+				add_to_array = { subcategory = token:topbar_rubber_refinery_damaged }
+		
+				update_topbar_menu_category = yes
+				
+			}
+			else_if = {
+				limit = { 
+				log = "[?v.GetTokenKey] trigger v"
+					check_variable = { topbar_menu_v = token:topbar_menu_assemblies }
+				}
+				log = "trigger passed"
+							
+				add_to_array = { subcategory = token:topbar_tank_production }
+				add_to_array = { subcategory = token:topbar_artillery_production }
+				add_to_array = { subcategory = token:topbar_engine_production }
+				add_to_array = { subcategory = token:topbar_air_production }
+				add_to_array = { subcategory = token:topbar_capital_production }
+		
+				update_topbar_menu_category = yes
+				
+			}
+			else_if = {
+				limit = { 
+					check_variable = { topbar_menu_v = token:topbar_menu_resource_total }
+				}
+							
+				add_to_array = { subcategory = token:topbar_oil_total }
+				add_to_array = { subcategory = token:topbar_rubber_total }
+				add_to_array = { subcategory = token:topbar_tungsten_total }
+				add_to_array = { subcategory = token:topbar_aluminium_total }
+				add_to_array = { subcategory = token:topbar_steel_total }
+				add_to_array = { subcategory = token:topbar_chromium_total }
+				add_to_array = { subcategory = token:topbar_bauxite_total }
+				add_to_array = { subcategory = token:topbar_coal_total }
+				add_to_array = { subcategory = token:topbar_iron_total }
+				add_to_array = { subcategory = token:topbar_food_total }
+		
+				update_topbar_menu_category = yes
+				
+			}
+			else_if = {
+				limit = { 
+					check_variable = { topbar_menu_v = token:topbar_menu_resource_produced }
+				}
+							
+				add_to_array = { subcategory = token:topbar_oil_produced }
+				add_to_array = { subcategory = token:topbar_rubber_produced }
+				add_to_array = { subcategory = token:topbar_tungsten_produced }
+				add_to_array = { subcategory = token:topbar_aluminium_produced }
+				add_to_array = { subcategory = token:topbar_steel_produced }
+				add_to_array = { subcategory = token:topbar_chromium_produced }
+				add_to_array = { subcategory = token:topbar_bauxite_produced }
+				add_to_array = { subcategory = token:topbar_coal_produced }
+				add_to_array = { subcategory = token:topbar_iron_produced }
+				add_to_array = { subcategory = token:topbar_food_produced }
+		
+				update_topbar_menu_category = yes
+				
+			}
+			else_if = {
+				limit = { 
+					check_variable = { topbar_menu_v = token:topbar_menu_resource_imported }
+				}
+							
+				add_to_array = { subcategory = token:topbar_oil_imported }
+				add_to_array = { subcategory = token:topbar_rubber_imported }
+				add_to_array = { subcategory = token:topbar_tungsten_imported }
+				add_to_array = { subcategory = token:topbar_aluminium_imported }
+				add_to_array = { subcategory = token:topbar_steel_imported }
+				add_to_array = { subcategory = token:topbar_chromium_imported }
+				add_to_array = { subcategory = token:topbar_bauxite_imported }
+				add_to_array = { subcategory = token:topbar_coal_imported }
+				add_to_array = { subcategory = token:topbar_iron_imported }
+				add_to_array = { subcategory = token:topbar_food_imported }
+		
+				update_topbar_menu_category = yes
+				
+			}
+			else_if = {
+				limit = { 
+					check_variable = { topbar_menu_v = token:topbar_menu_resource_exported }
+				}
+							
+				add_to_array = { subcategory = token:topbar_oil_exported }
+				add_to_array = { subcategory = token:topbar_rubber_exported }
+				add_to_array = { subcategory = token:topbar_tungsten_exported }
+				add_to_array = { subcategory = token:topbar_aluminium_exported }
+				add_to_array = { subcategory = token:topbar_steel_exported }
+				add_to_array = { subcategory = token:topbar_chromium_exported }
+				add_to_array = { subcategory = token:topbar_bauxite_exported }
+				add_to_array = { subcategory = token:topbar_coal_exported }
+				add_to_array = { subcategory = token:topbar_iron_exported }
+				add_to_array = { subcategory = token:topbar_food_exported }
+		
+				update_topbar_menu_category = yes
+				
+			}
+			else_if = {
+				limit = { 
+					check_variable = { topbar_menu_v = token:topbar_menu_resource_consumed }
+				}
+							
+				add_to_array = { subcategory = token:topbar_oil_consumed }
+				add_to_array = { subcategory = token:topbar_rubber_consumed }
+				add_to_array = { subcategory = token:topbar_tungsten_consumed }
+				add_to_array = { subcategory = token:topbar_aluminium_consumed }
+				add_to_array = { subcategory = token:topbar_steel_consumed }
+				add_to_array = { subcategory = token:topbar_chromium_consumed }
+				add_to_array = { subcategory = token:topbar_bauxite_consumed }
+				add_to_array = { subcategory = token:topbar_coal_consumed }
+				add_to_array = { subcategory = token:topbar_iron_consumed }
+				add_to_array = { subcategory = token:topbar_food_consumed }
+		
+				update_topbar_menu_category = yes
+				 
+			}
+			
+		} 
+	}
+	else = {
+		remove_from_array = { array = ROOT.topbar_array index = topbar_i }
+		add_to_array = { array = ROOT.topbar_array value = topbar_menu_v index = topbar_i }
+	
+		if = {
+			limit = {
+				check_variable = { shift_click = 0 }
+			}
+			clear_variable = subcategory_selected
+			clear_array = subcategory
+			
+			clear_array = topbar_menu@var:topbar_i
+			clear_variable = selected_topbar
+		}
+		else_if = {
+			limit = {
+				check_variable = { shift_click = 1 }
+			}
+			
+			if = {
+				limit = {
+					set_temp_variable = { ti = topbar_array^num }
+					subtract_from_temp_variable = { ti = 1 }
+					check_variable = { topbar_i = ti }
+				}
+				add_to_array = { topbar_array = token:topbar_empty }
+			}
+			clear_variable = subcategory_selected
+			clear_array = topbar_menu@var:topbar_i
+			
+			add_to_variable = { selected_topbar = 1 }
+			add_to_temp_variable = { topbar_i = 1 }
+			
+			update_topbar_menu = yes
+		}
+			
+			
+		
+	}
+}
+			

@@ -1,0 +1,535 @@
+### #  # ### ### #  ### ###   ##  ### ###  ##  #  #
+ #  ## # #    #  #   #  #  # #  #  #   #  #  # ## #
+ #  # ## ##   #  #   #  ###  ####  #   #  #  # # ##
+ #  #  # #    #  #   #  #  # #  #  #   #  #  # #  #
+### #  # #   ### ### #  #  # #  #  #  ###  ##  #  #
+
+#Category only allowed for is_potentially_communist_china
+#Category visible when PRC_infiltration focus is completed
+
+
+@SET_UP_RESISTANCE_CELL_BASE_COST = 5
+@SET_UP_RESISTANCE_CELL_COST_PER_ACTIVE_CELL = 5 #num_active_resistance_cell x This
+@SET_UP_RESISTANCE_DAYS_REMOVE = 30
+
+@EXPAND_RESISTANCE_CELL_BASE_COST = 10
+@EXPAND_RESISTANCE_CELL_COST_PER_ACTIVE_CELL = 5 #num_active_resistance_cell x This
+@EXPAND_RESISTANCE_DAYS_REMOVE = 30
+
+@INTEGRATE_RESISTANCE_CELL_BASE_COST = 10
+@INTEGRATE_RESISTANCE_CELL_COST_PER_ACTIVE_CELL = 5 #num_active_resistance_cell x This
+@INTEGRATE_RESISTANCE_DAYS_REMOVE = 30
+
+operations = {
+	PRC_set_up_resistance_cell = {
+		icon = generic_prepare_civil_war
+		allowed = { tag = PRC always = no }
+		available = {
+			#JAP = { FROM = { is_controlled_by_PREV_or_subject = yes is_core_of = PRC } }
+			#OWNER = {
+			#	is_in_faction_with = PRC 
+			#	has_war_with = JAP
+			#}
+		}
+		visible = {
+			 FROM = {
+				NOT = {
+					has_state_flag = PRC_resistance_cell_recently_destroyed 
+				}
+			}
+		}
+		state_target = yes
+		target_array = JAP.controlled_states
+		target_trigger = {
+			FROM = {
+				is_capital = yes
+				check_variable = { building_level@industrial_complex > 0 }
+				check_variable = { building_level@arms_factory > 0 }
+				NOT = { has_state_flag = { flag = PRC_resistance_cell_level value > 0 } }
+			}
+		}
+		cost = 0
+		custom_cost_trigger = {
+			set_temp_variable = { cost = @SET_UP_RESISTANCE_CELL_BASE_COST }
+			set_temp_variable = { cost_per_cell = @SET_UP_RESISTANCE_CELL_COST_PER_ACTIVE_CELL }
+			multiply_temp_variable = { cost_per_cell = num_active_resistance_cell }
+			add_to_temp_variable = { cost = cost_per_cell }
+			command_power > cost
+		}
+		custom_cost_text = cp_atleast
+		ai_will_do = {
+			factor = 0
+		}
+		days_remove = @SET_UP_RESISTANCE_DAYS_REMOVE
+		days_re_enable = 180
+
+		modifier = {
+			resistance_growth = 0.20
+		}
+		complete_effect = {
+			add_to_variable = { num_active_resistance_cell = 1 }
+				
+		}
+		remove_effect = {
+			FROM = { set_state_flag = { flag = PRC_resistance_cell_level value = 1 } }
+		}
+	}	
+	PRC_expand_resistance_cell = {
+		icon = generic_prepare_civil_war
+		allowed = { tag = PRC always = no }
+		available = {
+			FROM = { has_state_flag = { flag = PRC_resistance_cell_level value = 1 } }
+			JAP = { FROM = { is_controlled_by_PREV_or_subject = yes is_core_of = PRC } }
+			OWNER = {
+				is_in_faction_with = PRC 
+				has_war_with = JAP
+			}
+		}
+		visible = {
+			 FROM = {
+				NOT = {
+					has_state_flag = PRC_resistance_cell_recently_destroyed 
+				}
+			}
+		}
+		state_target = yes
+		target_array = JAP.controlled_states
+		target_trigger = {
+			FROM = {
+				is_capital = yes
+				check_variable = { building_level@industrial_complex > 0 }
+				check_variable = { building_level@arms_factory > 0 }
+				#has_state_flag = { flag = PRC_resistance_cell_level value = 1 }
+			}
+		}
+		cost = 0
+		custom_cost_trigger = {
+			set_temp_variable = { cost = @EXPAND_RESISTANCE_CELL_BASE_COST }
+			set_temp_variable = { cost_per_cell = @EXPAND_RESISTANCE_CELL_COST_PER_ACTIVE_CELL }
+			multiply_temp_variable = { cost_per_cell = num_active_resistance_cell }
+			add_to_temp_variable = { cost = cost_per_cell }
+			command_power > cost
+		}
+		custom_cost_text = cp_atleast
+		ai_will_do = {
+			factor = 0
+		}
+		days_remove = @EXPAND_RESISTANCE_DAYS_REMOVE
+		days_re_enable = 180
+
+		modifier = {
+			resistance_growth = 0.2
+			resistance_target = 0.2
+		}
+		complete_effect = {
+			
+		}
+		remove_effect = {
+			FROM = { set_state_flag = { flag = PRC_resistance_cell_level value = 2 } }
+		}
+	}	
+	PRC_integrate_resistance_cell = {
+		icon = generic_prepare_civil_war
+		allowed = { tag = PRC always = no }
+		available = {
+			FROM = { 
+				has_state_flag = { flag = PRC_resistance_cell_level value = 2 } 
+				check_variable = { resistance > 50 }  
+			}
+			JAP = { FROM = { is_controlled_by_PREV_or_subject = yes is_core_of = PRC } }
+			OWNER = {
+				is_in_faction_with = PRC 
+				has_war_with = JAP
+			}
+		}
+		visible = {
+			 FROM = {
+				NOT = {
+					has_state_flag = PRC_resistance_cell_recently_destroyed 
+				}
+			}
+		}
+		state_target = yes
+		target_array = JAP.controlled_states
+		target_trigger = {
+			FROM = {
+				is_capital = yes
+				check_variable = { building_level@industrial_complex > 0 }
+				check_variable = { building_level@arms_factory > 0 }
+				#has_state_flag = { flag = PRC_resistance_cell_level value = 2 }
+			}
+		}
+		cost = 0
+		custom_cost_trigger = {
+			set_temp_variable = { cost = @INTEGRATE_RESISTANCE_CELL_BASE_COST }
+			set_temp_variable = { cost_per_cell = @INTEGRATE_RESISTANCE_CELL_COST_PER_ACTIVE_CELL }
+			multiply_temp_variable = { cost_per_cell = num_active_resistance_cell }
+			add_to_temp_variable = { cost = cost_per_cell }
+			command_power > cost
+		}
+		custom_cost_text = cp_atleast
+		ai_will_do = {
+			factor = 0
+		}
+		days_remove = @INTEGRATE_RESISTANCE_DAYS_REMOVE
+		days_re_enable = 180
+
+		modifier = {
+			resistance_growth = 0.2
+			resistance_target = 0.2
+		}
+		complete_effect = {
+			
+		}
+		remove_effect = {
+		
+		}
+	}	
+	##################################
+	######  RESISTANCE EFFECTS  ######           
+	##################################
+	PRC_resistance_cell_sabotage_campaign_level_1 = {
+		icon = generic_prepare_civil_war
+		allowed = { tag = PRC always = no }
+		available = {
+			hidden_trigger = {
+				command_power > 5
+				has_equipment = {
+					support_equipment > 15
+				}
+			}
+			FROM = { has_state_flag = { flag = PRC_resistance_cell_level value = 1 } }
+			JAP = { FROM = { is_controlled_by_PREV_or_subject = yes is_core_of = PRC } }
+			OWNER = {
+				is_in_faction_with = PRC 
+				has_war_with = JAP
+			}
+		}
+		visible = {
+			FROM = {
+				#has_state_flag = { flag = PRC_resistance_cell_level value = 1 }
+				NOT = {
+					has_state_flag = PRC_resistance_cell_recently_destroyed 
+				}
+			}
+		}
+		state_target = yes
+		target_array = JAP.controlled_states
+		target_trigger = {
+			FROM = {
+				is_capital = yes
+				#has_state_flag = { flag = PRC_resistance_cell_level value = 1 }
+			}
+		}
+		cost = 0
+		custom_cost_trigger = {
+			command_power > 5
+			has_equipment = {
+				support_equipment > 15
+			}
+		}
+		custom_cost_text = support_equipment_atleast_15_cp_5
+		ai_will_do = {
+			factor = 0
+		}
+		days_remove = 30
+		days_re_enable = 30
+
+		modifier = {
+			resistance_activity = 0.2
+		}
+		complete_effect = {
+			hidden_effect = {
+				add_equipment_to_stockpile = {
+					type = support_equipment
+					amount = -15
+				}
+				add_command_power = -5
+			}
+				
+		}
+		remove_effect = {
+				
+		}
+	}	
+	PRC_resistance_cell_local_uprisings_level_1 = {
+		icon = generic_prepare_civil_war
+		allowed = { tag = PRC always = no }
+		available = {
+			hidden_trigger = {
+				command_power > 5
+				has_equipment = {
+					support_equipment > 15
+				}
+			}
+			FROM = { has_state_flag = { flag = PRC_resistance_cell_level value = 1 } }
+			JAP = { FROM = { is_controlled_by_PREV_or_subject = yes is_core_of = PRC } }
+			OWNER = {
+				is_in_faction_with = PRC 
+				has_war_with = JAP
+			}
+		}
+		visible = {
+			 FROM = {
+				NOT = {
+					has_state_flag = PRC_resistance_cell_recently_destroyed 
+				}
+			}
+		}
+		state_target = yes
+		target_array = JAP.controlled_states
+		target_trigger = {
+			FROM = {
+				is_capital = yes
+				check_variable = { building_level@industrial_complex > 0 }
+				check_variable = { building_level@arms_factory > 0 }
+				#has_state_flag = { flag = PRC_resistance_cell_level value = 1 }
+			}
+		}
+		cost = 0
+		custom_cost_trigger = {
+			command_power > 5
+			has_equipment = {
+				support_equipment > 15
+			}
+		}
+		custom_cost_text = support_equipment_atleast_15_cp_5
+		ai_will_do = {
+			factor = 0
+		}
+		days_remove = 30
+		days_re_enable = 30
+
+		modifier = {
+			attrition_for_controller = 0.2
+			resistance_damage_to_garrison = 0.2
+		}
+		complete_effect = {
+			hidden_effect = {
+				add_equipment_to_stockpile = {
+					type = support_equipment
+					amount = -15
+				}
+				add_command_power = -5
+			}
+			FROM = {
+				save_event_target_as = state
+				CONTROLLER = {
+					country_event = prc.159
+				}
+			}
+				
+		}
+		remove_effect = {
+			
+		}
+	}	
+	PRC_resistance_cell_infiltrate_railway_stations_level_1 = {
+		icon = generic_prepare_civil_war
+		allowed = { tag = PRC always = no }
+		available = {
+			FROM = { has_state_flag = { flag = PRC_resistance_cell_level value = 1 } }
+			JAP = { FROM = { is_controlled_by_PREV_or_subject = yes is_core_of = PRC } }
+			OWNER = {
+				is_in_faction_with = PRC 
+				has_war_with = JAP
+			}
+		}
+		visible = {
+			 FROM = {
+				NOT = {
+					has_state_flag = PRC_resistance_cell_recently_destroyed 
+				}
+			}
+		}
+		state_target = yes
+		target_array = JAP.controlled_states
+		target_trigger = {
+			FROM = {
+				is_capital = yes
+				check_variable = { building_level@industrial_complex > 0 }
+				check_variable = { building_level@arms_factory > 0 }
+				#has_state_flag = { flag = PRC_resistance_cell_level value = 1 }
+			}
+		}
+		cost = 0
+		custom_cost_trigger = {
+			command_power > 5
+			has_equipment = {
+				support_equipment > 15
+			}
+		}
+		custom_cost_text = support_equipment_atleast_15_cp_5
+		ai_will_do = {
+			factor = 0
+		}
+		days_remove = 30
+		days_re_enable = 30
+
+		modifier = {
+			disable_strategic_redeployment_for_controller = 1
+			local_supplies_for_controller = -0.75
+		}
+		complete_effect = {
+		
+		}
+		remove_effect = {
+			if = {
+				limit = {
+					FROM = { 
+						NOT = { 
+							has_state_flag = PRC_resistance_cell_counter_action
+							has_state_flag = PRC_resistance_cell_level
+						}
+					}
+				}
+				FROM = {
+					add_state_modifier = {
+						modifier = {
+							local_supplies_for_controller = -0.5
+						}
+					}
+					set_state_flag = PRC_cell_permanent/infiltrate_railway_stations_level_1
+				}
+			}
+		
+		}
+	}
+	JAP_clear_resistance_cell = {
+		icon = generic_prepare_civil_war
+		allowed = { tag = PRC always = no }
+		available = {
+			FROM = { has_state_flag = { flag = PRC_resistance_cell_level value = 1 } }
+			JAP = { FROM = { is_controlled_by_PREV_or_subject = yes is_core_of = PRC } }
+			OWNER = {
+				is_in_faction_with = PRC 
+				has_war_with = JAP
+			}
+		}
+		visible = {
+			 FROM = {
+				NOT = {
+					has_state_flag = PRC_resistance_cell_recently_destroyed 
+				}
+			}
+		}
+		state_target = yes
+		target_array = JAP.controlled_states
+		target_trigger = {
+			FROM = {
+				is_capital = yes
+				check_variable = { building_level@industrial_complex > 0 }
+				check_variable = { building_level@arms_factory > 0 }
+				#has_state_flag = { flag = PRC_resistance_cell_level value = 1 }
+			}
+		}
+		cost = 0
+		custom_cost_trigger = {
+			command_power > 5
+			has_equipment = {
+				support_equipment > 15
+			}
+		}
+		custom_cost_text = support_equipment_atleast_15_cp_5
+		ai_will_do = {
+			factor = 0
+		}
+		days_remove = 10
+		days_re_enable = 30
+
+		modifier = {
+			resistance_damage_to_garrison = 1
+			resistance_decay = 3
+		}
+		complete_effect = {
+		
+		}
+		remove_effect = {
+			FROM = {
+				clr_state_flag = PRC_resistance_cell_level
+				set_state_flag = { flag = PRC_resistance_cell_recently_destroyed value = 1 days = 75 }
+			}
+		
+		}
+	}
+	JAP_increase_troop_presence = {
+		icon = generic_prepare_civil_war
+		allowed = { tag = PRC always = no }
+		available = {
+			FROM = { has_state_flag = { flag = PRC_resistance_cell_level value = 1 } }
+			JAP = { FROM = { is_controlled_by_PREV_or_subject = yes is_core_of = PRC } }
+			OWNER = {
+				is_in_faction_with = PRC 
+				has_war_with = JAP
+			}
+		}
+		visible = {
+			 FROM = {
+				NOT = {
+					has_state_flag = PRC_resistance_cell_recently_destroyed 
+				}
+			}
+		}
+		state_target = yes
+		target_array = JAP.controlled_states
+		target_trigger = {
+			FROM = {
+				is_capital = yes
+				check_variable = { building_level@industrial_complex > 0 }
+				check_variable = { building_level@arms_factory > 0 }
+				#has_state_flag = { flag = PRC_resistance_cell_level value = 1 }
+			}
+		}
+		cost = 0
+		custom_cost_trigger = {
+			command_power > 5
+			has_equipment = {
+				support_equipment > 15
+			}
+		}
+		custom_cost_text = support_equipment_atleast_15_cp_5
+		ai_will_do = {
+			factor = 0
+		}
+		days_remove = 10
+		days_re_enable = 30
+
+		modifier = {
+			resistance_damage_to_garrison = 1
+			resistance_decay = 3
+		}
+		complete_effect = {
+		
+		}
+		remove_effect = {
+			FROM = {
+				clr_state_flag = PRC_resistance_cell_level
+				set_state_flag = { flag = PRC_resistance_cell_recently_destroyed value = 1 days = 75 }
+			}
+		
+		}
+	}
+}
+
+operations = {
+	PRC_launch_100_regiments_campaign = {
+		icon = generic_prepare_civil_war
+		allowed = { tag = PRC }
+		visible = {
+			has_completed_focus = PRC_100_regiments_campaign
+		}
+		cost = 0
+		fire_only_once = yes
+		ai_will_do = {
+			factor = 1
+		}
+		days_remove = 180
+
+		modifier = {
+			army_core_attack_factor = 0.25
+		}
+		complete_effect = {
+			#WTT_TODO_CD: Script mission to take enemy state
+		}
+	}	
+}

@@ -1,0 +1,121 @@
+
+
+########################################
+#Scripted Effects used by Partisan Code#
+########################################
+
+spawn_partisan_division = {
+	create_unit = {
+		division = "name = \"Partisans\" division_template = \"Partisan\" start_experience_factor = 0.5 start_equipment_factor = 1"
+		OWNER = PREV
+		allow_spawning_on_enemy_provs = yes
+	}
+}
+
+set_partisan_techs_and_templates = {
+	if = {
+		limit = {
+			NOT = {	has_tech = interwar_antitank }
+		}
+		set_technology = { interwar_antitank = 1 }
+	}
+	
+	if = {
+		limit = {
+			NOT = {	has_tech = partisans }
+		}
+		set_technology = { partisans = 1 }
+	}
+	
+	if = {
+		limit = {
+			NOT = {	has_template = "Partisan" }
+		}
+		division_template = {
+			name = "Partisan"		
+			is_locked = yes
+			regiments = {
+				partisan = { x = 0 y = 0 }
+				partisan = { x = 0 y = 1 }
+				
+				partisan = { x = 1 y = 0 }
+				partisan = { x = 1 y = 1 }
+				
+				partisan = { x = 2 y = 0 }
+				partisan = { x = 2 y = 1 }
+				
+				partisan = { x = 3 y = 0 }
+				partisan = { x = 3 y = 1 }
+				
+				partisan = { x = 4 y = 0 }
+				partisan = { x = 4 y = 1 }
+			}
+			
+			support = {
+				anti_tank = { x = 0 y = 0 }
+			}
+			priority = 0
+		}
+	}
+}
+
+
+calculate_communist_spanish_partisan_state = {
+	random_state = {
+		limit = {
+			is_fully_controlled_by = D01
+			is_owned_by = D01
+			is_on_continent = europe
+			OR = { 
+				state = 497 
+				state = 172 
+				state = 883 
+				state = 171
+				state = 174
+				state = 503
+				state = 170
+				state = 175
+				state = 173
+			}
+		}
+		ROOT = {
+			set_partisan_techs_and_templates = yes
+			
+			PREV = {
+				spawn_partisan_division = yes
+			}
+		}
+	}
+}
+
+calculate_fascist_spanish_partisan_state = {
+	random_state = {
+		limit = {
+			is_fully_controlled_by = SPR
+			is_owned_by = SPR
+			is_on_continent = europe
+			OR = { 
+				state = 497 
+				state = 172 
+				state = 883 
+				state = 171
+				state = 174
+				state = 503
+				state = 170
+				state = 175
+				state = 173
+				state = 177
+				state = 166
+				state = 169
+				state = 173
+			}
+		}
+		ROOT = {
+			set_partisan_techs_and_templates = yes
+			
+			PREV = {
+				spawn_partisan_division = yes
+			}
+		}
+	}
+}

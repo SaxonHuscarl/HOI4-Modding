@@ -1,0 +1,5768 @@
+technologies = {
+# Vertical yearorder
+	@1930 = 0
+	@1935 = 2
+	@1935_1 = 3
+	@1936 = 4
+	@1936_1 = 5
+	@1936_2 = 6
+	@1936_3 = 7
+	@1937 = 8
+	@1937_1 = 9
+	@1937_2 = 10
+	@1937_3 = 11
+	@1938 = 12
+	@1938_1 = 13
+	@1939 = 16
+	@1939_1 = 17
+	@1939_2 = 18
+	@1939_3 = 19
+	@1940 = 20
+	@1940_1 = 21
+	@1941 = 24
+	@1941_1 = 25
+	@1941_2 = 26
+	@1941_3 = 27
+	@1942 = 28
+	@1943 = 32
+	@1943_1 = 33
+	@1943_2 = 34
+	@1943_3 = 35
+	@1944 = 36
+	@1945 = 40
+# Horizontal positions
+	@IMMUN = 0	#-4
+	@IMPR_MED = 1	#-3
+	@ATMICR_SULFA = 2	#-2
+	@QUAL_CONTR = 2	#-1
+	@TOOLS = 4	#0
+	@TOOLS_1 = 3	#-1
+	@TOOLS_2 = 5	#1
+	@CONV = 6	#2	#Enabled with DLC DoD
+	@WORKERS = 7	#3
+	@BASIC_TLS = 8	#4
+	@GUILDS = 9	#5
+	@BSC_TL = 10
+
+	@FACT_COL1 = 14	#7
+	@FACT_COL2 = 15	#8
+	@FACT_COL3 = 16	#9
+	@FACT_COL4 = 17	#10
+	@FACT_COL5 = 18	#11
+	@CONC_IND = 12	#12
+	@MIL_PROD = 16	#13
+	@DISP_IND = 20	#14
+
+
+	@CONSTR = 26
+	@DIG_IN = 27
+	@DEF_WORKS = 28
+	@PREFAB = 29
+	@IMPR_MAT = 30
+	@RAIL_INFRA = 31
+	@ROAD_INFRA = 32
+	@INFRA_WRK = 33
+	@AIR_INFRA = 34
+	@PORT_INFRA = 35
+	@POWER_GRID = 36
+	@HOUS_WRK = 37
+	@HOSP_CIVW = 38
+	@SCH_WRK = 39
+	@FM_RADIO = 36
+	@EXCAV = 41
+	@chemical = 42
+
+	@WDF_ENG = 43
+	@FUEL_CAN = 44
+	@FUEL_SILO_1 = 45
+	@FUEL_REF = 46
+	@FUEL_SILO = 47
+	@OIL_PLT = 48
+	@OIL_COAL = 49
+	@RUB_PROC = 50
+	
+	#### Research AI Base Priorities - Industry; Construction; Resources; Fuel
+	
+	@I_PRIORITY_1 = 1000
+	@I_PRIORITY_2 = 2000 
+	@I_PRIORITY_3 = 4000 
+	@I_PRIORITY_4 = 8000 
+	@I_PRIORITY_5 = 16000
+	@I_PRIORITY_6 = 32000
+	
+	@C_PRIORITY_1 = 200
+	@C_PRIORITY_2 = 1000 
+	@C_PRIORITY_3 = 2000 
+	@C_PRIORITY_4 = 4000 
+	@C_PRIORITY_5 = 8000
+	@C_PRIORITY_6 = 28000
+	
+
+# Tools
+	basic_machine_tools = {
+		allow = { has_country_flag = UNLOCK:industry_folder } 
+
+		production_factory_max_efficiency_factor = 0.04
+		production_factory_start_efficiency_factor = 0.03
+		industrial_capacity_dockyard = 0.01
+		
+		enable_building = {
+			building = tank_assembly
+			level = 4
+		}
+		enable_building = {
+			building = air_assembly
+			level = 4
+		}
+		enable_building = {
+			building = engine_assembly
+			level = 4
+		}		
+		enable_building = {
+			building = artillery_assembly
+			level = 4
+		}
+
+		path = {
+			leads_to_tech = concentrated_industry
+			research_cost_coeff = 1
+		}
+		path = {
+			leads_to_tech = dispersed_industry
+			research_cost_coeff = 1
+		}
+		path = {
+			leads_to_tech = quality_control
+			research_cost_coeff = 1
+		}
+		research_cost = 1.5
+		start_year = 1930
+		folder = {
+			name = industry_folder
+			position = { x = @BSC_TL y = @1930 }
+		}
+
+		ai_will_do = {
+			base = @I_PRIORITY_6
+			
+			modifier = {
+				factor = ai_factor 
+				
+				set_temp_variable = { ai_factor = ai_industry_tech_need } #AI RESEARCH CATEGORY
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		
+		on_research_complete = {
+			set_temp_variable = { tech = token:basic_machine_tools }
+			on_industry_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = industry_tt
+			custom_effect_tooltip = tool_tech_tt
+		}
+		categories = {
+			industry
+			tool_tech
+		}
+	}
+	quality_control = {
+		allow = { has_country_flag = UNLOCK:industry_folder } 
+		
+		production_factory_efficiency_gain_factor = 0.05
+		
+		path = {
+			leads_to_tech = electric_hoist
+			research_cost_coeff = 1
+		}
+		path = {
+			leads_to_tech = tool_maintenance
+			research_cost_coeff = 1
+		}
+		path = {
+			leads_to_tech = fluorescent_lighting
+			research_cost_coeff = 1
+		}
+		path = {
+			leads_to_tech = improved_military_logistics
+			research_cost_coeff = 1
+		}
+		
+
+
+		research_cost = 1
+		start_year = 1935
+		folder = {
+			name = industry_folder
+			position = { x = @CONV y = @1935 }
+		}
+
+		ai_will_do = {
+			base = @I_PRIORITY_5
+			
+			modifier = {
+				factor = ai_factor 
+				
+				set_temp_variable = { ai_factor = ai_industry_tech_need } #AI RESEARCH CATEGORY
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		
+		on_research_complete = {
+			set_temp_variable = { tech = token:quality_control }
+			on_industry_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = industry_tt
+			custom_effect_tooltip = tool_tech_tt
+		}
+		categories = {
+			industry
+			tool_tech
+		}
+	}
+	fluorescent_lighting = {
+		allow = { has_country_flag = UNLOCK:industry_folder } 
+		
+		production_factory_max_efficiency_factor = 0.04
+		research_cost = 0.80
+		start_year = 1935
+		folder = {
+			name = industry_folder
+			position = { x = @TOOLS_2 y = @1936 }
+		}
+
+		ai_will_do = {
+			base = @I_PRIORITY_4
+			
+			modifier = {
+				factor = ai_factor 
+				
+				set_temp_variable = { ai_factor = ai_industry_tech_need } #AI RESEARCH CATEGORY
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		
+		on_research_complete = {
+			set_temp_variable = { tech = token:fluorescent_lighting }
+			on_industry_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = industry_tt
+			custom_effect_tooltip = electronics_tt
+			custom_effect_tooltip = tool_tech_tt
+			custom_effect_tooltip = civilian_tech_tt
+		}
+		categories = {
+			industry
+			tool_tech
+			electronics
+			civilian_tech
+		}
+	}
+
+	improved_military_logistics = {
+		allow = { has_country_flag = UNLOCK:industry_folder } 
+		
+		no_supply_grace = 24
+		army_fuel_capacity_factor = 0.10
+		supply_node_range = 0.05
+		
+		research_cost = 1.0
+		start_year = 1939
+		folder = {
+			name = industry_folder
+			position = { x = @QUAL_CONTR y = @1939_1 }
+		}
+
+		ai_will_do = {
+			base = @I_PRIORITY_2
+			
+			modifier = {
+				factor = ai_factor 
+				
+				set_temp_variable = { ai_factor = ai_industry_tech_need } #AI RESEARCH CATEGORY
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		
+		on_research_complete = {
+			set_temp_variable = { tech = token:improved_military_logistics }
+			on_industry_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = industry_tt
+		}
+		categories = {
+			industry
+		}
+	}
+	electric_hoist = {
+		allow = { has_country_flag = UNLOCK:industry_folder } 
+
+		production_factory_efficiency_gain_factor = 0.15
+
+		path = {
+			leads_to_tech = improved_machine_tools
+			research_cost_coeff = 1
+		}
+
+		research_cost = 1.0
+		start_year = 1936
+		folder = {
+			name = industry_folder
+			position = { x = @TOOLS y = @1936_2 }
+		}
+
+		ai_will_do = {
+			base = @I_PRIORITY_5
+			
+			modifier = {
+				factor = ai_factor 
+				
+				set_temp_variable = { ai_factor = ai_industry_tech_need } #AI RESEARCH CATEGORY
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		
+		on_research_complete = {
+			set_temp_variable = { tech = token:electric_hoist }
+			on_industry_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = industry_tt
+			custom_effect_tooltip = tool_tech_tt
+		}
+		categories = {
+			industry
+			tool_tech
+		}
+	}
+	improved_machine_tools = {
+		allow = { has_country_flag = UNLOCK:industry_folder } 
+
+		production_factory_max_efficiency_factor = 0.08
+		production_factory_start_efficiency_factor = 0.02
+		industrial_capacity_dockyard = 0.02
+
+		path = {
+			leads_to_tech = advanced_machine_tools
+			research_cost_coeff = 1
+		}
+		path = {
+			leads_to_tech = improved_equipment_conversion
+			research_cost_coeff = 1
+		}
+
+		research_cost = 1.5
+		start_year = 1937
+		folder = {
+			name = industry_folder
+			position = { x = @TOOLS y = @1937 }
+		}
+
+		ai_will_do = {
+			base = @I_PRIORITY_6
+			
+			modifier = {
+				factor = ai_factor 
+				
+				set_temp_variable = { ai_factor = ai_industry_tech_need } #AI RESEARCH CATEGORY
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		
+		on_research_complete = {
+			set_temp_variable = { tech = token:improved_machine_tools }
+			on_industry_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = industry_tt
+			custom_effect_tooltip = tool_tech_tt
+		}
+		categories = {
+			industry
+			tool_tech
+		}
+	}
+	advanced_machine_tools = {
+		allow = { has_country_flag = UNLOCK:industry_folder } 
+
+		production_factory_max_efficiency_factor = 0.08
+		production_factory_efficiency_gain_factor = 0.25
+		production_speed_industrial_complex_factor = -0.05
+		production_speed_arms_factory_factor = -0.05
+		production_factory_start_efficiency_factor = 0.03
+		industrial_capacity_dockyard = 0.02
+		engine_production_capacity = 1
+
+		path = {
+			leads_to_tech = assembly_line_production
+			research_cost_coeff = 1
+		}
+
+		research_cost = 2
+		start_year = 1939
+		folder = {
+			name = industry_folder
+			position = { x = @TOOLS y = @1939 }
+		}
+		
+		ai_will_do = {
+			base = @I_PRIORITY_6
+			
+			modifier = {
+				factor = ai_factor 
+				
+				set_temp_variable = { ai_factor = ai_industry_tech_need } #AI RESEARCH CATEGORY
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		
+		on_research_complete = {
+			set_temp_variable = { tech = token:advanced_machine_tools }
+			on_industry_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = industry_tt
+			custom_effect_tooltip = tool_tech_tt
+		}
+		categories = {
+			industry
+			tool_tech
+		}
+	}
+
+	assembly_line_production = {
+		allow = { has_country_flag = UNLOCK:industry_folder } 
+
+		production_factory_max_efficiency_factor = 0.15
+		production_speed_industrial_complex_factor = -0.15
+		production_speed_arms_factory_factor = -0.10
+		production_factory_start_efficiency_factor = 0.05
+		air_production_capacity = 1
+		engine_production_capacity = 1
+
+		path = {
+			leads_to_tech = flexible_line
+			research_cost_coeff = 1
+		}
+		path = {
+			leads_to_tech = streamlined_line
+			research_cost_coeff = 1
+		}
+
+		research_cost = 2
+		start_year = 1941
+		folder = {
+			name = industry_folder
+			position = { x = @TOOLS y = @1941 }
+		}
+		
+		ai_will_do = {
+			base = @I_PRIORITY_6
+			
+			modifier = {
+				factor = ai_factor 
+				
+				set_temp_variable = { ai_factor = ai_industry_tech_need } #AI RESEARCH CATEGORY
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		
+		on_research_complete = {
+			set_temp_variable = { tech = token:assembly_line_production }
+			on_industry_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = industry_tt
+			custom_effect_tooltip = tool_tech_tt
+		}
+		categories = {
+			industry
+			tool_tech
+		}
+	}
+
+	flexible_line = {
+		allow = { has_country_flag = UNLOCK:industry_folder } 
+
+	    production_factory_max_efficiency_factor = 0.05
+		line_change_production_efficiency_factor = 0.5
+		production_speed_industrial_complex_factor = -0.05
+		production_speed_arms_factory_factor = -0.05
+		production_factory_start_efficiency_factor = 0.03
+		XOR = {
+			streamlined_line
+		}
+		path = {
+			leads_to_tech = modern_machine_tools
+			research_cost_coeff = 1
+		}
+		research_cost = 2.51
+		start_year = 1943
+		folder = {
+			name = industry_folder
+			position = { x = @TOOLS_1 y = @1943 }
+		}
+		
+		ai_will_do = {
+			base = @I_PRIORITY_5
+			
+			modifier = {
+				factor = ai_factor 
+				
+				set_temp_variable = { ai_factor = ai_industry_tech_need } #AI RESEARCH CATEGORY
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		
+		on_research_complete = {
+			set_temp_variable = { tech = token:flexible_line }
+			on_industry_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = industry_tt
+			custom_effect_tooltip = tool_tech_tt
+		}
+		categories = {
+			industry
+			tool_tech
+		}
+	}
+	streamlined_line = {
+		allow = { has_country_flag = UNLOCK:industry_folder } 
+
+		production_factory_max_efficiency_factor = 0.07
+		production_factory_efficiency_gain_factor = 0.3
+		production_speed_industrial_complex_factor = -0.15
+		production_speed_arms_factory_factor = -0.15
+		production_factory_start_efficiency_factor = 0.02
+		XOR = {
+			flexible_line
+		}
+		path = {
+			leads_to_tech = modern_machine_tools
+			research_cost_coeff = 1
+		}
+
+		research_cost = 2.5
+		start_year = 1943
+		folder = {
+			name = industry_folder
+			position = { x = @TOOLS_2 y = @1943 }
+		}
+
+		ai_will_do = {
+			factor = 0
+		}
+		
+		on_research_complete = {
+			set_temp_variable = { tech = token:streamlined_line }
+			on_industry_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = industry_tt
+			custom_effect_tooltip = tool_tech_tt
+		}
+		categories = {
+			industry
+			tool_tech
+		}
+	}
+	modern_machine_tools = {
+		allow = { has_country_flag = UNLOCK:industry_folder } 
+	
+		production_factory_max_efficiency_factor = 0.05
+		production_factory_efficiency_gain_factor = 0.1
+		industrial_capacity_dockyard = 0.02
+		
+		air_production_capacity = 1
+		engine_production_capacity = 1
+		
+		path = {
+			leads_to_tech = automated_assembly_lines
+			research_cost_coeff = 1
+		}
+		research_cost = 2
+		start_year = 1944
+		folder = {
+			name = industry_folder
+			position = { x = @TOOLS y = @1944 }
+		}
+		
+		ai_will_do = {
+			base = @I_PRIORITY_5
+			
+			modifier = {
+				factor = ai_factor 
+				
+				set_temp_variable = { ai_factor = ai_industry_tech_need } #AI RESEARCH CATEGORY
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		
+		
+		on_research_complete = {
+			set_temp_variable = { tech = token:modern_machine_tools }
+			on_industry_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = industry_tt
+			custom_effect_tooltip = tool_tech_tt
+		}
+		categories = {
+			industry
+			tool_tech
+		}
+	}
+	automated_assembly_lines = {
+		allow = { has_country_flag = UNLOCK:industry_folder } 
+		
+		production_speed_arms_factory_factor = -0.06
+		production_speed_dockyard_factor = -0.03
+		conscription = 0.005
+		research_cost = 1.5
+		start_year = 1945
+		dependencies = {
+			advanced_computing_machine = 1
+		}
+		folder = {
+			name = industry_folder
+			position = { x = @TOOLS y = @1945 }
+		}
+
+		ai_will_do = {
+			base = @I_PRIORITY_3
+			
+			modifier = {
+				factor = ai_factor 
+				
+				set_temp_variable = { ai_factor = ai_industry_tech_need } #AI RESEARCH CATEGORY
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		
+		on_research_complete = {
+			set_temp_variable = { tech = token:automated_assembly_lines }
+			on_industry_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = industry_tt
+			custom_effect_tooltip = tool_tech_tt
+			custom_effect_tooltip = computing_tech_tt
+		}
+		categories = {
+			industry
+			tool_tech
+			computing_tech
+		}
+	}
+
+	tool_maintenance = {
+		allow = { has_country_flag = UNLOCK:industry_folder } 
+
+		production_factory_max_efficiency_factor = 0.06
+		industry_repair_factor = 0.05
+		production_factory_start_efficiency_factor = 0.02
+		industrial_capacity_dockyard = 0.02
+
+		path = {
+			leads_to_tech = worker_training
+			research_cost_coeff = 1
+		}
+
+		research_cost = 1.5
+		start_year = 1937
+		folder = {
+			name = industry_folder
+			position = { x = @BASIC_TLS y = @1937 }
+		}
+
+		ai_will_do = {
+			base = @I_PRIORITY_6
+			
+			modifier = {
+				factor = ai_factor 
+				
+				set_temp_variable = { ai_factor = ai_industry_tech_need } #AI RESEARCH CATEGORY
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		
+		on_research_complete = {
+			set_temp_variable = { tech = token:tool_maintenance }
+			on_industry_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = industry_tt
+			custom_effect_tooltip = tool_tech_tt
+		}
+		categories = {
+			industry
+			tool_tech
+		}
+	}
+	# Conversion branch - Enabled in DoD
+	improved_equipment_conversion = {
+		allow = { has_country_flag = UNLOCK:industry_folder } 
+
+		equipment_conversion_speed = 0.35
+
+		allow_branch = {
+			has_dlc = "Death or Dishonor"
+		}
+
+		path = {
+			leads_to_tech = advanced_equipment_conversion
+			research_cost_coeff = 1
+		}
+
+		research_cost = 0.8
+		start_year = 1938
+
+		folder = {
+			name = industry_folder
+			position = { x = @CONV y = @1938 }
+		}
+
+		ai_will_do = {
+			factor = 0
+		}
+		
+		on_research_complete = {
+			set_temp_variable = { tech = token:improved_equipment_conversion }
+			on_industry_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = industry_tt
+			custom_effect_tooltip = tool_tech_tt
+		}
+		categories = {
+			industry
+			tool_tech
+		}
+	}
+
+	advanced_equipment_conversion = {
+		allow = { has_country_flag = UNLOCK:industry_folder } 
+
+		equipment_conversion_speed = 0.45
+
+		research_cost = 0.6
+		start_year = 1940
+
+		folder = {
+			name = industry_folder
+			position = { x = @CONV y = @1940 }
+		}
+
+		ai_will_do = {
+			factor = 0
+		}
+		
+		on_research_complete = {
+			set_temp_variable = { tech = token:advanced_equipment_conversion }
+			on_industry_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = industry_tt
+			custom_effect_tooltip = tool_tech_tt
+		}
+		categories = {
+			industry
+			tool_tech
+		}
+	}
+	# Workers
+	worker_training = {
+		allow = { has_country_flag = UNLOCK:industry_folder } 
+
+		production_factory_max_efficiency_factor = 0.1
+		industrial_capacity_dockyard = 0.04
+		production_factory_start_efficiency_factor = 0.03
+
+
+		path = {
+			leads_to_tech = worker_safety
+			research_cost_coeff = 1
+		}
+
+		research_cost = 1.2
+		start_year = 1938
+		folder = {
+			name = industry_folder
+			position = { x = @BASIC_TLS y = @1938 }
+		}
+
+		ai_will_do = {
+			base = @I_PRIORITY_6
+			
+			modifier = {
+				factor = ai_factor 
+				
+				set_temp_variable = { ai_factor = ai_industry_tech_need } #AI RESEARCH CATEGORY
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		
+		on_research_complete = {
+			set_temp_variable = { tech = token:worker_training }
+			on_industry_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = industry_tt
+			custom_effect_tooltip = tool_tech_tt
+		}
+		categories = {
+			industry
+			tool_tech
+		}
+	}
+	worker_safety = {
+		allow = { has_country_flag = UNLOCK:industry_folder } 
+
+		industry_repair_factor = 0.25
+		line_change_production_efficiency_factor = 0.05
+
+		path = {
+			leads_to_tech = worker_colleges
+			research_cost_coeff = 1
+		}
+		path = {
+			leads_to_tech = on_spot_training
+			research_cost_coeff = 1
+		}
+
+		research_cost = 1.0
+		start_year = 1939
+		folder = {
+			name = industry_folder
+			position = { x = @BASIC_TLS y = @1939 }
+		}
+
+		ai_will_do = {
+			base = @I_PRIORITY_4
+			
+			modifier = {
+				factor = ai_factor 
+				
+				set_temp_variable = { ai_factor = ai_industry_tech_need } #AI RESEARCH CATEGORY
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		
+		on_research_complete = {
+			set_temp_variable = { tech = token:worker_safety }
+			on_industry_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = industry_tt
+			custom_effect_tooltip = tool_tech_tt
+		}
+		categories = {
+			industry
+			tool_tech
+		}
+	}
+
+	worker_colleges = {
+		allow = { has_country_flag = UNLOCK:industry_folder } 
+
+		line_change_production_efficiency_factor = 0.1
+		production_factory_efficiency_gain_factor = 0.2
+		industrial_capacity_dockyard = 0.04
+		production_factory_start_efficiency_factor = 0.03
+
+		research_cost = 1.7
+		start_year = 1941
+		folder = {
+			name = industry_folder
+			position = { x = @GUILDS y = @1941 }
+		}
+
+		ai_will_do = {
+			base = @I_PRIORITY_6
+			
+			modifier = {
+				factor = ai_factor 
+				
+				set_temp_variable = { ai_factor = ai_industry_tech_need } #AI RESEARCH CATEGORY
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		
+		on_research_complete = {
+			set_temp_variable = { tech = token:worker_colleges }
+			on_industry_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = industry_tt
+			custom_effect_tooltip = tool_tech_tt
+		}
+		categories = {
+			industry
+			tool_tech
+		}
+	}
+
+	on_spot_training = {
+		allow = { has_country_flag = UNLOCK:industry_folder } 
+
+		industry_repair_factor = 0.05
+		production_factory_efficiency_gain_factor = 0.25
+		line_change_production_efficiency_factor = 0.05
+		production_factory_start_efficiency_factor = 0.03
+
+		path = {
+			leads_to_tech = foriegn_labour
+			research_cost_coeff = 1
+		}
+
+		research_cost = 2
+		start_year = 1941
+		folder = {
+			name = industry_folder
+			position = { x = @WORKERS y = @1941 }
+		}
+
+		
+		ai_will_do = {
+			base = @I_PRIORITY_6
+			
+			modifier = {
+				factor = ai_factor 
+				
+				set_temp_variable = { ai_factor = ai_industry_tech_need } #AI RESEARCH CATEGORY
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		
+		on_research_complete = {
+			set_temp_variable = { tech = token:on_spot_training }
+			on_industry_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = industry_tt
+			custom_effect_tooltip = tool_tech_tt
+		}
+		categories = {
+			industry
+			tool_tech
+		}
+	}
+
+	foriegn_labour = {
+		allow = { has_country_flag = UNLOCK:industry_folder } 
+
+		industrial_capacity_factory = 0.1
+		production_factory_efficiency_gain_factor = -0.1
+		line_change_production_efficiency_factor = -0.08
+		production_factory_start_efficiency_factor = -0.02
+		conscription = 0.005
+		industry_repair_factor = -0.2
+		research_cost = 2.5
+		start_year = 1943
+		folder = {
+			name = industry_folder
+			position = { x = @WORKERS y = @1943 }
+		}
+
+		ai_will_do = {
+			base = @I_PRIORITY_2
+			
+			modifier = {
+				factor = ai_factor 
+				
+				set_temp_variable = { ai_factor = ai_industry_tech_need } #AI RESEARCH CATEGORY
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		
+		on_research_complete = {
+			set_temp_variable = { tech = token:foriegn_labour }
+			on_industry_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = industry_tt
+			custom_effect_tooltip = tool_tech_tt
+		}
+		categories = {
+			industry
+			tool_tech
+		}
+	}
+##### Concentrated Industry
+	concentrated_industry = {
+		allow = { has_country_flag = UNLOCK:industry_folder } 
+
+		industrial_capacity_factory = 0.1
+		#industrial_capacity_dockyard = 0.1
+		global_building_slots_factor = 0.16
+		industry_air_damage_factor = 0.1
+		line_change_production_efficiency_factor = -0.1
+
+		xor = { dispersed_industry }
+
+		path = {
+			leads_to_tech = concentrated_industry2
+			research_cost_coeff = 1
+		}
+		path = {
+			leads_to_tech = military_production_i
+			research_cost_coeff = 1
+		}
+
+		on_research_complete = {
+			set_temp_variable = { tech = token:concentrated_industry }
+			on_industry_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = industry_tt
+			custom_effect_tooltip = concentrated_industry_category_tt
+		
+		}
+
+		research_cost = 2
+		start_year = 1936
+		folder = {
+			name = industry_folder
+			position = { x = @CONC_IND y = @1936 }
+		}
+
+		ai_will_do = {
+			base = @I_PRIORITY_6
+			
+			modifier = {
+				factor = ai_factor 
+				
+				set_temp_variable = { ai_factor = ai_industry_tech_need } #AI RESEARCH CATEGORY
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+			modifier = {
+				factor = 0 
+				ai_dispersed_industry_pick = yes 
+			}
+		}
+		
+		categories = {
+			industry
+			concentrated_industry_category
+		}
+	}
+	concentrated_industry2 = {
+		allow = { has_country_flag = UNLOCK:industry_folder } 
+
+		industrial_capacity_factory = 0.15
+		#industrial_capacity_dockyard = 0.15
+		global_building_slots_factor = 0.2
+		industry_air_damage_factor = 0.1
+		line_change_production_efficiency_factor = -0.1
+		path = {
+			leads_to_tech = concentrated_industry3
+			research_cost_coeff = 1
+		}
+		### Factories
+		path = {
+			leads_to_tech = ship_industry
+			research_cost_coeff = 1
+		}
+		path = {
+			leads_to_tech = sub_industry
+			research_cost_coeff = 1
+		}
+		on_research_complete = {
+			set_temp_variable = { tech = token:concentrated_industry2 }
+			on_industry_tech_research_complete = yes
+			if = {
+				limit = { is_ai = yes }
+				country_event = EAI_M.4447
+			}
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = industry_tt
+			custom_effect_tooltip = concentrated_industry_category_tt
+		}
+		research_cost = 2
+		start_year = 1937
+		folder = {
+			name = industry_folder
+			position = { x = @CONC_IND y = @1937 }
+		}
+
+		
+		ai_will_do = {
+			base = @I_PRIORITY_6
+			
+			modifier = {
+				factor = ai_factor 
+				
+				set_temp_variable = { ai_factor = ai_industry_tech_need } #AI RESEARCH CATEGORY
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		
+
+		categories = {
+			industry
+			concentrated_industry_category
+		}
+
+	}
+	concentrated_industry3 = {
+		allow = { has_country_flag = UNLOCK:industry_folder } 
+
+		on_research_complete = {
+			set_temp_variable = { tech = token:concentrated_industry3 }
+			on_industry_tech_research_complete = yes
+			if = {
+				limit = { is_ai = yes }
+				country_event = EAI_M.4448
+			}
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = industry_tt
+			custom_effect_tooltip = concentrated_industry_category_tt
+		}
+
+		industrial_capacity_factory = 0.20
+		#industrial_capacity_dockyard = 0.2
+		global_building_slots_factor = 0.24
+		industry_air_damage_factor = 0.1
+		line_change_production_efficiency_factor = -0.1
+
+		path = {
+			leads_to_tech = concentrated_industry4
+			research_cost_coeff = 1
+		}
+		path = {
+			leads_to_tech = military_production_ii
+			research_cost_coeff = 1
+		}
+		### Factories
+		path = {
+			leads_to_tech = ship_industry2
+			research_cost_coeff = 1
+		}
+		path = {
+			leads_to_tech = sub_industry2
+			research_cost_coeff = 1
+		}
+		
+		path = {
+			leads_to_tech = artillery_industry
+			research_cost_coeff = 1
+		}
+		path = {
+			leads_to_tech = armor_industry
+			research_cost_coeff = 1
+		}
+		path = {
+			leads_to_tech = vehicle_industry
+			research_cost_coeff = 1
+		}
+		path = {
+			leads_to_tech = Ltaircraft_industry
+			research_cost_coeff = 1
+		}
+#		path = {
+#			leads_to_tech = Hvaircraft_industry
+#			research_cost_coeff = 1
+#		}
+
+		research_cost = 2
+		start_year = 1939
+		folder = {
+			name = industry_folder
+			position = { x = @CONC_IND y = @1939 }
+		}
+
+		
+		ai_will_do = {
+			base = @I_PRIORITY_6
+			
+			modifier = {
+				factor = ai_factor 
+				
+				set_temp_variable = { ai_factor = ai_industry_tech_need } #AI RESEARCH CATEGORY
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		
+
+		categories = {
+			industry
+			concentrated_industry_category
+		}
+
+	}
+	concentrated_industry4 = {
+		allow = { has_country_flag = UNLOCK:industry_folder } 
+
+		industrial_capacity_factory = 0.25
+		on_research_complete = {
+			set_temp_variable = { tech = token:concentrated_industry4 }
+			on_industry_tech_research_complete = yes
+			if = {
+				limit = { is_ai = yes }
+				country_event = EAI_M.4449
+			}
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = industry_tt
+			custom_effect_tooltip = concentrated_industry_category_tt
+		}
+		global_building_slots_factor = 0.28
+		industry_air_damage_factor = 0.1
+		line_change_production_efficiency_factor = -0.1
+
+		path = {
+			leads_to_tech = concentrated_industry5
+			research_cost_coeff = 1
+		}
+		### Factories
+		path = {
+			leads_to_tech = ship_industry3
+			research_cost_coeff = 1
+		}
+		path = {
+			leads_to_tech = sub_industry3
+			research_cost_coeff = 1
+		}
+		
+		path = {
+			leads_to_tech = artillery_industry2
+			research_cost_coeff = 1
+		}
+		path = {
+			leads_to_tech = armor_industry2
+			research_cost_coeff = 1
+		}
+		path = {
+			leads_to_tech = vehicle_industry2
+			research_cost_coeff = 1
+		}
+		path = {
+			leads_to_tech = Ltaircraft_industry2
+			research_cost_coeff = 1
+		}
+#		path = {
+#			leads_to_tech = Hvaircraft_industry2
+#			research_cost_coeff = 1
+#		}
+
+		research_cost = 2
+		start_year = 1941
+
+		folder = {
+			name = industry_folder
+			position = { x = @CONC_IND y = @1941 }
+		}
+
+		
+		ai_will_do = {
+			base = @I_PRIORITY_6
+			
+			modifier = {
+				factor = ai_factor 
+				
+				set_temp_variable = { ai_factor = ai_industry_tech_need } #AI RESEARCH CATEGORY
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		
+
+		categories = {
+			industry
+			concentrated_industry_category
+		}
+
+	}
+	concentrated_industry5 = {
+		allow = { has_country_flag = UNLOCK:industry_folder } 
+		
+		on_research_complete = {
+			set_temp_variable = { tech = token:concentrated_industry5 }
+			on_industry_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = industry_tt
+			custom_effect_tooltip = concentrated_industry_category_tt
+		}
+		industrial_capacity_factory = 0.30
+		#industrial_capacity_dockyard = 0.3
+		global_building_slots_factor = 0.32
+		industry_air_damage_factor = 0.1
+		line_change_production_efficiency_factor = -0.1
+
+		path = {
+			leads_to_tech = artillery_industry3
+			research_cost_coeff = 1
+		}
+		path = {
+			leads_to_tech = armor_industry3
+			research_cost_coeff = 1
+		}
+		path = {
+			leads_to_tech = vehicle_industry3
+			research_cost_coeff = 1
+		}
+		path = {
+			leads_to_tech = Ltaircraft_industry3
+			research_cost_coeff = 1
+		}
+#		path = {
+#			leads_to_tech = Hvaircraft_industry3
+#			research_cost_coeff = 1
+#		}
+
+		research_cost = 2
+		start_year = 1943
+		path = {
+			leads_to_tech = military_production_iii
+			research_cost_coeff = 1
+		}
+		folder = {
+			name = industry_folder
+			position = { x = @CONC_IND y = @1943 }
+		}
+
+		ai_will_do = {
+			base = @I_PRIORITY_6
+			
+			modifier = {
+				factor = ai_factor 
+				
+				set_temp_variable = { ai_factor = ai_industry_tech_need } #AI RESEARCH CATEGORY
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		
+
+		categories = {
+			industry
+			concentrated_industry_category
+		}
+
+	}
+
+	##### Dispersed Industry
+	dispersed_industry = {
+		allow = { has_country_flag = UNLOCK:industry_folder } 
+
+		industrial_capacity_factory = 0.10
+		#industrial_capacity_dockyard = 0.08
+		global_building_slots_factor = 0.1
+		industry_air_damage_factor = -0.1
+
+		XOR = { concentrated_industry }
+
+		path = {
+			leads_to_tech = dispersed_industry2
+			research_cost_coeff = 1
+		}
+		path = {
+			leads_to_tech = military_production_i
+			research_cost_coeff = 1
+		}
+		on_research_complete = {
+			set_temp_variable = { tech = token:dispersed_industry }
+			on_industry_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = industry_tt
+			custom_effect_tooltip = dispersed_industry_category_tt
+
+		}
+
+		research_cost = 2
+		start_year = 1936
+		folder = {
+			name = industry_folder
+			position = { x = @DISP_IND y = @1936 }
+		}
+
+		ai_will_do = {
+			base = @I_PRIORITY_6
+			
+			modifier = {
+				factor = ai_factor 
+				
+				set_temp_variable = { ai_factor = ai_industry_tech_need } #AI RESEARCH CATEGORY
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+			modifier = {
+				factor = 0 
+				ai_concentrated_industry_pick = yes 
+			}
+		}
+		
+
+		categories = {
+			industry
+			dispersed_industry_category
+		}
+	}
+	dispersed_industry2 = {
+		allow = { has_country_flag = UNLOCK:industry_folder } 
+
+		industrial_capacity_factory = 0.13
+		#industrial_capacity_dockyard = 0.12
+		global_building_slots_factor = 0.12
+		industry_air_damage_factor = -0.1
+
+		on_research_complete = {
+			set_temp_variable = { tech = token:dispersed_industry2 }
+			on_industry_tech_research_complete = yes
+			if = {
+				limit = { is_ai = yes }
+				country_event = EAI_M.4447
+			}
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = industry_tt
+			custom_effect_tooltip = dispersed_industry_category_tt
+		}
+
+		path = {
+			leads_to_tech = dispersed_industry3
+			research_cost_coeff = 1
+		}
+		### Factories
+		path = {
+			leads_to_tech = ship_industry
+			research_cost_coeff = 1
+		}
+		path = {
+			leads_to_tech = sub_industry
+			research_cost_coeff = 1
+		}
+
+		research_cost = 2
+		start_year = 1937
+
+		folder = {
+			name = industry_folder
+			position = { x = @DISP_IND y = @1937 }
+		}
+
+		
+		ai_will_do = {
+			base = @I_PRIORITY_6
+			
+			modifier = {
+				factor = ai_factor 
+				
+				set_temp_variable = { ai_factor = ai_industry_tech_need } #AI RESEARCH CATEGORY
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		
+
+		categories = {
+			industry
+			dispersed_industry_category
+		}
+
+	}
+	dispersed_industry3 = {
+		allow = { has_country_flag = UNLOCK:industry_folder } 
+
+		on_research_complete = {
+			set_temp_variable = { tech = token:dispersed_industry3 }
+			on_industry_tech_research_complete = yes
+			if = {
+				limit = { is_ai = yes }
+				country_event = EAI_M.4448
+			}
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = industry_tt
+			custom_effect_tooltip = dispersed_industry_category_tt
+		}
+
+		industrial_capacity_factory = 0.16
+		#industrial_capacity_dockyard = 0.15
+		global_building_slots_factor = 0.15
+		industry_air_damage_factor = -0.1
+
+		path = {
+			leads_to_tech = dispersed_industry4
+			research_cost_coeff = 1
+		}
+		path = {
+			leads_to_tech = military_production_ii
+			research_cost_coeff = 1
+		}
+		### Factories
+		path = {
+			leads_to_tech = ship_industry2
+			research_cost_coeff = 1
+		}
+		path = {
+			leads_to_tech = sub_industry2
+			research_cost_coeff = 1
+		}
+		
+		path = {
+			leads_to_tech = artillery_industry
+			research_cost_coeff = 1
+		}
+		path = {
+			leads_to_tech = armor_industry
+			research_cost_coeff = 1
+		}
+		path = {
+			leads_to_tech = vehicle_industry
+			research_cost_coeff = 1
+		}
+		path = {
+			leads_to_tech = Ltaircraft_industry
+			research_cost_coeff = 1
+		}
+#		path = {
+#			leads_to_tech = Hvaircraft_industry
+#			research_cost_coeff = 1
+#		}
+
+		research_cost = 2
+		start_year = 1939
+		folder = {
+			name = industry_folder
+			position = { x = @DISP_IND y = @1939 }
+		}
+
+		ai_will_do = {
+			base = @I_PRIORITY_6
+			
+			modifier = {
+				factor = ai_factor 
+				
+				set_temp_variable = { ai_factor = ai_industry_tech_need } #AI RESEARCH CATEGORY
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		
+
+		categories = {
+			industry
+			dispersed_industry_category
+		}
+
+	}
+	dispersed_industry4 = {
+		allow = { has_country_flag = UNLOCK:industry_folder } 
+		
+		on_research_complete = {
+			set_temp_variable = { tech = token:dispersed_industry4 }
+			on_industry_tech_research_complete = yes
+			if = {
+				limit = { is_ai = yes }
+				country_event = EAI_M.4449
+			}
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = industry_tt
+			custom_effect_tooltip = dispersed_industry_category_tt
+		}
+		industrial_capacity_factory = 0.19
+		#industrial_capacity_dockyard = 0.18
+		global_building_slots_factor = 0.18
+		industry_air_damage_factor = -0.1
+
+		path = {
+			leads_to_tech = dispersed_industry5
+			research_cost_coeff = 1
+		}
+		### Factories
+		path = {
+			leads_to_tech = ship_industry3
+			research_cost_coeff = 1
+		}
+		path = {
+			leads_to_tech = sub_industry3
+			research_cost_coeff = 1
+		}
+		
+		path = {
+			leads_to_tech = artillery_industry2
+			research_cost_coeff = 1
+		}
+		path = {
+			leads_to_tech = armor_industry2
+			research_cost_coeff = 1
+		}
+		path = {
+			leads_to_tech = vehicle_industry2
+			research_cost_coeff = 1
+		}
+		path = {
+			leads_to_tech = Ltaircraft_industry2
+			research_cost_coeff = 1
+		}
+#		path = {
+#			leads_to_tech = Hvaircraft_industry2
+#			research_cost_coeff = 1
+#		}
+
+		research_cost = 2
+		start_year = 1941
+
+		folder = {
+			name = industry_folder
+			position = { x = @DISP_IND y = @1941 }
+		}
+
+		ai_will_do = {
+			base = @I_PRIORITY_6
+			
+			modifier = {
+				factor = ai_factor 
+				
+				set_temp_variable = { ai_factor = ai_industry_tech_need } #AI RESEARCH CATEGORY
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		
+
+		categories = {
+			industry
+			dispersed_industry_category
+		}
+
+	}
+	dispersed_industry5 = {
+		allow = { has_country_flag = UNLOCK:industry_folder } 
+		
+		on_research_complete = {
+			set_temp_variable = { tech = token:dispersed_industry5 }
+			on_industry_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = industry_tt
+			custom_effect_tooltip = dispersed_industry_category_tt
+		}
+		industrial_capacity_factory = 0.22
+		#industrial_capacity_dockyard = 0.22
+		global_building_slots_factor = 0.2
+		industry_air_damage_factor = -0.1
+		
+		path = {
+			leads_to_tech = artillery_industry3
+			research_cost_coeff = 1
+		}
+		path = {
+			leads_to_tech = armor_industry3
+			research_cost_coeff = 1
+		}
+		path = {
+			leads_to_tech = vehicle_industry3
+			research_cost_coeff = 1
+		}
+		path = {
+			leads_to_tech = Ltaircraft_industry3
+			research_cost_coeff = 1
+		}
+#		path = {
+#			leads_to_tech = Hvaircraft_industry3
+#			research_cost_coeff = 1
+#		}
+
+		research_cost = 2
+		start_year = 1943
+		path = {
+			leads_to_tech = military_production_iii
+			research_cost_coeff = 1
+		}
+		folder = {
+			name = industry_folder
+			position = { x = @DISP_IND y = @1943 }
+		}
+
+		ai_will_do = {
+			base = @I_PRIORITY_6
+			
+			modifier = {
+				factor = ai_factor 
+				
+				set_temp_variable = { ai_factor = ai_industry_tech_need } #AI RESEARCH CATEGORY
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		
+
+		categories = {
+			industry
+			dispersed_industry_category
+		}
+
+	}
+	#### Military Production
+	military_production_i = {
+		allow = { has_country_flag = UNLOCK:industry_folder } 
+		
+		enable_building = {
+			building = arms_factory
+			level = 20
+		}
+		on_research_complete = {
+			set_temp_variable = { tech = token:military_production_i }
+			on_industry_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = industry_tt
+		}
+		industrial_capacity_factory = 0.05
+		industrial_capacity_dockyard = 0.04
+		stability_factor = -0.05
+		research_cost = 1.25
+		start_year = 1936
+		folder = {
+			name = industry_folder
+			position = { x = @MIL_PROD y = @1936_2 }
+		}
+
+		ai_will_do = {
+			base = @I_PRIORITY_3
+			
+			modifier = {
+				factor = ai_factor 
+				
+				set_temp_variable = { ai_factor = ai_industry_tech_need } #AI RESEARCH CATEGORY
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		
+
+		categories = {
+			industry
+		}
+	}
+
+	military_production_ii = {
+		allow = { has_country_flag = UNLOCK:industry_folder } 
+		
+		enable_building = {
+			building = arms_factory
+			level = 30
+		}
+		on_research_complete = {
+			set_temp_variable = { tech = token:military_production_ii }
+			on_industry_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = industry_tt
+		}
+		industrial_capacity_factory = 0.05
+		industrial_capacity_dockyard = 0.04
+		stability_factor = -0.05
+		dependencies = {
+			military_production_i = 1
+		}
+
+		research_cost = 1.25
+		start_year = 1940
+		folder = {
+			name = industry_folder
+			position = { x = @MIL_PROD y = @1940 }
+		}
+
+		ai_will_do = {
+			base = @I_PRIORITY_3
+			
+			modifier = {
+				factor = ai_factor 
+				
+				set_temp_variable = { ai_factor = ai_industry_tech_need } #AI RESEARCH CATEGORY
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		
+		categories = {
+			industry
+		}
+	}
+
+	military_production_iii = {
+		allow = { has_country_flag = UNLOCK:industry_folder } 
+		
+		enable_building = {
+			building = arms_factory
+			level = 40
+		}
+		on_research_complete = {
+			set_temp_variable = { tech = token:military_production_iii }
+			on_industry_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = industry_tt
+		}
+		industrial_capacity_factory = 0.075
+		industrial_capacity_dockyard = 0.065
+		stability_factor = -0.05
+		dependencies = {
+			military_production_ii = 1
+		}
+
+		research_cost = 1.25
+		start_year = 1944
+		folder = {
+			name = industry_folder
+			position = { x = @MIL_PROD y = @1944 }
+		}
+
+		ai_will_do = {
+			base = @I_PRIORITY_3
+			
+			modifier = {
+				factor = ai_factor 
+				
+				set_temp_variable = { ai_factor = ai_industry_tech_need } #AI RESEARCH CATEGORY
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		
+		categories = {
+			industry
+		}
+	}
+	###########################################
+	##### Concentrated Factories Level I
+	armor_industry = {
+		allow = { has_country_flag = UNLOCK:industry_folder } 
+		
+		enable_building = {
+			building = tank_assembly
+			level = 6
+		}
+		
+		tank_production_capacity = 1
+
+		on_research_complete = {
+			set_temp_variable = { tech = token:armor_industry }
+			on_industry_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = industry_tt
+			custom_effect_tooltip = concentrated_industry_category_tt
+			custom_effect_tooltip = dispersed_industry_category_tt
+
+			
+		}
+		start_year = 1939
+		research_cost = 0.75
+		folder = {
+			name = industry_folder
+			position = { x = @FACT_COL3 y = @1939_1 }
+		}
+
+		ai_will_do = {
+			factor = 0
+		}
+		
+
+		categories = {
+			concentrated_industry_category
+			dispersed_industry_category
+			industry
+		}
+	}
+	vehicle_industry = {
+		allow = { has_country_flag = UNLOCK:industry_folder } 
+
+		enable_building = {
+			building = engine_assembly
+			level = 6
+		}
+		engine_production_capacity = 1
+		on_research_complete = {
+			set_temp_variable = { tech = token:vehicle_industry }
+			on_industry_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = industry_tt
+			custom_effect_tooltip = concentrated_industry_category_tt
+			custom_effect_tooltip = dispersed_industry_category_tt
+			
+			
+		}
+		start_year = 1939
+		research_cost = 0.5
+		folder = {
+			name = industry_folder
+			position = { x = @FACT_COL2 y = @1939_1 }
+		}
+
+		ai_will_do = {
+			factor = 0
+		}
+		
+
+		categories = {
+			industry
+			concentrated_industry_category
+			dispersed_industry_category
+		}
+	}
+	artillery_industry = {
+		allow = { has_country_flag = UNLOCK:industry_folder } 
+
+		enable_building = {
+			building = artillery_assembly
+			level = 6
+		}
+		artillery_production_capacity = 1
+		
+		on_research_complete = {
+			set_temp_variable = { tech = token:artillery_industry }
+			on_industry_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = industry_tt
+			custom_effect_tooltip = concentrated_industry_category_tt
+			custom_effect_tooltip = dispersed_industry_category_tt
+			
+			
+		}
+		start_year = 1939
+		research_cost = 0.5
+		folder = {
+			name = industry_folder
+			position = { x = @FACT_COL4 y = @1939_1 }
+		}
+
+		ai_will_do = {
+			factor = 0
+		}
+		
+
+		categories = {
+			concentrated_industry_category
+			dispersed_industry_category
+			industry
+		}
+	}
+	Ltaircraft_industry = {
+		allow = { has_country_flag = UNLOCK:industry_folder } 
+
+		enable_building = {
+			building = air_assembly
+			level = 6
+		}
+		
+		air_production_capacity = 1
+		
+		on_research_complete = {
+			set_temp_variable = { tech = token:Ltaircraft_industry }
+			on_industry_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = industry_tt
+			custom_effect_tooltip = concentrated_industry_category_tt
+			custom_effect_tooltip = dispersed_industry_category_tt
+			
+			
+		}
+	
+		start_year = 1939
+		research_cost = 0.75
+
+		folder = {
+			name = industry_folder
+			position = { x = @FACT_COL3 y = @1939_2 }
+		}
+
+
+		ai_will_do = {
+			factor = 0
+		}
+		
+
+		categories = {
+			concentrated_industry_category
+			dispersed_industry_category
+			industry
+		}
+	}
+	ship_industry = {
+		allow = { has_country_flag = UNLOCK:industry_folder } 
+
+		enable_building = {
+			building = shipyard
+			level = 1
+		}
+		max_shipyard = 5
+		
+		on_research_complete = {
+			set_temp_variable = { tech = token:ship_industry }
+			on_industry_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = industry_tt
+			custom_effect_tooltip = concentrated_industry_category_tt
+			custom_effect_tooltip = dispersed_industry_category_tt
+			
+			
+		}
+
+		start_year = 1937
+		research_cost = 0.5
+		folder = {
+			name = industry_folder
+			position = { x = @FACT_COL2 y = @1937_2 }
+		}
+
+		ai_will_do = {
+			factor = 0
+		}
+		
+
+		categories = {
+			concentrated_industry_category
+			dispersed_industry_category
+			industry
+		}
+	}
+	sub_industry = {
+		allow = { has_country_flag = UNLOCK:industry_folder } 
+
+		enable_building = {
+			building = subyard
+			level = 1
+		}
+		max_subyard = 5
+		
+		on_research_complete = {
+			set_temp_variable = { tech = token:sub_industry }
+			on_industry_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = industry_tt
+			custom_effect_tooltip = concentrated_industry_category_tt
+			custom_effect_tooltip = dispersed_industry_category_tt
+			
+		}	
+
+		start_year = 1937
+		research_cost = 0.5
+		folder = {
+			name = industry_folder
+			position = { x = @FACT_COL4 y = @1937_2 }
+		}
+
+		ai_will_do = {
+			factor = 0
+		}
+		
+
+		categories = {
+			concentrated_industry_category
+			dispersed_industry_category
+			industry
+		}
+	}
+   
+	##### Concentrated Factories Level II
+	armor_industry2 = {
+		allow = { has_country_flag = UNLOCK:industry_folder } 
+
+		enable_building = {
+			building = tank_assembly
+			level = 8
+		}
+		
+		tank_production_capacity = 1
+		
+		on_research_complete = {
+			set_temp_variable = { tech = token:armor_industry2 }
+			on_industry_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = industry_tt
+			custom_effect_tooltip = concentrated_industry_category_tt
+			custom_effect_tooltip = dispersed_industry_category_tt
+		
+		}	
+
+		dependencies = {
+			armor_industry = 1
+		}
+
+		start_year = 1941
+		research_cost = 0.75
+		folder = {
+			name = industry_folder
+			position = { x = @FACT_COL3 y = @1941_1 }
+		}
+
+		ai_will_do = {
+			factor = 0
+		}
+		
+
+		categories = {
+			concentrated_industry_category
+			dispersed_industry_category
+			industry
+		}
+	}
+	
+	vehicle_industry2 = {
+		allow = { has_country_flag = UNLOCK:industry_folder } 
+
+		enable_building = {
+			building = engine_assembly
+			level = 8
+		}
+		engine_production_capacity = 1
+
+		on_research_complete = {
+			set_temp_variable = { tech = token:vehicle_industry2 }
+			on_industry_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = industry_tt
+			custom_effect_tooltip = concentrated_industry_category_tt
+			custom_effect_tooltip = dispersed_industry_category_tt
+		
+			
+		}
+		
+		dependencies = {
+			vehicle_industry = 1
+		}
+
+		start_year = 1941
+		research_cost = 0.5
+
+		folder = {
+			name = industry_folder
+			position = { x = @FACT_COL2 y = @1941_1 }
+		}
+
+		ai_will_do = {
+			factor = 0
+		}
+		
+
+		categories = {
+			concentrated_industry_category
+			dispersed_industry_category
+			industry
+		}
+	}
+	artillery_industry2 = {
+		allow = { has_country_flag = UNLOCK:industry_folder } 
+
+		enable_building = {
+			building = artillery_assembly
+			level = 8
+		}
+		artillery_production_capacity = 1
+
+		on_research_complete = {
+			set_temp_variable = { tech = token:artillery_industry2 }
+			on_industry_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = industry_tt
+			custom_effect_tooltip = concentrated_industry_category_tt
+			custom_effect_tooltip = dispersed_industry_category_tt
+			
+		}
+
+		dependencies = {
+			artillery_industry = 1
+		}
+
+		start_year = 1941
+		research_cost = 0.5
+		folder = {
+			name = industry_folder
+			position = { x = @FACT_COL4 y = @1941_1 }
+		}
+
+		ai_will_do = {
+			factor = 0
+		}
+		
+
+		categories = {
+			concentrated_industry_category
+			dispersed_industry_category
+			industry
+		}
+	}
+	Ltaircraft_industry2 = {
+		allow = { has_country_flag = UNLOCK:industry_folder } 
+
+		enable_building = {
+			building = air_assembly
+			level = 8
+		}
+		
+		air_production_capacity = 1
+
+		on_research_complete = {
+			set_temp_variable = { tech = token:Ltaircraft_industry2 }
+			on_industry_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = industry_tt
+			custom_effect_tooltip = concentrated_industry_category_tt
+			custom_effect_tooltip = dispersed_industry_category_tt
+			
+		}
+		
+		dependencies = {
+			Ltaircraft_industry = 1
+		}
+
+		start_year = 1941
+		research_cost = 0.75
+		folder = {
+			name = industry_folder
+			position = { x = @FACT_COL3 y = @1941_2 }
+		}
+
+		ai_will_do = {
+			factor = 0
+		}
+		
+
+		categories = {
+			concentrated_industry_category
+			dispersed_industry_category
+			industry
+		}
+	}
+	ship_industry2 = {
+		allow = { has_country_flag = UNLOCK:industry_folder } 
+
+		enable_building = {
+			building = shipyard
+			level = 2
+		}
+		max_shipyard = 5
+
+		on_research_complete = {
+			set_temp_variable = { tech = token:ship_industry2 }
+			on_industry_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = industry_tt
+			custom_effect_tooltip = concentrated_industry_category_tt
+			custom_effect_tooltip = dispersed_industry_category_tt
+			
+		}
+
+		dependencies = {
+			ship_industry = 1
+		}
+
+		start_year = 1939
+		research_cost = 0.5
+		folder = {
+			name = industry_folder
+			position = { x = @FACT_COL2 y = @1939_2 }
+		}
+
+		ai_will_do = {
+			factor = 0
+		}
+		
+
+		categories = {
+			concentrated_industry_category
+			dispersed_industry_category
+			industry
+		}
+	}
+	sub_industry2 = {
+		allow = { has_country_flag = UNLOCK:industry_folder } 
+
+		enable_building = {
+			building = subyard
+			level = 2
+		}
+		max_subyard = 5
+
+		on_research_complete = {
+			set_temp_variable = { tech = token:sub_industry2 }
+			on_industry_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = industry_tt
+			custom_effect_tooltip = concentrated_industry_category_tt
+			custom_effect_tooltip = dispersed_industry_category_tt
+			
+		}
+
+		dependencies = {
+			sub_industry = 1
+		}
+
+		start_year = 1939
+		research_cost = 0.5
+		folder = {
+			name = industry_folder
+			position = { x = @FACT_COL4 y = @1939_2 }
+		}
+
+		ai_will_do = {
+			factor = 0
+		}
+		
+
+		categories = {
+			concentrated_industry_category
+			dispersed_industry_category
+			industry
+		}
+	}
+	##### Concentrated Factories Level III
+	armor_industry3 = {
+		allow = { has_country_flag = UNLOCK:industry_folder } 
+
+		enable_building = {
+			building = tank_assembly
+			level = 10
+		}
+		
+		tank_production_capacity = 1
+		
+		on_research_complete = {
+			set_temp_variable = { tech = token:armor_industry3 }
+			on_industry_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = industry_tt
+			custom_effect_tooltip = concentrated_industry_category_tt
+			custom_effect_tooltip = dispersed_industry_category_tt
+			
+		}
+
+		dependencies = {
+			armor_industry2 = 1
+		}
+
+		start_year = 1943
+		research_cost = 0.75
+		folder = {
+			name = industry_folder
+			position = { x = @FACT_COL3 y = @1943_1 }
+		}
+
+		ai_will_do = {
+			factor = 0
+		}
+		
+
+		categories = {
+			concentrated_industry_category
+			dispersed_industry_category
+			industry
+		}
+	}
+	vehicle_industry3 = {
+		allow = { has_country_flag = UNLOCK:industry_folder } 
+
+		enable_building = {
+			building = engine_assembly
+			level = 10
+		}
+		engine_production_capacity = 1
+		
+		on_research_complete = {
+			set_temp_variable = { tech = token:vehicle_industry3 }
+			on_industry_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = industry_tt
+			custom_effect_tooltip = concentrated_industry_category_tt
+			custom_effect_tooltip = dispersed_industry_category_tt
+			
+		}
+
+		dependencies = {
+			vehicle_industry2 = 1
+		}
+
+		start_year = 1943
+		research_cost = 0.5
+		folder = {
+			name = industry_folder
+			position = { x = @FACT_COL2 y = @1943_1 }
+		}
+
+		ai_will_do = {
+			factor = 0
+		}
+		
+
+		categories = {
+			concentrated_industry_category
+			dispersed_industry_category
+			industry
+		}
+	}
+	artillery_industry3 = {
+		allow = { has_country_flag = UNLOCK:industry_folder } 
+
+		enable_building = {
+			building = artillery_assembly
+			level = 10
+		}
+		artillery_production_capacity = 1
+		
+		on_research_complete = {
+			set_temp_variable = { tech = token:artillery_industry3 }
+			on_industry_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = industry_tt
+			custom_effect_tooltip = concentrated_industry_category_tt
+			custom_effect_tooltip = dispersed_industry_category_tt
+			
+		}
+
+		dependencies = {
+			artillery_industry2 = 1
+		}
+
+		start_year = 1943
+		research_cost = 0.5
+		folder = {
+			name = industry_folder
+			position = { x = @FACT_COL4 y = @1943_1 }
+		}
+
+		ai_will_do = {
+			factor = 0
+		}
+		
+
+		categories = {
+			concentrated_industry_category
+			dispersed_industry_category
+			industry
+		}
+	}
+	Ltaircraft_industry3 = {
+		allow = { has_country_flag = UNLOCK:industry_folder } 
+
+		enable_building = {
+			building = air_assembly
+			level = 10
+		}
+		
+		air_production_capacity = 1
+		
+		on_research_complete = {
+			set_temp_variable = { tech = token:Ltaircraft_industry3 }
+			on_industry_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = industry_tt
+			custom_effect_tooltip = concentrated_industry_category_tt
+			custom_effect_tooltip = dispersed_industry_category_tt
+			
+		}
+
+		dependencies = {
+			Ltaircraft_industry2 = 1
+		}
+
+		start_year = 1943
+		research_cost = 0.75
+		folder = {
+			name = industry_folder
+			position = { x = @FACT_COL3 y = @1943_2 }
+		}
+
+		ai_will_do = {
+			factor = 0
+		}
+		
+
+		categories = {
+			concentrated_industry_category
+			dispersed_industry_category
+			industry
+		}
+	}
+	ship_industry3 = {
+		allow = { has_country_flag = UNLOCK:industry_folder } 
+
+		enable_building = {
+			building = shipyard
+			level = 3
+		}
+		max_shipyard = 5
+		
+		on_research_complete = {
+			set_temp_variable = { tech = token:ship_industry3 }
+			on_industry_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = industry_tt
+			custom_effect_tooltip = concentrated_industry_category_tt
+			custom_effect_tooltip = dispersed_industry_category_tt
+			
+		}
+
+		dependencies = {
+			ship_industry2 = 1
+		}
+
+		start_year = 1941
+		research_cost = 0.5
+		folder = {
+			name = industry_folder
+			position = { x = @FACT_COL2 y = @1941_2 }
+		}
+
+		ai_will_do = {
+			factor = 0
+		}
+		
+
+		categories = {
+			concentrated_industry_category
+			dispersed_industry_category
+			industry
+		}
+	}
+	sub_industry3 = {
+		allow = { has_country_flag = UNLOCK:industry_folder } 
+
+		enable_building = {
+			building = subyard
+			level = 3
+		}
+		max_subyard = 5
+		
+		on_research_complete = {
+			set_temp_variable = { tech = token:sub_industry3 }
+			on_industry_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = industry_tt
+			custom_effect_tooltip = concentrated_industry_category_tt
+			custom_effect_tooltip = dispersed_industry_category_tt
+			
+		}
+
+		dependencies = {
+			sub_industry2 = 1
+		}
+		
+		start_year = 1941
+		research_cost = 0.5
+		folder = {
+			name = industry_folder
+			position = { x = @FACT_COL4 y = @1941_2 }
+		}
+
+		ai_will_do = {
+			factor = 0
+		}
+		
+
+		categories = {
+			concentrated_industry_category
+			dispersed_industry_category
+			industry
+		}
+	}
+
+	###################################
+	##### Construction I
+	construction1 = {
+		allow = { has_country_flag = UNLOCK:industry_folder } 
+		
+		enable_building = {
+			building = industrial_complex
+			level = 16
+		}
+		production_speed_buildings_factor = 0.03
+		production_speed_industrial_complex_factor = 0.03
+
+		path = {
+			leads_to_tech = construction2
+			research_cost_coeff = 1
+		}
+		path = {
+			leads_to_tech = defence_works
+			research_cost_coeff = 1
+		}
+		path = {
+			leads_to_tech = infra_works
+			research_cost_coeff = 1
+		}
+		path = {
+			leads_to_tech = civ_works
+			research_cost_coeff = 1
+		}
+
+		research_cost = 1
+		start_year = 1936
+		folder = {
+			name = industry_folder
+			position = { x = @CONSTR y = @1936 }
+		}
+		on_research_complete = {
+			set_temp_variable = { tech = token:construction1 }
+			on_industry_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = industry_tt
+			custom_effect_tooltip = construction_tech_tt
+		}
+		categories = {
+			industry
+			construction_tech
+		}
+
+		ai_will_do = {
+			base = @C_PRIORITY_6
+			
+			modifier = {
+				factor = ai_factor 
+				
+				set_temp_variable = { ai_factor = ai_construction_tech_need } #AI RESEARCH CATEGORY
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		
+	}
+	defence_works = {
+		allow = { has_country_flag = UNLOCK:industry_folder } 
+		
+		enable_building = {
+			building = bunker
+			level = 3
+		}
+		enable_building = {
+			building = coastal_bunker
+			level = 3
+		}
+		max_dig_in = 0.5
+		land_bunker_effectiveness_factor = 0.03
+		coastal_bunker_effectiveness_factor = 0.03
+
+		path = {
+			leads_to_tech = aa_emplacement_construction
+			research_cost_coeff = 1
+		}
+		path = {
+			leads_to_tech = pre_fab
+			research_cost_coeff = 1
+		}
+
+		research_cost = 1.2
+		start_year = 1936
+		folder = {
+			name = industry_folder
+			position = { x = @DEF_WORKS y = @1936_1 }
+		}
+
+		ai_will_do = {
+			base = @C_PRIORITY_1
+			
+			modifier = {
+				factor = ai_factor 
+				
+				set_temp_variable = { ai_factor = ai_construction_tech_need } #AI RESEARCH CATEGORY
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		
+		on_research_complete = {
+			set_temp_variable = { tech = token:defence_works }
+			on_industry_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = industry_tt
+			custom_effect_tooltip = construction_tech_tt
+		}
+		categories = {
+			industry
+			construction_tech
+		}
+	}
+	aa_emplacement_construction = {
+		allow = { has_country_flag = UNLOCK:industry_folder } 
+
+		production_speed_anti_air_building_factor = 0.08
+		power_plant_resilience = 0.08
+
+		research_cost = 1.2
+		start_year = 1936
+		folder = {
+			name = industry_folder
+			position = { x = @DIG_IN y = @1936_3 }
+		}
+
+		ai_will_do = {
+			base = 0
+			
+			modifier = {
+				add = ai_add
+				
+				ai_anti_air_building_tech_need = yes
+			}
+			modifier = {
+				factor = ai_factor 
+				
+				set_temp_variable = { ai_factor = ai_construction_tech_need } #AI RESEARCH CATEGORY
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		
+		on_research_complete = {
+			set_temp_variable = { tech = token:aa_emplacement_construction }
+			on_industry_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = industry_tt
+			custom_effect_tooltip = construction_tech_tt
+			custom_effect_tooltip = anti_air_tech_tt
+		}
+		categories = {
+			industry
+			construction_tech
+			anti_air_tech
+		}
+	}
+	pre_fab = {
+		allow = { has_country_flag = UNLOCK:industry_folder } 
+		
+		enable_building = {
+			building = bunker
+			level = 4
+		}
+		land_bunker_effectiveness_factor = 0.05
+		coastal_bunker_effectiveness_factor = 0.05
+		production_speed_bunker_factor = 0.06
+		production_speed_coastal_bunker_factor = 0.06
+		dig_in_speed_factor = 0.05
+
+		research_cost = 1.2
+		start_year = 1936
+		folder = {
+			name = industry_folder
+			position = { x = @PREFAB y = @1936_3 }
+		}
+
+		ai_will_do = {
+			base = @C_PRIORITY_1
+			
+			modifier = {
+				factor = ai_factor 
+				
+				set_temp_variable = { ai_factor = ai_construction_tech_need } #AI RESEARCH CATEGORY
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		
+		on_research_complete = {
+			set_temp_variable = { tech = token:pre_fab }
+			on_industry_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = industry_tt
+			custom_effect_tooltip = construction_tech_tt
+		}
+		categories = {
+			industry
+			construction_tech
+		}
+	}
+	infra_works = {
+		allow = { has_country_flag = UNLOCK:industry_folder } 
+		
+		enable_building = {
+			building = naval_base
+			level = 5
+		}
+		production_speed_infrastructure_factor = 0.02
+		production_speed_rail_way_factor = 0.02
+		production_speed_naval_base_factor = 0.02
+
+		path = {
+			leads_to_tech = rail_infra
+			research_cost_coeff = 1
+		}
+		path = {
+			leads_to_tech = road_infra
+			research_cost_coeff = 1
+		}
+		path = {
+			leads_to_tech = air_infra
+			research_cost_coeff = 1
+		}
+		path = {
+			leads_to_tech = port_infra
+			research_cost_coeff = 1
+		}
+		on_research_complete = {
+			set_temp_variable = { tech = token:infra_works }
+			on_industry_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = industry_tt
+			custom_effect_tooltip = construction_tech_tt
+		}
+		research_cost = 1.2
+		start_year = 1936
+		categories = {
+			industry
+			construction_tech
+		}
+
+		folder = {
+			name = industry_folder
+			position = { x = @INFRA_WRK y = @1936_1 }
+		}
+
+		ai_will_do = {
+			base = @C_PRIORITY_5
+			
+			modifier = {
+				factor = ai_factor 
+				
+				set_temp_variable = { ai_factor = ai_construction_tech_need } #AI RESEARCH CATEGORY
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		
+	}
+	rail_infra = {
+		allow = { has_country_flag = UNLOCK:industry_folder } 
+		
+		production_speed_rail_way_factor = 0.02
+		line_change_production_efficiency_factor = 0.025
+		
+		on_research_complete = {
+			set_temp_variable = { tech = token:rail_infra }
+			on_industry_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = industry_tt
+			custom_effect_tooltip = construction_tech_tt
+		}
+		research_cost = 1.2
+		start_year = 1936
+		categories = {
+			industry
+			construction_tech
+			train_tech
+		}
+
+		folder = {
+			name = industry_folder
+			position = { x = @RAIL_INFRA y = @1936_3 }
+		}
+
+		ai_will_do = {
+			base = @C_PRIORITY_3
+			
+			modifier = {
+				factor = ai_factor 
+				
+				set_temp_variable = { ai_factor = ai_construction_tech_need } #AI RESEARCH CATEGORY
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		
+	}
+	road_infra = {
+		allow = { has_country_flag = UNLOCK:industry_folder } 
+		
+		on_research_complete = {
+			set_temp_variable = { tech = token:road_infra }
+			on_industry_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = industry_tt
+			custom_effect_tooltip = construction_tech_tt
+			custom_effect_tooltip = train_tech_tt
+		}
+		org_loss_when_moving = -0.02
+		production_speed_infrastructure_factor = 0.02
+		supply_node_range = 0.02
+
+		research_cost = 1.2
+		start_year = 1936
+		categories = {
+			industry
+			construction_tech
+		}
+
+		folder = {
+			name = industry_folder
+			position = { x = @ROAD_INFRA y = @1936_3 }
+		}
+
+		ai_will_do = {
+			base = @C_PRIORITY_1
+			
+			modifier = {
+				factor = ai_factor 
+				
+				set_temp_variable = { ai_factor = ai_construction_tech_need } #AI RESEARCH CATEGORY
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		
+	}
+	air_infra = {
+		allow = { has_country_flag = UNLOCK:industry_folder } 
+		
+		enable_building = {
+			building = air_base
+			level = 6
+		}
+		production_speed_air_base_factor = 0.05
+		on_research_complete = {
+			set_temp_variable = { tech = token:air_infra }
+			on_industry_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = industry_tt
+			custom_effect_tooltip = construction_tech_tt
+		}
+		research_cost = 1.2
+		start_year = 1936
+		folder = {
+			name = industry_folder
+			position = { x = @AIR_INFRA y = @1936_3 }
+		}
+
+		ai_will_do = {
+			base = 0
+			
+			modifier = {
+				add = ai_base
+				
+				set_temp_variable = { base = @C_PRIORITY_1 }
+				ai_air_base_tech = yes 
+			}
+			modifier = {
+				factor = ai_factor 
+				
+				set_temp_variable = { ai_factor = ai_aircraft_tech_need } #AI RESEARCH CATEGORY
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		
+		
+		categories = {
+			industry
+			construction_tech
+		}
+	}
+	port_infra = {
+		allow = { has_country_flag = UNLOCK:industry_folder } 
+		
+		enable_building = {
+			building = dockyard
+			level = 6
+		}
+		production_speed_dockyard_factor = 0.075
+		industrial_capacity_dockyard = 0.05
+		repair_speed_factor = 0.05
+		on_research_complete = {
+			set_temp_variable = { tech = token:port_infra }
+			on_industry_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = industry_tt
+			custom_effect_tooltip = construction_tech_tt
+		}
+		research_cost = 1.2
+		start_year = 1936
+		folder = {
+			name = industry_folder
+			position = { x = @PORT_INFRA y = @1936_3 }
+		}
+
+		ai_will_do = {
+			base = 0
+			
+			modifier = {
+				add = ai_base
+				
+				set_temp_variable = { base = @C_PRIORITY_1 }
+				ai_port_infra_tech = yes 
+			}
+			modifier = {
+				factor = ai_factor 
+				
+				set_temp_variable = { ai_factor = ai_naval_tech_need } #AI RESEARCH CATEGORY
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		
+
+		categories = {
+			industry
+			construction_tech
+		}
+	}
+	civ_works = {
+		allow = { has_country_flag = UNLOCK:industry_folder } 
+
+		stability_weekly = 0.001
+		food_need_civilian = 0.005
+
+		path = {
+			leads_to_tech = housing_work
+			research_cost_coeff = 1
+		}
+		path = {
+			leads_to_tech = hospital_work
+			research_cost_coeff = 1
+		}
+		path = {
+			leads_to_tech = schools_work
+			research_cost_coeff = 1
+		}
+
+		research_cost = 1.5
+		start_year = 1936
+		folder = {
+			name = industry_folder
+			position = { x = @HOSP_CIVW y = @1936_1 }
+		}
+
+		ai_will_do = {
+			base = @C_PRIORITY_4
+			
+			modifier = {
+				factor = ai_mult
+				
+				ai_stability_tech_need = yes
+			}
+			modifier = {
+				factor = ai_factor 
+				
+				set_temp_variable = { ai_factor = ai_construction_tech_need } #AI TECH CATEGORY
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		
+		on_research_complete = {
+			set_temp_variable = { tech = token:civ_works }
+			on_industry_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = industry_tt
+			custom_effect_tooltip = construction_tech_tt
+			custom_effect_tooltip = civilian_tech_tt
+		}
+		categories = {
+			industry
+			construction_tech
+			civilian_tech
+		}
+	}
+	housing_work = {
+		allow = { has_country_flag = UNLOCK:industry_folder } 
+
+		conscription = 0.0005
+		production_speed_industrial_complex_factor = 0.03
+
+		research_cost = 1.2
+		start_year = 1936
+		folder = {
+			name = industry_folder
+			position = { x = @HOUS_WRK y = @1936_3 }
+		}
+
+		ai_will_do = {
+			base = @C_PRIORITY_3
+			
+			modifier = {
+				factor = ai_factor 
+				
+				set_temp_variable = { ai_factor = ai_construction_tech_need } #AI TECH CATEGORY
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		
+		on_research_complete = {
+			set_temp_variable = { tech = token:housing_work }
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = industry_tt
+			custom_effect_tooltip = construction_tech_tt
+			custom_effect_tooltip = civilian_tech_tt
+		}
+		categories = {
+			industry
+			construction_tech
+			civilian_tech
+		}
+	}
+	hospital_work = {
+		allow = { has_country_flag = UNLOCK:industry_folder } 
+
+		attrition = -0.03 #take 3% less attrition losses
+
+		research_cost = 1.2
+		start_year = 1936
+		folder = {
+			name = industry_folder
+			position = { x = @HOSP_CIVW y = @1936_3 }
+		}
+
+		ai_will_do = {
+			base = @C_PRIORITY_1
+			
+			modifier = {
+				factor = ai_factor 
+				
+				set_temp_variable = { ai_factor = ai_construction_tech_need } #AI TECH CATEGORY
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		
+		on_research_complete = {
+			set_temp_variable = { tech = token:hospital_work }
+			on_industry_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = industry_tt
+			custom_effect_tooltip = construction_tech_tt
+			custom_effect_tooltip = medical_tech_tt
+		}
+		categories = {
+			industry
+			construction_tech
+			medical_tech
+		}
+	}
+	schools_work = {
+		allow = { has_country_flag = UNLOCK:industry_folder } 
+
+		training_time_army_factor = -0.04
+
+		research_cost = 1.2
+		start_year = 1936
+		folder = {
+			name = industry_folder
+			position = { x = @SCH_WRK y = @1936_3 }
+		}
+
+		ai_will_do = {
+			base = @C_PRIORITY_2
+			
+			modifier = {
+				factor = ai_factor 
+				
+				set_temp_variable = { ai_factor = ai_construction_tech_need } #AI TECH CATEGORY
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		
+		on_research_complete = {
+			set_temp_variable = { tech = token:schools_work }
+			on_industry_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = industry_tt
+			custom_effect_tooltip = construction_tech_tt
+			custom_effect_tooltip = civilian_tech_tt
+		}
+		categories = {
+			industry
+			construction_tech
+			civilian_tech
+		}
+	}
+# Construction II
+	construction2 = {
+		allow = { has_country_flag = UNLOCK:industry_folder } 
+		
+		enable_building = {
+			building = industrial_complex
+			level = 22
+		}
+		
+		production_speed_industrial_complex_factor = 0.02
+		production_speed_buildings_factor = 0.03
+		production_speed_arms_factory_factor = -0.02
+		production_speed_dockyard_factor = -0.02
+		
+		path = {
+			leads_to_tech = construction3
+			research_cost_coeff = 1
+		}
+		path = {
+			leads_to_tech = defence_works2
+			research_cost_coeff = 1
+		}
+		path = {
+			leads_to_tech = infra_works2
+			research_cost_coeff = 1
+		}
+		path = {
+			leads_to_tech = civ_works2
+			research_cost_coeff = 1
+		}
+		research_cost = 2
+		start_year = 1937
+		folder = {
+			name = industry_folder
+			position = { x = @CONSTR y = @1937 }
+		}
+		
+		
+		ai_will_do = {
+			base = @C_PRIORITY_6
+			
+			modifier = {
+				factor = ai_factor 
+				
+				set_temp_variable = { ai_factor = ai_construction_tech_need } #AI RESEARCH CATEGORY
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		
+		on_research_complete = {
+			set_temp_variable = { tech = token:construction2 }
+			on_industry_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = industry_tt
+			custom_effect_tooltip = construction_tech_tt
+		}
+		categories = {
+			industry
+			construction_tech
+		}
+	}
+	defence_works2 = {
+		allow = { has_country_flag = UNLOCK:industry_folder } 
+		
+		enable_building = {
+			building = bunker
+			level = 6
+		}
+		enable_building = {
+			building = coastal_bunker
+			level = 5
+		}
+		max_dig_in = 0.5
+		land_bunker_effectiveness_factor = 0.03
+		coastal_bunker_effectiveness_factor = 0.03
+
+		dependencies = {
+			defence_works = 1
+		}
+		path = {
+			leads_to_tech = aa_emplacement_construction2
+			research_cost_coeff = 1
+		}
+		path = {
+			leads_to_tech = pre_fab2
+			research_cost_coeff = 1
+		}
+
+		research_cost = 1.2
+		start_year = 1937
+		folder = {
+			name = industry_folder
+			position = { x = @DEF_WORKS y = @1937_1 }
+		}
+
+		ai_will_do = {
+			base = @C_PRIORITY_1
+			
+			modifier = {
+				factor = ai_factor 
+				
+				set_temp_variable = { ai_factor = ai_construction_tech_need } #AI RESEARCH CATEGORY
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		
+		on_research_complete = {
+			set_temp_variable = { tech = token:defence_works2 }
+			on_industry_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = industry_tt
+			custom_effect_tooltip = construction_tech_tt
+		}
+		categories = {
+			industry
+			construction_tech
+		}
+	}
+	aa_emplacement_construction2 = {
+		allow = { has_country_flag = UNLOCK:industry_folder } 
+		
+		production_speed_anti_air_building_factor = 0.08
+		power_plant_resilience = 0.08
+
+		dependencies = {
+			aa_emplacement_construction = 1
+		}
+
+		research_cost = 1.2
+		start_year = 1937
+		folder = {
+			name = industry_folder
+			position = { x = @DIG_IN y = @1937_3 }
+		}
+
+		ai_will_do = {
+			base = 0
+			
+			modifier = {
+				add = ai_add
+				
+				ai_anti_air_building_tech_need = yes
+			}
+			modifier = {
+				factor = ai_factor 
+				
+				set_temp_variable = { ai_factor = ai_construction_tech_need } #AI RESEARCH CATEGORY
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		
+		on_research_complete = {
+			set_temp_variable = { tech = token:aa_emplacement_construction2 }
+			on_industry_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = industry_tt
+			custom_effect_tooltip = construction_tech_tt
+			custom_effect_tooltip = anti_air_tech_tt
+		}
+		categories = {
+			industry
+			construction_tech
+			anti_air_tech
+		}
+	}
+	pre_fab2 = {
+		allow = { has_country_flag = UNLOCK:industry_folder } 
+		land_bunker_effectiveness_factor = 0.05
+		coastal_bunker_effectiveness_factor = 0.05
+		production_speed_bunker_factor = 0.06
+		production_speed_coastal_bunker_factor = 0.06
+		dig_in_speed_factor = 0.05
+
+		dependencies = {
+			pre_fab = 1
+		}
+
+		research_cost = 1.2
+		start_year = 1937
+		folder = {
+			name = industry_folder
+			position = { x = @PREFAB y = @1937_3 }
+		}
+
+		ai_will_do = {
+			base = @C_PRIORITY_1
+			
+			modifier = {
+				factor = ai_factor 
+				
+				set_temp_variable = { ai_factor = ai_construction_tech_need } #AI RESEARCH CATEGORY
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		
+		on_research_complete = {
+			set_temp_variable = { tech = token:pre_fab2 }
+			on_industry_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = industry_tt
+			custom_effect_tooltip = construction_tech_tt
+		}
+		categories = {
+			industry
+			construction_tech
+		}
+	}
+	infra_works2 = {
+		allow = { has_country_flag = UNLOCK:industry_folder } 
+		
+		enable_building = {
+			building = naval_base
+			level = 7
+		}
+		production_speed_infrastructure_factor = 0.02
+		production_speed_rail_way_factor = 0.02
+		production_speed_naval_base_factor = 0.02
+		path = {
+			leads_to_tech = rail_infra2
+			research_cost_coeff = 1
+		}
+		path = {
+			leads_to_tech = road_infra2
+			research_cost_coeff = 1
+		}
+		path = {
+			leads_to_tech = air_infra2
+			research_cost_coeff = 1
+		}
+		path = {
+			leads_to_tech = port_infra2
+			research_cost_coeff = 1
+		}
+		dependencies = {
+			infra_works = 1
+		}
+
+		research_cost = 1.5
+		start_year = 1937
+		folder = {
+			name = industry_folder
+			position = { x = @INFRA_WRK y = @1937_1 }
+		}
+
+		ai_will_do = {
+			base = @C_PRIORITY_5
+			
+			modifier = {
+				factor = ai_factor 
+				
+				set_temp_variable = { ai_factor = ai_construction_tech_need } #AI RESEARCH CATEGORY
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		
+		on_research_complete = {
+			set_temp_variable = { tech = token:infra_works2 }
+			on_industry_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = industry_tt
+			custom_effect_tooltip = construction_tech_tt
+		}
+		categories = {
+			industry
+			construction_tech
+		}
+	}
+
+	rail_infra2 = {
+		allow = { has_country_flag = UNLOCK:industry_folder } 
+
+		production_speed_rail_way_factor = 0.02
+		line_change_production_efficiency_factor = 0.035
+
+		dependencies = {
+			rail_infra = 1
+		}
+
+		research_cost = 1.2
+		start_year = 1937
+		folder = {
+			name = industry_folder
+			position = { x = @RAIL_INFRA y = @1937_3 }
+		}
+
+		ai_will_do = {
+			base = @C_PRIORITY_3
+			
+			modifier = {
+				factor = ai_factor 
+				
+				set_temp_variable = { ai_factor = ai_construction_tech_need } #AI RESEARCH CATEGORY
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		
+		on_research_complete = {
+			set_temp_variable = { tech = token:rail_infra2 }
+			on_industry_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = industry_tt
+			custom_effect_tooltip = construction_tech_tt
+			custom_effect_tooltip = train_tech_tt
+		}
+		categories = {
+			industry
+			construction_tech
+			train_tech
+		}
+	}
+	road_infra2 = {
+		allow = { has_country_flag = UNLOCK:industry_folder } 
+
+		org_loss_when_moving = -0.03
+		production_speed_infrastructure_factor = 0.02
+		supply_node_range = 0.03
+
+		dependencies = {
+			road_infra = 1
+		}
+
+		research_cost = 1.2
+		start_year = 1937
+		folder = {
+			name = industry_folder
+			position = { x = @ROAD_INFRA y = @1937_3 }
+		}
+
+		ai_will_do = {
+			base = @C_PRIORITY_1
+			
+			modifier = {
+				factor = ai_factor 
+				
+				set_temp_variable = { ai_factor = ai_construction_tech_need } #AI RESEARCH CATEGORY
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		
+		on_research_complete = {
+			set_temp_variable = { tech = token:road_infra2 }
+			on_industry_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = industry_tt
+			custom_effect_tooltip = construction_tech_tt
+			hidden_effect = {
+				if = { 
+					limit = { is_player = yes }
+					every_controlled_state = {
+						set_local_supply_in_states_modifier = yes
+					}
+				}
+			}
+		}
+		categories = {
+			industry
+			construction_tech
+		}
+	}
+	air_infra2 = {
+		allow = { has_country_flag = UNLOCK:industry_folder } 
+		
+		enable_building = {
+			building = air_base
+			level = 8
+		}
+		production_speed_air_base_factor = 0.05
+
+		dependencies = {
+			air_infra = 1
+		}
+
+		research_cost = 1.2
+		start_year = 1937
+		folder = {
+			name = industry_folder
+			position = { x = @AIR_INFRA y = @1937_3 }
+		}
+
+		ai_will_do = {
+			base = 0
+			
+			modifier = {
+				add = ai_base
+				
+				set_temp_variable = { base = @C_PRIORITY_1 }
+				ai_air_base_tech = yes 
+			}
+			modifier = {
+				factor = ai_factor 
+				
+				set_temp_variable = { ai_factor = ai_aircraft_tech_need } #AI RESEARCH CATEGORY
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		
+		on_research_complete = {
+			set_temp_variable = { tech = token:air_infra2 }
+			on_industry_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = industry_tt
+			custom_effect_tooltip = construction_tech_tt
+		}
+		categories = {
+			industry
+			construction_tech
+		}
+	}
+	port_infra2 = {
+		allow = { has_country_flag = UNLOCK:industry_folder } 
+		
+		enable_building = {
+			building = dockyard
+			level = 9
+		}
+		production_speed_dockyard_factor = 0.075
+		industrial_capacity_dockyard = 0.05
+		repair_speed_factor = 0.05
+
+		dependencies = {
+			port_infra = 1
+		}
+
+		research_cost = 1.2
+		start_year = 1937
+		on_research_complete = {
+			set_temp_variable = { tech = token:port_infra2 }
+			on_industry_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = industry_tt
+			custom_effect_tooltip = construction_tech_tt
+		}
+		categories = {
+			industry
+			construction_tech
+		}
+
+		folder = {
+			name = industry_folder
+			position = { x = @PORT_INFRA y = @1937_3 }
+		}
+
+		ai_will_do = {
+			base = 0
+			
+			modifier = {
+				add = ai_base
+				
+				set_temp_variable = { base = @C_PRIORITY_1 }
+				ai_port_infra_tech = yes 
+			}
+			modifier = {
+				factor = ai_factor 
+				
+				set_temp_variable = { ai_factor = ai_naval_tech_need } #AI RESEARCH CATEGORY
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		
+	}
+	civ_works2 = {
+		allow = { has_country_flag = UNLOCK:industry_folder } 
+		civilian_fuel_use_factor = 0.01
+		food_need_civilian = 0.01
+		path = {
+			leads_to_tech = housing_work2
+			research_cost_coeff = 1
+		}
+		path = {
+			leads_to_tech = hospital_work2
+			research_cost_coeff = 1
+		}
+		path = {
+			leads_to_tech = schools_work2
+			research_cost_coeff = 1
+		}
+		dependencies = {
+			civ_works = 1
+		}
+		stability_weekly = 0.0015
+		
+
+		research_cost = 1.5
+		start_year = 1937
+		folder = {
+			name = industry_folder
+			position = { x = @HOSP_CIVW y = @1937_1 }
+		}
+
+		ai_will_do = {
+			base = @C_PRIORITY_4
+			
+			modifier = {
+				factor = ai_mult
+				
+				ai_stability_tech_need = yes
+			}
+			modifier = {
+				factor = ai_factor 
+				
+				set_temp_variable = { ai_factor = ai_construction_tech_need } #AI TECH CATEGORY
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		
+		on_research_complete = {
+			set_temp_variable = { tech = token:civ_works2 }
+			on_industry_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = industry_tt
+			custom_effect_tooltip = construction_tech_tt
+			custom_effect_tooltip = civilian_tech_tt
+		}
+		categories = {
+			industry
+			construction_tech
+			civilian_tech
+		}
+	}
+	housing_work2 = {
+		allow = { has_country_flag = UNLOCK:industry_folder } 
+
+		dependencies = {
+			housing_work = 1
+		}
+
+		conscription = 0.001
+		production_speed_industrial_complex_factor = 0.03
+
+		research_cost = 1.2
+		start_year = 1937
+		folder = {
+			name = industry_folder
+			position = { x = @HOUS_WRK y = @1937_3 }
+		}
+		on_research_complete = {
+			set_temp_variable = { tech = token:housing_work2 }
+			on_industry_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = industry_tt
+			custom_effect_tooltip = construction_tech_tt
+			custom_effect_tooltip = civilian_tech_tt
+		}
+		categories = {
+			industry
+			construction_tech
+			civilian_tech
+		}
+		ai_will_do = {
+			base = @C_PRIORITY_3
+			
+			modifier = {
+				factor = ai_factor 
+				
+				set_temp_variable = { ai_factor = ai_construction_tech_need } #AI TECH CATEGORY
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		
+	}
+	hospital_work2 = {
+		allow = { has_country_flag = UNLOCK:industry_folder } 
+
+		attrition = -0.03 #take 3% less attrition losses
+
+		dependencies = {
+			hospital_work = 1
+		}
+
+		research_cost = 1.2
+		start_year = 1937
+		folder = {
+			name = industry_folder
+			position = { x = @HOSP_CIVW y = @1937_3 }
+		}
+
+		ai_will_do = {
+			base = @C_PRIORITY_1
+			
+			modifier = {
+				factor = ai_factor 
+				
+				set_temp_variable = { ai_factor = ai_construction_tech_need } #AI TECH CATEGORY
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		
+		on_research_complete = {
+			set_temp_variable = { tech = token:hospital_work2 }
+			on_industry_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = industry_tt
+			custom_effect_tooltip = construction_tech_tt
+			custom_effect_tooltip = medical_tech_tt
+		}
+		categories = {
+			industry
+			construction_tech
+			medical_tech
+		}
+	}
+	schools_work2 = {
+		allow = { has_country_flag = UNLOCK:industry_folder } 
+
+		training_time_army_factor = -0.04
+
+		dependencies = {
+			schools_work = 1
+		}
+
+		research_cost = 1.2
+		start_year = 1937
+		folder = {
+			name = industry_folder
+			position = { x = @SCH_WRK y = @1937_3 }
+		}
+
+		ai_will_do = {
+			base = @C_PRIORITY_2
+			
+			modifier = {
+				factor = ai_factor 
+				
+				set_temp_variable = { ai_factor = ai_construction_tech_need } #AI TECH CATEGORY
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		
+		on_research_complete = {
+			set_temp_variable = { tech = token:schools_work2 }
+			on_industry_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = industry_tt
+			custom_effect_tooltip = construction_tech_tt
+			custom_effect_tooltip = civilian_tech_tt
+		}
+		categories = {
+			industry
+			construction_tech
+			civilian_tech
+		}
+	}
+	######################
+	### Construction III
+	construction3 = {
+		allow = { has_country_flag = UNLOCK:industry_folder } 
+		
+		enable_building = {
+			building = industrial_complex
+			level = 28
+		}
+		production_speed_industrial_complex_factor = 0.03
+		production_speed_arms_factory_factor = -0.03
+		production_speed_buildings_factor = 0.03
+		production_speed_dockyard_factor = -0.03
+		path = {
+			leads_to_tech = construction4
+			research_cost_coeff = 1
+		}
+		path = {
+			leads_to_tech = defence_works3
+			research_cost_coeff = 1
+		}
+		path = {
+			leads_to_tech = infra_works3
+			research_cost_coeff = 1
+		}
+		path = {
+			leads_to_tech = civ_works3
+			research_cost_coeff = 1
+		}
+
+		research_cost = 2
+		start_year = 1939
+		folder = {
+			name = industry_folder
+			position = { x = @CONSTR y = @1939 }
+		}
+
+		ai_will_do = {
+			base = @C_PRIORITY_6
+			
+			modifier = {
+				factor = ai_factor 
+				
+				set_temp_variable = { ai_factor = ai_construction_tech_need } #AI RESEARCH CATEGORY
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		
+
+		on_research_complete = {
+			set_temp_variable = { tech = token:construction3 }
+			on_industry_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = industry_tt
+			custom_effect_tooltip = construction_tech_tt
+		}
+		categories = {
+			industry
+			construction_tech
+		}
+	}
+	defence_works3 = {
+		allow = { has_country_flag = UNLOCK:industry_folder } 
+		
+		enable_building = {
+			building = bunker
+			level = 8
+		}
+		enable_building = {
+			building = coastal_bunker
+			level = 7
+		}
+		path = {
+			leads_to_tech = aa_emplacement_construction3
+			research_cost_coeff = 1
+		}
+		path = {
+			leads_to_tech = pre_fab3
+			research_cost_coeff = 1
+		}
+		dependencies = {
+			defence_works2 = 1
+		}
+		max_dig_in = 0.5
+		land_bunker_effectiveness_factor = 0.03
+		coastal_bunker_effectiveness_factor = 0.03
+		research_cost = 1.2
+		start_year = 1939
+		folder = {
+			name = industry_folder
+			position = { x = @DEF_WORKS y = @1939_1 }
+		}
+
+		ai_will_do = {
+			base = @C_PRIORITY_1
+			
+			modifier = {
+				factor = ai_factor 
+				
+				set_temp_variable = { ai_factor = ai_construction_tech_need } #AI RESEARCH CATEGORY
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		
+		on_research_complete = {
+			set_temp_variable = { tech = token:defence_works3 }
+			on_industry_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = industry_tt
+			custom_effect_tooltip = construction_tech_tt
+		}
+		categories = {
+			industry
+			construction_tech
+		}
+	}
+	aa_emplacement_construction3 = {
+		allow = { has_country_flag = UNLOCK:industry_folder } 
+
+		dependencies = {
+			aa_emplacement_construction2 = 1
+		}
+
+		production_speed_anti_air_building_factor = 0.08
+		power_plant_resilience = 0.08
+
+		research_cost = 1.2
+		start_year = 1939
+		folder = {
+			name = industry_folder
+			position = { x = @DIG_IN y = @1939_3 }
+		}
+
+		ai_will_do = {
+			base = 0
+			
+			modifier = {
+				add = ai_add
+				
+				ai_anti_air_building_tech_need = yes
+			}
+			modifier = {
+				factor = ai_factor 
+				
+				set_temp_variable = { ai_factor = ai_construction_tech_need } #AI RESEARCH CATEGORY
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		
+		on_research_complete = {
+			set_temp_variable = { tech = token:aa_emplacement_construction3 }
+			on_industry_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = industry_tt
+			custom_effect_tooltip = construction_tech_tt
+			custom_effect_tooltip = anti_air_tech_tt
+		}
+		categories = {
+			industry
+			construction_tech
+			anti_air_tech
+		}
+	}
+	pre_fab3 = {
+		allow = { has_country_flag = UNLOCK:industry_folder } 
+		land_bunker_effectiveness_factor = 0.05
+		coastal_bunker_effectiveness_factor = 0.05
+		production_speed_bunker_factor = 0.06
+		production_speed_coastal_bunker_factor = 0.06
+		dig_in_speed_factor = 0.05
+
+		dependencies = {
+			pre_fab2 = 1
+		}
+
+		research_cost = 1.2
+		start_year = 1939
+		folder = {
+			name = industry_folder
+			position = { x = @PREFAB y = @1939_3 }
+		}
+
+		ai_will_do = {
+			base = @C_PRIORITY_1
+			
+			modifier = {
+				factor = ai_factor 
+				
+				set_temp_variable = { ai_factor = ai_construction_tech_need } #AI RESEARCH CATEGORY
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		
+		on_research_complete = {
+			set_temp_variable = { tech = token:pre_fab3 }
+			on_industry_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = industry_tt
+			custom_effect_tooltip = construction_tech_tt
+		}
+		categories = {
+			industry
+			construction_tech
+		}
+	}
+	infra_works3 = {
+		allow = { has_country_flag = UNLOCK:industry_folder } 
+		
+		enable_building = {
+			building = naval_base
+			level = 9
+		}
+		production_speed_infrastructure_factor = 0.04
+		production_speed_rail_way_factor = 0.04
+		production_speed_naval_base_factor = 0.04
+
+		path = {
+			leads_to_tech = rail_infra3
+			research_cost_coeff = 1
+		}
+		path = {
+			leads_to_tech = road_infra3
+			research_cost_coeff = 1
+		}
+		path = {
+			leads_to_tech = air_infra3
+			research_cost_coeff = 1
+		}
+		path = {
+			leads_to_tech = port_infra3
+			research_cost_coeff = 1
+		}
+
+		dependencies = {
+			infra_works2 = 1
+		}
+
+		research_cost = 1.2
+		start_year = 1939
+		folder = {
+			name = industry_folder
+			position = { x = @INFRA_WRK y = @1939_1 }
+		}
+
+		ai_will_do = {
+			base = @C_PRIORITY_5
+			
+			modifier = {
+				factor = ai_factor 
+				
+				set_temp_variable = { ai_factor = ai_construction_tech_need } #AI RESEARCH CATEGORY
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		
+		on_research_complete = {
+			set_temp_variable = { tech = token:infra_works3 }
+			on_industry_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = industry_tt
+			custom_effect_tooltip = construction_tech_tt
+		}
+		categories = {
+			industry
+			construction_tech
+		}
+	}
+
+	rail_infra3 = {
+		allow = { has_country_flag = UNLOCK:industry_folder } 
+
+		production_speed_rail_way_factor = 0.04
+		line_change_production_efficiency_factor = 0.045
+
+		dependencies = {
+			rail_infra2 = 1
+		}
+
+		research_cost = 1.2
+		start_year = 1939
+		folder = {
+			name = industry_folder
+			position = { x = @RAIL_INFRA y = @1939_3 }
+		}
+
+		ai_will_do = {
+			base = @C_PRIORITY_3
+			
+			modifier = {
+				factor = ai_factor 
+				
+				set_temp_variable = { ai_factor = ai_construction_tech_need } #AI RESEARCH CATEGORY
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		
+		on_research_complete = {
+			set_temp_variable = { tech = token:rail_infra3 }
+			on_industry_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = industry_tt
+			custom_effect_tooltip = construction_tech_tt
+			custom_effect_tooltip = train_tech_tt
+		}
+		categories = {
+			industry
+			construction_tech
+			train_tech
+		}
+	}
+	road_infra3 = {
+		allow = { has_country_flag = UNLOCK:industry_folder } 
+
+		
+		org_loss_when_moving = -0.04
+		production_speed_infrastructure_factor = 0.04
+		supply_node_range = 0.03
+
+		dependencies = {
+			road_infra2 = 1
+		}
+
+		research_cost = 1.2
+		start_year = 1939
+		folder = {
+			name = industry_folder
+			position = { x = @ROAD_INFRA y = @1939_3 }
+		}
+
+		ai_will_do = {
+			base = @C_PRIORITY_1
+			
+			modifier = {
+				factor = ai_factor 
+				
+				set_temp_variable = { ai_factor = ai_construction_tech_need } #AI RESEARCH CATEGORY
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		
+		on_research_complete = {
+			set_temp_variable = { tech = token:road_infra3 }
+			on_industry_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = industry_tt
+			custom_effect_tooltip = construction_tech_tt
+			hidden_effect = {
+				if = { 
+					limit = { is_player = yes }
+					every_controlled_state = {
+						set_local_supply_in_states_modifier = yes
+					}
+				}
+			}
+		}
+		categories = {
+			industry
+			construction_tech
+		}
+	}
+	air_infra3 = {
+		allow = { has_country_flag = UNLOCK:industry_folder } 
+		
+		enable_building = {
+			building = air_base
+			level = 10
+		}
+		production_speed_air_base_factor = 0.05
+		extra_paratrooper_supply_grace = 24
+
+		dependencies = {
+			air_infra2 = 1
+		}
+
+		research_cost = 1.2
+		start_year = 1939
+		folder = {
+			name = industry_folder
+			position = { x = @AIR_INFRA y = @1939_3 }
+		}
+
+		ai_will_do = {
+			base = 0
+			
+			modifier = {
+				add = ai_base
+				
+				set_temp_variable = { base = @C_PRIORITY_1 }
+				ai_air_base_tech = yes 
+			}
+			modifier = {
+				factor = ai_factor 
+				
+				set_temp_variable = { ai_factor = ai_aircraft_tech_need } #AI RESEARCH CATEGORY
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		
+		on_research_complete = {
+			set_temp_variable = { tech = token:air_infra3 }
+			on_industry_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = industry_tt
+			custom_effect_tooltip = construction_tech_tt
+		}
+		categories = {
+			industry
+			construction_tech
+		}
+	}
+	port_infra3 = {
+		allow = { has_country_flag = UNLOCK:industry_folder } 
+		
+		enable_building = {
+			building = dockyard
+			level = 12
+		}
+		production_speed_dockyard_factor = 0.05
+		industrial_capacity_dockyard = 0.05
+		repair_speed_factor = 0.05
+
+		dependencies = {
+			port_infra2 = 1
+		}
+
+		research_cost = 1.2
+		start_year = 1939
+		folder = {
+			name = industry_folder
+			position = { x = @PORT_INFRA y = @1939_3 }
+		}
+
+		ai_will_do = {
+			base = 0
+			
+			modifier = {
+				add = ai_base
+				
+				set_temp_variable = { base = @C_PRIORITY_1 }
+				ai_port_infra_tech = yes 
+			}
+			modifier = {
+				factor = ai_factor 
+				
+				set_temp_variable = { ai_factor = ai_naval_tech_need } #AI RESEARCH CATEGORY
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		
+		on_research_complete = {
+			set_temp_variable = { tech = token:port_infra3 }
+			on_industry_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = industry_tt
+			custom_effect_tooltip = construction_tech_tt
+		}
+		categories = {
+			industry
+			construction_tech
+		}
+	}
+	civ_works3 = {
+		allow = { has_country_flag = UNLOCK:industry_folder } 
+
+		path = {
+			leads_to_tech = housing_work3
+			research_cost_coeff = 1
+		}
+		path = {
+			leads_to_tech = hospital_work3
+			research_cost_coeff = 1
+		}
+		path = {
+			leads_to_tech = schools_work3
+			research_cost_coeff = 1
+		}
+		path = {
+			leads_to_tech = fm_radio
+			research_cost_coeff = 1
+		}
+		dependencies = {
+			civ_works2 = 1
+		}
+		stability_weekly = 0.002
+		civilian_fuel_use_factor = 0.01
+		food_need_civilian = 0.01
+
+		research_cost = 1.5
+		start_year = 1939
+		folder = {
+			name = industry_folder
+			position = { x = @HOSP_CIVW y = @1939_1 }
+		}
+
+		ai_will_do = {
+			base = @C_PRIORITY_4
+			
+			modifier = {
+				factor = ai_mult
+				
+				ai_stability_tech_need = yes
+			}
+			modifier = {
+				factor = ai_factor 
+				
+				set_temp_variable = { ai_factor = ai_construction_tech_need } #AI TECH CATEGORY
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		
+		on_research_complete = {
+			set_temp_variable = { tech = token:civ_works3 }
+			on_industry_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = industry_tt
+			custom_effect_tooltip = construction_tech_tt
+			custom_effect_tooltip = civilian_tech_tt
+		}
+		categories = {
+			industry
+			construction_tech
+			civilian_tech
+		}
+	}
+	housing_work3 = {
+		allow = { has_country_flag = UNLOCK:industry_folder } 
+
+		dependencies = {
+			housing_work2 = 1
+		}
+
+		conscription = 0.0015
+		production_speed_industrial_complex_factor = 0.04
+
+
+		research_cost = 1.2
+		start_year = 1939
+		folder = {
+			name = industry_folder
+			position = { x = @HOUS_WRK y = @1939_3 }
+		}
+
+		ai_will_do = {
+			base = @C_PRIORITY_3
+			
+			modifier = {
+				factor = ai_factor 
+				
+				set_temp_variable = { ai_factor = ai_construction_tech_need } #AI TECH CATEGORY
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		
+		on_research_complete = {
+			set_temp_variable = { tech = token:housing_work3 }
+			on_industry_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = industry_tt
+			custom_effect_tooltip = construction_tech_tt
+			custom_effect_tooltip = civilian_tech_tt
+		}
+		categories = {
+			industry
+			construction_tech
+			civilian_tech
+		}
+	}
+	hospital_work3 = {
+		allow = { has_country_flag = UNLOCK:industry_folder } 
+
+		attrition = -0.03 #take 3% less attrition losses
+
+		dependencies = {
+			hospital_work2 = 1
+		}
+
+		research_cost = 1.2
+		start_year = 1939
+		folder = {
+			name = industry_folder
+			position = { x = @HOSP_CIVW y = @1939_3 }
+		}
+
+		ai_will_do = {
+			base = @C_PRIORITY_1
+			
+			modifier = {
+				factor = ai_factor 
+				
+				set_temp_variable = { ai_factor = ai_construction_tech_need } #AI TECH CATEGORY
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		
+		on_research_complete = {
+			set_temp_variable = { tech = token:hospital_work3 }
+			on_industry_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = industry_tt
+			custom_effect_tooltip = construction_tech_tt
+			custom_effect_tooltip = medical_tech_tt
+		}
+		categories = {
+			industry
+			construction_tech
+			medical_tech
+		}
+	}
+	schools_work3 = {
+		allow = { has_country_flag = UNLOCK:industry_folder } 
+
+		training_time_army_factor = -0.04
+
+		dependencies = {
+			schools_work2 = 1
+		}
+
+		research_cost = 1.2
+		start_year = 1939
+		folder = {
+			name = industry_folder
+			position = { x = @SCH_WRK y = @1939_3 }
+		}
+
+		ai_will_do = {
+			base = @C_PRIORITY_2
+			
+			modifier = {
+				factor = ai_factor 
+				
+				set_temp_variable = { ai_factor = ai_construction_tech_need } #AI TECH CATEGORY
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		
+		on_research_complete = {
+			set_temp_variable = { tech = token:schools_work3 }
+			on_industry_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = industry_tt
+			custom_effect_tooltip = construction_tech_tt
+			custom_effect_tooltip = civilian_tech_tt
+		}
+		categories = {
+			industry
+			construction_tech
+			civilian_tech
+		}
+	}
+	fm_radio = {
+		allow = { has_country_flag = UNLOCK:industry_folder } 
+
+		encryption_factor = -0.015
+		political_power_factor = 0.07
+
+		dependencies = {
+			radio_technology = 1
+		}
+
+		research_cost = 1.2
+		start_year = 1940
+		folder = {
+			name = industry_folder
+			position = { x = @FM_RADIO y = @1940}
+		}
+
+		ai_will_do = {
+			base = @C_PRIORITY_4
+			
+			modifier = {
+				factor = ai_factor 
+				
+				set_temp_variable = { ai_factor = ai_construction_tech_need } #AI TECH CATEGORY
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		
+		on_research_complete = {
+			set_temp_variable = { tech = token:fm_radio }
+			on_industry_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = industry_tt
+			custom_effect_tooltip = radio_tech_tt
+			custom_effect_tooltip = electronics_tt
+		}
+		categories = {
+			industry
+			radio_tech
+			electronics
+		}
+	}
+	#####################
+	### Construction IV
+	construction4 = {
+		allow = { has_country_flag = UNLOCK:industry_folder } 
+		
+		enable_building = {
+			building = industrial_complex
+			level = 34
+		}
+		production_speed_industrial_complex_factor = 0.03
+		production_speed_arms_factory_factor = -0.03
+		production_speed_buildings_factor = 0.03
+		production_speed_dockyard_factor = -0.03
+		path = {
+			leads_to_tech = construction5
+			research_cost_coeff = 1
+		}
+		path = {
+			leads_to_tech = defence_works4
+			research_cost_coeff = 1
+		}
+		path = {
+			leads_to_tech = infra_works4
+			research_cost_coeff = 1
+		}
+		path = {
+			leads_to_tech = civ_works4
+			research_cost_coeff = 1
+		}
+		research_cost = 2
+		start_year = 1941
+		folder = {
+			name = industry_folder
+			position = { x = @CONSTR y = @1941 }
+		}
+
+		ai_will_do = {
+			base = @C_PRIORITY_6
+			
+			modifier = {
+				factor = ai_factor 
+				
+				set_temp_variable = { ai_factor = ai_construction_tech_need } #AI RESEARCH CATEGORY
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		
+		on_research_complete = {
+			set_temp_variable = { tech = token:construction4 }
+			on_industry_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = industry_tt
+			custom_effect_tooltip = construction_tech_tt
+		}
+		categories = {
+			industry
+			construction_tech
+		}
+	}
+	defence_works4 = {
+		allow = { has_country_flag = UNLOCK:industry_folder } 
+		
+		enable_building = {
+			building = bunker
+			level = 10
+		}
+		enable_building = {
+			building = coastal_bunker
+			level = 9
+		}
+		path = {
+			leads_to_tech = aa_emplacement_construction4
+			research_cost_coeff = 1
+		}
+		path = {
+			leads_to_tech = pre_fab4
+			research_cost_coeff = 1
+		}
+		dependencies = {
+			defence_works3 = 1
+		}
+		max_dig_in = 0.5
+		land_bunker_effectiveness_factor = 0.03
+		coastal_bunker_effectiveness_factor = 0.03
+
+		research_cost = 1.2
+		start_year = 1941
+		folder = {
+			name = industry_folder
+			position = { x = @DEF_WORKS y = @1941_1 }
+		}
+
+		ai_will_do = {
+			base = @C_PRIORITY_1
+			
+			modifier = {
+				factor = ai_factor 
+				
+				set_temp_variable = { ai_factor = ai_construction_tech_need } #AI RESEARCH CATEGORY
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		
+		on_research_complete = {
+			set_temp_variable = { tech = token:defence_works4 }
+			on_industry_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = industry_tt
+			custom_effect_tooltip = construction_tech_tt
+		}
+		categories = {
+			industry
+			construction_tech
+		}
+	}
+	aa_emplacement_construction4 = {
+		allow = { has_country_flag = UNLOCK:industry_folder } 
+
+		dependencies = {
+			aa_emplacement_construction3 = 1
+		}
+
+		production_speed_anti_air_building_factor = 0.08
+		power_plant_resilience = 0.08
+
+		research_cost = 1.2
+		start_year = 1941
+		folder = {
+			name = industry_folder
+			position = { x = @DIG_IN y = @1941_3 }
+		}
+
+		ai_will_do = {
+			base = 0
+			
+			modifier = {
+				add = ai_add
+				
+				ai_anti_air_building_tech_need = yes
+			}
+			modifier = {
+				factor = ai_factor 
+				
+				set_temp_variable = { ai_factor = ai_construction_tech_need } #AI RESEARCH CATEGORY
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		
+		on_research_complete = {
+			set_temp_variable = { tech = token:aa_emplacement_construction4 }
+			on_industry_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = industry_tt
+			custom_effect_tooltip = construction_tech_tt
+			custom_effect_tooltip = anti_air_tech_tt
+		}
+		categories = {
+			industry
+			construction_tech
+			anti_air_tech
+		}
+	}
+	pre_fab4 = {
+		allow = { has_country_flag = UNLOCK:industry_folder } 
+		land_bunker_effectiveness_factor = 0.05
+		coastal_bunker_effectiveness_factor = 0.05
+		production_speed_bunker_factor = 0.06
+		production_speed_coastal_bunker_factor = 0.06
+		dig_in_speed_factor = 0.05
+
+		dependencies = {
+			pre_fab3 = 1
+		}
+
+		research_cost = 1.2
+		start_year = 1941
+		folder = {
+			name = industry_folder
+			position = { x = @PREFAB y = @1941_3 }
+		}
+
+		ai_will_do = {
+			base = @C_PRIORITY_1
+			
+			modifier = {
+				factor = ai_factor 
+				
+				set_temp_variable = { ai_factor = ai_construction_tech_need } #AI RESEARCH CATEGORY
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		
+		on_research_complete = {
+			set_temp_variable = { tech = token:pre_fab4 }
+			on_industry_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = industry_tt
+			custom_effect_tooltip = construction_tech_tt
+		}
+		categories = {
+			industry
+			construction_tech
+		}
+	}
+	infra_works4 = {
+		allow = { has_country_flag = UNLOCK:industry_folder } 
+		
+		enable_building = {
+			building = naval_base
+			level = 10
+		}
+		production_speed_infrastructure_factor = 0.04
+		production_speed_rail_way_factor = 0.04
+		production_speed_naval_base_factor = 0.04
+
+		path = {
+			leads_to_tech = rail_infra4
+			research_cost_coeff = 1
+		}
+		path = {
+			leads_to_tech = road_infra4
+			research_cost_coeff = 1
+		}
+		path = {
+			leads_to_tech = air_infra4
+			research_cost_coeff = 1
+		}
+		path = {
+			leads_to_tech = port_infra4
+			research_cost_coeff = 1
+		}
+		path = {
+			leads_to_tech = modern_highways
+			research_cost_coeff = 1
+		}
+		dependencies = {
+			infra_works3 = 1
+		}
+
+		research_cost = 1.2
+		start_year = 1941
+		folder = {
+			name = industry_folder
+			position = { x = @INFRA_WRK y = @1941_1 }
+		}
+
+		ai_will_do = {
+			base = @C_PRIORITY_5
+			
+			modifier = {
+				factor = ai_factor 
+				
+				set_temp_variable = { ai_factor = ai_construction_tech_need } #AI RESEARCH CATEGORY
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		
+		on_research_complete = {
+			set_temp_variable = { tech = token:infra_works4 }
+			on_industry_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = industry_tt
+			custom_effect_tooltip = construction_tech_tt
+		}
+		categories = {
+			industry
+			construction_tech
+		}
+	}
+	modern_highways = {
+		allow = { has_country_flag = UNLOCK:industry_folder } 
+
+		reassignment_duration_factor = -0.20
+		org_loss_when_moving = -0.025
+
+		research_cost = 0.65
+		start_year = 1942
+		folder = {
+			name = industry_folder
+			position = { x = @ROAD_INFRA y = @1942 }
+		}
+
+		ai_will_do = {
+			factor = 0
+		}
+		
+		on_research_complete = {
+			set_temp_variable = { tech = token:modern_highways }
+			on_industry_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = industry_tt
+			custom_effect_tooltip = construction_tech_tt
+			custom_effect_tooltip = civilian_tech_tt
+		}
+		categories = {
+			industry
+			construction_tech
+			civilian_tech
+		}
+	}
+	rail_infra4 = {
+		allow = { has_country_flag = UNLOCK:industry_folder } 
+
+		production_speed_rail_way_factor = 0.04
+		line_change_production_efficiency_factor = 0.055
+
+		dependencies = {
+			rail_infra3 = 1
+		}
+
+		research_cost = 1.2
+		start_year = 1941
+		folder = {
+			name = industry_folder
+			position = { x = @RAIL_INFRA y = @1941_3 }
+		}
+
+		ai_will_do = {
+			base = @C_PRIORITY_3
+			
+			modifier = {
+				factor = ai_factor 
+				
+				set_temp_variable = { ai_factor = ai_construction_tech_need } #AI RESEARCH CATEGORY
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		
+		on_research_complete = {
+			set_temp_variable = { tech = token:rail_infra4 }
+			on_industry_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = industry_tt
+			custom_effect_tooltip = construction_tech_tt
+			custom_effect_tooltip = train_tech_tt
+		}
+		categories = {
+			industry
+			construction_tech
+			train_tech
+		}
+	}
+	road_infra4 = {
+		allow = { has_country_flag = UNLOCK:industry_folder } 
+
+		org_loss_when_moving = -0.05
+		production_speed_infrastructure_factor = 0.04
+		supply_node_range = 0.03
+
+		dependencies = {
+			road_infra3 = 1
+		}
+
+		research_cost = 1.2
+		start_year = 1941
+		folder = {
+			name = industry_folder
+			position = { x = @ROAD_INFRA y = @1941_3 }
+		}
+
+		ai_will_do = {
+			base = @C_PRIORITY_1
+			
+			modifier = {
+				factor = ai_factor 
+				
+				set_temp_variable = { ai_factor = ai_construction_tech_need } #AI RESEARCH CATEGORY
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		
+		on_research_complete = {
+			set_temp_variable = { tech = token:road_infra4 }
+			on_industry_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = industry_tt
+			custom_effect_tooltip = construction_tech_tt
+			hidden_effect = {
+				if = { 
+					limit = { is_player = yes }
+					every_controlled_state = {
+						set_local_supply_in_states_modifier = yes
+					}
+				}
+			}
+		}
+		categories = {
+			industry
+			construction_tech
+		}
+	}
+	air_infra4 = {
+		allow = { has_country_flag = UNLOCK:industry_folder } 
+		
+		enable_building = {
+			building = air_base
+			level = 12
+		}
+		production_speed_air_base_factor = 0.08
+		air_fuel_consumption_factor = -0.02
+
+		dependencies = {
+			air_infra3 = 1
+		}
+
+		research_cost = 1.2
+		start_year = 1941
+		folder = {
+			name = industry_folder
+			position = { x = @AIR_INFRA y = @1941_3 }
+		}
+
+		ai_will_do = {
+			base = 0
+			
+			modifier = {
+				add = ai_base
+				
+				set_temp_variable = { base = @C_PRIORITY_1 }
+				ai_air_base_tech = yes 
+			}
+			modifier = {
+				factor = ai_factor 
+				
+				set_temp_variable = { ai_factor = ai_aircraft_tech_need } #AI RESEARCH CATEGORY
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		
+		on_research_complete = {
+			set_temp_variable = { tech = token:air_infra4 }
+			on_industry_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = industry_tt
+			custom_effect_tooltip = construction_tech_tt
+		}
+		categories = {
+			industry
+			construction_tech
+		}
+	}
+	port_infra4 = {
+		allow = { has_country_flag = UNLOCK:industry_folder } 
+		
+		enable_building = {
+			building = dockyard
+			level = 15
+		}
+		production_speed_dockyard_factor = 0.05
+		industrial_capacity_dockyard = 0.05
+		repair_speed_factor = 0.05
+
+		dependencies = {
+			port_infra3 = 1
+		}
+
+		research_cost = 1.2
+		start_year = 1941
+		folder = {
+			name = industry_folder
+			position = { x = @PORT_INFRA y = @1941_3 }
+		}
+
+		ai_will_do = {
+			base = 0
+			
+			modifier = {
+				add = ai_base
+				
+				set_temp_variable = { base = @C_PRIORITY_1 }
+				ai_port_infra_tech = yes 
+			}
+			modifier = {
+				factor = ai_factor 
+				
+				set_temp_variable = { ai_factor = ai_naval_tech_need } #AI RESEARCH CATEGORY
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		
+		on_research_complete = {
+			set_temp_variable = { tech = token:port_infra4 }
+			on_industry_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = industry_tt
+			custom_effect_tooltip = construction_tech_tt
+		}
+		categories = {
+			industry
+			construction_tech
+		}
+	}
+	civ_works4 = {
+		allow = { has_country_flag = UNLOCK:industry_folder } 
+
+		path = {
+			leads_to_tech = housing_work4
+			research_cost_coeff = 1
+		}
+		path = {
+			leads_to_tech = hospital_work4
+			research_cost_coeff = 1
+		}
+		path = {
+			leads_to_tech = schools_work4
+			research_cost_coeff = 1
+		}
+		dependencies = {
+			civ_works3 = 1
+		}
+		stability_weekly = 0.0025
+		civilian_fuel_use_factor = 0.02
+		food_need_civilian = 0.02
+
+		research_cost = 1.5
+		start_year = 1941
+		folder = {
+			name = industry_folder
+			position = { x = @HOSP_CIVW y = @1941_1 }
+		}
+
+		ai_will_do = {
+			base = @C_PRIORITY_4
+			
+			modifier = {
+				factor = ai_mult
+				
+				ai_stability_tech_need = yes
+			}
+			modifier = {
+				factor = ai_factor 
+				
+				set_temp_variable = { ai_factor = ai_construction_tech_need } #AI TECH CATEGORY
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		
+		on_research_complete = {
+			set_temp_variable = { tech = token:civ_works4 }
+			on_industry_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = industry_tt
+			custom_effect_tooltip = construction_tech_tt
+			custom_effect_tooltip = civilian_tech_tt
+		}
+		categories = {
+			industry
+			construction_tech
+			civilian_tech
+		}
+	}
+	housing_work4 = {
+		allow = { has_country_flag = UNLOCK:industry_folder } 
+
+		dependencies = {
+			housing_work3 = 1
+		}
+
+		conscription = 0.002
+		production_speed_industrial_complex_factor = 0.04
+
+		research_cost = 1.2
+		start_year = 1941
+		folder = {
+			name = industry_folder
+			position = { x = @HOUS_WRK y = @1941_3 }
+		}
+
+		ai_will_do = {
+			base = @C_PRIORITY_3
+			
+			modifier = {
+				factor = ai_factor 
+				
+				set_temp_variable = { ai_factor = ai_construction_tech_need } #AI TECH CATEGORY
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		
+		on_research_complete = {
+			set_temp_variable = { tech = token:housing_work4 }
+			on_industry_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = industry_tt
+			custom_effect_tooltip = construction_tech_tt
+			custom_effect_tooltip = civilian_tech_tt
+		}
+		categories = {
+			industry
+			construction_tech
+			civilian_tech
+		}
+	}
+	hospital_work4 = {
+		allow = { has_country_flag = UNLOCK:industry_folder } 
+
+		attrition = -0.04 #take 3% less attrition losses
+
+		dependencies = {
+			hospital_work3 = 1
+		}
+
+		research_cost = 1.2
+		start_year = 1941
+		folder = {
+			name = industry_folder
+			position = { x = @HOSP_CIVW y = @1941_3 }
+		}
+
+		ai_will_do = {
+			base = @C_PRIORITY_1
+			
+			modifier = {
+				factor = ai_factor 
+				
+				set_temp_variable = { ai_factor = ai_construction_tech_need } #AI TECH CATEGORY
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		
+		on_research_complete = {
+			set_temp_variable = { tech = token:hospital_work4 }
+			on_industry_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = industry_tt
+			custom_effect_tooltip = construction_tech_tt
+			custom_effect_tooltip = medical_tech_tt
+		}
+		categories = {
+			industry
+			construction_tech
+			medical_tech
+		}
+	}
+	schools_work4 = {
+		allow = { has_country_flag = UNLOCK:industry_folder } 
+
+		training_time_factor = -0.04
+
+		dependencies = {
+			schools_work3 = 1
+		}
+
+		research_cost = 1.2
+		start_year = 1941
+		folder = {
+			name = industry_folder
+			position = { x = @SCH_WRK y = @1941_3 }
+		}
+
+		ai_will_do = {
+			base = @C_PRIORITY_2
+			
+			modifier = {
+				factor = ai_factor 
+				
+				set_temp_variable = { ai_factor = ai_construction_tech_need } #AI TECH CATEGORY
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		
+		on_research_complete = {
+			set_temp_variable = { tech = token:schools_work4 }
+			on_industry_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = industry_tt
+			custom_effect_tooltip = construction_tech_tt
+			custom_effect_tooltip = civilian_tech_tt
+		}
+		categories = {
+			industry
+			construction_tech
+			civilian_tech
+		}
+	}
+	############################
+	##### Construction V
+	construction5 = {
+		allow = { has_country_flag = UNLOCK:industry_folder } 
+		
+		enable_building = {
+			building = industrial_complex
+			level = 40
+		}
+		production_speed_industrial_complex_factor = 0.04
+		production_speed_buildings_factor = 0.02
+
+		path = {
+			leads_to_tech = defence_works5
+			research_cost_coeff = 1
+		}
+		path = {
+			leads_to_tech = infra_works5
+			research_cost_coeff = 1
+		}
+		path = {
+			leads_to_tech = civ_works5
+			research_cost_coeff = 1
+		}
+
+		research_cost = 2
+		start_year = 1943
+		folder = {
+			name = industry_folder
+			position = { x = @CONSTR y = @1943 }
+		}
+
+		ai_will_do = {
+			base = @C_PRIORITY_6
+			
+			modifier = {
+				factor = ai_factor 
+				
+				set_temp_variable = { ai_factor = ai_construction_tech_need } #AI RESEARCH CATEGORY
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		
+		on_research_complete = {
+			set_temp_variable = { tech = token:construction5 }
+			on_industry_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = industry_tt
+			custom_effect_tooltip = construction_tech_tt
+		}
+		categories = {
+			industry
+			construction_tech
+		}
+	}
+
+	# Defenses V
+	defence_works5 = {
+		allow = { has_country_flag = UNLOCK:industry_folder } 
+		
+		enable_building = {
+			building = bunker
+			level = 12
+		}
+		enable_building = {
+			building = coastal_bunker
+			level = 10
+		}
+		path = {
+			leads_to_tech = aa_emplacement_construction5
+			research_cost_coeff = 1
+		}
+		path = {
+			leads_to_tech = pre_fab5
+			research_cost_coeff = 1
+		}
+		dependencies = {
+			defence_works4 = 1
+		}
+
+		max_dig_in = 0.5
+		land_bunker_effectiveness_factor = 0.03
+		coastal_bunker_effectiveness_factor = 0.03
+
+		research_cost = 1.2
+		start_year = 1943
+		folder = {
+			name = industry_folder
+			position = { x = @DEF_WORKS y = @1943_1 }
+		}
+
+		ai_will_do = {
+			base = @C_PRIORITY_1
+			
+			modifier = {
+				factor = ai_factor 
+				
+				set_temp_variable = { ai_factor = ai_construction_tech_need } #AI RESEARCH CATEGORY
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		
+		on_research_complete = {
+			set_temp_variable = { tech = token:defence_works5 }
+			on_industry_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = industry_tt
+			custom_effect_tooltip = construction_tech_tt
+		}
+		categories = {
+			industry
+			construction_tech
+		}
+	}
+	aa_emplacement_construction5 = {
+		allow = { has_country_flag = UNLOCK:industry_folder } 
+
+		dependencies = {
+			aa_emplacement_construction4 = 1
+		}
+
+		production_speed_anti_air_building_factor = 0.08
+		power_plant_resilience = 0.08
+
+		research_cost = 1.2
+		start_year = 1943
+		folder = {
+			name = industry_folder
+			position = { x = @DIG_IN y = @1943_3 }
+		}
+
+		ai_will_do = {
+			base = 0
+			
+			modifier = {
+				add = ai_add
+				
+				ai_anti_air_building_tech_need = yes
+			}
+			modifier = {
+				factor = ai_factor 
+				
+				set_temp_variable = { ai_factor = ai_construction_tech_need } #AI RESEARCH CATEGORY
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		
+		on_research_complete = {
+			set_temp_variable = { tech = token:aa_emplacement_construction5 }
+			on_industry_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = industry_tt
+			custom_effect_tooltip = construction_tech_tt
+			custom_effect_tooltip = anti_air_tech_tt
+		}
+		categories = {
+			industry
+			construction_tech
+			anti_air_tech
+		}
+	}
+	pre_fab5 = {
+		allow = { has_country_flag = UNLOCK:industry_folder } 
+		land_bunker_effectiveness_factor = 0.05
+		coastal_bunker_effectiveness_factor = 0.05
+		production_speed_bunker_factor = 0.06
+		production_speed_coastal_bunker_factor = 0.06
+		dig_in_speed_factor = 0.05
+
+		dependencies = {
+			pre_fab4 = 1
+		}
+
+		research_cost = 1.2
+		start_year = 1943
+		folder = {
+			name = industry_folder
+			position = { x = @PREFAB y = @1943_3 }
+		}
+
+		ai_will_do = {
+			base = @C_PRIORITY_1
+			
+			modifier = {
+				factor = ai_factor 
+				
+				set_temp_variable = { ai_factor = ai_construction_tech_need } #AI RESEARCH CATEGORY
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		
+		on_research_complete = {
+			set_temp_variable = { tech = token:pre_fab5 }
+			on_industry_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = industry_tt
+			custom_effect_tooltip = construction_tech_tt
+		}
+		categories = {
+			industry
+			construction_tech
+		}
+	}
+	# Infrastructure V
+	infra_works5 = {
+		allow = { has_country_flag = UNLOCK:industry_folder } 
+
+		production_speed_infrastructure_factor = 0.07
+		production_speed_rail_way_factor = 0.07
+		production_speed_naval_base_factor = 0.07
+
+		path = {
+			leads_to_tech = rail_infra5
+			research_cost_coeff = 1
+		}
+		path = {
+			leads_to_tech = road_infra5
+			research_cost_coeff = 1
+		}
+		path = {
+			leads_to_tech = air_infra5
+			research_cost_coeff = 1
+		}
+		path = {
+			leads_to_tech = port_infra5
+			research_cost_coeff = 1
+		}
+		dependencies = {
+			infra_works4 = 1
+		}
+
+		research_cost = 1.5
+		start_year = 1943
+		folder = {
+			name = industry_folder
+			position = { x = @INFRA_WRK y = @1943_1 }
+		}
+
+		ai_will_do = {
+			base = @C_PRIORITY_5
+			
+			modifier = {
+				factor = ai_factor 
+				
+				set_temp_variable = { ai_factor = ai_construction_tech_need } #AI RESEARCH CATEGORY
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		
+		on_research_complete = {
+			set_temp_variable = { tech = token:infra_works5 }
+			on_industry_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = industry_tt
+			custom_effect_tooltip = construction_tech_tt
+		}
+		categories = {
+			industry
+			construction_tech
+		}
+	}
+	rail_infra5 = {
+		allow = { has_country_flag = UNLOCK:industry_folder } 
+		
+		production_speed_rail_way_factor = 0.08
+		line_change_production_efficiency_factor = 0.065
+		
+		dependencies = {
+			rail_infra4 = 1
+		}
+		
+		research_cost = 1.2
+		start_year = 1943
+		folder = {
+			name = industry_folder
+			position = { x = @RAIL_INFRA y = @1943_3 }
+		}
+		
+		ai_will_do = {
+			base = @C_PRIORITY_3
+			
+			modifier = {
+				factor = ai_factor 
+				
+				set_temp_variable = { ai_factor = ai_construction_tech_need } #AI RESEARCH CATEGORY
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		
+		on_research_complete = {
+			set_temp_variable = { tech = token:rail_infra5 }
+			on_industry_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = industry_tt
+			custom_effect_tooltip = construction_tech_tt
+			custom_effect_tooltip = train_tech_tt
+		}
+		categories = {
+			industry
+			construction_tech
+			train_tech
+		}
+	}
+	road_infra5 = {
+		allow = { has_country_flag = UNLOCK:industry_folder } 
+
+		org_loss_when_moving = -0.05
+		production_speed_infrastructure_factor = 0.08
+		supply_node_range = 0.04
+
+		dependencies = {
+			road_infra4 = 1
+		}
+
+		research_cost = 1.2
+		start_year = 1943
+		folder = {
+			name = industry_folder
+			position = { x = @ROAD_INFRA y = @1943_3 }
+		}
+
+		ai_will_do = {
+			base = @C_PRIORITY_1
+			
+			modifier = {
+				factor = ai_factor 
+				
+				set_temp_variable = { ai_factor = ai_construction_tech_need } #AI RESEARCH CATEGORY
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		
+		on_research_complete = {
+			set_temp_variable = { tech = token:road_infra5 }
+			on_industry_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = industry_tt
+			custom_effect_tooltip = construction_tech_tt
+			hidden_effect = {
+				if = { 
+					limit = { is_player = yes }
+					every_controlled_state = {
+						set_local_supply_in_states_modifier = yes
+					}
+				}
+			}
+		}
+		categories = {
+			industry
+			construction_tech
+		}
+	}
+	air_infra5 = {
+		allow = { has_country_flag = UNLOCK:industry_folder } 
+		
+		enable_building = {
+			building = air_base
+			level = 15
+		}
+		production_speed_air_base_factor = 0.15
+		production_speed_air_assembly_factor = 0.05
+
+		dependencies = {
+			air_infra4 = 1
+		}
+
+		research_cost = 1.2
+		start_year = 1943
+		folder = {
+			name = industry_folder
+			position = { x = @AIR_INFRA y = @1943_3 }
+		}
+
+		ai_will_do = {
+			base = 0
+			
+			modifier = {
+				add = ai_base
+				
+				set_temp_variable = { base = @C_PRIORITY_1 }
+				ai_air_base_tech = yes 
+			}
+			modifier = {
+				factor = ai_factor 
+				
+				set_temp_variable = { ai_factor = ai_aircraft_tech_need } #AI RESEARCH CATEGORY
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		
+		on_research_complete = {
+			set_temp_variable = { tech = token:air_infra5 }
+			on_industry_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = industry_tt
+			custom_effect_tooltip = construction_tech_tt
+		}
+		categories = {
+			industry
+			construction_tech
+		}
+	}
+	port_infra5 = {
+		allow = { has_country_flag = UNLOCK:industry_folder } 
+		
+		enable_building = {
+			building = dockyard
+			level = 20
+		}
+		production_speed_dockyard_factor = 0.05
+		industrial_capacity_dockyard = 0.05
+		repair_speed_factor = 0.05
+
+		dependencies = {
+			port_infra4 = 1
+		}
+
+		research_cost = 1.2
+		start_year = 1943
+		folder = {
+			name = industry_folder
+			position = { x = @PORT_INFRA y = @1943_3 }
+		}
+
+		ai_will_do = {
+			base = 0
+			
+			modifier = {
+				add = ai_base
+				
+				set_temp_variable = { base = @C_PRIORITY_1 }
+				ai_port_infra_tech = yes 
+			}
+			modifier = {
+				factor = ai_factor 
+				
+				set_temp_variable = { ai_factor = ai_naval_tech_need } #AI RESEARCH CATEGORY
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		
+		on_research_complete = {
+			set_temp_variable = { tech = token:port_infra5 }
+			on_industry_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = industry_tt
+			custom_effect_tooltip = construction_tech_tt
+		}
+		categories = {
+			industry
+			construction_tech
+		}
+	}
+	##### Civilian works V
+	civ_works5 = {
+		allow = { has_country_flag = UNLOCK:industry_folder } 
+
+		path = {
+			leads_to_tech = housing_work5
+			research_cost_coeff = 1
+		}
+		path = {
+			leads_to_tech = hospital_work5
+			research_cost_coeff = 1
+		}
+		path = {
+			leads_to_tech = schools_work5
+			research_cost_coeff = 1
+		}
+		dependencies = {
+			civ_works4 = 1
+		}
+
+		stability_weekly = 0.003
+		civilian_fuel_use_factor = 0.02
+		food_need_civilian = 0.03
+
+		research_cost = 1.5
+		start_year = 1943
+		folder = {
+			name = industry_folder
+			position = { x = @HOSP_CIVW y = @1943_1 }
+		}
+
+		ai_will_do = {
+			base = @C_PRIORITY_4
+			
+			modifier = {
+				factor = ai_mult
+				
+				ai_stability_tech_need = yes
+			}
+			modifier = {
+				factor = ai_factor 
+				
+				set_temp_variable = { ai_factor = ai_construction_tech_need } #AI TECH CATEGORY
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		
+		on_research_complete = {
+			set_temp_variable = { tech = token:civ_works5 }
+			on_industry_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = industry_tt
+			custom_effect_tooltip = construction_tech_tt
+			custom_effect_tooltip = civilian_tech_tt
+		}
+		categories = {
+			industry
+			construction_tech
+			civilian_tech
+		}
+	}
+	housing_work5 = {
+		allow = { has_country_flag = UNLOCK:industry_folder } 
+
+		dependencies = {
+			housing_work4 = 1
+		}
+
+		conscription = 0.0025
+		production_speed_industrial_complex_factor = 0.05
+
+		research_cost = 1.2
+		start_year = 1943
+		folder = {
+			name = industry_folder
+			position = { x = @HOUS_WRK y = @1943_3 }
+		}
+
+		ai_will_do = {
+			base = @C_PRIORITY_3
+			
+			modifier = {
+				factor = ai_factor 
+				
+				set_temp_variable = { ai_factor = ai_construction_tech_need } #AI TECH CATEGORY
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		
+		on_research_complete = {
+			set_temp_variable = { tech = token:housing_work5 }
+			on_industry_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = industry_tt
+			custom_effect_tooltip = construction_tech_tt
+			custom_effect_tooltip = civilian_tech_tt
+		}
+		categories = {
+			industry
+			construction_tech
+			civilian_tech
+		}
+	}
+	hospital_work5 = {
+		allow = { has_country_flag = UNLOCK:industry_folder } 
+
+		attrition = -0.04 #take 3% less attrition losses
+
+		dependencies = {
+			hospital_work4 = 1
+		}
+
+		research_cost = 1.2
+		start_year = 1943
+		folder = {
+			name = industry_folder
+			position = { x = @HOSP_CIVW y = @1943_3 }
+		}
+
+		ai_will_do = {
+			base = @C_PRIORITY_1
+			
+			modifier = {
+				factor = ai_factor 
+				
+				set_temp_variable = { ai_factor = ai_construction_tech_need } #AI TECH CATEGORY
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		
+		on_research_complete = {
+			set_temp_variable = { tech = token:hospital_work5 }
+			on_industry_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = industry_tt
+			custom_effect_tooltip = construction_tech_tt
+			custom_effect_tooltip = medical_tech_tt
+		}
+		categories = {
+			industry
+			construction_tech
+			medical_tech
+		}
+	}
+	schools_work5 = {
+		allow = { has_country_flag = UNLOCK:industry_folder } 
+
+		training_time_factor = -0.04
+
+		dependencies = {
+			schools_work4 = 1
+		}
+
+		research_cost = 1.2
+		start_year = 1943
+		folder = {
+			name = industry_folder
+			position = { x = @SCH_WRK y = @1943_3 }
+		}
+
+		ai_will_do = {
+			base = @C_PRIORITY_2
+			
+			modifier = {
+				factor = ai_factor 
+				
+				set_temp_variable = { ai_factor = ai_construction_tech_need } #AI TECH CATEGORY
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		
+		on_research_complete = {
+			set_temp_variable = { tech = token:schools_work5 }
+			on_industry_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = industry_tt
+			custom_effect_tooltip = construction_tech_tt
+			custom_effect_tooltip = civilian_tech_tt
+		}
+		categories = {
+			industry
+			construction_tech
+			civilian_tech
+		}
+	}
+}
+#EOF#

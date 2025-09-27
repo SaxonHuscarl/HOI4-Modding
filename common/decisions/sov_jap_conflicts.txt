@@ -1,0 +1,1101 @@
+#If you change the values loc for WTT_border_incident_delay_until_new_incident_180 and WTT_border_incident_delay_until_new_incident_120 has to be changed
+@border_incident_escalation_countdown = 30
+@border_conflict_incident_forgotten_timer = 30
+@border_conflict_escalate_to_war_countdown = 45
+@border_conflict_time_until_cancelled = 360
+@border_incident_cooldown = 180
+foreign_politics = {
+	SOV_JAP_treaty = {
+		icon = jap_pacific_guardian
+		allowed = {
+			tag = SOV
+		}
+		cosmetic_tag = JAP
+		cosmetic_ideology = fascism
+		ai_will_do = {
+			factor = 200
+		}
+		available = {
+			OR = {
+				SOV = { has_country_flag = mr_accepted }
+				JAP = {
+					has_war_with = ENG
+				}
+			}
+			set_temp_variable = { border = border_high }
+			divide_temp_variable = { border = 2 }
+			
+			custom_trigger_tooltip = {
+				tooltip = border_peace_tt
+				check_variable = { 
+					var = border 
+					value = JAP.border_high 
+					compare = greater_than_or_equals
+				}
+			}
+		}
+		visible = {
+			NOT = { has_global_flag = SOV_JAP_neutrality }
+			not = { has_war_with = JAP }
+		}
+				
+		fire_only_once = yes
+		complete_effect = {
+			set_temp_variable = { border_payment = border_high }
+			multiply_temp_variable = { border_payment = -10 }
+			
+			diplomatic_relation = {
+				country = JAP
+				relation = non_aggression_pact
+				active = yes
+			}
+			JAP = {
+				add_political_power = border_payment
+			}
+				
+			set_global_flag = SOV_JAP_neutrality
+			hidden_effect = {
+				SOV = {
+					mark_focus_tree_layout_dirty = yes
+					remove_opinion_modifier = {
+						target = JAP
+						modifier = border_conflict_problems
+					}
+					remove_ideas = SOV_border_bonus
+				}
+				JAP = {
+					remove_opinion_modifier = {
+						target = SOV
+						modifier = border_conflict_problems
+					}
+					remove_ideas = JAP_border_bonus
+				}
+				if = {
+					limit = {
+						761 = {
+							is_controlled_by = JAP
+						}
+					}
+					MAN = {
+						transfer_state = 761
+					}
+					761 = {
+						add_core_of = MAN
+						cancel_resistance = yes
+					}
+				}				
+			}
+		}
+	}
+	JAP_SOV_treaty = {
+		name = SOV_JAP_treaty
+		desc = SOV_JAP_treaty_desc
+		icon = jap_pacific_guardian
+		allowed = {
+			tag = JAP
+		}
+		cosmetic_tag = SOV
+		cosmetic_ideology = communism
+		ai_will_do = {
+			factor = 200
+		}
+		available = {
+			OR = {
+				SOV = { has_country_flag = mr_accepted }
+				JAP = {
+					has_war_with = ENG
+				}
+			}
+			set_temp_variable = { border = border_high }
+			divide_temp_variable = { border = 2 }
+			
+			custom_trigger_tooltip = {
+				tooltip = border_peace_tt 
+				check_variable = { 
+					var = border 
+					value = SOV.border_high 
+					compare = greater_than_or_equals
+				}
+			}
+		}
+		visible = {
+			NOT = { has_global_flag = SOV_JAP_neutrality }
+			not = { has_war_with = SOV }
+		}
+		
+		fire_only_once = yes
+		complete_effect = {
+			set_temp_variable = { border_payment = border_high }
+			multiply_temp_variable = { border_payment = -10 }
+			diplomatic_relation = {
+				country = SOV
+				relation = non_aggression_pact
+				active = yes
+			}
+			SOV = {
+				add_political_power = border_payment
+			}
+				
+			set_global_flag = SOV_JAP_neutrality
+			hidden_effect = {
+				SOV = {
+					mark_focus_tree_layout_dirty = yes
+					remove_opinion_modifier = {
+						target = JAP
+						modifier = border_conflict_problems
+					}
+					remove_ideas = SOV_border_bonus
+				}
+				JAP = {
+					remove_opinion_modifier = {
+						target = SOV
+						modifier = border_conflict_problems
+					}
+					remove_ideas = JAP_border_bonus
+				}
+				if = {
+					limit = {
+						761 = {
+							is_controlled_by = JAP
+						}
+					}
+					MAN = {
+						transfer_state = 761
+					}
+					761 = {
+						add_core_of = MAN
+						cancel_resistance = yes
+					}
+				}				
+			}
+		}
+	}
+}
+
+
+SOV_JAP_border_clashes = {	
+
+	SOV_JAP_nab = {
+		icon = generic_ignite_civil_war
+		allowed = {
+			OR = {
+				tag = SOV
+				tag = JAP
+			}
+		}
+		visible = {
+			not = { has_global_flag = SOV_JAP_neutrality }
+		}
+		available = {
+			if = {
+				limit = {
+					tag = SOV
+				}
+				NOT = { has_war_with = JAP }
+			}
+			else = {
+				NOT = { has_war_with = SOV }
+			}
+			custom_trigger_tooltip = {
+				tooltip = border_nab_tt 
+				check_variable = { 
+					var = border_strength
+					value = 2
+					compare = greater_than_or_equals
+				}
+			}
+		}
+		fire_only_once = no
+		days_re_enable = 180
+		ai_will_do = {
+			factor = 0
+		}	
+		complete_effect = {
+			subtract_from_variable = { border_strength = 2 tooltip = border_reduced_TT}
+			if = {
+				limit = {
+					tag = SOV
+				}			
+				random_owned_state = {
+					limit = {
+						any_neighbor_state = { 
+							CONTROLLER = {
+								OR = {
+									tag = JAP 
+									tag = MAN
+								}
+							}
+						}
+					}
+					add_extra_state_shared_building_slots = 1
+					add_resource = {
+						type = iron
+						amount = 1
+					}
+				}
+			}
+			else = {
+				random_owned_state = {
+					limit = {
+						any_neighbor_state = { 
+							CONTROLLER = {
+								OR = {
+									tag = SOV 
+									tag = MON
+								}
+							}
+						}
+					}
+					add_extra_state_shared_building_slots = 1
+					add_resource = {
+						type = iron
+						amount = 1
+					}
+				}
+			}
+		}		
+	}
+	SOV_JAP_raid = {
+		icon = generic_operation
+		allowed = {
+			OR = {
+				tag = SOV
+				tag = JAP
+			}
+		}
+		visible = {
+			not = { has_global_flag = SOV_JAP_neutrality }
+		}
+		available = {
+			if = {
+				limit = {
+					tag = SOV
+				}
+				NOT = { has_war_with = JAP }
+			}
+			else = {
+				NOT = { has_war_with = SOV }
+			}
+			custom_trigger_tooltip = {
+				tooltip = SOV_JAP_raid_tt 
+				check_variable = { 
+					var = border_strength
+					value = 3
+					compare = greater_than_or_equals
+				}
+			}
+		}
+		fire_only_once = no
+		days_re_enable = 180
+		ai_will_do = {
+			factor = 0
+		}	
+		complete_effect = {
+			subtract_from_variable = { border_strength = 3 tooltip = border_reduced_TT}
+			random_army_leader = {
+				gain_xp = 50
+			}
+			if = {
+				limit = {
+					tag = SOV
+				}	
+				add_operation_token = {
+					tag = JAP
+					token = token_army
+				}				
+				MAN = {
+					random_owned_state = {
+						damage_building = {
+							type = infrastructure
+							damage = 1
+						}
+					}
+				}
+				JAP = {
+					add_fuel = -750
+					send_equipment = {
+						equipment = infantry_equipment
+						amount = 1000
+						target = SOV
+					}
+				}
+			}
+			else = {
+				add_operation_token = {
+					tag = SOV
+					token = token_army
+				}
+				MON = {
+					random_owned_state = {
+						damage_building = {
+							type = infrastructure
+							damage = 1
+						}
+					}
+				}
+				SOV = {
+					add_fuel = -750
+					send_equipment = {
+						equipment = infantry_equipment
+						amount = 1000
+						target = JAP
+					}
+				}
+			}
+		}		
+	}
+	SOV_JAP_citation = {
+		icon = generic_officer
+		allowed = {
+			OR = {
+				tag = SOV
+				tag = JAP
+			}
+		}
+		visible = {
+			not = { has_global_flag = SOV_JAP_neutrality }
+		}
+		available = {
+			if = {
+				limit = {
+					tag = SOV
+				}
+				NOT = { has_war_with = JAP }
+				divisions_in_state = {
+					state = 563	
+					size > 0
+				}
+			}
+			else = {
+				NOT = { has_war_with = SOV }
+				divisions_in_state = {
+					state = 761	
+					size > 0
+				}
+			}
+			custom_trigger_tooltip = {
+				tooltip = SOV_JAP_medal_tt 
+				check_variable = { 
+					var = border_strength
+					value = 10
+					compare = greater_than_or_equals
+				}
+			}
+		}
+		fire_only_once = yes
+		ai_will_do = {
+			factor = 10
+		}
+		complete_effect = {
+			subtract_from_variable = { border_strength = 10 tooltip = border_reduced_TT}
+			if = {
+				limit = {
+					tag = SOV
+				}	
+				563 = {
+					random_state_division = {
+						add_history_entry = {
+							key = border_skirmish
+							subject = "Border Skirmish"
+							allow = yes
+						}
+						add_divisional_commander_xp = 25
+					}
+				}
+			}
+			else = {
+				761 = {
+					random_state_division = {
+						add_history_entry = {
+							key = border_skirmish
+							subject = "Border Skirmish"
+							allow = yes
+						}
+						add_divisional_commander_xp = 25
+					}
+				}
+			}
+		}
+	}
+	SOV_JAP_land = {
+		icon = decision_revolt
+		allowed = {
+			OR = {
+				tag = SOV
+				tag = JAP
+			}
+		}
+		visible = {
+			not = { has_global_flag = SOV_JAP_neutrality }
+		}
+		available = {
+			if = {
+				limit = {
+					tag = SOV
+				}
+				NOT = { has_war_with = JAP }
+			}
+			else = {
+				NOT = { has_war_with = SOV }
+			}
+			custom_trigger_tooltip = {
+				tooltip = SOV_JAP_land_tt 
+				check_variable = { 
+					var = border_strength
+					value = 25
+					compare = greater_than_or_equals
+				}
+			}
+		}
+		fire_only_once = yes
+		ai_will_do = {
+			factor = 10
+		}	
+		complete_effect = {
+			subtract_from_variable = { border_strength = 25 tooltip = border_reduced_TT}
+			if = {
+				limit = {
+					tag = SOV
+				}	
+				MON = {
+					transfer_state = 761
+					add_state_claim = 761
+				}
+			}
+			else = {
+				MAN = {
+					transfer_state = 860
+					add_state_claim = 860
+				}
+			}
+		}
+	}
+	########################################################################
+	prepare_border_conflict_soviets = {
+        icon = border_war
+		allowed = {
+			tag = SOV
+		}
+        available = {			
+        }
+        state_target = yes
+        target_array = global.soviet_jap_skirmish
+        target_trigger = {
+            FROM = { 
+                is_controlled_by_ROOT_or_subject = yes 
+				any_neighbor_state = { 
+					CONTROLLER = {
+						tag = JAP 
+					}
+				}
+            }
+        }
+        visible = {
+			check_variable = { global.days_passed > 30 }
+			NOT = { 
+				has_country_flag = border_cooldown 
+				has_country_flag = border_state_selected
+				has_global_flag = SOV_JAP_neutrality
+			}
+			NOT = { has_war_with = JAP }
+        }
+		ai_will_do = {
+			factor = 200
+		}
+        fire_only_once = no
+        cost = border_cost
+
+        days_re_enable = 165
+		war_with_target_on_remove = yes
+
+		complete_effect = {
+			add_to_variable = { border_cost = border_cost_increase }
+			set_country_flag = border_state_selected
+			FROM = {
+				set_variable = { Root.attacker_state = This.id }
+				every_neighbor_state = {
+					limit = {
+						CONTROLLER = {
+							tag = JAP 
+						}
+					}
+					ROOT = { 
+						activate_targeted_decision = {
+							decision = border_conflict_soviets
+							target = PREV 
+						}
+					}
+				}
+			}
+		}
+	}
+	prepare_border_conflict_jap = {
+        icon = border_war
+		allowed = {
+			tag = JAP
+		}
+        available = {			
+        }
+        state_target = yes
+        target_array = global.soviet_jap_skirmish
+        target_trigger = {
+            FROM = { 
+                is_controlled_by_ROOT_or_subject = yes 
+				any_neighbor_state = { 
+					CONTROLLER = {
+						tag = SOV
+					}
+				}
+            }
+        }
+        visible = {
+			check_variable = { global.days_passed > 25 }
+			NOT = { 
+				has_country_flag = border_cooldown 
+				has_country_flag = border_state_selected
+				has_global_flag = SOV_JAP_neutrality
+			}
+			NOT = { has_war_with = SOV }
+        }
+		ai_will_do = {
+			factor = 200
+		}
+        fire_only_once = no
+        cost = border_cost
+
+        days_re_enable = 165
+		war_with_target_on_remove = yes
+
+		complete_effect = {
+			add_to_variable = { border_cost = border_cost_increase }
+			set_country_flag = border_state_selected
+			FROM = {
+				set_variable = { Root.attacker_state = This.id }
+				every_neighbor_state = {
+					limit = {
+						CONTROLLER = {
+							tag = SOV
+						}
+					}
+					ROOT = { 
+						activate_targeted_decision = {
+							decision = border_conflict_jap
+							target = PREV 
+						}
+					}
+				}
+			}
+		}
+	}
+	prepare_border_conflict_jap_puppet = {
+        icon = border_war
+		allowed = {
+			OR = {
+				tag = MEN
+				tag = MAN
+			}
+		}
+        available = {			
+        }
+        state_target = yes
+        target_array = global.soviet_jap_puppet_skirmish
+        target_trigger = {
+            FROM = { 
+                CONTROLLER = { 
+					tag = Root
+				}
+				any_neighbor_state = { 
+					CONTROLLER = {
+						TAG = MON
+					}
+				}
+            }
+        }
+        visible = {
+			check_variable = { global.days_passed > 45 }
+			NOT = { 
+				has_country_flag = border_cooldown 
+				has_country_flag = border_state_selected
+				has_global_flag = SOV_JAP_neutrality
+			}
+			NOT = { has_war_with = SOV }
+        }
+		ai_will_do = {
+			factor = 200
+		}
+        fire_only_once = no
+        cost = border_cost
+
+        days_re_enable = 180
+		war_with_target_on_remove = yes
+
+		complete_effect = {
+			add_to_variable = { border_cost = border_cost_increase }
+			set_country_flag = border_state_selected
+			FROM = {
+				set_variable = { Root.attacker_state_pup = This.id }
+				every_neighbor_state = {
+					limit = {
+						CONTROLLER = {
+							tag = MON
+						}
+					}
+					ROOT = { 
+						activate_targeted_decision = {
+							decision = border_conflict_puppet
+							target = PREV 
+						}
+					}
+				}
+			}
+		}
+	}
+	prepare_border_conflict_mon = {
+        icon = border_war
+		allowed = {
+			tag = MON
+		}
+        available = {			
+        }
+        state_target = yes
+        target_array = global.soviet_jap_puppet_skirmish
+        target_trigger = {
+            FROM = { 
+                CONTROLLER = { TAG = MON }
+				any_neighbor_state = { 
+					CONTROLLER = {
+						is_subject_of = JAP
+					}
+				}
+            }
+        }
+        visible = {
+			check_variable = { global.days_passed > 40 }
+			NOT = { 
+				has_country_flag = border_cooldown 
+				has_country_flag = border_state_selected
+				has_global_flag = SOV_JAP_neutrality
+			}
+			NOT = { has_war_with = JAP }
+        }
+		ai_will_do = {
+			factor = 200
+		}
+        fire_only_once = no
+        cost = border_cost
+
+        days_re_enable = 180
+		war_with_target_on_remove = yes
+
+		complete_effect = {
+			add_to_variable = { border_cost = border_cost_increase }
+			set_country_flag = border_state_selected
+			FROM = {
+				set_variable = { Root.attacker_state_pup = This.id }
+				every_neighbor_state = {
+					limit = {
+						CONTROLLER = {
+							is_subject_of = JAP
+						}
+					}
+					ROOT = { 
+						activate_targeted_decision = {
+							decision = border_conflict_puppet
+							target = PREV 
+						}
+					}
+				}
+			}
+		}
+    }
+	border_conflict_soviets = {
+        icon = border_war
+		allowed = {
+			always = no 
+		}
+        available = {			
+        }
+
+        state_target = yes
+		
+		highlight_states = { 
+			highlight_state_targets = {
+				state = var:attacker_state
+			}
+		}
+        visible = {
+			NOT = { has_war_with = JAP }
+        }
+
+        fire_only_once = yes
+        cost = 0
+		ai_will_do = {
+			factor = 200
+		}
+        days_re_enable = 160
+		war_with_target_on_remove = yes
+
+		complete_effect = {
+			#ROOT SOV
+			#FROM STATE
+			#FROM.CONTROLLER MAN
+			
+			clr_country_flag = border_state_selected
+			set_global_flag = border_happening
+			set_country_flag = {
+				flag = border_cooldown
+				value = 1 #bruh
+				days = @border_incident_cooldown
+			}
+			var:attacker_state  = {
+				save_event_target_as = attacker_state
+				set_temp_variable = { attacker_state_temp = id }
+				set_state_flag = border_incident_active
+			}
+			FROM = {
+				save_event_target_as = defender_state
+				set_variable = { Root.defender_state = id }
+				set_temp_variable = { defender_state_temp = id }
+				set_state_flag = border_incident_active
+				
+			}
+			custom_effect_tooltip = WTT_border_incident_delay_until_new_incident_180
+			JAP = {
+				country_event = { id = SOV_border_incident_defender_warning.1 hours = 1 }
+				activate_targeted_decision = { target = ROOT decision = WTT_border_conflict_incident_warning_defender }				
+			}
+			activate_targeted_decision = { target = JAP decision = BICE_escalate_incident_to_border_conflict_small }
+			hidden_effect = {
+				every_state = {
+					ROOT = {
+						remove_targeted_decision = {
+							decision = border_conflict_soviets
+							target = PREV 
+						}
+					}
+				}
+			}
+		}
+    }
+	border_conflict_jap = {
+        icon = border_war
+		allowed = {
+			always = no 
+		}
+         available = {			
+        }
+
+        state_target = yes
+		
+		highlight_states = { 
+			highlight_state_targets = {
+				state = var:attacker_state
+			}
+		}
+        visible = {
+			NOT = { has_war_with = SOV }
+        }
+
+        fire_only_once = yes
+        cost = 0
+		ai_will_do = {
+			factor = 200
+		}
+        days_re_enable = 160
+		war_with_target_on_remove = yes
+
+		complete_effect = {
+			#ROOT SOV
+			#FROM STATE
+			#FROM.CONTROLLER MAN
+			
+			clr_country_flag = border_state_selected
+			set_global_flag = border_happening
+			set_country_flag = {
+				flag = border_cooldown
+				value = 1 #bruh
+				days = @border_incident_cooldown
+			}
+			var:attacker_state  = {
+				save_event_target_as = attacker_state
+				set_temp_variable = { attacker_state_temp = id }
+				set_state_flag = border_incident_active
+			}
+			FROM = {
+				save_event_target_as = defender_state
+				set_variable = { Root.defender_state = id }
+				set_temp_variable = { defender_state_temp = id }
+				set_state_flag = border_incident_active
+				
+			}
+			custom_effect_tooltip = WTT_border_incident_delay_until_new_incident_180
+			SOV = {
+				country_event = { id = SOV_border_incident_defender_warning.1 hours = 1 }
+				activate_targeted_decision = { target = ROOT decision = WTT_border_conflict_incident_warning_defender }				
+			}
+			activate_targeted_decision = { target = SOV decision = BICE_escalate_incident_to_border_conflict_small }
+			hidden_effect = {
+				every_state = {
+					ROOT = {
+						remove_targeted_decision = {
+							decision = border_conflict_jap
+							target = PREV 
+						}
+					}
+				}
+			}
+		}
+	}
+	border_conflict_puppet = {
+        icon = border_war
+		allowed = {
+			always = no 
+		}
+        available = {			
+        }
+
+        state_target = yes
+		
+		highlight_states = { 
+			highlight_state_targets = {
+				state = var:attacker_state_pup
+			}
+		}
+        visible = {
+        }
+
+        fire_only_once = yes
+        cost = 0
+		ai_will_do = {
+			factor = 200
+		}
+        days_re_enable = 180
+		war_with_target_on_remove = yes
+
+		complete_effect = {
+			#ROOT MON
+			#FROM STATE
+			
+			clr_country_flag = border_state_selected
+			set_global_flag = border_happening
+			set_country_flag = {
+				flag = border_cooldown
+				value = 1 #bruh
+				days = @border_incident_cooldown
+			}
+			var:attacker_state_pup  = {
+				save_event_target_as = attacker_state_pup
+				set_temp_variable = { attacker_state_pup_temp = id }
+				set_state_flag = border_incident_active
+			}
+			FROM = {
+				save_event_target_as = defender_state_pup
+				set_variable = { Root.defender_state_pup = id }
+				set_temp_variable = { defender_state_pup_temp = id }
+				set_state_flag = border_incident_active
+				
+			}
+			custom_effect_tooltip = WTT_border_incident_delay_until_new_incident_180
+			FROM.CONTROLLER = {
+				country_event = { id = SOV_border_incident_defender_warning.1 hours = 1 }
+				activate_targeted_decision = { target = ROOT decision = WTT_border_conflict_incident_warning_defender }				
+			}
+			activate_targeted_decision = { target = FROM.CONTROLLER decision = BICE_escalate_incident_to_border_conflict_puppet }
+			hidden_effect = {
+				every_state = {
+					ROOT = {
+						remove_targeted_decision = {
+							decision = border_conflict_puppet
+							target = PREV 
+						}
+					}
+				}
+			}
+		}
+    }
+	#Decision to escalate incident on border with FROM to border conflict
+	#ROOT is attacker
+	BICE_escalate_incident_to_border_conflict_puppet = {
+
+		icon = border_war
+
+		allowed = { always = no } #Activated from effect
+
+		available = {
+			var:attacker_state_pup = {
+				OR = {
+					CONTROLLER = { tag = ROOT }
+					CONTROLLER = { is_subject_of = ROOT }
+				}
+			}
+			divisions_in_border_state = {
+				state = var:attacker_state_pup
+				border_state = var:defender_state_pup
+				size > 0
+			}
+		}
+
+		highlight_states = { 
+			highlight_state_targets = {
+				state = var:attacker_state_pup
+			}
+		}
+		#highlight_state_targets = {
+		#	state = var:defender_state_pup
+		#}
+
+		ai_will_do = {
+			factor = 200
+		}
+
+		#cancel_trigger = { #._.
+		#	is_in_faction_with = FROM 
+		#}
+
+		selectable_mission = yes
+
+		fire_only_once = yes #Reactivation handled in effect
+
+		days_mission_timeout = @border_conflict_incident_forgotten_timer
+
+		timeout_effect = {
+			custom_effect_tooltip = WTT_border_incident_delay_until_new_incident_120
+			hidden_effect = {
+				FROM = { remove_targeted_decision = { target = ROOT decision = WTT_border_conflict_escalation_warning_defender } }
+				var:attacker_state_pup = {
+					clr_state_flag = border_incident_active
+				}
+				var:defender_state_pup = {
+					clr_state_flag = border_incident_active
+				}
+				clear_variable = attacker_state_pup
+				clear_variable = defender_state_pup
+			}
+		}
+
+		complete_effect = {
+			
+			start_border_war = {
+				change_state_after_war = no
+				attacker = {
+					state = var:attacker_state_pup
+					num_provinces = 2
+					on_win = SOV_border_conflict_won_attacker.2
+					on_lose = SOV_border_conflict_lost_attacker.2
+					on_cancel = SOV_border_conflict_canceled_attacker.2
+				}
+				
+				defender = {
+					state = var:defender_state_pup
+					num_provinces = 2
+					on_win = SOV_border_conflict_won_defender.2
+					on_lose = SOV_border_conflict_lost_defender.2
+					on_cancel = SOV_border_conflict_canceled_defender.2
+				}
+			}
+			set_border_war_data = {
+				attacker = var:attacker_state_pup
+				defender = var:defender_state_pup
+				combat_width = 60 
+			}
+			FROM = {
+				activate_targeted_decision = { target = ROOT decision = WTT_border_conflict_time_until_cancelled }
+			}
+			activate_targeted_decision = { target = FROM decision = WTT_border_conflict_time_until_cancelled }
+			
+			hidden_effect = {
+			}
+		}
+	}
+	BICE_escalate_incident_to_border_conflict_small = {
+
+		icon = border_war
+
+		allowed = { always = no } #Activated from effect
+
+		available = {
+			var:attacker_state = {
+				OR = {
+					CONTROLLER = { tag = ROOT }
+					CONTROLLER = { is_subject_of = ROOT }
+				}
+			}
+			divisions_in_border_state = {
+				state = var:attacker_state
+				border_state = var:defender_state
+				size > 0
+			}
+		}
+
+		highlight_states = { 
+			highlight_state_targets = {
+				state = var:attacker_state
+			}
+		}
+		#highlight_state_targets = {
+		#	state = var:defender_state
+		#}
+
+		ai_will_do = {
+			factor = 200
+		}
+
+		#cancel_trigger = { #._.
+		#	is_in_faction_with = FROM 
+		#}
+
+		selectable_mission = yes
+
+		fire_only_once = yes #Reactivation handled in effect
+
+		days_mission_timeout = @border_conflict_incident_forgotten_timer
+
+		timeout_effect = {
+			custom_effect_tooltip = WTT_border_incident_delay_until_new_incident_120
+			hidden_effect = {
+				FROM = { remove_targeted_decision = { target = ROOT decision = WTT_border_conflict_escalation_warning_defender } }
+				var:attacker_state = {
+					clr_state_flag = border_incident_active
+				}
+				var:defender_state = {
+					clr_state_flag = border_incident_active
+				}
+				clear_variable = attacker_state
+				clear_variable = defender_state
+			}
+		}
+
+		complete_effect = {
+			
+			start_border_war = {
+				change_state_after_war = no
+				attacker = {
+					state = var:attacker_state
+					num_provinces = 2
+					on_win = SOV_border_conflict_won_attacker.2
+					on_lose = SOV_border_conflict_lost_attacker.2
+					on_cancel = SOV_border_conflict_canceled_attacker.2
+				}
+				
+				defender = {
+					state = var:defender_state
+					num_provinces = 2
+					on_win = SOV_border_conflict_won_defender.2
+					on_lose = SOV_border_conflict_lost_defender.2
+					on_cancel = SOV_border_conflict_canceled_defender.2
+				}
+			}
+			set_border_war_data = {
+				attacker = var:attacker_state
+				defender = var:defender_state
+				combat_width = 85 
+			}
+			FROM = {
+				activate_targeted_decision = { target = ROOT decision = WTT_border_conflict_time_until_cancelled }
+			}
+			activate_targeted_decision = { target = FROM decision = WTT_border_conflict_time_until_cancelled }
+			
+		}
+	}
+	#Decision to escalate incident on border with FROM to border conflict
+}

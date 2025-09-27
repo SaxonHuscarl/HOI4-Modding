@@ -1,0 +1,118 @@
+# befriend
+# conquer
+# antagonize
+# build_ship
+# build_army
+# unit_ratio
+# build_building
+# research_tech
+# garrison
+# protect
+# influence
+
+do_not_join_england = {
+	allowed = { tag = FIN }
+	enable = {
+		country_exists = ENG
+		ENG = { has_war_with = GER }
+	}
+	abort = {
+		has_war_with = GER 
+		NOT = { country_exists = ENG }
+	}
+	
+	ai_strategy = { type = befriend id = "ENG" 			value = -200 	}
+	ai_strategy = { type = alliance id = "ENG" 				value = -200 	}
+}
+
+do_not_join_war = {
+	allowed = { tag = FIN }
+	enable = {
+		country_exists = SOV
+		ENG = { has_war_with = GER }
+	}
+	abort = {
+		has_war_with = GER 
+		NOT = { country_exists = SOV }
+	}
+	
+	ai_strategy = { type = befriend id = "SOV"				value = -200 	}
+	ai_strategy = { type = alliance id = "SOV" 				value = -200 	}
+	ai_strategy = { type = alliance id = "GER" 				value = -40 		}
+}
+FIN_garrison = {
+
+    allowed = {
+        tag = FIN
+    }
+
+    enable = {
+        SOV = { is_ai = no }
+    }
+
+    abort_when_not_enabled = yes
+
+	ai_strategy = {
+        type = put_unit_buffers
+        ratio = 0.15
+    
+		states = {
+		  146 # Karelia
+		  111 # Helsinki
+		  149 # Ponjanmaa
+		  818 # Hanko
+		}
+		subtract_fronts_from_need = no
+	}
+}
+
+FIN_prepare_2nd_war_with_SOV = {
+	allowed = { tag = FIN }
+	enable = {
+		has_global_flag = first_finish_war_over
+		is_subject = no
+	}
+	abort = {
+		OR = {
+			is_subject_of = SOV
+			has_capitulated = yes
+			SOV = { has_capitulated = yes }
+		}
+	}
+
+	ai_strategy = { 
+		type = conquer 
+		id = SOV
+		value = 500
+	}
+}
+
+FIN_no_front_GER = {
+	allowed = { tag = FIN }
+	enable = {
+		date < 1944.1.1
+		144 = { is_controlled_by = GER }
+		NOT = { has_war_with = GER }
+		is_subject = no
+		OR = {
+			has_global_flag = first_finish_war_over
+			has_war_with = SOV
+		}
+	}
+	abort = {
+		OR = {
+			has_war_with = GER
+			is_subject = yes
+			NOT = { has_war_with = SOV }
+			date > 1944.1.1
+		}
+	}
+
+	ai_strategy = { 
+		type = front_unit_request 
+		id = GER
+		value = -100
+	}
+}
+
+### EOF ###

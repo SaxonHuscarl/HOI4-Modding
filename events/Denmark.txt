@@ -1,0 +1,384 @@
+﻿add_namespace = denmark
+
+
+country_event = {
+	id = denmark.2
+	title = denmark.2.t
+	desc = denmark.2.desc
+	picture = GFX_report_event_swedish_soldier
+	
+	trigger = {
+		tag = DEN
+		has_defensive_war_with = GER
+		GER = { has_government = fascism }
+	}
+	is_triggered_only = yes
+	
+	option = { #Surrender
+		name = denmark.2.a
+		ai_chance = {	
+			factor = 3
+			modifier = {
+				factor = 100
+				is_historical_focus_on = yes
+			}
+			modifier = {
+				factor = 0.25
+				OR = {
+					is_in_faction_with = FIN 
+					is_in_faction_with = SWE
+				}
+			}
+		}
+		GER = {
+			country_event = { id = denmark.3 }
+		}	
+	}
+
+	option = { # Refuse
+		name = denmark.2.b
+		ai_chance = {	
+			factor = 1	
+			modifier = {
+				factor = 100
+				OR = {
+					is_in_faction_with = FIN 
+					is_in_faction_with = SWE
+				}
+			}
+		}		
+	}
+	
+}
+country_event = {
+	id = denmark.3
+	title = denmark.3.t
+	desc = denmark.3.desc
+	picture = GFX_report_event_swedish_soldier
+	
+	is_triggered_only = yes
+	
+	option = { #Agree
+		name = denmark.3.a
+		ai_chance = {	
+			factor = 3
+			modifier = {
+				factor = 100
+				is_historical_focus_on = yes
+			}
+		}
+		DEN = {
+			if = {
+				limit = {
+					is_in_faction = yes 
+				}
+				leave_faction = yes
+			}
+			white_peace = GER
+			country_event = { id = wtt_denmark.1 days = 1 }
+			100 = {
+				teleport_armies = {
+					limit = {
+						always = yes
+					}
+				}
+			}
+			101 = {
+				teleport_armies = {
+					limit = {
+						always = yes
+					}
+				}
+			}
+			if = {
+				limit = {
+					is_ai = yes 
+				}
+				337 = {
+					teleport_armies = {
+						limit = {
+							always = yes
+						}
+					}
+				}
+			}
+		}
+		GER = {
+			if = {
+				limit = {
+					has_dlc = "Together for Victory"
+				}
+				DEN = { keep_current_politics = yes }
+				set_autonomy = {
+					target = DEN
+					autonomous_state = autonomy_colony
+				}
+			}
+			else = {
+				DEN = { keep_current_politics = yes }
+				puppet = DEN
+			}
+		}
+		if = {
+			limit = {
+				ENG = { is_ai = yes	}
+			}
+			ENG = {
+				transfer_state = 337
+			}
+		}
+	}
+
+	option = { # No Crush Them
+		name = denmark.3.b
+		ai_chance = {	
+			factor = 1	
+		}
+		add_political_power = -15
+		hidden_effect = {
+			DEN = {
+				if = {
+					limit = {
+						check_variable = { global.event_random < 15 }
+					}
+					country_event = { id = wtt_denmark.1 days = 1 }
+					100 = {
+						add_extra_state_shared_building_slots = 1
+						add_building_construction = {
+							type = arms_factory
+							level = 1
+							instant_build = yes
+						}
+					}
+				}
+				else_if = {
+					limit = {
+						check_variable = { global.event_random < 23 }
+					}
+					country_event = { id = wtt_denmark.1 days = 1 }
+				}
+				else_if = {
+					limit = {
+						check_variable = { global.event_random < 50 }
+					}				
+					country_event = { id = denmark.4 days = 1 }
+					news_event = { id = news.331 days = 2 }
+				}
+				else = {
+					100 = {
+						add_extra_state_shared_building_slots = 1
+						add_building_construction = {
+							type = arms_factory
+							level = 1
+							instant_build = yes
+						}
+					}
+					country_event = { id = denmark.4 days = 1 }
+					news_event = { id = news.331 days = 2 }
+				}
+			}
+		}
+	}
+	
+}
+country_event = {
+	id = denmark.4
+	title = denmark.4.t
+	desc = denmark.4.desc
+	picture = GFX_report_event_swedish_soldier
+	
+	trigger = {
+		tag = DEN
+	}
+	is_triggered_only = yes
+	immediate = {
+		
+	}		
+	option = { 
+		name = denmark.4.a
+		ICE = {
+			add_state_core = 100
+			inherit_technology = DEN
+			set_temp_variable = { slots = DEN.amount_research_slots }
+			if = {
+				limit = { check_variable = { slots > 2 } }
+				subtract_from_temp_variable = { slots = 2 }
+				multiply_temp_variable = { slots = -1 }
+				meta_effect = {
+					text = {
+						ICE = { add_research_slot = [NUM] }
+					}
+					NUM = "[?slots]"
+				}
+			}
+			transfer_state = 100
+			division_template = {
+				name = "Garnison"
+				regiments = {
+					Militia = { x = 0 y = 0 }
+					Militia = { x = 0 y = 1 }
+				}
+				support = { 
+					DIV_HQ = { x = 0 y = 0 }
+				} 
+			}			
+		}
+		ENG = {
+			add_to_faction = ICE
+		}	
+		100 = {
+			create_unit = {
+				division = "name = \"Garnison\" division_template = \"Garnison\" start_experience_factor = 0.0 start_equipment_factor = 0.85"
+				owner = ICE
+			}
+		}
+	}	
+}
+# Copenhaughen Conference
+country_event = {
+	id = denmark.5
+	title = denmark.5.t
+	desc = denmark.5.d
+	picture = GFX_report_event_stockholm_conference
+
+	is_triggered_only = yes
+
+	option = {
+		name = denmark.5.a	
+		ai_chance = {
+			base = 60 
+			modifier = {
+				factor = 0.75
+				is_historical_focus_on = no
+			}
+		}
+		ROOT = {
+			add_opinion_modifier = { target = DEN modifier = trade_partner }
+			add_to_variable = {
+				var = loves_den
+				value = 1
+			}
+		}
+		DEN = {
+			add_opinion_modifier = { target = ROOT modifier = trade_partner }
+		}
+	}
+	
+	option = {
+		name = denmark.5.b
+		ai_chance = {
+			base = 40 
+			modifier = {
+				factor = 0.5
+				is_historical_focus_on = yes
+			}
+		}
+	}
+}
+country_event = {
+	id = denmark.6
+	title = denmark.6.t
+	desc = denmark.6.d
+	picture = GFX_report_event_stockholm_conference
+
+	is_triggered_only = yes
+
+	option = {
+		name = denmark.5.a	
+		ai_chance = {
+			base = 60 
+			modifier = {
+				factor = 2
+				has_opinion = {
+					target = DEN
+					value > 90
+				}
+			}
+		}
+		ROOT = {
+			diplomatic_relation = {
+				country = DEN
+				relation = non_aggression_pact
+				active = yes
+			}
+			add_to_variable = {
+				var = loves_den
+				value = 1
+			}
+		}
+		DEN = {
+			diplomatic_relation = {
+				country = ROOT
+				relation = non_aggression_pact
+				active = yes
+			}
+		}
+	}
+	
+	option = {
+		name = denmark.5.b
+		ai_chance = {
+			base = 40 
+			modifier = {
+				factor = 2
+				has_opinion = {
+					target = DEN
+					value < 50
+				}
+			}
+			modifier = {
+				factor = 2
+				has_opinion = {
+					target = DEN
+					value < 25
+				}
+			}
+		}
+	}
+}
+# DEN: Alliance
+country_event = {
+	id = denmark.7
+	title = denmark.7.t
+	desc = denmark.7.d
+	picture = GFX_report_event_generic_read_write
+	
+	is_triggered_only = yes
+	
+	option = { # Accept request
+		name = denmark.7.a
+		ai_chance = { 
+			factor = 80 
+		}
+		DEN = {
+			country_event = denmark.8
+			add_to_faction = ROOT
+		}
+		add_ai_strategy = {
+			type = alliance
+			id = "DEN"
+			value = 200
+		}
+	}
+	
+	option = { # Refuse request
+		name = denmark.7.b
+		ai_chance = { 
+			factor = 20 
+		}
+		DEN = { country_event = denmark.9 }
+	}
+}
+########Refuse faction Den
+country_event = {
+	id = denmark.9
+	title = denmark.9.t
+	desc = denmark.9.d
+	picture = GFX_report_event_generic_sign_treaty1
+	
+	is_triggered_only = yes
+	
+	option = { # Refuse request
+		name = sweden.11.a
+	}
+}

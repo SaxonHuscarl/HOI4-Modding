@@ -1,0 +1,2645 @@
+technologies = {
+
+	@1918 = 0
+	@1934 = 2
+	@1936 = 4
+	@1937 = 6
+	@1938 = 8
+	@1939 = 10
+	@1940 = 12
+	@1941 = 14
+	@1942 = 16
+	@1943 = 18
+	@1944 = 20
+	@1945 = 22
+	@1946 = 24
+	@1948 = 26
+
+	@RC_cav = 1
+	@RC = 2
+	@RC_bike = 3
+	@RC_tank = 2
+	@SUPP = 6
+	@AIRB_ENG = 6
+	@EG = 7
+	@EG_1 = 8
+	@CMB_ENG = 9
+	@EXP = 10
+	@MP = 12
+	@MP_SUP = 13
+	@MC = 15
+	@FH = 17
+	@LC = 19
+	@SC = 23
+	@TRAIN = 28
+	@TRAIN_ARM = 30
+	@SUPPORT_PRIORITY = 10000
+	@RECON_PRIORITY = 6000
+	@ENGI_PRIORITY = 7000
+	@MP_PRIORITY = 0 
+	@MAINT_PRIORITY = 6500
+	@HOSP_PRIORITY = 6500
+	@LOG_PRIORITY = 7000
+	@SIG_PRIORITY = 6000
+	@TRAIN_PRIORITY = 5000
+######### Technologies ###############
+	tech_support = {
+		allow = { has_country_flag = UNLOCK:support_folder }
+
+		enable_equipments = {
+			support_equipment_1
+		}
+
+		DIV_HQ = {
+			need = {
+               	support_equipment = 20
+         	}
+		}
+		DIV_HQ_airborne = {
+			need = {
+               	support_equipment = 20
+         	}
+		}
+		DIV_HQ_car = {
+			need = {
+               	support_equipment = 20
+         	}
+		}
+		DIV_HQ_mech = {
+			need = {
+               	support_equipment = 20
+         	}
+		}
+		#DIV_HQ_arm = {
+		#	need = {
+        #       	support_equipment = 20
+        # 	}
+		#}
+
+		path = {
+			leads_to_tech = tech_recon
+			research_cost_coeff = 1
+		}
+		path = {
+			leads_to_tech = tech_engineers
+			research_cost_coeff = 1
+		}
+		path = {
+			leads_to_tech = tech_combat_engineers
+			research_cost_coeff = 1
+		}
+		path = {
+			leads_to_tech = tech_military_police
+			research_cost_coeff = 1
+		}
+		path = {
+			leads_to_tech = tech_field_hospital
+			research_cost_coeff = 1
+		}
+		path = {
+			leads_to_tech = tech_maintenance_company
+			research_cost_coeff = 1
+		}
+		path = {
+			leads_to_tech = tech_logistics_company
+			research_cost_coeff = 1
+		}
+		path = {
+			leads_to_tech = tech_signal_company
+			research_cost_coeff = 1
+		}
+
+		research_cost = 1.0
+		start_year = 1918
+		folder = {
+			name = support_folder
+			position = { x = @SUPP y = @1918 }
+		}
+
+		on_research_complete = {
+			set_temp_variable = { tech = token:tech_support }
+			on_support_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = support_tech_tt
+
+			custom_effect_tooltip = support_equipment_new_equipment_tt
+			set_temp_variable = { temp = 20 }
+			set_temp_variable = { total_div_hq = num_battalions_with_type@DIV_HQ }
+			add_to_temp_variable = { total_div_hq = num_battalions_with_type@DIV_HQ_airborne }
+			add_to_temp_variable = { total_div_hq = num_battalions_with_type@DIV_HQ_car }
+			add_to_temp_variable = { total_div_hq = num_battalions_with_type@DIV_HQ_mech }
+			#add_to_temp_variable = { total_div_hq = num_battalions_with_type@DIV_HQ_arm }
+			multiply_temp_variable = { total_div_hq = temp }
+			custom_effect_tooltip = div_hq_tt
+		}
+
+		categories = {
+			support_tech
+		}		special_project_specialization = { specialization_land }
+		ai_will_do = {
+			base = @SUPPORT_PRIORITY
+			modifier = {
+				add = ai_add 
+				
+				ai_support_equipment_tech = yes 
+			}
+			modifier = {
+				factor = ai_factor
+				
+				set_temp_variable = { ai_factor = ai_support_tech_need }
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		
+	}
+######## Engineers
+	tech_engineers = {
+		allow = { has_country_flag = UNLOCK:support_folder }
+
+		enable_subunits = {
+			engineer
+			engineer_mot
+		}
+
+		path = {
+			leads_to_tech = tech_engineers2
+			research_cost_coeff = 1
+		}
+
+
+		research_cost = 1.2
+		start_year = 1934
+		folder = {
+			name = support_folder
+			position = { x = @EG y = @1934 }
+		}
+		on_research_complete = {
+			set_temp_variable = { tech = token:tech_engineers }
+			on_support_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = support_tech_tt
+			custom_effect_tooltip = engineers_tech_tt
+		}
+		categories = {
+			support_tech
+			engineers_tech
+		}		special_project_specialization = { specialization_land }
+		ai_will_do = {
+			base = 0
+			modifier = {
+				add = ai_base
+				
+				set_temp_variable = { base = @ENGI_PRIORITY }
+				ai_engineer_tech = yes 
+			}
+			modifier = {
+				factor = ai_tech_need/tech_engineers?1
+			}
+			modifier = {
+				factor = ai_factor
+				
+				set_temp_variable = { ai_factor = ai_support_tech_need }
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		
+	}
+	tech_engineers2 = {
+		allow = { has_country_flag = UNLOCK:support_folder }
+
+		enable_subunits = {
+			engineer_mech
+			#engineer_arm #already in tank techs tab, where the equipment needed for it is as well
+		}
+
+		path = {
+			leads_to_tech = tech_engineers3
+			research_cost_coeff = 1
+		}
+		path = {
+			leads_to_tech = tech_engineers_bridges
+			research_cost_coeff = 1
+		}
+		path = {
+			leads_to_tech = tech_airborne_engineers
+			research_cost_coeff = 1
+		}
+
+		category_all_engineer = {
+			entrenchment = 2
+			fort = {
+				defence = 0.05
+				attack = 0.05
+			}
+		}
+
+		research_cost = 0.8
+		start_year = 1939
+		folder = {
+			name = support_folder
+			position = { x = @EG y = @1939 }
+		}
+		on_research_complete = {
+			set_temp_variable = { tech = token:tech_engineers2 }
+			on_support_tech_research_complete = yes
+			custom_effect_tooltip = engineer_tt2
+			custom_effect_tooltip = terrain_forts_TT
+			set_temp_variable = { attack = 0.05 }
+			set_temp_variable = { defence = 0.05 }
+			custom_effect_tooltip = terrain_attack_TT
+			custom_effect_tooltip = terrain_defence_TT
+
+			custom_effect_tooltip = {
+				localization_key = SP_UNLOCK_PROJECT
+				PROJECT = sp_land_engineers_bridges
+			}
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = support_tech_tt
+			custom_effect_tooltip = engineers_tech_tt
+		}
+		categories = {
+			support_tech
+			engineers_tech
+		}		special_project_specialization = { specialization_land }
+		ai_will_do = {
+			base = 0
+			modifier = {
+				add = ai_base
+				
+				set_temp_variable = { base = @ENGI_PRIORITY }
+				ai_engineer_tech = yes 
+			}
+			modifier = {
+				factor = ai_tech_need/tech_engineers2?1
+			}
+			modifier = {
+				factor = ai_factor
+				
+				set_temp_variable = { ai_factor = ai_support_tech_need }
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		
+	}
+	tech_engineers3 = {
+		allow = { has_country_flag = UNLOCK:support_folder }
+
+		path = {
+			leads_to_tech = tech_engineers4
+			research_cost_coeff = 1
+		}
+		category_all_engineer = {
+			entrenchment = 1
+			river = {
+                attack = 0.05
+			}
+		}
+
+		research_cost = 0.8
+		start_year = 1942
+		folder = {
+			name = support_folder
+			position = { x = @EG y = @1942 }
+		}
+		on_research_complete = {
+			set_temp_variable = { tech = token:tech_engineers3 }
+			on_support_tech_research_complete = yes
+			custom_effect_tooltip = engineer_tt2
+			custom_effect_tooltip = terrain_river_TT
+			set_temp_variable = { attack = 0.05 }
+			custom_effect_tooltip = terrain_attack_TT
+
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = support_tech_tt
+			custom_effect_tooltip = engineers_tech_tt
+		}
+		categories = {
+			support_tech
+			engineers_tech
+		}
+		dependencies = {
+			tech_Headquarters2 = 1
+		}		special_project_specialization = { specialization_land }
+		ai_will_do = {
+			base = 0
+			modifier = {
+				add = ai_base
+				
+				set_temp_variable = { base = @ENGI_PRIORITY }
+				ai_engineer_tech = yes 
+			}
+			modifier = {
+				factor = ai_factor
+				
+				set_temp_variable = { ai_factor = ai_support_tech_need }
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		
+	}
+	tech_engineers4 = {
+		allow = { has_country_flag = UNLOCK:support_folder }
+
+		category_all_engineer = {
+			entrenchment = 1
+			urban = {
+				attack = 0.05
+			}
+			densecity = {
+				attack = 0.05
+			}
+			capital = {
+				attack = 0.05
+			}
+		}
+
+		research_cost = 0.8
+		start_year = 1945
+		folder = {
+			name = support_folder
+			position = { x = @EG y = @1945 }
+		}
+		on_research_complete = {
+			set_temp_variable = { tech = token:tech_engineers4 }
+			on_support_tech_research_complete = yes
+			custom_effect_tooltip = engineer_tt2
+			custom_effect_tooltip = terrain_urban_TT
+			set_temp_variable = { attack = 0.05 }
+			custom_effect_tooltip = terrain_attack_TT
+
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = support_tech_tt
+			custom_effect_tooltip = engineers_tech_tt
+		}
+		categories = {
+			support_tech
+			engineers_tech
+		}
+		dependencies = {
+			tech_Headquarters3 = 1
+		}		special_project_specialization = { specialization_land }
+		ai_will_do = {
+			base = 0
+			modifier = {
+				add = ai_base
+				
+				set_temp_variable = { base = @ENGI_PRIORITY }
+				ai_engineer_tech = yes 
+			}
+			modifier = {
+				factor = ai_factor
+				
+				set_temp_variable = { ai_factor = ai_support_tech_need }
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		
+	}
+	tech_combat_engineers = {
+		allow = { has_country_flag = UNLOCK:support_folder }
+
+		enable_subunits = {
+			combat_engineer
+			combat_engineer_mot
+		}
+
+		path = {
+			leads_to_tech = tech_combat_engineers2
+			research_cost_coeff = 1
+		}
+
+		research_cost = 1.2
+		start_year = 1936
+		folder = {
+			name = support_folder
+			position = { x = @CMB_ENG y = @1936 }
+		}
+
+		on_research_complete = {
+			set_temp_variable = { tech = token:tech_combat_engineers }
+			on_support_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = support_tech_tt
+			custom_effect_tooltip = engineers_tech_tt
+		}
+
+		categories = {
+			support_tech
+			engineers_tech
+		}		special_project_specialization = { specialization_land }
+		ai_will_do = {
+			base = 0
+			modifier = {
+				add = ai_base
+				
+				set_temp_variable = { base = @ENGI_PRIORITY }
+				ai_combat_engineer_tech = yes 
+			}
+			modifier = {
+				factor = ai_tech_need/tech_combat_engineers?1
+			}
+			modifier = {
+				factor = ai_factor
+				
+				set_temp_variable = { ai_factor = ai_support_tech_need }
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		
+	}
+	tech_combat_engineers2 = {
+		allow = { has_country_flag = UNLOCK:support_folder }
+
+		enable_subunits = {
+			combat_engineer_mech
+			#combat_engineer_arm #already in tank techs tab, where the equipment needed for it is as well
+		}
+
+		path = {
+			leads_to_tech = explosives_team
+			research_cost_coeff = 1
+		}
+
+		research_cost = 1.2
+		start_year = 1939
+		folder = {
+			name = support_folder
+			position = { x = @CMB_ENG y = @1939 }
+		}
+
+		on_research_complete = {
+			set_temp_variable = { tech = token:tech_combat_engineers2 }
+			on_support_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = support_tech_tt
+			custom_effect_tooltip = engineers_tech_tt
+		}
+
+		categories = {
+			support_tech
+			engineers_tech
+		}		special_project_specialization = { specialization_land }
+		ai_will_do = {
+			base = 0
+			modifier = {
+				add = ai_base
+				
+				set_temp_variable = { base = @ENGI_PRIORITY }
+				ai_combat_engineer_tech = yes 
+			}
+			modifier = {
+				factor = ai_tech_need/tech_combat_engineers2?1
+			}
+			modifier = {
+				factor = ai_factor
+				
+				set_temp_variable = { ai_factor = ai_support_tech_need }
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		
+	}
+	explosives_team = {
+		allow = { has_country_flag = UNLOCK:support_folder }
+
+		category_all_engineer = {
+			river = {
+				defence = 0.05
+			}
+		}
+		category_assault_infantry = {
+			breakthrough = 0.01
+			urban = {
+				attack = 0.05
+			}
+			densecity = {
+				attack = 0.05
+			}
+			capital = {
+				attack = 0.05
+			}
+			fort = {
+				attack = 0.025
+			}
+		}
+		combat_engineer = {
+			breakthrough = 0.01
+			urban = {
+				attack = 0.07
+			}
+			densecity = {
+				attack = 0.07
+			}
+			capital = {
+				attack = 0.07
+			}
+			fort = {
+				attack = 0.07
+			}
+		}
+		combat_engineer_mot = {
+			breakthrough = 0.01
+			urban = {
+				attack = 0.085
+			}
+			densecity = {
+				attack = 0.085
+			}
+			capital = {
+				attack = 0.085
+			}
+			fort = {
+				attack = 0.085
+			}
+		}
+		combat_engineer_mech = {
+			breakthrough = 0.01
+			urban = {
+				attack = 0.1
+			}
+			densecity = {
+				attack = 0.1
+			}
+			capital = {
+				attack = 0.1
+			}
+			fort = {
+				attack = 0.1
+			}
+		}
+		combat_engineer_arm = {
+			breakthrough = 0.01
+			urban = {
+				attack = 0.12
+			}
+			densecity = {
+				attack = 0.12
+			}
+			capital = {
+				attack = 0.12
+			}
+			fort = {
+				attack = 0.12
+			}
+		}
+
+		research_cost = 0.8
+		start_year = 1940
+		folder = {
+			name = support_folder
+			position = { x = @EXP y = @1940 }
+		}
+		on_research_complete = {
+			set_temp_variable = { tech = token:explosives_team }
+			on_support_tech_research_complete = yes
+			custom_effect_tooltip = terrain_river_TT
+			set_temp_variable = { defence = 0.05 }
+			custom_effect_tooltip = terrain_defence_TT
+			custom_effect_tooltip = space_TT
+			
+			custom_effect_tooltip = explosives_team_TT
+
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = support_tech
+			custom_effect_tooltip = engineers_tech
+		}
+		categories = {
+			support_tech
+			engineers_tech
+		}		special_project_specialization = { specialization_land }
+		ai_will_do = {
+			base = 0
+			modifier = {
+				add = ai_base
+				
+				set_temp_variable = { base = @ENGI_PRIORITY }
+				ai_engineer_tech = yes 
+			}
+			modifier = {
+				factor = ai_factor
+				
+				set_temp_variable = { ai_factor = ai_support_tech_need }
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		
+	}
+	tech_airborne_engineers = {
+		allow = { has_country_flag = UNLOCK:support_folder }
+
+		enable_subunits = {
+			airborne_engineer
+		}
+
+		dependencies = {
+			paratroopers3 = 1
+		}
+
+		research_cost = 1.2
+		start_year = 1944
+		folder = {
+			name = support_folder
+			position = { x = @AIRB_ENG y = @1944 }
+		}
+		on_research_complete = {
+			set_temp_variable = { tech = token:tech_airborne_engineers }
+			on_support_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = support_tech_tt
+			custom_effect_tooltip = engineers_tech_tt
+			custom_effect_tooltip = para_tech_tt
+		}
+		categories = {
+			support_tech
+			engineers_tech
+			para_tech
+		}		special_project_specialization = { specialization_land }
+		ai_will_do = {
+			factor = 0
+		}
+		
+	}
+	################################################################################
+	tech_engineers_bridges = {
+		allow = { 
+			ROOT = { is_special_project_completed = sp:sp_land_engineers_bridges }
+		}
+		
+		is_special_project_tech = yes
+
+		category_all_engineer = {
+			need = {
+				support_equipment = 5
+			}
+			breakthrough = 0.01
+			river = {
+				attack = 0.1
+				movement = 0.15
+			}
+		}
+
+		on_research_complete = {
+			set_temp_variable = { tech = token:tech_engineers_bridges }
+			on_support_tech_research_complete = yes
+			custom_effect_tooltip = engineer_tt3
+			custom_effect_tooltip = terrain_river_TT
+			set_temp_variable = { attack = 0.1 }
+			set_temp_variable = { movement = 0.15 }
+			custom_effect_tooltip = terrain_attack_TT
+			custom_effect_tooltip = terrain_movement_TT
+
+			custom_effect_tooltip = increase_cost_warning
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = support_tech_tt
+			custom_effect_tooltip = engineers_tech_tt
+
+			set_variable = { tech_engineers_bridges = 1 }
+		}
+
+		research_cost = 1
+		start_year = 1940
+		folder = {
+			name = support_folder
+			position = { x = @EG_1 y = @1940 }
+		}
+
+		categories = {
+			support_tech
+			engineers_tech
+		}		special_project_specialization = { specialization_land }
+		ai_will_do = {
+			base = 0
+			modifier = {
+				add = ai_base
+				
+				set_temp_variable = { base = @ENGI_PRIORITY }
+				ai_engineer_tech = yes 
+			}
+			modifier = {
+				factor = ai_factor
+				
+				set_temp_variable = { ai_factor = ai_support_tech_need }
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		
+	}
+#################### Infantry Recon ################
+	tech_recon = {
+		allow = { has_country_flag = UNLOCK:support_folder }
+
+		enable_subunits = {
+			recon
+		}
+		enable_equipments = {
+			recon_equipment_0
+		}
+
+		path = {
+			leads_to_tech = tech_recon2
+			research_cost_coeff = 1
+		}
+		sub_technologies = {
+			subtech_recon_cav_1
+			subtech_recon_mot_1
+		}
+
+		research_cost = 1
+		start_year = 1934
+		folder = {
+			name = support_folder
+			position = { x = @RC y = @1934 }
+		}
+		on_research_complete = {
+			set_temp_variable = { tech = token:tech_recon }
+			on_support_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = support_tech_tt
+			custom_effect_tooltip = recon_tech_tt
+		}
+		categories = {
+			support_tech
+			recon_tech
+		}		special_project_specialization = { specialization_land }
+		ai_will_do = {
+			base = 0
+			modifier = {
+				add = ai_base
+				
+				set_temp_variable = { base = @RECON_PRIORITY }
+				ai_recon_tech = yes 
+			}
+			modifier = {
+				factor = ai_tech_need/tech_recon?1
+			}
+			modifier = {
+				factor = ai_factor
+				
+				set_temp_variable = { ai_factor = ai_support_tech_need }
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		
+	}
+
+	subtech_recon_cav_1 = {
+		allow = { has_country_flag = UNLOCK:support_folder }
+
+		#enable_equipments = {
+		#	recon_cav_equipment_0
+		#}
+
+		enable_subunits = {
+			recon_cav
+		}
+
+		research_cost = 0.5
+		start_year = 1934		special_project_specialization = { specialization_land }
+		ai_will_do = {
+			base = 0
+			modifier = {
+				add = ai_base
+				
+				set_temp_variable = { base = @RECON_PRIORITY }
+				ai_recon_cav_tech = yes 
+			}
+			modifier = {
+				factor = ai_tech_need/subtech_recon_cav_1?1
+			}
+			modifier = {
+				factor = ai_factor
+				
+				set_temp_variable = { ai_factor = ai_support_tech_need }
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		
+
+		on_research_complete = {
+			set_temp_variable = { tech = token:subtech_recon_cav_1 }
+			on_support_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = support_tech_tt
+			custom_effect_tooltip = recon_tech_tt
+			custom_effect_tooltip = horse_tech_tt
+		}
+		categories = {
+			support_tech
+			recon_tech
+			horse_tech
+		}
+	}
+
+	subtech_recon_mot_1 = {
+		allow = { has_country_flag = UNLOCK:support_folder }
+
+		enable_equipments = {
+			recon_mot_equipment_0
+		}
+
+		enable_subunits = {
+			recon_mot
+		}
+
+		research_cost = 0.5
+		start_year = 1935		special_project_specialization = { specialization_land }
+		ai_will_do = {
+			base = 0
+			modifier = {
+				add = ai_base
+				
+				set_temp_variable = { base = @RECON_PRIORITY }
+				ai_recon_mot_tech = yes 
+			}
+			modifier = {
+				factor = ai_tech_need/subtech_recon_mot_1?1
+			}
+			modifier = {
+				factor = ai_factor
+				
+				set_temp_variable = { ai_factor = ai_support_tech_need }
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		
+		on_research_complete = {
+			set_temp_variable = { tech = token:subtech_recon_mot_1 }
+			on_support_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = support_tech_tt
+			custom_effect_tooltip = recon_tech_tt
+			custom_effect_tooltip = motorized_equipment_tt
+		}
+		categories = {
+			support_tech
+			recon_tech
+			motorized_equipment
+		}
+	}
+
+	tech_recon2 = {
+		allow = { has_country_flag = UNLOCK:support_folder }
+
+		enable_equipments = {
+			recon_equipment_1
+		}
+
+		sub_technologies = {
+			subtech_recon_mech_1
+		}
+
+		path = {
+			leads_to_tech = tech_recon3
+			research_cost_coeff = 1
+		}
+		path = {
+			leads_to_tech = tech_mot_recon3
+			research_cost_coeff = 1
+		}
+
+		research_cost = 0.8
+		start_year = 1938
+		folder = {
+			name = support_folder
+			position = { x = @RC y = @1938 }
+		}
+		on_research_complete = {
+			set_temp_variable = { tech = token:tech_recon2 }
+			on_support_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = support_tech_tt
+			custom_effect_tooltip = recon_tech_tt
+		}
+		categories = {
+			support_tech
+			recon_tech
+		}		special_project_specialization = { specialization_land }
+		ai_will_do = {
+			base = 0
+			modifier = {
+				add = ai_base
+				
+				set_temp_variable = { base = @RECON_PRIORITY }
+				multiply_temp_variable = { base = 2 }
+				ai_recon_tech = yes 
+			}
+			modifier = {
+				factor = ai_factor
+				
+				set_temp_variable = { ai_factor = ai_support_tech_need }
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		
+	}
+	subtech_recon_mech_1 = {
+		allow = { has_country_flag = UNLOCK:support_folder }
+
+		enable_subunits = {
+			recon_mech
+		}
+
+		dependencies = {
+			subtech_recon_mot_1 = 1
+			mechanised_infantry = 1
+		}
+
+		research_cost = 0.4
+		start_year = 1940		special_project_specialization = { specialization_land }
+		ai_will_do = {
+			base = 0
+			modifier = {
+				add = ai_base
+				
+				set_temp_variable = { base = @RECON_PRIORITY }
+				ai_recon_mech_tech = yes 
+			}
+			modifier = {
+				factor = ai_tech_need/subtech_recon_mech_1?1
+			}
+			modifier = {
+				factor = ai_factor
+				
+				set_temp_variable = { ai_factor = ai_support_tech_need }
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		
+		on_research_complete = {
+			set_temp_variable = { tech = token:subtech_recon_mech_1 }
+			on_support_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = support_tech_tt
+			custom_effect_tooltip = recon_tech_tt
+			custom_effect_tooltip = motorized_equipment_tt
+			custom_effect_tooltip = cat_mechanized_equipment_tt
+		}
+		categories = {
+			support_tech
+			recon_tech
+			motorized_equipment
+			cat_mechanized_equipment
+		}
+	}
+	tech_recon3 = {
+		allow = { has_country_flag = UNLOCK:support_folder }
+
+		recon = {
+			recon = 1
+		}
+		recon_cav = {
+			recon = 1
+		}
+
+		path = {
+			leads_to_tech = tech_recon4
+			research_cost_coeff = 1
+		}
+
+		research_cost = 0.6
+		start_year = 1939
+		folder = {
+			name = support_folder
+			position = { x = @RC_cav y = @1939 }
+		}
+		on_research_complete = {
+			set_temp_variable = { tech = token:tech_recon3 }
+			on_support_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = support_tech_tt
+			custom_effect_tooltip = recon_tech_tt
+			custom_effect_tooltip = horse_tech_tt
+		}
+		categories = {
+			support_tech
+			recon_tech
+			horse_tech
+		}		special_project_specialization = { specialization_land }
+		ai_will_do = {
+			base = 0
+			modifier = {
+				add = ai_base
+				
+				set_temp_variable = { base = @RECON_PRIORITY }
+				ai_recon_tech = yes 
+			}
+			modifier = {
+				factor = ai_factor
+				
+				set_temp_variable = { ai_factor = ai_support_tech_need }
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		
+	}
+	tech_mot_recon3 = {
+		allow = { has_country_flag = UNLOCK:support_folder }
+
+		category_mobile_recon = {
+			recon = 1
+		}
+		category_tank_recon = {
+			recon = 1
+		}
+		dependencies = {
+			subtech_recon_mot_1 = 1
+		}
+		path = {
+			leads_to_tech = tech_mot_recon4
+			research_cost_coeff = 1
+		}
+		path = {
+			leads_to_tech = tech_trm_tank_recon
+			research_cost_coeff = 1
+		}
+
+		research_cost = 0.75
+		start_year = 1939
+		folder = {
+			name = support_folder
+			position = { x = @RC_bike y = @1939 }
+		}
+		on_research_complete = {
+			set_temp_variable = { tech = token:tech_mot_recon3 }
+			on_support_tech_research_complete = yes
+			custom_effect_tooltip = {
+				localization_key = SP_UNLOCK_PROJECT
+				PROJECT = sp_land_tank_recon
+			}
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = support_tech_tt
+			custom_effect_tooltip = recon_tech_tt
+			custom_effect_tooltip = motorized_equipment_tt
+		}
+		categories = {
+			support_tech
+			recon_tech
+			motorized_equipment
+		}		special_project_specialization = { specialization_land }
+		ai_will_do = {
+			base = 0
+			modifier = {
+				add = ai_base
+				
+				set_temp_variable = { base = @RECON_PRIORITY }
+				ai_recon_mot_tech = yes 
+			}
+			modifier = {
+				factor = ai_factor
+				
+				set_temp_variable = { ai_factor = ai_support_tech_need }
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		
+	}
+	tech_recon4 = {
+		allow = { has_country_flag = UNLOCK:support_folder }
+
+		recon = {
+			recon = 1
+		}
+		recon_cav = {
+			recon = 1
+		}
+
+		path = {
+			leads_to_tech = tech_recon5
+			research_cost_coeff = 1
+		}
+
+		research_cost = 0.6
+		start_year = 1942
+		folder = {
+			name = support_folder
+			position = { x = @RC_cav y = @1942 }
+		}
+		on_research_complete = {
+			set_temp_variable = { tech = token:tech_recon4 }
+			on_support_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = support_tech_tt
+			custom_effect_tooltip = recon_tech_tt
+			custom_effect_tooltip = horse_tech_tt
+		}
+		categories = {
+			support_tech
+			recon_tech
+			horse_tech
+		}
+		dependencies = {
+			tech_Headquarters2 = 1
+		}		special_project_specialization = { specialization_land }
+		ai_will_do = {
+			base = 0
+			modifier = {
+				add = ai_base
+				
+				set_temp_variable = { base = @RECON_PRIORITY }
+				ai_recon_tech = yes 
+			}
+			modifier = {
+				factor = ai_factor
+				
+				set_temp_variable = { ai_factor = ai_support_tech_need }
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		
+	}
+	tech_mot_recon4 = {
+		allow = { has_country_flag = UNLOCK:support_folder }
+
+		category_mobile_recon = {
+			recon = 1
+		}
+		category_tank_recon = {
+			recon = 1
+		}
+		
+		path = {
+			leads_to_tech = tech_mot_recon5
+			research_cost_coeff = 1
+		}
+
+		research_cost = 0.75
+		start_year = 1942
+		folder = {
+			name = support_folder
+			position = { x = @RC_bike y = @1942 }
+		}
+		on_research_complete = {
+			set_temp_variable = { tech = token:tech_mot_recon4 }
+			on_support_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = support_tech_tt
+			custom_effect_tooltip = recon_tech_tt
+			custom_effect_tooltip = motorized_equipment_tt
+		}
+		categories = {
+			support_tech
+			recon_tech
+			motorized_equipment
+		}
+		dependencies = {
+			tech_Headquarters2 = 1
+		}		special_project_specialization = { specialization_land }
+		ai_will_do = {
+			base = 0
+			modifier = {
+				add = ai_base
+				
+				set_temp_variable = { base = @RECON_PRIORITY }
+				ai_recon_mot_tech = yes 
+			}
+			modifier = {
+				factor = ai_factor
+				
+				set_temp_variable = { ai_factor = ai_support_tech_need }
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		
+	}
+	tech_recon5 = {
+		allow = { has_country_flag = UNLOCK:support_folder }
+
+		recon = {
+			recon = 1
+		}
+		recon_cav = {
+			recon = 1
+		}
+
+		research_cost = 0.6
+		start_year = 1945
+		folder = {
+			name = support_folder
+			position = { x = @RC_cav y = @1945 }
+		}
+		on_research_complete = {
+			set_temp_variable = { tech = token:tech_recon5 }
+			on_support_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = support_tech_tt
+			custom_effect_tooltip = recon_tech_tt
+			custom_effect_tooltip = horse_tech_tt
+		}
+		categories = {
+			support_tech
+			recon_tech
+			horse_tech
+		}
+		dependencies = {
+			tech_Headquarters3 = 1
+		}		special_project_specialization = { specialization_land }
+		ai_will_do = {
+			base = 0
+			modifier = {
+				add = ai_base
+				
+				set_temp_variable = { base = @RECON_PRIORITY }
+				ai_recon_tech = yes 
+			}
+			modifier = {
+				factor = ai_factor
+				
+				set_temp_variable = { ai_factor = ai_support_tech_need }
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		
+	}
+	tech_mot_recon5 = {
+		allow = { has_country_flag = UNLOCK:support_folder }
+
+		category_mobile_recon = {
+			recon = 1
+		}
+		category_tank_recon = {
+			recon = 1
+		}
+
+		research_cost = 0.75
+		start_year = 1945
+		folder = {
+			name = support_folder
+			position = { x = @RC_bike y = @1945 }
+		}
+		on_research_complete = {
+			set_temp_variable = { tech = token:tech_mot_recon5 }
+			on_support_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = support_tech_tt
+			custom_effect_tooltip = recon_tech_tt
+			custom_effect_tooltip = motorized_equipment_tt
+		}
+		categories = {
+			support_tech
+			recon_tech
+			motorized_equipment
+		}
+		dependencies = {
+			tech_Headquarters3 = 1
+		}		special_project_specialization = { specialization_land }
+		ai_will_do = {
+			base = 0
+			modifier = {
+				add = ai_base
+				
+				set_temp_variable = { base = @RECON_PRIORITY }
+				ai_recon_mot_tech = yes 
+			}
+			modifier = {
+				factor = ai_factor
+				
+				set_temp_variable = { ai_factor = ai_support_tech_need }
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		
+	}
+	##########################################################
+	###################### Militairy Police ##################
+	tech_military_police = {
+		allow = { has_country_flag = UNLOCK:support_folder }
+
+		enable_subunits = {
+			military_police
+		}
+
+		path = {
+			leads_to_tech = tech_military_police2
+			research_cost_coeff = 1
+		}
+
+		research_cost = 1
+		start_year = 1934
+		folder = {
+			name = support_folder
+			position = { x = @MP y = @1934 }
+		}
+		on_research_complete = {
+			set_temp_variable = { tech = token:tech_military_police }
+			on_support_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = support_tech_tt
+			custom_effect_tooltip = military_police_tech_tt
+		}
+		categories = {
+			support_tech
+			military_police_tech
+		}		special_project_specialization = { specialization_land }
+		ai_will_do = {
+			base = 0
+			modifier = {
+				add = ai_base
+				
+				set_temp_variable = { base = @MP_PRIORITY }
+				ai_military_police_tech = yes 
+			}
+			modifier = {
+				factor = ai_factor
+				
+				set_temp_variable = { ai_factor = ai_support_tech_need }
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		
+	}
+	tech_military_police2 = {
+		allow = { has_country_flag = UNLOCK:support_folder }
+
+		military_police = {
+			suppression_factor = 0.01
+			suppression = 0.05
+		}
+
+		path = {
+			leads_to_tech = tech_military_police3
+			research_cost_coeff = 1
+		}
+
+		research_cost = 0.8
+		start_year = 1939
+		folder = {
+			name = support_folder
+			position = { x = @MP y = @1939 }
+		}
+		on_research_complete = {
+			set_temp_variable = { tech = token:tech_military_police2 }
+			on_support_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = support_tech_tt
+			custom_effect_tooltip = military_police_tech_tt
+		}
+		categories = {
+			support_tech
+			military_police_tech
+		}		special_project_specialization = { specialization_land }
+		ai_will_do = {
+			base = 0
+			modifier = {
+				add = ai_base
+				
+				set_temp_variable = { base = @MP_PRIORITY }
+				ai_military_police_tech = yes 
+			}
+			modifier = {
+				factor = ai_factor
+				
+				set_temp_variable = { ai_factor = ai_support_tech_need }
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		
+	}
+	tech_military_police3 = {
+		allow = { has_country_flag = UNLOCK:support_folder }
+
+		military_police = {
+			suppression_factor = 0.01
+			suppression = 0.05
+		}
+		path = {
+			leads_to_tech = tech_military_police4
+			research_cost_coeff = 1
+		}
+		path = {
+			leads_to_tech = tech_improved_suppression
+			research_cost_coeff = 1
+		}
+		research_cost = 0.8
+		start_year = 1942
+		folder = {
+			name = support_folder
+			position = { x = @MP y = @1942 }
+		}
+		on_research_complete = {
+			set_temp_variable = { tech = token:tech_military_police3 }
+			on_support_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = support_tech_tt
+			custom_effect_tooltip = military_police_tech_tt
+		}
+		categories = {
+			support_tech
+			military_police_tech
+		}
+		dependencies = {
+			tech_Headquarters2 = 1
+		}		special_project_specialization = { specialization_land }
+		ai_will_do = {
+			base = 0
+			modifier = {
+				add = ai_base
+				
+				set_temp_variable = { base = @MP_PRIORITY }
+				ai_military_police_tech = yes 
+			}
+			modifier = {
+				factor = ai_factor
+				
+				set_temp_variable = { ai_factor = ai_support_tech_need }
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		
+	}
+	tech_improved_suppression = {
+		allow = { has_country_flag = UNLOCK:support_folder }
+
+		category_mobile = {
+			suppression = 0.1
+		}
+		category_light_infantry = {
+			suppression = 0.1
+		}
+		research_cost = 1.3
+		start_year = 1943
+		folder = {
+			name = support_folder
+			position = { x = @MP_SUP y = @1943 }
+		}
+		on_research_complete = {
+			set_temp_variable = { tech = token:tech_improved_suppression }
+			on_support_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = support_tech_tt
+			custom_effect_tooltip = military_police_tech_tt
+		}
+		categories = {
+			support_tech
+			military_police_tech
+		}		special_project_specialization = { specialization_land }
+		ai_will_do = {
+			base = 0
+			modifier = {
+				add = ai_base
+				
+				set_temp_variable = { base = @MP_PRIORITY }
+				ai_military_police_tech = yes 
+			}
+			modifier = {
+				factor = ai_factor
+				
+				set_temp_variable = { ai_factor = ai_support_tech_need }
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		
+	}
+	tech_military_police4 = {
+		allow = { has_country_flag = UNLOCK:support_folder }
+
+		military_police = {
+			suppression_factor = 0.02
+			suppression = 0.05
+		}
+
+		research_cost = 0.8
+		start_year = 1945
+		folder = {
+			name = support_folder
+			position = { x = @MP y = @1945 }
+		}
+		on_research_complete = {
+			set_temp_variable = { tech = token:tech_military_police4 }
+			on_support_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = support_tech_tt
+			custom_effect_tooltip = military_police_tech_tt
+		}
+		categories = {
+			support_tech
+			military_police_tech
+		}
+		dependencies = {
+			tech_Headquarters3 = 1
+		}		special_project_specialization = { specialization_land }
+		ai_will_do = {
+			base = 0
+			modifier = {
+				add = ai_base
+				
+				set_temp_variable = { base = @MP_PRIORITY }
+				ai_military_police_tech = yes 
+			}
+			modifier = {
+				factor = ai_factor
+				
+				set_temp_variable = { ai_factor = ai_support_tech_need }
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		
+	}
+	#### Maintenance Company ####
+	tech_maintenance_company = {
+		allow = { has_country_flag = UNLOCK:support_folder }
+
+		enable_subunits = {
+			maintenance_company
+		}
+		dependencies = {
+			semi_motorised_infantry = 1
+		}
+
+		path = {
+			leads_to_tech = tech_maintenance_company2
+			research_cost_coeff = 1
+		}
+
+		research_cost = 1
+		start_year = 1934
+		folder = {
+			name = support_folder
+			position = { x = @MC y = @1934 }
+		}
+		on_research_complete = {
+			set_temp_variable = { tech = token:tech_maintenance_company }
+			on_support_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = support_tech_tt
+			custom_effect_tooltip = motorized_equipment_tt
+			custom_effect_tooltip = maintenance_company_tech_tt
+		}
+		categories = {
+			support_tech
+			motorized_equipment
+			maintenance_company_tech
+		}		special_project_specialization = { specialization_land }
+		ai_will_do = {
+			base = 0
+			modifier = {
+				add = ai_base
+				
+				set_temp_variable = { base = @MAINT_PRIORITY }
+				ai_maintenance_tech = yes 
+			}
+			modifier = {
+				factor = ai_tech_need/tech_maintenance_company?1
+			}
+			modifier = {
+				factor = ai_factor
+				
+				set_temp_variable = { ai_factor = ai_support_tech_need }
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		
+	}
+	tech_maintenance_company2 = {
+		allow = { has_country_flag = UNLOCK:support_folder }
+
+		category_all_maintenance = {
+			reliability_factor = 0.03
+		}
+
+		path = {
+			leads_to_tech = tech_maintenance_company3
+			research_cost_coeff = 1
+		}
+
+		research_cost = 0.8
+		start_year = 1939
+		folder = {
+			name = support_folder
+			position = { x = @MC y = @1939 }
+		}
+
+		on_research_complete = {
+			set_temp_variable = { tech = token:tech_maintenance_company2 }
+			on_support_tech_research_complete = yes
+			custom_effect_tooltip = {
+				localization_key = SP_UNLOCK_PROJECT
+				PROJECT = sp_land_recovery_tanks
+			}
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = support_tech_tt
+			custom_effect_tooltip = motorized_equipment_tt
+			custom_effect_tooltip = maintenance_company_tech_tt
+		}
+		categories = {
+			support_tech
+			motorized_equipment
+			maintenance_company_tech
+		}		special_project_specialization = { specialization_land }
+		ai_will_do = {
+			base = 0
+			modifier = {
+				add = ai_base
+				
+				set_temp_variable = { base = @MAINT_PRIORITY }
+				ai_maintenance_tech = yes 
+			}
+			modifier = {
+				factor = ai_factor
+				
+				set_temp_variable = { ai_factor = ai_support_tech_need }
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		
+	}
+	tech_maintenance_company3 = {
+		allow = { has_country_flag = UNLOCK:support_folder }
+
+		category_all_maintenance = {
+			reliability_factor = 0.03
+		}
+
+		path = {
+			leads_to_tech = tech_maintenance_company4
+			research_cost_coeff = 1
+		}
+
+		research_cost = 0.8
+		start_year = 1942
+		folder = {
+			name = support_folder
+			position = { x = @MC y = @1942 }
+		}
+
+		on_research_complete = {
+			set_temp_variable = { tech = token:tech_maintenance_company3 }
+			on_support_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = support_tech_tt
+			custom_effect_tooltip = motorized_equipment_tt
+			custom_effect_tooltip = maintenance_company_tech_tt
+		}
+		categories = {
+			support_tech
+			motorized_equipment
+			maintenance_company_tech
+		}
+		dependencies = {
+			tech_Headquarters2 = 1
+		}		special_project_specialization = { specialization_land }
+		ai_will_do = {
+			base = 0
+			modifier = {
+				add = ai_base
+				
+				set_temp_variable = { base = @MAINT_PRIORITY }
+				ai_maintenance_tech = yes 
+			}
+			modifier = {
+				factor = ai_factor
+				
+				set_temp_variable = { ai_factor = ai_support_tech_need }
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		
+	}
+	tech_maintenance_company4 = {
+		allow = { has_country_flag = UNLOCK:support_folder }
+
+		category_all_maintenance = {
+			reliability_factor = 0.03
+		}
+
+		research_cost = 0.8
+		start_year = 1945
+		folder = {
+			name = support_folder
+			position = { x = @MC y = @1945 }
+		}
+
+		on_research_complete = {
+			set_temp_variable = { tech = token:tech_maintenance_company4 }
+			on_support_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = support_tech_tt
+			custom_effect_tooltip = motorized_equipment_tt
+			custom_effect_tooltip = maintenance_company_tech_tt
+		}
+		categories = {
+			support_tech
+			motorized_equipment
+			maintenance_company_tech
+		}
+		dependencies = {
+			tech_Headquarters3 = 1
+		}		special_project_specialization = { specialization_land }
+		ai_will_do = {
+			base = 0
+			modifier = {
+				add = ai_base
+				
+				set_temp_variable = { base = @MAINT_PRIORITY }
+				ai_maintenance_tech = yes 
+			}
+			modifier = {
+				factor = ai_factor
+				
+				set_temp_variable = { ai_factor = ai_support_tech_need }
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		
+	}
+	#### Field Hospital ####
+	tech_field_hospital = {
+		allow = { has_country_flag = UNLOCK:support_folder }
+
+		enable_subunits = {
+			field_hospital_cav
+			field_hospital
+		}
+
+		path = {
+			leads_to_tech = tech_field_hospital2
+			research_cost_coeff = 1
+		}
+
+		dependencies = {
+			tech_liaison_cars = 1
+		}
+
+		research_cost = 1
+		start_year = 1934
+		folder = {
+			name = support_folder
+			position = { x = @FH y = @1934 }
+		}
+		on_research_complete = {
+			set_temp_variable = { tech = token:tech_field_hospital }
+			on_support_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = support_tech_tt
+			custom_effect_tooltip = motorized_equipment_tt
+			custom_effect_tooltip = medical_tech_tt
+			custom_effect_tooltip = hospital_tech_tt
+			custom_effect_tooltip = horse_tech_tt
+		}
+		categories = {
+			support_tech
+			motorized_equipment
+			medical_tech
+			hospital_tech
+			horse_tech
+		}		special_project_specialization = { specialization_land }
+		ai_will_do = {
+			base = 0
+			modifier = {
+				add = ai_base
+				
+				set_temp_variable = { base = @HOSP_PRIORITY }
+				ai_field_hospital_tech = yes 
+			}
+			modifier = {
+				factor = ai_tech_need/tech_field_hospital?1
+			}
+			modifier = {
+				factor = ai_factor
+				
+				set_temp_variable = { ai_factor = ai_support_tech_need }
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		
+	}
+	tech_field_hospital2 = {
+		allow = { has_country_flag = UNLOCK:support_folder }
+
+		field_hospital_cav = {
+			casualty_trickleback = 0.02
+			experience_loss_factor = -0.04
+		}
+		field_hospital = {
+			casualty_trickleback = 0.04
+			experience_loss_factor = -0.08
+		}
+
+		path = {
+			leads_to_tech = tech_field_hospital3
+			research_cost_coeff = 1
+		}
+
+		research_cost = 0.8
+		start_year = 1939
+		folder = {
+			name = support_folder
+			position = { x = @FH y = @1939 }
+		}
+		on_research_complete = {
+			set_temp_variable = { tech = token:tech_field_hospital2 }
+			on_support_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = support_tech_tt
+			custom_effect_tooltip = motorized_equipment_tt
+			custom_effect_tooltip = medical_tech_tt
+			custom_effect_tooltip = hospital_tech_tt
+		}
+		categories = {
+			support_tech
+			motorized_equipment
+			medical_tech
+			hospital_tech
+		}		special_project_specialization = { specialization_land }
+		ai_will_do = {
+			base = 0
+			modifier = {
+				add = ai_base
+				
+				set_temp_variable = { base = @HOSP_PRIORITY }
+				ai_field_hospital_tech = yes 
+			}
+			modifier = {
+				factor = ai_factor
+				
+				set_temp_variable = { ai_factor = ai_support_tech_need }
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		
+	}
+	tech_field_hospital3 = {
+		allow = { has_country_flag = UNLOCK:support_folder }
+
+		field_hospital_cav = {
+			casualty_trickleback = 0.02
+			experience_loss_factor = -0.04
+		}
+		field_hospital = {
+			casualty_trickleback = 0.04
+			experience_loss_factor = -0.08
+		}
+
+		path = {
+			leads_to_tech = tech_field_hospital4
+			research_cost_coeff = 1
+		}
+
+		research_cost = 0.8
+		start_year = 1942
+		folder = {
+			name = support_folder
+			position = { x = @FH y = @1942 }
+		}
+		on_research_complete = {
+			set_temp_variable = { tech = token:tech_field_hospital3 }
+			on_support_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = support_tech_tt
+			custom_effect_tooltip = motorized_equipment_tt
+			custom_effect_tooltip = medical_tech_tt
+			custom_effect_tooltip = hospital_tech_tt
+		}
+		categories = {
+			support_tech
+			motorized_equipment
+			medical_tech
+			hospital_tech
+		}
+		dependencies = {
+			tech_Headquarters2 = 1
+		}		special_project_specialization = { specialization_land }
+		ai_will_do = {
+			base = 0
+			modifier = {
+				add = ai_base
+				
+				set_temp_variable = { base = @HOSP_PRIORITY }
+				ai_field_hospital_tech = yes 
+			}
+			modifier = {
+				factor = ai_factor
+				
+				set_temp_variable = { ai_factor = ai_support_tech_need }
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		
+	}
+	tech_field_hospital4 = {
+		allow = { has_country_flag = UNLOCK:support_folder }
+
+		field_hospital_cav = {
+			casualty_trickleback = 0.02
+			experience_loss_factor = -0.04
+		}
+		field_hospital = {
+			casualty_trickleback = 0.04
+			experience_loss_factor = -0.08
+		}
+
+		research_cost = 0.8
+		start_year = 1945
+		folder = {
+			name = support_folder
+			position = { x = @FH y = @1945 }
+		}
+		on_research_complete = {
+			set_temp_variable = { tech = token:tech_field_hospital4 }
+			on_support_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = support_tech_tt
+			custom_effect_tooltip = motorized_equipment_tt
+			custom_effect_tooltip = medical_tech_tt
+			custom_effect_tooltip = hospital_tech_tt
+		}
+		categories = {
+			support_tech
+			motorized_equipment
+			medical_tech
+			hospital_tech
+		}
+		dependencies = {
+			tech_Headquarters3 = 1
+		}		special_project_specialization = { specialization_land }
+		ai_will_do = {
+			base = 0
+			modifier = {
+				add = ai_base
+				
+				set_temp_variable = { base = @HOSP_PRIORITY }
+				ai_field_hospital_tech = yes 
+			}
+			modifier = {
+				factor = ai_factor
+				
+				set_temp_variable = { ai_factor = ai_support_tech_need }
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		
+	}
+	#### Logistics Company ####
+	tech_logistics_company = {
+		allow = { has_country_flag = UNLOCK:support_folder }
+
+		enable_subunits = {
+			logistics_company
+			logistics_company_car
+		}
+
+		path = {
+			leads_to_tech = tech_logistics_company2
+			research_cost_coeff = 1
+		}
+
+		dependencies = {
+			tech_liaison_cars = 1
+		}
+
+		research_cost = 1.2
+		start_year = 1934
+		folder = {
+			name = support_folder
+			position = { x = @LC y = @1934 }
+		}
+
+		on_research_complete = {
+			set_temp_variable = { tech = token:tech_logistics_company }
+			on_support_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = support_tech_tt
+			custom_effect_tooltip = motorized_equipment_tt
+			custom_effect_tooltip = logistics_tech_tt
+			custom_effect_tooltip = horse_tech_tt
+		}
+
+		categories = {
+			motorized_equipment
+			logistics_tech
+			support_tech
+			horse_tech
+		}		special_project_specialization = { specialization_land }
+		ai_will_do = {
+			base = 0
+			modifier = {
+				add = ai_base
+				
+				set_temp_variable = { base = @LOG_PRIORITY }
+				ai_logistics_tech = yes 
+			}
+			modifier = {
+				factor = ai_tech_need/tech_logistics_company?1
+			}
+			modifier = {
+				factor = ai_factor
+				
+				set_temp_variable = { ai_factor = ai_support_tech_need }
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		
+	}
+	tech_logistics_company2 = {
+		allow = { has_country_flag = UNLOCK:support_folder }
+
+		category_all_logistics = {
+			supply_consumption_factor = -0.04
+		}
+		category_heavy_logistics = {
+			supply_consumption_factor = -0.02
+		}
+
+		enable_subunits = {
+			logistics_company_mot
+			logistics_company_mech
+		}
+		
+		dependencies = {
+			semi_motorised_infantry = 1
+		}
+
+		path = {
+			leads_to_tech = tech_logistics_company3
+			research_cost_coeff = 1
+		}
+
+		research_cost = 0.8
+		start_year = 1939
+		folder = {
+			name = support_folder
+			position = { x = @LC y = @1939 }
+		}
+
+		on_research_complete = {
+			set_temp_variable = { tech = token:tech_logistics_company2 }
+			on_support_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = support_tech_tt
+			custom_effect_tooltip = motorized_equipment_tt
+			custom_effect_tooltip = logistics_tech_tt
+		}
+		categories = {
+			motorized_equipment
+			logistics_tech
+			support_tech
+		}		special_project_specialization = { specialization_land }
+		ai_will_do = {
+			base = 0
+			modifier = {
+				add = ai_base
+				
+				set_temp_variable = { base = @LOG_PRIORITY }
+				ai_logistics_tech = yes 
+			}
+			modifier = {
+				factor = ai_tech_need/tech_logistics_company2?1
+			}
+			modifier = {
+				factor = ai_factor
+				
+				set_temp_variable = { ai_factor = ai_support_tech_need }
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		
+	}
+	tech_logistics_company3 = {
+		allow = { has_country_flag = UNLOCK:support_folder }
+
+		category_all_logistics = {
+			supply_consumption_factor = -0.04
+		}
+		category_heavy_logistics = {
+			supply_consumption_factor = -0.02
+		}
+
+		path = {
+			leads_to_tech = tech_logistics_company4
+			research_cost_coeff = 1
+		}
+
+		research_cost = 0.8
+		start_year = 1942
+		folder = {
+			name = support_folder
+			position = { x = @LC y = @1942 }
+		}
+
+		on_research_complete = {
+			set_temp_variable = { tech = token:tech_logistics_company3 }
+			on_support_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = support_tech_tt
+			custom_effect_tooltip = motorized_equipment_tt
+			custom_effect_tooltip = logistics_tech_tt
+		}
+		categories = {
+			motorized_equipment
+			logistics_tech
+			support_tech
+		}
+		dependencies = {
+			tech_Headquarters2 = 1
+		}		special_project_specialization = { specialization_land }
+		ai_will_do = {
+			base = 0
+			modifier = {
+				add = ai_base
+				
+				set_temp_variable = { base = @LOG_PRIORITY }
+				ai_logistics_tech = yes 
+			}
+			modifier = {
+				factor = ai_factor
+				
+				set_temp_variable = { ai_factor = ai_support_tech_need }
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		
+	}
+	tech_logistics_company4 = {
+		allow = { has_country_flag = UNLOCK:support_folder }
+
+		category_all_logistics = {
+			supply_consumption_factor = -0.04
+		}
+		category_heavy_logistics = {
+			supply_consumption_factor = -0.02
+		}
+
+		research_cost = 0.8
+		start_year = 1945
+		folder = {
+			name = support_folder
+			position = { x = @LC y = @1945 }
+		}
+
+		on_research_complete = {
+			set_temp_variable = { tech = token:tech_logistics_company4 }
+			on_support_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = support_tech_tt
+			custom_effect_tooltip = motorized_equipment_tt
+			custom_effect_tooltip = logistics_tech_tt
+		}
+		categories = {
+			motorized_equipment
+			logistics_tech
+			support_tech
+		}
+		dependencies = {
+			tech_Headquarters3 = 1
+		}		special_project_specialization = { specialization_land }
+		ai_will_do = {
+			base = 0
+			modifier = {
+				add = ai_base
+				
+				set_temp_variable = { base = @LOG_PRIORITY }
+				ai_logistics_tech = yes 
+			}
+			modifier = {
+				factor = ai_factor
+				
+				set_temp_variable = { ai_factor = ai_support_tech_need }
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		
+	}
+	#### Signal Company ####
+	tech_signal_company = {
+		allow = { has_country_flag = UNLOCK:support_folder }
+
+		enable_subunits = {
+			signal_company
+			signal_company_mot
+		}
+
+		path = {
+			leads_to_tech = tech_signal_company2
+			research_cost_coeff = 1
+		}
+		dependencies = {
+			radio_technology = 1
+		}
+
+		research_cost = 1.2
+		start_year = 1937
+		folder = {
+			name = support_folder
+			position = { x = @SC y = @1937 }
+		}
+
+		#on_research_complete = {
+		#	limit = {
+		#		tag = GER
+		#	}
+		#	hidden_effect = {
+		#		set_technology = { ss_signalcompany_tech = 1 }
+		#	}
+		#	custom_effect_tooltip = ENABLE_SS_SIGNAL_COMP
+		#}
+		on_research_complete = {
+			set_temp_variable = { tech = token:tech_signal_company }
+			on_support_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = support_tech_tt
+			custom_effect_tooltip = electronics_tt
+			custom_effect_tooltip = signal_company_tech_tt
+			custom_effect_tooltip = radio_tech_tt
+		}
+
+		categories = {
+			support_tech
+			electronics
+			signal_company_tech
+			radio_tech
+		}		special_project_specialization = { specialization_land }
+		ai_will_do = {
+			base = 0
+			modifier = {
+				add = ai_base
+				
+				set_temp_variable = { base = @SIG_PRIORITY }
+				ai_signal_tech = yes 
+			}
+			modifier = {
+				factor = ai_tech_need/tech_signal_company?1
+			}
+			modifier = {
+				factor = ai_factor
+				
+				set_temp_variable = { ai_factor = ai_support_tech_need }
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		
+	}
+	tech_signal_company2 = {
+		allow = { has_country_flag = UNLOCK:support_folder }
+
+		category_all_signal = {
+			initiative = 0.03
+			default_morale = 0.03
+			max_organisation = 5
+		}
+
+		path = {
+			leads_to_tech = tech_signal_company3
+			research_cost_coeff = 1
+		}
+
+		research_cost = 0.8
+		start_year = 1939
+		folder = {
+			name = support_folder
+			position = { x = @SC y = @1939 }
+		}
+
+		on_research_complete = {
+			set_temp_variable = { tech = token:tech_signal_company2 }
+			on_support_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = support_tech_tt
+			custom_effect_tooltip = electronics_tt
+			custom_effect_tooltip = signal_company_tech_tt
+			custom_effect_tooltip = radio_tech_tt
+		}
+
+		categories = {
+			support_tech
+			electronics
+			signal_company_tech
+			radio_tech
+		}		special_project_specialization = { specialization_land }
+		ai_will_do = {
+			base = 0
+			modifier = {
+				add = ai_base
+				
+				set_temp_variable = { base = @SIG_PRIORITY }
+				ai_signal_tech = yes 
+			}
+			modifier = {
+				factor = ai_factor
+				
+				set_temp_variable = { ai_factor = ai_support_tech_need }
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		
+	}
+
+	tech_signal_company3 = {
+		allow = { has_country_flag = UNLOCK:support_folder }
+
+		category_all_signal = {
+			initiative = 0.03
+			default_morale = 0.03
+			max_organisation = 5
+		}
+
+		path = {
+			leads_to_tech = tech_signal_company4
+			research_cost_coeff = 1
+		}
+
+		research_cost = 0.8
+		start_year = 1942
+		folder = {
+			name = support_folder
+			position = { x = @SC y = @1942 }
+		}
+
+		on_research_complete = {
+			set_temp_variable = { tech = token:tech_signal_company3 }
+			on_support_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = support_tech_tt
+			custom_effect_tooltip = electronics_tt
+			custom_effect_tooltip = signal_company_tech_tt
+			custom_effect_tooltip = radio_tech_tt
+		}
+
+		categories = {
+			support_tech
+			electronics
+			signal_company_tech
+			radio_tech
+		}
+		dependencies = {
+			tech_Headquarters2 = 1
+		}		special_project_specialization = { specialization_land }
+		ai_will_do = {
+			base = 0
+			modifier = {
+				add = ai_base
+				
+				set_temp_variable = { base = @SIG_PRIORITY }
+				ai_signal_tech = yes 
+			}
+			modifier = {
+				factor = ai_factor
+				
+				set_temp_variable = { ai_factor = ai_support_tech_need }
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		
+	}
+	tech_signal_company4 = {
+		allow = { has_country_flag = UNLOCK:support_folder }
+
+		category_all_signal = {
+			initiative = 0.03
+			default_morale = 0.03
+			max_organisation = 5
+		}
+
+		research_cost = 0.8
+		start_year = 1945
+		folder = {
+			name = support_folder
+			position = { x = @SC y = @1945 }
+		}
+
+		on_research_complete = {
+			set_temp_variable = { tech = token:tech_signal_company3 }
+			on_support_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = support_tech_tt
+			custom_effect_tooltip = electronics_tt
+			custom_effect_tooltip = signal_company_tech_tt
+			custom_effect_tooltip = radio_tech_tt
+		}
+
+		categories = {
+			support_tech
+			electronics
+			signal_company_tech
+			radio_tech
+		}
+		dependencies = {
+			tech_Headquarters3 = 1
+		}		special_project_specialization = { specialization_land }
+		ai_will_do = {
+			base = 0
+			modifier = {
+				add = ai_base
+				
+				set_temp_variable = { base = @SIG_PRIORITY }
+				ai_signal_tech = yes 
+			}
+			modifier = {
+				factor = ai_factor
+				
+				set_temp_variable = { ai_factor = ai_support_tech_need }
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		
+	}
+	
+	#################### Train Techs ################
+	
+	tech_basic_train = {
+		allow = { has_country_flag = UNLOCK:support_folder }
+
+		enable_equipments = {
+			train_equipment_1
+		}
+		
+		research_cost = 1.5
+		start_year = 1910
+		folder = {
+			name = support_folder
+			position = { x = @TRAIN y = @1918 }
+		}
+
+		path = {
+			leads_to_tech = tech_wartime_train
+			research_cost_coeff = 1
+		}
+
+		path = {
+			leads_to_tech = tech_armored_train
+			research_cost_coeff = 1
+		}
+		
+		on_research_complete = {
+			set_temp_variable = { tech = token:tech_basic_train }
+			on_support_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = support_tech_tt
+		}
+
+		categories = {
+			support_tech
+			train_tech
+		}		special_project_specialization = { specialization_land }
+		ai_will_do = {
+			base = 0
+			modifier = {
+				add = ai_base
+				
+				set_temp_variable = { base = @TRAIN_PRIORITY }
+			}
+			modifier = {
+				factor = ai_factor
+				
+				set_temp_variable = { ai_factor = ai_support_tech_need }
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		
+	}
+	tech_wartime_train = {
+		allow = { has_country_flag = UNLOCK:support_folder }
+
+		enable_equipments = {
+			train_equipment_2
+		}
+		
+		research_cost = 1.5
+		start_year = 1939
+		folder = {
+			name = support_folder
+			position = { x = @TRAIN y = @1939 }
+		}
+
+		on_research_complete = {
+			set_temp_variable = { tech = token:tech_wartime_train }
+			on_support_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = support_tech_tt
+		}
+
+		categories = {
+			support_tech
+			train_tech
+		}		special_project_specialization = { specialization_land }
+		ai_will_do = {
+			base = 0
+			modifier = {
+				add = ai_base
+				
+				set_temp_variable = { base = @TRAIN_PRIORITY }
+				ai_train_tech = yes
+			}
+			modifier = {
+				factor = ai_factor
+				
+				set_temp_variable = { ai_factor = ai_support_tech_need }
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		
+	}
+	tech_armored_train = {
+		allow = { has_country_flag = UNLOCK:support_folder }
+
+		enable_equipments = {
+			train_equipment_3
+		}
+		
+		research_cost = 1.5
+		start_year = 1936
+		folder = {
+			name = support_folder
+			position = { x = @TRAIN_ARM y = @1936 }
+		}
+		
+		on_research_complete = {
+			set_temp_variable = { tech = token:tech_armored_train }
+			on_support_tech_research_complete = yes
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = support_tech_tt
+		}
+
+		categories = {
+			support_tech
+			train_tech
+		}		special_project_specialization = { specialization_land }
+		ai_will_do = {
+			base = 0
+			modifier = {
+				add = ai_base
+				
+				set_temp_variable = { base = @TRAIN_PRIORITY }
+				ai_train_tech = yes
+			}
+			modifier = {
+				factor = ai_factor
+				
+				set_temp_variable = { ai_factor = ai_support_tech_need }
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		
+	}
+	
+	tech_trm_tank_recon = {
+		allow = { 
+			ROOT = { is_special_project_completed = sp:sp_land_tank_recon }
+		}
+		
+		is_special_project_tech = yes
+
+		enable_subunits = {
+			trm_light_armor_recon
+			trm_light_amphibious_armor_recon
+			trm_cavalry_armor_recon
+			trm_cavalry_amphibious_armor_recon
+			trm_amphibious_armor_recon
+			trm_para_armor_recon
+		}
+
+		research_cost = 0.8
+		start_year = 1940
+		folder = {
+			name = support_folder
+			position = { x = @RC_tank y = @1940 }
+		}
+		on_research_complete = {
+			set_temp_variable = { tech = token:tech_trm_tank_recon }
+			on_support_tech_research_complete = yes
+			if = {
+				limit = { has_tech = paratroopers3 }
+				set_technology = { popup = no para_airbone_armor_recon = 1 }
+			}
+			custom_effect_tooltip = tech_category_tt
+			custom_effect_tooltip = support_tech_tt
+			custom_effect_tooltip = recon_tech_tt
+		}
+		categories = {
+			support_tech
+			recon_tech
+		}		special_project_specialization = { specialization_land }
+		ai_will_do = {
+			base = 0
+			modifier = {
+				add = ai_base
+				
+				set_temp_variable = { base = @RECON_PRIORITY }
+				ai_recon_tech = yes 
+			}
+			modifier = {
+				factor = ai_factor
+				
+				set_temp_variable = { ai_factor = ai_support_tech_need }
+				add_to_temp_variable = { ai_factor = 1 }
+			}
+		}
+		
+	}
+
+	#Hidden Techs
+	tech_trm_tank_recon_early = {
+
+		enable_equipments = { 
+			trm_light_armor_recon
+			trm_light_amphibious_armor_recon
+		}
+
+		research_cost = 1
+		start_year = 1930
+
+		#set at gamestart
+		allow = {
+			always = no
+		}
+	}
+}
+#EOF#
